@@ -10,6 +10,7 @@
 
 'use strict';
 
+// TODO: Get this type somehow
 import type {PackagerAsset} from '../../Libraries/Image/AssetRegistry';
 
 /**

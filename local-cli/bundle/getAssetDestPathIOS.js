@@ -12,6 +12,7 @@
 
 const path = require('path');
 
+// TODO: Get this type somehow
 import type {PackagerAsset} from '../../Libraries/Image/AssetRegistry';
 
 function getAssetDestPathIOS(asset: PackagerAsset, scale: number): string {

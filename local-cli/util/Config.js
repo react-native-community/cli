@@ -72,6 +72,7 @@ const Config = {
     },
     serializer: {
       getModulesRunBeforeMainModule: () => [
+        // TODO: Get this file somehow
         require.resolve('../../Libraries/Core/InitializeCore'),
       ],
       getPolyfills,

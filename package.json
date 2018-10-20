@@ -10,7 +10,6 @@
     "react": "16.6.0-alpha.8af6728"
   },
   "dependencies": {
-    "@babel/runtime": "^7.0.0",
     "absolute-path": "^0.0.0",
     "chalk": "^1.1.1",
     "commander": "^2.9.0",
@@ -39,7 +38,6 @@
     "optimist": "^0.6.1",
     "plist": "^3.0.0",
     "promise": "^7.1.1",
-    "regenerator-runtime": "^0.11.0",
     "semver": "^5.0.3",
     "serve-static": "^1.13.1",
     "shell-quote": "1.6.1",
@@ -50,11 +48,9 @@
   "devDependencies": {
     "@babel/core": "^7.0.0",
     "@callstack/eslint-config": "^3.0.0",
-    "babel-generator": "^6.26.0",
     "eslint": "^5.7.0",
     "flow-bin": "^0.83.0",
     "jest": "23.4.1",
-    "jest-junit": "5.1.0",
     "react": "16.6.0-alpha.8af6728",
     "react-test-renderer": "16.6.0-alpha.8af6728"
   }

@@ -7,8 +7,6 @@
  * @format
  */
 
-'use strict';
-
 const glob = require('glob');
 const path = require('path');
 

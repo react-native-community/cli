@@ -22,7 +22,7 @@ function parseDevicesResult(result: string): Array<string> {
   const lines = result.trim().split(/\r?\n/);
 
   for (let i = 0; i < lines.length; i++) {
-    let words = lines[i].split(/[ ,\t]+/).filter(w => w !== '');
+    const words = lines[i].split(/[ ,\t]+/).filter(w => w !== '');
 
     if (words[1] === 'device') {
       devices.push(words[0]);
@@ -44,6 +44,6 @@ function getDevices(): Array<string> {
 }
 
 module.exports = {
-  parseDevicesResult: parseDevicesResult,
-  getDevices: getDevices,
+  parseDevicesResult,
+  getDevices,
 };

@@ -8,12 +8,10 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 jest.dontMock('../getAssetDestPathIOS');
 
-const getAssetDestPathIOS = require('../getAssetDestPathIOS');
 const path = require('path');
+const getAssetDestPathIOS = require('../getAssetDestPathIOS');
 
 describe('getAssetDestPathIOS', () => {
   it('should build correct path', () => {
@@ -24,7 +22,7 @@ describe('getAssetDestPathIOS', () => {
     };
 
     expect(getAssetDestPathIOS(asset, 1)).toBe(
-      path.normalize('assets/test/icon.png'),
+      path.normalize('assets/test/icon.png')
     );
   });
 
@@ -36,10 +34,10 @@ describe('getAssetDestPathIOS', () => {
     };
 
     expect(getAssetDestPathIOS(asset, 2)).toBe(
-      path.normalize('assets/test/icon@2x.png'),
+      path.normalize('assets/test/icon@2x.png')
     );
     expect(getAssetDestPathIOS(asset, 3)).toBe(
-      path.normalize('assets/test/icon@3x.png'),
+      path.normalize('assets/test/icon@3x.png')
     );
   });
 });

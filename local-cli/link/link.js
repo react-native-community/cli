@@ -11,6 +11,8 @@
 /* $FlowFixMe(>=0.54.0 site=react_native_oss) This comment suppresses an error
  * found when Flow v0.54 was deployed. To see the error delete this comment and
  * run Flow. */
+import type { RNConfig } from '../core';
+
 const log = require('npmlog');
 const path = require('path');
 const uniqBy = require('lodash').uniqBy;
@@ -31,8 +33,6 @@ const pollParams = require('./pollParams');
 const commandStub = require('./commandStub');
 const promisify = require('./promisify');
 const findReactNativeScripts = require('../util/findReactNativeScripts');
-
-import type {RNConfig} from '../core';
 
 log.heading = 'rnpm-link';
 
@@ -57,14 +57,14 @@ const linkDependency = async (platforms, project, dependency) => {
     const isInstalled = linkConfig.isInstalled(
       project[platform],
       dependency.name,
-      dependency.config[platform],
+      dependency.config[platform]
     );
 
     if (isInstalled) {
       log.info(
         chalk.grey(
-          `Platform '${platform}' module ${dependency.name} is already linked`,
-        ),
+          `Platform '${platform}' module ${dependency.name} is already linked`
+        )
       );
       return null;
     }
@@ -75,13 +75,13 @@ const linkDependency = async (platforms, project, dependency) => {
       dependency.name,
       dependency.config[platform],
       params,
-      project[platform],
+      project[platform]
     );
 
     log.info(
       `Platform '${platform}' module ${
         dependency.name
-      } has been successfully linked`,
+      } has been successfully linked`
     );
   });
 };
@@ -123,14 +123,14 @@ function link(args: Array<string>, config: RNConfig) {
   } catch (err) {
     log.error(
       'ERRPACKAGEJSON',
-      'No package found. Are you sure this is a React Native project?',
+      'No package found. Are you sure this is a React Native project?'
     );
     return Promise.reject(err);
   }
 
   const hasProjectConfig = Object.keys(platforms).reduce(
     (acc, key) => acc || key in project,
-    false,
+    false
   );
   if (!hasProjectConfig && findReactNativeScripts()) {
     throw new Error(
@@ -138,7 +138,7 @@ function link(args: Array<string>, config: RNConfig) {
         'If you need to include a library that relies on custom native code, ' +
         'you might have to eject first. ' +
         'See https://github.com/react-community/create-react-native-app/blob/master/EJECTING.md ' +
-        'for more information.',
+        'for more information.'
     );
   }
 
@@ -150,14 +150,14 @@ function link(args: Array<string>, config: RNConfig) {
 
   const dependencies = getDependencyConfig(
     config,
-    packageName ? [packageName] : getProjectDependencies(),
+    packageName ? [packageName] : getProjectDependencies()
   );
 
   const assets = dedupeAssets(
     dependencies.reduce(
       (acc, dependency) => acc.concat(dependency.config.assets),
-      project.assets,
-    ),
+      project.assets
+    )
   );
 
   const tasks = flatten(
@@ -165,7 +165,7 @@ function link(args: Array<string>, config: RNConfig) {
       () => promisify(dependency.config.commands.prelink || commandStub),
       () => linkDependency(platforms, project, dependency),
       () => promisify(dependency.config.commands.postlink || commandStub),
-    ]),
+    ])
   );
 
   tasks.push(() => linkAssets(platforms, project, assets));
@@ -173,7 +173,7 @@ function link(args: Array<string>, config: RNConfig) {
   return promiseWaterfall(tasks).catch(err => {
     log.error(
       `Something went wrong while linking. Error: ${err.message} \n` +
-        'Please file an issue here: https://github.com/facebook/react-native/issues',
+        'Please file an issue here: https://github.com/facebook/react-native/issues'
     );
     throw err;
   });

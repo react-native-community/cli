@@ -8,19 +8,19 @@
  * @flow
  */
 
-'use strict';
+import type { ConfigT } from 'metro-config/src/configTypes.flow';
+import type { RequestOptions, OutputOptions } from './types.flow';
 
-const log = require('../util/log').out('bundle');
+('use strict');
+
 /* $FlowFixMe(site=react_native_oss) */
 const Server = require('metro/src/Server');
 
 /* $FlowFixMe(site=react_native_oss) */
 const outputBundle = require('metro/src/shared/output/bundle');
 const path = require('path');
+const log = require('../util/log').out('bundle');
 const saveAssets = require('./saveAssets');
-
-import type {RequestOptions, OutputOptions} from './types.flow';
-import type {ConfigT} from 'metro-config/src/configTypes.flow';
 
 async function buildBundle(
   args: OutputOptions & {
@@ -32,7 +32,7 @@ async function buildBundle(
     minify: boolean,
   },
   configPromise: Promise<ConfigT>,
-  output = outputBundle,
+  output = outputBundle
 ) {
   // This is used by a bazillion of npm modules we don't control so we don't
   // have other choice than defining it as an env variable here.
@@ -52,7 +52,7 @@ async function buildBundle(
     platform: args.platform,
   };
 
-  const server = new Server({...config, resetCache: args.resetCache});
+  const server = new Server({ ...config, resetCache: args.resetCache });
 
   try {
     const bundle = await output.build(server, requestOpts);

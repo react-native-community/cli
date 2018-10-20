@@ -7,10 +7,9 @@
  * @format
  */
 
-'use strict';
-
 const spawnSync = require('child_process').spawnSync;
 const yarn = require('../util/yarn');
+
 const spawnOpts = {
   stdio: 'inherit',
   stdin: 'inherit',
@@ -52,7 +51,7 @@ function callYarnOrNpm(yarnCommand, npmCommand) {
 function add(packageName) {
   return callYarnOrNpm(
     `yarn add ${packageName}`,
-    `npm install ${packageName} --save`,
+    `npm install ${packageName} --save`
   );
 }
 
@@ -64,11 +63,11 @@ function add(packageName) {
 function remove(packageName) {
   return callYarnOrNpm(
     `yarn remove ${packageName}`,
-    `npm uninstall --save ${packageName}`,
+    `npm uninstall --save ${packageName}`
   );
 }
 
 module.exports = {
-  add: add,
-  remove: remove,
+  add,
+  remove,
 };

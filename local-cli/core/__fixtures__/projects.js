@@ -27,4 +27,4 @@ const withPods = {
   ios: ios.pod,
 };
 
-module.exports = {flat, nested, withExamples, withPods};
+module.exports = { flat, nested, withExamples, withPods };

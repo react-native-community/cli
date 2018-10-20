@@ -8,8 +8,6 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 const getHeadersInFolder = require('../../ios/getHeadersInFolder');
 
 describe('ios::getHeadersInFolder', () => {
@@ -21,7 +19,7 @@ describe('ios::getHeadersInFolder', () => {
 
     const foundHeaders = getHeadersInFolder(process.cwd());
 
-    expect(foundHeaders.length).toBe(2);
+    expect(foundHeaders).toHaveLength(2);
 
     getHeadersInFolder(process.cwd()).forEach(headerPath => {
       expect(headerPath).to.contain(process.cwd());

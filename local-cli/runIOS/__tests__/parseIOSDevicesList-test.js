@@ -8,14 +8,12 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 jest.dontMock('../parseIOSDevicesList');
-var parseIOSDevicesList = require('../parseIOSDevicesList');
+const parseIOSDevicesList = require('../parseIOSDevicesList');
 
 describe('parseIOSDevicesList', () => {
   it('parses typical output', () => {
-    var devices = parseIOSDevicesList(
+    const devices = parseIOSDevicesList(
       [
         'Known Devices:',
         'Maxs MacBook Pro [11111111-1111-1111-1111-111111111111]',
@@ -28,7 +26,7 @@ describe('parseIOSDevicesList', () => {
         'Blank',
         'System Usage',
         'Zombies',
-      ].join('\n'),
+      ].join('\n')
     );
 
     expect(devices).toEqual([
@@ -42,7 +40,7 @@ describe('parseIOSDevicesList', () => {
 
   it('ignores garbage', () => {
     expect(parseIOSDevicesList('Something went terribly wrong (-42)')).toEqual(
-      [],
+      []
     );
   });
 });

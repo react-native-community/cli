@@ -8,15 +8,13 @@
  * @format
  */
 
-'use strict';
-
 const ALLOWED_SCALES = {
   ios: [1, 2, 3],
 };
 
 function filterPlatformAssetScales(
   platform: string,
-  scales: $ReadOnlyArray<number>,
+  scales: $ReadOnlyArray<number>
 ): $ReadOnlyArray<number> {
   const whitelist = ALLOWED_SCALES[platform];
   if (!whitelist) {

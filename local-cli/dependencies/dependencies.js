@@ -7,8 +7,6 @@
  * @format
  */
 
-'use strict';
-
 const Metro = require('metro');
 
 const denodeify = require('denodeify');
@@ -20,7 +18,7 @@ async function dependencies(argv, configPromise, args, packagerInstance) {
   const config = await configPromise;
   if (!fs.existsSync(rootModuleAbsolutePath)) {
     return Promise.reject(
-      new Error(`File ${rootModuleAbsolutePath} does not exist`),
+      new Error(`File ${rootModuleAbsolutePath} does not exist`)
     );
   }
 
@@ -28,7 +26,7 @@ async function dependencies(argv, configPromise, args, packagerInstance) {
 
   const relativePath = path.relative(
     config.projectRoot,
-    rootModuleAbsolutePath,
+    rootModuleAbsolutePath
   );
 
   const options = {
@@ -58,7 +56,7 @@ async function dependencies(argv, configPromise, args, packagerInstance) {
       0;
 
     if (isInsideProjectRoots) {
-      outStream.write(modulePath + '\n');
+      outStream.write(`${modulePath}\n`);
     }
   });
   return writeToFile
@@ -99,7 +97,7 @@ module.exports = {
     {
       command: '--dev [boolean]',
       description: 'If false, skip all dev-only code path',
-      parse: val => (val === 'false' ? false : true),
+      parse: val => val !== 'false',
       default: true,
     },
     {

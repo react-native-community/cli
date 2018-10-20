@@ -7,8 +7,6 @@
  * @format
  */
 
-'use strict';
-
 const bundleWithOutput = require('./bundle').withOutput;
 const bundleCommandLineArgs = require('./bundleCommandLineArgs');
 const outputUnbundle = require('metro/src/shared/output/RamBundle');

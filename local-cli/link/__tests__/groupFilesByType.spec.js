@@ -8,8 +8,6 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 const groupFilesByType = require('../groupFilesByType');
 
 describe('groupFilesByType', () => {

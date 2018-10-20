@@ -8,16 +8,16 @@
  * @flow strict
  */
 
-'use strict';
+// TODO: Get this type somehow
+import type { PackagerAsset } from '../../Libraries/Image/AssetRegistry';
+
+('use strict');
 
 const path = require('path');
 
-// TODO: Get this type somehow
-import type {PackagerAsset} from '../../Libraries/Image/AssetRegistry';
-
 function getAssetDestPathIOS(asset: PackagerAsset, scale: number): string {
-  const suffix = scale === 1 ? '' : '@' + scale + 'x';
-  const fileName = asset.name + suffix + '.' + asset.type;
+  const suffix = scale === 1 ? '' : `@${scale}x`;
+  const fileName = `${asset.name + suffix}.${asset.type}`;
   return path.join(asset.httpServerLocation.substr(1), fileName);
 }
 

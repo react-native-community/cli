@@ -8,8 +8,8 @@
  */
 
 const plistParser = require('plist');
-const getPlistPath = require('./getPlistPath');
 const fs = require('fs');
+const getPlistPath = require('./getPlistPath');
 
 /**
  * Returns Info.plist located in the iOS project

@@ -8,8 +8,8 @@
  */
 
 const plistParser = require('plist');
-const getPlistPath = require('./getPlistPath');
 const fs = require('fs');
+const getPlistPath = require('./getPlistPath');
 
 /**
  * Writes to Info.plist located in the iOS project
@@ -28,6 +28,6 @@ module.exports = function writePlist(project, sourceDir, plist) {
   // Ref: https://github.com/facebook/react-native/issues/11668
   return fs.writeFileSync(
     plistPath,
-    plistParser.build(plist, {indent: '\t', offset: -1}) + '\n',
+    `${plistParser.build(plist, { indent: '\t', offset: -1 })}\n`
   );
 };

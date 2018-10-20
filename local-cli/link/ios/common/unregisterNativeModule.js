@@ -10,7 +10,7 @@ module.exports = function unregisterNativeModule(
   name,
   dependencyConfig,
   projectConfig,
-  otherDependencies,
+  otherDependencies
 ) {
   const isIosInstalled = isInstalledIOS(projectConfig, dependencyConfig);
   const isPodInstalled = isInstalledPods(projectConfig, dependencyConfig);

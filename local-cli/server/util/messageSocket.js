@@ -7,10 +7,9 @@
  * @format
  */
 
-'use strict';
-
 const url = require('url');
 const WebSocketServer = require('ws').Server;
+
 const PROTOCOL_VERSION = 2;
 const notifier = require('node-notifier');
 
@@ -25,10 +24,10 @@ function parseMessage(data, binary) {
       return message;
     }
     console.error(
-      'Received message had wrong protocol version: ' + message.version,
+      `Received message had wrong protocol version: ${message.version}`
     );
   } catch (e) {
-    console.error('Failed to parse the message as JSON:\n' + data);
+    console.error(`Failed to parse the message as JSON:\n${data}`);
   }
   return undefined;
 }
@@ -58,8 +57,8 @@ function isResponse(message) {
 
 function attachToServer(server, path) {
   const wss = new WebSocketServer({
-    server: server,
-    path: path,
+    server,
+    path,
   });
   const clients = new Map();
   let nextClientId = 0;
@@ -94,14 +93,14 @@ function attachToServer(server, path) {
         } catch (e) {
           console.error(
             `Failed to send broadcast to client: '${otherId}' ` +
-              `due to:\n ${e.toString()}`,
+              `due to:\n ${e.toString()}`
           );
         }
       }
     }
   }
 
-  wss.on('connection', function(clientWs) {
+  wss.on('connection', clientWs => {
     const clientId = `client#${nextClientId++}`;
 
     function handleCaughtError(message, error) {
@@ -117,22 +116,22 @@ function attachToServer(server, path) {
       if (message.id === undefined) {
         console.error(
           `Handling message from ${clientId} failed with:\n${error}\n` +
-            `message:\n${JSON.stringify(errorMessage)}`,
+            `message:\n${JSON.stringify(errorMessage)}`
         );
       } else {
         try {
           clientWs.send(
             JSON.stringify({
               version: PROTOCOL_VERSION,
-              error: error,
+              error,
               id: message.id,
-            }),
+            })
           );
         } catch (e) {
           console.error(
             `Failed to reply to ${clientId} with error:\n${error}` +
               `\nmessage:\n${JSON.stringify(errorMessage)}` +
-              `\ndue to error: ${e.toString()}`,
+              `\ndue to error: ${e.toString()}`
           );
         }
       }
@@ -159,9 +158,9 @@ function attachToServer(server, path) {
       clientWs.send(
         JSON.stringify({
           version: PROTOCOL_VERSION,
-          result: result,
+          result,
           id: message.id,
-        }),
+        })
       );
     }
 
@@ -174,8 +173,8 @@ function attachToServer(server, path) {
           id:
             message.id === undefined
               ? undefined
-              : {requestId: message.id, clientId: clientId},
-        }),
+              : { requestId: message.id, clientId },
+        })
       );
     }
 
@@ -186,7 +185,7 @@ function attachToServer(server, path) {
           result: message.result,
           error: message.error,
           id: message.id.requestId,
-        }),
+        })
       );
     }
 
@@ -224,12 +223,12 @@ function attachToServer(server, path) {
 
   return {
     broadcast: (method, params) => {
-      handleSendBroadcast(null, {method: method, params: params});
+      handleSendBroadcast(null, { method, params });
     },
   };
 }
 
 module.exports = {
-  attachToServer: attachToServer,
-  parseMessage: parseMessage,
+  attachToServer,
+  parseMessage,
 };

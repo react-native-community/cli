@@ -7,11 +7,10 @@
  * @format
  */
 
-'use strict';
-
 const spawnSync = require('child_process').spawnSync;
 const log = require('npmlog');
 const PackageManager = require('../util/PackageManager');
+
 const spawnOpts = {
   stdio: 'inherit',
   stdin: 'inherit',
@@ -22,7 +21,7 @@ log.heading = 'rnpm-install';
 function uninstall(args, config) {
   const name = args[0];
 
-  var res = spawnSync('react-native', ['unlink', name], spawnOpts);
+  let res = spawnSync('react-native', ['unlink', name], spawnOpts);
 
   if (res.status) {
     process.exit(res.status);

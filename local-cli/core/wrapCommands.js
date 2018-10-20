@@ -7,8 +7,6 @@
  * @format
  */
 
-'use strict';
-
 const makeCommand = require('./makeCommand');
 
 module.exports = function wrapCommands(commands) {

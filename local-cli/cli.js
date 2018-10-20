@@ -7,8 +7,6 @@
  * @format
  */
 
-'use strict';
-
 // gracefulify() has to be called before anything else runs
 require('graceful-fs').gracefulify(require('fs'));
 
@@ -18,7 +16,7 @@ require('./server/checkNodeVersion')();
 
 require('../setupBabel')();
 
-var cliEntry = require('./cliEntry');
+const cliEntry = require('./cliEntry');
 
 if (require.main === module) {
   cliEntry.run();

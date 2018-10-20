@@ -17,8 +17,6 @@
  * having this duplicated file.
  */
 (function(global) {
-  'use strict';
-
   /**
    * This is a reference client for the Delta Bundler: it maintains cached the
    * last patched bundle delta and it's capable of applying new Deltas received
@@ -55,7 +53,7 @@
       // Make sure that the first received delta is a fresh one.
       if (!this._initialized && !deltaBundle.reset) {
         throw new Error(
-          'DeltaPatcher should receive a fresh Delta when being initialized',
+          'DeltaPatcher should receive a fresh Delta when being initialized'
         );
       }
 
@@ -109,7 +107,7 @@
       return [].concat(
         Array.from(this._lastBundle.pre.values()),
         Array.from(this._lastBundle.modules.values()),
-        Array.from(this._lastBundle.post.values()),
+        Array.from(this._lastBundle.post.values())
       );
     }
 

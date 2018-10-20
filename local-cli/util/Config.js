@@ -7,19 +7,19 @@
  * @format
  * @flow
  */
-'use strict';
-
-const findSymlinkedModules = require('./findSymlinkedModules');
-const getPolyfills = require('../../rn-get-polyfills');
-const path = require('path');
-
-const {createBlacklist} = require('metro');
-const {loadConfig} = require('metro-config');
-
 /**
  * Configuration file of the CLI.
  */
-import type {ConfigT} from 'metro-config/src/configTypes.flow';
+import type { ConfigT } from 'metro-config/src/configTypes.flow';
+
+('use strict');
+
+const path = require('path');
+
+const { createBlacklist } = require('metro');
+const { loadConfig } = require('metro-config');
+const getPolyfills = require('../../rn-get-polyfills');
+const findSymlinkedModules = require('./findSymlinkedModules');
 
 function getProjectRoot() {
   if (
@@ -28,7 +28,8 @@ function getProjectRoot() {
     // Packager is running from node_modules.
     // This is the default case for all projects created using 'react-native init'.
     return path.resolve(__dirname, '../../../..');
-  } else if (__dirname.match(/Pods[\/\\]React[\/\\]packager$/)) {
+  }
+  if (__dirname.match(/Pods[\/\\]React[\/\\]packager$/)) {
     // React Native was installed using CocoaPods.
     return path.resolve(__dirname, '../../../..');
   }
@@ -41,7 +42,7 @@ const resolveSymlinksForRoots = roots =>
      * error found when Flow v0.70 was deployed. To see the error delete this
      * comment and run Flow. */
     (arr, rootPath) => arr.concat(findSymlinkedModules(rootPath, roots)),
-    [...roots],
+    [...roots]
   );
 
 const getWatchFolders = () => {
@@ -52,9 +53,7 @@ const getWatchFolders = () => {
   return [];
 };
 
-const getBlacklistRE = () => {
-  return createBlacklist([/.*\/__fixtures__\/.*/]);
-};
+const getBlacklistRE = () => createBlacklist([/.*\/__fixtures__\/.*/]);
 
 /**
  * Module capable of getting the configuration out of a given file.
@@ -87,11 +86,11 @@ const Config = {
   },
 
   async load(configFile: ?string): Promise<ConfigT> {
-    const argv = {cwd: getProjectRoot()};
+    const argv = { cwd: getProjectRoot() };
 
     return await loadConfig(
-      configFile ? {...argv, config: configFile} : argv,
-      this.DEFAULT,
+      configFile ? { ...argv, config: configFile } : argv,
+      this.DEFAULT
     );
   },
 };

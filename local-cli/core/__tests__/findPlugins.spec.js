@@ -8,10 +8,8 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
-const findPlugins = require('../findPlugins');
 const path = require('path');
+const findPlugins = require('../findPlugins');
 
 const ROOT = path.join(__dirname, '..', '..', '..');
 const pjsonPath = path.join(ROOT, 'package.json');
@@ -23,7 +21,7 @@ describe('findPlugins', () => {
 
   it('returns an array of dependencies', () => {
     jest.mock(pjsonPath, () => ({
-      dependencies: {'rnpm-plugin-test': '*'},
+      dependencies: { 'rnpm-plugin-test': '*' },
     }));
 
     expect(findPlugins([ROOT])).toHaveProperty('commands');
@@ -50,8 +48,8 @@ describe('findPlugins', () => {
 
   it('returns plugins from both dependencies and dev dependencies', () => {
     jest.mock(pjsonPath, () => ({
-      dependencies: {'rnpm-plugin-test': '*'},
-      devDependencies: {'rnpm-plugin-test-2': '*'},
+      dependencies: { 'rnpm-plugin-test': '*' },
+      devDependencies: { 'rnpm-plugin-test-2': '*' },
     }));
     expect(findPlugins([ROOT])).toHaveProperty('commands');
     expect(findPlugins([ROOT])).toHaveProperty('platforms');
@@ -61,8 +59,8 @@ describe('findPlugins', () => {
 
   it('returns unique list of plugins', () => {
     jest.mock(pjsonPath, () => ({
-      dependencies: {'rnpm-plugin-test': '*'},
-      devDependencies: {'rnpm-plugin-test': '*'},
+      dependencies: { 'rnpm-plugin-test': '*' },
+      devDependencies: { 'rnpm-plugin-test': '*' },
     }));
     expect(findPlugins([ROOT]).commands).toHaveLength(1);
   });

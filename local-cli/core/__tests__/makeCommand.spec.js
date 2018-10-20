@@ -8,8 +8,6 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 let spawnError = false;
 
 jest.setMock('child_process', {

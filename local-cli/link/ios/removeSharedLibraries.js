@@ -14,7 +14,7 @@ module.exports = function removeSharedLibraries(project, libraries) {
 
   const target = project.getFirstTarget().uuid;
 
-  for (var name of libraries) {
-    project.removeFramework(name, {target});
+  for (const name of libraries) {
+    project.removeFramework(name, { target });
   }
 };

@@ -28,14 +28,14 @@ module.exports = function unlinkAssetsIOS(files, projectConfig) {
   if (!plist) {
     return log.error(
       'ERRPLIST',
-      "Could not locate Info.plist file. Check if your project has 'INFOPLIST_FILE' set properly",
+      "Could not locate Info.plist file. Check if your project has 'INFOPLIST_FILE' set properly"
     );
   }
 
   if (!project.pbxGroupByName('Resources')) {
     return log.error(
       'ERRGROUP',
-      "Group 'Resources' does not exist in your Xcode project. There is nothing to unlink.",
+      "Group 'Resources' does not exist in your Xcode project. There is nothing to unlink."
     );
   }
 
@@ -44,8 +44,8 @@ module.exports = function unlinkAssetsIOS(files, projectConfig) {
       .map(asset =>
         project.removeResourceFile(
           path.relative(projectConfig.sourceDir, asset),
-          {target: project.getFirstTarget().uuid},
-        ),
+          { target: project.getFirstTarget().uuid }
+        )
       )
       .map(file => file.basename);
   };

@@ -7,8 +7,6 @@
  * @format
  */
 
-'use strict';
-
 const execSync = require('child_process').execSync;
 const fs = require('fs');
 const path = require('path');
@@ -34,11 +32,10 @@ function getYarnVersionIfAvailable() {
   try {
     if (semver.gte(yarnVersion, '0.16.0')) {
       return yarnVersion;
-    } else {
-      return null;
     }
+    return null;
   } catch (error) {
-    console.error('Cannot parse yarn version: ' + yarnVersion);
+    console.error(`Cannot parse yarn version: ${yarnVersion}`);
     return null;
   }
 }
@@ -55,6 +52,6 @@ function isGlobalCliUsingYarn(projectDir) {
 }
 
 module.exports = {
-  getYarnVersionIfAvailable: getYarnVersionIfAvailable,
-  isGlobalCliUsingYarn: isGlobalCliUsingYarn,
+  getYarnVersionIfAvailable,
+  isGlobalCliUsingYarn,
 };

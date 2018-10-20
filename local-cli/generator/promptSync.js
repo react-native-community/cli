@@ -3,20 +3,23 @@
 // Simplified version of:
 // https://github.com/0x00A/prompt-sync/blob/master/index.js
 
-'use strict';
+const fs = require('fs');
 
-var fs = require('fs');
-var term = 13; // carriage return
+const term = 13; // carriage return
 
 function create() {
   return prompt;
 
   function prompt(ask, value, opts) {
-    var insert = 0,
-      savedinsert = 0,
-      res,
-      i,
-      savedstr;
+    let insert = 0;
+
+    const savedinsert = 0;
+
+    let res;
+
+    let i;
+
+    let savedstr;
     opts = opts || {};
 
     if (Object(ask) === ask) {
@@ -27,23 +30,25 @@ function create() {
       value = opts.value;
     }
     ask = ask || '';
-    var echo = opts.echo;
-    var masked = 'echo' in opts;
+    const echo = opts.echo;
+    const masked = 'echo' in opts;
 
-    var fd =
+    const fd =
       process.platform === 'win32'
         ? process.stdin.fd
         : fs.openSync('/dev/tty', 'rs');
 
-    var wasRaw = process.stdin.isRaw;
+    const wasRaw = process.stdin.isRaw;
     if (!wasRaw) {
       process.stdin.setRawMode(true);
     }
 
-    var buf = new Buffer(3);
-    var str = '',
-      character,
-      read;
+    let buf = new Buffer(3);
+    let str = '';
+
+    let character;
+
+    let read;
 
     savedstr = '';
 
@@ -51,19 +56,19 @@ function create() {
       process.stdout.write(ask);
     }
 
-    var cycle = 0;
-    var prevComplete;
+    const cycle = 0;
+    let prevComplete;
 
     while (true) {
       read = fs.readSync(fd, buf, 0, 3);
       if (read > 1) {
         // received a control sequence
         if (buf.toString()) {
-          str = str + buf.toString();
+          str += buf.toString();
           str = str.replace(/\0/g, '');
           insert = str.length;
-          process.stdout.write('\u001b[2K\u001b[0G' + ask + str);
-          process.stdout.write('\u001b[' + (insert + ask.length + 1) + 'G');
+          process.stdout.write(`\u001b[2K\u001b[0G${ask}${str}`);
+          process.stdout.write(`\u001b[${insert + ask.length + 1}G`);
           buf = new Buffer(3);
         }
         continue; // any other 3 character sequence is ignored
@@ -88,7 +93,7 @@ function create() {
       }
 
       if (character == 127 || (process.platform == 'win32' && character == 8)) {
-        //backspace
+        // backspace
         if (!insert) {
           continue;
         }
@@ -108,24 +113,18 @@ function create() {
 
       if (masked) {
         process.stdout.write(
-          '\u001b[2K\u001b[0G' + ask + Array(str.length + 1).join(echo),
+          `\u001b[2K\u001b[0G${ask}${Array(str.length + 1).join(echo)}`
         );
       } else {
         process.stdout.write('\u001b[s');
         if (insert == str.length) {
-          process.stdout.write('\u001b[2K\u001b[0G' + ask + str);
+          process.stdout.write(`\u001b[2K\u001b[0G${ask}${str}`);
+        } else if (ask) {
+          process.stdout.write(`\u001b[2K\u001b[0G${ask}${str}`);
         } else {
-          if (ask) {
-            process.stdout.write('\u001b[2K\u001b[0G' + ask + str);
-          } else {
-            process.stdout.write(
-              '\u001b[2K\u001b[0G' +
-                str +
-                '\u001b[' +
-                (str.length - insert) +
-                'D',
-            );
-          }
+          process.stdout.write(
+            `\u001b[2K\u001b[0G${str}\u001b[${str.length - insert}D`
+          );
         }
         process.stdout.write('\u001b[u');
         process.stdout.write('\u001b[1C');

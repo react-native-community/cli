@@ -8,13 +8,13 @@
  * @flow
  */
 
-'use strict';
+import type { ConfigT } from 'metro-config/src/configTypes.flow';
+import type { RNConfig } from '../core';
+import type { Args as RunServerArgs } from './runServer';
+
+('use strict');
 
 const runServer = require('./runServer');
-
-import type {RNConfig} from '../core';
-import type {ConfigT} from 'metro-config/src/configTypes.flow';
-import type {Args as RunServerArgs} from './runServer';
 
 /**
  * Starts the React Native Packager Server.

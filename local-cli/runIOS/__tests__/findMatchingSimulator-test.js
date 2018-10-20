@@ -9,8 +9,6 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 jest.dontMock('../findMatchingSimulator');
 
 const findMatchingSimulator = require('../findMatchingSimulator');
@@ -55,8 +53,8 @@ describe('findMatchingSimulator', () => {
             ],
           },
         },
-        'iPhone 6',
-      ),
+        'iPhone 6'
+      )
     ).toEqual({
       udid: 'BA0D93BD-07E6-4182-9B0A-F60A2474139C',
       name: 'iPhone 6',
@@ -104,14 +102,14 @@ describe('findMatchingSimulator', () => {
             ],
           },
         },
-        'iPhone 6',
-      ),
+        'iPhone 6'
+      )
     ).toEqual(null);
   });
 
   it('should return null if an odd input', () => {
     expect(findMatchingSimulator('random string input', 'iPhone 6')).toEqual(
-      null,
+      null
     );
   });
 
@@ -154,8 +152,8 @@ describe('findMatchingSimulator', () => {
             ],
           },
         },
-        null,
-      ),
+        null
+      )
     ).toEqual({
       udid: '1CCBBF8B-5773-4EA6-BD6F-C308C87A1ADB',
       name: 'iPhone 5',
@@ -229,8 +227,8 @@ describe('findMatchingSimulator', () => {
             ],
           },
         },
-        null,
-      ),
+        null
+      )
     ).toEqual({
       udid: '1CCBBF8B-5773-4EA6-BD6F-C308C87A1ADB',
       name: 'iPhone 5',
@@ -278,8 +276,8 @@ describe('findMatchingSimulator', () => {
             ],
           },
         },
-        null,
-      ),
+        null
+      )
     ).toEqual({
       udid: 'D0F29BE7-CC3C-4976-888D-C739B4F50508',
       name: 'iPhone 6s',
@@ -327,8 +325,8 @@ describe('findMatchingSimulator', () => {
             ],
           },
         },
-        'iPhone 6',
-      ),
+        'iPhone 6'
+      )
     ).toEqual({
       udid: 'BA0D93BD-07E6-4182-9B0A-F60A2474139C',
       name: 'iPhone 6',
@@ -402,8 +400,8 @@ describe('findMatchingSimulator', () => {
             ],
           },
         },
-        null,
-      ),
+        null
+      )
     ).toEqual({
       udid: '3A409DC5-5188-42A6-8598-3AA6F34607A5',
       name: 'iPhone 7',
@@ -477,8 +475,8 @@ describe('findMatchingSimulator', () => {
             ],
           },
         },
-        'iPhone 6s',
-      ),
+        'iPhone 6s'
+      )
     ).toEqual({
       udid: 'D0F29BE7-CC3C-4976-888D-C739B4F50508',
       name: 'iPhone 6s',
@@ -514,8 +512,8 @@ describe('findMatchingSimulator', () => {
             ],
           },
         },
-        'Apple TV',
-      ),
+        'Apple TV'
+      )
     ).toEqual({
       udid: '816C30EA-38EA-41AC-BFDA-96FB632D522E',
       name: 'Apple TV',

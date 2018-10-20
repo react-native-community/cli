@@ -7,16 +7,15 @@
  * @format
  */
 
-'use strict';
-
 const path = require('path');
 const MemoryFS = require('metro-memory-fs');
+
 let fs;
 
 function setMockFilesystem(object, platform) {
   reset(platform);
   const root = platform === 'win32' ? 'c:\\' : '/';
-  mockDir(root, {...object});
+  mockDir(root, { ...object });
   return root;
 }
 
@@ -43,18 +42,18 @@ function mockDir(dirPath, desc) {
 function reset(platform) {
   if (path.mock == null) {
     throw new Error(
-      'to use this "fs" module mock, you must also mock the "path" module',
+      'to use this "fs" module mock, you must also mock the "path" module'
     );
   }
   path.mock.reset(platform);
   const cwd = () => (platform === 'win32' ? 'c:\\' : '/');
-  fs = new MemoryFS({platform, cwd});
+  fs = new MemoryFS({ platform, cwd });
   Object.assign(mockFs, fs);
 }
 
 const mockFs = {};
 mockFs.__setMockFilesystem = setMockFilesystem;
-mockFs.mock = {clear: reset};
+mockFs.mock = { clear: reset };
 
 reset('posix');
 

@@ -7,8 +7,6 @@
  * @format
  */
 
-'use strict';
-
 module.exports = function findLineToAddPod(podLines, firstTargetLine) {
   // match line with new target: target 'project_name' do (most likely target inside podfile main target)
   const nextTarget = /target (\'|\")\w+(\'|\") do/g;

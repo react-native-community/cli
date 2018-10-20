@@ -7,8 +7,6 @@
  * @format
  */
 
-'use strict';
-
 const glob = require('glob');
 const path = require('path');
 
@@ -46,12 +44,13 @@ module.exports = function findProject(folder) {
       cwd: folder,
       ignore: GLOB_EXCLUDE_PATTERN,
     })
-    .filter(project => {
-      return path.dirname(project) === IOS_BASE || !TEST_PROJECTS.test(project);
-    })
-    .sort((projectA, projectB) => {
-      return path.dirname(projectA) === IOS_BASE ? -1 : 1;
-    });
+    .filter(
+      project =>
+        path.dirname(project) === IOS_BASE || !TEST_PROJECTS.test(project)
+    )
+    .sort(
+      (projectA, projectB) => (path.dirname(projectA) === IOS_BASE ? -1 : 1)
+    );
 
   if (projects.length === 0) {
     return null;

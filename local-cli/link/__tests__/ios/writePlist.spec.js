@@ -8,15 +8,13 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 jest.mock('path');
 jest.mock('fs');
 
 let plistPath = null;
 jest.mock('../../ios/getPlistPath', () => () => plistPath);
 
-const {readFileSync} = require.requireActual('fs');
+const { readFileSync } = require.requireActual('fs');
 const fs = require('fs');
 
 const xcode = require('xcode');
@@ -28,7 +26,7 @@ const infoPlistPath = path.join(__dirname, '../../__fixtures__/Info.plist');
 
 fs.readFileSync = jest.fn(() => readFileSync(projectPath).toString());
 
-const {writeFileSync} = fs;
+const { writeFileSync } = fs;
 fs.writeFileSync = jest.fn(writeFileSync);
 
 const project = xcode.project('/Basic/project.pbxproj');

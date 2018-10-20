@@ -7,10 +7,8 @@
  * @format
  */
 
-'use strict';
-
+const chalk = require('chalk');
 const copyToClipBoard = require('../util/copyToClipBoard');
-var chalk = require('chalk');
 
 /**
  * Handle the request from JS to copy contents onto host system clipboard.
@@ -18,7 +16,7 @@ var chalk = require('chalk');
  */
 module.exports = function(req, res, next) {
   if (req.url === '/copy-to-clipboard') {
-    var ret = copyToClipBoard(req.rawBody);
+    const ret = copyToClipBoard(req.rawBody);
     if (!ret) {
       console.warn(chalk.red('Copy button is not supported on this platform!'));
     }

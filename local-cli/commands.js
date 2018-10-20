@@ -8,11 +8,11 @@
  * @flow
  */
 
-'use strict';
+import type { RNConfig } from './core';
 
-const {getProjectCommands} = require('./core');
+('use strict');
 
-import type {RNConfig} from './core';
+const { getProjectCommands } = require('./core');
 
 export type CommandT = {
   name: string,
@@ -64,7 +64,7 @@ const undocumentedCommands = [
         [
           'Looks like React Native project already exists in the current',
           'folder. Run this command from a different folder or remove node_modules/react-native',
-        ].join('\n'),
+        ].join('\n')
       );
     },
   },

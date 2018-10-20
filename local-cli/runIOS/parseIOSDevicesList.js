@@ -8,8 +8,6 @@
  * @flow strict
  */
 
-'use strict';
-
 type IOSDeviceInfo = {
   name: string,
   udid: string,
@@ -25,10 +23,10 @@ function parseIOSDevicesList(text: string): Array<IOSDeviceInfo> {
     const device = line.match(/(.*?) \((.*?)\) \[(.*?)\]/);
     const noSimulator = line.match(/(.*?) \((.*?)\) \[(.*?)\] \((.*?)\)/);
     if (device != null && noSimulator == null) {
-      var name = device[1];
-      var version = device[2];
-      var udid = device[3];
-      devices.push({udid, name, version});
+      const name = device[1];
+      const version = device[2];
+      const udid = device[3];
+      devices.push({ udid, name, version });
     }
   });
 

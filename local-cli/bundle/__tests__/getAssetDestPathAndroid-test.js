@@ -8,13 +8,10 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 jest.dontMock('../getAssetDestPathAndroid').dontMock('../assetPathUtils');
 
-const getAssetDestPathAndroid = require('../getAssetDestPathAndroid');
-
 const path = require('path');
+const getAssetDestPathAndroid = require('../getAssetDestPathAndroid');
 
 describe('getAssetDestPathAndroid', () => {
   it('should use the right destination folder', () => {
@@ -27,7 +24,7 @@ describe('getAssetDestPathAndroid', () => {
     const expectDestPathForScaleToStartWith = (scale, path) => {
       if (!getAssetDestPathAndroid(asset, scale).startsWith(path)) {
         throw new Error(
-          `asset for scale ${scale} should start with path '${path}'`,
+          `asset for scale ${scale} should start with path '${path}'`
         );
       }
     };
@@ -47,7 +44,7 @@ describe('getAssetDestPathAndroid', () => {
     };
 
     expect(getAssetDestPathAndroid(asset, 1)).toBe(
-      path.normalize('drawable-mdpi/app_test_icon.png'),
+      path.normalize('drawable-mdpi/app_test_icon.png')
     );
   });
 
@@ -69,7 +66,7 @@ describe('getAssetDestPathAndroid', () => {
     };
 
     expect(getAssetDestPathAndroid(asset, 1)).toBe(
-      path.normalize('raw/app_test_video.mp4'),
+      path.normalize('raw/app_test_video.mp4')
     );
   });
 });

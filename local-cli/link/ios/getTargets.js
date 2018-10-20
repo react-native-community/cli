@@ -11,17 +11,17 @@
  * Given xcodeproj it returns list of targets
  */
 module.exports = function getTargets(project) {
-  let targets = project.getFirstProject().firstProject.targets;
-  let nativeTargetSection = project.pbxNativeTargetSection();
-  return targets.map(function(target) {
-    let key = target.value;
-    let configurationListId = project.pbxNativeTargetSection()[key]
+  const targets = project.getFirstProject().firstProject.targets;
+  const nativeTargetSection = project.pbxNativeTargetSection();
+  return targets.map(target => {
+    const key = target.value;
+    const configurationListId = project.pbxNativeTargetSection()[key]
       .buildConfigurationList;
-    let configurationList = project.pbxXCConfigurationList()[
+    const configurationList = project.pbxXCConfigurationList()[
       configurationListId
     ];
-    let buildConfigurationId = configurationList.buildConfigurations[0].value;
-    let buildConfiguration = project.pbxXCBuildConfigurationSection()[
+    const buildConfigurationId = configurationList.buildConfigurations[0].value;
+    const buildConfiguration = project.pbxXCBuildConfigurationSection()[
       buildConfigurationId
     ];
     return {

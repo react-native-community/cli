@@ -8,7 +8,8 @@
  * @flow
  */
 
-'use strict';
-
 /* $FlowFixMe(site=react_native_oss) */
-export type {OutputOptions, RequestOptions} from 'metro/src/shared/types.flow';
+export type {
+  OutputOptions,
+  RequestOptions,
+} from 'metro/src/shared/types.flow';

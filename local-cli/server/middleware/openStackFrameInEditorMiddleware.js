@@ -7,11 +7,9 @@
  * @format
  */
 
-'use strict';
-
 const launchEditor = require('../util/launchEditor');
 
-module.exports = function({watchFolders}) {
+module.exports = function({ watchFolders }) {
   return function(req, res, next) {
     if (req.url === '/open-stack-frame') {
       const frame = JSON.parse(req.rawBody);

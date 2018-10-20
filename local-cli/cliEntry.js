@@ -8,9 +8,12 @@
  * @flow
  */
 
-'use strict';
+import type { CommandT } from './commands';
+import type { RNConfig } from './core';
 
-const {configPromise} = require('./core');
+('use strict');
+
+const { configPromise } = require('./core');
 
 const assertRequiredOptions = require('./util/assertRequiredOptions');
 /* $FlowFixMe(>=0.54.0 site=react_native_oss) This comment suppresses an error
@@ -26,9 +29,6 @@ const commands = require('./commands');
 const init = require('./init/init');
 const path = require('path');
 const pkg = require('../package.json');
-
-import type {CommandT} from './commands';
-import type {RNConfig} from './core';
 
 commander.version(pkg.version);
 
@@ -50,7 +50,7 @@ const handleError = err => {
 function printHelpInformation() {
   let cmdName = this._name;
   if (this._alias) {
-    cmdName = cmdName + '|' + this._alias;
+    cmdName = `${cmdName}|${this._alias}`;
   }
 
   const sourceInformation = this.pkg
@@ -92,10 +92,10 @@ function printUnknownCommand(cmdName) {
         ? chalk.red(`  Unrecognized command '${cmdName}'`)
         : chalk.red("  You didn't pass any command"),
       `  Run ${chalk.cyan(
-        'react-native --help',
+        'react-native --help'
       )} to see list of all available commands`,
       '',
-    ].join('\n'),
+    ].join('\n')
   );
 }
 
@@ -128,8 +128,8 @@ const addCommand = (command: CommandT, cfg: RNConfig) => {
       opt.command,
       opt.description,
       opt.parse || defaultOptParser,
-      typeof opt.default === 'function' ? opt.default(cfg) : opt.default,
-    ),
+      typeof opt.default === 'function' ? opt.default(cfg) : opt.default
+    )
   );
 
   // Placeholder option for --config, which is parsed before any other option,
@@ -150,7 +150,7 @@ async function run() {
   commander.parse(process.argv);
 
   const isValidCommand = commands.find(
-    cmd => cmd.name.split(' ')[0] === process.argv[2],
+    cmd => cmd.name.split(' ')[0] === process.argv[2]
   );
 
   if (!isValidCommand) {
@@ -164,6 +164,6 @@ async function run() {
 }
 
 module.exports = {
-  run: run,
-  init: init,
+  run,
+  init,
 };

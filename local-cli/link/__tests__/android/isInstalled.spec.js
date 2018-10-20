@@ -8,15 +8,13 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 const path = require('path');
 const isInstalled = require('../../android/isInstalled');
 
 const projectConfig = {
   buildGradlePath: path.join(
     __dirname,
-    '../../__fixtures__/android/patchedBuild.gradle',
+    '../../__fixtures__/android/patchedBuild.gradle'
   ),
 };
 

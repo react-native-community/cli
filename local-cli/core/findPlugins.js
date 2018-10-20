@@ -7,8 +7,6 @@
  * @format
  */
 
-'use strict';
-
 const path = require('path');
 const union = require('lodash').union;
 const uniq = require('lodash').uniq;
@@ -69,7 +67,7 @@ const findHasteConfigInPackageAndConcat = (pjson, haste) => {
   if (!pjson.rnpm || !pjson.rnpm.haste) {
     return;
   }
-  let pkgHaste = pjson.rnpm.haste;
+  const pkgHaste = pjson.rnpm.haste;
 
   if (pkgHaste.platforms) {
     haste.platforms = haste.platforms.concat(pkgHaste.platforms);
@@ -77,7 +75,7 @@ const findHasteConfigInPackageAndConcat = (pjson, haste) => {
 
   if (pkgHaste.providesModuleNodeModules) {
     haste.providesModuleNodeModules = haste.providesModuleNodeModules.concat(
-      pkgHaste.providesModuleNodeModules,
+      pkgHaste.providesModuleNodeModules
     );
   }
 };
@@ -91,13 +89,13 @@ const findPluginInFolder = folder => {
 
   const deps = union(
     Object.keys(pjson.dependencies || {}),
-    Object.keys(pjson.devDependencies || {}),
+    Object.keys(pjson.devDependencies || {})
   );
 
   return deps.reduce((acc, pkg) => {
     let commands = acc.commands;
     let platforms = acc.platforms;
-    let haste = acc.haste;
+    const haste = acc.haste;
     if (isRNPMPlugin(pkg)) {
       commands = commands.concat(pkg);
     }
@@ -109,7 +107,7 @@ const findPluginInFolder = folder => {
         findHasteConfigInPackageAndConcat(pkgJson, haste);
       }
     }
-    return {commands: commands, platforms: platforms, haste: haste};
+    return { commands, platforms, haste };
   }, getEmptyPluginConfig());
 };
 
@@ -126,7 +124,7 @@ module.exports = function findPlugins(folders) {
     haste: {
       platforms: uniq(flatten(plugins.map(p => p.haste.platforms))),
       providesModuleNodeModules: uniq(
-        flatten(plugins.map(p => p.haste.providesModuleNodeModules)),
+        flatten(plugins.map(p => p.haste.providesModuleNodeModules))
       ),
     },
   };

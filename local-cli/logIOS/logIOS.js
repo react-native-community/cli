@@ -7,8 +7,6 @@
  * @format
  */
 
-'use strict';
-
 const chalk = require('chalk');
 const child_process = require('child_process');
 const os = require('os');
@@ -30,18 +28,18 @@ function _logIOS() {
     rawDevices = child_process.execFileSync(
       'xcrun',
       ['simctl', 'list', 'devices', '--json'],
-      {encoding: 'utf8'},
+      { encoding: 'utf8' }
     );
   } catch (e) {
     console.log(
       chalk.red(
-        'xcrun invocation failed. Please check that Xcode is installed.',
-      ),
+        'xcrun invocation failed. Please check that Xcode is installed.'
+      )
     );
     return Promise.reject(e);
   }
 
-  const {devices} = JSON.parse(rawDevices);
+  const { devices } = JSON.parse(rawDevices);
 
   const device = _findAvailableDevice(devices);
   if (device === undefined) {
@@ -69,13 +67,13 @@ function tailDeviceLogs(udid) {
     'Logs',
     'CoreSimulator',
     udid,
-    'asl',
+    'asl'
   );
 
   const log = child_process.spawnSync(
     'syslog',
     ['-w', '-F', 'std', '-d', logDir],
-    {stdio: 'inherit'},
+    { stdio: 'inherit' }
   );
 
   if (log.error !== null) {

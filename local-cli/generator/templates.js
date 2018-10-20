@@ -7,12 +7,10 @@
  * @format
  */
 
-'use strict';
-
-const copyProjectTemplateAndReplace = require('./copyProjectTemplateAndReplace');
 const execSync = require('child_process').execSync;
 const fs = require('fs');
 const path = require('path');
+const copyProjectTemplateAndReplace = require('./copyProjectTemplateAndReplace');
 
 /**
  * @param destPath Create the new project at this path.
@@ -25,7 +23,7 @@ function createProjectFromTemplate(
   destPath,
   newProjectName,
   template,
-  yarnVersion,
+  yarnVersion
 ) {
   // Expand the basic 'HelloWorld' template
   copyProjectTemplateAndReplace(
@@ -34,10 +32,10 @@ function createProjectFromTemplate(
       'react-native',
       'local-cli',
       'templates',
-      'HelloWorld',
+      'HelloWorld'
     ),
     destPath,
-    newProjectName,
+    newProjectName
   );
 
   if (template === undefined) {
@@ -65,7 +63,7 @@ function createFromRemoteTemplate(
   template,
   destPath,
   newProjectName,
-  yarnVersion,
+  yarnVersion
 ) {
   let installPackage;
   let templateName;
@@ -75,7 +73,7 @@ function createFromRemoteTemplate(
     templateName = template.substr(template.lastIndexOf('/') + 1);
   } else {
     // e.g 'demo'
-    installPackage = 'react-native-template-' + template;
+    installPackage = `react-native-template-${template}`;
     templateName = installPackage;
   }
 
@@ -89,7 +87,7 @@ function createFromRemoteTemplate(
     } else {
       execSync(
         `npm install ${installPackage} --save --save-exact --ignore-scripts`,
-        {stdio: 'inherit'},
+        { stdio: 'inherit' }
       );
     }
     const templatePath = path.resolve('node_modules', templateName);
@@ -119,7 +117,7 @@ function createFromRemoteTemplate(
       // if this the clean up fails.
       console.warn(
         `Failed to clean up template temp files in node_modules/${templateName}. ` +
-          'This is not a critical error, you can work on your app.',
+          'This is not a critical error, you can work on your app.'
       );
     }
   }
@@ -140,15 +138,15 @@ function installTemplateDependencies(templatePath, yarnVersion) {
     dependencies = JSON.parse(fs.readFileSync(dependenciesJsonPath));
   } catch (err) {
     throw new Error(
-      "Could not parse the template's dependencies.json: " + err.message,
+      `Could not parse the template's dependencies.json: ${err.message}`
     );
   }
-  for (let depName in dependencies) {
+  for (const depName in dependencies) {
     const depVersion = dependencies[depName];
-    const depToInstall = depName + '@' + depVersion;
-    console.log('Adding ' + depToInstall + '...');
+    const depToInstall = `${depName}@${depVersion}`;
+    console.log(`Adding ${depToInstall}...`);
     if (yarnVersion) {
-      execSync(`yarn add ${depToInstall}`, {stdio: 'inherit'});
+      execSync(`yarn add ${depToInstall}`, { stdio: 'inherit' });
     } else {
       execSync(`npm install ${depToInstall} --save --save-exact`, {
         stdio: 'inherit',
@@ -156,7 +154,7 @@ function installTemplateDependencies(templatePath, yarnVersion) {
     }
   }
   console.log("Linking native dependencies into the project's build files...");
-  execSync('react-native link', {stdio: 'inherit'});
+  execSync('react-native link', { stdio: 'inherit' });
 }
 
 function installTemplateDevDependencies(templatePath, yarnVersion) {
@@ -164,7 +162,7 @@ function installTemplateDevDependencies(templatePath, yarnVersion) {
   // that are required by this template
   const devDependenciesJsonPath = path.resolve(
     templatePath,
-    'devDependencies.json',
+    'devDependencies.json'
   );
   console.log('Adding develop dependencies for the project...');
   if (!fs.existsSync(devDependenciesJsonPath)) {
@@ -177,15 +175,15 @@ function installTemplateDevDependencies(templatePath, yarnVersion) {
     dependencies = JSON.parse(fs.readFileSync(devDependenciesJsonPath));
   } catch (err) {
     throw new Error(
-      "Could not parse the template's devDependencies.json: " + err.message,
+      `Could not parse the template's devDependencies.json: ${err.message}`
     );
   }
-  for (let depName in dependencies) {
+  for (const depName in dependencies) {
     const depVersion = dependencies[depName];
-    const depToInstall = depName + '@' + depVersion;
-    console.log('Adding ' + depToInstall + '...');
+    const depToInstall = `${depName}@${depVersion}`;
+    console.log(`Adding ${depToInstall}...`);
     if (yarnVersion) {
-      execSync(`yarn add ${depToInstall} -D`, {stdio: 'inherit'});
+      execSync(`yarn add ${depToInstall} -D`, { stdio: 'inherit' });
     } else {
       execSync(`npm install ${depToInstall} --save-dev --save-exact`, {
         stdio: 'inherit',

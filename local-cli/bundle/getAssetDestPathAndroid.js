@@ -8,21 +8,21 @@
  * @flow strict
  */
 
-'use strict';
-
-const assetPathUtils = require('./assetPathUtils');
-const path = require('path');
-
 // TODO: Get this type somehow
-import type {PackagerAsset} from '../../Libraries/Image/AssetRegistry';
+import type { PackagerAsset } from '../../Libraries/Image/AssetRegistry';
+
+('use strict');
+
+const path = require('path');
+const assetPathUtils = require('./assetPathUtils');
 
 function getAssetDestPathAndroid(asset: PackagerAsset, scale: number): string {
   const androidFolder = assetPathUtils.getAndroidResourceFolderName(
     asset,
-    scale,
+    scale
   );
   const fileName = assetPathUtils.getAndroidResourceIdentifier(asset);
-  return path.join(androidFolder, fileName + '.' + asset.type);
+  return path.join(androidFolder, `${fileName}.${asset.type}`);
 }
 
 module.exports = getAssetDestPathAndroid;

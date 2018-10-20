@@ -7,12 +7,11 @@
  * @format
  */
 
-'use strict';
+const child_process = require('child_process');
 
-var child_process = require('child_process');
-var spawn = child_process.spawn;
-var path = require('path');
-var fs = require('fs');
+const spawn = child_process.spawn;
+const path = require('path');
+const fs = require('fs');
 
 const xsel = path.join(__dirname, 'external/xsel');
 fs.chmodSync(xsel, '0755');

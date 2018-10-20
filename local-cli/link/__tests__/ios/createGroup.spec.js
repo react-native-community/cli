@@ -8,8 +8,6 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 const xcode = require('xcode');
 const path = require('path');
 const createGroup = require('../../ios/createGroup');
@@ -17,7 +15,7 @@ const getGroup = require('../../ios/getGroup');
 const last = require('lodash').last;
 
 const project = xcode.project(
-  path.join(__dirname, '../../__fixtures__/project.pbxproj'),
+  path.join(__dirname, '../../__fixtures__/project.pbxproj')
 );
 
 describe('ios::createGroup', () => {
@@ -50,8 +48,8 @@ describe('ios::createGroup', () => {
     const mainGroup = getGroup(project);
 
     expect(
-      mainGroup.children.filter(group => group.comment === 'Libraries').length,
-    ).toBe(1);
+      mainGroup.children.filter(group => group.comment === 'Libraries')
+    ).toHaveLength(1);
     expect(last(outerGroup.children).comment).toBe(createdGroup.name);
   });
 });

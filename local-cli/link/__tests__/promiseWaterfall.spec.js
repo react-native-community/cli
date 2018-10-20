@@ -8,8 +8,6 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 const sinon = require('sinon');
 const promiseWaterfall = require('../promiseWaterfall');
 

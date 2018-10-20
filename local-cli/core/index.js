@@ -8,7 +8,10 @@
  * @flow
  */
 
-'use strict';
+import type { ConfigT } from 'metro-config/src/configTypes.flow';
+import type { CommandT } from '../commands';
+
+('use strict');
 
 const android = require('./android');
 const Config = require('../util/Config');
@@ -16,7 +19,7 @@ const findPlugins = require('./findPlugins');
 const findAssets = require('./findAssets');
 const ios = require('./ios');
 const wrapCommands = require('./wrapCommands');
-const {ASSET_REGISTRY_PATH} = require('./Constants');
+const { ASSET_REGISTRY_PATH } = require('./Constants');
 
 /* $FlowFixMe(>=0.54.0 site=react_native_oss) This comment suppresses an error
  * found when Flow v0.54 was deployed. To see the error delete this comment and
@@ -27,9 +30,6 @@ const flatten = require('lodash').flatten;
  * run Flow. */
 const minimist = require('minimist');
 const path = require('path');
-
-import type {CommandT} from '../commands';
-import type {ConfigT} from 'metro-config/src/configTypes.flow';
 
 export type RNConfig = {
   ...ConfigT,
@@ -54,17 +54,19 @@ const getRNPMConfig = folder =>
 const attachPackage = (command, pkg) =>
   Array.isArray(command)
     ? command.map(cmd => attachPackage(cmd, pkg))
-    : {...command, pkg};
+    : { ...command, pkg };
 
 const appRoot = process.cwd();
 const plugins = findPlugins([appRoot]);
-const pluginPlatforms = plugins.platforms.reduce((acc, pathToPlatforms) => {
-  return Object.assign(
-    acc,
-    // $FlowFixMe non-literal require
-    require(path.join(appRoot, 'node_modules', pathToPlatforms)),
-  );
-}, {});
+const pluginPlatforms = plugins.platforms.reduce(
+  (acc, pathToPlatforms) =>
+    Object.assign(
+      acc,
+      // $FlowFixMe non-literal require
+      require(path.join(appRoot, 'node_modules', pathToPlatforms))
+    ),
+  {}
+);
 
 const defaultConfig = {
   hasteImplModulePath: require.resolve('../../jest/hasteImpl'),
@@ -92,7 +94,7 @@ const defaultRNConfig = {
     const folder = process.cwd();
     const rnpm = getRNPMConfig(folder);
 
-    let config = Object.assign({}, rnpm, {
+    const config = Object.assign({}, rnpm, {
       assets: findAssets(folder, rnpm.assets),
     });
 
@@ -108,7 +110,7 @@ const defaultRNConfig = {
     const folder = path.join(process.cwd(), 'node_modules', packageName);
     const rnpm = getRNPMConfig(folder);
 
-    let config = Object.assign({}, rnpm, {
+    const config = Object.assign({}, rnpm, {
       assets: findAssets(folder, rnpm.assets),
       commands: wrapCommands(rnpm.commands),
       params: rnpm.params || [],
@@ -128,7 +130,7 @@ const defaultRNConfig = {
 async function getCliConfig(): Promise<RNConfig> {
   const cliArgs = minimist(process.argv.slice(2));
   const config = await Config.load(
-    cliArgs.config != null ? path.resolve(__dirname, cliArgs.config) : null,
+    cliArgs.config != null ? path.resolve(__dirname, cliArgs.config) : null
   );
 
   config.transformer.assetRegistryPath = ASSET_REGISTRY_PATH;
@@ -140,11 +142,11 @@ async function getCliConfig(): Promise<RNConfig> {
   config.resolver.providesModuleNodeModules = config.resolver
     .providesModuleNodeModules
     ? config.resolver.providesModuleNodeModules.concat(
-        defaultConfig.getProvidesModuleNodeModules(),
+        defaultConfig.getProvidesModuleNodeModules()
       )
     : defaultConfig.getProvidesModuleNodeModules();
 
-  return {...defaultRNConfig, ...config};
+  return { ...defaultRNConfig, ...config };
 }
 
 /**
@@ -162,7 +164,7 @@ function getProjectCommands(): Array<CommandT> {
 
     return attachPackage(
       require(path.join(appRoot, 'node_modules', pathToCommands)),
-      require(path.join(appRoot, 'node_modules', name, 'package.json')),
+      require(path.join(appRoot, 'node_modules', name, 'package.json'))
     );
   });
 

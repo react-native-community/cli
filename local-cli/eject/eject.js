@@ -7,11 +7,9 @@
  * @format
  */
 
-'use strict';
-
-const copyProjectTemplateAndReplace = require('../generator/copyProjectTemplateAndReplace');
 const path = require('path');
 const fs = require('fs');
+const copyProjectTemplateAndReplace = require('../generator/copyProjectTemplateAndReplace');
 
 /**
  * The eject command re-creates the `android` and `ios` native folders. Because native code can be
@@ -30,7 +28,7 @@ function eject() {
   if (doesIOSExist && doesAndroidExist) {
     console.error(
       'Both the iOS and Android folders already exist! Please delete `ios` and/or `android` ' +
-        'before ejecting.',
+        'before ejecting.'
     );
     process.exit(1);
   }
@@ -42,9 +40,9 @@ function eject() {
     console.error(
       'Eject requires an `app.json` config file to be located at ' +
         `${path.resolve(
-          'app.json',
+          'app.json'
         )}, and it must at least specify a \`name\` for the project ` +
-        "name, and a `displayName` for the app's home screen label.",
+        "name, and a `displayName` for the app's home screen label."
     );
     process.exit(1);
   }
@@ -53,7 +51,7 @@ function eject() {
   if (!appName) {
     console.error(
       'App `name` must be defined in the `app.json` config file to define the project name. ' +
-        'It must not contain any spaces or dashes.',
+        'It must not contain any spaces or dashes.'
     );
     process.exit(1);
   }
@@ -61,12 +59,12 @@ function eject() {
   if (!displayName) {
     console.error(
       'App `displayName` must be defined in the `app.json` config file, to define the label ' +
-        'of the app on the home screen.',
+        'of the app on the home screen.'
     );
     process.exit(1);
   }
 
-  const templateOptions = {displayName};
+  const templateOptions = { displayName };
 
   if (!doesIOSExist) {
     console.log('Generating the iOS folder.');
@@ -77,11 +75,11 @@ function eject() {
         'local-cli',
         'templates',
         'HelloWorld',
-        'ios',
+        'ios'
       ),
       path.resolve('ios'),
       appName,
-      templateOptions,
+      templateOptions
     );
   }
 
@@ -94,11 +92,11 @@ function eject() {
         'local-cli',
         'templates',
         'HelloWorld',
-        'android',
+        'android'
       ),
       path.resolve('android'),
       appName,
-      templateOptions,
+      templateOptions
     );
   }
 }

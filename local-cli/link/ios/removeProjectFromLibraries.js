@@ -16,6 +16,6 @@
  */
 module.exports = function removeProjectFromLibraries(libraries, file) {
   libraries.children = libraries.children.filter(
-    library => library.comment !== file.basename,
+    library => library.comment !== file.basename
   );
 };

@@ -8,14 +8,12 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 jest.mock('path');
 jest.mock('fs');
 
+const fs = require('fs');
 const mocks = require('../../__fixtures__/android');
 const findPackageClassName = require('../../android/findPackageClassName');
-const fs = require('fs');
 
 ['posix', 'win32'].forEach(platform => {
   let root;
@@ -31,28 +29,28 @@ const fs = require('fs');
             android: mocks.validKotlin,
           },
         },
-        platform,
+        platform
       );
     });
 
     it('returns manifest content if file exists in the folder', () => {
-      expect(typeof findPackageClassName(root + 'flatJava')).toBe('string');
+      expect(typeof findPackageClassName(`${root}flatJava`)).toBe('string');
     });
 
     it('returns the name of the java class implementing ReactPackage', () => {
-      expect(findPackageClassName(root + 'flatJava')).toBe(
-        'SomeExampleJavaPackage',
+      expect(findPackageClassName(`${root}flatJava`)).toBe(
+        'SomeExampleJavaPackage'
       );
     });
 
     it('returns the name of the kotlin class implementing ReactPackage', () => {
-      expect(findPackageClassName(root + 'flatKotlin')).toBe(
-        'SomeExampleKotlinPackage',
+      expect(findPackageClassName(`${root}flatKotlin`)).toBe(
+        'SomeExampleKotlinPackage'
       );
     });
 
     it('returns `null` if there are no matches', () => {
-      expect(findPackageClassName(root + 'empty')).toBeNull();
+      expect(findPackageClassName(`${root}empty`)).toBeNull();
     });
   });
 });

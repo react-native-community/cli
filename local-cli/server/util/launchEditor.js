@@ -7,12 +7,10 @@
  * @format
  */
 
-'use strict';
-
-var chalk = require('chalk');
-var fs = require('fs');
-var path = require('path');
-var child_process = require('child_process');
+const chalk = require('chalk');
+const fs = require('fs');
+const path = require('path');
+const child_process = require('child_process');
 const isAbsolutePath = require('absolute-path');
 const shellQuote = require('shell-quote');
 
@@ -29,7 +27,7 @@ function isTerminalEditor(editor) {
 // Map from full process name to binary that starts the process
 // We can't just re-use full process name, because it will spawn a new instance
 // of the app every time
-var COMMON_EDITORS = {
+const COMMON_EDITORS = {
   '/Applications/Atom.app/Contents/MacOS/Atom': 'atom',
   '/Applications/Atom Beta.app/Contents/MacOS/Atom Beta':
     '/Applications/Atom Beta.app/Contents/MacOS/Atom Beta',
@@ -58,7 +56,7 @@ function getArgumentsForLineNumber(editor, fileName, lineNumber, workspace) {
   switch (path.basename(editor)) {
     case 'vim':
     case 'mvim':
-      return [fileName, '+' + lineNumber];
+      return [fileName, `+${lineNumber}`];
     case 'atom':
     case 'Atom':
     case 'Atom Beta':
@@ -69,19 +67,19 @@ function getArgumentsForLineNumber(editor, fileName, lineNumber, workspace) {
     case 'appcode':
     case 'charm':
     case 'idea':
-      return [fileName + ':' + lineNumber];
+      return [`${fileName}:${lineNumber}`];
     case 'joe':
     case 'emacs':
     case 'emacsclient':
-      return ['+' + lineNumber, fileName];
+      return [`+${lineNumber}`, fileName];
     case 'rmate':
     case 'mate':
     case 'mine':
       return ['--line', lineNumber, fileName];
     case 'code':
       return addWorkspaceToArgumentsIfExists(
-        ['-g', fileName + ':' + lineNumber],
-        workspace,
+        ['-g', `${fileName}:${lineNumber}`],
+        workspace
       );
   }
 
@@ -101,10 +99,10 @@ function guessEditor() {
   // Potentially we could use similar technique for Windows and Linux
   if (process.platform === 'darwin') {
     try {
-      var output = child_process.execSync('ps x').toString();
-      var processNames = Object.keys(COMMON_EDITORS);
-      for (var i = 0; i < processNames.length; i++) {
-        var processName = processNames[i];
+      const output = child_process.execSync('ps x').toString();
+      const processNames = Object.keys(COMMON_EDITORS);
+      for (let i = 0; i < processNames.length; i++) {
+        const processName = processNames[i];
         if (output.indexOf(processName) !== -1) {
           return [COMMON_EDITORS[processName]];
         }
@@ -117,7 +115,8 @@ function guessEditor() {
   // Last resort, use old skool env vars
   if (process.env.VISUAL) {
     return [process.env.VISUAL];
-  } else if (process.env.EDITOR) {
+  }
+  if (process.env.EDITOR) {
     return [process.env.EDITOR];
   }
 
@@ -128,7 +127,7 @@ function printInstructions(title) {
   console.log(
     [
       '',
-      chalk.bgBlue.white.bold(' ' + title + ' '),
+      chalk.bgBlue.white.bold(` ${title} `),
       '  When you see Red Box with stack trace, you can click any ',
       '  stack frame to jump to the source file. The packager will launch your ',
       '  editor of choice. It will first look at REACT_EDITOR environment ',
@@ -136,7 +135,7 @@ function printInstructions(title) {
       '  export REACT_EDITOR=atom to your ~/.bashrc or ~/.zshrc depending on ',
       '  which shell you use.',
       '',
-    ].join('\n'),
+    ].join('\n')
   );
 }
 
@@ -155,7 +154,7 @@ function findRootForFile(projectRoots, fileName) {
   });
 }
 
-var _childProcess = null;
+let _childProcess = null;
 function launchEditor(fileName, lineNumber, projectRoots) {
   if (!fs.existsSync(fileName)) {
     return;
@@ -173,10 +172,10 @@ function launchEditor(fileName, lineNumber, projectRoots) {
     return;
   }
 
-  var workspace = findRootForFile(projectRoots, fileName);
+  const workspace = findRootForFile(projectRoots, fileName);
   if (lineNumber) {
     args = args.concat(
-      getArgumentsForLineNumber(editor, fileName, lineNumber, workspace),
+      getArgumentsForLineNumber(editor, fileName, lineNumber, workspace)
     );
   } else {
     args.push(fileName);
@@ -192,23 +191,21 @@ function launchEditor(fileName, lineNumber, projectRoots) {
   ) {
     console.log();
     console.log(
-      chalk.red(
-        'Could not open ' + path.basename(fileName) + ' in the editor.',
-      ),
+      chalk.red(`Could not open ${path.basename(fileName)} in the editor.`)
     );
     console.log();
     console.log(
       'When running on Windows, file names are checked against a whitelist ' +
         'to protect against remote code execution attacks. File names may ' +
         'consist only of alphanumeric characters (all languages), periods, ' +
-        'dashes, slashes, and underscores.',
+        'dashes, slashes, and underscores.'
     );
     console.log();
     return;
   }
 
   console.log(
-    'Opening ' + chalk.underline(fileName) + ' with ' + chalk.bold(editor),
+    `Opening ${chalk.underline(fileName)} with ${chalk.bold(editor)}`
   );
 
   if (_childProcess && isTerminalEditor(editor)) {
@@ -224,12 +221,12 @@ function launchEditor(fileName, lineNumber, projectRoots) {
     _childProcess = child_process.spawn(
       'cmd.exe',
       ['/C', editor].concat(args),
-      {stdio: 'inherit'},
+      { stdio: 'inherit' }
     );
   } else {
-    _childProcess = child_process.spawn(editor, args, {stdio: 'inherit'});
+    _childProcess = child_process.spawn(editor, args, { stdio: 'inherit' });
   }
-  _childProcess.on('exit', function(errorCode) {
+  _childProcess.on('exit', errorCode => {
     _childProcess = null;
 
     if (errorCode) {
@@ -238,7 +235,7 @@ function launchEditor(fileName, lineNumber, projectRoots) {
     }
   });
 
-  _childProcess.on('error', function(error) {
+  _childProcess.on('error', error => {
     console.log(chalk.red(error.message));
     printInstructions('How to fix:');
   });

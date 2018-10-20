@@ -7,15 +7,13 @@
  * @format
  */
 
-'use strict';
-
 const spawn = require('child_process').spawn;
 
 module.exports = function makeCommand(command) {
   return cb => {
     if (!cb) {
       throw new Error(
-        `You missed a callback function for the ${command} command`,
+        `You missed a callback function for the ${command} command`
       );
     }
 
@@ -27,7 +25,7 @@ module.exports = function makeCommand(command) {
       stdin: 'inherit',
     });
 
-    commandProcess.on('close', function prelink(code) {
+    commandProcess.on('close', code => {
       if (code) {
         throw new Error(`Error occurred during executing "${command}" command`);
       }

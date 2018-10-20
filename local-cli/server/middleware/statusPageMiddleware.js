@@ -7,8 +7,6 @@
  * @format
  */
 
-'use strict';
-
 /**
  * Status page so that anyone who needs to can verify that the packager is
  * running on 8081 and not another program / service.

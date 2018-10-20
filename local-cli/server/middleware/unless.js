@@ -7,14 +7,10 @@
  * @format
  */
 
-'use strict';
-
-module.exports = (url, middleware) => {
-  return (req, res, next) => {
-    if (req.url === url || req.url.startsWith(url + '/')) {
-      middleware(req, res, next);
-    } else {
-      next();
-    }
-  };
+module.exports = (url, middleware) => (req, res, next) => {
+  if (req.url === url || req.url.startsWith(`${url}/`)) {
+    middleware(req, res, next);
+  } else {
+    next();
+  }
 };

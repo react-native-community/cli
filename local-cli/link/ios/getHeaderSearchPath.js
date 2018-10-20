@@ -57,6 +57,6 @@ module.exports = function getHeaderSearchPath(sourceDir, headers) {
     ? `"$(SRCROOT)${path.sep}${path.relative(sourceDir, directories[0])}"`
     : `"$(SRCROOT)${path.sep}${path.relative(
         sourceDir,
-        getOuterDirectory(directories),
+        getOuterDirectory(directories)
       )}/**"`;
 };

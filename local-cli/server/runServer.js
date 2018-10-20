@@ -8,21 +8,21 @@
  * @format
  */
 
-'use strict';
+import type { ConfigT } from 'metro-config/src/configTypes.flow';
+
+('use strict');
 
 require('../../setupBabel')();
 
 const Metro = require('metro');
 
-const {Terminal} = require('metro-core');
+const { Terminal } = require('metro-core');
 
-const messageSocket = require('./util/messageSocket');
 const morgan = require('morgan');
 const path = require('path');
+const messageSocket = require('./util/messageSocket');
 const webSocketProxy = require('./util/webSocketProxy');
 const MiddlewareManager = require('./middleware/MiddlewareManager');
-
-import type {ConfigT} from 'metro-config/src/configTypes.flow';
 
 export type Args = {|
   +assetExts: $ReadOnlyArray<string>,
@@ -73,7 +73,7 @@ async function runServer(args: Args, config: ConfigT) {
 
   const wsProxy = webSocketProxy.attachToServer(
     serverInstance,
-    '/debugger-proxy',
+    '/debugger-proxy'
   );
   const ms = messageSocket.attachToServer(serverInstance, '/message');
   middlewareManager.attachDevToolsSocket(wsProxy);

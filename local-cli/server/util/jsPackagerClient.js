@@ -7,8 +7,6 @@
  * @format
  */
 
-'use strict';
-
 const WebSocket = require('ws');
 
 const parseMessage = require('./messageSocket').parseMessage;
@@ -37,12 +35,10 @@ class JsPackagerClient {
         // gracefully ignore wrong messages or broadcasts
       } else if (msgCallback === undefined) {
         console.warn(`Response with non-existing message id: '${message.id}'`);
+      } else if (message.error === undefined) {
+        msgCallback.resolve(message.result);
       } else {
-        if (message.error === undefined) {
-          msgCallback.resolve(message.result);
-        } else {
-          msgCallback.reject(message.error);
-        }
+        msgCallback.reject(message.error);
       }
     });
   }
@@ -52,23 +48,23 @@ class JsPackagerClient {
       () =>
         new Promise((resolve, reject) => {
           const messageId = getMessageId();
-          this.msgCallbacks.set(messageId, {resolve: resolve, reject: reject});
+          this.msgCallbacks.set(messageId, { resolve, reject });
           this.ws.send(
             JSON.stringify({
               version: PROTOCOL_VERSION,
-              target: target,
-              method: method,
+              target,
+              method,
               id: messageId,
-              params: params,
+              params,
             }),
             error => {
               if (error !== undefined) {
                 this.msgCallbacks.delete(messageId);
                 reject(error);
               }
-            },
+            }
           );
-        }),
+        })
     );
   }
 
@@ -79,9 +75,9 @@ class JsPackagerClient {
           this.ws.send(
             JSON.stringify({
               version: PROTOCOL_VERSION,
-              target: target,
-              method: method,
-              params: params,
+              target,
+              method,
+              params,
             }),
             error => {
               if (error !== undefined) {
@@ -89,9 +85,9 @@ class JsPackagerClient {
               } else {
                 resolve();
               }
-            },
+            }
           );
-        }),
+        })
     );
   }
 
@@ -102,10 +98,11 @@ class JsPackagerClient {
   getPeers() {
     return new Promise((resolve, reject) => {
       this.sendRequest('getpeers', TARGET_SERVER, undefined).then(response => {
-        if (!response instanceof Map) {
+        if (!(response instanceof Map)) {
           reject(
-            'Results received from server are of wrong format:\n' +
-              JSON.stringify(response),
+            `Results received from server are of wrong format:\n${JSON.stringify(
+              response
+            )}`
           );
         } else {
           resolve(response);

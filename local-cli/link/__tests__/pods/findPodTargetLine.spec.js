@@ -8,8 +8,6 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 const path = require('path');
 const findPodTargetLine = require('../../pods/findPodTargetLine');
 const readPodfile = require('../../pods/readPodfile');

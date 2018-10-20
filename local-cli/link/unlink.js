@@ -9,12 +9,12 @@
 
 const log = require('npmlog');
 
-const getProjectDependencies = require('./getProjectDependencies');
-const getDependencyConfig = require('./getDependencyConfig');
 const difference = require('lodash').difference;
 const filter = require('lodash').filter;
 const flatten = require('lodash').flatten;
 const isEmpty = require('lodash').isEmpty;
+const getDependencyConfig = require('./getDependencyConfig');
+const getProjectDependencies = require('./getProjectDependencies');
 const promiseWaterfall = require('./promiseWaterfall');
 const commandStub = require('./commandStub');
 const promisify = require('./promisify');
@@ -26,7 +26,7 @@ const unlinkDependency = (
   project,
   dependency,
   packageName,
-  otherDependencies,
+  otherDependencies
 ) => {
   Object.keys(platforms || {}).forEach(platform => {
     if (!project[platform] || !dependency[platform]) {
@@ -44,7 +44,7 @@ const unlinkDependency = (
     const isInstalled = linkConfig.isInstalled(
       project[platform],
       packageName,
-      dependency[platform],
+      dependency[platform]
     );
 
     if (!isInstalled) {
@@ -58,13 +58,13 @@ const unlinkDependency = (
       packageName,
       dependency[platform],
       project[platform],
-      otherDependencies,
+      otherDependencies
     );
 
     log.info(
       `Platform '${platform}' module ${
         dependency.name
-      } has been successfully unlinked`,
+      } has been successfully unlinked`
     );
   });
 };
@@ -88,7 +88,7 @@ function unlink(args, config) {
   } catch (err) {
     log.error(
       'ERRPACKAGEJSON',
-      "No package found. Are you sure it's a React Native project?",
+      "No package found. Are you sure it's a React Native project?"
     );
     return Promise.reject(err);
   }
@@ -98,7 +98,7 @@ function unlink(args, config) {
   } catch (err) {
     log.warn(
       'ERRINVALIDPROJ',
-      `Project ${packageName} is not a react-native library`,
+      `Project ${packageName} is not a react-native library`
     );
     return Promise.reject(err);
   }
@@ -106,7 +106,7 @@ function unlink(args, config) {
   const allDependencies = getDependencyConfig(config, getProjectDependencies());
   const otherDependencies = filter(
     allDependencies,
-    d => d.name !== packageName,
+    d => d.name !== packageName
   );
 
   const tasks = [
@@ -117,7 +117,7 @@ function unlink(args, config) {
         project,
         dependency,
         packageName,
-        otherDependencies,
+        otherDependencies
       ),
     () => promisify(dependency.commands.postunlink || commandStub),
   ];
@@ -128,7 +128,7 @@ function unlink(args, config) {
       // link
       const assets = difference(
         dependency.assets,
-        flatten(allDependencies, d => d.assets),
+        flatten(allDependencies, d => d.assets)
       );
 
       if (isEmpty(assets)) {
@@ -149,12 +149,12 @@ function unlink(args, config) {
       });
 
       log.info(
-        `${packageName} assets has been successfully unlinked from your project`,
+        `${packageName} assets has been successfully unlinked from your project`
       );
     })
     .catch(err => {
       log.error(
-        `It seems something went wrong while unlinking. Error: ${err.message}`,
+        `It seems something went wrong while unlinking. Error: ${err.message}`
       );
       throw err;
     });

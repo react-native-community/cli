@@ -23,14 +23,14 @@ const findGroup = (group, name) =>
 module.exports = function getGroup(project, path) {
   const firstProject = getFirstProject(project);
 
-  var group = project.getPBXGroupByKey(firstProject.mainGroup);
+  let group = project.getPBXGroupByKey(firstProject.mainGroup);
 
   if (!path) {
     return group;
   }
 
-  for (var name of path.split('/')) {
-    var foundGroup = findGroup(group, name);
+  for (const name of path.split('/')) {
+    const foundGroup = findGroup(group, name);
 
     if (foundGroup) {
       group = project.getPBXGroupByKey(foundGroup.value);

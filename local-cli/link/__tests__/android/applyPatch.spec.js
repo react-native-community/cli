@@ -8,14 +8,12 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 const applyParams = require('../../android/patches/applyParams');
 
 describe('applyParams', () => {
   it('apply params to the string', () => {
-    expect(applyParams('${foo}', {foo: 'foo'}, 'react-native')).toEqual(
-      'getResources().getString(R.string.reactNative_foo)',
+    expect(applyParams('${foo}', { foo: 'foo' }, 'react-native')).toEqual(
+      'getResources().getString(R.string.reactNative_foo)'
     );
   });
 

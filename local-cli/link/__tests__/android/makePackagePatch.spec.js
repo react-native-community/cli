@@ -8,8 +8,6 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 const makePackagePatch = require('../../android/patches/makePackagePatch');
 const applyParams = require('../../android/patches/applyParams');
 
@@ -27,9 +25,9 @@ describe('makePackagePatch@0.20', () => {
   });
 
   it('MainActivity contains a correct 0.20 import patch', () => {
-    const {patch} = makePackagePatch(packageInstance, params, name);
+    const { patch } = makePackagePatch(packageInstance, params, name);
     const processedInstance = applyParams(packageInstance, params, name);
 
-    expect(patch).toBe(',\n            ' + processedInstance);
+    expect(patch).toBe(`,\n            ${processedInstance}`);
   });
 });

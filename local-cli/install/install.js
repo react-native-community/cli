@@ -7,11 +7,10 @@
  * @format
  */
 
-'use strict';
-
 const spawnSync = require('child_process').spawnSync;
 const log = require('npmlog');
 const PackageManager = require('../util/PackageManager');
+
 const spawnOpts = {
   stdio: 'inherit',
   stdin: 'inherit',

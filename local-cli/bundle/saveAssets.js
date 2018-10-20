@@ -7,10 +7,8 @@
  * @format
  */
 
-'use strict';
-
-const filterPlatformAssetScales = require('./filterPlatformAssetScales');
 const fs = require('fs');
+const filterPlatformAssetScales = require('./filterPlatformAssetScales');
 const getAssetDestPathAndroid = require('./getAssetDestPathAndroid');
 const getAssetDestPathIOS = require('./getAssetDestPathIOS');
 const log = require('../util/log').out('bundle');
@@ -29,7 +27,7 @@ function saveAssets(assets, platform, assetsDest) {
   const filesToCopy = Object.create(null); // Map src -> dest
   assets.forEach(asset => {
     const validScales = new Set(
-      filterPlatformAssetScales(platform, asset.scales),
+      filterPlatformAssetScales(platform, asset.scales)
     );
     asset.scales.forEach((scale, idx) => {
       if (!validScales.has(scale)) {
@@ -50,7 +48,7 @@ function copyAll(filesToCopy) {
     return Promise.resolve();
   }
 
-  log('Copying ' + queue.length + ' asset files');
+  log(`Copying ${queue.length} asset files`);
   return new Promise((resolve, reject) => {
     const copyNext = error => {
       if (error) {

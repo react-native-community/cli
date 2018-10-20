@@ -7,9 +7,7 @@
  * @format
  */
 
-'use strict';
-
-var _enabled = true;
+let _enabled = true;
 
 function disable() {
   _enabled = false;
@@ -21,7 +19,7 @@ function log(stream, module) {
       return;
     }
     const message = Array.prototype.slice.call(arguments).join(' ');
-    stream.write(module + ': ' + message + '\n');
+    stream.write(`${module}: ${message}\n`);
   };
 }
 

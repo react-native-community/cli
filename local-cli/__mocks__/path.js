@@ -7,15 +7,13 @@
  * @format
  */
 
-'use strict';
-
 const mockPath = {};
 
 function reset(platform) {
   Object.assign(mockPath, jest.requireActual('path')[platform]);
 }
 
-mockPath.mock = {reset};
+mockPath.mock = { reset };
 
 reset('posix');
 

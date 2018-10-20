@@ -15,6 +15,6 @@ const path = require('path');
 module.exports = function getProjectDependencies(cwd) {
   const pjson = require(path.join(cwd || process.cwd(), './package.json'));
   return Object.keys(pjson.dependencies || {}).filter(
-    name => name !== 'react-native',
+    name => name !== 'react-native'
   );
 };

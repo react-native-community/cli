@@ -8,10 +8,8 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
-const getDependencyConfig = require('../getDependencyConfig');
 const sinon = require('sinon');
+const getDependencyConfig = require('../getDependencyConfig');
 
 describe('getDependencyConfig', () => {
   it("should return an array of dependencies' rnpm config", () => {

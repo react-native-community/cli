@@ -7,8 +7,6 @@
  * @format
  */
 
-'use strict';
-
 const envinfo = require('envinfo');
 
 const info = function() {
@@ -27,7 +25,7 @@ const info = function() {
               !args.packages.includes('*')) ||
             !args.packages
               ? ['react', 'react-native'].concat(
-                  (args.packages || '').split(','),
+                  (args.packages || '').split(',')
                 )
               : args.packages,
           npmGlobalPackages: '*react-native*',
@@ -35,7 +33,7 @@ const info = function() {
         {
           clipboard: !!args.clipboard,
           title: 'React Native Environment Info',
-        },
+        }
       )
       .then(console.log)
       .catch(err => {

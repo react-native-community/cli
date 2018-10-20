@@ -7,13 +7,11 @@
  * @format
  */
 
-'use strict';
-
 const glob = require('glob');
 const path = require('path');
 
 const findAssetsInFolder = folder =>
-  glob.sync(path.join(folder, '**'), {nodir: true});
+  glob.sync(path.join(folder, '**'), { nodir: true });
 
 /**
  * Given an array of assets folders, e.g. ['Fonts', 'Images'],
@@ -27,6 +25,6 @@ module.exports = function findAssets(folder, assets) {
     .reduce(
       (_assets, assetsFolder) =>
         _assets.concat(findAssetsInFolder(assetsFolder)),
-      [],
+      []
     );
 };

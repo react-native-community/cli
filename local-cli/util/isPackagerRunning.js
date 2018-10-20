@@ -7,8 +7,6 @@
  * @format
  */
 
-'use strict';
-
 const fetch = require('node-fetch');
 
 /**
@@ -27,9 +25,9 @@ function isPackagerRunning(packagerPort = process.env.RCT_METRO_PORT || 8081) {
         .text()
         .then(
           body =>
-            body === 'packager-status:running' ? 'running' : 'unrecognized',
+            body === 'packager-status:running' ? 'running' : 'unrecognized'
         ),
-    () => 'not_running',
+    () => 'not_running'
   );
 }
 

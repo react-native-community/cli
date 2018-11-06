@@ -10,8 +10,8 @@
 'use strict';
 
 const findSymlinkedModules = require('./findSymlinkedModules');
-// @todo what to do with this file?
-// const getPolyfills = require('../../../react-native/rn-get-polyfills');
+const findReactNativePath = require('./findReactNativePath');
+const getPolyfills = require(findReactNativePath('rn-get-polyfills'));
 const path = require('path');
 
 const {createBlacklist} = require('metro');
@@ -23,17 +23,14 @@ const {loadConfig} = require('metro-config');
 import type {ConfigT} from 'metro-config/src/configTypes.flow';
 
 function getProjectRoot() {
-  if (
-    __dirname.match(/node_modules[\/\\]react-native[\/\\]local-cli[\/\\]util$/)
-  ) {
-    // Packager is running from node_modules.
-    // This is the default case for all projects created using 'react-native init'.
-    return path.resolve(__dirname, '../../../..');
-  } else if (__dirname.match(/Pods[\/\\]React[\/\\]packager$/)) {
-    // React Native was installed using CocoaPods.
+  // React Native was installed using CocoaPods.
+  if (__dirname.match(/Pods[\/\\]React[\/\\]packager$/)) {
+    // @todo check this
     return path.resolve(__dirname, '../../../..');
   }
-  return path.resolve(__dirname, '../..');
+  // Packager is running from node_modules.
+  // This is the default case for all projects created using 'react-native init'.
+  return path.resolve(__dirname, '../../');
 }
 
 const resolveSymlinksForRoots = roots =>
@@ -73,9 +70,9 @@ const Config = {
     },
     serializer: {
       getModulesRunBeforeMainModule: () => [
-        require.resolve('../../Libraries/Core/InitializeCore'),
+        require.resolve(findReactNativePath('Libraries/Core/InitializeCore')),
       ],
-      // getPolyfills,
+      getPolyfills,
     },
     server: {
       port: process.env.RCT_METRO_PORT || 8081,

@@ -17,6 +17,7 @@ const findAssets = require('./findAssets');
 const ios = require('./ios');
 const wrapCommands = require('./wrapCommands');
 const {ASSET_REGISTRY_PATH} = require('./Constants');
+const findReactNativePath = require('../util/findReactNativePath');
 
 /* $FlowFixMe(>=0.54.0 site=react_native_oss) This comment suppresses an error
  * found when Flow v0.54 was deployed. To see the error delete this comment and
@@ -67,8 +68,7 @@ const pluginPlatforms = plugins.platforms.reduce((acc, pathToPlatforms) => {
 }, {});
 
 const defaultConfig = {
-  // @todo fix
-  // hasteImplModulePath: require.resolve('../../jest/hasteImpl'),
+  hasteImplModulePath: require.resolve(findReactNativePath('jest/hasteImpl')),
 
   getPlatforms(): Array<string> {
     return ['ios', 'android', 'native', ...plugins.haste.platforms];

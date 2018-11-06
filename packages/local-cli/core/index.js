@@ -132,6 +132,7 @@ async function getCliConfig(): Promise<RNConfig> {
     cliArgs.config != null ? path.resolve(__dirname, cliArgs.config) : null,
   );
 
+  // $FlowFixMe Metro configuration is immutable.
   config.transformer.assetRegistryPath = ASSET_REGISTRY_PATH;
   config.resolver.hasteImplModulePath =
     config.resolver.hasteImplModulePath || defaultConfig.hasteImplModulePath;

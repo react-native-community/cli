@@ -29,7 +29,7 @@ function createProjectFromTemplate(
 ) {
   // Expand the basic 'HelloWorld' template
   copyProjectTemplateAndReplace(
-    path.join(__dirname, '../templates/HelloWorld'),
+    path.resolve(__dirname, '../templates/HelloWorld'),
     destPath,
     newProjectName,
   );

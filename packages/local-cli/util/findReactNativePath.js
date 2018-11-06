@@ -18,7 +18,7 @@ let reactNativePath = null;
 function findReactNativePath(): string {
   // By default, CLI lives inside `node_modules` next to React Native as 
   // node dependencies are flattened
-  if (fs.existsSync(path.resolve('../../react-native'))) {
+  if (fs.existsSync(path.join(__dirname, '../../react-native'))) {
     return '../../react-native';
   }
   // Otherwise, we assume it's within React Native `node_modules`

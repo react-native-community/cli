@@ -29,13 +29,7 @@ function createProjectFromTemplate(
 ) {
   // Expand the basic 'HelloWorld' template
   copyProjectTemplateAndReplace(
-    path.resolve(
-      'node_modules',
-      'react-native',
-      'local-cli',
-      'templates',
-      'HelloWorld',
-    ),
+    path.join(__dirname, '../templates/HelloWorld'),
     destPath,
     newProjectName,
   );

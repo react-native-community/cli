@@ -10,7 +10,7 @@
 
 'use strict';
 
-require('../../setupBabel')();
+require('../util/setupBabel')();
 
 const Metro = require('metro');
 

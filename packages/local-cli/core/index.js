@@ -67,7 +67,8 @@ const pluginPlatforms = plugins.platforms.reduce((acc, pathToPlatforms) => {
 }, {});
 
 const defaultConfig = {
-  hasteImplModulePath: require.resolve('../../jest/hasteImpl'),
+  // @todo fix
+  // hasteImplModulePath: require.resolve('../../jest/hasteImpl'),
 
   getPlatforms(): Array<string> {
     return ['ios', 'android', 'native', ...plugins.haste.platforms];

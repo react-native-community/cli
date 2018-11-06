@@ -10,7 +10,8 @@
 'use strict';
 
 const findSymlinkedModules = require('./findSymlinkedModules');
-const getPolyfills = require('../../rn-get-polyfills');
+// @todo what to do with this file?
+// const getPolyfills = require('../../../react-native/rn-get-polyfills');
 const path = require('path');
 
 const {createBlacklist} = require('metro');
@@ -74,7 +75,7 @@ const Config = {
       getModulesRunBeforeMainModule: () => [
         require.resolve('../../Libraries/Core/InitializeCore'),
       ],
-      getPolyfills,
+      // getPolyfills,
     },
     server: {
       port: process.env.RCT_METRO_PORT || 8081,

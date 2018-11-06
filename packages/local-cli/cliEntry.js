@@ -25,7 +25,7 @@ const commander = require('commander');
 const commands = require('./commands');
 const init = require('./init/init');
 const path = require('path');
-const pkg = require('../package.json');
+const pkg = require('./package.json');
 
 import type {CommandT} from './commands';
 import type {RNConfig} from './core';

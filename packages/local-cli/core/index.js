@@ -68,7 +68,13 @@ const pluginPlatforms = plugins.platforms.reduce((acc, pathToPlatforms) => {
 }, {});
 
 const defaultConfig = {
-  hasteImplModulePath: require.resolve(findReactNativePath('jest/hasteImpl')),
+  getHasteImplModulePath(): ?string {
+    try {
+      return require.resolve(findReactNativePath('jest/hasteImpl'));
+    } catch(_ignored) {
+      return;
+    }
+  },
 
   getPlatforms(): Array<string> {
     return ['ios', 'android', 'native', ...plugins.haste.platforms];
@@ -135,7 +141,7 @@ async function getCliConfig(): Promise<RNConfig> {
   // $FlowFixMe Metro configuration is immutable.
   config.transformer.assetRegistryPath = ASSET_REGISTRY_PATH;
   config.resolver.hasteImplModulePath =
-    config.resolver.hasteImplModulePath || defaultConfig.hasteImplModulePath;
+    config.resolver.hasteImplModulePath || defaultConfig.getHasteImplModulePath();
   config.resolver.platforms = config.resolver.platforms
     ? config.resolver.platforms.concat(defaultConfig.getPlatforms())
     : defaultConfig.getPlatforms();

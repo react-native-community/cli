@@ -11,7 +11,6 @@
 
 const findSymlinkedModules = require('./findSymlinkedModules');
 const findReactNativePath = require('./findReactNativePath');
-const getPolyfills = require(findReactNativePath('rn-get-polyfills'));
 const path = require('path');
 
 const {createBlacklist} = require('metro');
@@ -72,7 +71,7 @@ const Config = {
       getModulesRunBeforeMainModule: () => [
         require.resolve(findReactNativePath('Libraries/Core/InitializeCore')),
       ],
-      getPolyfills,
+      getPolyfills: (...args) => require(findReactNativePath('rn-get-polyfills'))(...args),
     },
     server: {
       port: process.env.RCT_METRO_PORT || 8081,

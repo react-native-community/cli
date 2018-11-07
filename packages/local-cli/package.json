@@ -13,7 +13,7 @@
   "jest": {
     "testPathIgnorePatterns": [
       "/node_modules/",
-      "local-cli/templates/"
+      "/templates/"
     ],
     "transform": {
       ".*": "./util/jestPreprocessor.js"

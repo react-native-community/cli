@@ -14,7 +14,7 @@
 const getProjectDependencies = require('../getProjectDependencies');
 const path = require('path');
 
-const CWD = path.resolve(__dirname, '../../..');
+const CWD = path.resolve(__dirname, '../../');
 
 describe('getProjectDependencies', () => {
   beforeEach(() => {

@@ -25,8 +25,8 @@ function findReactNativePath(): string {
   return '../../../';
 }
 
-module.exports = (str) => {
-  if (!reactNativePath) {
+module.exports = (str: string) => {
+  if (reactNativePath === null) {
     reactNativePath = findReactNativePath();
   }
   return path.join(reactNativePath, str);

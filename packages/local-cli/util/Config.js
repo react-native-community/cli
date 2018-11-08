@@ -71,6 +71,7 @@ const Config = {
       getModulesRunBeforeMainModule: () => [
         require.resolve(findReactNativePath('Libraries/Core/InitializeCore')),
       ],
+      // $FlowFixMe: Non-literal require
       getPolyfills: (...args) => require(findReactNativePath('rn-get-polyfills'))(...args),
     },
     server: {

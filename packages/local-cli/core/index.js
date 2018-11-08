@@ -169,11 +169,12 @@ function getProjectCommands(): Array<CommandT> {
         : pathToCommands.split(path.sep)[0];
 
     return attachPackage(
+      // $FlowFixMe: Non-literal require
       require(path.join(appRoot, 'node_modules', pathToCommands)),
+      // $FlowFixMe: Non-literal require
       require(path.join(appRoot, 'node_modules', name, 'package.json')),
     );
   });
-
   return flatten(commands);
 }
 

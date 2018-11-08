@@ -13,7 +13,7 @@
 const assetPathUtils = require('./assetPathUtils');
 const path = require('path');
 
-import type {PackagerAsset} from '../../Libraries/Image/AssetRegistry';
+import type { PackagerAsset } from './assetPathUtils';
 
 function getAssetDestPathAndroid(asset: PackagerAsset, scale: number): string {
   const androidFolder = assetPathUtils.getAndroidResourceFolderName(

@@ -10,7 +10,11 @@
 
 'use strict';
 
-import type {PackagerAsset} from '../../Libraries/Image/AssetRegistry';
+type PackagerAsset = {
+  +httpServerLocation: string,
+  +name: string,
+  +type: string,
+};
 
 /**
  * FIXME: using number to represent discrete scale numbers is fragile in essence because of

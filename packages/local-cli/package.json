@@ -4,6 +4,9 @@
   "description": "Local CLI package used with React Native",
   "license": "MIT",
   "main": "cli.js",
+  "bin": {
+    "react-native": "bin.js"
+  },
   "engines": {
     "node": ">= 8.3"
   },

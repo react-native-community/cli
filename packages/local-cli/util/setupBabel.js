@@ -9,13 +9,15 @@
 
 'use strict';
 
+const babelConfig = require('../babel.config.js');
+
 /**
  * Centralized place to register all the directories that need a Babel
  * transformation before being fed to Node.js. Notably, this is necessary to
  * support Flow type annotations.
  */
 function setupBabel() {
-  require('@babel/register')();
+  require('@babel/register')(babelConfig);
 }
 
 module.exports = setupBabel;

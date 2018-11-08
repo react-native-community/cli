@@ -43,7 +43,6 @@
     "inquirer": "^3.0.6",
     "lodash": "^4.17.5",
     "metro": "^0.48.1",
-    "metro-babel-register": "^0.48.1",
     "metro-config": "^0.48.1",
     "metro-core": "^0.48.1",
     "metro-memory-fs": "^0.48.1",

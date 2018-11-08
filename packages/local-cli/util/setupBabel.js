@@ -9,19 +9,13 @@
 
 'use strict';
 
-const babelRegisterOnly = require('metro-babel-register');
-
-const BABEL_ENABLED_PATHS = ['../'];
-
 /**
  * Centralized place to register all the directories that need a Babel
  * transformation before being fed to Node.js. Notably, this is necessary to
  * support Flow type annotations.
  */
 function setupBabel() {
-  babelRegisterOnly(
-    babelRegisterOnly.buildRegExps(__dirname, BABEL_ENABLED_PATHS),
-  );
+  require('@babel/register')();
 }
 
 module.exports = setupBabel;

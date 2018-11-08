@@ -16,12 +16,8 @@ require('graceful-fs').gracefulify(require('fs'));
 // it is not supported. This is why the rest of the cli code is in `cliEntry.js`.
 require('./server/checkNodeVersion')();
 
+// Transpile the source code
 require('./util/setupBabel')();
 
-var cliEntry = require('./cliEntry');
-
-if (require.main === module) {
-  cliEntry.run();
-}
-
-module.exports = cliEntry;
+// Export main CLI module
+module.exports = require('./cliEntry');

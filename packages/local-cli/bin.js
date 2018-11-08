@@ -11,7 +11,7 @@
 
 const isInstalledGlobally = require('./util/isInstalledGlobally');
 
-if (installedGlobally()) {
+if (isInstalledGlobally()) {
   const chalk = require('chalk');
 
   console.error(

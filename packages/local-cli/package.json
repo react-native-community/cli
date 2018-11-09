@@ -21,7 +21,6 @@
     "testEnvironment": "node"
   },
   "dependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.1.0",
     "@babel/preset-env": "^7.1.5",
     "@babel/preset-flow": "^7.0.0",
     "@babel/register": "^7.0.0",
@@ -68,5 +67,8 @@
     "eslint": "^5.7.0",
     "flow-bin": "^0.85.0",
     "jest": "24.0.0-alpha.4"
+  },
+  "peerDependencies": {
+    "react-native": "^0.57.0"
   }
 }

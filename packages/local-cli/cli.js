@@ -17,7 +17,13 @@ require('graceful-fs').gracefulify(require('fs'));
 require('./server/checkNodeVersion')();
 
 // Transpile the source code
-require('./util/setupBabel')();
+const babelConfig = require('./babel.config');
+require('@babel/register')(babelConfig);
 
-// Export main CLI module
-module.exports = require('./cliEntry');
+const cli = require('./cliEntry');
+
+if (require.main === module) {
+  cli.run();
+}
+
+module.exports = cli;

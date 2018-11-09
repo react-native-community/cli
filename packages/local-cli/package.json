@@ -1,6 +1,6 @@
 {
   "name": "react-native-local-cli",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.4",
   "description": "Local CLI package used with React Native",
   "license": "MIT",
   "main": "cli.js",

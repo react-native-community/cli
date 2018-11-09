@@ -1,3 +1,6 @@
+const path = require('path');
+const escapeRegExp = require('escape-string-regexp');
+
 module.exports = {
   presets: [
     [
@@ -8,5 +11,8 @@ module.exports = {
       },
     ],
     '@babel/preset-flow',
+  ],
+  only: [
+    new RegExp('^' + escapeRegExp(__dirname))
   ]
 };

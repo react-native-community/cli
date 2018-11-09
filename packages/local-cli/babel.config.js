@@ -4,13 +4,13 @@ const escapeRegExp = require('escape-string-regexp');
 module.exports = {
   presets: [
     [
-      '@babel/preset-env',
+      require.resolve('@babel/preset-env'),
       {
         targets: { node: '8' },
         useBuiltIns: 'entry',
       },
     ],
-    '@babel/preset-flow',
+    require.resolve('@babel/preset-flow'),
   ],
   only: [
     new RegExp('^' + escapeRegExp(__dirname))

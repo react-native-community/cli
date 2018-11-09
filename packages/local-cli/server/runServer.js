@@ -50,7 +50,7 @@ async function runServer(args: Args, config: ConfigT) {
 
   middlewareManager.getConnectInstance().use(morgan('combined'));
 
-  args.watchFolders.forEach(middlewareManager.serveStatic);
+  args.watchFolders.forEach(middlewareManager.serveStatic.bind(middlewareManager));
 
   // $FlowFixMe Metro configuration is immutable.
   config.maxWorkers = args.maxWorkers;

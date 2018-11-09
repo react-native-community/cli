@@ -57,13 +57,15 @@ module.exports = class MiddlewareManager {
       .use(errorhandler());
   }
 
-  serveStatic = (folder: string) => {
+  serveStatic(folder: string) {
     this.app.use(serveStatic(folder));
-  };
+  }
 
-  getConnectInstance = () => this.app;
+  getConnectInstance() {
+    return this.app;
+  }
 
-  attachDevToolsSocket = (socket: WebSocketProxy) => {
+  attachDevToolsSocket(socket: WebSocketProxy) {
     this.app.use(
       getDevToolsMiddleware(this.options, () => socket.isChromeConnected()),
     );

@@ -21,6 +21,7 @@
     "testEnvironment": "node"
   },
   "dependencies": {
+    "@babel/core": "^7.1.5",
     "@babel/preset-env": "^7.1.5",
     "@babel/preset-flow": "^7.0.0",
     "@babel/register": "^7.0.0",
@@ -62,7 +63,6 @@
     "xmldoc": "^0.4.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.1.5",
     "babel-core": "7.0.0-bridge.0",
     "babel-jest": "24.0.0-alpha.4",
     "eslint": "^5.7.0",

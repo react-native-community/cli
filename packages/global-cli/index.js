@@ -45,6 +45,14 @@ var execSync = require('child_process').execSync;
 var chalk = require('chalk');
 var prompt = require('prompt');
 var semver = require('semver');
+var pnp = null;
+
+try {
+  pnp = require('pnpapi');
+} catch(e) {
+  // Not in PnP
+}
+
 /**
  * Used arguments:
  *   -v --version - to print current version of react-native-cli and react-native dependency
@@ -61,17 +69,38 @@ var semver = require('semver');
 
 var options = require('minimist')(process.argv.slice(2));
 
+/**
+ * This function resolves the path to a specified Node module and, and if more
+ * than one argument is specified, a file inside of a Node module.
+ *
+ * If Yarn Plug 'n Play is enabled, it will use `pnpapi` to resolve the module.
+ * If not, it will look in the `node_modules` folder of the current working directory
+ */
+function resolve(...paths) {
+  if (pnp) {
+    try {
+      return pnp.resolveToUnqualified(path.join(...paths), process.cwd());
+    } catch (e) {
+      // If a node_module cannot be resolved, `resolveToUnqualified` throws.
+      // The rest of the codebase just handles non-existance by seeing if the path
+      // exists. `fs.fileExistsSync` will always return `false` for `null`.
+      return null;
+    }
+  } else {
+    return path.resolve(process.cwd(), 'node_modules', ...paths);
+  }
+}
+
 var CLI_MODULE_PATH = function() {
-  return path.resolve(process.cwd(), 'node_modules', 'react-native', 'cli.js');
+  let path = resolve('react-native-local-cli', 'cli.js');
+  if (!fs.existsSync(path)) {
+    path = resolve('react-native', 'cli.js');
+  }
+  return path;
 };
 
 var REACT_NATIVE_PACKAGE_JSON_PATH = function() {
-  return path.resolve(
-    process.cwd(),
-    'node_modules',
-    'react-native',
-    'package.json',
-  );
+  return resolve('react-native', 'package.json');
 };
 
 if (options._.length === 0 && (options.v || options.version)) {

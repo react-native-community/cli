@@ -12,8 +12,8 @@ const launchChrome = require('../util/launchChrome');
 
 const {exec} = require('child_process');
 
-function launchChromeDevTools(host, args = '') {
-  var debuggerURL = 'http://' + host + '/debugger-ui' + args;
+function launchChromeDevTools(host, post, args = '') {
+  var debuggerURL = `http://${host}:${post}/debugger-ui${args}`;
   console.log('Launching Dev Tools...');
   launchChrome(debuggerURL);
 }
@@ -23,7 +23,7 @@ function escapePath(pathname) {
   return '"' + pathname + '"';
 }
 
-function launchDevTools({host, watchFolders}, isChromeConnected) {
+function launchDevTools({host, port, watchFolders}, isChromeConnected) {
   // Explicit config always wins
   var customDebugger = process.env.REACT_DEBUGGER;
   if (customDebugger) {
@@ -37,13 +37,12 @@ function launchDevTools({host, watchFolders}, isChromeConnected) {
     });
   } else if (!isChromeConnected()) {
     // Dev tools are not yet open; we need to open a session
-    launchChromeDevTools(host);
+    launchChromeDevTools(host, port);
   }
 }
 
 module.exports = function(options, isChromeConnected) {
   return function(req, res, next) {
-    var host = req.headers.host;
     if (req.url === '/launch-safari-devtools') {
       // TODO: remove `console.log` and dev tools binary
       console.log(
@@ -61,7 +60,7 @@ module.exports = function(options, isChromeConnected) {
       launchDevTools(options, isChromeConnected);
       res.end('OK');
     } else if (req.url === '/launch-js-devtools') {
-      launchDevTools({...options, host}, isChromeConnected);
+      launchDevTools(options, isChromeConnected);
       res.end('OK');
     } else {
       next();

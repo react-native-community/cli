@@ -12,8 +12,8 @@ const launchChrome = require('../util/launchChrome');
 
 const {exec} = require('child_process');
 
-function launchChromeDevTools(host, post, args = '') {
-  var debuggerURL = `http://${host}:${post}/debugger-ui${args}`;
+function launchChromeDevTools(host, port, args = '') {
+  var debuggerURL = `http://${host}:${port}/debugger-ui${args}`;
   console.log('Launching Dev Tools...');
   launchChrome(debuggerURL);
 }

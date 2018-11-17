@@ -13,32 +13,36 @@ const launchChrome = require('../util/launchChrome');
 const {exec} = require('child_process');
 
 function launchChromeDevTools(host, port, args = '') {
-  var debuggerURL = `http://${host}:${port}/debugger-ui${args}`;
+  const debuggerURL = `http://${host}:${port}/debugger-ui${args}`;
   console.log('Launching Dev Tools...');
   launchChrome(debuggerURL);
 }
 
 function escapePath(pathname) {
   // " Can escape paths with spaces in OS X, Windows, and *nix
-  return '"' + pathname + '"';
+  return `"${pathname}"`;
 }
 
-function launchDevTools({host, port, watchFolders}, isChromeConnected) {
+function launchDevTools({ host, port, watchFolders }, isChromeConnected) {
   // Explicit config always wins
-  var customDebugger = process.env.REACT_DEBUGGER;
+  const customDebugger = process.env.REACT_DEBUGGER;
   if (customDebugger) {
-    var folders = watchFolders.map(escapePath).join(' ');
-    var command = customDebugger + ' ' + folders;
-    console.log('Starting custom debugger by executing: ' + command);
-    exec(command, function(error, stdout, stderr) {
-      if (error !== null) {
-        console.log('Error while starting custom debugger: ' + error);
-      }
-    });
+    customDebugger({ watchFolders, customDebugger });
   } else if (!isChromeConnected()) {
     // Dev tools are not yet open; we need to open a session
     launchChromeDevTools(host, port);
   }
+}
+
+function customDebugger({ watchFolders, customDebugger }) {
+  const folders = watchFolders.map(escapePath).join(' ');
+  const command = `${customDebugger} ${folders}`;
+  console.log('Starting custom debugger by executing:', command);
+  exec(command, function(error, stdout, stderr) {
+    if (error !== null) {
+      console.log('Error while starting custom debugger:', error);
+    }
+  });
 }
 
 module.exports = function(options, isChromeConnected) {

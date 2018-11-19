@@ -37,7 +37,7 @@ module.exports = {
     },
     {
       command: '--host [string]',
-      default: '',
+      default: 'localhost',
     },
     {
       command: '--projectRoot [string]',

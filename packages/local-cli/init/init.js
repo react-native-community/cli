@@ -52,7 +52,7 @@ function init(projectDir, argsOrName) {
  * @param options Command line arguments parsed by minimist.
  */
 function generateProject(destinationRoot, newProjectName, options) {
-  var reactNativePackageJson = require(findReactNativePath('package.json'));
+  var reactNativePackageJson = require.resolve('react-native/package.json');
   var {peerDependencies} = reactNativePackageJson;
   if (!peerDependencies) {
     console.error(

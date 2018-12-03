@@ -57,8 +57,6 @@ const getBlacklistRE = () => {
   return createBlacklist([/.*\/__fixtures__\/.*/]);
 };
 
-const plugins = findPlugins();
-
 /**
  * Default configuration
  */
@@ -106,21 +104,16 @@ module.exports = async function load(options: ConfigOptionsT): Promise<ConfigT> 
 
   const config = await loadConfig(argv, getDefaultConfig());
 
-  const platforms = ['ios', 'android', 'native', ...plugins.haste.platforms];
-  const providesModuleNodeModules = ['react-native', ...plugins.haste.providesModuleNodeModules];
-  
   config.transformer.assetRegistryPath = 'react-native/Libraries/Image/AssetRegistry';
   
   config.resolver.hasteImplModulePath =
     config.resolver.hasteImplModulePath || require.resolve('react-native/jest/hasteImpl');
 
   config.resolver.platforms = config.resolver.platforms
-    ? config.resolver.platforms.concat(platforms)
-    : platforms;
+    .concat(plugins.haste.platforms);
 
   config.resolver.providesModuleNodeModules = config.resolver.providesModuleNodeModules
-    ? config.resolver.providesModuleNodeModules.concat(providesModuleNodeModules)
-    : providesModuleNodeModules;
+    .concat(plugins.haste.providesModuleNodeModules);
 
   if (options.maxWorkers) {
     config.maxWorkers = options.maxWorkers;

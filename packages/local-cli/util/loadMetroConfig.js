@@ -67,7 +67,6 @@ export type ConfigOptionsT = {
   maxWorkers?: number,
   port?: number,
   resetCache?: boolean,
-  projectRoot?: string,
   watchFolders?: string[],
   sourceExts?: string[],
   reporter: any,
@@ -81,11 +80,10 @@ export type ConfigOptionsT = {
  * @todo(grabbou): Is this really how we want it? 
  * Is it breaking to just use "defaults"?
  */
-module.exports = async function load(options: ConfigOptionsT): Promise<ConfigT> {
-  const argv = {cwd: options.projectRoot};
-  const plugins = findPlugins(argv.cwd);
+module.exports = async function load(projectRoot: string, options: ConfigOptionsT): Promise<ConfigT> {
+  const plugins = findPlugins(projectRoot);
 
-  const config = await loadConfig(argv, getDefaultConfig());
+  const config = await loadConfig({cwd: projectRoot}, getDefaultConfig());
 
   config.transformer.assetRegistryPath = 'react-native/Libraries/Image/AssetRegistry';
   

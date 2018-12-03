@@ -32,7 +32,7 @@ export type Args = {|
   nonPersistent?: boolean,
   platforms?: string[],
   port?: number,
-  projectRoot?: string,
+  projectRoot: string,
   providesModuleNodeModules?: string[],
   resetCache?: boolean,
   sourceExts?: string[],
@@ -46,13 +46,12 @@ async function runServer(argv: *, ctx: *, args: Args) {
   const ReporterImpl = getReporterImpl(args.customLogReporterPath || null);
   const reporter = new ReporterImpl(terminal);
 
-  const metroConfig = await loadMetroConfig({
+  const metroConfig = await loadMetroConfig(args.projectRoot, {
     maxWorkers: args.maxWorkers,
     port: args.port,
     resetCache: args.resetCache,
     watchFolders: args.watchFolders,
     sourceExts: args.sourceExts,
-    projectRoot: args.projectRoot,
     reporter,
   });
   

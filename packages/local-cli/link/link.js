@@ -8,21 +8,11 @@
  * @flow
  */
 
-/* $FlowFixMe(>=0.54.0 site=react_native_oss) This comment suppresses an error
- * found when Flow v0.54 was deployed. To see the error delete this comment and
- * run Flow. */
 const log = require('npmlog');
 const path = require('path');
 const uniqBy = require('lodash').uniqBy;
 const flatten = require('lodash').flatten;
-/* $FlowFixMe(>=0.54.0 site=react_native_oss) This comment suppresses an error
- * found when Flow v0.54 was deployed. To see the error delete this comment and
- * run Flow. */
 const chalk = require('chalk');
-
-/* $FlowFixMe(>=0.54.0 site=react_native_oss) This comment suppresses an error
- * found when Flow v0.54 was deployed. To see the error delete this comment and
- * run Flow. */
 const isEmpty = require('lodash').isEmpty;
 const promiseWaterfall = require('./promiseWaterfall');
 const getProjectDependencies = require('./getProjectDependencies');
@@ -30,16 +20,23 @@ const getDependencyConfig = require('./getDependencyConfig');
 const pollParams = require('./pollParams');
 const commandStub = require('./commandStub');
 const promisify = require('./promisify');
+const getProjectConfig = require('./getProjectConfig');
+
 const findReactNativeScripts = require('../util/findReactNativeScripts');
 
-import type {ConfigT} from '../core';
+const getHooks = require('../core/getHooks');
+const getParams = require('../core/getParams');
+const getAssets = require('../core/getAssets');
+const getPlatforms = require('../core/getPlatforms');
+
+import type {ContextT} from '../core/types.flow';
 
 log.heading = 'rnpm-link';
 
 const dedupeAssets = assets => uniqBy(assets, asset => path.basename(asset));
 
 const linkDependency = async (platforms, project, dependency) => {
-  const params = await pollParams(dependency.config.params);
+  const params = await pollParams(dependency.params);
 
   Object.keys(platforms || {}).forEach(platform => {
     if (!project[platform] || !dependency.config[platform]) {
@@ -73,8 +70,10 @@ const linkDependency = async (platforms, project, dependency) => {
 
     linkConfig.register(
       dependency.name,
+      // $FlowFixMe: We check if dependency.config[platform] exists on line 42
       dependency.config[platform],
       params,
+      // $FlowFixMe: We check if project[platform] exists on line 42
       project[platform],
     );
 
@@ -96,11 +95,13 @@ const linkAssets = (platforms, project, assets) => {
       platforms[platform] &&
       platforms[platform].linkConfig &&
       platforms[platform].linkConfig();
-    if (!linkConfig || !linkConfig.copyAssets) {
+    
+    if (!linkConfig || !linkConfig.copyAssets || !project[platform]) {
       return;
     }
-
+    
     log.info(`Linking assets to ${platform} project`);
+    // $FlowFixMe: We check for existence of project[platform] on line 97.
     linkConfig.copyAssets(assets, project[platform]);
   });
 
@@ -112,14 +113,11 @@ const linkAssets = (platforms, project, assets) => {
  *
  * @param args If optional argument [packageName] is provided,
  *             only that package is processed.
- * @param config CLI config, see local-cli/core/index.js
  */
-function link(args: Array<string>, config: ConfigT) {
-  let project;
+function link(args: Array<string>, ctx: ContextT) {
   let platforms;
   try {
-    project = config.getProjectConfig();
-    platforms = config.getPlatformConfig();
+    platforms = getPlatforms(ctx.root);
   } catch (err) {
     log.error(
       'ERRPACKAGEJSON',
@@ -127,7 +125,7 @@ function link(args: Array<string>, config: ConfigT) {
     );
     return Promise.reject(err);
   }
-
+  const project = getProjectConfig(ctx, platforms);
   const hasProjectConfig = Object.keys(platforms).reduce(
     (acc, key) => acc || key in project,
     false,
@@ -148,23 +146,28 @@ function link(args: Array<string>, config: ConfigT) {
     packageName = packageName.replace(/^(.+?)(@.+?)$/gi, '$1');
   }
 
+  /*
+   * @todo(grabbou): Deprecate `getProjectDependencies()` soon. The implicit
+   * behaviour is causing us more harm.
+   */
   const dependencies = getDependencyConfig(
-    config,
-    packageName ? [packageName] : getProjectDependencies(),
+    ctx,
+    platforms,
+    packageName ? [packageName] : getProjectDependencies(ctx.root),
   );
 
   const assets = dedupeAssets(
     dependencies.reduce(
-      (acc, dependency) => acc.concat(dependency.config.assets),
-      project.assets,
+      (acc, dependency) => acc.concat(dependency.assets),
+      getAssets(ctx.root),
     ),
   );
 
   const tasks = flatten(
     dependencies.map(dependency => [
-      () => promisify(dependency.config.commands.prelink || commandStub),
+      () => promisify(dependency.commands.prelink || commandStub),
       () => linkDependency(platforms, project, dependency),
-      () => promisify(dependency.config.commands.postlink || commandStub),
+      () => promisify(dependency.commands.postlink || commandStub),
     ]),
   );
 

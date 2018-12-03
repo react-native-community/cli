@@ -14,12 +14,12 @@ const assertRequiredOptions = require('./util/assertRequiredOptions');
 const chalk = require('chalk');
 const childProcess = require('child_process');
 const commander = require('commander');
-const commands = require('./commands');
+const getCommands = require('./core/getCommands');
 const init = require('./init/init');
 const path = require('path');
 const pkg = require('./package.json');
 
-import type { CommandT } from './commands';
+import type { CommandT, ContextT } from './core/types.flow';
 
 commander.version(pkg.version);
 
@@ -90,7 +90,7 @@ function printUnknownCommand(cmdName) {
   );
 }
 
-const addCommand = (command: CommandT) => {
+const addCommand = (command: CommandT, ctx: ContextT) => {
   const options = command.options || [];
 
   const cmd = commander
@@ -105,7 +105,7 @@ const addCommand = (command: CommandT) => {
       Promise.resolve()
         .then(() => {
           assertRequiredOptions(options, passedOptions);
-          return command.func(argv, passedOptions);
+          return command.func(argv, ctx, passedOptions);
         })
         .catch(handleError);
     });
@@ -120,7 +120,7 @@ const addCommand = (command: CommandT) => {
       opt.command,
       opt.description,
       opt.parse || defaultOptParser,
-      typeof opt.default === 'function' ? opt.default() : opt.default,
+      typeof opt.default === 'function' ? opt.default(ctx) : opt.default,
     ),
   );
 
@@ -136,7 +136,13 @@ async function run() {
 
   childProcess.execFileSync(path.join(__dirname, setupEnvScript));
 
-  commands.forEach(addCommand);
+  // @todo(grabbou): Root !== process.cwd() in all the cases. Respect `root` flag.
+  const root = process.cwd();
+  const ctx = { root };
+
+  const commands = getCommands(root);
+
+  commands.forEach(command => addCommand(command, ctx));
 
   commander.parse(process.argv);
 

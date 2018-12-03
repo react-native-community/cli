@@ -18,6 +18,7 @@ const isEmpty = require('lodash').isEmpty;
 const promiseWaterfall = require('./promiseWaterfall');
 const commandStub = require('./commandStub');
 const promisify = require('./promisify');
+const core = require('../core');
 
 log.heading = 'rnpm-link';
 
@@ -75,7 +76,7 @@ const unlinkDependency = (
  * If optional argument [packageName] is provided, it's the only one
  * that's checked
  */
-function unlink(args, config) {
+function unlink(args) {
   const packageName = args[0];
 
   let platforms;
@@ -83,8 +84,8 @@ function unlink(args, config) {
   let dependency;
 
   try {
-    platforms = config.getPlatformConfig();
-    project = config.getProjectConfig();
+    platforms = core.getPlatformConfig();
+    project = core.getProjectConfig();
   } catch (err) {
     log.error(
       'ERRPACKAGEJSON',
@@ -94,7 +95,7 @@ function unlink(args, config) {
   }
 
   try {
-    dependency = config.getDependencyConfig(packageName);
+    dependency = core.getDependencyConfig(packageName);
   } catch (err) {
     log.warn(
       'ERRINVALIDPROJ',
@@ -103,7 +104,7 @@ function unlink(args, config) {
     return Promise.reject(err);
   }
 
-  const allDependencies = getDependencyConfig(config, getProjectDependencies());
+  const allDependencies = getDependencyConfig(getProjectDependencies());
   const otherDependencies = filter(
     allDependencies,
     d => d.name !== packageName,

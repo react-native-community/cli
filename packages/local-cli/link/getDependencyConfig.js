@@ -1,26 +1,51 @@
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * @format
+ * @flow
  */
 
-/**
- * Given an array of dependencies - it returns their RNPM config
- * if they were valid.
- */
-module.exports = function getDependencyConfig(config, deps) {
-  return deps.reduce((acc, name) => {
-    try {
-      return acc.concat({
-        config: config.getDependencyConfig(name),
-        name,
+'use strict';
+
+const path = require('path');
+
+import type { PlatformsT, ContextT, InquirerPromptT, DependencyConfigT } from '../core/types.flow';
+
+const getPackageConfiguration = require('../core/getPackageConfiguration');
+const getParams = require('../core/getParams');
+const getHooks = require('../core/getHooks');
+const getAssets = require('../core/getAssets');
+
+type DependenciesConfig = Array<{
+  config: DependencyConfigT,
+  name: string,
+  path: string,
+  assets: string[],
+  commands: { [name: string]: string },
+  params: InquirerPromptT[],
+}>;
+
+module.exports = function getDependencyConfig(
+  ctx: ContextT,
+  availablePlatforms: PlatformsT,
+  dependencies: string[]
+): DependenciesConfig {
+  return dependencies.reduce((acc, packageName) => {
+    const folder = path.join(ctx.root, 'node_modules', packageName);
+    const config = getPackageConfiguration(folder);
+
+    let platformConfigs = {ios: null, android: null};
+
+    Object.keys(availablePlatforms)
+      .forEach(platform => {
+        const platformConfig = availablePlatforms[platform]
+          .dependencyConfig(ctx.root, config[platform]);
       });
-    } catch (err) {
-      console.log(err);
-      return acc;
-    }
+
+    return acc.concat({
+      config: platformConfigs,
+      name: packageName,
+      path: folder,
+      commands: getHooks(folder),
+      assets: getAssets(folder),
+      params: getParams(folder)
+    });
   }, []);
 };

@@ -70,6 +70,7 @@ export type ConfigOptionsT = {
   watchFolders?: string[],
   sourceExts?: string[],
   reporter: any,
+  config?: string,
 };
 
 /**
@@ -83,7 +84,10 @@ export type ConfigOptionsT = {
 module.exports = async function load(projectRoot: string, options: ConfigOptionsT): Promise<ConfigT> {
   const plugins = findPlugins(projectRoot);
 
-  const config = await loadConfig({cwd: projectRoot}, getDefaultConfig());
+  const config = await loadConfig({
+    cwd: projectRoot,
+    config: options.config
+  }, getDefaultConfig());
 
   config.transformer.assetRegistryPath = 'react-native/Libraries/Image/AssetRegistry';
   

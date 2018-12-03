@@ -40,6 +40,7 @@ export type Args = {|
   transformer?: string,
   verbose?: boolean,
   watchFolders?: string[],
+  config?: string,
 |};
 
 async function runServer(argv: *, ctx: ContextT, args: Args) {
@@ -48,6 +49,7 @@ async function runServer(argv: *, ctx: ContextT, args: Args) {
   const reporter = new ReporterImpl(terminal);
 
   const metroConfig = await loadMetroConfig(ctx.root, {
+    config: args.config,
     maxWorkers: args.maxWorkers,
     port: args.port,
     resetCache: args.resetCache,

@@ -124,9 +124,6 @@ const addCommand = (command: CommandT, ctx: ContextT) => {
       typeof opt.default === 'function' ? opt.default(ctx) : opt.default,
     ),
   );
-  // @todo(grabbou): Bring back support for it. This is Metro specific.
-  // cmd.option('--config [string]', 'Path to the CLI configuration file');
-
   // This is needed to avoid `unknown option` error by Commander.js
   cmd.option('--projectRoot [string]', 'Path to the root of the project');
 };
@@ -147,7 +144,9 @@ async function run() {
   const options = minimist(process.argv.slice(2));
 
   const ctx = {
-    root: path.resolve(options.projectRoot) || process.cwd(),
+    root: options.projectRoot
+      ? path.resolve(options.projectRoot)
+      : process.cwd(),
   };
 
   const commands = getCommands(ctx.root);

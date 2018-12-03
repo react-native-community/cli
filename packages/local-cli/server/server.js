@@ -10,6 +10,8 @@
 
 'use strict';
 
+const path = require('path');
+
 import type { ContextT } from '../core/types.flow';
 
 module.exports = {
@@ -99,6 +101,11 @@ module.exports = {
     {
       command: '--cert [path]',
       description: 'Path to custom SSL cert',
+    },
+    {
+      command: '--config [string]',
+      description: 'Path to the CLI configuration file',
+      parse: (val: string) => path.resolve(val),
     },
   ],
 };

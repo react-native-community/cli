@@ -32,7 +32,7 @@ const commandStub = require('./commandStub');
 const promisify = require('./promisify');
 const findReactNativeScripts = require('../util/findReactNativeScripts');
 
-import type {RNConfig} from '../core';
+import type {ConfigT} from '../core';
 
 log.heading = 'rnpm-link';
 
@@ -114,7 +114,7 @@ const linkAssets = (platforms, project, assets) => {
  *             only that package is processed.
  * @param config CLI config, see local-cli/core/index.js
  */
-function link(args: Array<string>, config: RNConfig) {
+function link(args: Array<string>, config: ConfigT) {
   let project;
   let platforms;
   try {

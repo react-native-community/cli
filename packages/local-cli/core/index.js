@@ -16,18 +16,16 @@ const findPlugins = require('./findPlugins');
 const findAssets = require('./findAssets');
 const ios = require('./ios');
 const wrapCommands = require('./wrapCommands');
-const {ASSET_REGISTRY_PATH} = require('./Constants');
+const { ASSET_REGISTRY_PATH } = require('./Constants');
 const findReactNativePath = require('../util/findReactNativePath');
 
 const flatten = require('lodash').flatten;
 const minimist = require('minimist');
 const path = require('path');
 
-import type {CommandT} from '../commands';
-import type {ConfigT} from 'metro-config/src/configTypes.flow';
+import type { CommandT } from '../commands';
 
-export type RNConfig = {
-  ...ConfigT,
+export type ConfigT = {
   /**
    * Returns an object with all platform configurations.
    */
@@ -39,20 +37,17 @@ export type RNConfig = {
   /**
    * Returns dependency config from <node_modules>/packageName
    */
-  getDependencyConfig(pkgName: string): Object,
+  getDependencyConfig(pkgName: string): Object
 };
 
 const getRNPMConfig = folder =>
   // $FlowFixMe non-literal require
   require(path.join(folder, './package.json')).rnpm || {};
 
-const attachPackage = (command, pkg) =>
-  Array.isArray(command)
-    ? command.map(cmd => attachPackage(cmd, pkg))
-    : {...command, pkg};
-
 const appRoot = process.cwd();
+
 const plugins = findPlugins([appRoot]);
+
 const pluginPlatforms = plugins.platforms.reduce((acc, pathToPlatforms) => {
   return Object.assign(
     acc,
@@ -61,25 +56,7 @@ const pluginPlatforms = plugins.platforms.reduce((acc, pathToPlatforms) => {
   );
 }, {});
 
-const defaultConfig = {
-  getHasteImplModulePath(): ?string {
-    try {
-      return require.resolve(findReactNativePath('jest/hasteImpl'));
-    } catch(_ignored) {
-      return;
-    }
-  },
-
-  getPlatforms(): Array<string> {
-    return ['ios', 'android', 'native', ...plugins.haste.platforms];
-  },
-
-  getProvidesModuleNodeModules(): Array<string> {
-    return ['react-native', ...plugins.haste.providesModuleNodeModules];
-  },
-};
-
-const defaultRNConfig = {
+const config: ConfigT = {
   getPlatformConfig(): Object {
     return {
       ios,
@@ -123,56 +100,4 @@ const defaultRNConfig = {
   },
 };
 
-/**
- * Loads the CLI configuration
- */
-async function getCliConfig(): Promise<RNConfig> {
-  const cliArgs = minimist(process.argv.slice(2));
-  const config = await Config.load(
-    typeof cliArgs.config === 'string'
-      ? path.resolve(__dirname, cliArgs.config)
-      : null,
-  );
-
-  // $FlowFixMe Metro configuration is immutable.
-  config.transformer.assetRegistryPath = ASSET_REGISTRY_PATH;
-  config.resolver.hasteImplModulePath =
-    config.resolver.hasteImplModulePath || defaultConfig.getHasteImplModulePath();
-  config.resolver.platforms = config.resolver.platforms
-    ? config.resolver.platforms.concat(defaultConfig.getPlatforms())
-    : defaultConfig.getPlatforms();
-  config.resolver.providesModuleNodeModules = config.resolver
-    .providesModuleNodeModules
-    ? config.resolver.providesModuleNodeModules.concat(
-        defaultConfig.getProvidesModuleNodeModules(),
-      )
-    : defaultConfig.getProvidesModuleNodeModules();
-
-  return {...defaultRNConfig, ...config};
-}
-
-/**
- * Returns an array of project commands used by the CLI to load
- */
-function getProjectCommands(): Array<CommandT> {
-  const commands = plugins.commands.map(pathToCommands => {
-    const name =
-      pathToCommands[0] === '@'
-        ? pathToCommands
-            .split(path.sep)
-            .slice(0, 2)
-            .join(path.sep)
-        : pathToCommands.split(path.sep)[0];
-
-    return attachPackage(
-      // $FlowFixMe: Non-literal require
-      require(path.join(appRoot, 'node_modules', pathToCommands)),
-      // $FlowFixMe: Non-literal require
-      require(path.join(appRoot, 'node_modules', name, 'package.json')),
-    );
-  });
-  return flatten(commands);
-}
-
-module.exports.configPromise = getCliConfig();
-module.exports.getProjectCommands = getProjectCommands;
+module.exports = config;

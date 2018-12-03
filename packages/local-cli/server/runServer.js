@@ -11,7 +11,7 @@
 
 const Metro = require('metro');
 
-const {Terminal} = require('metro-core');
+const { Terminal } = require('metro-core');
 
 const messageSocket = require('./util/messageSocket');
 const morgan = require('morgan');
@@ -19,26 +19,27 @@ const path = require('path');
 const webSocketProxy = require('./util/webSocketProxy');
 const MiddlewareManager = require('./middleware/MiddlewareManager');
 
-import type {ConfigT} from 'metro-config/src/configTypes.flow';
+import type { ConfigT } from '../core';
+import type { ConfigT as MetroConfigT } from 'metro-config/src/configTypes.flow';
 
 export type Args = {|
-  +assetExts: $ReadOnlyArray<string>,
+  +assetExts: $ReadOnlyArray < string >,
   +cert: string,
-  +customLogReporterPath?: string,
-  +host: string,
-  +https: boolean,
-  +maxWorkers: number,
-  +key: string,
-  +nonPersistent: boolean,
-  +platforms: $ReadOnlyArray<string>,
-  +port: number,
-  +projectRoot: string,
-  +providesModuleNodeModules: Array<string>,
-  +resetCache: boolean,
-  +sourceExts: $ReadOnlyArray<string>,
-  +transformer?: string,
-  +verbose: boolean,
-  +watchFolders: $ReadOnlyArray<string>,
+    +customLogReporterPath ?: string,
+    +host: string,
+      +https: boolean,
+        +maxWorkers: number,
+          +key: string,
+            +nonPersistent: boolean,
+              +platforms: $ReadOnlyArray < string >,
+                +port: number,
+                  +projectRoot: string,
+                    +providesModuleNodeModules: Array < string >,
+                      +resetCache: boolean,
+                        +sourceExts: $ReadOnlyArray < string >,
+                          +transformer ?: string,
+                          +verbose: boolean,
+                            +watchFolders: $ReadOnlyArray < string >,
 |};
 
 async function runServer(args: Args, config: ConfigT) {
@@ -51,30 +52,33 @@ async function runServer(args: Args, config: ConfigT) {
 
   args.watchFolders.forEach(middlewareManager.serveStatic.bind(middlewareManager));
 
+  // @todo(mike) replace this with real config
+  const metroConfig = {};
+
   // $FlowFixMe Metro configuration is immutable.
-  config.maxWorkers = args.maxWorkers;
+  metroConfig.maxWorkers = args.maxWorkers;
   // $FlowFixMe Metro configuration is immutable.
-  config.server.port = args.port;
+  metroConfig.server.port = args.port;
   // $FlowFixMe Metro configuration is immutable.
-  config.reporter = reporter;
+  metroConfig.reporter = reporter;
   // $FlowFixMe Metro configuration is immutable.
-  config.resetCache = args.resetCache;
+  metroConfig.resetCache = args.resetCache;
   // $FlowFixMe Metro configuration is immutable.
-  config.projectRoot = args.projectRoot;
+  metroConfig.projectRoot = args.projectRoot;
   // $FlowFixMe Metro configuration is immutable.
-  config.watchFolders = args.watchFolders.slice(0);
+  metroConfig.watchFolders = args.watchFolders.slice(0);
   // $FlowFixMe Metro configuration is immutable.
-  config.server.enhanceMiddleware = middleware =>
+  metroConfig.server.enhanceMiddleware = middleware =>
     middlewareManager.getConnectInstance().use(middleware);
 
   if (args.sourceExts !== config.resolver.sourceExts) {
     // $FlowFixMe Metro configuration is immutable.
-    config.resolver.sourceExts = args.sourceExts.concat(
-      config.resolver.sourceExts,
+    metroConfig.resolver.sourceExts = args.sourceExts.concat(
+      metroConfig.resolver.sourceExts,
     );
   }
 
-  const serverInstance = await Metro.runServer(config, {
+  const serverInstance = await Metro.runServer(metroConfig, {
     host: args.host,
     secure: args.https,
     secureCert: args.cert,

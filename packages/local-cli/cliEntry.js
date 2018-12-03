@@ -10,25 +10,16 @@
 
 'use strict';
 
-const {configPromise} = require('./core');
-
 const assertRequiredOptions = require('./util/assertRequiredOptions');
-/* $FlowFixMe(>=0.54.0 site=react_native_oss) This comment suppresses an error
- * found when Flow v0.54 was deployed. To see the error delete this comment and
- * run Flow. */
 const chalk = require('chalk');
 const childProcess = require('child_process');
-/* $FlowFixMe(>=0.54.0 site=react_native_oss) This comment suppresses an error
- * found when Flow v0.54 was deployed. To see the error delete this comment and
- * run Flow. */
 const commander = require('commander');
 const commands = require('./commands');
 const init = require('./init/init');
 const path = require('path');
 const pkg = require('./package.json');
 
-import type {CommandT} from './commands';
-import type {RNConfig} from './core';
+import type { CommandT } from './commands';
 
 commander.version(pkg.version);
 
@@ -99,7 +90,7 @@ function printUnknownCommand(cmdName) {
   );
 }
 
-const addCommand = (command: CommandT, cfg: RNConfig) => {
+const addCommand = (command: CommandT) => {
   const options = command.options || [];
 
   const cmd = commander
@@ -114,13 +105,14 @@ const addCommand = (command: CommandT, cfg: RNConfig) => {
       Promise.resolve()
         .then(() => {
           assertRequiredOptions(options, passedOptions);
-          return command.func(argv, cfg, passedOptions);
+          return command.func(argv, passedOptions);
         })
         .catch(handleError);
     });
 
   cmd.helpInformation = printHelpInformation.bind(cmd);
   cmd.examples = command.examples;
+  // $FlowFixMe: This is either null or not
   cmd.pkg = command.pkg;
 
   options.forEach(opt =>
@@ -128,7 +120,7 @@ const addCommand = (command: CommandT, cfg: RNConfig) => {
       opt.command,
       opt.description,
       opt.parse || defaultOptParser,
-      typeof opt.default === 'function' ? opt.default(cfg) : opt.default,
+      typeof opt.default === 'function' ? opt.default() : opt.default,
     ),
   );
 
@@ -138,14 +130,13 @@ const addCommand = (command: CommandT, cfg: RNConfig) => {
 };
 
 async function run() {
-  const config = await configPromise;
   const setupEnvScript = /^win/.test(process.platform)
     ? 'setup_env.bat'
     : 'setup_env.sh';
 
   childProcess.execFileSync(path.join(__dirname, setupEnvScript));
 
-  commands.forEach(cmd => addCommand(cmd, config));
+  commands.forEach(addCommand);
 
   commander.parse(process.argv);
 

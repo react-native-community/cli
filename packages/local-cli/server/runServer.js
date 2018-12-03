@@ -21,6 +21,8 @@ const MiddlewareManager = require('./middleware/MiddlewareManager');
 
 const loadMetroConfig = require('../util/loadMetroConfig');
 
+import type { ContextT } from '../core/types.flow';
+
 export type Args = {|
   assetExts?: string[],
   cert?: string,
@@ -41,12 +43,12 @@ export type Args = {|
   watchFolders?: string[],
 |};
 
-async function runServer(argv: *, ctx: *, args: Args) {
+async function runServer(argv: *, ctx: ContextT, args: Args) {
   const terminal = new Terminal(process.stdout);
   const ReporterImpl = getReporterImpl(args.customLogReporterPath || null);
   const reporter = new ReporterImpl(terminal);
 
-  const metroConfig = await loadMetroConfig(args.projectRoot, {
+  const metroConfig = await loadMetroConfig(ctx.root, {
     maxWorkers: args.maxWorkers,
     port: args.port,
     resetCache: args.resetCache,

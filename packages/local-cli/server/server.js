@@ -26,11 +26,6 @@ module.exports = {
       default: 'localhost',
     },
     {
-      command: '--projectRoot [string]',
-      description: 'Specify the main project root',
-      default: (ctx: ContextT) => ctx.root,
-    },
-    {
       command: '--watchFolders [list]',
       description:
         'Specify any additional folders to be added to the watch list',

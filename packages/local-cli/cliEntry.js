@@ -136,7 +136,8 @@ async function run() {
 
   childProcess.execFileSync(path.join(__dirname, setupEnvScript));
 
-  // @todo(grabbou): Root !== process.cwd() in all the cases. Respect `root` flag.
+  // @todo(grabbou): Root !== process.cwd() in all the cases.
+  // Respect `--projectRoot` flag.
   const root = process.cwd();
   const ctx = { root };
 

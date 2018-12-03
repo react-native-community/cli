@@ -34,7 +34,6 @@ export type Args = {|
   nonPersistent?: boolean,
   platforms?: string[],
   port?: number,
-  projectRoot: string,
   providesModuleNodeModules?: string[],
   resetCache?: boolean,
   sourceExts?: string[],

@@ -28,24 +28,28 @@ module.exports = function getDependencyConfig(
   dependencies: string[]
 ): DependenciesConfig {
   return dependencies.reduce((acc, packageName) => {
-    const folder = path.join(ctx.root, 'node_modules', packageName);
-    const config = getPackageConfiguration(folder);
+    try {
+      const folder = path.join(ctx.root, 'node_modules', packageName);
+      const config = getPackageConfiguration(folder);
 
-    let platformConfigs = {ios: null, android: null};
+      let platformConfigs = {ios: null, android: null};
 
-    Object.keys(availablePlatforms)
-      .forEach(platform => {
-        const platformConfig = availablePlatforms[platform]
-          .dependencyConfig(ctx.root, config[platform]);
+      Object.keys(availablePlatforms)
+        .forEach(platform => {
+          const platformConfig = availablePlatforms[platform]
+            .dependencyConfig(ctx.root, config[platform]);
+        });
+
+      return acc.concat({
+        config: platformConfigs,
+        name: packageName,
+        path: folder,
+        commands: getHooks(folder),
+        assets: getAssets(folder),
+        params: getParams(folder)
       });
-
-    return acc.concat({
-      config: platformConfigs,
-      name: packageName,
-      path: folder,
-      commands: getHooks(folder),
-      assets: getAssets(folder),
-      params: getParams(folder)
-    });
+    } catch (e) {
+      return acc;
+    }
   }, []);
 };

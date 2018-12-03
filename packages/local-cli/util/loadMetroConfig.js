@@ -62,19 +62,18 @@ const plugins = findPlugins()
 /**
  * Default configuration
  */
-const DEFAULT_CONFIG = {
+const getDefaultConfig = () => ({
   resolver: {
     resolverMainFields: ['react-native', 'browser', 'main'],
     blacklistRE: getBlacklistRE(),
     assetRegistryPath: 'react-native/Libraries/Image/AssetRegistry',
-    hasteImplModulePath: 'react-native/jest/hasteImpl'
+    hasteImplModulePath: require.resolve('react-native/jest/hasteImpl')
   },
   serializer: {
     getModulesRunBeforeMainModule: () => [
-      require.resolve(findReactNativePath('Libraries/Core/InitializeCore')),
+      require.resolve('react-native/Libraries/Core/InitializeCore'),
     ],
-    // $FlowFixMe: Non-literal require
-    getPolyfills: (...args) => require(findReactNativePath('rn-get-polyfills'))(...args),
+    getPolyfills: require.resolve('react-native/rn-get-polyfills'),
   },
   server: {
     port: process.env.RCT_METRO_PORT || 8081,
@@ -83,7 +82,7 @@ const DEFAULT_CONFIG = {
     babelTransformerPath: require.resolve('metro/src/reactNativeTransformer'),
   },
   watchFolders: getWatchFolders(),
-};
+});
 
 export type ConfigOptionsT = {
   maxWorkers?: number,
@@ -107,7 +106,7 @@ module.exports = async function load(options: ConfigOptionsT): Promise<ConfigT> 
   const argv = {cwd: getProjectRoot()};
   const plugins = findPlugins(argv.cwd);
 
-  const config = await loadConfig(argv, DEFAULT_CONFIG);
+  const config = await loadConfig(argv, getDefaultConfig());
 
   const platforms = ['ios', 'android', 'native', ...plugins.haste.platforms];
   const providesModuleNodeModules = ['react-native', ...plugins.haste.providesModuleNodeModules];
@@ -136,7 +135,10 @@ module.exports = async function load(options: ConfigOptionsT): Promise<ConfigT> 
     config.watchFolders = options.watchFolders;
   }
 
-  if (options.sourceExts !== config.resolver.sourceExts) {
+  if (
+    options.sourceExts
+    && options.sourceExts !== config.resolver.sourceExts
+  ) {
     config.resolver.sourceExts = options.sourceExts.concat(
       config.resolver.sourceExts,
     );
@@ -146,7 +148,7 @@ module.exports = async function load(options: ConfigOptionsT): Promise<ConfigT> 
     ? config.resolver.platforms.concat(platforms)
     : platforms;
 
-  config.resolver.providesModuleNodeModules = config.resolveSymlinksForRoots.providesModuleNodeModules
+  config.resolver.providesModuleNodeModules = config.resolver.providesModuleNodeModules
     ? config.resolver.providesModuleNodeModules.concat(providesModuleNodeModules)
     : providesModuleNodeModules;
 

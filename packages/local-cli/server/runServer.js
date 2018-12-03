@@ -42,7 +42,11 @@ export type Args = {|
 |};
 
 async function runServer(args: Args) {
-  const metroConfig = loadMetroConfig({
+  const terminal = new Terminal(process.stdout);
+  const ReporterImpl = getReporterImpl(args.customLogReporterPath || null);
+  const reporter = new ReporterImpl(terminal);
+  
+  const metroConfig = await loadMetroConfig({
     maxWorkers: args.maxWorkers,
     port: args.port,
     resetCache: args.resetCache,
@@ -50,10 +54,6 @@ async function runServer(args: Args) {
     sourceExts: args.sourceExts,
     reporter,
   });
-
-  const terminal = new Terminal(process.stdout);
-  const ReporterImpl = getReporterImpl(args.customLogReporterPath || null);
-  const reporter = new ReporterImpl(terminal);
   
   const middlewareManager = new MiddlewareManager({
     host: args.host,
@@ -66,7 +66,6 @@ async function runServer(args: Args) {
 
   metroConfig.server.enhanceMiddleware = middleware =>
     middlewareManager.getConnectInstance().use(middleware);
-
 
   const serverInstance = await Metro.runServer(metroConfig, {
     host: args.host,

@@ -63,23 +63,21 @@ export type PlatformConfigT<ProjectConfigT, DependencyConfigT, ParamsT> = {
   },
 };
 
+/**
+ * The following types will be useful when we type `link` itself. For now,
+ * they can be treated as aliases.
+ */
 export type AndroidConfigParamsT = {};
 
 export type IOSConfigParamsT = {};
 
-export type ProjectConfigIOST = {
-
-};
+export type ProjectConfigIOST = {};
 
 export type DependencyConfigIOST = ProjectConfigIOST;
 
-export type ProjectConfigAndroidT = {
+export type ProjectConfigAndroidT = {};
 
-};
-
-export type DependencyConfigAndroidT = {
-
-};
+export type DependencyConfigAndroidT = {};
 
 /**
  * Config of a project.

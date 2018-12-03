@@ -19,64 +19,54 @@ const path = require('path');
 const webSocketProxy = require('./util/webSocketProxy');
 const MiddlewareManager = require('./middleware/MiddlewareManager');
 
-import type { ConfigT } from '../core';
-import type { ConfigT as MetroConfigT } from 'metro-config/src/configTypes.flow';
+const loadMetroConfig = require('../util/loadMetroConfig');
 
 export type Args = {|
-  +assetExts: $ReadOnlyArray < string >,
-  +cert: string,
-    +customLogReporterPath ?: string,
-    +host: string,
-      +https: boolean,
-        +maxWorkers: number,
-          +key: string,
-            +nonPersistent: boolean,
-              +platforms: $ReadOnlyArray < string >,
-                +port: number,
-                  +projectRoot: string,
-                    +providesModuleNodeModules: Array < string >,
-                      +resetCache: boolean,
-                        +sourceExts: $ReadOnlyArray < string >,
-                          +transformer ?: string,
-                          +verbose: boolean,
-                            +watchFolders: $ReadOnlyArray < string >,
+  assetExts?: string[],
+  cert?: string,
+  customLogReporterPath?: string,
+  host?: string,
+  https?: boolean,
+  maxWorkers?: number,
+  key?: string,
+  nonPersistent?: boolean,
+  platforms?: string[],
+  port?: number,
+  projectRoot?: string,
+  providesModuleNodeModules?: string[],
+  resetCache?: boolean,
+  sourceExts?: string[],
+  transformer?: string,
+  verbose?: boolean,
+  watchFolders?: string[],
 |};
 
-async function runServer(args: Args, config: ConfigT) {
+async function runServer(args: Args) {
+  const metroConfig = loadMetroConfig({
+    maxWorkers: args.maxWorkers,
+    port: args.port,
+    resetCache: args.resetCache,
+    watchFolders: args.watchFolders,
+    sourceExts: args.sourceExts,
+    reporter,
+  });
+
   const terminal = new Terminal(process.stdout);
   const ReporterImpl = getReporterImpl(args.customLogReporterPath || null);
   const reporter = new ReporterImpl(terminal);
-  const middlewareManager = new MiddlewareManager(args);
+  
+  const middlewareManager = new MiddlewareManager({
+    host: args.host,
+    watchFolders: metroConfig.watchFolders
+  });
 
   middlewareManager.getConnectInstance().use(morgan('combined'));
 
-  args.watchFolders.forEach(middlewareManager.serveStatic.bind(middlewareManager));
+  metroConfig.watchFolders.forEach(middlewareManager.serveStatic.bind(middlewareManager));
 
-  // @todo(mike) replace this with real config
-  const metroConfig = {};
-
-  // $FlowFixMe Metro configuration is immutable.
-  metroConfig.maxWorkers = args.maxWorkers;
-  // $FlowFixMe Metro configuration is immutable.
-  metroConfig.server.port = args.port;
-  // $FlowFixMe Metro configuration is immutable.
-  metroConfig.reporter = reporter;
-  // $FlowFixMe Metro configuration is immutable.
-  metroConfig.resetCache = args.resetCache;
-  // $FlowFixMe Metro configuration is immutable.
-  metroConfig.projectRoot = args.projectRoot;
-  // $FlowFixMe Metro configuration is immutable.
-  metroConfig.watchFolders = args.watchFolders.slice(0);
-  // $FlowFixMe Metro configuration is immutable.
   metroConfig.server.enhanceMiddleware = middleware =>
     middlewareManager.getConnectInstance().use(middleware);
 
-  if (args.sourceExts !== config.resolver.sourceExts) {
-    // $FlowFixMe Metro configuration is immutable.
-    metroConfig.resolver.sourceExts = args.sourceExts.concat(
-      metroConfig.resolver.sourceExts,
-    );
-  }
 
   const serverInstance = await Metro.runServer(metroConfig, {
     host: args.host,

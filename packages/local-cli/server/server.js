@@ -10,15 +10,9 @@
 
 'use strict';
 
-const runServer = require('./runServer');
-
-import type { ContextT } from '../core/types.flow';
-
-import type { Args as RunServerArgs } from './runServer';
-
 module.exports = {
   name: 'start',
-  func: runServer,
+  func: require('./runServer'),
   description: 'starts the webserver',
   options: [
     {

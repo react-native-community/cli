@@ -10,6 +10,8 @@
 
 'use strict';
 
+import type { ContextT } from '../core/types.flow';
+
 module.exports = {
   name: 'start',
   func: require('./runServer'),
@@ -26,6 +28,7 @@ module.exports = {
     {
       command: '--projectRoot [string]',
       description: 'Specify the main project root',
+      default: (ctx: ContextT) => ctx.root,
     },
     {
       command: '--watchFolders [list]',

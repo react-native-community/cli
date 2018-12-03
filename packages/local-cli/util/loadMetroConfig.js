@@ -22,23 +22,6 @@ const findPlugins = require('../core/findPlugins');
  */
 import type {ConfigT} from 'metro-config/src/configTypes.flow';
 
-// @todo(grabbou): why don't we just use process.cwd() like in the CLI?
-function getProjectRoot() {
-  /*
-   * React Native was installed using CocoaPods.
-   * 
-   * @todo(grabbou): Check if this still holds true now that we have sep. package
-   */
-  if (__dirname.match(/Pods[\/\\]React[\/\\]packager$/)) {
-    return path.resolve(__dirname, '../../../..');
-  }
-  /**
-   * Packager is running from `node_modules`.
-   * This is the default case for all projects created using 'react-native init'.
-   */
-  return path.resolve(__dirname, '../../');
-}
-
 const resolveSymlinksForRoots = (roots) =>
   roots.reduce<string[]>(
     (arr, rootPath) => arr.concat(findSymlinkedModules(rootPath, roots)),
@@ -99,7 +82,7 @@ export type ConfigOptionsT = {
  * Is it breaking to just use "defaults"?
  */
 module.exports = async function load(options: ConfigOptionsT): Promise<ConfigT> {
-  const argv = {cwd: options.projectRoot || getProjectRoot()};
+  const argv = {cwd: options.projectRoot};
   const plugins = findPlugins(argv.cwd);
 
   const config = await loadConfig(argv, getDefaultConfig());

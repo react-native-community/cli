@@ -10,7 +10,6 @@
 'use strict';
 
 const findSymlinkedModules = require('./findSymlinkedModules');
-const findReactNativePath = require('./findReactNativePath');
 const path = require('path');
 
 const {createBlacklist} = require('metro');
@@ -23,6 +22,7 @@ const findPlugins = require('../core/findPlugins');
  */
 import type {ConfigT} from 'metro-config/src/configTypes.flow';
 
+// @todo(grabbou): why don't we just use process.cwd() like in the CLI?
 function getProjectRoot() {
   /*
    * React Native was installed using CocoaPods.
@@ -57,7 +57,7 @@ const getBlacklistRE = () => {
   return createBlacklist([/.*\/__fixtures__\/.*/]);
 };
 
-const plugins = findPlugins()
+const plugins = findPlugins();
 
 /**
  * Default configuration
@@ -65,15 +65,13 @@ const plugins = findPlugins()
 const getDefaultConfig = () => ({
   resolver: {
     resolverMainFields: ['react-native', 'browser', 'main'],
-    blacklistRE: getBlacklistRE(),
-    assetRegistryPath: 'react-native/Libraries/Image/AssetRegistry',
-    hasteImplModulePath: require.resolve('react-native/jest/hasteImpl')
+    blacklistRE: getBlacklistRE()
   },
   serializer: {
     getModulesRunBeforeMainModule: () => [
       require.resolve('react-native/Libraries/Core/InitializeCore'),
     ],
-    getPolyfills: require.resolve('react-native/rn-get-polyfills'),
+    getPolyfills: require('react-native/rn-get-polyfills'),
   },
   server: {
     port: process.env.RCT_METRO_PORT || 8081,
@@ -103,7 +101,7 @@ export type ConfigOptionsT = {
  * Is it breaking to just use "defaults"?
  */
 module.exports = async function load(options: ConfigOptionsT): Promise<ConfigT> {
-  const argv = {cwd: getProjectRoot()};
+  const argv = {cwd: options.projectRoot || getProjectRoot()};
   const plugins = findPlugins(argv.cwd);
 
   const config = await loadConfig(argv, getDefaultConfig());
@@ -111,6 +109,19 @@ module.exports = async function load(options: ConfigOptionsT): Promise<ConfigT> 
   const platforms = ['ios', 'android', 'native', ...plugins.haste.platforms];
   const providesModuleNodeModules = ['react-native', ...plugins.haste.providesModuleNodeModules];
   
+  config.transformer.assetRegistryPath = 'react-native/Libraries/Image/AssetRegistry';
+  
+  config.resolver.hasteImplModulePath =
+    config.resolver.hasteImplModulePath || require.resolve('react-native/jest/hasteImpl');
+
+  config.resolver.platforms = config.resolver.platforms
+    ? config.resolver.platforms.concat(platforms)
+    : platforms;
+
+  config.resolver.providesModuleNodeModules = config.resolver.providesModuleNodeModules
+    ? config.resolver.providesModuleNodeModules.concat(providesModuleNodeModules)
+    : providesModuleNodeModules;
+
   if (options.maxWorkers) {
     config.maxWorkers = options.maxWorkers;
   }
@@ -126,11 +137,7 @@ module.exports = async function load(options: ConfigOptionsT): Promise<ConfigT> 
   if (options.resetCache) {
     config.resetCache = options.resetCache;
   }
-
-  if (options.projectRoot) {
-    config.projectRoot = options.projectRoot;
-  }
-
+  
   if (options.watchFolders) {
     config.watchFolders = options.watchFolders;
   }
@@ -143,14 +150,6 @@ module.exports = async function load(options: ConfigOptionsT): Promise<ConfigT> 
       config.resolver.sourceExts,
     );
   }
-
-  config.resolver.platforms = config.resolver.platforms
-    ? config.resolver.platforms.concat(platforms)
-    : platforms;
-
-  config.resolver.providesModuleNodeModules = config.resolver.providesModuleNodeModules
-    ? config.resolver.providesModuleNodeModules.concat(providesModuleNodeModules)
-    : providesModuleNodeModules;
 
   return config;
 };

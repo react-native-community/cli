@@ -17,7 +17,6 @@ const path = require('path');
 const printRunInstructions = require('../generator/printRunInstructions');
 const process = require('process');
 const yarn = require('../util/yarn');
-const findReactNativePath = require('../util/findReactNativePath');
 
 /**
  * Creates the template for a React Native project given the provided

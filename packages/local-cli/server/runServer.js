@@ -41,17 +41,18 @@ export type Args = {|
   watchFolders?: string[],
 |};
 
-async function runServer(args: Args) {
+async function runServer(argv: *, ctx: *, args: Args) {
   const terminal = new Terminal(process.stdout);
   const ReporterImpl = getReporterImpl(args.customLogReporterPath || null);
   const reporter = new ReporterImpl(terminal);
-  
+
   const metroConfig = await loadMetroConfig({
     maxWorkers: args.maxWorkers,
     port: args.port,
     resetCache: args.resetCache,
     watchFolders: args.watchFolders,
     sourceExts: args.sourceExts,
+    projectRoot: args.projectRoot,
     reporter,
   });
   

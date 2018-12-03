@@ -15,6 +15,7 @@ const chalk = require('chalk');
 const childProcess = require('child_process');
 const commander = require('commander');
 const getCommands = require('./core/getCommands');
+const minimist = require('minimist');
 const init = require('./init/init');
 const path = require('path');
 const pkg = require('./package.json');
@@ -123,12 +124,11 @@ const addCommand = (command: CommandT, ctx: ContextT) => {
       typeof opt.default === 'function' ? opt.default(ctx) : opt.default,
     ),
   );
-
-  // Placeholder option for --config, which is parsed before any other option,
-  // but needs to be here to avoid "unknown option" errors when specified
-  
   // @todo(grabbou): Bring back support for it. This is Metro specific.
   // cmd.option('--config [string]', 'Path to the CLI configuration file');
+
+  // This is needed to avoid `unknown option` error by Commander.js
+  cmd.option('--projectRoot [string]', 'Path to the root of the project');
 };
 
 async function run() {
@@ -138,12 +138,19 @@ async function run() {
 
   childProcess.execFileSync(path.join(__dirname, setupEnvScript));
 
-  // @todo(grabbou): Root !== process.cwd() in all the cases.
-  // Respect `--projectRoot` flag.
-  const root = process.cwd();
-  const ctx = { root };
+  /**
+   * Read passed `options` and take the "global" settings
+   * 
+   * @todo(grabbou): Consider unifying this by removing either `commander`
+   * or `minimist`
+   */
+  const options = minimist(process.argv.slice(2));
 
-  const commands = getCommands(root);
+  const ctx = {
+    root: path.resolve(options.projectRoot) || process.cwd(),
+  };
+
+  const commands = getCommands(ctx.root);
 
   commands.forEach(command => addCommand(command, ctx));
 

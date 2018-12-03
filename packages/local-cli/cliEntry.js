@@ -126,7 +126,9 @@ const addCommand = (command: CommandT, ctx: ContextT) => {
 
   // Placeholder option for --config, which is parsed before any other option,
   // but needs to be here to avoid "unknown option" errors when specified
-  cmd.option('--config [string]', 'Path to the CLI configuration file');
+  
+  // @todo(grabbou): Bring back support for it. This is Metro specific.
+  // cmd.option('--config [string]', 'Path to the CLI configuration file');
 };
 
 async function run() {

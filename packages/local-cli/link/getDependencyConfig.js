@@ -32,12 +32,12 @@ module.exports = function getDependencyConfig(
       const folder = path.join(ctx.root, 'node_modules', packageName);
       const config = getPackageConfiguration(folder);
 
-      let platformConfigs = {ios: null, android: null};
+      let platformConfigs = {ios: undefined, android: undefined};
 
       Object.keys(availablePlatforms)
         .forEach(platform => {
           platformConfigs[platform] = availablePlatforms[platform]
-            .dependencyConfig(ctx.root, config[platform]);
+            .dependencyConfig(ctx.root, config[platform] || {});
         });
 
       return acc.concat({

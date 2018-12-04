@@ -14,11 +14,11 @@ module.exports = function getProjectConfig(
 ): ProjectConfigT {
   const config = getPackageConfiguration(ctx.root);
   
-  let platformConfigs = {ios: null, android: null};
+  let platformConfigs = {ios: undefined, android: undefined};
 
   Object.keys(availablePlatforms)
     .forEach(platform => {
-      const platformConfig = availablePlatforms[platform]
+      platformConfigs[platform] = availablePlatforms[platform]
         .projectConfig(ctx.root, config[platform] || {});
     });
   

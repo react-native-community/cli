@@ -49,7 +49,6 @@ module.exports = function getDependencyConfig(
         params: getParams(folder)
       });
     } catch (e) {
-      console.log(e);
       return acc;
     }
   }, []);

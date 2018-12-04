@@ -140,6 +140,6 @@ module.exports = async function load(
   if (options) {
     overwriteWithOptions(config, options);
   }
-  console.log(config);
+
   return config;
 };

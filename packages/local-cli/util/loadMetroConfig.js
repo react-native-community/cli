@@ -42,6 +42,9 @@ const getBlacklistRE = () => {
 
 /**
  * Default configuration
+ * 
+ * @todo(grabbou): As a separate PR, haste.platforms should be added before "native".
+ * Otherwise, a.native.js will not load on Windows or other platforms
  */
 const getDefaultConfig = (root: string) => {
   const plugins = findPlugins(root);
@@ -51,7 +54,7 @@ const getDefaultConfig = (root: string) => {
       resolverMainFields: ['react-native', 'browser', 'main'],
       blacklistRE: getBlacklistRE(),
       platforms: ['ios', 'android', 'native', ...plugins.haste.platforms],
-      providesModuleNodeModules: plugins.haste.providesModuleNodeModules,
+      providesModuleNodeModules: ['react-native', ...plugins.haste.providesModuleNodeModules],
       hasteImplModulePath: require.resolve('react-native/jest/hasteImpl')
     },
     serializer: {
@@ -137,6 +140,6 @@ module.exports = async function load(
   if (options) {
     overwriteWithOptions(config, options);
   }
-
+  console.log(config);
   return config;
 };

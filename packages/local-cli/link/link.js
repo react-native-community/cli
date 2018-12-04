@@ -116,8 +116,10 @@ const linkAssets = (platforms, project, assets) => {
  */
 function link(args: Array<string>, ctx: ContextT) {
   let platforms;
+  let project;
   try {
     platforms = getPlatforms(ctx.root);
+    project = getProjectConfig(ctx, platforms);
   } catch (err) {
     log.error(
       'ERRPACKAGEJSON',
@@ -125,7 +127,6 @@ function link(args: Array<string>, ctx: ContextT) {
     );
     return Promise.reject(err);
   }
-  const project = getProjectConfig(ctx, platforms);
   const hasProjectConfig = Object.keys(platforms).reduce(
     (acc, key) => acc || key in project,
     false,

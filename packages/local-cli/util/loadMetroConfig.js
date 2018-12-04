@@ -43,25 +43,33 @@ const getBlacklistRE = () => {
 /**
  * Default configuration
  */
-const getDefaultConfig = () => ({
-  resolver: {
-    resolverMainFields: ['react-native', 'browser', 'main'],
-    blacklistRE: getBlacklistRE()
-  },
-  serializer: {
-    getModulesRunBeforeMainModule: () => [
-      require.resolve('react-native/Libraries/Core/InitializeCore'),
-    ],
-    getPolyfills: require('react-native/rn-get-polyfills'),
-  },
-  server: {
-    port: process.env.RCT_METRO_PORT || 8081,
-  },
-  transformer: {
-    babelTransformerPath: require.resolve('metro/src/reactNativeTransformer'),
-  },
-  watchFolders: getWatchFolders(),
-});
+const getDefaultConfig = (root: string) => {
+  const plugins = findPlugins(root);
+
+  return ({
+    resolver: {
+      resolverMainFields: ['react-native', 'browser', 'main'],
+      blacklistRE: getBlacklistRE(),
+      platforms: ['ios', 'android', 'native', ...plugins.haste.platforms],
+      providesModuleNodeModules: plugins.haste.providesModuleNodeModules,
+      hasteImplModulePath: require.resolve('react-native/jest/hasteImpl')
+    },
+    serializer: {
+      getModulesRunBeforeMainModule: () => [
+        require.resolve('react-native/Libraries/Core/InitializeCore'),
+      ],
+      getPolyfills: require('react-native/rn-get-polyfills'),
+    },
+    server: {
+      port: process.env.RCT_METRO_PORT || 8081,
+    },
+    transformer: {
+      babelTransformerPath: require.resolve('metro/src/reactNativeTransformer'),
+      assetRegistryPath: require.resolve('react-native/Libraries/Image/AssetRegistry')
+    },
+    watchFolders: getWatchFolders(),
+  });
+};
 
 export type ConfigOptionsT = {
   maxWorkers?: number,
@@ -69,37 +77,17 @@ export type ConfigOptionsT = {
   resetCache?: boolean,
   watchFolders?: string[],
   sourceExts?: string[],
-  reporter: any,
+  reporter?: any,
   config?: string,
 };
 
 /**
- * Loads Metro Config and applies `options` on top of the resolved config.
+ * Overwrites Metro configuration with options. 
  * 
- * This allows the CLI to always overwrite the file settings.
- * 
- * @todo(grabbou): Is this really how we want it? 
- * Is it breaking to just use "defaults"?
+ * This ensures that options are always taking precedence over other
+ * configuration present.
  */
-module.exports = async function load(projectRoot: string, options: ConfigOptionsT): Promise<ConfigT> {
-  const plugins = findPlugins(projectRoot);
-
-  const config = await loadConfig({
-    cwd: projectRoot,
-    config: options.config
-  }, getDefaultConfig());
-
-  config.transformer.assetRegistryPath = 'react-native/Libraries/Image/AssetRegistry';
-  
-  config.resolver.hasteImplModulePath =
-    config.resolver.hasteImplModulePath || require.resolve('react-native/jest/hasteImpl');
-
-  config.resolver.platforms = config.resolver.platforms
-    .concat(plugins.haste.platforms);
-
-  config.resolver.providesModuleNodeModules = config.resolver.providesModuleNodeModules
-    .concat(plugins.haste.providesModuleNodeModules);
-
+const overwriteWithOptions = (config: ConfigT, options: ConfigOptionsT) => {
   if (options.maxWorkers) {
     config.maxWorkers = options.maxWorkers;
   }
@@ -127,6 +115,27 @@ module.exports = async function load(projectRoot: string, options: ConfigOptions
     config.resolver.sourceExts = options.sourceExts.concat(
       config.resolver.sourceExts,
     );
+  }
+};
+
+/**
+ * Loads Metro Config and applies `options` on top of the resolved config.
+ * 
+ * This allows the CLI to always overwrite the file settings.
+ */
+module.exports = async function load(
+  projectRoot: string,
+  options?: ConfigOptionsT = {}
+): Promise<ConfigT> {
+  const defaultConfig = getDefaultConfig(projectRoot);
+  
+  const config = await loadConfig({
+    cwd: projectRoot,
+    config: options.config
+  }, defaultConfig);
+
+  if (options) {
+    overwriteWithOptions(config, options);
   }
 
   return config;

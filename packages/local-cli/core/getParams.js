@@ -1,7 +1,5 @@
 /**
  * @flow
- * 
- * @todo(grabbou): This file should be moved to a `link`-related folder.
  */
 
 'use strict';

@@ -108,7 +108,6 @@ export type PlatformsT = {
   [name: string]: PlatformConfigT<any, any, any>
 };
 
-// @todo(grabbou): Get this from `DefinitelyTyped` or somewhere
 export type InquirerPromptT = any;
 
 /**

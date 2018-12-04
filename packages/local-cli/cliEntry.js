@@ -124,6 +124,7 @@ const addCommand = (command: CommandT, ctx: ContextT) => {
       typeof opt.default === 'function' ? opt.default(ctx) : opt.default,
     ),
   );
+  
   // This is needed to avoid `unknown option` error by Commander.js
   cmd.option('--projectRoot [string]', 'Path to the root of the project');
 };

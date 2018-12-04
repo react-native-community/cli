@@ -45,3 +45,5 @@ module.exports = function getHooks(root: string) {
   
     return acc;
 };
+
+module.exports.makeCommand = makeCommand;

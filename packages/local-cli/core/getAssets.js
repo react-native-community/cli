@@ -33,3 +33,5 @@ module.exports = function getAssets(root: string) {
   const config = getPackageConfiguration(root);
   return findAssets(root, config.assets);
 };
+
+module.exports.findAssets = findAssets;

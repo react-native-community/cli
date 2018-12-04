@@ -1,6 +1,7 @@
 /**
  * @flow
  */
+const path = require('path');
 
 import type { PackageConfigurationT } from './types.flow';
 

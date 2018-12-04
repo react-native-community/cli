@@ -36,7 +36,7 @@ module.exports = function getDependencyConfig(
 
       Object.keys(availablePlatforms)
         .forEach(platform => {
-          const platformConfig = availablePlatforms[platform]
+          platformConfigs[platform] = availablePlatforms[platform]
             .dependencyConfig(ctx.root, config[platform]);
         });
 
@@ -49,6 +49,7 @@ module.exports = function getDependencyConfig(
         params: getParams(folder)
       });
     } catch (e) {
+      console.log(e);
       return acc;
     }
   }, []);

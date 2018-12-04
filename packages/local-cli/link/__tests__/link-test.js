@@ -11,7 +11,12 @@
 'use strict';
 
 const log = require('npmlog');
+
 jest.setMock('chalk', {grey: str => str});
+
+const config = {
+  ctx: process.cwd(),
+};
 
 describe('link', () => {
   beforeEach(() => {
@@ -21,11 +26,7 @@ describe('link', () => {
   });
 
   it('should reject when run in a folder without package.json', done => {
-    const config = {
-      getProjectConfig: () => {
-        throw new Error('No package.json found');
-      },
-    };
+    
 
     const link = require('../link').func;
     link([], config).catch(() => done());

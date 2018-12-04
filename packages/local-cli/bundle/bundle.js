@@ -16,10 +16,7 @@ const outputBundle = require('metro/src/shared/output/bundle');
 /**
  * Builds the bundle starting to look for dependencies at the given entry path.
  */
-function bundleWithOutput(argv, config, args, output) {
-  if (!output) {
-    output = outputBundle;
-  }
+function bundleWithOutput(_, config, args, output) {
   return buildBundle(args, config, output);
 }
 
@@ -28,6 +25,6 @@ module.exports = {
   description: 'builds the javascript bundle for offline use',
   func: bundleWithOutput,
   options: bundleCommandLineArgs,
-  // not used by the CLI itself
+  // Used by `ramBundle.js`
   withOutput: bundleWithOutput,
 };

@@ -15,6 +15,7 @@ const chalk = require('chalk');
 const childProcess = require('child_process');
 const commander = require('commander');
 const getCommands = require('./core/getCommands');
+const getLegacyConfig = require('./core/getLegacyConfig');
 const minimist = require('minimist');
 const init = require('./init/init');
 const path = require('path');
@@ -144,10 +145,13 @@ async function run() {
    */
   const options = minimist(process.argv.slice(2));
 
+  const root = options.projectRoot
+    ? path.resolve(options.projectRoot)
+    : process.cwd();
+
   const ctx = {
-    root: options.projectRoot
-      ? path.resolve(options.projectRoot)
-      : process.cwd(),
+    ...getLegacyConfig(root),
+    root,
   };
 
   const commands = getCommands(ctx.root);

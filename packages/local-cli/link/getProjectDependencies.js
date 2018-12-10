@@ -10,11 +10,18 @@
 const path = require('path');
 
 /**
+ * List of projects that should not be treated as projects to be linked. 
+ * 
+ * That includes `react-native` itself and the CLI project (under its real and staging npm package).
+ */
+const EXCLUDED_PROJECTS = ['react-native', 'react-native-local-cli', 'react-native-local-cli-preview'];
+
+/**
  * Returns an array of dependencies that should be linked/checked.
  */
 module.exports = function getProjectDependencies(cwd) {
   const pjson = require(path.join(cwd || process.cwd(), './package.json'));
   return Object.keys(pjson.dependencies || {}).filter(
-    name => name !== 'react-native',
+    name => EXCLUDED_PROJECTS.includes(name) === false,
   );
 };

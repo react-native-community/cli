@@ -82,7 +82,7 @@ const findHasteConfigInPackageAndConcat = (pjson, haste) => {
   }
 };
 
-const findPluginInFolder = folder => {
+const findPluginsInFolder = folder => {
   const pjson = readPackage(folder);
 
   if (!pjson) {
@@ -116,17 +116,16 @@ const findPluginInFolder = folder => {
 /**
  * Find plugins in package.json of the given folder
  * @param {String} folder Path to the folder to get the package.json from
- * @type  {Object}        Object of commands and platform plugins
  */
-module.exports = function findPlugins(folders) {
-  const plugins = folders.map(findPluginInFolder);
+module.exports = function findPlugins(folder: string) {
+  const plugin = findPluginsInFolder(folder);
   return {
-    commands: uniq(flatten(plugins.map(p => p.commands))),
-    platforms: uniq(flatten(plugins.map(p => p.platforms))),
+    commands: uniq(flatten(plugin.commands)),
+    platforms: uniq(flatten(plugin.platforms)),
     haste: {
-      platforms: uniq(flatten(plugins.map(p => p.haste.platforms))),
+      platforms: uniq(flatten(plugin.haste.platforms)),
       providesModuleNodeModules: uniq(
-        flatten(plugins.map(p => p.haste.providesModuleNodeModules)),
+        flatten(plugin.haste.providesModuleNodeModules),
       ),
     },
   };

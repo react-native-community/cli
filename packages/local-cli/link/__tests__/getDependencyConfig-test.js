@@ -10,25 +10,38 @@
 
 'use strict';
 
+const platforms = {
+  ios: {
+    dependencyConfig: () => ({ sampleiOSKey: '' }),
+  },
+  android: {
+    dependencyConfig: () => ({ sampleAndroidKey: '' }),
+  },
+};
+
+jest.setMock('../../core/getPackageConfiguration', (folder) => {
+  if (folder === '/root/node_modules/abcd') {
+    throw new Error('Cannot require');
+  }
+  return {};
+});
+
 const getDependencyConfig = require('../getDependencyConfig');
 
 describe('getDependencyConfig', () => {
-  it("should return an array of dependencies' rnpm config", () => {
-    const config = {
-      getDependencyConfig: jest.fn(),
-    };
+  it("should return an array of dependencies' config", () => {
+    const dependencies = getDependencyConfig({ root: '/root' }, platforms, ['react-native-windows']);
 
-    expect(Array.isArray(getDependencyConfig(config, ['abcd']))).toBeTruthy();
-    expect(config.getDependencyConfig.mock.calls.length).toEqual(1);
+    expect(dependencies).toMatchSnapshot();
   });
 
   it('should filter out invalid react-native projects', () => {
-    const config = {
-      getDependencyConfig: jest.fn().mockImplementation(() => {
-        throw new Error('Cannot require');
-      }),
-    };
+    const dependencies = getDependencyConfig(
+      { root: '/root' },
+      platforms,
+      ['react-native-windows', 'abcd']
+    );
 
-    expect(getDependencyConfig(config, ['abcd'])).toEqual([]);
+    expect(dependencies).toMatchSnapshot();
   });
 });

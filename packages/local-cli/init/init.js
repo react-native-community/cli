@@ -17,7 +17,6 @@ const path = require('path');
 const printRunInstructions = require('../generator/printRunInstructions');
 const process = require('process');
 const yarn = require('../util/yarn');
-const findReactNativePath = require('../util/findReactNativePath');
 
 /**
  * Creates the template for a React Native project given the provided
@@ -52,7 +51,7 @@ function init(projectDir, argsOrName) {
  * @param options Command line arguments parsed by minimist.
  */
 function generateProject(destinationRoot, newProjectName, options) {
-  var reactNativePackageJson = require(findReactNativePath('package.json'));
+  var reactNativePackageJson = require.resolve('react-native/package.json');
   var {peerDependencies} = reactNativePackageJson;
   if (!peerDependencies) {
     console.error(

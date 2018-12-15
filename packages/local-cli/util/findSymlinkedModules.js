@@ -34,19 +34,11 @@ module.exports = function findSymlinkedModules(
   projectRoot: string,
   ignoredRoots?: Array<string> = [],
 ) {
-  const timeStart = Date.now();
   const nodeModuleRoot = path.join(projectRoot, 'node_modules');
   const resolvedSymlinks = findModuleSymlinks(nodeModuleRoot, [
     ...ignoredRoots,
     projectRoot,
   ]);
-  const timeEnd = Date.now();
-
-  console.log(
-    `Scanning folders for symlinks in ${nodeModuleRoot} (${timeEnd -
-      timeStart}ms)`,
-  );
-
   return resolvedSymlinks;
 };
 

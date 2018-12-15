@@ -10,74 +10,52 @@
 
 'use strict';
 
-const runServer = require('./runServer');
+const path = require('path');
 
-import type {RNConfig} from '../core';
-import type {ConfigT} from 'metro-config/src/configTypes.flow';
-import type {Args as RunServerArgs} from './runServer';
-
-/**
- * Starts the React Native Packager Server.
- */
-function server(argv: mixed, config: RNConfig, args: RunServerArgs) {
-  /* $FlowFixMe(site=react_native_fb) ConfigT shouldn't be extendable. */
-  const configT: ConfigT = config;
-  runServer(args, configT);
-}
+import type { ContextT } from '../core/types.flow';
 
 module.exports = {
   name: 'start',
-  func: server,
+  func: require('./runServer'),
   description: 'starts the webserver',
   options: [
     {
       command: '--port [number]',
       parse: (val: string) => Number(val),
-      default: (config: ConfigT) => config.server.port,
     },
     {
       command: '--host [string]',
       default: 'localhost',
     },
     {
-      command: '--projectRoot [string]',
-      description: 'Specify the main project root',
-      default: (config: ConfigT) => config.projectRoot,
-    },
-    {
       command: '--watchFolders [list]',
       description:
         'Specify any additional folders to be added to the watch list',
       parse: (val: string) => val.split(','),
-      default: (config: ConfigT) => config.watchFolders,
     },
     {
       command: '--assetExts [list]',
       description:
         'Specify any additional asset extensions to be used by the packager',
       parse: (val: string) => val.split(','),
-      default: (config: ConfigT) => config.resolver.assetExts,
     },
     {
       command: '--sourceExts [list]',
       description:
         'Specify any additional source extensions to be used by the packager',
       parse: (val: string) => val.split(','),
-      default: (config: ConfigT) => config.resolver.sourceExts,
     },
     {
       command: '--platforms [list]',
       description:
         'Specify any additional platforms to be used by the packager',
       parse: (val: string) => val.split(','),
-      default: (config: ConfigT) => config.resolver.platforms,
     },
     {
       command: '--providesModuleNodeModules [list]',
       description:
         'Specify any npm packages that import dependencies with providesModule',
       parse: (val: string) => val.split(','),
-      default: (config: ConfigT) => config.resolver.providesModuleNodeModules,
     },
     {
       command: '--max-workers [number]',
@@ -85,7 +63,6 @@ module.exports = {
         'Specifies the maximum number of workers the worker-pool ' +
         'will spawn for transforming files. This defaults to the number of the ' +
         'cores available on your machine.',
-      default: (config: ConfigT) => config.maxWorkers,
       parse: (workers: string) => Number(workers),
     },
     {
@@ -124,6 +101,11 @@ module.exports = {
     {
       command: '--cert [path]',
       description: 'Path to custom SSL cert',
+    },
+    {
+      command: '--config [string]',
+      description: 'Path to the CLI configuration file',
+      parse: (val: string) => path.resolve(val),
     },
   ],
 };

@@ -4,13 +4,15 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
+ * @flow
  */
 
 const log = require('npmlog');
 
 const getProjectDependencies = require('./getProjectDependencies');
 const getDependencyConfig = require('./getDependencyConfig');
+const getProjectConfig = require('./getProjectConfig');
+
 const difference = require('lodash').difference;
 const filter = require('lodash').filter;
 const flatten = require('lodash').flatten;
@@ -18,6 +20,10 @@ const isEmpty = require('lodash').isEmpty;
 const promiseWaterfall = require('./promiseWaterfall');
 const commandStub = require('./commandStub');
 const promisify = require('./promisify');
+
+const getPlatforms = require('../core/getPlatforms');
+
+import type { ContextT } from '../core/types.flow';
 
 log.heading = 'rnpm-link';
 
@@ -29,7 +35,7 @@ const unlinkDependency = (
   otherDependencies,
 ) => {
   Object.keys(platforms || {}).forEach(platform => {
-    if (!project[platform] || !dependency[platform]) {
+    if (!project[platform] || !dependency.config[platform]) {
       return;
     }
 
@@ -44,7 +50,7 @@ const unlinkDependency = (
     const isInstalled = linkConfig.isInstalled(
       project[platform],
       packageName,
-      dependency[platform],
+      dependency.config[platform],
     );
 
     if (!isInstalled) {
@@ -56,7 +62,9 @@ const unlinkDependency = (
 
     linkConfig.unregister(
       packageName,
-      dependency[platform],
+      // $FlowFixMe: We check for existence on line 38
+      dependency.config[platform],
+      // $FlowFixMe: We check for existence on line 38
       project[platform],
       otherDependencies,
     );
@@ -75,16 +83,13 @@ const unlinkDependency = (
  * If optional argument [packageName] is provided, it's the only one
  * that's checked
  */
-function unlink(args, config) {
+function unlink(args: Array<string>, ctx: ContextT) {
   const packageName = args[0];
 
   let platforms;
-  let project;
-  let dependency;
 
   try {
-    platforms = config.getPlatformConfig();
-    project = config.getProjectConfig();
+    platforms = getPlatforms(ctx.root);
   } catch (err) {
     log.error(
       'ERRPACKAGEJSON',
@@ -93,21 +98,25 @@ function unlink(args, config) {
     return Promise.reject(err);
   }
 
+  const allDependencies = getDependencyConfig(ctx, platforms, getProjectDependencies());
+  let otherDependencies;
+  let dependency;
+
   try {
-    dependency = config.getDependencyConfig(packageName);
+    const idx = allDependencies.findIndex(p => p.name === packageName);
+
+    if (idx === -1) {
+      throw new Error(`Project ${packageName} is not a react-native library`);
+    }
+
+    otherDependencies = [...allDependencies];
+    dependency = otherDependencies.splice(idx, 1)[0];
   } catch (err) {
-    log.warn(
-      'ERRINVALIDPROJ',
-      `Project ${packageName} is not a react-native library`,
-    );
+    log.warn('ERRINVALIDPROJ', err.message);
     return Promise.reject(err);
   }
 
-  const allDependencies = getDependencyConfig(config, getProjectDependencies());
-  const otherDependencies = filter(
-    allDependencies,
-    d => d.name !== packageName,
-  );
+  const project = getProjectConfig(ctx, platforms);
 
   const tasks = [
     () => promisify(dependency.commands.preunlink || commandStub),
@@ -140,11 +149,12 @@ function unlink(args, config) {
           platforms[platform] &&
           platforms[platform].linkConfig &&
           platforms[platform].linkConfig();
-        if (!linkConfig || !linkConfig.unlinkAssets) {
+        if (!linkConfig || !linkConfig.unlinkAssets || !project[platform]) {
           return;
         }
 
         log.info(`Unlinking assets from ${platform} project`);
+        // $FlowFixMe: We check for platorm existence on line 150
         linkConfig.unlinkAssets(assets, project[platform]);
       });
 

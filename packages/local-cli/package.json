@@ -67,7 +67,8 @@
     "babel-jest": "24.0.0-alpha.6",
     "eslint": "^5.7.0",
     "flow-bin": "0.87.0",
-    "jest": "24.0.0-alpha.6"
+    "jest": "24.0.0-alpha.6",
+    "react-native": "^0.57.0"
   },
   "peerDependencies": {
     "react-native": "^0.57.0"

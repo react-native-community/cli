@@ -13,7 +13,7 @@
 jest.mock('path');
 jest.mock('fs');
 
-const findAssets = require('../findAssets');
+const { findAssets } = require('../getAssets');
 const dependencies = require('../__fixtures__/dependencies');
 const fs = require('fs');
 

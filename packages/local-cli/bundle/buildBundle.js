@@ -16,28 +16,20 @@ const outputBundle = require('metro/src/shared/output/bundle');
 const path = require('path');
 const saveAssets = require('./saveAssets');
 
-import type {RequestOptions, OutputOptions} from './types.flow';
-import type {ConfigT} from 'metro-config/src/configTypes.flow';
+const loadMetroConfig = require('../util/loadMetroConfig');
 
-async function buildBundle(
-  args: OutputOptions & {
-    assetsDest: mixed,
-    entryFile: string,
-    maxWorkers: number,
-    resetCache: boolean,
-    transformer: string,
-    minify: boolean,
-  },
-  configPromise: Promise<ConfigT>,
-  /* $FlowFixMe(>=0.85.0 site=react_native_fb) This comment suppresses an error
-   * found when Flow v0.85 was deployed. To see the error, delete this comment
-   * and run Flow. */
-  output = outputBundle,
-) {
+import type { ContextT } from '../core/types.flow';
+import type { CommandLineArgs } from './bundleCommandLineArgs';
+
+async function buildBundle(args: CommandLineArgs, ctx: ContextT, output = outputBundle) {
+  const config = await loadMetroConfig(ctx.root, {
+    resetCache: args.resetCache,
+    config: args.config
+  });
+
   // This is used by a bazillion of npm modules we don't control so we don't
   // have other choice than defining it as an env variable here.
   process.env.NODE_ENV = args.dev ? 'development' : 'production';
-  const config = await configPromise;
 
   let sourceMapUrl = args.sourcemapOutput;
   if (sourceMapUrl && !args.sourcemapUseAbsolutePath) {
@@ -52,7 +44,7 @@ async function buildBundle(
     platform: args.platform,
   };
 
-  const server = new Server({...config, resetCache: args.resetCache});
+  const server = new Server(config);
 
   try {
     const bundle = await output.build(server, requestOpts);

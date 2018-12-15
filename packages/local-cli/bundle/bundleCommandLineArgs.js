@@ -4,10 +4,31 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
+ * @flow
  */
 
 'use strict';
+
+const path = require('path');
+
+export type CommandLineArgs = {
+  assetsDest?: string,
+  entryFile: string,
+  resetCache: boolean,
+  resetGlobalCache: boolean,
+  transformer?: string,
+  minify?: boolean,
+  config?: string,
+  platform?: string,
+  dev: boolean,
+  bundleOutput: string,
+  bundleEncoding?: string,
+  maxWorkers?: number,
+  sourcemapOutput?: string,
+  sourcemapSourcesRoot?: string,
+  sourcemapUseAbsolutePath: boolean,
+  verbose: boolean,
+};
 
 module.exports = [
   {
@@ -27,7 +48,7 @@ module.exports = [
   {
     command: '--dev [boolean]',
     description: 'If false, warnings are disabled and the bundle is minified',
-    parse: val => (val === 'false' ? false : true),
+    parse: (val: string) => (val === 'false' ? false : true),
     default: true,
   },
   {
@@ -36,7 +57,7 @@ module.exports = [
       'Allows overriding whether bundle is minified. This defaults to ' +
       'false if dev is true, and true if dev is false. Disabling minification ' +
       'can be useful for speeding up production builds for testing purposes.',
-    parse: val => (val === 'false' ? false : true),
+    parse: (val: string) => (val === 'false' ? false : true),
   },
   {
     command: '--bundle-output <string>',
@@ -92,5 +113,10 @@ module.exports = [
     description:
       'Try to fetch transformed JS code from the global cache, if configured.',
     default: false,
+  },
+  {
+    command: '--config [string]',
+    description: 'Path to the CLI configuration file',
+    parse: (val: string) => path.resolve(val),
   },
 ];

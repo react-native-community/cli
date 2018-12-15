@@ -1,17 +1,13 @@
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * @format
+ * @flow
  */
 
 'use strict';
 
 const spawn = require('child_process').spawn;
+const getPackageConfiguration = require('./getPackageConfiguration');
 
-module.exports = function makeCommand(command) {
+function makeCommand(command) {
   return cb => {
     if (!cb) {
       throw new Error(
@@ -36,3 +32,18 @@ module.exports = function makeCommand(command) {
     });
   };
 };
+
+module.exports = function getHooks(root: string) {
+  const commands = getPackageConfiguration(root).commands || {};
+  
+  const acc = {};
+  
+  Object.keys(commands)
+    .forEach(command => {
+      acc[command] = makeCommand(commands[command]);
+    });
+  
+    return acc;
+};
+
+module.exports.makeCommand = makeCommand;

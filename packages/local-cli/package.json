@@ -1,6 +1,6 @@
 {
-  "name": "react-native-local-cli-preview",
-  "version": "0.0.3",
+  "name": "react-native-local-cli",
+  "version": "1.0.0-alpha.4",
   "description": "Local CLI package used with React Native",
   "license": "MIT",
   "main": "cli.js",
@@ -15,7 +15,7 @@
       "/node_modules/",
       "/templates/"
     ],
-    "unmockedModulePathPatterns": [
+    "unmockedModulePathPattelocalrns": [
       "promise"
     ],
     "testEnvironment": "node"

@@ -7,8 +7,9 @@
   "bin": {
     "react-native": "bin.js"
   },
+  "engineStrict": true,
   "engines": {
-    "node": ">= 8.3"
+    "node": ">=8.3"
   },
   "jest": {
     "testPathIgnorePatterns": [

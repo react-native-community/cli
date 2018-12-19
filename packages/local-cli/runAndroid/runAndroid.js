@@ -14,7 +14,6 @@ const { spawnSync, spawn, execFileSync } = require('child_process');
 const fs = require('fs');
 const isString = require('lodash/isString');
 const path = require('path');
-const Promise = require('promise');
 const findReactNativeScripts = require('../util/findReactNativeScripts');
 const isPackagerRunning = require('../util/isPackagerRunning');
 const adb = require('./adb');

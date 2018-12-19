@@ -61,7 +61,9 @@ const getDefaultConfig = (root: string) => {
       port: process.env.RCT_METRO_PORT || 8081,
     },
     transformer: {
-      babelTransformerPath: require.resolve('metro/src/reactNativeTransformer'),
+      babelTransformerPath: require.resolve(
+        'metro-react-native-babel-transformer'
+      ),
       assetRegistryPath: require.resolve(
         'react-native/Libraries/Image/AssetRegistry'
       ),

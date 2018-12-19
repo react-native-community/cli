@@ -7,23 +7,19 @@
  * @flow
  */
 
+import type { ContextT } from '../core/types.flow';
+
 const log = require('npmlog');
 
-const getProjectDependencies = require('./getProjectDependencies');
-const getDependencyConfig = require('./getDependencyConfig');
+const { flatten, isEmpty, difference } = require('lodash');
 const getProjectConfig = require('./getProjectConfig');
-
-const difference = require('lodash').difference;
-const filter = require('lodash').filter;
-const flatten = require('lodash').flatten;
-const isEmpty = require('lodash').isEmpty;
+const getDependencyConfig = require('./getDependencyConfig');
+const getProjectDependencies = require('./getProjectDependencies');
 const promiseWaterfall = require('./promiseWaterfall');
 const commandStub = require('./commandStub');
 const promisify = require('./promisify');
 
 const getPlatforms = require('../core/getPlatforms');
-
-import type { ContextT } from '../core/types.flow';
 
 log.heading = 'rnpm-link';
 
@@ -32,7 +28,7 @@ const unlinkDependency = (
   project,
   dependency,
   packageName,
-  otherDependencies,
+  otherDependencies
 ) => {
   Object.keys(platforms || {}).forEach(platform => {
     if (!project[platform] || !dependency.config[platform]) {
@@ -50,7 +46,7 @@ const unlinkDependency = (
     const isInstalled = linkConfig.isInstalled(
       project[platform],
       packageName,
-      dependency.config[platform],
+      dependency.config[platform]
     );
 
     if (!isInstalled) {
@@ -66,13 +62,13 @@ const unlinkDependency = (
       dependency.config[platform],
       // $FlowFixMe: We check for existence on line 38
       project[platform],
-      otherDependencies,
+      otherDependencies
     );
 
     log.info(
       `Platform '${platform}' module ${
         dependency.name
-      } has been successfully unlinked`,
+      } has been successfully unlinked`
     );
   });
 };
@@ -93,12 +89,16 @@ function unlink(args: Array<string>, ctx: ContextT) {
   } catch (err) {
     log.error(
       'ERRPACKAGEJSON',
-      "No package found. Are you sure it's a React Native project?",
+      "No package found. Are you sure it's a React Native project?"
     );
     return Promise.reject(err);
   }
 
-  const allDependencies = getDependencyConfig(ctx, platforms, getProjectDependencies());
+  const allDependencies = getDependencyConfig(
+    ctx,
+    platforms,
+    getProjectDependencies()
+  );
   let otherDependencies;
   let dependency;
 
@@ -110,7 +110,7 @@ function unlink(args: Array<string>, ctx: ContextT) {
     }
 
     otherDependencies = [...allDependencies];
-    dependency = otherDependencies.splice(idx, 1)[0];
+    dependency = otherDependencies.splice(idx, 1)[0]; // eslint-disable-line prefer-destructuring
   } catch (err) {
     log.warn('ERRINVALIDPROJ', err.message);
     return Promise.reject(err);
@@ -126,7 +126,7 @@ function unlink(args: Array<string>, ctx: ContextT) {
         project,
         dependency,
         packageName,
-        otherDependencies,
+        otherDependencies
       ),
     () => promisify(dependency.commands.postunlink || commandStub),
   ];
@@ -137,11 +137,11 @@ function unlink(args: Array<string>, ctx: ContextT) {
       // link
       const assets = difference(
         dependency.assets,
-        flatten(allDependencies, d => d.assets),
+        flatten(allDependencies, d => d.assets)
       );
 
       if (isEmpty(assets)) {
-        return Promise.resolve();
+        return;
       }
 
       Object.keys(platforms || {}).forEach(platform => {
@@ -159,12 +159,12 @@ function unlink(args: Array<string>, ctx: ContextT) {
       });
 
       log.info(
-        `${packageName} assets has been successfully unlinked from your project`,
+        `${packageName} assets has been successfully unlinked from your project`
       );
     })
     .catch(err => {
       log.error(
-        `It seems something went wrong while unlinking. Error: ${err.message}`,
+        `It seems something went wrong while unlinking. Error: ${err.message}`
       );
       throw err;
     });

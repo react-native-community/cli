@@ -5,6 +5,18 @@
   ],
   "scripts": {
     "test": "cd packages/local-cli && yarn jest; cd -",
-    "flow-check": "cd packages/local-cli && yarn flow check; cd -"
+    "lint": "eslint packages",
+    "flow-check": "yarn lint && cd packages/local-cli && yarn flow check; cd -"
+  },
+  "devDependencies": {
+    "@callstack/eslint-config": "^3.0.2",
+    "eslint": "^5.10.0"
+  },
+  "eslintConfig": {
+    "extends": "@callstack",
+    "rules": {
+      "global-require": 0,
+      "no-console": 0
+    }
   }
 }

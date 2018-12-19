@@ -4,27 +4,31 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
+ * @flow
  */
-
-'use strict';
-
-const log = require('../util/log').out('bundle');
-const Server = require('metro/src/Server');
-
-const outputBundle = require('metro/src/shared/output/bundle');
-const path = require('path');
-const saveAssets = require('./saveAssets');
-
-const loadMetroConfig = require('../util/loadMetroConfig');
 
 import type { ContextT } from '../core/types.flow';
 import type { CommandLineArgs } from './bundleCommandLineArgs';
 
-async function buildBundle(args: CommandLineArgs, ctx: ContextT, output = outputBundle) {
+('use strict');
+
+const Server = require('metro/src/Server');
+
+const outputBundle = require('metro/src/shared/output/bundle');
+const path = require('path');
+const log = require('../util/log').out('bundle');
+const saveAssets = require('./saveAssets');
+
+const loadMetroConfig = require('../util/loadMetroConfig');
+
+async function buildBundle(
+  args: CommandLineArgs,
+  ctx: ContextT,
+  output = outputBundle
+) {
   const config = await loadMetroConfig(ctx.root, {
     resetCache: args.resetCache,
-    config: args.config
+    config: args.config,
   });
 
   // This is used by a bazillion of npm modules we don't control so we don't

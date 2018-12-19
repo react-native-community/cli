@@ -8,15 +8,15 @@
  * @flow strict
  */
 
-'use strict';
+import type { PackagerAsset } from './assetPathUtils';
+
+('use strict');
 
 const path = require('path');
 
-import type { PackagerAsset } from './assetPathUtils';
-
 function getAssetDestPathIOS(asset: PackagerAsset, scale: number): string {
-  const suffix = scale === 1 ? '' : '@' + scale + 'x';
-  const fileName = asset.name + suffix + '.' + asset.type;
+  const suffix = scale === 1 ? '' : `@${scale}x`;
+  const fileName = `${asset.name + suffix}.${asset.type}`;
   return path.join(asset.httpServerLocation.substr(1), fileName);
 }
 

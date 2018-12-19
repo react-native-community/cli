@@ -8,10 +8,8 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 describe('DeltaPatcher', () => {
-  const window = (global.window = {});
+  const window = (global.window = {}); // eslint-disable-line 
   require('../DeltaPatcher');
 
   it('should initialize to an empty bundle', () => {

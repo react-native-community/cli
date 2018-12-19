@@ -8,7 +8,7 @@
  * @format
  */
 
-module.exports = function(req, res, next) {
+module.exports = function getSecurityHeadersMiddleware(req, res, next) {
   const address = req.client.server.address();
 
   // Block any cross origin request.

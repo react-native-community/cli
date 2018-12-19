@@ -20,16 +20,13 @@
  * @format
  */
 
-'use strict';
+const optimistModule = require('optimist');
 
-var optimistModule = require('optimist');
-
-function parseCommandLine(config, args) {
-  var optimist = new optimistModule();
-  args = args || process.argv;
+function parseCommandLine(config, args = process.argv) {
+  const optimist = new optimistModule();
   // optimist default API requires you to write the command name three time
   // This is a small wrapper to accept an object instead
-  for (var i = 0; i < config.length; ++i) {
+  for (let i = 0; i < config.length; ++i) {
     if (config[i].type === 'string') {
       optimist.string(config[i].command);
     } else {
@@ -44,11 +41,11 @@ function parseCommandLine(config, args) {
       optimist.demand(config[i].command);
     }
   }
-  var argv = optimist.parse(args);
+  const argv = optimist.parse(args);
 
   // optimist doesn't have support for --dev=false, instead it returns 'false'
-  for (var i = 0; i < config.length; ++i) {
-    var command = config[i].command;
+  for (let i = 0; i < config.length; ++i) {
+    const { command } = config[i];
     if (argv[command] === undefined) {
       argv[command] = config[i].default;
     }
@@ -61,8 +58,8 @@ function parseCommandLine(config, args) {
     if (config[i].type === 'string') {
       // According to https://github.com/substack/node-optimist#numbers,
       // every argument that looks like a number should be converted to one.
-      var strValue = argv[command];
-      var numValue = strValue ? Number(strValue) : undefined;
+      const strValue = argv[command];
+      const numValue = strValue ? Number(strValue) : undefined;
       if (typeof numValue === 'number' && !isNaN(numValue)) {
         argv[command] = numValue;
       }

@@ -7,7 +7,5 @@
  * @format
  */
 
-'use strict';
-
 module.exports.out = () => jest.fn();
 module.exports.err = () => jest.fn();

@@ -8,8 +8,6 @@
  * @flow strict
  */
 
-'use strict';
-
 export type PackagerAsset = {
   +httpServerLocation: string,
   +name: string,
@@ -34,8 +32,9 @@ function getAndroidAssetSuffix(scale: number): string {
       return 'xxhdpi';
     case 4:
       return 'xxxhdpi';
+    default:
+      throw new Error('no such scale');
   }
-  throw new Error('no such scale');
 }
 
 // See https://developer.android.com/guide/topics/resources/drawable-resource.html
@@ -53,20 +52,21 @@ function getAndroidResourceFolderName(asset: PackagerAsset, scale: number) {
   if (!drawableFileTypes.has(asset.type)) {
     return 'raw';
   }
-  var suffix = getAndroidAssetSuffix(scale);
+  const suffix = getAndroidAssetSuffix(scale);
   if (!suffix) {
     throw new Error(
-      "Don't know which android drawable suffix to use for asset: " +
-        JSON.stringify(asset),
+      `Don't know which android drawable suffix to use for asset: ${JSON.stringify(
+        asset
+      )}`
     );
   }
-  const androidFolder = 'drawable-' + suffix;
+  const androidFolder = `drawable-${suffix}`;
   return androidFolder;
 }
 
 function getAndroidResourceIdentifier(asset: PackagerAsset) {
-  var folderPath = getBasePath(asset);
-  return (folderPath + '/' + asset.name)
+  const folderPath = getBasePath(asset);
+  return `${folderPath}/${asset.name}`
     .toLowerCase()
     .replace(/\//g, '_') // Encode folder structure in file name
     .replace(/([^a-z0-9_])/g, '') // Remove illegal chars
@@ -74,7 +74,7 @@ function getAndroidResourceIdentifier(asset: PackagerAsset) {
 }
 
 function getBasePath(asset: PackagerAsset) {
-  var basePath = asset.httpServerLocation;
+  let basePath = asset.httpServerLocation;
   if (basePath[0] === '/') {
     basePath = basePath.substr(1);
   }
@@ -82,8 +82,8 @@ function getBasePath(asset: PackagerAsset) {
 }
 
 module.exports = {
-  getAndroidAssetSuffix: getAndroidAssetSuffix,
-  getAndroidResourceFolderName: getAndroidResourceFolderName,
-  getAndroidResourceIdentifier: getAndroidResourceIdentifier,
-  getBasePath: getBasePath,
+  getAndroidAssetSuffix,
+  getAndroidResourceFolderName,
+  getAndroidResourceIdentifier,
+  getBasePath,
 };

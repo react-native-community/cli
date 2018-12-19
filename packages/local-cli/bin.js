@@ -17,12 +17,12 @@ if (isInstalledGlobally()) {
   console.error(
     [
       chalk.red(
-        'Looks like you installed react-native globally, maybe you meant react-native-cli?',
+        'Looks like you installed react-native globally, maybe you meant react-native-cli?'
       ),
       chalk.red('To fix the issue, run:'),
       'npm uninstall -g react-native',
       'npm install -g react-native-cli',
-    ].join('\n'),
+    ].join('\n')
   );
   process.exit(1);
 } else {

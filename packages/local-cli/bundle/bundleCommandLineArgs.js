@@ -7,8 +7,6 @@
  * @flow
  */
 
-'use strict';
-
 const path = require('path');
 
 export type CommandLineArgs = {
@@ -48,7 +46,7 @@ module.exports = [
   {
     command: '--dev [boolean]',
     description: 'If false, warnings are disabled and the bundle is minified',
-    parse: (val: string) => (val === 'false' ? false : true),
+    parse: (val: string) => val !== 'false',
     default: true,
   },
   {
@@ -57,7 +55,7 @@ module.exports = [
       'Allows overriding whether bundle is minified. This defaults to ' +
       'false if dev is true, and true if dev is false. Disabling minification ' +
       'can be useful for speeding up production builds for testing purposes.',
-    parse: (val: string) => (val === 'false' ? false : true),
+    parse: (val: string) => val !== 'false',
   },
   {
     command: '--bundle-output <string>',

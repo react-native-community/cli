@@ -8,8 +8,6 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 const xcode = require('xcode');
 const path = require('path');
 const addSharedLibraries = require('../../ios/addSharedLibraries');
@@ -17,7 +15,7 @@ const removeSharedLibraries = require('../../ios/removeSharedLibraries');
 const getGroup = require('../../ios/getGroup');
 
 const project = xcode.project(
-  path.join(__dirname, '../../__fixtures__/project.pbxproj'),
+  path.join(__dirname, '../../__fixtures__/project.pbxproj')
 );
 
 describe('ios::removeSharedLibraries', () => {
@@ -30,7 +28,7 @@ describe('ios::removeSharedLibraries', () => {
     removeSharedLibraries(project, ['libc++.tbd']);
 
     const frameworksGroup = getGroup(project, 'Frameworks');
-    expect(frameworksGroup.children.length).toEqual(1);
+    expect(frameworksGroup.children).toHaveLength(1);
     expect(frameworksGroup.children[0].comment).toEqual('libz.tbd');
   });
 
@@ -38,6 +36,6 @@ describe('ios::removeSharedLibraries', () => {
     removeSharedLibraries(project, ['libxml2.tbd']);
 
     const frameworksGroup = getGroup(project, 'Frameworks');
-    expect(frameworksGroup.children.length).toEqual(2);
+    expect(frameworksGroup.children).toHaveLength(2);
   });
 });

@@ -2,14 +2,12 @@
  * @flow
  */
 
-'use strict';
-
 const glob = require('glob');
 const path = require('path');
 const getPackageConfiguration = require('./getPackageConfiguration');
 
 const findAssetsInFolder = folder =>
-  glob.sync(path.join(folder, '**'), {nodir: true});
+  glob.sync(path.join(folder, '**'), { nodir: true });
 
 /**
  * Given an array of assets folders, e.g. ['Fonts', 'Images'],
@@ -21,10 +19,11 @@ function findAssets(folder, assets) {
   return (assets || [])
     .map(asset => path.join(folder, asset))
     .reduce(
-      (acc, assetPath) => (acc.concat(findAssetsInFolder(assetPath)): Array<string>),
-      [],
+      (acc, assetPath) =>
+        (acc.concat(findAssetsInFolder(assetPath)): Array<string>),
+      []
     );
-};
+}
 
 /**
  * Returns a project configuration in a given folder

@@ -10,6 +10,7 @@
 const xcode = require('xcode');
 const fs = require('fs');
 const path = require('path');
+const { isEmpty } = require('lodash');
 
 const addToHeaderSearchPaths = require('./addToHeaderSearchPaths');
 const getHeadersInFolder = require('./getHeadersInFolder');
@@ -19,7 +20,6 @@ const createGroupWithMessage = require('./createGroupWithMessage');
 const addFileToProject = require('./addFileToProject');
 const addProjectToLibraries = require('./addProjectToLibraries');
 const addSharedLibraries = require('./addSharedLibraries');
-const isEmpty = require('lodash').isEmpty;
 
 /**
  * Register native module IOS adds given dependency to project by adding
@@ -30,7 +30,7 @@ const isEmpty = require('lodash').isEmpty;
  */
 module.exports = function registerNativeModuleIOS(
   dependencyConfig,
-  projectConfig,
+  projectConfig
 ) {
   const project = xcode.project(projectConfig.pbxprojPath).parseSync();
   const dependencyProject = xcode
@@ -39,11 +39,11 @@ module.exports = function registerNativeModuleIOS(
 
   const libraries = createGroupWithMessage(
     project,
-    projectConfig.libraryFolder,
+    projectConfig.libraryFolder
   );
   const file = addFileToProject(
     project,
-    path.relative(projectConfig.sourceDir, dependencyConfig.projectPath),
+    path.relative(projectConfig.sourceDir, dependencyConfig.projectPath)
   );
 
   const targets = getTargets(project);
@@ -51,7 +51,7 @@ module.exports = function registerNativeModuleIOS(
   addProjectToLibraries(libraries, file);
 
   getTargets(dependencyProject).forEach(product => {
-    var i;
+    let i;
     if (!product.isTVOS) {
       for (i = 0; i < targets.length; i++) {
         if (!targets[i].isTVOS) {
@@ -79,7 +79,7 @@ module.exports = function registerNativeModuleIOS(
   if (!isEmpty(headers)) {
     addToHeaderSearchPaths(
       project,
-      getHeaderSearchPath(projectConfig.sourceDir, headers),
+      getHeaderSearchPath(projectConfig.sourceDir, headers)
     );
   }
 

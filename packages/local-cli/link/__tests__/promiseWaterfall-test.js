@@ -8,8 +8,6 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 const promiseWaterfall = require('../promiseWaterfall');
 
 describe('promiseWaterfall', () => {
@@ -20,7 +18,7 @@ describe('promiseWaterfall', () => {
 
     // Check that tasks[0] is executed before tasks[1].
     expect(tasks[0].mock.invocationCallOrder[0]).toBeLessThan(
-      tasks[1].mock.invocationCallOrder[0],
+      tasks[1].mock.invocationCallOrder[0]
     );
   });
 
@@ -41,7 +39,7 @@ describe('promiseWaterfall', () => {
 
     promiseWaterfall(tasks).catch(err => {
       expect(err).toEqual(error);
-      expect(tasks[1].mock.calls.length).toEqual(0);
+      expect(tasks[1].mock.calls).toHaveLength(0);
       done();
     });
   });

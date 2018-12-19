@@ -7,7 +7,7 @@
  * @format
  */
 
-const groupBy = require('lodash').groupBy;
+const { groupBy } = require('lodash');
 const mime = require('mime');
 
 /**

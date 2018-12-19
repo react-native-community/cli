@@ -7,7 +7,7 @@
  * @format
  */
 
-module.exports = function() {
+module.exports = function getAndroidLinkConfig() {
   return {
     isInstalled: require('./isInstalled'),
     register: require('./registerNativeModule'),

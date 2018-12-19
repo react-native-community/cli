@@ -3,12 +3,9 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
- *
- * @format
- * @emails oncall+javascript_foundation
  */
 
-'use strict';
+/* eslint-disable no-template-curly-in-string */
 
 const makePackagePatch = require('../../android/patches/makePackagePatch');
 const applyParams = require('../../android/patches/applyParams');
@@ -27,9 +24,9 @@ describe('makePackagePatch@0.20', () => {
   });
 
   it('MainActivity contains a correct 0.20 import patch', () => {
-    const {patch} = makePackagePatch(packageInstance, params, name);
+    const { patch } = makePackagePatch(packageInstance, params, name);
     const processedInstance = applyParams(packageInstance, params, name);
 
-    expect(patch).toBe(',\n            ' + processedInstance);
+    expect(patch).toBe(`,\n            ${processedInstance}`);
   });
 });

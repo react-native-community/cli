@@ -7,12 +7,10 @@
  * @format
  */
 
-'use strict';
-
+const path = require('path');
 const findAndroidAppFolder = require('./findAndroidAppFolder');
 const findManifest = require('./findManifest');
 const findPackageClassName = require('./findPackageClassName');
-const path = require('path');
 const readManifest = require('./readManifest');
 
 const getPackageName = manifest => manifest.attr.package;
@@ -52,28 +50,28 @@ exports.projectConfig = function projectConfigAndroid(folder, userConfig = {}) {
   const mainFilePath = path.join(
     sourceDir,
     userConfig.mainFilePath ||
-      `src/main/java/${packageFolder}/MainApplication.java`,
+      `src/main/java/${packageFolder}/MainApplication.java`
   );
 
   const stringsPath = path.join(
     sourceDir,
-    userConfig.stringsPath || 'src/main/res/values/strings.xml',
+    userConfig.stringsPath || 'src/main/res/values/strings.xml'
   );
 
   const settingsGradlePath = path.join(
     folder,
     'android',
-    userConfig.settingsGradlePath || 'settings.gradle',
+    userConfig.settingsGradlePath || 'settings.gradle'
   );
 
   const assetsPath = path.join(
     sourceDir,
-    userConfig.assetsPath || 'src/main/assets',
+    userConfig.assetsPath || 'src/main/assets'
   );
 
   const buildGradlePath = path.join(
     sourceDir,
-    userConfig.buildGradlePath || 'build.gradle',
+    userConfig.buildGradlePath || 'build.gradle'
   );
 
   return {
@@ -95,7 +93,7 @@ exports.projectConfig = function projectConfigAndroid(folder, userConfig = {}) {
  */
 exports.dependencyConfig = function dependencyConfigAndroid(
   folder,
-  userConfig = {},
+  userConfig = {}
 ) {
   const src = userConfig.sourceDir || findAndroidAppFolder(folder);
 
@@ -130,7 +128,7 @@ exports.dependencyConfig = function dependencyConfigAndroid(
   const packageInstance =
     userConfig.packageInstance || `new ${packageClassName}()`;
 
-  return {sourceDir, folder, manifest, packageImportPath, packageInstance};
+  return { sourceDir, folder, manifest, packageImportPath, packageInstance };
 };
 
 exports.linkConfig = require('../../link/android');

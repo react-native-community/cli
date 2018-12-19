@@ -7,25 +7,22 @@
  * @format
  */
 
-'use strict';
-
+const path = require('path');
 const findProject = require('./findProject');
 const findPodfilePath = require('./findPodfilePath');
 const findPodspecName = require('./findPodspecName');
-const path = require('path');
 
 /**
  * For libraries specified without an extension, add '.tbd' for those that
  * start with 'lib' and '.framework' to the rest.
  */
-const mapSharedLibaries = libraries => {
-  return libraries.map(name => {
+const mapSharedLibaries = libraries =>
+  libraries.map(name => {
     if (path.extname(name)) {
       return name;
     }
     return name + (name.indexOf('lib') === 0 ? '.tbd' : '.framework');
   });
-};
 
 /**
  * Returns project config by analyzing given folder and applying some user defaults
@@ -45,11 +42,11 @@ exports.projectConfig = function projectConfigIOS(folder, userConfig) {
 
   return {
     sourceDir: path.dirname(projectPath),
-    folder: folder,
+    folder,
     pbxprojPath: path.join(projectPath, 'project.pbxproj'),
     podfile: findPodfilePath(projectPath),
     podspec: findPodspecName(folder),
-    projectPath: projectPath,
+    projectPath,
     projectName: path.basename(projectPath),
     libraryFolder: userConfig.libraryFolder || 'Libraries',
     sharedLibraries: mapSharedLibaries(userConfig.sharedLibraries || []),

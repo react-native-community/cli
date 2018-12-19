@@ -8,13 +8,12 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 jest.mock('path');
 jest.mock('fs');
 
-const getProjectConfig = require('../../android').projectConfig;
 const fs = require('fs');
+
+const getProjectConfig = require('../../android').projectConfig;
 const mocks = require('../../__fixtures__/android');
 
 describe('android::getProjectConfig', () => {

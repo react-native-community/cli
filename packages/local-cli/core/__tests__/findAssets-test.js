@@ -8,18 +8,17 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 jest.mock('path');
 jest.mock('fs');
 
+const fs = require('fs');
+
 const { findAssets } = require('../getAssets');
 const dependencies = require('../__fixtures__/dependencies');
-const fs = require('fs');
 
 describe('findAssets', () => {
   beforeEach(() => {
-    fs.__setMockFilesystem({testDir: dependencies.withAssets});
+    fs.__setMockFilesystem({ testDir: dependencies.withAssets });
   });
 
   it('returns an array of all files in given folders', () => {

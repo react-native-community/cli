@@ -7,12 +7,13 @@
  * @format
  */
 
-var inquirer = require('inquirer');
+const inquirer = require('inquirer');
 
 module.exports = questions =>
   new Promise((resolve, reject) => {
     if (!questions) {
-      return resolve({});
+      resolve({});
+      return;
     }
 
     inquirer.prompt(questions).then(resolve, reject);

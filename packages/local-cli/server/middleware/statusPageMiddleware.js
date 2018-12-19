@@ -7,13 +7,11 @@
  * @format
  */
 
-'use strict';
-
 /**
  * Status page so that anyone who needs to can verify that the packager is
  * running on 8081 and not another program / service.
  */
-module.exports = function(req, res, next) {
+module.exports = function statusPageMiddleware(req, res, next) {
   if (req.url === '/status') {
     res.end('packager-status:running');
   } else {

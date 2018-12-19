@@ -2,11 +2,14 @@
  * @flow
  */
 
-'use strict';
+import type {
+  PlatformsT,
+  ContextT,
+  InquirerPromptT,
+  DependencyConfigT,
+} from '../core/types.flow';
 
 const path = require('path');
-
-import type { PlatformsT, ContextT, InquirerPromptT, DependencyConfigT } from '../core/types.flow';
 
 const getPackageConfiguration = require('../core/getPackageConfiguration');
 const getParams = require('../core/getParams');
@@ -32,13 +35,13 @@ module.exports = function getDependencyConfig(
       const folder = path.join(ctx.root, 'node_modules', packageName);
       const config = getPackageConfiguration(folder);
 
-      let platformConfigs = {ios: undefined, android: undefined};
+      const platformConfigs = { ios: undefined, android: undefined };
 
-      Object.keys(availablePlatforms)
-        .forEach(platform => {
-          platformConfigs[platform] = availablePlatforms[platform]
-            .dependencyConfig(folder, config[platform] || {});
-        });
+      Object.keys(availablePlatforms).forEach(platform => {
+        platformConfigs[platform] = availablePlatforms[
+          platform
+        ].dependencyConfig(folder, config[platform] || {});
+      });
 
       return acc.concat({
         config: platformConfigs,
@@ -46,7 +49,7 @@ module.exports = function getDependencyConfig(
         path: folder,
         commands: getHooks(folder),
         assets: getAssets(folder),
-        params: getParams(folder)
+        params: getParams(folder),
       });
     } catch (e) {
       return acc;

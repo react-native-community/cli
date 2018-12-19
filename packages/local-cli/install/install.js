@@ -7,11 +7,10 @@
  * @format
  */
 
-'use strict';
-
-const spawnSync = require('child_process').spawnSync;
+const { spawnSync } = require('child_process');
 const log = require('npmlog');
 const PackageManager = require('../util/PackageManager');
+
 const spawnOpts = {
   stdio: 'inherit',
   stdin: 'inherit',
@@ -19,7 +18,7 @@ const spawnOpts = {
 
 log.heading = 'rnpm-install';
 
-function install(args, config) {
+function install(args) {
   const name = args[0];
 
   let res = PackageManager.add(name);

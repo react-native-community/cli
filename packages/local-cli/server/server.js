@@ -8,11 +8,7 @@
  * @flow
  */
 
-'use strict';
-
 const path = require('path');
-
-import type { ContextT } from '../core/types.flow';
 
 module.exports = {
   name: 'start',

@@ -7,15 +7,15 @@
  * @format
  */
 
-'use strict';
-
 function attachToServer(server, path) {
-  var WebSocketServer = require('ws').Server;
-  var wss = new WebSocketServer({
-    server: server,
-    path: path,
+  const WebSocketServer = require('ws').Server;
+  const wss = new WebSocketServer({
+    server,
+    path,
   });
-  var debuggerSocket, clientSocket;
+
+  let debuggerSocket;
+  let clientSocket;
 
   function send(dest, message) {
     if (!dest) {
@@ -30,8 +30,20 @@ function attachToServer(server, path) {
     }
   }
 
-  wss.on('connection', function(ws) {
-    const {url} = ws.upgradeReq;
+  const debuggerSocketCloseHandler = () => {
+    debuggerSocket = null;
+    if (clientSocket) {
+      clientSocket.close(1011, 'Debugger was disconnected');
+    }
+  };
+
+  const clientSocketCloseHandler = () => {
+    clientSocket = null;
+    send(debuggerSocket, JSON.stringify({ method: '$disconnected' }));
+  };
+
+  wss.on('connection', ws => {
+    const { url } = ws.upgradeReq;
 
     if (url.indexOf('role=debugger') > -1) {
       if (debuggerSocket) {
@@ -39,24 +51,20 @@ function attachToServer(server, path) {
         return;
       }
       debuggerSocket = ws;
-      debuggerSocket.onerror = debuggerSocket.onclose = () => {
-        debuggerSocket = null;
-        if (clientSocket) {
-          clientSocket.close(1011, 'Debugger was disconnected');
-        }
-      };
-      debuggerSocket.onmessage = ({data}) => send(clientSocket, data);
+      debuggerSocket.onerror = debuggerSocketCloseHandler;
+      debuggerSocket.onclose = debuggerSocketCloseHandler;
+      debuggerSocket.onmessage = ({ data }) => send(clientSocket, data);
     } else if (url.indexOf('role=client') > -1) {
       if (clientSocket) {
-        clientSocket.onerror = clientSocket.onclose = clientSocket.onmessage = null;
+        clientSocket.onerror = null;
+        clientSocket.onclose = null;
+        clientSocket.onmessage = null;
         clientSocket.close(1011, 'Another client connected');
       }
       clientSocket = ws;
-      clientSocket.onerror = clientSocket.onclose = () => {
-        clientSocket = null;
-        send(debuggerSocket, JSON.stringify({method: '$disconnected'}));
-      };
-      clientSocket.onmessage = ({data}) => send(debuggerSocket, data);
+      clientSocket.onerror = clientSocketCloseHandler;
+      clientSocket.onclose = clientSocketCloseHandler;
+      clientSocket.onmessage = ({ data }) => send(debuggerSocket, data);
     } else {
       ws.close(1011, 'Missing role param');
     }
@@ -64,12 +72,12 @@ function attachToServer(server, path) {
 
   return {
     server: wss,
-    isChromeConnected: function() {
+    isChromeConnected() {
       return !!debuggerSocket;
     },
   };
 }
 
 module.exports = {
-  attachToServer: attachToServer,
+  attachToServer,
 };

@@ -8,8 +8,6 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 const getHeadersInFolder = require('../../ios/getHeadersInFolder');
 
 describe('ios::getHeadersInFolder', () => {
@@ -21,10 +19,10 @@ describe('ios::getHeadersInFolder', () => {
 
     const foundHeaders = getHeadersInFolder(process.cwd());
 
-    expect(foundHeaders.length).toBe(2);
+    expect(foundHeaders).toHaveLength(2);
 
     getHeadersInFolder(process.cwd()).forEach(headerPath => {
-      expect(headerPath).to.contain(process.cwd());
+      expect(headerPath.includes(process.cwd())).toBe(true);
     });
   });
 
@@ -43,6 +41,6 @@ describe('ios::getHeadersInFolder', () => {
       },
     });
 
-    expect(getHeadersInFolder(process.cwd()).length).to.equals(2);
+    expect(getHeadersInFolder(process.cwd())).toEqual(2);
   });
 });

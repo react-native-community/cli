@@ -11,9 +11,7 @@
 /* global Blob, URL: true */
 
 (function(global) {
-  'use strict';
-
-  let cachedBundleUrls = new Map();
+  const cachedBundleUrls = new Map();
 
   /**
    * Converts the passed delta URL into an URL object containing already the
@@ -31,7 +29,7 @@
 
     const deltaPatcher = client.applyDelta(bundle);
 
-    let cachedBundle = cachedBundleUrls.get(deltaUrl);
+    const cachedBundle = cachedBundleUrls.get(deltaUrl);
 
     // If nothing changed, avoid recreating a bundle blob by reusing the
     // previous one.
@@ -52,7 +50,7 @@
     // modules.
     const blobContent = deltaPatcher
       .getAllModules()
-      .map(module => module + '\n');
+      .map(module => `${module}\n`);
 
     // Build the blob with the whole JS bundle.
     const blob = new Blob(blobContent, {

@@ -3,8 +3,6 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
- *
- * @format
  */
 
 /**
@@ -15,7 +13,8 @@
  * It's mainly due to limitations of `xcode` library.
  */
 module.exports = function removeProjectFromLibraries(libraries, file) {
+  // eslint-disable-next-line no-param-reassign
   libraries.children = libraries.children.filter(
-    library => library.comment !== file.basename,
+    library => library.comment !== file.basename
   );
 };

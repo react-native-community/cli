@@ -4,24 +4,22 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
+ * @flow
  */
 
-'use strict';
+import type { ContextT } from '../core/types.flow';
 
 const Metro = require('metro');
 
 const { Terminal } = require('metro-core');
 
-const messageSocket = require('./util/messageSocket');
 const morgan = require('morgan');
 const path = require('path');
+const messageSocket = require('./util/messageSocket');
 const webSocketProxy = require('./util/webSocketProxy');
 const MiddlewareManager = require('./middleware/MiddlewareManager');
 
 const loadMetroConfig = require('../util/loadMetroConfig');
-
-import type { ContextT } from '../core/types.flow';
 
 export type Args = {|
   assetExts?: string[],
@@ -57,15 +55,17 @@ async function runServer(argv: *, ctx: ContextT, args: Args) {
     sourceExts: args.sourceExts,
     reporter,
   });
-  
+
   const middlewareManager = new MiddlewareManager({
     host: args.host,
-    watchFolders: metroConfig.watchFolders
+    watchFolders: metroConfig.watchFolders,
   });
 
   middlewareManager.getConnectInstance().use(morgan('combined'));
 
-  metroConfig.watchFolders.forEach(middlewareManager.serveStatic.bind(middlewareManager));
+  metroConfig.watchFolders.forEach(
+    middlewareManager.serveStatic.bind(middlewareManager)
+  );
 
   metroConfig.server.enhanceMiddleware = middleware =>
     middlewareManager.getConnectInstance().use(middleware);
@@ -80,7 +80,7 @@ async function runServer(argv: *, ctx: ContextT, args: Args) {
 
   const wsProxy = webSocketProxy.attachToServer(
     serverInstance,
-    '/debugger-proxy',
+    '/debugger-proxy'
   );
   const ms = messageSocket.attachToServer(serverInstance, '/message');
   middlewareManager.attachDevToolsSocket(wsProxy);

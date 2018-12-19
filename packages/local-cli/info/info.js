@@ -7,13 +7,9 @@
  * @format
  */
 
-'use strict';
-
 const envinfo = require('envinfo');
 
-const info = function() {
-  const args = Array.prototype.slice.call(arguments)[2];
-
+const info = function getInfo(argv, ctx, options) {
   try {
     envinfo
       .run(
@@ -23,19 +19,19 @@ const info = function() {
           IDEs: ['Xcode', 'Android Studio'],
           SDKs: ['iOS SDK', 'Android SDK'],
           npmPackages:
-            (typeof args.packages === 'string' &&
-              !args.packages.includes('*')) ||
-            !args.packages
+            (typeof options.packages === 'string' &&
+              !options.packages.includes('*')) ||
+            !options.packages
               ? ['react', 'react-native'].concat(
-                  (args.packages || '').split(','),
+                  (options.packages || '').split(',')
                 )
-              : args.packages,
+              : options.packages,
           npmGlobalPackages: '*react-native*',
         },
         {
-          clipboard: !!args.clipboard,
+          clipboard: !!options.clipboard,
           title: 'React Native Environment Info',
-        },
+        }
       )
       .then(console.log)
       .catch(err => {

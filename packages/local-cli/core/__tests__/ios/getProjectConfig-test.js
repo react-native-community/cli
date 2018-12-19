@@ -8,20 +8,19 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 jest.mock('path');
 jest.mock('fs');
 
-const getProjectConfig = require('../../ios').projectConfig;
 const fs = require('fs');
+
+const getProjectConfig = require('../../ios').projectConfig;
 const projects = require('../../__fixtures__/projects');
 
 describe('ios::getProjectConfig', () => {
   const userConfig = {};
 
   beforeEach(() => {
-    fs.__setMockFilesystem({testDir: projects});
+    fs.__setMockFilesystem({ testDir: projects });
   });
 
   it('returns an object with ios project configuration', () => {

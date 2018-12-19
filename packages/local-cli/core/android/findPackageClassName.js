@@ -7,8 +7,6 @@
  * @format
  */
 
-'use strict';
-
 const fs = require('fs');
 const glob = require('glob');
 const path = require('path');
@@ -20,7 +18,7 @@ const path = require('path');
  * @param {String} folder Folder to find java/kt files
  */
 module.exports = function getPackageClassName(folder) {
-  const files = glob.sync('**/+(*.java|*.kt)', {cwd: folder});
+  const files = glob.sync('**/+(*.java|*.kt)', { cwd: folder });
 
   const packages = files
     .map(filePath => fs.readFileSync(path.join(folder, filePath), 'utf8'))

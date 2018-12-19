@@ -7,7 +7,7 @@
  * @format
  */
 
-'use strict';
+/* eslint-disable */
 
 const child_process = require('child_process');
 const fs = require('fs');
@@ -16,6 +16,7 @@ const findXcodeProject = require('./findXcodeProject');
 const findReactNativeScripts = require('../util/findReactNativeScripts');
 const parseIOSDevicesList = require('./parseIOSDevicesList');
 const findMatchingSimulator = require('./findMatchingSimulator');
+
 const getBuildPath = function(configuration = 'Debug', appName, isDevice) {
   let device;
 
@@ -47,14 +48,13 @@ function runIOS(argv, config, args) {
       child_process.spawnSync(
         reactNativeScriptsPath,
         ['ios'].concat(process.argv.slice(1)),
-        {stdio: 'inherit'},
+        { stdio: 'inherit' }
       );
       return;
-    } else {
-      throw new Error(
-        'iOS project folder not found. Are you sure this is a React Native project?',
-      );
     }
+    throw new Error(
+      'iOS project folder not found. Are you sure this is a React Native project?'
+    );
   }
   process.chdir(args.projectPath);
   const xcodeProject = findXcodeProject(fs.readdirSync('.'));
@@ -64,18 +64,18 @@ function runIOS(argv, config, args) {
 
   const inferredSchemeName = path.basename(
     xcodeProject.name,
-    path.extname(xcodeProject.name),
+    path.extname(xcodeProject.name)
   );
   const scheme = args.scheme || inferredSchemeName;
   console.log(
     `Found Xcode ${xcodeProject.isWorkspace ? 'workspace' : 'project'} ${
       xcodeProject.name
-    }`,
+    }`
   );
   const devices = parseIOSDevicesList(
     child_process.execFileSync('xcrun', ['instruments', '-s'], {
       encoding: 'utf8',
-    }),
+    })
   );
   if (args.device) {
     const selectedDevice = matchingDevice(devices, args.device);
@@ -87,18 +87,15 @@ function runIOS(argv, config, args) {
         args.configuration,
         args.packager,
         args.verbose,
-        args.port,
+        args.port
       );
+    }
+    if (devices && devices.length > 0) {
+      console.log(`Could not find device with the name: "${args.device}".`);
+      console.log('Choose one of the following:');
+      printFoundDevices(devices);
     } else {
-      if (devices && devices.length > 0) {
-        console.log(
-          'Could not find device with the name: "' + args.device + '".',
-        );
-        console.log('Choose one of the following:');
-        printFoundDevices(devices);
-      } else {
-        console.log('No iOS devices connected.');
-      }
+      console.log('No iOS devices connected.');
     }
   } else if (args.udid) {
     return runOnDeviceByUdid(args, scheme, xcodeProject, devices);
@@ -117,16 +114,15 @@ function runOnDeviceByUdid(args, scheme, xcodeProject, devices) {
       args.configuration,
       args.packager,
       args.verbose,
-      args.port,
+      args.port
     );
+  }
+  if (devices && devices.length > 0) {
+    console.log(`Could not find device with the udid: "${args.udid}".`);
+    console.log('Choose one of the following:');
+    printFoundDevices(devices);
   } else {
-    if (devices && devices.length > 0) {
-      console.log('Could not find device with the udid: "' + args.udid + '".');
-      console.log('Choose one of the following:');
-      printFoundDevices(devices);
-    } else {
-      console.log('No iOS devices connected.');
-    }
+    console.log('No iOS devices connected.');
   }
 }
 
@@ -137,8 +133,8 @@ function runOnSimulator(xcodeProject, args, scheme) {
         child_process.execFileSync(
           'xcrun',
           ['simctl', 'list', '--json', 'devices'],
-          {encoding: 'utf8'},
-        ),
+          { encoding: 'utf8' }
+        )
       );
     } catch (e) {
       throw new Error('Could not parse the simulator list output');
@@ -161,7 +157,7 @@ function runOnSimulator(xcodeProject, args, scheme) {
      * this flag has no effect.
      */
     const activeDeveloperDir = child_process
-      .execFileSync('xcode-select', ['-p'], {encoding: 'utf8'})
+      .execFileSync('xcode-select', ['-p'], { encoding: 'utf8' })
       .trim();
     child_process.execFileSync('open', [
       `${activeDeveloperDir}/Applications/Simulator.app`,
@@ -192,13 +188,13 @@ function runOnSimulator(xcodeProject, args, scheme) {
       args.configuration,
       args.packager,
       args.verbose,
-      args.port,
-    ).then(appName => resolve({udid: selectedSimulator.udid, appName}));
-  }).then(({udid, appName}) => {
+      args.port
+    ).then(appName => resolve({ udid: selectedSimulator.udid, appName }));
+  }).then(({ udid, appName }) => {
     if (!appName) {
       appName = scheme;
     }
-    let appPath = getBuildPath(args.configuration, appName);
+    const appPath = getBuildPath(args.configuration, appName);
     console.log(`Installing ${appPath}`);
     child_process.spawnSync('xcrun', ['simctl', 'install', udid, appPath], {
       stdio: 'inherit',
@@ -208,7 +204,7 @@ function runOnSimulator(xcodeProject, args, scheme) {
       .execFileSync(
         '/usr/libexec/PlistBuddy',
         ['-c', 'Print:CFBundleIdentifier', path.join(appPath, 'Info.plist')],
-        {encoding: 'utf8'},
+        { encoding: 'utf8' }
       )
       .trim();
 
@@ -226,7 +222,7 @@ function runOnDevice(
   configuration,
   launchPackager,
   verbose,
-  port,
+  port
 ) {
   return buildProject(
     xcodeProject,
@@ -235,7 +231,7 @@ function runOnDevice(
     configuration,
     launchPackager,
     verbose,
-    port,
+    port
   ).then(appName => {
     if (!appName) {
       appName = scheme;
@@ -248,12 +244,12 @@ function runOnDevice(
       '--justlaunch',
     ];
     console.log(
-      `installing and launching your app on ${selectedDevice.name}...`,
+      `installing and launching your app on ${selectedDevice.name}...`
     );
     const iosDeployOutput = child_process.spawnSync(
       'ios-deploy',
       iosDeployInstallArgs,
-      {encoding: 'utf8'},
+      { encoding: 'utf8' }
     );
     if (iosDeployOutput.error) {
       console.log('');
@@ -273,10 +269,10 @@ function buildProject(
   configuration = 'Debug',
   launchPackager = false,
   verbose,
-  port,
+  port
 ) {
   return new Promise((resolve, reject) => {
-    var xcodebuildArgs = [
+    const xcodebuildArgs = [
       xcodeProject.isWorkspace ? '-workspace' : '-project',
       xcodeProject.name,
       '-configuration',
@@ -300,10 +296,10 @@ function buildProject(
     const buildProcess = child_process.spawn(
       'xcodebuild',
       xcodebuildArgs,
-      getProcessOptions(launchPackager, port),
+      getProcessOptions(launchPackager, port)
     );
     let buildOutput = '';
-    buildProcess.stdout.on('data', function(data) {
+    buildProcess.stdout.on('data', data => {
       buildOutput += data.toString();
       if (xcpretty) {
         xcpretty.stdin.write(data);
@@ -311,23 +307,23 @@ function buildProject(
         console.log(data.toString());
       }
     });
-    buildProcess.stderr.on('data', function(data) {
+    buildProcess.stderr.on('data', data => {
       console.error(data.toString());
     });
-    buildProcess.on('close', function(code) {
+    buildProcess.on('close', code => {
       if (xcpretty) {
         xcpretty.stdin.end();
       }
-      //FULL_PRODUCT_NAME is the actual file name of the app, which actually comes from the Product Name in the build config, which does not necessary match a scheme name,  example output line: export FULL_PRODUCT_NAME="Super App Dev.app"
-      let productNameMatch = /export FULL_PRODUCT_NAME="?(.+).app"?$/m.exec(
-        buildOutput,
+      // FULL_PRODUCT_NAME is the actual file name of the app, which actually comes from the Product Name in the build config, which does not necessary match a scheme name,  example output line: export FULL_PRODUCT_NAME="Super App Dev.app"
+      const productNameMatch = /export FULL_PRODUCT_NAME="?(.+).app"?$/m.exec(
+        buildOutput
       );
       if (
         productNameMatch &&
         productNameMatch.length &&
         productNameMatch.length > 1
       ) {
-        return resolve(productNameMatch[1]); //0 is the full match, 1 is the app name
+        return resolve(productNameMatch[1]); // 0 is the full match, 1 is the app name
       }
       return buildProcess.error ? reject(buildProcess.error) : resolve();
     });
@@ -339,7 +335,7 @@ function matchingDevice(devices, deviceName) {
     console.log(
       `Using first available device ${
         devices[0].name
-      } due to lack of name supplied.`,
+      } due to lack of name supplied.`
     );
     return devices[0];
   }
@@ -367,19 +363,19 @@ function formattedDeviceName(simulator) {
 
 function printFoundDevices(devices) {
   for (let i = devices.length - 1; i >= 0; i--) {
-    console.log(devices[i].name + ' Udid: ' + devices[i].udid);
+    console.log(`${devices[i].name} Udid: ${devices[i].udid}`);
   }
 }
 
 function getProcessOptions(launchPackager, port) {
   if (launchPackager) {
     return {
-      env: {...process.env, RCT_METRO_PORT: port},
+      env: { ...process.env, RCT_METRO_PORT: port },
     };
   }
 
   return {
-    env: {...process.env, RCT_NO_LAUNCH_PACKAGER: true},
+    env: { ...process.env, RCT_NO_LAUNCH_PACKAGER: true },
   };
 }
 

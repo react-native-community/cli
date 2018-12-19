@@ -7,15 +7,14 @@
  * @format
  */
 
-'use strict';
+const mkdirp = require('mkdirp');
+const path = require('path');
+const fs = require('fs');
 
 const filterPlatformAssetScales = require('./filterPlatformAssetScales');
-const fs = require('fs');
 const getAssetDestPathAndroid = require('./getAssetDestPathAndroid');
 const getAssetDestPathIOS = require('./getAssetDestPathIOS');
 const log = require('../util/log').out('bundle');
-const mkdirp = require('mkdirp');
-const path = require('path');
 
 function saveAssets(assets, platform, assetsDest) {
   if (!assetsDest) {
@@ -29,7 +28,7 @@ function saveAssets(assets, platform, assetsDest) {
   const filesToCopy = Object.create(null); // Map src -> dest
   assets.forEach(asset => {
     const validScales = new Set(
-      filterPlatformAssetScales(platform, asset.scales),
+      filterPlatformAssetScales(platform, asset.scales)
     );
     asset.scales.forEach((scale, idx) => {
       if (!validScales.has(scale)) {
@@ -50,11 +49,12 @@ function copyAll(filesToCopy) {
     return Promise.resolve();
   }
 
-  log('Copying ' + queue.length + ' asset files');
+  log(`Copying ${queue.length} asset files`);
   return new Promise((resolve, reject) => {
     const copyNext = error => {
       if (error) {
-        return reject(error);
+        reject(error);
+        return;
       }
       if (queue.length === 0) {
         log('Done copying assets');
@@ -73,7 +73,8 @@ function copy(src, dest, callback) {
   const destDir = path.dirname(dest);
   mkdirp(destDir, err => {
     if (err) {
-      return callback(err);
+      callback(err);
+      return;
     }
     fs.createReadStream(src)
       .pipe(fs.createWriteStream(dest))

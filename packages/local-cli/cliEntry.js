@@ -8,20 +8,20 @@
  * @flow
  */
 
-'use strict';
+import type { CommandT, ContextT } from './core/types.flow';
 
-const assertRequiredOptions = require('./util/assertRequiredOptions');
+('use strict');
+
 const chalk = require('chalk');
 const childProcess = require('child_process');
 const commander = require('commander');
+const minimist = require('minimist');
+const path = require('path');
 const getCommands = require('./core/getCommands');
 const getLegacyConfig = require('./core/getLegacyConfig');
-const minimist = require('minimist');
 const init = require('./init/init');
-const path = require('path');
+const assertRequiredOptions = require('./util/assertRequiredOptions');
 const pkg = require('./package.json');
-
-import type { CommandT, ContextT } from './core/types.flow';
 
 commander.version(pkg.version);
 
@@ -43,7 +43,7 @@ const handleError = err => {
 function printHelpInformation() {
   let cmdName = this._name;
   if (this._alias) {
-    cmdName = cmdName + '|' + this._alias;
+    cmdName = `${cmdName}|${this._alias}`;
   }
 
   const sourceInformation = this.pkg
@@ -85,10 +85,10 @@ function printUnknownCommand(cmdName) {
         ? chalk.red(`  Unrecognized command '${cmdName}'`)
         : chalk.red("  You didn't pass any command"),
       `  Run ${chalk.cyan(
-        'react-native --help',
+        'react-native --help'
       )} to see list of all available commands`,
       '',
-    ].join('\n'),
+    ].join('\n')
   );
 }
 
@@ -100,9 +100,9 @@ const addCommand = (command: CommandT, ctx: ContextT) => {
       noHelp: !command.description,
     })
     .description(command.description)
-    .action(function runAction() {
+    .action((...args) => {
       const passedOptions = this.opts();
-      const argv: Array<string> = Array.from(arguments).slice(0, -1);
+      const argv: Array<string> = Array.from(args).slice(0, -1);
 
       Promise.resolve()
         .then(() => {
@@ -122,10 +122,10 @@ const addCommand = (command: CommandT, ctx: ContextT) => {
       opt.command,
       opt.description,
       opt.parse || defaultOptParser,
-      typeof opt.default === 'function' ? opt.default(ctx) : opt.default,
-    ),
+      typeof opt.default === 'function' ? opt.default(ctx) : opt.default
+    )
   );
-  
+
   // This is needed to avoid `unknown option` error by Commander.js
   cmd.option('--projectRoot [string]', 'Path to the root of the project');
 };
@@ -139,7 +139,7 @@ async function run() {
 
   /**
    * Read passed `options` and take the "global" settings
-   * 
+   *
    * @todo(grabbou): Consider unifying this by removing either `commander`
    * or `minimist`
    */
@@ -161,7 +161,7 @@ async function run() {
   commander.parse(process.argv);
 
   const isValidCommand = commands.find(
-    cmd => cmd.name.split(' ')[0] === process.argv[2],
+    cmd => cmd.name.split(' ')[0] === process.argv[2]
   );
 
   if (!isValidCommand) {
@@ -175,6 +175,6 @@ async function run() {
 }
 
 module.exports = {
-  run: run,
-  init: init,
+  run,
+  init,
 };

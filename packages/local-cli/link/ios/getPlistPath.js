@@ -19,6 +19,6 @@ module.exports = function getPlistPath(project, sourceDir) {
 
   return path.join(
     sourceDir,
-    plistFile.replace(/"/g, '').replace('$(SRCROOT)', ''),
+    plistFile.replace(/"/g, '').replace('$(SRCROOT)', '')
   );
 };

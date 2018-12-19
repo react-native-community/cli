@@ -12,6 +12,7 @@ require('graceful-fs').gracefulify(require('fs'));
 
 // Transpile the source code
 const babelConfig = require('./babel.config');
+
 require('@babel/register')(babelConfig);
 
 const cli = require('./cliEntry');

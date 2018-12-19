@@ -10,8 +10,6 @@
 
 import type { CommandT, ContextT } from './core/types.flow';
 
-('use strict');
-
 const chalk = require('chalk');
 const childProcess = require('child_process');
 const commander = require('commander');

@@ -10,8 +10,6 @@
 
 import type { PackagerAsset } from './assetPathUtils';
 
-('use strict');
-
 const path = require('path');
 const assetPathUtils = require('./assetPathUtils');
 

@@ -11,5 +11,6 @@ module.exports = {
     ],
     require.resolve('@babel/preset-flow'),
   ],
+  plugins: [require.resolve('@babel/plugin-transform-strict-mode')],
   only: [new RegExp(`^${escapeRegExp(__dirname)}`)],
 };

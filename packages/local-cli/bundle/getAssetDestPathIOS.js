@@ -10,8 +10,6 @@
 
 import type { PackagerAsset } from './assetPathUtils';
 
-('use strict');
-
 const path = require('path');
 
 function getAssetDestPathIOS(asset: PackagerAsset, scale: number): string {

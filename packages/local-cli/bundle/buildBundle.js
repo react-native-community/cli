@@ -10,8 +10,6 @@
 import type { ContextT } from '../core/types.flow';
 import type { CommandLineArgs } from './bundleCommandLineArgs';
 
-('use strict');
-
 const Server = require('metro/src/Server');
 
 const outputBundle = require('metro/src/shared/output/bundle');

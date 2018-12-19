@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-
+/* eslint-disable strict */
 /**
  * Copyright (c) Facebook, Inc. and its affiliates.
  *
@@ -35,6 +35,8 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // /!\ DO NOT MODIFY THIS FILE /!\
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+'use strict';
 
 const fs = require('fs');
 const path = require('path');

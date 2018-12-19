@@ -7,8 +7,6 @@
  */
 import type { ConfigT } from 'metro-config/src/configTypes.flow';
 
-('use strict');
-
 const path = require('path');
 
 const { createBlacklist } = require('metro');

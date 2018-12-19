@@ -150,7 +150,7 @@ module.exports = async function load(
   }
 
   if (!config.transformer.assetRegistryPath) {
-    config.resolver.assetRegistryPath = require.resolve(
+    config.transformer.assetRegistryPath = require.resolve(
       'react-native/Libraries/Image/AssetRegistry'
     );
   }

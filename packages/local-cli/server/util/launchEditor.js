@@ -11,7 +11,6 @@ const chalk = require('chalk');
 const fs = require('fs');
 const path = require('path');
 const { execSync, spawn } = require('child_process');
-const isAbsolutePath = require('absolute-path');
 const shellQuote = require('shell-quote');
 
 function isTerminalEditor(editor) {
@@ -141,7 +140,7 @@ function printInstructions(title) {
 }
 
 function transformToAbsolutePathIfNeeded(pathName) {
-  if (!isAbsolutePath(pathName)) {
+  if (!path.isAbsolute(pathName)) {
     return path.resolve(process.cwd(), pathName);
   }
   return pathName;

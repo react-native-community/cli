@@ -100,7 +100,7 @@ const addCommand = (command: CommandT, ctx: ContextT) => {
       noHelp: !command.description,
     })
     .description(command.description)
-    .action((...args) => {
+    .action(function handleAction(...args) {
       const passedOptions = this.opts();
       const argv: Array<string> = Array.from(args).slice(0, -1);
 

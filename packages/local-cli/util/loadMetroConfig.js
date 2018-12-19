@@ -49,13 +49,13 @@ const getDefaultConfig = (root: string) => {
         'react-native',
         ...plugins.haste.providesModuleNodeModules,
       ],
-      hasteImplModulePath: require.resolve('react-native/jest/hasteImpl'),
     },
     serializer: {
       getModulesRunBeforeMainModule: () => [
         require.resolve('react-native/Libraries/Core/InitializeCore'),
       ],
-      getPolyfills: require('react-native/rn-get-polyfills'),
+      getPolyfills: (...args) =>
+        require('react-native/rn-get-polyfills')(...args),
     },
     server: {
       port: process.env.RCT_METRO_PORT || 8081,
@@ -63,9 +63,6 @@ const getDefaultConfig = (root: string) => {
     transformer: {
       babelTransformerPath: require.resolve(
         'metro-react-native-babel-transformer'
-      ),
-      assetRegistryPath: require.resolve(
-        'react-native/Libraries/Image/AssetRegistry'
       ),
     },
     watchFolders: getWatchFolders(),
@@ -134,6 +131,29 @@ module.exports = async function load(
     },
     defaultConfig
   );
+
+  /**
+   * Metro configuration requires the following two properties to be defined
+   * statically. They can't be a function, unline `serializer.getModulesRunBeforeMainModule`.
+   *
+   * We only resolve React Native files if no other value was provided by the user.
+   *
+   * This is to allow using CLI inside React Native source code, where there is no
+   * "react-native" module in "node_modules".
+   *
+   * See "react-native/metro.config.js"
+   */
+  if (!config.resolver.hasteImplModulePath) {
+    config.resolver.hasteImplModulePath = require.resolve(
+      'react-native/jest/hasteImpl'
+    );
+  }
+
+  if (!config.transformer.assetRegistryPath) {
+    config.resolver.assetRegistryPath = require.resolve(
+      'react-native/Libraries/Image/AssetRegistry'
+    );
+  }
 
   if (options) {
     overwriteWithOptions(config, options);

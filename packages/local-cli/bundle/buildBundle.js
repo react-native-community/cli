@@ -16,7 +16,7 @@ const Server = require('metro/src/Server');
 
 const outputBundle = require('metro/src/shared/output/bundle');
 const path = require('path');
-const log = require('../util/log').out('bundle');
+const log = require('./log').out('bundle');
 const saveAssets = require('./saveAssets');
 
 const loadMetroConfig = require('../util/loadMetroConfig');

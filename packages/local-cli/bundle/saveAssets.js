@@ -14,7 +14,7 @@ const fs = require('fs');
 const filterPlatformAssetScales = require('./filterPlatformAssetScales');
 const getAssetDestPathAndroid = require('./getAssetDestPathAndroid');
 const getAssetDestPathIOS = require('./getAssetDestPathIOS');
-const log = require('../util/log').out('bundle');
+const log = require('./log').out('bundle');
 
 function saveAssets(assets, platform, assetsDest) {
   if (!assetsDest) {

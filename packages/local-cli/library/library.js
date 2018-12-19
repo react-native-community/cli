@@ -7,23 +7,20 @@
  * @format
  */
 
-'use strict';
-
-const copyAndReplace = require('../util/copyAndReplace');
 const fs = require('fs');
-const isValidPackageName = require('../util/isValidPackageName');
 const path = require('path');
+const copyAndReplace = require('../util/copyAndReplace');
+const isValidPackageName = require('../util/isValidPackageName');
 const walk = require('../util/walk');
 
 /**
  * Creates a new native library with the given name
  */
-function library(argv, config, args) {
+async function library(argv, config, args) {
   if (!isValidPackageName(args.name)) {
-    return Promise.reject(
-      args.name +
-        ' is not a valid name for a project. Please use a valid ' +
-        'identifier name (alphanumeric).',
+    throw new Error(
+      `${args.name} is not a valid name for a project. Please use a valid ` +
+        `identifier name (alphanumeric).`
     );
   }
 
@@ -34,7 +31,7 @@ function library(argv, config, args) {
     'node_modules',
     'react-native',
     'Libraries',
-    'Sample',
+    'Sample'
   );
 
   if (!fs.existsSync(libraries)) {
@@ -42,9 +39,7 @@ function library(argv, config, args) {
   }
 
   if (fs.existsSync(libraryDest)) {
-    return Promise.reject(
-      new Error(`Library already exists in ${libraryDest}`),
-    );
+    throw new Error(`Library already exists in ${libraryDest}`);
   }
 
   walk(source).forEach(f => {
@@ -57,7 +52,7 @@ function library(argv, config, args) {
 
     const dest = path.relative(
       source,
-      f.replace(/Sample/g, args.name).replace(/^_/, '.'),
+      f.replace(/Sample/g, args.name).replace(/^_/, '.')
     );
     copyAndReplace(path.resolve(source, f), path.resolve(libraryDest, dest), {
       Sample: args.name,
@@ -69,7 +64,7 @@ function library(argv, config, args) {
   console.log('   Link your library in Xcode:');
   console.log(
     '   https://facebook.github.io/react-native/docs/' +
-      'linking-libraries-ios.html#content\n',
+      'linking-libraries-ios.html#content\n'
   );
 }
 

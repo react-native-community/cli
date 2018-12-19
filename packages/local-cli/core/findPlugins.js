@@ -4,15 +4,11 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
+ * @flow
  */
 
-'use strict';
-
 const path = require('path');
-const union = require('lodash').union;
-const uniq = require('lodash').uniq;
-const flatten = require('lodash').flatten;
+const { union, uniq, flatten } = require('lodash');
 
 const RNPM_PLUGIN_PATTERNS = [/^rnpm-plugin-/, /^@(.*)\/rnpm-plugin-/];
 
@@ -69,15 +65,17 @@ const findHasteConfigInPackageAndConcat = (pjson, haste) => {
   if (!pjson.rnpm || !pjson.rnpm.haste) {
     return;
   }
-  let pkgHaste = pjson.rnpm.haste;
+  const pkgHaste = pjson.rnpm.haste;
 
   if (pkgHaste.platforms) {
+    // eslint-disable-next-line no-param-reassign
     haste.platforms = haste.platforms.concat(pkgHaste.platforms);
   }
 
   if (pkgHaste.providesModuleNodeModules) {
+    // eslint-disable-next-line no-param-reassign
     haste.providesModuleNodeModules = haste.providesModuleNodeModules.concat(
-      pkgHaste.providesModuleNodeModules,
+      pkgHaste.providesModuleNodeModules
     );
   }
 };
@@ -91,13 +89,11 @@ const findPluginsInFolder = folder => {
 
   const deps = union(
     Object.keys(pjson.dependencies || {}),
-    Object.keys(pjson.devDependencies || {}),
+    Object.keys(pjson.devDependencies || {})
   );
 
   return deps.reduce((acc, pkg) => {
-    let commands = acc.commands;
-    let platforms = acc.platforms;
-    let haste = acc.haste;
+    let { commands, platforms } = acc;
     if (isRNPMPlugin(pkg)) {
       commands = commands.concat(pkg);
     }
@@ -106,10 +102,10 @@ const findPluginsInFolder = folder => {
       if (pkgJson) {
         commands = commands.concat(findPluginsInReactNativePackage(pkgJson));
         platforms = platforms.concat(findPlatformsInPackage(pkgJson));
-        findHasteConfigInPackageAndConcat(pkgJson, haste);
+        findHasteConfigInPackageAndConcat(pkgJson, acc.haste);
       }
     }
-    return {commands: commands, platforms: platforms, haste: haste};
+    return { commands, platforms, haste: acc.haste };
   }, getEmptyPluginConfig());
 };
 
@@ -125,7 +121,7 @@ module.exports = function findPlugins(folder: string) {
     haste: {
       platforms: uniq(flatten(plugin.haste.platforms)),
       providesModuleNodeModules: uniq(
-        flatten(plugin.haste.providesModuleNodeModules),
+        flatten(plugin.haste.providesModuleNodeModules)
       ),
     },
   };

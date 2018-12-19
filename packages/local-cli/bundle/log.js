@@ -7,21 +7,19 @@
  * @format
  */
 
-'use strict';
-
-var _enabled = true;
+let _enabled = true;
 
 function disable() {
   _enabled = false;
 }
 
 function log(stream, module) {
-  return function() {
+  return (...args) => {
     if (!_enabled) {
       return;
     }
-    const message = Array.prototype.slice.call(arguments).join(' ');
-    stream.write(module + ': ' + message + '\n');
+    const message = Array.prototype.slice.call(args).join(' ');
+    stream.write(`${module}: ${message}\n`);
   };
 }
 

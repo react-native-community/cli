@@ -8,8 +8,6 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 const normalizeProjectName = require('../../android/patches/normalizeProjectName');
 
 const name = 'test';

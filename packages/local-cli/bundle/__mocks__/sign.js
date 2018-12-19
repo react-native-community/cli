@@ -7,8 +7,6 @@
  * @format
  */
 
-'use strict';
-
 function sign(source) {
   return source;
 }

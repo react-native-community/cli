@@ -2,6 +2,8 @@
  * @flow
  */
 
+/* eslint-disable flowtype/no-weak-types */
+
 export type ContextT = {
   root: string,
 };
@@ -10,7 +12,7 @@ export type LocalCommandT = {
   name: string,
   description?: string,
   usage?: string,
-  func: (argv: Array<string>, ctx: ContextT, args: Object) =>?Promise<void>,
+  func: (argv: Array<string>, ctx: ContextT, args: Object) => ?Promise<void>,
   options?: Array<{
     command: string,
     description?: string,
@@ -30,10 +32,10 @@ type Package = {
 
 /**
  * User can define command either as an object (RequiredCommandT) or
- * as an array of commands (Array<RequiredCommandT>). 
+ * as an array of commands (Array<RequiredCommandT>).
  */
 export type ProjectCommandT = LocalCommandT & {
-  pkg: Package
+  pkg: Package,
 };
 
 /**
@@ -48,7 +50,7 @@ export type PlatformConfigT<ProjectConfigT, DependencyConfigT, ParamsT> = {
   projectConfig: (string, ParamsT) => ?ProjectConfigT,
   dependencyConfig: (string, ParamsT) => ?DependencyConfigT,
   /**
-   * @todo(grabbou): This should not be part of the "core". It should be 
+   * @todo(grabbou): This should not be part of the "core". It should be
    * specific to `link` and `unlink`. Remove it from here soon.
    */
   linkConfig: () => {
@@ -57,9 +59,14 @@ export type PlatformConfigT<ProjectConfigT, DependencyConfigT, ParamsT> = {
      */
     isInstalled: (ProjectConfigT, string, DependencyConfigT) => boolean,
     register: (string, DependencyConfigT, Object, ProjectConfigT) => void,
-    unregister: (string, DependencyConfigT, ProjectConfigT, Array<DependencyConfigT>) => void,
+    unregister: (
+      string,
+      DependencyConfigT,
+      ProjectConfigT,
+      Array<DependencyConfigT>
+    ) => void,
     copyAssets: (string[], ProjectConfigT) => void,
-    unlinkAssets: (string[], ProjectConfigT) => void
+    unlinkAssets: (string[], ProjectConfigT) => void,
   },
 };
 
@@ -81,13 +88,13 @@ export type DependencyConfigAndroidT = {};
 
 /**
  * Config of a project.
- * 
+ *
  * When one of the projects is `null`, that means given platform
  * is not available in the current project.
  */
 export type ProjectConfigT = {
   android: ?ProjectConfigAndroidT,
-  ios: ?ProjectConfigIOST
+  ios: ?ProjectConfigIOST,
 };
 
 /**
@@ -96,27 +103,35 @@ export type ProjectConfigT = {
  */
 export type DependencyConfigT = {
   android: ?DependencyConfigAndroidT,
-  ios: ?DependencyConfigIOST
+  ios: ?DependencyConfigIOST,
 };
 
 /**
  * Available platforms. Additional plugins should assert the type on their own.
  */
 export type PlatformsT = {
-  ios: PlatformConfigT<ProjectConfigIOST, DependencyConfigIOST, IOSConfigParamsT>,
-  android: PlatformConfigT<ProjectConfigAndroidT, DependencyConfigAndroidT, AndroidConfigParamsT>,
-  [name: string]: PlatformConfigT<any, any, any>
+  ios: PlatformConfigT<
+    ProjectConfigIOST,
+    DependencyConfigIOST,
+    IOSConfigParamsT
+  >,
+  android: PlatformConfigT<
+    ProjectConfigAndroidT,
+    DependencyConfigAndroidT,
+    AndroidConfigParamsT
+  >,
+  [name: string]: PlatformConfigT<any, any, any>,
 };
 
 export type InquirerPromptT = any;
 
 /**
- * Configuration of the CLI as set by a package in the package.json 
+ * Configuration of the CLI as set by a package in the package.json
  */
 export type PackageConfigurationT = {
   assets?: string[],
   commands?: { [name: string]: string },
   params?: InquirerPromptT[],
   android: AndroidConfigParamsT,
-  ios: IOSConfigParamsT
+  ios: IOSConfigParamsT,
 };

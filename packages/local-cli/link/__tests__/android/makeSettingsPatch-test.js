@@ -8,8 +8,6 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 const path = require('path');
 const makeSettingsPatch = require('../../android/patches/makeSettingsPatch');
 const normalizeProjectName = require('../../android/patches/normalizeProjectName');
@@ -32,23 +30,23 @@ describe('makeSettingsPatch', () => {
   it('should build a patch function', () => {
     expect(
       Object.prototype.toString(
-        makeSettingsPatch(name, dependencyConfig, projectConfig),
-      ),
+        makeSettingsPatch(name, dependencyConfig, projectConfig)
+      )
     ).toBe('[object Object]');
   });
 
   it('should make a correct patch', () => {
     const projectDir = path.relative(
       path.dirname(projectConfig.settingsGradlePath),
-      dependencyConfig.sourceDir,
+      dependencyConfig.sourceDir
     );
 
-    const {patch} = makeSettingsPatch(name, dependencyConfig, projectConfig);
+    const { patch } = makeSettingsPatch(name, dependencyConfig, projectConfig);
 
     expect(patch).toBe(
       `include ':${name}'\n` +
         `project(':${name}').projectDir = ` +
-        `new File(rootProject.projectDir, '${projectDir}')\n`,
+        `new File(rootProject.projectDir, '${projectDir}')\n`
     );
   });
 });
@@ -57,27 +55,27 @@ describe('makeSettingsPatchWithScopedPackage', () => {
   it('should build a patch function', () => {
     expect(
       Object.prototype.toString(
-        makeSettingsPatch(scopedName, scopedDependencyConfig, projectConfig),
-      ),
+        makeSettingsPatch(scopedName, scopedDependencyConfig, projectConfig)
+      )
     ).toBe('[object Object]');
   });
 
   it('should make a correct patch', () => {
     const projectDir = path.relative(
       path.dirname(projectConfig.settingsGradlePath),
-      scopedDependencyConfig.sourceDir,
+      scopedDependencyConfig.sourceDir
     );
 
-    const {patch} = makeSettingsPatch(
+    const { patch } = makeSettingsPatch(
       scopedName,
       scopedDependencyConfig,
-      projectConfig,
+      projectConfig
     );
 
     expect(patch).toBe(
       `include ':${normalizedScopedName}'\n` +
         `project(':${normalizedScopedName}').projectDir = ` +
-        `new File(rootProject.projectDir, '${projectDir}')\n`,
+        `new File(rootProject.projectDir, '${projectDir}')\n`
     );
   });
 });

@@ -8,14 +8,12 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 const xcode = require('xcode');
-const getTargets = require('../../ios/getTargets');
 const path = require('path');
+const getTargets = require('../../ios/getTargets');
 
 const project = xcode.project(
-  path.join(__dirname, '../../__fixtures__/project.pbxproj'),
+  path.join(__dirname, '../../__fixtures__/project.pbxproj')
 );
 
 describe('ios::getTargets', () => {
@@ -25,7 +23,7 @@ describe('ios::getTargets', () => {
 
   it('should return an array of project targets', () => {
     const targets = getTargets(project);
-    expect(targets.length).toBe(2);
+    expect(targets).toHaveLength(2);
     expect(targets[0].name).toContain('Basic.app');
     expect(targets[1].name).toContain('BasicTests.xctest');
   });

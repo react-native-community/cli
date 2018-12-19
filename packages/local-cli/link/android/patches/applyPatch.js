@@ -14,6 +14,6 @@ module.exports = function applyPatch(file, patch) {
     file,
     fs
       .readFileSync(file, 'utf8')
-      .replace(patch.pattern, match => `${match}${patch.patch}`),
+      .replace(patch.pattern, match => `${match}${patch.patch}`)
   );
 };

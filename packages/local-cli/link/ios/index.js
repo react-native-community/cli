@@ -7,7 +7,7 @@
  * @format
  */
 
-module.exports = function() {
+module.exports = function getIOSLinkConfig() {
   return {
     isInstalled: require('./common/isInstalled'),
     register: require('./common/registerNativeModule'),

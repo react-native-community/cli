@@ -8,15 +8,13 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 const xcode = require('xcode');
 const path = require('path');
-const addFileToProject = require('../../ios/addFileToProject');
 const _ = require('lodash');
+const addFileToProject = require('../../ios/addFileToProject');
 
 const project = xcode.project(
-  path.join(__dirname, '../../__fixtures__/project.pbxproj'),
+  path.join(__dirname, '../../__fixtures__/project.pbxproj')
 );
 
 describe('ios::addFileToProject', () => {
@@ -25,12 +23,12 @@ describe('ios::addFileToProject', () => {
   });
 
   it('should add file to a project', () => {
-    const fileRef = addFileToProject(
+    const { fileRef } = addFileToProject(
       project,
-      '../../__fixtures__/linearGradient.pbxproj',
-    ).fileRef;
+      '../../__fixtures__/linearGradient.pbxproj'
+    );
     expect(
-      _.includes(Object.keys(project.pbxFileReferenceSection()), fileRef),
+      _.includes(Object.keys(project.pbxFileReferenceSection()), fileRef)
     ).toBeTruthy();
   });
 });

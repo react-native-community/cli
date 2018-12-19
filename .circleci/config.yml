@@ -31,7 +31,7 @@ jobs:
       - attach_workspace:
           at: ~/react-native-cli
       - run: |
-          # yarn lint – disable temporarily until ESLint is added to the project
+          yarn lint
           yarn flow-check
   tests:
     <<: *defaults

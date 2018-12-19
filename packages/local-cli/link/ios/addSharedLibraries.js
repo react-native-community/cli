@@ -19,7 +19,7 @@ module.exports = function addSharedLibraries(project, libraries) {
 
   const target = project.getFirstTarget().uuid;
 
-  for (var name of libraries) {
-    project.addFramework(name, {target});
+  for (const name of libraries) {
+    project.addFramework(name, { target });
   }
 };

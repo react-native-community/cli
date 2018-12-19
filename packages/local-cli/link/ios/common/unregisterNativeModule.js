@@ -7,7 +7,7 @@
  * @format
  */
 
-const compact = require('lodash').compact;
+const { compact } = require('lodash');
 const isInstalledIOS = require('../isInstalled');
 const isInstalledPods = require('../../pods/isInstalled');
 const unregisterDependencyIOS = require('../unregisterNativeModule');
@@ -17,7 +17,7 @@ module.exports = function unregisterNativeModule(
   name,
   dependencyConfig,
   projectConfig,
-  otherDependencies,
+  otherDependencies
 ) {
   const isIosInstalled = isInstalledIOS(projectConfig, dependencyConfig);
   const isPodInstalled = isInstalledPods(projectConfig, dependencyConfig);

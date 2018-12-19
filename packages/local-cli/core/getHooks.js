@@ -2,16 +2,14 @@
  * @flow
  */
 
-'use strict';
-
-const spawn = require('child_process').spawn;
+const { spawn } = require('child_process');
 const getPackageConfiguration = require('./getPackageConfiguration');
 
 function makeCommand(command) {
   return cb => {
     if (!cb) {
       throw new Error(
-        `You missed a callback function for the ${command} command`,
+        `You missed a callback function for the ${command} command`
       );
     }
 
@@ -23,7 +21,7 @@ function makeCommand(command) {
       stdin: 'inherit',
     });
 
-    commandProcess.on('close', function prelink(code) {
+    commandProcess.on('close', code => {
       if (code) {
         throw new Error(`Error occurred during executing "${command}" command`);
       }
@@ -31,19 +29,18 @@ function makeCommand(command) {
       cb();
     });
   };
-};
+}
 
 module.exports = function getHooks(root: string) {
   const commands = getPackageConfiguration(root).commands || {};
-  
+
   const acc = {};
-  
-  Object.keys(commands)
-    .forEach(command => {
-      acc[command] = makeCommand(commands[command]);
-    });
-  
-    return acc;
+
+  Object.keys(commands).forEach(command => {
+    acc[command] = makeCommand(commands[command]);
+  });
+
+  return acc;
 };
 
 module.exports.makeCommand = makeCommand;

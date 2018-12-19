@@ -7,8 +7,6 @@
  * @format
  */
 
-'use strict';
-
 const readPodfile = require('./readPodfile');
 const findPodTargetLine = require('./findPodTargetLine');
 const findLineToAddPod = require('./findLineToAddPod');
@@ -19,7 +17,7 @@ const savePodFile = require('./savePodFile');
 module.exports = function registerNativeModulePods(
   name,
   dependencyConfig,
-  iOSProject,
+  iOSProject
 ) {
   const podLines = readPodfile(iOSProject.podfile);
   const linesToAddEntry = getLinesToAddEntry(podLines, iOSProject);
@@ -27,12 +25,11 @@ module.exports = function registerNativeModulePods(
   savePodFile(iOSProject.podfile, podLines);
 };
 
-function getLinesToAddEntry(podLines, {projectName}) {
+function getLinesToAddEntry(podLines, { projectName }) {
   const linesToAddPodWithMarker = findMarkedLinesInPodfile(podLines);
   if (linesToAddPodWithMarker.length > 0) {
     return linesToAddPodWithMarker;
-  } else {
-    const firstTargetLined = findPodTargetLine(podLines, projectName);
-    return findLineToAddPod(podLines, firstTargetLined);
   }
+  const firstTargetLined = findPodTargetLine(podLines, projectName);
+  return findLineToAddPod(podLines, firstTargetLined);
 }

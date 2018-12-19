@@ -1,25 +1,24 @@
 /**
  * @flow
  */
-'use strict';
-
-const findSymlinkedModules = require('./findSymlinkedModules');
-const path = require('path');
-
-const {createBlacklist} = require('metro');
-const {loadConfig} = require('metro-config');
-
-const findPlugins = require('../core/findPlugins');
-
+/* eslint-disable no-param-reassign */
 /**
  * Configuration file of Metro.
  */
-import type {ConfigT} from 'metro-config/src/configTypes.flow';
+import type { ConfigT } from 'metro-config/src/configTypes.flow';
 
-const resolveSymlinksForRoots = (roots) =>
+const path = require('path');
+
+const { createBlacklist } = require('metro');
+const { loadConfig } = require('metro-config');
+const findSymlinkedModules = require('./findSymlinkedModules');
+
+const findPlugins = require('../core/findPlugins');
+
+const resolveSymlinksForRoots = roots =>
   roots.reduce<string[]>(
     (arr, rootPath) => arr.concat(findSymlinkedModules(rootPath, roots)),
-    [...roots],
+    [...roots]
   );
 
 const getWatchFolders = () => {
@@ -30,26 +29,27 @@ const getWatchFolders = () => {
   return [];
 };
 
-const getBlacklistRE = () => {
-  return createBlacklist([/.*\/__fixtures__\/.*/]);
-};
+const getBlacklistRE = () => createBlacklist([/.*\/__fixtures__\/.*/]);
 
 /**
  * Default configuration
- * 
+ *
  * @todo(grabbou): As a separate PR, haste.platforms should be added before "native".
  * Otherwise, a.native.js will not load on Windows or other platforms
  */
 const getDefaultConfig = (root: string) => {
   const plugins = findPlugins(root);
 
-  return ({
+  return {
     resolver: {
       resolverMainFields: ['react-native', 'browser', 'main'],
       blacklistRE: getBlacklistRE(),
       platforms: ['ios', 'android', 'native', ...plugins.haste.platforms],
-      providesModuleNodeModules: ['react-native', ...plugins.haste.providesModuleNodeModules],
-      hasteImplModulePath: require.resolve('react-native/jest/hasteImpl')
+      providesModuleNodeModules: [
+        'react-native',
+        ...plugins.haste.providesModuleNodeModules,
+      ],
+      hasteImplModulePath: require.resolve('react-native/jest/hasteImpl'),
     },
     serializer: {
       getModulesRunBeforeMainModule: () => [
@@ -62,10 +62,12 @@ const getDefaultConfig = (root: string) => {
     },
     transformer: {
       babelTransformerPath: require.resolve('metro/src/reactNativeTransformer'),
-      assetRegistryPath: require.resolve('react-native/Libraries/Image/AssetRegistry')
+      assetRegistryPath: require.resolve(
+        'react-native/Libraries/Image/AssetRegistry'
+      ),
     },
     watchFolders: getWatchFolders(),
-  });
+  };
 };
 
 export type ConfigOptionsT = {
@@ -74,13 +76,13 @@ export type ConfigOptionsT = {
   resetCache?: boolean,
   watchFolders?: string[],
   sourceExts?: string[],
-  reporter?: any,
+  reporter?: any, // eslint-disable-line flowtype/no-weak-types
   config?: string,
 };
 
 /**
- * Overwrites Metro configuration with options. 
- * 
+ * Overwrites Metro configuration with options.
+ *
  * This ensures that options are always taking precedence over other
  * configuration present.
  */
@@ -100,24 +102,21 @@ const overwriteWithOptions = (config: ConfigT, options: ConfigOptionsT) => {
   if (options.resetCache) {
     config.resetCache = options.resetCache;
   }
-  
+
   if (options.watchFolders) {
     config.watchFolders = options.watchFolders;
   }
 
-  if (
-    options.sourceExts
-    && options.sourceExts !== config.resolver.sourceExts
-  ) {
+  if (options.sourceExts && options.sourceExts !== config.resolver.sourceExts) {
     config.resolver.sourceExts = options.sourceExts.concat(
-      config.resolver.sourceExts,
+      config.resolver.sourceExts
     );
   }
 };
 
 /**
  * Loads Metro Config and applies `options` on top of the resolved config.
- * 
+ *
  * This allows the CLI to always overwrite the file settings.
  */
 module.exports = async function load(
@@ -125,11 +124,14 @@ module.exports = async function load(
   options?: ConfigOptionsT = {}
 ): Promise<ConfigT> {
   const defaultConfig = getDefaultConfig(projectRoot);
-  
-  const config = await loadConfig({
-    cwd: projectRoot,
-    config: options.config
-  }, defaultConfig);
+
+  const config = await loadConfig(
+    {
+      cwd: projectRoot,
+      config: options.config,
+    },
+    defaultConfig
+  );
 
   if (options) {
     overwriteWithOptions(config, options);

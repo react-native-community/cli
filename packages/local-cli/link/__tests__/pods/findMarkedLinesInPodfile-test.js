@@ -8,8 +8,6 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 const path = require('path');
 const readPodfile = require('../../pods/readPodfile');
 const findMarkedLinesInPodfile = require('../../pods/findMarkedLinesInPodfile');
@@ -26,18 +24,18 @@ describe('pods::findMarkedLinesInPodfile', () => {
   it('returns empty array for Simple Podfile', () => {
     const podfile = readPodfile(path.join(PODFILES_PATH, 'PodfileSimple'));
     expect(
-      findMarkedLinesInPodfile(podfile, LINE_AFTER_TARGET_IN_TEST_PODFILE),
+      findMarkedLinesInPodfile(podfile, LINE_AFTER_TARGET_IN_TEST_PODFILE)
     ).toEqual([]);
   });
 
   it('returns correct line numbers for Podfile with marker', () => {
     const podfile = readPodfile(path.join(PODFILES_PATH, 'PodfileWithMarkers'));
     const expectedObject = [
-      {line: 18, indentation: 2},
-      {line: 31, indentation: 4},
+      { line: 18, indentation: 2 },
+      { line: 31, indentation: 4 },
     ];
     expect(
-      findMarkedLinesInPodfile(podfile, LINE_AFTER_TARGET_IN_TEST_PODFILE),
+      findMarkedLinesInPodfile(podfile, LINE_AFTER_TARGET_IN_TEST_PODFILE)
     ).toEqual(expectedObject);
   });
 });

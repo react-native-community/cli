@@ -14,15 +14,13 @@
  */
 module.exports = function removeFromPbxItemContainerProxySection(
   project,
-  file,
+  file
 ) {
   const section = project.hash.project.objects.PBXContainerItemProxy;
 
-  for (var key of Object.keys(section)) {
+  for (const key of Object.keys(section)) {
     if (section[key].containerPortal === file.uuid) {
       delete section[key];
     }
   }
-
-  return;
 };

@@ -13,11 +13,11 @@ const normalizeProjectName = require('./normalizeProjectName');
 module.exports = function makeSettingsPatch(
   name,
   androidConfig,
-  projectConfig,
+  projectConfig
 ) {
-  var projectDir = path.relative(
+  const projectDir = path.relative(
     path.dirname(projectConfig.settingsGradlePath),
-    androidConfig.sourceDir,
+    androidConfig.sourceDir
   );
   const normalizedProjectName = normalizeProjectName(name);
 

@@ -8,14 +8,12 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 const xcode = require('xcode');
-const hasLibraryImported = require('../../ios/hasLibraryImported');
 const path = require('path');
+const hasLibraryImported = require('../../ios/hasLibraryImported');
 
 const project = xcode.project(
-  path.join(__dirname, '../../__fixtures__/project.pbxproj'),
+  path.join(__dirname, '../../__fixtures__/project.pbxproj')
 );
 
 describe('ios::hasLibraryImported', () => {

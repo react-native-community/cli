@@ -17,7 +17,7 @@ const WebSocketServer = require('ws').Server;
 
 const indexPageMiddleware = require('./indexPage');
 const copyToClipBoardMiddleware = require('./copyToClipBoardMiddleware');
-const getSecurityHeadersMiddleware =  require('./getSecurityHeadersMiddleware');
+const getSecurityHeadersMiddleware = require('./getSecurityHeadersMiddleware');
 const loadRawBodyMiddleware = require('./loadRawBodyMiddleware');
 const openStackFrameInEditorMiddleware = require('./openStackFrameInEditorMiddleware');
 const statusPageMiddleware = require('./statusPageMiddleware');
@@ -27,7 +27,7 @@ const getDevToolsMiddleware = require('./getDevToolsMiddleware');
 type Options = {
   +watchFolders: $ReadOnlyArray<string>,
   +host?: string,
-}
+};
 
 type WebSocketProxy = {
   server: WebSocketServer,
@@ -38,6 +38,7 @@ type Connect = $Call<connect>;
 
 module.exports = class MiddlewareManager {
   app: Connect;
+
   options: Options;
 
   constructor(options: Options) {
@@ -67,7 +68,7 @@ module.exports = class MiddlewareManager {
 
   attachDevToolsSocket(socket: WebSocketProxy) {
     this.app.use(
-      getDevToolsMiddleware(this.options, () => socket.isChromeConnected()),
+      getDevToolsMiddleware(this.options, () => socket.isChromeConnected())
     );
-  };
+  }
 };

@@ -7,11 +7,9 @@
  * @format
  */
 
-'use strict';
-
 const chalk = require('chalk');
-const copyAndReplace = require('../util/copyAndReplace');
 const path = require('path');
+const copyAndReplace = require('../util/copyAndReplace');
 const prompt = require('./promptSync')();
 const walk = require('../util/walk');
 
@@ -33,7 +31,7 @@ function copyProjectTemplateAndReplace(
   srcPath,
   destPath,
   newProjectName,
-  options,
+  options = {}
 ) {
   if (!srcPath) {
     throw new Error('Need a path to copy from');
@@ -44,8 +42,6 @@ function copyProjectTemplateAndReplace(
   if (!newProjectName) {
     throw new Error('Need a project name');
   }
-
-  options = options || {};
 
   walk(srcPath).forEach(absoluteSrcFilePath => {
     // 'react-native upgrade'
@@ -90,13 +86,12 @@ function copyProjectTemplateAndReplace(
 
     let contentChangedCallback = null;
     if (options.upgrade && !options.force) {
-      contentChangedCallback = (_, contentChanged) => {
-        return upgradeFileContentChangedCallback(
+      contentChangedCallback = (_, contentChanged) =>
+        upgradeFileContentChangedCallback(
           absoluteSrcFilePath,
           relativeRenamedPath,
-          contentChanged,
+          contentChanged
         );
-      };
     }
     copyAndReplace(
       absoluteSrcFilePath,
@@ -106,7 +101,7 @@ function copyProjectTemplateAndReplace(
         HelloWorld: newProjectName,
         helloworld: newProjectName.toLowerCase(),
       },
-      contentChangedCallback,
+      contentChangedCallback
     );
   });
 }
@@ -119,11 +114,11 @@ function copyProjectTemplateAndReplace(
  * This is especially important for .gitignore because npm has some special
  * behavior of automatically renaming .gitignore to .npmignore.
  */
-function translateFilePath(path) {
-  if (!path) {
-    return path;
+function translateFilePath(filePath) {
+  if (!filePath) {
+    return filePath;
   }
-  return path
+  return filePath
     .replace('_BUCK', 'BUCK')
     .replace('_gitignore', '.gitignore')
     .replace('_gitattributes', '.gitattributes')
@@ -136,43 +131,36 @@ function translateFilePath(path) {
 function upgradeFileContentChangedCallback(
   absoluteSrcFilePath,
   relativeDestPath,
-  contentChanged,
+  contentChanged
 ) {
   if (contentChanged === 'new') {
-    console.log(chalk.bold('new') + ' ' + relativeDestPath);
+    console.log(`${chalk.bold('new')} ${relativeDestPath}`);
     return 'overwrite';
-  } else if (contentChanged === 'changed') {
+  }
+  if (contentChanged === 'changed') {
     console.log(
-      chalk.bold(relativeDestPath) +
-        ' ' +
-        'has changed in the new version.\nDo you want to keep your ' +
-        relativeDestPath +
-        ' or replace it with the ' +
-        'latest version?\nIf you ever made any changes ' +
-        "to this file, you'll probably want to keep it.\n" +
-        'You can see the new version here: ' +
-        absoluteSrcFilePath +
-        '\n' +
-        'Do you want to replace ' +
-        relativeDestPath +
-        '? ' +
-        'Answer y to replace, n to keep your version: ',
+      `${chalk.bold(relativeDestPath)} ` +
+        `has changed in the new version.\nDo you want to keep your ${relativeDestPath} or replace it with the ` +
+        `latest version?\nIf you ever made any changes ` +
+        `to this file, you'll probably want to keep it.\n` +
+        `You can see the new version here: ${absoluteSrcFilePath}\n` +
+        `Do you want to replace ${relativeDestPath}? ` +
+        `Answer y to replace, n to keep your version: `
     );
     const answer = prompt();
     if (answer === 'y') {
-      console.log('Replacing ' + relativeDestPath);
+      console.log(`Replacing ${relativeDestPath}`);
       return 'overwrite';
-    } else {
-      console.log('Keeping your ' + relativeDestPath);
-      return 'keep';
     }
-  } else if (contentChanged === 'identical') {
+    console.log(`Keeping your ${relativeDestPath}`);
     return 'keep';
-  } else {
-    throw new Error(
-      `Unknown file changed state: ${relativeDestPath}, ${contentChanged}`,
-    );
   }
+  if (contentChanged === 'identical') {
+    return 'keep';
+  }
+  throw new Error(
+    `Unknown file changed state: ${relativeDestPath}, ${contentChanged}`
+  );
 }
 
 module.exports = copyProjectTemplateAndReplace;

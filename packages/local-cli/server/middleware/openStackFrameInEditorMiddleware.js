@@ -7,12 +7,12 @@
  * @format
  */
 
-'use strict';
-
 const launchEditor = require('../util/launchEditor');
 
-module.exports = function({watchFolders}) {
-  return function(req, res, next) {
+module.exports = function getOpenStackFrameInEditorMiddleware({
+  watchFolders,
+}) {
+  return (req, res, next) => {
     if (req.url === '/open-stack-frame') {
       const frame = JSON.parse(req.rawBody);
       launchEditor(frame.file, frame.lineNumber, watchFolders);

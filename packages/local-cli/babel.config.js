@@ -1,4 +1,3 @@
-const path = require('path');
 const escapeRegExp = require('escape-string-regexp');
 
 module.exports = {
@@ -12,7 +11,6 @@ module.exports = {
     ],
     require.resolve('@babel/preset-flow'),
   ],
-  only: [
-    new RegExp('^' + escapeRegExp(__dirname))
-  ]
+  plugins: [require.resolve('@babel/plugin-transform-strict-mode')],
+  only: [new RegExp(`^${escapeRegExp(__dirname)}`)],
 };

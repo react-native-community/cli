@@ -15,11 +15,10 @@ module.exports = function isInstalledGlobally() {
     const path = require('path');
     // On Windows, assume we are installed globally if we can't find a
     // package.json above node_modules.
-    return !fs.existsSync(path.join(__dirname, '../../../package.json'), );
-  } else {
-    // On non-windows, assume we are installed globally if we are called from
-    // outside of the node_mobules/.bin/react-native executable.
-    var script = process.argv[1];
-    return script.indexOf('node_modules/.bin/react-native') === -1;
+    return !fs.existsSync(path.join(__dirname, '../../../package.json'));
   }
+  // On non-windows, assume we are installed globally if we are called from
+  // outside of the node_mobules/.bin/react-native executable.
+  const script = process.argv[1];
+  return script.indexOf('node_modules/.bin/react-native') === -1;
 };

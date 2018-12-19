@@ -8,8 +8,6 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 const path = require('path');
 const findPodTargetLine = require('../../pods/findPodTargetLine');
 const readPodfile = require('../../pods/readPodfile');
@@ -27,7 +25,7 @@ describe('pods::findPodTargetLine', () => {
     expect(findPodTargetLine(podfile, 'invalidName')).toBeNull();
   });
 
-  it('returns null if there is not matching project name', () => {
+  it('returns correct line if there is a matching project', () => {
     const podfile = readPodfile(path.join(PODFILES_PATH, 'PodfileSimple'));
     expect(findPodTargetLine(podfile, 'Testing')).toBe(4);
   });

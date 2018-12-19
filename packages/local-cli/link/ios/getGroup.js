@@ -29,8 +29,8 @@ module.exports = function getGroup(project, path) {
     return groups;
   }
 
-  for (var name of path.split('/')) {
-    var foundGroup = findGroup(groups, name);
+  for (const name of path.split('/')) {
+    const foundGroup = findGroup(groups, name);
 
     if (foundGroup) {
       groups = project.getPBXGroupByKey(foundGroup.value);

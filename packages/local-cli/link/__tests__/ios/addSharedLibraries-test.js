@@ -8,15 +8,13 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 const xcode = require('xcode');
 const path = require('path');
 const addSharedLibraries = require('../../ios/addSharedLibraries');
 const getGroup = require('../../ios/getGroup');
 
 const project = xcode.project(
-  path.join(__dirname, '../../__fixtures__/project.pbxproj'),
+  path.join(__dirname, '../../__fixtures__/project.pbxproj')
 );
 
 describe('ios::addSharedLibraries', () => {
@@ -34,11 +32,11 @@ describe('ios::addSharedLibraries', () => {
     addSharedLibraries(project, ['libz.tbd']);
 
     const frameworksGroup = getGroup(project, 'Frameworks');
-    expect(frameworksGroup.children.length).toEqual(1);
+    expect(frameworksGroup.children).toHaveLength(1);
     expect(frameworksGroup.children[0].comment).toEqual('libz.tbd');
 
     addSharedLibraries(project, ['MessageUI.framework']);
-    expect(frameworksGroup.children.length).toEqual(2);
+    expect(frameworksGroup.children).toHaveLength(2);
   });
 
   it('should not add duplicate libraries to project', () => {
@@ -46,6 +44,6 @@ describe('ios::addSharedLibraries', () => {
     addSharedLibraries(project, ['libz.tbd']);
 
     const frameworksGroup = getGroup(project, 'Frameworks');
-    expect(frameworksGroup.children.length).toEqual(1);
+    expect(frameworksGroup.children).toHaveLength(1);
   });
 });

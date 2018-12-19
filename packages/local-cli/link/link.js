@@ -8,12 +8,12 @@
  * @flow
  */
 
+import type { ContextT } from '../core/types.flow';
+
 const log = require('npmlog');
 const path = require('path');
-const uniqBy = require('lodash').uniqBy;
-const flatten = require('lodash').flatten;
+const { flatten, isEmpty, uniqBy } = require('lodash');
 const chalk = require('chalk');
-const isEmpty = require('lodash').isEmpty;
 const promiseWaterfall = require('./promiseWaterfall');
 const getProjectDependencies = require('./getProjectDependencies');
 const getDependencyConfig = require('./getDependencyConfig');
@@ -24,12 +24,8 @@ const getProjectConfig = require('./getProjectConfig');
 
 const findReactNativeScripts = require('../util/findReactNativeScripts');
 
-const getHooks = require('../core/getHooks');
-const getParams = require('../core/getParams');
 const getAssets = require('../core/getAssets');
 const getPlatforms = require('../core/getPlatforms');
-
-import type {ContextT} from '../core/types.flow';
 
 log.heading = 'rnpm-link';
 
@@ -40,7 +36,7 @@ const linkDependency = async (platforms, project, dependency) => {
 
   Object.keys(platforms || {}).forEach(platform => {
     if (!project[platform] || !dependency.config[platform]) {
-      return null;
+      return;
     }
 
     const linkConfig =
@@ -48,22 +44,22 @@ const linkDependency = async (platforms, project, dependency) => {
       platforms[platform].linkConfig &&
       platforms[platform].linkConfig();
     if (!linkConfig || !linkConfig.isInstalled || !linkConfig.register) {
-      return null;
+      return;
     }
 
     const isInstalled = linkConfig.isInstalled(
       project[platform],
       dependency.name,
-      dependency.config[platform],
+      dependency.config[platform]
     );
 
     if (isInstalled) {
       log.info(
         chalk.grey(
-          `Platform '${platform}' module ${dependency.name} is already linked`,
-        ),
+          `Platform '${platform}' module ${dependency.name} is already linked`
+        )
       );
-      return null;
+      return;
     }
 
     log.info(`Linking ${dependency.name} ${platform} dependency`);
@@ -74,13 +70,13 @@ const linkDependency = async (platforms, project, dependency) => {
       dependency.config[platform],
       params,
       // $FlowFixMe: We check if project[platform] exists on line 42
-      project[platform],
+      project[platform]
     );
 
     log.info(
       `Platform '${platform}' module ${
         dependency.name
-      } has been successfully linked`,
+      } has been successfully linked`
     );
   });
 };
@@ -95,11 +91,11 @@ const linkAssets = (platforms, project, assets) => {
       platforms[platform] &&
       platforms[platform].linkConfig &&
       platforms[platform].linkConfig();
-    
+
     if (!linkConfig || !linkConfig.copyAssets || !project[platform]) {
       return;
     }
-    
+
     log.info(`Linking assets to ${platform} project`);
     // $FlowFixMe: We check for existence of project[platform] on line 97.
     linkConfig.copyAssets(assets, project[platform]);
@@ -123,13 +119,13 @@ function link(args: Array<string>, ctx: ContextT) {
   } catch (err) {
     log.error(
       'ERRPACKAGEJSON',
-      'No package found. Are you sure this is a React Native project?',
+      'No package found. Are you sure this is a React Native project?'
     );
     return Promise.reject(err);
   }
   const hasProjectConfig = Object.keys(platforms).reduce(
     (acc, key) => acc || key in project,
-    false,
+    false
   );
   if (!hasProjectConfig && findReactNativeScripts()) {
     throw new Error(
@@ -137,7 +133,7 @@ function link(args: Array<string>, ctx: ContextT) {
         'If you need to include a library that relies on custom native code, ' +
         'you might have to eject first. ' +
         'See https://github.com/react-community/create-react-native-app/blob/master/EJECTING.md ' +
-        'for more information.',
+        'for more information.'
     );
   }
 
@@ -154,14 +150,14 @@ function link(args: Array<string>, ctx: ContextT) {
   const dependencies = getDependencyConfig(
     ctx,
     platforms,
-    packageName ? [packageName] : getProjectDependencies(ctx.root),
+    packageName ? [packageName] : getProjectDependencies(ctx.root)
   );
 
   const assets = dedupeAssets(
     dependencies.reduce(
       (acc, dependency) => acc.concat(dependency.assets),
-      getAssets(ctx.root),
-    ),
+      getAssets(ctx.root)
+    )
   );
 
   const tasks = flatten(
@@ -169,7 +165,7 @@ function link(args: Array<string>, ctx: ContextT) {
       () => promisify(dependency.commands.prelink || commandStub),
       () => linkDependency(platforms, project, dependency),
       () => promisify(dependency.commands.postlink || commandStub),
-    ]),
+    ])
   );
 
   tasks.push(() => linkAssets(platforms, project, assets));
@@ -177,7 +173,7 @@ function link(args: Array<string>, ctx: ContextT) {
   return promiseWaterfall(tasks).catch(err => {
     log.error(
       `Something went wrong while linking. Error: ${err.message} \n` +
-        'Please file an issue here: https://github.com/facebook/react-native/issues',
+        'Please file an issue here: https://github.com/facebook/react-native/issues'
     );
     throw err;
   });

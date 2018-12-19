@@ -3,14 +3,11 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
- *
- * @format
  */
-
-'use strict';
 
 const url = require('url');
 const WebSocketServer = require('ws').Server;
+
 const PROTOCOL_VERSION = 2;
 const notifier = require('node-notifier');
 
@@ -25,10 +22,10 @@ function parseMessage(data, binary) {
       return message;
     }
     console.error(
-      'Received message had wrong protocol version: ' + message.version,
+      `Received message had wrong protocol version: ${message.version}`
     );
   } catch (e) {
-    console.error('Failed to parse the message as JSON:\n' + data);
+    console.error(`Failed to parse the message as JSON:\n${data}`);
   }
   return undefined;
 }
@@ -50,7 +47,7 @@ function isRequest(message) {
 function isResponse(message) {
   return (
     typeof message.id === 'object' &&
-    typeof message.id.requestId !== undefined &&
+    typeof message.id.requestId !== 'undefined' &&
     typeof message.id.clientId === 'string' &&
     (message.result !== undefined || message.error !== undefined)
   );
@@ -58,8 +55,8 @@ function isResponse(message) {
 
 function attachToServer(server, path) {
   const wss = new WebSocketServer({
-    server: server,
-    path: path,
+    server,
+    path,
   });
   const clients = new Map();
   let nextClientId = 0;
@@ -67,7 +64,9 @@ function attachToServer(server, path) {
   function getClientWs(clientId) {
     const clientWs = clients.get(clientId);
     if (clientWs === undefined) {
-      throw `could not find id "${clientId}" while forwarding request`;
+      throw new Error(
+        `could not find id "${clientId}" while forwarding request`
+      );
     }
     return clientWs;
   }
@@ -94,14 +93,14 @@ function attachToServer(server, path) {
         } catch (e) {
           console.error(
             `Failed to send broadcast to client: '${otherId}' ` +
-              `due to:\n ${e.toString()}`,
+              `due to:\n ${e.toString()}`
           );
         }
       }
     }
   }
 
-  wss.on('connection', function(clientWs) {
+  wss.on('connection', clientWs => {
     const clientId = `client#${nextClientId++}`;
 
     function handleCaughtError(message, error) {
@@ -117,22 +116,22 @@ function attachToServer(server, path) {
       if (message.id === undefined) {
         console.error(
           `Handling message from ${clientId} failed with:\n${error}\n` +
-            `message:\n${JSON.stringify(errorMessage)}`,
+            `message:\n${JSON.stringify(errorMessage)}`
         );
       } else {
         try {
           clientWs.send(
             JSON.stringify({
               version: PROTOCOL_VERSION,
-              error: error,
+              error,
               id: message.id,
-            }),
+            })
           );
         } catch (e) {
           console.error(
             `Failed to reply to ${clientId} with error:\n${error}` +
               `\nmessage:\n${JSON.stringify(errorMessage)}` +
-              `\ndue to error: ${e.toString()}`,
+              `\ndue to error: ${e.toString()}`
           );
         }
       }
@@ -153,15 +152,15 @@ function attachToServer(server, path) {
           });
           break;
         default:
-          throw `unknown method: ${message.method}`;
+          throw new Error(`unknown method: ${message.method}`);
       }
 
       clientWs.send(
         JSON.stringify({
           version: PROTOCOL_VERSION,
-          result: result,
+          result,
           id: message.id,
-        }),
+        })
       );
     }
 
@@ -174,8 +173,8 @@ function attachToServer(server, path) {
           id:
             message.id === undefined
               ? undefined
-              : {requestId: message.id, clientId: clientId},
-        }),
+              : { requestId: message.id, clientId },
+        })
       );
     }
 
@@ -186,15 +185,18 @@ function attachToServer(server, path) {
           result: message.result,
           error: message.error,
           id: message.id.requestId,
-        }),
+        })
       );
     }
 
     clients.set(clientId, clientWs);
-    clientWs.onclose = clientWs.onerror = () => {
-      clientWs.onmessage = null;
+    const onCloseHandler = () => {
+      clientWs.onmessage = null; // eslint-disable-line no-param-reassign
       clients.delete(clientId);
     };
+    clientWs.onclose = onCloseHandler; // eslint-disable-line no-param-reassign
+    clientWs.onerror = onCloseHandler; // eslint-disable-line no-param-reassign
+    // eslint-disable-next-line no-param-reassign
     clientWs.onmessage = event => {
       const message = parseMessage(event.data, event.binary);
       if (message === undefined) {
@@ -214,7 +216,7 @@ function attachToServer(server, path) {
         } else if (isResponse(message)) {
           forwardResponse(message);
         } else {
-          throw 'Invalid message, did not match the protocol';
+          throw new Error('Invalid message, did not match the protocol');
         }
       } catch (e) {
         handleCaughtError(message, e.toString());
@@ -224,12 +226,12 @@ function attachToServer(server, path) {
 
   return {
     broadcast: (method, params) => {
-      handleSendBroadcast(null, {method: method, params: params});
+      handleSendBroadcast(null, { method, params });
     },
   };
 }
 
 module.exports = {
-  attachToServer: attachToServer,
-  parseMessage: parseMessage,
+  attachToServer,
+  parseMessage,
 };

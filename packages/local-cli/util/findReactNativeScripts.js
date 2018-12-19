@@ -8,8 +8,6 @@
  * @flow strict
  */
 
-'use strict';
-
 const path = require('path');
 const fs = require('fs');
 
@@ -17,7 +15,7 @@ function findReactNativeScripts(): ?string {
   const executablePath = path.resolve(
     'node_modules',
     '.bin',
-    'react-native-scripts',
+    'react-native-scripts'
   );
   if (fs.existsSync(executablePath)) {
     return executablePath;

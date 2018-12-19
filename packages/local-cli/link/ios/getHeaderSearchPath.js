@@ -8,8 +8,7 @@
  */
 
 const path = require('path');
-const union = require('lodash').union;
-const last = require('lodash').last;
+const { last, union } = require('lodash');
 
 /**
  * Given an array of directories, it returns the one that contains
@@ -57,6 +56,6 @@ module.exports = function getHeaderSearchPath(sourceDir, headers) {
     ? `"$(SRCROOT)${path.sep}${path.relative(sourceDir, directories[0])}"`
     : `"$(SRCROOT)${path.sep}${path.relative(
         sourceDir,
-        getOuterDirectory(directories),
+        getOuterDirectory(directories)
       )}/**"`;
 };

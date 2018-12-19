@@ -8,13 +8,11 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 jest.mock('path');
 jest.mock('fs');
 
-const findManifest = require('../../android/findManifest');
 const fs = require('fs');
+const findManifest = require('../../android/findManifest');
 const mocks = require('../../__fixtures__/android');
 
 describe('android::findManifest', () => {

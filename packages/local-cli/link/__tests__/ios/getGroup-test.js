@@ -8,14 +8,12 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 const xcode = require('xcode');
-const getGroup = require('../../ios/getGroup');
 const path = require('path');
+const getGroup = require('../../ios/getGroup');
 
 const project = xcode.project(
-  path.join(__dirname, '../../__fixtures__/project.pbxproj'),
+  path.join(__dirname, '../../__fixtures__/project.pbxproj')
 );
 
 describe('ios::getGroup', () => {
@@ -31,7 +29,7 @@ describe('ios::getGroup', () => {
 
   it('should return nested group when specified', () => {
     const group = getGroup(project, 'NestedGroup/Libraries');
-    expect(group.children.length).toBe(0); // our test nested Libraries is empty
+    expect(group.children).toHaveLength(0); // our test nested Libraries is empty
     expect(group.name).toBe('Libraries');
   });
 

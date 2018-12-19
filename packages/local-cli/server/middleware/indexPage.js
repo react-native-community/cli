@@ -7,12 +7,10 @@
  * @format
  */
 
-'use strict';
-
 const fs = require('fs');
 const path = require('path');
 
-module.exports = function(req, res, next) {
+module.exports = function indexPageMiddleware(req, res, next) {
   if (req.url === '/') {
     res.end(fs.readFileSync(path.join(__dirname, 'index.html')));
   } else {

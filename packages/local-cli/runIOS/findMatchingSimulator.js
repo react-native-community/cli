@@ -7,7 +7,7 @@
  * @format
  */
 
-'use strict';
+/* eslint-disable */
 
 /**
  * Takes in a parsed simulator list and a desired name, and returns an object with the matching simulator. The desired
@@ -38,8 +38,8 @@ function findMatchingSimulator(simulators, simulatorString) {
     simulatorName = simulatorString;
   }
 
-  var match;
-  for (let version in devices) {
+  let match;
+  for (const version in devices) {
     // Making sure the version of the simulator is an iOS or tvOS (Removes Apple Watch, etc)
     if (!version.startsWith('iOS') && !version.startsWith('tvOS')) {
       continue;
@@ -47,8 +47,8 @@ function findMatchingSimulator(simulators, simulatorString) {
     if (simulatorVersion && !version.endsWith(simulatorVersion)) {
       continue;
     }
-    for (let i in devices[version]) {
-      let simulator = devices[version][i];
+    for (const i in devices[version]) {
+      const simulator = devices[version][i];
       // Skipping non-available simulator
       if (
         simulator.availability !== '(available)' &&
@@ -56,7 +56,7 @@ function findMatchingSimulator(simulators, simulatorString) {
       ) {
         continue;
       }
-      let booted = simulator.state === 'Booted';
+      const booted = simulator.state === 'Booted';
       if (booted && simulatorName === null) {
         return {
           udid: simulator.udid,

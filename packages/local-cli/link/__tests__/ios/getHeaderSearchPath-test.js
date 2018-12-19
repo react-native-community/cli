@@ -8,10 +8,8 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
-const getHeaderSearchPath = require('../../ios/getHeaderSearchPath');
 const path = require('path');
+const getHeaderSearchPath = require('../../ios/getHeaderSearchPath');
 
 const SRC_DIR = path.join('react-native-project', 'ios');
 
@@ -25,7 +23,7 @@ describe('ios::getHeaderSearchPath', () => {
         'react-native-project',
         'node_modules',
         'package',
-        'Gradient.h',
+        'Gradient.h'
       ),
       path.join('react-native-project', 'node_modules', 'package', 'Manager.h'),
     ];
@@ -33,7 +31,7 @@ describe('ios::getHeaderSearchPath', () => {
     const searchPath = getHeaderSearchPath(SRC_DIR, files);
 
     expect(searchPath).toBe(
-      `"${['$(SRCROOT)', '..', 'node_modules', 'package'].join(path.sep)}"`,
+      `"${['$(SRCROOT)', '..', 'node_modules', 'package'].join(path.sep)}"`
     );
   });
 
@@ -48,7 +46,7 @@ describe('ios::getHeaderSearchPath', () => {
         'package',
         'src',
         'folderA',
-        'Gradient.h',
+        'Gradient.h'
       ),
       path.join(
         'react-native-project',
@@ -56,7 +54,7 @@ describe('ios::getHeaderSearchPath', () => {
         'package',
         'src',
         'folderB',
-        'Manager.h',
+        'Manager.h'
       ),
     ];
 
@@ -64,8 +62,8 @@ describe('ios::getHeaderSearchPath', () => {
 
     expect(searchPath).toBe(
       `"${['$(SRCROOT)', '..', 'node_modules', 'package', 'src'].join(
-        path.sep,
-      )}/**"`,
+        path.sep
+      )}/**"`
     );
   });
 
@@ -80,7 +78,7 @@ describe('ios::getHeaderSearchPath', () => {
         'package',
         'src',
         'folderA',
-        'Gradient.h',
+        'Gradient.h'
       ),
       path.join(
         'react-native-project',
@@ -88,14 +86,14 @@ describe('ios::getHeaderSearchPath', () => {
         'package',
         'src',
         'folderB',
-        'Manager.h',
+        'Manager.h'
       ),
       path.join(
         'react-native-project',
         'node_modules',
         'package',
         'src',
-        'Manager.h',
+        'Manager.h'
       ),
     ];
 
@@ -103,8 +101,8 @@ describe('ios::getHeaderSearchPath', () => {
 
     expect(searchPath).toBe(
       `"${['$(SRCROOT)', '..', 'node_modules', 'package', 'src'].join(
-        path.sep,
-      )}/**"`,
+        path.sep
+      )}/**"`
     );
   });
 });

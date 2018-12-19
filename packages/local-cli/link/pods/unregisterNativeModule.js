@@ -7,8 +7,6 @@
  * @format
  */
 
-'use strict';
-
 const fs = require('fs');
 const removePodEntry = require('./removePodEntry');
 

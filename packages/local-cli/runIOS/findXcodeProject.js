@@ -8,8 +8,6 @@
  * @flow strict
  */
 
-'use strict';
-
 const path = require('path');
 
 type ProjectInfo = {

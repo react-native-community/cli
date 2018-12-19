@@ -8,8 +8,6 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 jest.dontMock('../filterPlatformAssetScales').dontMock('../assetPathUtils');
 
 const filterPlatformAssetScales = require('../filterPlatformAssetScales');

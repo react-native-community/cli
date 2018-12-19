@@ -8,10 +8,6 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
-const getPlistPath = require('../../ios/getPlistPath');
-
 jest.mock('path');
 jest.mock('fs');
 jest.mock('../../ios/getPlistPath', () => jest.fn(() => null));
@@ -20,6 +16,7 @@ const { readFileSync } = jest.requireActual('fs');
 const fs = require('fs');
 
 const xcode = require('xcode');
+const getPlistPath = require('../../ios/getPlistPath');
 const writePlist = require('../../ios/writePlist');
 
 const realPath = jest.requireActual('path');
@@ -51,7 +48,10 @@ describe('ios::writePlist', () => {
     getPlistPath.mockImplementation(() => '/Basic/Info.plist');
     writePlist(project, '/', plist);
     const infoPlist = readFileSync(infoPlistPath).toString();
-    expect(fs.writeFileSync).toHaveBeenCalledWith('/Basic/Info.plist', infoPlist);
+    expect(fs.writeFileSync).toHaveBeenCalledWith(
+      '/Basic/Info.plist',
+      infoPlist
+    );
   });
 
   it('when plistPath is null it should return null', () => {

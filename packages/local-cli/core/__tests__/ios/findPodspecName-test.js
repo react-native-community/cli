@@ -8,13 +8,11 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 jest.mock('path');
 jest.mock('fs');
 
-const findPodspecName = require('../../ios/findPodspecName');
 const fs = require('fs');
+const findPodspecName = require('../../ios/findPodspecName');
 const projects = require('../../__fixtures__/projects');
 const ios = require('../../__fixtures__/ios');
 

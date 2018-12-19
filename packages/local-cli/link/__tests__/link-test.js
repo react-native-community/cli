@@ -8,11 +8,9 @@
  * @emails oncall+javascript_foundation
  */
 
-'use strict';
-
 const log = require('npmlog');
 
-jest.setMock('chalk', {grey: str => str});
+jest.setMock('chalk', { grey: str => str });
 
 const context = {
   root: process.cwd(),
@@ -31,14 +29,16 @@ describe('link', () => {
   });
 
   it('should accept a name of a dependency to link', done => {
-    const getDependencyConfig = jest.fn(() => [{
-      config: {
-        ios: null,
-        android: null,
+    const getDependencyConfig = jest.fn(() => [
+      {
+        config: {
+          ios: null,
+          android: null,
+        },
+        assets: [],
+        commands: {},
       },
-      assets: [],
-      commands: {}
-    }]);
+    ]);
 
     jest.setMock('../getDependencyConfig', getDependencyConfig);
 
@@ -52,23 +52,23 @@ describe('link', () => {
   });
 
   it('should accept the name of a dependency with a scope / tag', async () => {
-    const getDependencyConfig = jest.fn(() => [{
-      config: {
-        ios: null,
-        android: null,
+    const getDependencyConfig = jest.fn(() => [
+      {
+        config: {
+          ios: null,
+          android: null,
+        },
+        assets: [],
+        commands: {},
       },
-      assets: [],
-      commands: {}
-    }]);
+    ]);
 
     jest.setMock('../getDependencyConfig', getDependencyConfig);
 
     const link = require('../link').func;
     await link(['@scope/something@latest'], context);
-    
-    expect(getDependencyConfig.mock.calls[0][2]).toEqual([
-      '@scope/something',
-    ]);
+
+    expect(getDependencyConfig.mock.calls[0][2]).toEqual(['@scope/something']);
   });
 
   it('should register native module when android/ios projects are present', done => {
@@ -80,14 +80,16 @@ describe('link', () => {
       android: {},
     }));
 
-    const getDependencyConfig = jest.fn(() => [{
-      config: {
-        ios: {},
-        android: {},
+    const getDependencyConfig = jest.fn(() => [
+      {
+        config: {
+          ios: {},
+          android: {},
+        },
+        assets: [],
+        commands: { prelink, postlink },
       },
-      assets: [],
-      commands: {prelink, postlink}
-    }]);
+    ]);
 
     jest.setMock('../getDependencyConfig', getDependencyConfig);
 
@@ -95,21 +97,21 @@ describe('link', () => {
 
     jest.setMock('../android/isInstalled.js', jest.fn().mockReturnValue(false));
     jest.setMock('../android/registerNativeModule.js', registerNativeModule);
-    
+
     jest.setMock('../ios/isInstalled.js', jest.fn().mockReturnValue(false));
     jest.setMock('../ios/registerNativeModule.js', registerNativeModule);
 
     const link = require('../link').func;
 
     link(['react-native-blur'], context).then(() => {
-      expect(registerNativeModule.mock.calls.length).toBe(2);
+      expect(registerNativeModule.mock.calls).toHaveLength(2);
 
       expect(prelink.mock.invocationCallOrder[0]).toBeLessThan(
-        registerNativeModule.mock.invocationCallOrder[0],
+        registerNativeModule.mock.invocationCallOrder[0]
       );
 
       expect(postlink.mock.invocationCallOrder[0]).toBeGreaterThan(
-        registerNativeModule.mock.invocationCallOrder[0],
+        registerNativeModule.mock.invocationCallOrder[0]
       );
 
       done();
@@ -119,24 +121,26 @@ describe('link', () => {
   it('should copy assets from both project and dependencies projects', done => {
     const dependencyAssets = ['Fonts/Font.ttf'];
     const projectAssets = ['Fonts/FontC.ttf'];
-    
+
     jest.setMock('../getProjectConfig', () => ({
       ios: {},
       android: {},
     }));
 
-    jest.setMock('../getDependencyConfig', () => [{
-      config: {
-        ios: {},
-        android: {},
+    jest.setMock('../getDependencyConfig', () => [
+      {
+        config: {
+          ios: {},
+          android: {},
+        },
+        assets: dependencyAssets,
+        commands: {},
       },
-      assets: dependencyAssets,
-      commands: {}
-    }]);
+    ]);
 
     jest.setMock('../android/isInstalled.js', jest.fn().mockReturnValue(false));
     jest.setMock('../android/registerNativeModule.js', jest.fn());
-    
+
     jest.setMock('../ios/isInstalled.js', jest.fn().mockReturnValue(false));
     jest.setMock('../ios/registerNativeModule.js', jest.fn());
 
@@ -150,9 +154,9 @@ describe('link', () => {
     const link = require('../link').func;
 
     link(['react-native-blur'], context).then(() => {
-      expect(copyAssets.mock.calls.length).toBe(2);
+      expect(copyAssets.mock.calls).toHaveLength(2);
       expect(copyAssets.mock.calls[0][0]).toEqual(
-        projectAssets.concat(dependencyAssets),
+        projectAssets.concat(dependencyAssets)
       );
       jest.unmock('../../core/getAssets');
       done();
@@ -165,14 +169,16 @@ describe('link', () => {
       android: {},
     }));
 
-    const getDependencyConfig = jest.fn(() => [{
-      config: {
-        ios: {},
-        android: {},
+    const getDependencyConfig = jest.fn(() => [
+      {
+        config: {
+          ios: {},
+          android: {},
+        },
+        assets: [],
+        commands: {},
       },
-      assets: [],
-      commands: {}
-    }]);
+    ]);
 
     jest.setMock('../getDependencyConfig', getDependencyConfig);
 
@@ -180,14 +186,14 @@ describe('link', () => {
 
     jest.setMock('../android/isInstalled.js', jest.fn().mockReturnValue(true));
     jest.setMock('../android/registerNativeModule.js', registerNativeModule);
-    
+
     jest.setMock('../ios/isInstalled.js', jest.fn().mockReturnValue(true));
     jest.setMock('../ios/registerNativeModule.js', registerNativeModule);
 
     const link = require('../link').func;
 
     link(['react-native-blur'], context).then(() => {
-      expect(registerNativeModule.mock.calls.length).toEqual(0);
+      expect(registerNativeModule.mock.calls).toHaveLength(0);
       done();
     });
   });
@@ -205,35 +211,37 @@ describe('link', () => {
       isInstalled: () => false,
       register: registerNativeModule,
     });
-  
-    const getDependencyConfig = jest.fn(() => [{
-      config: {
-        ios: {},
-        android: {},
-        windows: {}
+
+    const getDependencyConfig = jest.fn(() => [
+      {
+        config: {
+          ios: {},
+          android: {},
+          windows: {},
+        },
+        assets: [],
+        commands: {},
       },
-      assets: [],
-      commands: {}
-    }]);
+    ]);
 
     jest.setMock('../../core/getPlatforms', () => ({
-      ios: {linkConfig: require('../ios')},
-      android: {linkConfig: require('../android')},
-      windows: {linkConfig: genericLinkConfig},
+      ios: { linkConfig: require('../ios') },
+      android: { linkConfig: require('../android') },
+      windows: { linkConfig: genericLinkConfig },
     }));
 
     jest.setMock('../getDependencyConfig', getDependencyConfig);
 
     jest.setMock('../android/isInstalled.js', jest.fn().mockReturnValue(true));
     jest.setMock('../android/registerNativeModule.js', registerNativeModule);
-    
+
     jest.setMock('../ios/isInstalled.js', jest.fn().mockReturnValue(true));
     jest.setMock('../ios/registerNativeModule.js', registerNativeModule);
 
     const link = require('../link').func;
 
     link(['react-native-blur'], context).then(() => {
-      expect(registerNativeModule.mock.calls.length).toBe(1);
+      expect(registerNativeModule.mock.calls).toHaveLength(1);
       done();
     });
   });

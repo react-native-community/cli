@@ -7,8 +7,6 @@
  * @format
  */
 
-'use strict';
-
 const fs = require('fs');
 const path = require('path');
 
@@ -31,7 +29,7 @@ function copyAndReplace(
   srcPath,
   destPath,
   replacements,
-  contentChangedCallback,
+  contentChangedCallback
 ) {
   if (fs.lstatSync(srcPath).isDirectory()) {
     if (!fs.existsSync(destPath)) {
@@ -73,13 +71,9 @@ function copyAndReplace(
     // Text file
     const srcPermissions = fs.statSync(srcPath).mode;
     let content = fs.readFileSync(srcPath, 'utf8');
-    Object.keys(replacements).forEach(
-      regex =>
-        (content = content.replace(
-          new RegExp(regex, 'g'),
-          replacements[regex],
-        )),
-    );
+    Object.keys(replacements).forEach(regex => {
+      content = content.replace(new RegExp(regex, 'g'), replacements[regex]);
+    });
 
     let shouldOverwrite = 'overwrite';
     if (contentChangedCallback) {
@@ -88,7 +82,7 @@ function copyAndReplace(
       try {
         const origContent = fs.readFileSync(destPath, 'utf8');
         if (content !== origContent) {
-          //console.log('Content changed: ' + destPath);
+          // console.log('Content changed: ' + destPath);
           contentChanged = 'changed';
         }
       } catch (err) {
@@ -116,16 +110,16 @@ function copyBinaryFile(srcPath, destPath, cb) {
   let cbCalled = false;
   const srcPermissions = fs.statSync(srcPath).mode;
   const readStream = fs.createReadStream(srcPath);
-  readStream.on('error', function(err) {
+  readStream.on('error', err => {
     done(err);
   });
   const writeStream = fs.createWriteStream(destPath, {
     mode: srcPermissions,
   });
-  writeStream.on('error', function(err) {
+  writeStream.on('error', err => {
     done(err);
   });
-  writeStream.on('close', function(ex) {
+  writeStream.on('close', () => {
     done();
   });
   readStream.pipe(writeStream);

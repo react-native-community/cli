@@ -8,7 +8,7 @@
  * @flow strict
  */
 
-const child_process = require('child_process');
+const { execSync } = require('child_process');
 
 /**
  * Parses the output of the 'adb devices' command
@@ -22,7 +22,7 @@ function parseDevicesResult(result: string): Array<string> {
   const lines = result.trim().split(/\r?\n/);
 
   for (let i = 0; i < lines.length; i++) {
-    let words = lines[i].split(/[ ,\t]+/).filter(w => w !== '');
+    const words = lines[i].split(/[ ,\t]+/).filter(w => w !== '');
 
     if (words[1] === 'device') {
       devices.push(words[0]);
@@ -36,7 +36,7 @@ function parseDevicesResult(result: string): Array<string> {
  */
 function getDevices(): Array<string> {
   try {
-    const devicesResult = child_process.execSync('adb devices');
+    const devicesResult = execSync('adb devices');
     return parseDevicesResult(devicesResult.toString());
   } catch (e) {
     return [];
@@ -44,6 +44,6 @@ function getDevices(): Array<string> {
 }
 
 module.exports = {
-  parseDevicesResult: parseDevicesResult,
-  getDevices: getDevices,
+  parseDevicesResult,
+  getDevices,
 };

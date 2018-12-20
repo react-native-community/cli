@@ -35,9 +35,4 @@ describe('ios::addFileToProject', () => {
     const file = removeProjectFromProject(project, filePath);
     expect(project.pbxFileReferenceSection()[file.fileRef]).not.toBeDefined();
   });
-
-  xit('should remove file from PBXContainerProxy', () => {
-    // todo(mike): add in .xcodeproj after Xcode modifications so we can test extra
-    // removals later.
-  });
 });

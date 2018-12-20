@@ -8,16 +8,22 @@
  * @emails oncall+javascript_foundation
  */
 
+jest.mock('fs');
+jest.mock('path');
+const fs = require('fs');
+
 const getHeadersInFolder = require('../../ios/getHeadersInFolder');
 
+const ROOT_DIR = '/';
+
 describe('ios::getHeadersInFolder', () => {
-  xit('should return an array of all headers in given folder', () => {
-    jest.setMock({
+  it('should return an array of all headers in given folder', () => {
+    fs.__setMockFilesystem({
       'FileA.h': '',
       'FileB.h': '',
     });
 
-    const foundHeaders = getHeadersInFolder(process.cwd());
+    const foundHeaders = getHeadersInFolder(ROOT_DIR);
 
     expect(foundHeaders).toHaveLength(2);
 
@@ -26,8 +32,8 @@ describe('ios::getHeadersInFolder', () => {
     });
   });
 
-  xit('should ignore all headers in Pods, Examples & node_modules', () => {
-    jest.setMock({
+  it('should ignore all headers in Pods, Examples & node_modules', () => {
+    fs.__setMockFilesystem({
       'FileA.h': '',
       'FileB.h': '',
       Pods: {
@@ -41,6 +47,6 @@ describe('ios::getHeadersInFolder', () => {
       },
     });
 
-    expect(getHeadersInFolder(process.cwd())).toEqual(2);
+    expect(getHeadersInFolder(ROOT_DIR)).toHaveLength(2);
   });
 });

@@ -104,7 +104,7 @@ const linkAssets = (platforms, project, assets) => {
 };
 
 /**
- * Links dependencies for specified project.
+ * Links specified package.
  *
  * @param args [packageName]
  */

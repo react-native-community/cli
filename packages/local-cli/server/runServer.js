@@ -58,6 +58,7 @@ async function runServer(argv: *, ctx: ContextT, args: Args) {
 
   const middlewareManager = new MiddlewareManager({
     host: args.host,
+    port: metroConfig.server.port,
     watchFolders: metroConfig.watchFolders,
   });
 

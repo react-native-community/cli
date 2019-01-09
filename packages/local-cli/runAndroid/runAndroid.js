@@ -268,21 +268,25 @@ function runOnAllDevices(
     const gradleArgs = [];
     if (args.variant) {
       gradleArgs.push(
-        `install${args.variant[0].toUpperCase()}${args.variant.slice(1)}`
+        `${
+          args.appFolder
+        }:install${args.variant[0].toUpperCase()}${args.variant.slice(1)}`
       );
     } else if (args.flavor) {
       console.warn(
         chalk.yellow('--flavor has been deprecated. Use --variant instead')
       );
       gradleArgs.push(
-        `install${args.flavor[0].toUpperCase()}${args.flavor.slice(1)}`
+        `${
+          args.appFolder
+        }:install${args.flavor[0].toUpperCase()}${args.flavor.slice(1)}`
       );
     } else {
-      gradleArgs.push('installDebug');
+      gradleArgs.push(`${args.appFolder}:installDebug`);
     }
 
     if (args.installDebug) {
-      gradleArgs.push(args.installDebug);
+      gradleArgs.push(`${args.appFolder}:${args.installDebug}`);
     }
 
     console.log(

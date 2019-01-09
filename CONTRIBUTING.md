@@ -46,13 +46,15 @@ Currently we use `flow` for typechecking, `eslint` with `prettier` for linting a
 
 We prefix our commit messages with one of the following to signify the kind of change:
 
-* `fix`: bug fixes
-* `feat`: new features
-* `refactor`: code/structure refactor
-* `docs`: changes in documentation
-* `test`: adding or updating tests
-* `chore`: tooling changes
-* `BREAKING`: for changes that break existing usage
+* **build**: Changes that affect the build system or external dependencies
+* **ci**, **chore**: Changes to our CI configuration files and scripts
+* **docs**: Documentation only changes
+* **feat**: A new feature
+* **fix**: A bug fix
+* **perf**: A code change that improves performance
+* **refactor**: A code change that neither fixes a bug nor adds a feature
+* **style**: Changes that do not affect the meaning of the code
+* **test**: Adding missing tests or correcting existing tests
 
 ## Sending a pull request
 

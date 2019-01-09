@@ -42,6 +42,18 @@ Currently we use `flow` for typechecking, `eslint` with `prettier` for linting a
 * `yarn lint`: run `eslint` and `prettier`
 * `yarn test`: run unit tests
 
+## Commit message convention
+
+We prefix our commit messages with one of the following to signify the kind of change:
+
+* `fix`: bug fixes
+* `feat`: new features
+* `refactor`: code/structure refactor
+* `docs`: changes in documentation
+* `test`: adding or updating tests
+* `chore`: tooling changes
+* `BREAKING`: for changes that break existing usage
+
 ## Sending a pull request
 
 When you're sending a pull request:

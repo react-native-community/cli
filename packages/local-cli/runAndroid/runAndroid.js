@@ -85,8 +85,10 @@ function buildAndRun(args) {
   process.chdir(path.join(args.root, 'android'));
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
 
+  // "app" is usually the default value for Android apps with only 1 app
+  const appFolder = args.appFolder || 'app';
   const packageName = fs
-    .readFileSync(`${args.appFolder}/src/main/AndroidManifest.xml`, 'utf8')
+    .readFileSync(`${appFolder}/src/main/AndroidManifest.xml`, 'utf8')
     .match(/package="(.+?)"/)[1];
 
   const packageNameWithSuffix = getPackageNameWithSuffix(
@@ -163,9 +165,9 @@ function buildApk(gradlew) {
 
 function tryInstallAppOnDevice(args, device) {
   try {
-    const pathToApk = `${args.appFolder}/build/outputs/apk/${
-      args.appFolder
-    }-debug.apk`;
+    // "app" is usually the default value for Android apps with only 1 app
+    const appFolder = args.appFolder || 'app';
+    const pathToApk = `${appFolder}/build/outputs/apk/${appFolder}-debug.apk`;
     const adbPath = getAdbPath();
     const adbArgs = ['-s', device, 'install', pathToApk];
     console.log(
@@ -289,8 +291,7 @@ module.exports = {
     {
       command: '--appFolder [string]',
       description:
-        'Specify a different application folder name for the android source.',
-      default: 'app',
+        'Specify a different application folder name for the android source. If not, we assume is "app"',
     },
     {
       command: '--appId [string]',

@@ -22,12 +22,18 @@ describe('--appFolder', () => {
     jest.clearAllMocks();
   });
 
+  it('uses installDebug as default if no arguments', () => {
+    runOnAllDevices({});
+
+    expect(execFileSync.mock.calls[0][1]).toContain('installDebug');
+  });
+
   it('uses appFolder and default variant', () => {
     runOnAllDevices({
-      appFolder: 'app',
+      appFolder: 'someApp',
     });
 
-    expect(execFileSync.mock.calls[0][1]).toContain('app:installDebug');
+    expect(execFileSync.mock.calls[0][1]).toContain('someApp:installDebug');
   });
 
   it('uses appFolder and variant', () => {
@@ -40,10 +46,17 @@ describe('--appFolder', () => {
 
     runOnAllDevices({
       appFolder: 'anotherApp',
+      variant: 'debug',
+    });
+
+    expect(execFileSync.mock.calls[1][1]).toContain('anotherApp:installDebug');
+
+    runOnAllDevices({
+      appFolder: 'anotherApp',
       variant: 'staging',
     });
 
-    expect(execFileSync.mock.calls[1][1]).toContain(
+    expect(execFileSync.mock.calls[2][1]).toContain(
       'anotherApp:installStaging'
     );
   });
@@ -57,12 +70,20 @@ describe('--appFolder', () => {
     expect(execFileSync.mock.calls[0][1]).toContain('app:installSomeFlavor');
   });
 
-  it('uses appFolder and custom installDebug argument', () => {
+  it('uses only installDebug argument', () => {
     runOnAllDevices({
-      appFolder: 'app',
-      installDebug: 'someRandomCommand',
+      installDebug: 'someCommand',
     });
 
-    expect(execFileSync.mock.calls[0][1]).toContain('app:someRandomCommand');
+    expect(execFileSync.mock.calls[0][1]).toContain('someCommand');
+  });
+
+  it('uses appFolder and custom installDebug argument', () => {
+    runOnAllDevices({
+      appFolder: 'anotherApp',
+      installDebug: 'someCommand',
+    });
+
+    expect(execFileSync.mock.calls[0][1]).toContain('anotherApp:someCommand');
   });
 });

@@ -16,6 +16,10 @@ const adb = require('./adb');
 const tryRunAdbReverse = require('./tryRunAdbReverse');
 const tryLaunchAppOnDevice = require('./tryLaunchAppOnDevice');
 
+function getInstallCommand(appFolder, install = 'install') {
+  return appFolder ? `${appFolder}:${install}` : install;
+}
+
 function runOnAllDevices(
   args,
   cmd,
@@ -25,27 +29,26 @@ function runOnAllDevices(
 ) {
   try {
     const gradleArgs = [];
-    if (args.variant) {
+
+    if (args.installDebug) {
+      gradleArgs.push(getInstallCommand(args.appFolder, args.installDebug));
+    } else if (args.variant) {
       gradleArgs.push(
-        `${
+        `${getInstallCommand(
           args.appFolder
-        }:install${args.variant[0].toUpperCase()}${args.variant.slice(1)}`
+        )}${args.variant[0].toUpperCase()}${args.variant.slice(1)}`
       );
     } else if (args.flavor) {
       console.warn(
         chalk.yellow('--flavor has been deprecated. Use --variant instead')
       );
       gradleArgs.push(
-        `${
+        `${getInstallCommand(
           args.appFolder
-        }:install${args.flavor[0].toUpperCase()}${args.flavor.slice(1)}`
+        )}${args.flavor[0].toUpperCase()}${args.flavor.slice(1)}`
       );
     } else {
-      gradleArgs.push(`${args.appFolder}:installDebug`);
-    }
-
-    if (args.installDebug) {
-      gradleArgs.push(`${args.appFolder}:${args.installDebug}`);
+      gradleArgs.push(getInstallCommand(args.appFolder, 'installDebug'));
     }
 
     console.log(

@@ -19,20 +19,11 @@ Repository is splitted into two packages:
 
 ## Testing your changes
 
-To test your changes you will need to have another `react-native` project. You can initialize new one or use already existing repository. Next, you will need to install `local-cli` with your changes:
+You can test your changes by calling `cli.js` directly from the cloned repository. You need to make sure the version of React Native matches the one present in devDependencies of the CLI. Otherwise, you may get unexpected errors.
+
 ```sh
-# Assuming that you have react-native-cli cloned in the parent directory
-yarn add ../react-native-cli/packages/local-cli
+node /path/to/cloned/project/packages/local-cli/cli.js
 ```
-
-You should have your `local-cli` installed, linked as `node_modules/.bin/react-native`. Now, you can run it with:
-```
-yarn react-native --help
-```
-
-### Testing `react-native init`
-
-_TODO_
 
 ## Typechecking, linting and testing
 

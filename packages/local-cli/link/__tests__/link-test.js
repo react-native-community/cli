@@ -25,7 +25,7 @@ describe('link', () => {
 
   it('should reject when run in a folder without package.json', done => {
     const link = require('../link').func;
-    link([], { root: '/' }).catch(() => done());
+    link([], { root: '/' }, {}).catch(() => done());
   });
 
   it('should accept a name of a dependency to link', done => {
@@ -43,7 +43,7 @@ describe('link', () => {
     jest.setMock('../getDependencyConfig', getDependencyConfig);
 
     const link = require('../link').func;
-    link(['react-native-gradient'], context).then(() => {
+    link(['react-native-gradient'], context, {}).then(() => {
       expect(getDependencyConfig.mock.calls[0][2]).toEqual([
         'react-native-gradient',
       ]);
@@ -66,7 +66,7 @@ describe('link', () => {
     jest.setMock('../getDependencyConfig', getDependencyConfig);
 
     const link = require('../link').func;
-    await link(['@scope/something@latest'], context);
+    await link(['@scope/something@latest'], context, {});
 
     expect(getDependencyConfig.mock.calls[0][2]).toEqual(['@scope/something']);
   });
@@ -103,7 +103,7 @@ describe('link', () => {
 
     const link = require('../link').func;
 
-    link(['react-native-blur'], context).then(() => {
+    link(['react-native-blur'], context, {}).then(() => {
       expect(registerNativeModule.mock.calls).toHaveLength(2);
 
       expect(prelink.mock.invocationCallOrder[0]).toBeLessThan(
@@ -153,7 +153,7 @@ describe('link', () => {
 
     const link = require('../link').func;
 
-    link(['react-native-blur'], context).then(() => {
+    link(['react-native-blur'], context, {}).then(() => {
       expect(copyAssets.mock.calls).toHaveLength(2);
       expect(copyAssets.mock.calls[0][0]).toEqual(
         projectAssets.concat(dependencyAssets)
@@ -192,7 +192,7 @@ describe('link', () => {
 
     const link = require('../link').func;
 
-    link(['react-native-blur'], context).then(() => {
+    link(['react-native-blur', {}], context, {}).then(() => {
       expect(registerNativeModule.mock.calls).toHaveLength(0);
       done();
     });
@@ -240,9 +240,60 @@ describe('link', () => {
 
     const link = require('../link').func;
 
-    link(['react-native-blur'], context).then(() => {
+    link(['react-native-blur'], context, {}).then(() => {
       expect(registerNativeModule.mock.calls).toHaveLength(1);
       done();
     });
+  });
+
+  it('should link only for specific platforms if --platforms is used', async () => {
+    jest.setMock('../getProjectDependencies', () => ['react-native-maps']);
+    jest.setMock('../../core/getPackageConfiguration', () => ({
+      assets: [],
+    }));
+
+    const registerAndroidNativeModule = jest.fn();
+    const registerIOSNativeModule = jest.fn();
+
+    const genericAndroidLinkConfig = () => ({
+      isInstalled: () => false,
+      register: registerAndroidNativeModule,
+    });
+
+    const genericIOSLinkConfig = () => ({
+      isInstalled: () => false,
+      register: registerIOSNativeModule,
+    });
+
+    jest.setMock('../../core/getPlatforms', () => ({
+      android: { linkConfig: genericAndroidLinkConfig },
+      ios: { linkConfig: genericIOSLinkConfig },
+    }));
+
+    jest.setMock(
+      '../android/registerNativeModule.js',
+      registerAndroidNativeModule
+    );
+    jest.setMock('../ios/registerNativeModule.js', registerIOSNativeModule);
+
+    const link = require('../link').func;
+    const assertPlaftormsCalledTimes = (android: number, ios: number) => {
+      expect(registerAndroidNativeModule).toHaveBeenCalledTimes(android);
+      expect(registerIOSNativeModule).toHaveBeenCalledTimes(ios);
+      registerAndroidNativeModule.mockClear();
+      registerIOSNativeModule.mockClear();
+    };
+
+    await link([], { root: '/' }, { platforms: ['android', 'ios'] });
+    assertPlaftormsCalledTimes(1, 1);
+
+    await link([], { root: '/' }, { platforms: ['android'] });
+    assertPlaftormsCalledTimes(1, 0);
+
+    await link([], { root: '/' }, { platforms: ['ios'] });
+    assertPlaftormsCalledTimes(0, 1);
+
+    await link([], { root: '/' }, { platforms: ['android', 'ios'] });
+    assertPlaftormsCalledTimes(1, 1);
   });
 });

@@ -12,7 +12,7 @@ import type { ContextT } from '../core/types.flow';
 
 const log = require('npmlog');
 const path = require('path');
-const { flatten, isEmpty, uniqBy } = require('lodash');
+const { flatten, isEmpty, pick, uniqBy } = require('lodash');
 const chalk = require('chalk');
 const promiseWaterfall = require('./promiseWaterfall');
 const getProjectDependencies = require('./getProjectDependencies');
@@ -104,17 +104,24 @@ const linkAssets = (platforms, project, assets) => {
   log.info('Assets have been successfully linked to your project');
 };
 
+type FlagsType = {
+  platforms: string,
+};
+
 /**
  * Updates project and links all dependencies to it.
  *
  * @param args If optional argument [packageName] is provided,
  *             only that package is processed.
  */
-function link(args: Array<string>, ctx: ContextT) {
+function link(args: Array<string>, ctx: ContextT, opts: FlagsType) {
   let platforms;
   let project;
   try {
     platforms = getPlatforms(ctx.root);
+    if (opts.platforms) {
+      platforms = pick(platforms, opts.platforms);
+    }
     project = getProjectConfig(ctx, platforms);
   } catch (err) {
     log.error(
@@ -183,4 +190,12 @@ module.exports = {
   func: link,
   description: 'links all native dependencies (updates native build files)',
   name: 'link [packageName]',
+  options: [
+    {
+      command: '--platforms [list]',
+      description:
+        'If you want to link dependencies only for specific platforms',
+      parse: (val: string) => val.split(','),
+    },
+  ],
 };

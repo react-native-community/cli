@@ -1,41 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`getDependencyConfig should filter out invalid react-native projects 1`] = `
-Array [
-  Object {
-    "assets": Array [],
-    "commands": Object {},
-    "config": Object {
-      "android": Object {
-        "sampleAndroidKey": "",
-      },
-      "ios": Object {
-        "sampleiOSKey": "",
-      },
-    },
-    "name": "react-native-windows",
-    "params": Array [],
-    "path": "/root/node_modules/react-native-windows",
-  },
-]
-`;
-
 exports[`getDependencyConfig should return an array of dependencies' config 1`] = `
-Array [
-  Object {
-    "assets": Array [],
-    "commands": Object {},
-    "config": Object {
-      "android": Object {
-        "sampleAndroidKey": "",
-      },
-      "ios": Object {
-        "sampleiOSKey": "",
-      },
+Object {
+  "assets": Array [],
+  "commands": Object {},
+  "config": Object {
+    "android": Object {
+      "sampleAndroidKey": "",
     },
-    "name": "react-native-windows",
-    "params": Array [],
-    "path": "/root/node_modules/react-native-windows",
+    "ios": Object {
+      "sampleiOSKey": "",
+    },
   },
-]
+  "name": "react-native-windows",
+  "params": Array [],
+  "path": "/root/node_modules/react-native-windows",
+}
 `;

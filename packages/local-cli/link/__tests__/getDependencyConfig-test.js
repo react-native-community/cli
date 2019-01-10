@@ -28,19 +28,18 @@ const getDependencyConfig = require('../getDependencyConfig');
 
 describe('getDependencyConfig', () => {
   it("should return an array of dependencies' config", () => {
-    const dependencies = getDependencyConfig({ root: '/root' }, platforms, [
-      'react-native-windows',
-    ]);
+    const dependencies = getDependencyConfig(
+      { root: '/root' },
+      platforms,
+      'react-native-windows'
+    );
 
     expect(dependencies).toMatchSnapshot();
   });
 
-  it('should filter out invalid react-native projects', () => {
-    const dependencies = getDependencyConfig({ root: '/root' }, platforms, [
-      'react-native-windows',
-      'abcd',
-    ]);
-
-    expect(dependencies).toMatchSnapshot();
+  it('should throw on invalid react-native dependency', () => {
+    expect(() =>
+      getDependencyConfig({ root: '/root' }, platforms, 'abcd')
+    ).toThrowError();
   });
 });

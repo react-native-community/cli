@@ -4,9 +4,9 @@
     "packages/*"
   ],
   "scripts": {
-    "test": "cd packages/local-cli && yarn jest; cd -",
+    "test": "cd packages/local-cli && yarn jest",
     "lint": "eslint packages",
-    "flow-check": "cd packages/local-cli && yarn flow check; cd -"
+    "flow-check": "cd packages/local-cli && yarn flow check"
   },
   "devDependencies": {
     "@callstack/eslint-config": "^3.0.2",

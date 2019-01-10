@@ -270,16 +270,32 @@ describe('link', () => {
       registerIOSNativeModule.mockClear();
     };
 
-    await link([], { root: '/' }, { platforms: ['android', 'ios'] });
+    await link(
+      ['react-native-gradient'],
+      { root: '/' },
+      { platforms: ['android', 'ios'] }
+    );
     assertPlaftormsCalledTimes(1, 1);
 
-    await link([], { root: '/' }, { platforms: ['android'] });
+    await link(
+      ['react-native-gradient'],
+      { root: '/' },
+      { platforms: ['android'] }
+    );
     assertPlaftormsCalledTimes(1, 0);
 
-    await link([], { root: '/' }, { platforms: ['ios'] });
+    await link(
+      ['react-native-gradient'],
+      { root: '/' },
+      { platforms: ['ios'] }
+    );
     assertPlaftormsCalledTimes(0, 1);
 
-    await link([], { root: '/' }, { platforms: ['android', 'ios'] });
+    await link(
+      ['react-native-gradient'],
+      { root: '/' },
+      { platforms: ['android', 'ios'] }
+    );
     assertPlaftormsCalledTimes(1, 1);
   });
 });

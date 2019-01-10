@@ -12,10 +12,9 @@ import type { ContextT } from '../core/types.flow';
 
 const log = require('npmlog');
 const path = require('path');
-const { flatten, isEmpty, pick, uniqBy } = require('lodash');
+const { isEmpty, pick } = require('lodash');
 const chalk = require('chalk');
 const promiseWaterfall = require('./promiseWaterfall');
-const getProjectDependencies = require('./getProjectDependencies');
 const getDependencyConfig = require('./getDependencyConfig');
 const pollParams = require('./pollParams');
 const commandStub = require('./commandStub');
@@ -24,12 +23,9 @@ const getProjectConfig = require('./getProjectConfig');
 
 const findReactNativeScripts = require('../util/findReactNativeScripts');
 
-const getAssets = require('../core/getAssets');
 const getPlatforms = require('../core/getPlatforms');
 
 log.heading = 'rnpm-link';
-
-const dedupeAssets = assets => uniqBy(assets, asset => path.basename(asset));
 
 const linkDependency = async (platforms, project, dependency) => {
   const params = await pollParams(dependency.params);
@@ -81,8 +77,8 @@ const linkDependency = async (platforms, project, dependency) => {
   });
 };
 
-const linkAssets = (platforms, project, assets) => {
-  if (isEmpty(assets)) {
+const linkAssets = (platforms, project, dependency) => {
+  if (isEmpty(dependency.assets)) {
     return;
   }
 
@@ -98,7 +94,7 @@ const linkAssets = (platforms, project, assets) => {
 
     log.info(`Linking assets to ${platform} project`);
     // $FlowFixMe: We check for existence of project[platform] on line 97.
-    linkConfig.copyAssets(assets, project[platform]);
+    linkConfig.copyAssets(dependency.assets, project[platform]);
   });
 
   log.info('Assets have been successfully linked to your project');
@@ -109,10 +105,9 @@ type FlagsType = {
 };
 
 /**
- * Updates project and links all dependencies to it.
+ * Links specified package.
  *
- * @param args If optional argument [packageName] is provided,
- *             only that package is processed.
+ * @param args [packageName]
  */
 function link(args: Array<string>, ctx: ContextT, opts: FlagsType) {
   let platforms;
@@ -136,7 +131,7 @@ function link(args: Array<string>, ctx: ContextT, opts: FlagsType) {
   );
   if (!hasProjectConfig && findReactNativeScripts()) {
     throw new Error(
-      '`react-native link` can not be used in Create React Native App projects. ' +
+      '`react-native link <package>` can not be used in Create React Native App projects. ' +
         'If you need to include a library that relies on custom native code, ' +
         'you might have to eject first. ' +
         'See https://github.com/react-community/create-react-native-app/blob/master/EJECTING.md ' +
@@ -144,38 +139,17 @@ function link(args: Array<string>, ctx: ContextT, opts: FlagsType) {
     );
   }
 
-  let packageName = args[0];
   // Trim the version / tag out of the package name (eg. package@latest)
-  if (packageName !== undefined) {
-    packageName = packageName.replace(/^(.+?)(@.+?)$/gi, '$1');
-  }
+  const packageName = rawPackageName.replace(/^(.+?)(@.+?)$/gi, '$1');
 
-  /*
-   * @todo(grabbou): Deprecate `getProjectDependencies()` soon. The implicit
-   * behaviour is causing us more harm.
-   */
-  const dependencies = getDependencyConfig(
-    ctx,
-    platforms,
-    packageName ? [packageName] : getProjectDependencies(ctx.root)
-  );
+  const dependencyConfig = getDependencyConfig(ctx, platforms, packageName);
 
-  const assets = dedupeAssets(
-    dependencies.reduce(
-      (acc, dependency) => acc.concat(dependency.assets),
-      getAssets(ctx.root)
-    )
-  );
-
-  const tasks = flatten(
-    dependencies.map(dependency => [
-      () => promisify(dependency.commands.prelink || commandStub),
-      () => linkDependency(platforms, project, dependency),
-      () => promisify(dependency.commands.postlink || commandStub),
-    ])
-  );
-
-  tasks.push(() => linkAssets(platforms, project, assets));
+  const tasks = [
+    () => promisify(dependencyConfig.commands.prelink || commandStub),
+    () => linkDependency(platforms, project, dependencyConfig),
+    () => promisify(dependencyConfig.commands.postlink || commandStub),
+    () => linkAssets(platforms, project, dependencyConfig),
+  ];
 
   return promiseWaterfall(tasks).catch(err => {
     log.error(
@@ -188,8 +162,8 @@ function link(args: Array<string>, ctx: ContextT, opts: FlagsType) {
 
 module.exports = {
   func: link,
-  description: 'links all native dependencies (updates native build files)',
-  name: 'link [packageName]',
+  description: 'links native dependencies for specified package (updates native build files)',
+  name: 'link <packageName>',
   options: [
     {
       command: '--platforms [list]',

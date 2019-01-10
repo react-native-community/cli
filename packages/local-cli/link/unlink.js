@@ -94,10 +94,8 @@ function unlink(args: Array<string>, ctx: ContextT) {
     return Promise.reject(err);
   }
 
-  const allDependencies = getDependencyConfig(
-    ctx,
-    platforms,
-    getProjectDependencies()
+  const allDependencies = getProjectDependencies().map(dependency =>
+    getDependencyConfig(ctx, platforms, dependency)
   );
   let otherDependencies;
   let dependency;

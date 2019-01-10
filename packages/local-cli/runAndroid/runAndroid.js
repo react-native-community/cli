@@ -17,6 +17,10 @@ const path = require('path');
 const findReactNativeScripts = require('../util/findReactNativeScripts');
 const isPackagerRunning = require('../util/isPackagerRunning');
 const adb = require('./adb');
+const runOnAllDevices = require('./runOnAllDevices');
+const tryRunAdbReverse = require('./tryRunAdbReverse');
+const tryLaunchAppOnDevice = require('./tryLaunchAppOnDevice');
+const getAdbPath = require('./getAdbPath');
 
 // Verifies this is an Android project
 function checkAndroid(root) {
@@ -65,33 +69,6 @@ function runAndroid(argv, config, args) {
   });
 }
 
-function getAdbPath() {
-  return process.env.ANDROID_HOME
-    ? `${process.env.ANDROID_HOME}/platform-tools/adb`
-    : 'adb';
-}
-
-// Runs ADB reverse tcp:8081 tcp:8081 to allow loading the jsbundle from the packager
-function tryRunAdbReverse(packagerPort, device) {
-  try {
-    const adbPath = getAdbPath();
-    const adbArgs = ['reverse', `tcp:${packagerPort}`, `tcp:${packagerPort}`];
-
-    // If a device is specified then tell adb to use it
-    if (device) {
-      adbArgs.unshift('-s', device);
-    }
-
-    console.log(chalk.bold(`Running ${adbPath} ${adbArgs.join(' ')}`));
-
-    execFileSync(adbPath, adbArgs, {
-      stdio: [process.stdin, process.stdout, process.stderr],
-    });
-  } catch (e) {
-    console.log(chalk.yellow(`Could not run adb reverse: ${e.message}`));
-  }
-}
-
 function getPackageNameWithSuffix(appId, appIdSuffix, packageName) {
   if (appId) {
     return appId;
@@ -108,8 +85,10 @@ function buildAndRun(args) {
   process.chdir(path.join(args.root, 'android'));
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
 
+  // "app" is usually the default value for Android apps with only 1 app
+  const appFolder = args.appFolder || 'app';
   const packageName = fs
-    .readFileSync(`${args.appFolder}/src/main/AndroidManifest.xml`, 'utf8')
+    .readFileSync(`${appFolder}/src/main/AndroidManifest.xml`, 'utf8')
     .match(/package="(.+?)"/)[1];
 
   const packageNameWithSuffix = getPackageNameWithSuffix(
@@ -186,9 +165,9 @@ function buildApk(gradlew) {
 
 function tryInstallAppOnDevice(args, device) {
   try {
-    const pathToApk = `${args.appFolder}/build/outputs/apk/${
-      args.appFolder
-    }-debug.apk`;
+    // "app" is usually the default value for Android apps with only 1 app
+    const appFolder = args.appFolder || 'app';
+    const pathToApk = `${appFolder}/build/outputs/apk/${appFolder}-debug.apk`;
     const adbPath = getAdbPath();
     const adbArgs = ['-s', device, 'install', pathToApk];
     console.log(
@@ -209,36 +188,6 @@ function tryInstallAppOnDevice(args, device) {
   }
 }
 
-function tryLaunchAppOnDevice(
-  device,
-  packageNameWithSuffix,
-  packageName,
-  adbPath,
-  mainActivity
-) {
-  try {
-    const adbArgs = [
-      '-s',
-      device,
-      'shell',
-      'am',
-      'start',
-      '-n',
-      `${packageNameWithSuffix}/${packageName}.${mainActivity}`,
-    ];
-    console.log(
-      chalk.bold(
-        `Starting the app on ${device} (${adbPath} ${adbArgs.join(' ')})...`
-      )
-    );
-    spawnSync(adbPath, adbArgs, { stdio: 'inherit' });
-  } catch (e) {
-    console.log(
-      chalk.red('adb invocation failed. Do you have adb in your PATH?')
-    );
-  }
-}
-
 function installAndLaunchOnDevice(
   args,
   selectedDevice,
@@ -255,100 +204,6 @@ function installAndLaunchOnDevice(
     adbPath,
     args.mainActivity
   );
-}
-
-function runOnAllDevices(
-  args,
-  cmd,
-  packageNameWithSuffix,
-  packageName,
-  adbPath
-) {
-  try {
-    const gradleArgs = [];
-    if (args.variant) {
-      gradleArgs.push(
-        `install${args.variant[0].toUpperCase()}${args.variant.slice(1)}`
-      );
-    } else if (args.flavor) {
-      console.warn(
-        chalk.yellow('--flavor has been deprecated. Use --variant instead')
-      );
-      gradleArgs.push(
-        `install${args.flavor[0].toUpperCase()}${args.flavor.slice(1)}`
-      );
-    } else {
-      gradleArgs.push('installDebug');
-    }
-
-    if (args.installDebug) {
-      gradleArgs.push(args.installDebug);
-    }
-
-    console.log(
-      chalk.bold(
-        `Building and installing the app on the device (cd android && ${cmd} ${gradleArgs.join(
-          ' '
-        )})...`
-      )
-    );
-
-    execFileSync(cmd, gradleArgs, {
-      stdio: [process.stdin, process.stdout, process.stderr],
-    });
-  } catch (e) {
-    console.log(
-      chalk.red(
-        'Could not install the app on the device, read the error above for details.\n' +
-          'Make sure you have an Android emulator running or a device connected and have\n' +
-          'set up your Android development environment:\n' +
-          'https://facebook.github.io/react-native/docs/getting-started.html'
-      )
-    );
-    // stderr is automatically piped from the gradle process, so the user
-    // should see the error already, there is no need to do
-    // `console.log(e.stderr)`
-    return Promise.reject(e);
-  }
-  const devices = adb.getDevices();
-  if (devices && devices.length > 0) {
-    devices.forEach(device => {
-      tryRunAdbReverse(args.port, device);
-      tryLaunchAppOnDevice(
-        device,
-        packageNameWithSuffix,
-        packageName,
-        adbPath,
-        args.mainActivity
-      );
-    });
-  } else {
-    try {
-      // If we cannot execute based on adb devices output, fall back to
-      // shell am start
-      const fallbackAdbArgs = [
-        'shell',
-        'am',
-        'start',
-        '-n',
-        `${packageNameWithSuffix}/${packageName}.MainActivity`,
-      ];
-      console.log(
-        chalk.bold(
-          `Starting the app (${adbPath} ${fallbackAdbArgs.join(' ')}...`
-        )
-      );
-      spawnSync(adbPath, fallbackAdbArgs, { stdio: 'inherit' });
-    } catch (e) {
-      console.log(
-        chalk.red('adb invocation failed. Do you have adb in your PATH?')
-      );
-      // stderr is automatically piped from the gradle process, so the user
-      // should see the error already, there is no need to do
-      // `console.log(e.stderr)`
-      return Promise.reject(e);
-    }
-  }
 }
 
 function startServerInNewWindow(port, terminal = process.env.REACT_TERMINAL) {
@@ -436,8 +291,7 @@ module.exports = {
     {
       command: '--appFolder [string]',
       description:
-        'Specify a different application folder name for the android source.',
-      default: 'app',
+        'Specify a different application folder name for the android source. If not, we assume is "app"',
     },
     {
       command: '--appId [string]',

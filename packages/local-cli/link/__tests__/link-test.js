@@ -29,46 +29,42 @@ describe('link', () => {
   });
 
   it('should accept a name of a dependency to link', done => {
-    const getDependencyConfig = jest.fn(() => [
-      {
-        config: {
-          ios: null,
-          android: null,
-        },
-        assets: [],
-        commands: {},
+    const getDependencyConfig = jest.fn(() => ({
+      config: {
+        ios: null,
+        android: null,
       },
-    ]);
+      assets: [],
+      commands: {},
+    }));
 
     jest.setMock('../getDependencyConfig', getDependencyConfig);
 
     const link = require('../link').func;
     link(['react-native-gradient'], context, {}).then(() => {
-      expect(getDependencyConfig.mock.calls[0][2]).toEqual([
-        'react-native-gradient',
-      ]);
+      expect(getDependencyConfig.mock.calls[0][2]).toEqual(
+        'react-native-gradient'
+      );
       done();
     });
   });
 
   it('should accept the name of a dependency with a scope / tag', async () => {
-    const getDependencyConfig = jest.fn(() => [
-      {
-        config: {
-          ios: null,
-          android: null,
-        },
-        assets: [],
-        commands: {},
+    const getDependencyConfig = jest.fn(() => ({
+      config: {
+        ios: null,
+        android: null,
       },
-    ]);
+      assets: [],
+      commands: {},
+    }));
 
     jest.setMock('../getDependencyConfig', getDependencyConfig);
 
     const link = require('../link').func;
     await link(['@scope/something@latest'], context, {});
 
-    expect(getDependencyConfig.mock.calls[0][2]).toEqual(['@scope/something']);
+    expect(getDependencyConfig.mock.calls[0][2]).toEqual('@scope/something');
   });
 
   it('should register native module when android/ios projects are present', done => {
@@ -80,16 +76,14 @@ describe('link', () => {
       android: {},
     }));
 
-    const getDependencyConfig = jest.fn(() => [
-      {
-        config: {
-          ios: {},
-          android: {},
-        },
-        assets: [],
-        commands: { prelink, postlink },
+    const getDependencyConfig = jest.fn(() => ({
+      config: {
+        ios: {},
+        android: {},
       },
-    ]);
+      assets: [],
+      commands: { prelink, postlink },
+    }));
 
     jest.setMock('../getDependencyConfig', getDependencyConfig);
 
@@ -127,16 +121,14 @@ describe('link', () => {
       android: {},
     }));
 
-    jest.setMock('../getDependencyConfig', () => [
-      {
-        config: {
-          ios: {},
-          android: {},
-        },
-        assets: dependencyAssets,
-        commands: {},
+    jest.setMock('../getDependencyConfig', () => ({
+      config: {
+        ios: {},
+        android: {},
       },
-    ]);
+      assets: dependencyAssets,
+      commands: {},
+    }));
 
     jest.setMock('../android/isInstalled.js', jest.fn().mockReturnValue(false));
     jest.setMock('../android/registerNativeModule.js', jest.fn());
@@ -169,16 +161,14 @@ describe('link', () => {
       android: {},
     }));
 
-    const getDependencyConfig = jest.fn(() => [
-      {
-        config: {
-          ios: {},
-          android: {},
-        },
-        assets: [],
-        commands: {},
+    const getDependencyConfig = jest.fn(() => ({
+      config: {
+        ios: {},
+        android: {},
       },
-    ]);
+      assets: [],
+      commands: {},
+    }));
 
     jest.setMock('../getDependencyConfig', getDependencyConfig);
 
@@ -212,17 +202,15 @@ describe('link', () => {
       register: registerNativeModule,
     });
 
-    const getDependencyConfig = jest.fn(() => [
-      {
-        config: {
-          ios: {},
-          android: {},
-          windows: {},
-        },
-        assets: [],
-        commands: {},
+    const getDependencyConfig = jest.fn(() => ({
+      config: {
+        ios: {},
+        android: {},
+        windows: {},
       },
-    ]);
+      assets: [],
+      commands: {},
+    }));
 
     jest.setMock('../../core/getPlatforms', () => ({
       ios: { linkConfig: require('../ios') },

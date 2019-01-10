@@ -104,7 +104,7 @@ const linkAssets = (platforms, project, dependency) => {
  *
  * @param args [packageName]
  */
-function link([rawPackageName]: [string], ctx: ContextT) {
+function link([rawPackageName]: Array<string>, ctx: ContextT) {
   let platforms;
   let project;
   try {

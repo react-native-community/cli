@@ -2,7 +2,7 @@
  * @flow
  */
 
-import type { CommandT, ProjectCommandT } from './types.flow';
+import type { CommandT, ProjectCommandT, LocalCommandT } from './types.flow';
 
 const path = require('path');
 const findPlugins = require('./findPlugins');
@@ -10,7 +10,7 @@ const findPlugins = require('./findPlugins');
 /**
  * List of built-in commands
  */
-const loadLocalCommands = () => [
+const loadLocalCommands = (): Array<LocalCommandT> => [
   require('../server/server'),
   require('../runIOS/runIOS'),
   require('../runAndroid/runAndroid'),
@@ -25,7 +25,6 @@ const loadLocalCommands = () => [
   require('../upgrade/upgrade'),
   require('../logAndroid/logAndroid'),
   require('../logIOS/logIOS'),
-  require('../dependencies/dependencies'),
   require('../info/info'),
 ];
 

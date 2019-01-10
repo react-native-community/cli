@@ -11,7 +11,6 @@
 import type { ContextT } from '../core/types.flow';
 
 const log = require('npmlog');
-const path = require('path');
 const { isEmpty } = require('lodash');
 const chalk = require('chalk');
 const promiseWaterfall = require('./promiseWaterfall');

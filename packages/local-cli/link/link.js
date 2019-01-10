@@ -12,7 +12,7 @@ import type { ContextT } from '../core/types.flow';
 
 const log = require('npmlog');
 const path = require('path');
-const { isEmpty, uniqBy } = require('lodash');
+const { isEmpty } = require('lodash');
 const chalk = require('chalk');
 const promiseWaterfall = require('./promiseWaterfall');
 const getDependencyConfig = require('./getDependencyConfig');
@@ -23,12 +23,9 @@ const getProjectConfig = require('./getProjectConfig');
 
 const findReactNativeScripts = require('../util/findReactNativeScripts');
 
-const getAssets = require('../core/getAssets');
 const getPlatforms = require('../core/getPlatforms');
 
 log.heading = 'rnpm-link';
-
-const dedupeAssets = assets => uniqBy(assets, asset => path.basename(asset));
 
 const linkDependency = async (platforms, project, dependency) => {
   const params = await pollParams(dependency.params);
@@ -80,8 +77,8 @@ const linkDependency = async (platforms, project, dependency) => {
   });
 };
 
-const linkAssets = (platforms, project, assets) => {
-  if (isEmpty(assets)) {
+const linkAssets = (platforms, project, dependency) => {
+  if (isEmpty(dependency.assets)) {
     return;
   }
 
@@ -97,7 +94,7 @@ const linkAssets = (platforms, project, assets) => {
 
     log.info(`Linking assets to ${platform} project`);
     // $FlowFixMe: We check for existence of project[platform] on line 97.
-    linkConfig.copyAssets(assets, project[platform]);
+    linkConfig.copyAssets(dependency.assets, project[platform]);
   });
 
   log.info('Assets have been successfully linked to your project');
@@ -139,17 +136,13 @@ function link([rawPackageName]: [string], ctx: ContextT) {
   const packageName = rawPackageName.replace(/^(.+?)(@.+?)$/gi, '$1');
 
   const dependencyConfig = getDependencyConfig(ctx, platforms, packageName);
-  const assets = dedupeAssets(
-    getAssets(ctx.root).concat(dependencyConfig.assets)
-  );
 
   const tasks = [
     () => promisify(dependencyConfig.commands.prelink || commandStub),
     () => linkDependency(platforms, project, dependencyConfig),
     () => promisify(dependencyConfig.commands.postlink || commandStub),
+    () => linkAssets(platforms, project, dependencyConfig),
   ];
-
-  tasks.push(() => linkAssets(platforms, project, assets));
 
   return promiseWaterfall(tasks).catch(err => {
     log.error(

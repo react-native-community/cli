@@ -265,7 +265,7 @@ describe('link', () => {
     jest.setMock('../ios/registerNativeModule.js', registerIOSNativeModule);
 
     const link = require('../link').func;
-    const assertPlaftormsCalledTimes = (android: number, ios: number) => {
+    const assertPlaftormsCalledTimes = (android, ios) => {
       expect(registerAndroidNativeModule).toHaveBeenCalledTimes(android);
       expect(registerIOSNativeModule).toHaveBeenCalledTimes(ios);
       registerAndroidNativeModule.mockClear();

@@ -112,7 +112,7 @@ describe('link', () => {
     });
   });
 
-  it('should copy assets from both project and dependencies projects', done => {
+  it('should copy assets only from the specific dependency that we are linking', done => {
     const dependencyAssets = ['Fonts/Font.ttf'];
     const projectAssets = ['Fonts/FontC.ttf'];
 
@@ -147,9 +147,7 @@ describe('link', () => {
 
     link(['react-native-blur'], context, {}).then(() => {
       expect(copyAssets.mock.calls).toHaveLength(2);
-      expect(copyAssets.mock.calls[0][0]).toEqual(
-        projectAssets.concat(dependencyAssets)
-      );
+      expect(copyAssets.mock.calls[0][0]).toEqual(dependencyAssets);
       jest.unmock('../../core/getAssets');
       done();
     });

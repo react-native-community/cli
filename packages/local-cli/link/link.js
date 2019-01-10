@@ -11,7 +11,6 @@
 import type { ContextT } from '../core/types.flow';
 
 const log = require('npmlog');
-const path = require('path');
 const { isEmpty, pick } = require('lodash');
 const chalk = require('chalk');
 const promiseWaterfall = require('./promiseWaterfall');
@@ -109,7 +108,7 @@ type FlagsType = {
  *
  * @param args [packageName]
  */
-function link(args: Array<string>, ctx: ContextT, opts: FlagsType) {
+function link([rawPackageName]: [string], ctx: ContextT, opts: FlagsType) {
   let platforms;
   let project;
   try {
@@ -162,7 +161,8 @@ function link(args: Array<string>, ctx: ContextT, opts: FlagsType) {
 
 module.exports = {
   func: link,
-  description: 'links native dependencies for specified package (updates native build files)',
+  description:
+    'links native dependencies for specified package (updates native build files)',
   name: 'link <packageName>',
   options: [
     {

@@ -36,15 +36,13 @@
 // /!\ DO NOT MODIFY THIS FILE /!\
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-'use strict';
-
-var fs = require('fs');
-var path = require('path');
-var exec = require('child_process').exec;
-var execSync = require('child_process').execSync;
-var chalk = require('chalk');
-var prompt = require('prompt');
-var semver = require('semver');
+const fs = require('fs');
+const path = require('path');
+const exec = require('child_process').exec;
+const execSync = require('child_process').execSync;
+const chalk = require('chalk');
+const prompt = require('prompt');
+const semver = require('semver');
 /**
  * Used arguments:
  *   -v --version - to print current version of react-native-cli and react-native dependency
@@ -59,29 +57,35 @@ var semver = require('semver');
  *     - "/Users/home/react-native/react-native-0.22.0.tgz" - for package prepared with `npm pack`, useful for e2e tests
  */
 
-var options = require('minimist')(process.argv.slice(2));
+const options = require('minimist')(process.argv.slice(2));
 
-var CLI_MODULE_PATH = function() {
-  return path.resolve(process.cwd(), 'node_modules', 'react-native', 'cli.js');
-};
-
-var REACT_NATIVE_PACKAGE_JSON_PATH = function() {
+const getCliPath = function() {
   return path.resolve(
     process.cwd(),
     'node_modules',
     'react-native',
-    'package.json',
+    'local-cli',
+    'cli.js'
+  );
+};
+
+const getRNPkgJsonPath = function() {
+  return path.resolve(
+    process.cwd(),
+    'node_modules',
+    'react-native',
+    'package.json'
   );
 };
 
 if (options._.length === 0 && (options.v || options.version)) {
-  printVersionsAndExit(REACT_NATIVE_PACKAGE_JSON_PATH());
+  printVersionsAndExit(getRNPkgJsonPath());
 }
 
 // Use Yarn if available, it's much faster than the npm client.
 // Return the version of yarn installed on the system, null if yarn is not available.
 function getYarnVersionIfAvailable() {
-  var yarnVersion;
+  let yarnVersion;
   try {
     // execSync returns a Buffer -> convert to string
     if (process.platform.startsWith('win')) {
@@ -98,22 +102,21 @@ function getYarnVersionIfAvailable() {
   try {
     if (semver.gte(yarnVersion, '0.16.0')) {
       return yarnVersion;
-    } else {
-      return null;
     }
+    return null;
   } catch (error) {
-    console.error('Cannot parse yarn version: ' + yarnVersion);
+    console.error(`Cannot parse yarn version: ${yarnVersion}`);
     return null;
   }
 }
 
-var cli;
-var cliPath = CLI_MODULE_PATH();
+let cli;
+const cliPath = getCliPath();
 if (fs.existsSync(cliPath)) {
   cli = require(cliPath);
 }
 
-var commands = options._;
+const commands = options._;
 if (cli) {
   cli.run();
 } else {
@@ -134,14 +137,14 @@ if (cli) {
         '    -v, --version use a specific version of React Native',
         '    --template use an app template. Use --template to see available templates.',
         '',
-      ].join('\n'),
+      ].join('\n')
     );
     process.exit(0);
   }
 
   if (commands.length === 0) {
     console.error(
-      'You did not pass any commands, run `react-native --help` to see a list of all available commands.',
+      'You did not pass any commands, run `react-native --help` to see a list of all available commands.'
     );
     process.exit(1);
   }
@@ -159,7 +162,7 @@ if (cli) {
       console.error(
         'Command `%s` unrecognized. ' +
           'Make sure that you have run `npm install` and that you are inside a react-native project.',
-        commands[0],
+        commands[0]
       );
       process.exit(1);
       break;
@@ -171,7 +174,7 @@ function validateProjectName(name) {
     console.error(
       '"%s" is not a valid name for a project. Please use a valid identifier ' +
         'name (alphanumeric).',
-      name,
+      name
     );
     process.exit(1);
   }
@@ -180,7 +183,7 @@ function validateProjectName(name) {
     console.error(
       '"%s" is not a valid name for a project. Please do not use the ' +
         'reserved word "React".',
-      name,
+      name
     );
     process.exit(1);
   }
@@ -206,15 +209,15 @@ function init(name, options) {
 function createAfterConfirmation(name, options) {
   prompt.start();
 
-  var property = {
+  const property = {
     name: 'yesno',
-    message: 'Directory ' + name + ' already exists. Continue?',
+    message: `Directory ${name} already exists. Continue?`,
     validator: /y[es]*|n[o]?/,
     warning: 'Must respond yes or no',
     default: 'no',
   };
 
-  prompt.get(property, function(err, result) {
+  prompt.get(property, (err, result) => {
     if (result.yesno[0] === 'y') {
       createProject(name, options);
     } else {
@@ -225,31 +228,31 @@ function createAfterConfirmation(name, options) {
 }
 
 function createProject(name, options) {
-  var root = path.resolve(name);
-  var projectName = path.basename(root);
+  const root = path.resolve(name);
+  const projectName = path.basename(root);
 
   console.log(
     'This will walk you through creating a new React Native project in',
-    root,
+    root
   );
 
   if (!fs.existsSync(root)) {
     fs.mkdirSync(root);
   }
 
-  var packageJson = {
+  const packageJson = {
     name: projectName,
     version: '0.0.1',
     private: true,
     scripts: {
-      start: 'node node_modules/react-native/local-cli/cli.js start',
+      start: 'react-native start',
       ios: 'react-native run-ios',
       android: 'react-native run-android',
     },
   };
   fs.writeFileSync(
     path.join(root, 'package.json'),
-    JSON.stringify(packageJson),
+    JSON.stringify(packageJson)
   );
   process.chdir(root);
 
@@ -257,10 +260,10 @@ function createProject(name, options) {
 }
 
 function getInstallPackage(rnPackage) {
-  var packageToInstall = 'react-native';
-  var isValidSemver = semver.valid(rnPackage);
+  let packageToInstall = 'react-native';
+  const isValidSemver = semver.valid(rnPackage);
   if (isValidSemver) {
-    packageToInstall += '@' + isValidSemver;
+    packageToInstall += `@${isValidSemver}`;
   } else if (rnPackage) {
     // for tar.gz or alternative paths
     packageToInstall = rnPackage;
@@ -269,50 +272,49 @@ function getInstallPackage(rnPackage) {
 }
 
 function run(root, projectName, options) {
-  var rnPackage = options.version; // e.g. '0.38' or '/path/to/archive.tgz'
-  var forceNpmClient = options.npm;
-  var yarnVersion = !forceNpmClient && getYarnVersionIfAvailable();
-  var installCommand;
+  const rnPackage = options.version; // e.g. '0.38' or '/path/to/archive.tgz'
+  const forceNpmClient = options.npm;
+  const yarnVersion = !forceNpmClient && getYarnVersionIfAvailable();
+  let installCommand;
   if (options.installCommand) {
     // In CI environments it can be useful to provide a custom command,
     // to set up and use an offline mirror for installing dependencies, for example.
     installCommand = options.installCommand;
+  } else if (yarnVersion) {
+    console.log(`Using yarn v${yarnVersion}`);
+    console.log(`Installing ${getInstallPackage(rnPackage)}...`);
+    installCommand = `yarn add ${getInstallPackage(rnPackage)} --exact`;
+    if (options.verbose) {
+      installCommand += ' --verbose';
+    }
   } else {
-    if (yarnVersion) {
-      console.log('Using yarn v' + yarnVersion);
-      console.log('Installing ' + getInstallPackage(rnPackage) + '...');
-      installCommand = 'yarn add ' + getInstallPackage(rnPackage) + ' --exact';
-      if (options.verbose) {
-        installCommand += ' --verbose';
-      }
-    } else {
-      console.log('Installing ' + getInstallPackage(rnPackage) + '...');
-      if (!forceNpmClient) {
-        console.log(
-          'Consider installing yarn to make this faster: https://yarnpkg.com',
-        );
-      }
-      installCommand =
-        'npm install --save --save-exact ' + getInstallPackage(rnPackage);
-      if (options.verbose) {
-        installCommand += ' --verbose';
-      }
+    console.log(`Installing ${getInstallPackage(rnPackage)}...`);
+    if (!forceNpmClient) {
+      console.log(
+        'Consider installing yarn to make this faster: https://yarnpkg.com'
+      );
+    }
+    installCommand = `npm install --save --save-exact ${getInstallPackage(
+      rnPackage
+    )}`;
+    if (options.verbose) {
+      installCommand += ' --verbose';
     }
   }
   try {
-    execSync(installCommand, {stdio: 'inherit'});
+    execSync(installCommand, { stdio: 'inherit' });
   } catch (err) {
     console.error(err);
-    console.error('Command `' + installCommand + '` failed.');
+    console.error(`Command \`${installCommand}\` failed.`);
     process.exit(1);
   }
   checkNodeVersion();
-  cli = require(CLI_MODULE_PATH());
+  cli = require(getCliPath());
   cli.init(root, projectName);
 }
 
 function checkNodeVersion() {
-  var packageJson = require(REACT_NATIVE_PACKAGE_JSON_PATH());
+  const packageJson = require(getRNPkgJsonPath());
   if (!packageJson.engines || !packageJson.engines.node) {
     return;
   }
@@ -321,21 +323,21 @@ function checkNodeVersion() {
       chalk.red(
         'You are currently running Node %s but React Native requires %s. ' +
           'Please use a supported version of Node.\n' +
-          'See https://facebook.github.io/react-native/docs/getting-started.html',
+          'See https://facebook.github.io/react-native/docs/getting-started.html'
       ),
       process.version,
-      packageJson.engines.node,
+      packageJson.engines.node
     );
   }
 }
 
 function printVersionsAndExit(reactNativePackageJsonPath) {
-  console.log('react-native-cli: ' + require('./package.json').version);
+  console.log(`react-native-cli: ${require('./package.json').version}`);
   try {
-    console.log('react-native: ' + require(reactNativePackageJsonPath).version);
+    console.log(`react-native: ${require(reactNativePackageJsonPath).version}`);
   } catch (e) {
     console.log(
-      'react-native: n/a - not inside a React Native project directory',
+      'react-native: n/a - not inside a React Native project directory'
     );
   }
   process.exit();

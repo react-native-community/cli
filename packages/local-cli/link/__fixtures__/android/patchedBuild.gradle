@@ -13,6 +13,8 @@ dependencies {
     implementation (project(':test-impl-config-spaces')) {
       exclude group: 'com.google.android.gms'
     }
+// Indentation being off for some entries is a part of the test, because
+// Gradle doesn't care about indentation and neither should we
 implementationDebug project(':test-impl-debug')
 implementationAbc project(':test-impl-abc')
    compile project(':test-compile')

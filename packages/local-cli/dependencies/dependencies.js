@@ -4,7 +4,6 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 const Metro = require('metro');
@@ -92,7 +91,7 @@ module.exports = {
         'Specifies the maximum number of workers the worker-pool ' +
         'will spawn for transforming files. This defaults to the number of the ' +
         'cores available on your machine.',
-      parse: (workers: string) => Number(workers),
+      parse: workers => Number(workers),
     },
     {
       command: '--dev [boolean]',

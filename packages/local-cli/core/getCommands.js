@@ -25,6 +25,7 @@ const loadLocalCommands = (): Array<LocalCommandT> => [
   require('../upgrade/upgrade'),
   require('../logAndroid/logAndroid'),
   require('../logIOS/logIOS'),
+  require('../dependencies/dependencies'),
   require('../info/info'),
 ];
 

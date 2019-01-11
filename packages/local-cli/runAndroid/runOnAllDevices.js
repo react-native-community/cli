@@ -21,11 +21,11 @@ function getCommand(appFolder, command) {
 }
 
 function runOnAllDevices(
-  args,
-  cmd,
-  packageNameWithSuffix,
-  packageName,
-  adbPath
+  args: Object,
+  cmd: string,
+  packageNameWithSuffix: string,
+  packageName: string,
+  adbPath: string
 ) {
   try {
     const gradleArgs = [];

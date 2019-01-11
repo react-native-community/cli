@@ -11,6 +11,7 @@ const Metro = require('metro');
 const denodeify = require('denodeify');
 const fs = require('fs');
 const path = require('path');
+const util = require('util');
 
 async function dependencies(argv, configPromise, args, packagerInstance) {
   const rootModuleAbsolutePath = args.entryFile;
@@ -66,7 +67,10 @@ async function dependencies(argv, configPromise, args, packagerInstance) {
 module.exports = {
   name: 'dependencies',
   description: 'lists dependencies',
-  func: dependencies,
+  func: util.deprecate(
+    dependencies,
+    'dependencies command was moved to metro, and will be removed from cli in next release'
+  ),
   options: [
     {
       command: '--entry-file <path>',

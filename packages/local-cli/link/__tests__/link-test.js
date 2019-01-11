@@ -8,8 +8,7 @@
  * @emails oncall+javascript_foundation
  */
 
-const log = require('npmlog');
-
+jest.mock('npmlog');
 jest.setMock('chalk', { grey: str => str });
 
 const context = {
@@ -19,8 +18,6 @@ const context = {
 describe('link', () => {
   beforeEach(() => {
     jest.resetModules();
-    delete require.cache[require.resolve('../link')];
-    log.level = 'silent';
   });
 
   it('should reject when run in a folder without package.json', done => {

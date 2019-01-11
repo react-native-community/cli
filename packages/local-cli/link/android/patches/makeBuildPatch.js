@@ -12,7 +12,7 @@ const normalizeProjectName = require('./normalizeProjectName');
 module.exports = function makeBuildPatch(name) {
   const normalizedProjectName = normalizeProjectName(name);
   const installPattern = new RegExp(
-    `\\s{4}(implementation)(\\(|\\s)(project)\\(\\':${normalizedProjectName}\\'\\)(\\)|\\s)`
+    `(implementation|compile)\\w*\\s*\\(*project\\(['"]:${normalizedProjectName}['"]\\)`
   );
 
   return {

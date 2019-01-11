@@ -10,7 +10,7 @@
 
 const log = require('npmlog');
 
-jest.setMock('chalk', { grey: str => str });
+jest.mock('chalk', () => ({ grey: str => str }));
 
 const context = {
   root: process.cwd(),
@@ -38,7 +38,7 @@ describe('link', () => {
       commands: {},
     }));
 
-    jest.setMock('../getDependencyConfig', getDependencyConfig);
+    jest.doMock('../getDependencyConfig', () => getDependencyConfig);
 
     const link = require('../link').func;
     link(['react-native-gradient'], context, {}).then(() => {
@@ -59,7 +59,7 @@ describe('link', () => {
       commands: {},
     }));
 
-    jest.setMock('../getDependencyConfig', getDependencyConfig);
+    jest.doMock('../getDependencyConfig', () => getDependencyConfig);
 
     const link = require('../link').func;
     await link(['@scope/something@latest'], context, {});
@@ -71,7 +71,7 @@ describe('link', () => {
     const prelink = jest.fn().mockImplementation(cb => cb());
     const postlink = jest.fn().mockImplementation(cb => cb());
 
-    jest.setMock('../getProjectConfig', () => ({
+    jest.doMock('../getProjectConfig', () => () => ({
       ios: {},
       android: {},
     }));
@@ -85,15 +85,22 @@ describe('link', () => {
       commands: { prelink, postlink },
     }));
 
-    jest.setMock('../getDependencyConfig', getDependencyConfig);
+    jest.doMock('../getDependencyConfig', () => getDependencyConfig);
 
     const registerNativeModule = jest.fn();
 
-    jest.setMock('../android/isInstalled.js', jest.fn().mockReturnValue(false));
-    jest.setMock('../android/registerNativeModule.js', registerNativeModule);
+    jest.doMock('../android/isInstalled.js', () =>
+      jest.fn().mockReturnValue(false)
+    );
+    jest.doMock(
+      '../android/registerNativeModule.js',
+      () => registerNativeModule
+    );
 
-    jest.setMock('../ios/isInstalled.js', jest.fn().mockReturnValue(false));
-    jest.setMock('../ios/registerNativeModule.js', registerNativeModule);
+    jest.doMock('../ios/isInstalled.js', () =>
+      jest.fn().mockReturnValue(false)
+    );
+    jest.doMock('../ios/registerNativeModule.js', () => registerNativeModule);
 
     const link = require('../link').func;
 
@@ -116,12 +123,12 @@ describe('link', () => {
     const dependencyAssets = ['Fonts/Font.ttf'];
     const projectAssets = ['Fonts/FontC.ttf'];
 
-    jest.setMock('../getProjectConfig', () => ({
+    jest.doMock('../getProjectConfig', () => () => ({
       ios: {},
       android: {},
     }));
 
-    jest.setMock('../getDependencyConfig', () => ({
+    jest.doMock('../getDependencyConfig', () => () => ({
       config: {
         ios: {},
         android: {},
@@ -130,18 +137,22 @@ describe('link', () => {
       commands: {},
     }));
 
-    jest.setMock('../android/isInstalled.js', jest.fn().mockReturnValue(false));
-    jest.setMock('../android/registerNativeModule.js', jest.fn());
+    jest.doMock('../android/isInstalled.js', () =>
+      jest.fn().mockReturnValue(false)
+    );
+    jest.doMock('../android/registerNativeModule.js', () => jest.fn());
 
-    jest.setMock('../ios/isInstalled.js', jest.fn().mockReturnValue(false));
-    jest.setMock('../ios/registerNativeModule.js', jest.fn());
+    jest.doMock('../ios/isInstalled.js', () =>
+      jest.fn().mockReturnValue(false)
+    );
+    jest.doMock('../ios/registerNativeModule.js', () => jest.fn());
 
-    jest.setMock('../../core/getAssets', () => projectAssets);
+    jest.doMock('../../core/getAssets', () => projectAssets);
 
     const copyAssets = jest.fn();
 
-    jest.setMock('../ios/copyAssets.js', copyAssets);
-    jest.setMock('../android/copyAssets.js', copyAssets);
+    jest.doMock('../ios/copyAssets.js', () => copyAssets);
+    jest.doMock('../android/copyAssets.js', () => copyAssets);
 
     const link = require('../link').func;
 
@@ -154,7 +165,7 @@ describe('link', () => {
   });
 
   it('should not register modules when they are already installed', done => {
-    jest.setMock('../getProjectConfig', () => ({
+    jest.doMock('../getProjectConfig', () => () => ({
       ios: {},
       android: {},
     }));
@@ -168,15 +179,20 @@ describe('link', () => {
       commands: {},
     }));
 
-    jest.setMock('../getDependencyConfig', getDependencyConfig);
+    jest.doMock('../getDependencyConfig', () => getDependencyConfig);
 
     const registerNativeModule = jest.fn();
 
-    jest.setMock('../android/isInstalled.js', jest.fn().mockReturnValue(true));
-    jest.setMock('../android/registerNativeModule.js', registerNativeModule);
+    jest.doMock('../android/isInstalled.js', () =>
+      jest.fn().mockReturnValue(true)
+    );
+    jest.doMock(
+      '../android/registerNativeModule.js',
+      () => registerNativeModule
+    );
 
-    jest.setMock('../ios/isInstalled.js', jest.fn().mockReturnValue(true));
-    jest.setMock('../ios/registerNativeModule.js', registerNativeModule);
+    jest.doMock('../ios/isInstalled.js', () => jest.fn().mockReturnValue(true));
+    jest.doMock('../ios/registerNativeModule.js', () => registerNativeModule);
 
     const link = require('../link').func;
 
@@ -187,7 +203,7 @@ describe('link', () => {
   });
 
   it('should register native modules for additional platforms', done => {
-    jest.setMock('../getProjectConfig', () => ({
+    jest.doMock('../getProjectConfig', () => () => ({
       ios: {},
       android: {},
       windows: {},
@@ -210,19 +226,24 @@ describe('link', () => {
       commands: {},
     }));
 
-    jest.setMock('../../core/getPlatforms', () => ({
+    jest.doMock('../../core/getPlatforms', () => () => ({
       ios: { linkConfig: require('../ios') },
       android: { linkConfig: require('../android') },
       windows: { linkConfig: genericLinkConfig },
     }));
 
-    jest.setMock('../getDependencyConfig', getDependencyConfig);
+    jest.doMock('../getDependencyConfig', () => getDependencyConfig);
 
-    jest.setMock('../android/isInstalled.js', jest.fn().mockReturnValue(true));
-    jest.setMock('../android/registerNativeModule.js', registerNativeModule);
+    jest.doMock('../android/isInstalled.js', () =>
+      jest.fn().mockReturnValue(true)
+    );
+    jest.doMock(
+      '../android/registerNativeModule.js',
+      () => registerNativeModule
+    );
 
-    jest.setMock('../ios/isInstalled.js', jest.fn().mockReturnValue(true));
-    jest.setMock('../ios/registerNativeModule.js', registerNativeModule);
+    jest.doMock('../ios/isInstalled.js', () => jest.fn().mockReturnValue(true));
+    jest.doMock('../ios/registerNativeModule.js', () => registerNativeModule);
 
     const link = require('../link').func;
 
@@ -233,8 +254,8 @@ describe('link', () => {
   });
 
   it('should link only for specific platforms if --platforms is used', async () => {
-    jest.setMock('../getProjectDependencies', () => ['react-native-maps']);
-    jest.setMock('../../core/getPackageConfiguration', () => ({
+    jest.doMock('../getProjectDependencies', () => () => ['react-native-maps']);
+    jest.doMock('../../core/getPackageConfiguration', () => () => ({
       assets: [],
     }));
 
@@ -251,16 +272,19 @@ describe('link', () => {
       register: registerIOSNativeModule,
     });
 
-    jest.setMock('../../core/getPlatforms', () => ({
+    jest.doMock('../../core/getPlatforms', () => () => ({
       android: { linkConfig: genericAndroidLinkConfig },
       ios: { linkConfig: genericIOSLinkConfig },
     }));
 
-    jest.setMock(
+    jest.doMock(
       '../android/registerNativeModule.js',
-      registerAndroidNativeModule
+      () => registerAndroidNativeModule
     );
-    jest.setMock('../ios/registerNativeModule.js', registerIOSNativeModule);
+    jest.doMock(
+      '../ios/registerNativeModule.js',
+      () => registerIOSNativeModule
+    );
 
     const link = require('../link').func;
     const assertPlaftormsCalledTimes = (android, ios) => {

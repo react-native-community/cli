@@ -63,10 +63,9 @@ function copyProjectTemplateAndReplace(
       }
     }
 
-    const relativeFilePath = path.relative(srcPath, absoluteSrcFilePath);
-    const relativeRenamedPath = translateFilePath(relativeFilePath)
-      .replace(/HelloWorld/g, newProjectName)
-      .replace(/helloworld/g, newProjectName.toLowerCase());
+    const relativeFilePath = translateFilePath(
+      path.relative(srcPath, absoluteSrcFilePath)
+    );
 
     // Templates may contain files that we don't want to copy.
     // Examples:
@@ -89,13 +88,13 @@ function copyProjectTemplateAndReplace(
       contentChangedCallback = (_, contentChanged) =>
         upgradeFileContentChangedCallback(
           absoluteSrcFilePath,
-          relativeRenamedPath,
+          relativeFilePath,
           contentChanged
         );
     }
     copyAndReplace(
       absoluteSrcFilePath,
-      path.resolve(destPath, relativeRenamedPath),
+      path.resolve(destPath, relativeFilePath),
       {
         'Hello App Display Name': options.displayName || newProjectName,
         HelloWorld: newProjectName,

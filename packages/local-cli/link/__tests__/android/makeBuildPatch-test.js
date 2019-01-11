@@ -29,8 +29,7 @@ describe('makeBuildPatch', () => {
 
   it('should make a correct install check pattern', () => {
     const { installPattern } = makeBuildPatch(name);
-    const match = `/\\s{4}(implementation)(\\(|\\s)(project)\\(\\':${name}\\'\\)(\\)|\\s)/`;
-    expect(installPattern.toString()).toBe(match);
+    expect(installPattern.toString()).toEqual(expect.stringContaining(name));
   });
 });
 
@@ -44,7 +43,8 @@ describe('makeBuildPatchWithScopedPackage', () => {
 
   it('should make a correct install check pattern', () => {
     const { installPattern } = makeBuildPatch(scopedName);
-    const match = `/\\s{4}(implementation)(\\(|\\s)(project)\\(\\':${normalizedScopedName}\\'\\)(\\)|\\s)/`;
-    expect(installPattern.toString()).toBe(match);
+    expect(installPattern.toString()).toEqual(
+      expect.stringContaining(normalizedScopedName)
+    );
   });
 });

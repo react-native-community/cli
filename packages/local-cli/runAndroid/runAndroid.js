@@ -9,6 +9,8 @@
 
 /* eslint-disable consistent-return */
 
+import type { ContextT } from '../core/types.flow';
+
 const chalk = require('chalk');
 const { spawnSync, spawn, execFileSync } = require('child_process');
 const fs = require('fs');
@@ -30,7 +32,7 @@ function checkAndroid(root) {
 /**
  * Starts the app on a connected Android emulator or device.
  */
-function runAndroid(argv, config, args) {
+function runAndroid(argv: Array<string>, config: ContextT, args: Object) {
   if (!checkAndroid(args.root)) {
     const reactNativeScriptsPath = findReactNativeScripts();
     if (reactNativeScriptsPath) {
@@ -89,6 +91,7 @@ function buildAndRun(args) {
   const appFolder = args.appFolder || 'app';
   const packageName = fs
     .readFileSync(`${appFolder}/src/main/AndroidManifest.xml`, 'utf8')
+    // $FlowFixMe
     .match(/package="(.+?)"/)[1];
 
   const packageNameWithSuffix = getPackageNameWithSuffix(
@@ -220,7 +223,7 @@ function startServerInNewWindow(port, terminal = process.env.REACT_TERMINAL) {
   // set up the launchpackager.(command|bat) file
   const scriptsDir = path.resolve(__dirname, '..', '..', 'scripts');
   const launchPackagerScript = path.resolve(scriptsDir, scriptFile);
-  const procConfig = { cwd: scriptsDir };
+  const procConfig: Object = { cwd: scriptsDir };
 
   // set up the .packager.(env|bat) file to ensure the packager starts on the right port
   const packagerEnvFile = path.join(

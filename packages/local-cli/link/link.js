@@ -108,7 +108,7 @@ type FlagsType = {
  *
  * @param args [packageName]
  */
-function link([rawPackageName]: [string], ctx: ContextT, opts: FlagsType) {
+function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
   let platforms;
   let project;
   try {

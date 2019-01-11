@@ -13,7 +13,7 @@ const { execFileSync } = require('child_process');
 const getAdbPath = require('./getAdbPath');
 
 // Runs ADB reverse tcp:8081 tcp:8081 to allow loading the jsbundle from the packager
-function tryRunAdbReverse(packagerPort, device) {
+function tryRunAdbReverse(packagerPort: number | string, device: string) {
   try {
     const adbPath = getAdbPath();
     const adbArgs = ['reverse', `tcp:${packagerPort}`, `tcp:${packagerPort}`];

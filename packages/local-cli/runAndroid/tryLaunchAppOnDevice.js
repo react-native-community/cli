@@ -11,11 +11,11 @@ const chalk = require('chalk');
 const { spawnSync } = require('child_process');
 
 function tryLaunchAppOnDevice(
-  device,
-  packageNameWithSuffix,
-  packageName,
-  adbPath,
-  mainActivity
+  device: string,
+  packageNameWithSuffix: string,
+  packageName: string,
+  adbPath: string,
+  mainActivity: *
 ) {
   try {
     const adbArgs = [

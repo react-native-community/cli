@@ -22,7 +22,7 @@ const loadMetroConfig = require('../util/loadMetroConfig');
 async function buildBundle(
   args: CommandLineArgs,
   ctx: ContextT,
-  output = outputBundle
+  output: typeof outputBundle = outputBundle
 ) {
   const config = await loadMetroConfig(ctx.root, {
     resetCache: args.resetCache,

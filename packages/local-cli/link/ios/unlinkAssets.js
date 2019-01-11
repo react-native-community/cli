@@ -4,7 +4,6 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 const fs = require('fs-extra');
@@ -42,7 +41,7 @@ module.exports = function unlinkAssetsIOS(files, projectConfig) {
     return;
   }
 
-  const removeResourceFiles = (f: string[] = []) =>
+  const removeResourceFiles = (f = []) =>
     (f || [])
       .map(asset =>
         project.removeResourceFile(

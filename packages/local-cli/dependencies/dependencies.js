@@ -4,7 +4,6 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 const Metro = require('metro');
@@ -12,6 +11,7 @@ const Metro = require('metro');
 const denodeify = require('denodeify');
 const fs = require('fs');
 const path = require('path');
+const util = require('util');
 
 async function dependencies(argv, configPromise, args, packagerInstance) {
   const rootModuleAbsolutePath = args.entryFile;
@@ -67,7 +67,10 @@ async function dependencies(argv, configPromise, args, packagerInstance) {
 module.exports = {
   name: 'dependencies',
   description: 'lists dependencies',
-  func: dependencies,
+  func: util.deprecate(
+    dependencies,
+    'dependencies command was moved to metro, and will be removed from cli in next release'
+  ),
   options: [
     {
       command: '--entry-file <path>',
@@ -92,7 +95,7 @@ module.exports = {
         'Specifies the maximum number of workers the worker-pool ' +
         'will spawn for transforming files. This defaults to the number of the ' +
         'cores available on your machine.',
-      parse: (workers: string) => Number(workers),
+      parse: workers => Number(workers),
     },
     {
       command: '--dev [boolean]',

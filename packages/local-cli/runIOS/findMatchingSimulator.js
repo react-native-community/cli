@@ -31,7 +31,7 @@ function findMatchingSimulator(simulators, simulatorString) {
   const parsedSimulatorName = simulatorString
     ? simulatorString.match(/(.*)? (?:\((.*)?\))?/)
     : [];
-  if (parsedSimulatorName[2] !== undefined) {
+  if (parsedSimulatorName && parsedSimulatorName[2] !== undefined) {
     var simulatorVersion = parsedSimulatorName[2];
     var simulatorName = parsedSimulatorName[1];
   } else {

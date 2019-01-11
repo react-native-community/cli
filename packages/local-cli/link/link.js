@@ -11,7 +11,7 @@
 import type { ContextT } from '../core/types.flow';
 
 const log = require('npmlog');
-const { isEmpty } = require('lodash');
+const { isEmpty, pick } = require('lodash');
 const chalk = require('chalk');
 const promiseWaterfall = require('./promiseWaterfall');
 const getDependencyConfig = require('./getDependencyConfig');
@@ -99,16 +99,23 @@ const linkAssets = (platforms, project, dependency) => {
   log.info('Assets have been successfully linked to your project');
 };
 
+type FlagsType = {
+  platforms: Array<string>,
+};
+
 /**
  * Links specified package.
  *
  * @param args [packageName]
  */
-function link([rawPackageName]: Array<string>, ctx: ContextT) {
+function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
   let platforms;
   let project;
   try {
     platforms = getPlatforms(ctx.root);
+    if (opts.platforms) {
+      platforms = pick(platforms, opts.platforms);
+    }
     project = getProjectConfig(ctx, platforms);
   } catch (err) {
     log.error(
@@ -154,7 +161,14 @@ function link([rawPackageName]: Array<string>, ctx: ContextT) {
 
 module.exports = {
   func: link,
-  description:
-    'links native dependencies for specified package (updates native build files)',
+  description: 'scope link command to certain platforms (comma-separated)',
   name: 'link <packageName>',
+  options: [
+    {
+      command: '--platforms [list]',
+      description:
+        'If you want to link dependencies only for specific platforms',
+      parse: (val: string) => val.toLowerCase().split(','),
+    },
+  ],
 };

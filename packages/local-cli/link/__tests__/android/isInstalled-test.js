@@ -19,11 +19,20 @@ const projectConfig = {
 };
 
 describe('android::isInstalled', () => {
-  it('should return true when project is already in build.gradle', () => {
-    expect(isInstalled(projectConfig, 'test')).toBeTruthy();
-    expect(isInstalled(projectConfig, 'test2')).toBeTruthy();
-  });
-
-  it('should return false when project is not in build.gradle', () =>
-    expect(isInstalled(projectConfig, 'test3')).toBeFalsy());
+  test.each([
+    ['test-impl', true],
+    ['test-impl-config', true],
+    ['test-impl-config-spaces', true],
+    ['test-impl-debug', true],
+    ['test-impl-abc', true],
+    ['test-compile', true],
+    ['test-compile-debug', true],
+    ['test-compile-abc', true],
+    ['test-not-there-yet', false],
+  ])(
+    'properly detects if %p project is already in build.gradle',
+    (project, isPresent) => {
+      expect(isInstalled(projectConfig, project)).toBe(isPresent);
+    }
+  );
 });

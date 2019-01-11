@@ -100,7 +100,7 @@ const linkAssets = (platforms, project, dependency) => {
 };
 
 type FlagsType = {
-  platforms: string,
+  platforms: Array<string>,
 };
 
 /**
@@ -161,15 +161,14 @@ function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
 
 module.exports = {
   func: link,
-  description:
-    'links native dependencies for specified package (updates native build files)',
+  description: 'scope link command to certain platforms (comma-separated)',
   name: 'link <packageName>',
   options: [
     {
       command: '--platforms [list]',
       description:
         'If you want to link dependencies only for specific platforms',
-      parse: (val: string) => val.split(','),
+      parse: (val: string) => val.toLowerCase().split(','),
     },
   ],
 };

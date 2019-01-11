@@ -273,13 +273,6 @@ describe('link', () => {
     await link(
       ['react-native-gradient'],
       { root: '/' },
-      { platforms: ['android', 'ios'] }
-    );
-    assertPlaftormsCalledTimes(1, 1);
-
-    await link(
-      ['react-native-gradient'],
-      { root: '/' },
       { platforms: ['android'] }
     );
     assertPlaftormsCalledTimes(1, 0);

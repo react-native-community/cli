@@ -16,6 +16,7 @@
     "url": "https://github.com/react-native-community/react-native-cli.git"
   },
   "jest": {
+    "displayName": "local",
     "testPathIgnorePatterns": [
       "/node_modules/",
       "/templates/"
@@ -66,10 +67,7 @@
     "xmldoc": "^0.4.0"
   },
   "devDependencies": {
-    "babel-core": "7.0.0-bridge.0",
-    "babel-jest": "24.0.0-alpha.6",
     "flow-bin": "0.87.0",
-    "jest": "24.0.0-alpha.6",
     "react-native": "^0.57.0"
   },
   "peerDependencies": {

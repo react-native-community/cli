@@ -18,7 +18,7 @@
 .*/node_modules/metro.*/.*
 
 [include]
-../../node_modules
+flow-typed
 
 [options]
 emoji=true

@@ -422,7 +422,7 @@ module.exports = {
       command: '--project-path [string]',
       description:
         'Path relative to project root where the Xcode project ' +
-        "(.xcodeproj) lives. The default is 'ios'.",
+        "(.xcodeproj) lives.",
       default: 'ios',
     },
     {

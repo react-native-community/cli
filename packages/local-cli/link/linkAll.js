@@ -5,6 +5,7 @@ import type { ContextT, PlatformsT, ProjectConfigT } from '../core/types.flow';
 const log = require('npmlog');
 const { uniqBy, flatten } = require('lodash');
 const path = require('path');
+const getAssets = require('../core/getAssets');
 const getProjectDependencies = require('./getProjectDependencies');
 const getDependencyConfig = require('./getDependencyConfig');
 const promiseWaterfall = require('./promiseWaterfall');
@@ -25,11 +26,17 @@ function linkAll(
   log.warn(
     'Linking modules without specifying package name is deprecated and will be removed in next release'
   );
+  const projectAssets = getAssets(context.root);
   const dependencies = getProjectDependencies(context.root);
   const depenendenciesConfig = dependencies.map(dependnecy =>
     getDependencyConfig(context, platforms, dependnecy)
   );
-  const assets = dedupeAssets(flatten(depenendenciesConfig.map(d => d.assets)));
+  const assets = dedupeAssets(
+    depenendenciesConfig.reduce(
+      (acc, dependency) => acc.concat(dependency.assets),
+      projectAssets
+    )
+  );
 
   const tasks = flatten(
     depenendenciesConfig
@@ -37,8 +44,8 @@ function linkAll(
         () => promisify(config.commands.prelink || commandStub),
         () => linkDependency(platforms, project, config),
         () => promisify(config.commands.postlink || commandStub),
+        () => linkAssets(platforms, project, assets)
       ])
-      .concat(() => linkAssets(platforms, project, assets))
   );
 
   return promiseWaterfall(tasks).catch(err => {

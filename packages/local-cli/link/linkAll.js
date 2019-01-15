@@ -24,13 +24,17 @@ function linkAll(
   project: ProjectConfigT
 ) {
   log.warn(
-    'Linking modules without specifying package name is deprecated and will be removed in next release'
+    'Running `react-native link` without package name is deprecated and will be removed ' +
+      'in next release. If you are using `react-native link` to link your project assets, ' +
+      ' let us know about your use case here: https://goo.gl/RKTeoc'
   );
+
   const projectAssets = getAssets(context.root);
   const dependencies = getProjectDependencies(context.root);
   const depenendenciesConfig = dependencies.map(dependnecy =>
     getDependencyConfig(context, platforms, dependnecy)
   );
+
   const assets = dedupeAssets(
     depenendenciesConfig.reduce(
       (acc, dependency) => acc.concat(dependency.assets),

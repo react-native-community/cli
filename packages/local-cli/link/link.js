@@ -11,14 +11,15 @@
 import type { ContextT } from '../core/types.flow';
 
 const log = require('npmlog');
-const { isEmpty, pick } = require('lodash');
-const chalk = require('chalk');
+const { pick } = require('lodash');
 const promiseWaterfall = require('./promiseWaterfall');
 const getDependencyConfig = require('./getDependencyConfig');
-const pollParams = require('./pollParams');
 const commandStub = require('./commandStub');
 const promisify = require('./promisify');
 const getProjectConfig = require('./getProjectConfig');
+const linkDependency = require('./linkDependency');
+const linkAssets = require('./linkAssets');
+const linkAll = require('./linkAll');
 
 const findReactNativeScripts = require('../util/findReactNativeScripts');
 
@@ -26,87 +27,15 @@ const getPlatforms = require('../core/getPlatforms');
 
 log.heading = 'rnpm-link';
 
-const linkDependency = async (platforms, project, dependency) => {
-  const params = await pollParams(dependency.params);
-
-  Object.keys(platforms || {}).forEach(platform => {
-    if (!project[platform] || !dependency.config[platform]) {
-      return;
-    }
-
-    const linkConfig =
-      platforms[platform] &&
-      platforms[platform].linkConfig &&
-      platforms[platform].linkConfig();
-    if (!linkConfig || !linkConfig.isInstalled || !linkConfig.register) {
-      return;
-    }
-
-    const isInstalled = linkConfig.isInstalled(
-      project[platform],
-      dependency.name,
-      dependency.config[platform]
-    );
-
-    if (isInstalled) {
-      log.info(
-        chalk.grey(
-          `Platform '${platform}' module ${dependency.name} is already linked`
-        )
-      );
-      return;
-    }
-
-    log.info(`Linking ${dependency.name} ${platform} dependency`);
-
-    linkConfig.register(
-      dependency.name,
-      // $FlowFixMe: We check if dependency.config[platform] exists on line 42
-      dependency.config[platform],
-      params,
-      // $FlowFixMe: We check if project[platform] exists on line 42
-      project[platform]
-    );
-
-    log.info(
-      `Platform '${platform}' module ${
-        dependency.name
-      } has been successfully linked`
-    );
-  });
-};
-
-const linkAssets = (platforms, project, dependency) => {
-  if (isEmpty(dependency.assets)) {
-    return;
-  }
-
-  Object.keys(platforms || {}).forEach(platform => {
-    const linkConfig =
-      platforms[platform] &&
-      platforms[platform].linkConfig &&
-      platforms[platform].linkConfig();
-
-    if (!linkConfig || !linkConfig.copyAssets || !project[platform]) {
-      return;
-    }
-
-    log.info(`Linking assets to ${platform} project`);
-    // $FlowFixMe: We check for existence of project[platform] on line 97.
-    linkConfig.copyAssets(dependency.assets, project[platform]);
-  });
-
-  log.info('Assets have been successfully linked to your project');
-};
-
 type FlagsType = {
   platforms: Array<string>,
 };
 
 /**
- * Links specified package.
+ * Updates project and links all dependencies to it.
  *
- * @param args [packageName]
+ * @param args If optional argument [packageName] is provided,
+ *             only that package is processed.
  */
 function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
   let platforms;
@@ -130,12 +59,16 @@ function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
   );
   if (!hasProjectConfig && findReactNativeScripts()) {
     throw new Error(
-      '`react-native link <package>` can not be used in Create React Native App projects. ' +
+      '`react-native link [package]` can not be used in Create React Native App projects. ' +
         'If you need to include a library that relies on custom native code, ' +
         'you might have to eject first. ' +
         'See https://github.com/react-community/create-react-native-app/blob/master/EJECTING.md ' +
         'for more information.'
     );
+  }
+
+  if (rawPackageName === undefined) {
+    return linkAll(ctx, platforms, project);
   }
 
   // Trim the version / tag out of the package name (eg. package@latest)
@@ -162,7 +95,7 @@ function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
 module.exports = {
   func: link,
   description: 'scope link command to certain platforms (comma-separated)',
-  name: 'link <packageName>',
+  name: 'link [packageName]',
   options: [
     {
       command: '--platforms [list]',

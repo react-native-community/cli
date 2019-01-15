@@ -49,13 +49,12 @@ const getDefaultConfig = (root: string) => {
         'react-native',
         ...plugins.haste.providesModuleNodeModules,
       ],
-      hasteImplModulePath: require.resolve('react-native/jest/hasteImpl'),
     },
     serializer: {
       getModulesRunBeforeMainModule: () => [
         require.resolve('react-native/Libraries/Core/InitializeCore'),
       ],
-      getPolyfills: require('react-native/rn-get-polyfills'),
+      getPolyfills: () => require('react-native/rn-get-polyfills')(),
     },
     server: {
       port: process.env.RCT_METRO_PORT || 8081,
@@ -63,9 +62,6 @@ const getDefaultConfig = (root: string) => {
     transformer: {
       babelTransformerPath: require.resolve(
         'metro-react-native-babel-transformer'
-      ),
-      assetRegistryPath: require.resolve(
-        'react-native/Libraries/Image/AssetRegistry'
       ),
     },
     watchFolders: getWatchFolders(),
@@ -83,40 +79,6 @@ export type ConfigOptionsT = {
 };
 
 /**
- * Overwrites Metro configuration with options.
- *
- * This ensures that options are always taking precedence over other
- * configuration present.
- */
-const overwriteWithOptions = (config: ConfigT, options: ConfigOptionsT) => {
-  if (options.maxWorkers) {
-    config.maxWorkers = options.maxWorkers;
-  }
-
-  if (options.port) {
-    config.server.port = options.port;
-  }
-
-  if (options.reporter) {
-    config.reporter = options.reporter;
-  }
-
-  if (options.resetCache) {
-    config.resetCache = options.resetCache;
-  }
-
-  if (options.watchFolders) {
-    config.watchFolders = options.watchFolders;
-  }
-
-  if (options.sourceExts && options.sourceExts !== config.resolver.sourceExts) {
-    config.resolver.sourceExts = options.sourceExts.concat(
-      config.resolver.sourceExts
-    );
-  }
-};
-
-/**
  * Loads Metro Config and applies `options` on top of the resolved config.
  *
  * This allows the CLI to always overwrite the file settings.
@@ -130,13 +92,28 @@ module.exports = async function load(
   const config = await loadConfig(
     {
       cwd: projectRoot,
-      config: options.config,
+      ...options,
     },
     defaultConfig
   );
 
-  if (options) {
-    overwriteWithOptions(config, options);
+  /**
+   * Workaround for static Metro configuration. If the following properties are defined
+   * in user space, the following code will not run.
+   *
+   * That makes it possible to run CLI in context of `react-native` source code, where
+   * the package does not exist under `node_modules`.
+   */
+  if (config.resolver.hasteImplModulePath === undefined) {
+    config.resolver.hasteImplModulePath = require.resolve(
+      'react-native/jest/hasteImpl'
+    );
+  }
+
+  if (config.transformer.assetRegistryPath === 'missing-asset-registry-path') {
+    config.transformer.assetRegistryPath = require.resolve(
+      'react-native/Libraries/Image/AssetRegistry'
+    );
   }
 
   return config;

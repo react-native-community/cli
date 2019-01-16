@@ -27,7 +27,9 @@ function createProjectFromTemplate(
 ) {
   const templatePath = path.resolve(
     process.cwd(),
-    './node_modules/react-native/template'
+    'node_modules',
+    'react-native',
+    'template'
   );
   copyProjectTemplateAndReplace(templatePath, destPath, newProjectName);
 

@@ -25,12 +25,7 @@ function createProjectFromTemplate(
   template,
   yarnVersion
 ) {
-  const templatePath = path.resolve(
-    process.cwd(),
-    'node_modules',
-    'react-native',
-    'template'
-  );
+  const templatePath = require.resolve('react-native/template');
   copyProjectTemplateAndReplace(templatePath, destPath, newProjectName);
 
   if (template === undefined) {

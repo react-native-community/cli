@@ -95,7 +95,11 @@ function copyProjectTemplateAndReplace(
     copyAndReplace(
       absoluteSrcFilePath,
       path.resolve(destPath, relativeFilePath),
-      {},
+      {
+        'Hello App Display Name': options.displayName || newProjectName,
+        HelloWorld: newProjectName,
+        helloworld: newProjectName.toLowerCase(),
+      },
       contentChangedCallback
     );
   });

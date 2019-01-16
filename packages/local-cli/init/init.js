@@ -114,7 +114,10 @@ function addJestToPackageJson(destinationRoot) {
   packageJSON.jest = {
     preset: 'react-native',
   };
-  fs.writeFileSync(packageJSONPath, JSON.stringify(packageJSON, null, 2));
+  fs.writeFileSync(
+    packageJSONPath,
+    `${JSON.stringify(packageJSON, null, 2)}\n`
+  );
 }
 
 module.exports = init;

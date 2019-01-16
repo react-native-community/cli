@@ -86,7 +86,7 @@ module.exports = (root: string): Array<CommandT> => [
     func: () => {
       console.log(
         [
-          'Looks like React Native project already exists in the current',
+          'Looks like a React Native project already exists in the current',
           'folder. Run this command from a different folder or remove node_modules/react-native',
         ].join('\n')
       );

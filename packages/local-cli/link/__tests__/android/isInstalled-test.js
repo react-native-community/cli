@@ -28,6 +28,9 @@ describe('android::isInstalled', () => {
     ['test-compile', true],
     ['test-compile-debug', true],
     ['test-compile-abc', true],
+    ['test-api', true],
+    ['test-api-debug', true],
+    ['test-api-abc', true],
     ['test-not-there-yet', false],
   ])(
     'properly detects if %p project is already in build.gradle',

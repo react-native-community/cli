@@ -135,13 +135,7 @@ function validateAndUpgrade() {
 function upgradeProjectFiles(projectDir, projectName) {
   // Just overwrite
   copyProjectTemplateAndReplace(
-    path.resolve(
-      'node_modules',
-      'react-native',
-      'local-cli',
-      'templates',
-      'HelloWorld'
-    ),
+    require.resolve('react-native/template'),
     projectDir,
     projectName,
     { upgrade: true }

@@ -25,21 +25,17 @@ function createProjectFromTemplate(
   template,
   yarnVersion
 ) {
-  // Expand the basic 'HelloWorld' template
-  copyProjectTemplateAndReplace(
-    path.resolve(__dirname, '../templates/HelloWorld'),
-    destPath,
-    newProjectName
-  );
+  const templatePath = require.resolve('react-native/template');
+  copyProjectTemplateAndReplace(templatePath, destPath, newProjectName);
 
   if (template === undefined) {
-    // No specific template, use just the HelloWorld template above
+    // No specific template, use just the react-native template above
     return;
   }
 
-  // Keep the files from the 'HelloWorld' template, and overwrite some of them
+  // Keep the files from the react-native template, and overwrite some of them
   // with the specified project template.
-  // The 'HelloWorld' template contains the native files (these are used by
+  // The react-native template contains the native files (these are used by
   // all templates) and every other template only contains additional JS code.
   // Reason:
   // This way we don't have to duplicate the native files in every template.

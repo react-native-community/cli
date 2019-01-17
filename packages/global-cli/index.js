@@ -60,13 +60,7 @@ const semver = require('semver');
 const options = require('minimist')(process.argv.slice(2));
 
 const getCliPath = function() {
-  return path.resolve(
-    process.cwd(),
-    'node_modules',
-    'react-native',
-    'local-cli',
-    'cli.js'
-  );
+  return path.resolve(process.cwd(), 'node_modules', 'react-native', 'cli.js');
 };
 
 const getRNPkgJsonPath = function() {

@@ -21,6 +21,10 @@ implementationAbc project(':test-impl-abc')
 	 compileDebug project(':test-compile-debug')
 	 compileAbc project(':test-compile-abc')
 
+    api project(':test-api')
+    apiDebug project(':test-api-debug')
+    apiAbc project(':test-api-abc')
+
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:27.1.1"
     implementation "com.facebook.react:react-native:+"

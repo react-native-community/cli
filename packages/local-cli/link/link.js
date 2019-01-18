@@ -19,7 +19,6 @@ const promisify = require('./promisify');
 const getProjectConfig = require('./getProjectConfig');
 const linkDependency = require('./linkDependency');
 const linkAssets = require('./linkAssets');
-const linkAll = require('./linkAll');
 
 const findReactNativeScripts = require('../util/findReactNativeScripts');
 
@@ -32,10 +31,8 @@ type FlagsType = {
 };
 
 /**
- * Updates project and links all dependencies to it.
  *
- * @param args If optional argument [packageName] is provided,
- *             only that package is processed.
+ * @param args [packageName] - links native dependencies and assets for provided package
  */
 function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
   let platforms;
@@ -59,16 +56,12 @@ function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
   );
   if (!hasProjectConfig && findReactNativeScripts()) {
     throw new Error(
-      '`react-native link [package]` can not be used in Create React Native App projects. ' +
+      '`react-native link <package>` can not be used in Create React Native App projects. ' +
         'If you need to include a library that relies on custom native code, ' +
         'you might have to eject first. ' +
         'See https://github.com/react-community/create-react-native-app/blob/master/EJECTING.md ' +
         'for more information.'
     );
-  }
-
-  if (rawPackageName === undefined) {
-    return linkAll(ctx, platforms, project);
   }
 
   // Trim the version / tag out of the package name (eg. package@latest)
@@ -95,7 +88,7 @@ function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
 module.exports = {
   func: link,
   description: 'scope link command to certain platforms (comma-separated)',
-  name: 'link [packageName]',
+  name: 'link <packageName>',
   options: [
     {
       command: '--platforms [list]',

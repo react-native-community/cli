@@ -25,7 +25,7 @@ describe('getProjectDependencies', () => {
         dependencies: {
           lodash: '^6.0.0',
           'react-native': '^16.0.0',
-          'react-native-local-cli': '*',
+          '@react-native-community/cli': '*',
         },
       }),
       { virtual: true }

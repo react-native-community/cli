@@ -16,8 +16,8 @@
     "url": "https://github.com/react-native-community/react-native-cli.git"
   },
   "scripts": {
-    "prepublish": "yarn build && cp -R src/server/util/external build/server/util/external",
-    "build": "rm -rf build; babel src --out-dir build --ignore '**/__tests__/**','**/__mocks__/**','**/__fixtures__/**'"
+    "prepublish": "yarn build",
+    "build": "rm -rf build; babel src --copy-files --out-dir build --ignore '**/__tests__/**','**/__mocks__/**','**/__fixtures__/**'"
   },
   "jest": {
     "displayName": "cli",

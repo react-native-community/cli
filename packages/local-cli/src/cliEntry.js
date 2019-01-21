@@ -19,7 +19,7 @@ const getCommands = require('./core/getCommands');
 const getLegacyConfig = require('./core/getLegacyConfig');
 const init = require('./init/init');
 const assertRequiredOptions = require('./util/assertRequiredOptions');
-const pkg = require('./package.json');
+const pkg = require('../package.json');
 
 commander.version(pkg.version);
 
@@ -130,8 +130,8 @@ const addCommand = (command: CommandT, ctx: ContextT) => {
 
 async function run() {
   const setupEnvScript = /^win/.test(process.platform)
-    ? 'setup_env.bat'
-    : 'setup_env.sh';
+    ? path.join('..', 'setup_env.bat')
+    : path.join('..', 'setup_env.sh');
 
   childProcess.execFileSync(path.join(__dirname, setupEnvScript));
 

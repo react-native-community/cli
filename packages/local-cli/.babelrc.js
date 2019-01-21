@@ -5,12 +5,11 @@ module.exports = {
     [
       require.resolve('@babel/preset-env'),
       {
-        targets: { node: '8' },
+        targets: { node: 8 },
         useBuiltIns: 'entry',
       },
     ],
     require.resolve('@babel/preset-flow'),
   ],
   plugins: [require.resolve('@babel/plugin-transform-strict-mode')],
-  only: [new RegExp(`^${escapeRegExp(__dirname)}`)],
 };

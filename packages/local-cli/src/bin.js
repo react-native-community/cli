@@ -26,5 +26,5 @@ if (isInstalledGlobally()) {
   );
   process.exit(1);
 } else {
-  require('./cli').run();
+  require('.').run();
 }

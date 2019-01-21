@@ -12,7 +12,7 @@ const path = require('path');
 const findPlugins = require('../findPlugins');
 
 const ROOT = path.join(__dirname, '..', '..');
-const pjsonPath = path.join(ROOT, 'package.json');
+const pjsonPath = path.join(ROOT, './package.json');
 
 describe('findPlugins', () => {
   beforeEach(() => {
@@ -20,9 +20,13 @@ describe('findPlugins', () => {
   });
 
   it('returns an array of dependencies', () => {
-    jest.mock(pjsonPath, () => ({
-      dependencies: { 'rnpm-plugin-test': '*' },
-    }));
+    jest.doMock(
+      pjsonPath,
+      () => ({
+        dependencies: { 'rnpm-plugin-test': '*' },
+      }),
+      { virtual: true }
+    );
 
     expect(findPlugins(ROOT)).toHaveProperty('commands');
     expect(findPlugins(ROOT)).toHaveProperty('platforms');
@@ -32,7 +36,7 @@ describe('findPlugins', () => {
   });
 
   it('returns an empty array if there are no plugins in this folder', () => {
-    jest.mock(pjsonPath, () => ({}));
+    jest.doMock(pjsonPath, () => ({}), { virtual: true });
     expect(findPlugins(ROOT)).toHaveProperty('commands');
     expect(findPlugins(ROOT)).toHaveProperty('platforms');
     expect(findPlugins(ROOT).commands).toHaveLength(0);
@@ -47,10 +51,14 @@ describe('findPlugins', () => {
   });
 
   it('returns plugins from both dependencies and dev dependencies', () => {
-    jest.mock(pjsonPath, () => ({
-      dependencies: { 'rnpm-plugin-test': '*' },
-      devDependencies: { 'rnpm-plugin-test-2': '*' },
-    }));
+    jest.doMock(
+      pjsonPath,
+      () => ({
+        dependencies: { 'rnpm-plugin-test': '*' },
+        devDependencies: { 'rnpm-plugin-test-2': '*' },
+      }),
+      { virtual: true }
+    );
     expect(findPlugins(ROOT)).toHaveProperty('commands');
     expect(findPlugins(ROOT)).toHaveProperty('platforms');
     expect(findPlugins(ROOT).commands).toHaveLength(2);
@@ -58,22 +66,30 @@ describe('findPlugins', () => {
   });
 
   it('returns unique list of plugins', () => {
-    jest.mock(pjsonPath, () => ({
-      dependencies: { 'rnpm-plugin-test': '*' },
-      devDependencies: { 'rnpm-plugin-test': '*' },
-    }));
+    jest.doMock(
+      pjsonPath,
+      () => ({
+        dependencies: { 'rnpm-plugin-test': '*' },
+        devDependencies: { 'rnpm-plugin-test': '*' },
+      }),
+      { virtual: true }
+    );
     expect(findPlugins(ROOT).commands).toHaveLength(1);
   });
 
   it('returns plugins in scoped modules', () => {
-    jest.mock(pjsonPath, () => ({
-      dependencies: {
-        '@org/rnpm-plugin-test': '*',
-        '@org/react-native-test': '*',
-        '@react-native/test': '*',
-        '@react-native-org/test': '*',
-      },
-    }));
+    jest.doMock(
+      pjsonPath,
+      () => ({
+        dependencies: {
+          '@org/rnpm-plugin-test': '*',
+          '@org/react-native-test': '*',
+          '@react-native/test': '*',
+          '@react-native-org/test': '*',
+        },
+      }),
+      { virtual: true }
+    );
 
     expect(findPlugins(ROOT)).toHaveProperty('commands');
     expect(findPlugins(ROOT)).toHaveProperty('platforms');

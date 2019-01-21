@@ -20,7 +20,7 @@
     "build": "rm -rf build; babel src --out-dir build --ignore '**/__tests__/**','**/__mocks__/**','**/__fixtures__/**'"
   },
   "jest": {
-    "displayName": "local",
+    "displayName": "cli",
     "testPathIgnorePatterns": [
       "/node_modules/",
       "/templates/"

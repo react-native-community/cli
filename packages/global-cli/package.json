@@ -24,6 +24,6 @@
     "semver": "^5.0.3"
   },
   "jest": {
-    "displayName": "global"
+    "displayName": "global-cli"
   }
 }

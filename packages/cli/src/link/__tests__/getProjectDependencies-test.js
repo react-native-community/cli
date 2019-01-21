@@ -19,19 +19,25 @@ describe('getProjectDependencies', () => {
     jest.resetModules();
   });
   it('should return an array of project dependencies', () => {
-    jest.setMock(path.join(CWD, './package.json'), {
-      dependencies: {
-        lodash: '^6.0.0',
-        'react-native': '^16.0.0',
-        'react-native-local-cli': '*',
-      },
-    });
+    jest.doMock(
+      path.join(CWD, './package.json'),
+      () => ({
+        dependencies: {
+          lodash: '^6.0.0',
+          'react-native': '^16.0.0',
+          '@react-native-community/cli': '*',
+        },
+      }),
+      { virtual: true }
+    );
 
     expect(getProjectDependencies(CWD)).toEqual(['lodash']);
   });
 
   it('should return an empty array when no dependencies set', () => {
-    jest.setMock(path.join(CWD, './package.json'), {});
+    jest.doMock(path.join(CWD, './package.json'), () => ({}), {
+      virtual: true,
+    });
     expect(getProjectDependencies(CWD)).toEqual([]);
   });
 });

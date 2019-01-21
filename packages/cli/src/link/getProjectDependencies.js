@@ -16,7 +16,7 @@ const path = require('path');
  */
 const EXCLUDED_PROJECTS = [
   'react-native',
-  'react-native-local-cli',
+  '@react-native-community/cli',
   'react-native-local-cli-preview',
 ];
 

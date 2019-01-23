@@ -9,7 +9,7 @@
  */
 
 jest.mock('chalk', () => ({ grey: str => str }));
-jest.mock('npmlog');
+jest.mock('../../util/logger');
 
 const context = {
   root: process.cwd(),

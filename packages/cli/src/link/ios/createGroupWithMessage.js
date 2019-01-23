@@ -7,8 +7,7 @@
  * @format
  */
 
-const log = require('npmlog');
-
+const log = require('../../util/logger');
 const createGroup = require('./createGroup');
 const getGroup = require('./getGroup');
 
@@ -25,7 +24,6 @@ module.exports = function createGroupWithMessage(project, path) {
     group = createGroup(project, path);
 
     log.warn(
-      'ERRGROUP',
       `Group '${path}' does not exist in your Xcode project. We have created it automatically for you.`
     );
   }

@@ -2,11 +2,9 @@
 
 import type { PlatformsT, ProjectConfigT } from '../core/types.flow';
 
-const log = require('npmlog');
 const chalk = require('chalk');
+const log = require('../util/logger');
 const pollParams = require('./pollParams');
-
-log.heading = 'rnpm-link';
 
 const linkDependency = async (
   platforms: PlatformsT,

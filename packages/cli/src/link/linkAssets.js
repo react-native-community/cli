@@ -2,10 +2,8 @@
 
 import type { PlatformsT, ProjectConfigT } from '../core/types.flow';
 
-const log = require('npmlog');
 const { isEmpty } = require('lodash');
-
-log.heading = 'rnpm-link';
+const log = require('../util/logger');
 
 const linkAssets = (
   platforms: PlatformsT,

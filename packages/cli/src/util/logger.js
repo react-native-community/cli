@@ -1,7 +1,7 @@
 // @flow
 const chalk = require('chalk');
 
-const SEPARATOR = ' - ';
+const SEPARATOR = ', ';
 
 const joinMessages = (messages: Array<string>) => messages.join(SEPARATOR);
 

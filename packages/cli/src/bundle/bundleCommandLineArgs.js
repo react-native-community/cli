@@ -97,11 +97,6 @@ module.exports = [
       'Directory name where to store assets referenced in the bundle',
   },
   {
-    command: '--verbose',
-    description: 'Enables logging',
-    default: false,
-  },
-  {
     command: '--reset-cache',
     description: 'Removes cached files',
     default: false,

@@ -1,9 +1,6 @@
 /**
- * @flow
- */
-/* eslint-disable no-param-reassign */
-/**
  * Configuration file of Metro.
+ * @flow
  */
 import type { ConfigT } from 'metro-config/src/configTypes.flow';
 

@@ -27,26 +27,19 @@ const chalk = require('chalk');
 const micromatch = require('micromatch');
 const prettier = require('prettier');
 const stringLength = require('string-length');
+const { PACKAGES_DIR, getPackages } = require('./helpers');
 
 const OK = chalk.reset.inverse.bold.green(' DONE ');
 const SRC_DIR = 'src';
 const BUILD_DIR = 'build';
 const JS_FILES_PATTERN = '**/*.js';
 const IGNORE_PATTERN = '**/__{tests,mocks,fixtures}__/**';
-const PACKAGES_DIR = path.resolve(__dirname, '../packages');
 
 const transformOptions = require('../babel.config.js');
 
 const prettierConfig = prettier.resolveConfig.sync(__filename);
 prettierConfig.trailingComma = 'none';
 prettierConfig.parser = 'babel';
-
-function getPackages() {
-  return fs
-    .readdirSync(PACKAGES_DIR)
-    .map(file => path.resolve(PACKAGES_DIR, file))
-    .filter(f => fs.lstatSync(path.resolve(f)).isDirectory());
-}
 
 const adjustToTerminalWidth = str => {
   const columns = process.stdout.columns || 80;

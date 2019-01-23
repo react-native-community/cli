@@ -6,6 +6,7 @@
   "scripts": {
     "build": "node ./scripts/build.js",
     "build-clean": "rm -rf ./packages/*/build",
+    "watch": "node ./scripts/watch.js",
     "test": "jest",
     "lint": "eslint . --cache --report-unused-disable-directives",
     "flow-check": "flow check",

@@ -44,7 +44,7 @@ function runAndroid(argv: Array<string>, config: ContextT, args: Object) {
     } else {
       console.log(
         chalk.red(
-          'Android project not found. Maybe run react-native android first?'
+          'Android project not found. Are you sure this is a React Native project?'
         )
       );
     }

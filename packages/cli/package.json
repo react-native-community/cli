@@ -15,10 +15,6 @@
     "type": "git",
     "url": "https://github.com/react-native-community/react-native-cli.git"
   },
-  "scripts": {
-    "prepublish": "yarn build",
-    "build": "rm -rf build; babel src --copy-files --out-dir build --ignore '**/__tests__/**','**/__mocks__/**','**/__fixtures__/**'"
-  },
   "jest": {
     "displayName": "cli",
     "testPathIgnorePatterns": [
@@ -66,12 +62,6 @@
     "xmldoc": "^0.4.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.2.3",
-    "@babel/core": "^7.1.5",
-    "@babel/plugin-transform-strict-mode": "^7.2.0",
-    "@babel/preset-env": "^7.1.5",
-    "@babel/preset-flow": "^7.0.0",
-    "flow-bin": "0.87.0",
     "react-native": "^0.57.0"
   },
   "peerDependencies": {

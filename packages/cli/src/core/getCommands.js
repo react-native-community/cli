@@ -6,6 +6,7 @@ import type { CommandT, ProjectCommandT, LocalCommandT } from './types.flow';
 
 const path = require('path');
 const findPlugins = require('./findPlugins');
+const logger = require('../util/logger');
 
 /**
  * List of built-in commands
@@ -84,7 +85,7 @@ module.exports = (root: string): Array<CommandT> => [
   {
     name: 'init',
     func: () => {
-      console.log(
+      logger.warn(
         [
           'Looks like a React Native project already exists in the current',
           'folder. Run this command from a different folder or remove node_modules/react-native',

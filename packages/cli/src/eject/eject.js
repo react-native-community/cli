@@ -10,6 +10,7 @@
 const path = require('path');
 const fs = require('fs');
 const copyProjectTemplateAndReplace = require('../generator/copyProjectTemplateAndReplace');
+const logger = require('../util/logger');
 
 /**
  * The eject command re-creates the `android` and `ios` native folders. Because native code can be
@@ -26,7 +27,7 @@ function eject() {
   const doesIOSExist = fs.existsSync(path.resolve('ios'));
   const doesAndroidExist = fs.existsSync(path.resolve('android'));
   if (doesIOSExist && doesAndroidExist) {
-    console.error(
+    logger.error(
       'Both the iOS and Android folders already exist! Please delete `ios` and/or `android` ' +
         'before ejecting.'
     );
@@ -37,7 +38,7 @@ function eject() {
   try {
     appConfig = require(path.resolve('app.json'));
   } catch (e) {
-    console.error(
+    logger.error(
       'Eject requires an `app.json` config file to be located at ' +
         `${path.resolve(
           'app.json'
@@ -49,7 +50,7 @@ function eject() {
 
   const appName = appConfig.name;
   if (!appName) {
-    console.error(
+    logger.error(
       'App `name` must be defined in the `app.json` config file to define the project name. ' +
         'It must not contain any spaces or dashes.'
     );
@@ -59,7 +60,7 @@ function eject() {
   // eslint-disable-next-line prefer-destructuring
   const displayName = appConfig.displayName;
   if (!displayName) {
-    console.error(
+    logger.error(
       'App `displayName` must be defined in the `app.json` config file, to define the label ' +
         'of the app on the home screen.'
     );
@@ -69,7 +70,7 @@ function eject() {
   const templateOptions = { displayName };
 
   if (!doesIOSExist) {
-    console.log('Generating the iOS folder.');
+    logger.info('Generating the iOS folder.');
     copyProjectTemplateAndReplace(
       path.resolve(
         'node_modules',
@@ -87,7 +88,7 @@ function eject() {
   }
 
   if (!doesAndroidExist) {
-    console.log('Generating the Android folder.');
+    logger.info('Generating the Android folder.');
     copyProjectTemplateAndReplace(
       path.resolve(
         'node_modules',

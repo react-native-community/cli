@@ -14,10 +14,9 @@ const Server = require('metro/src/Server');
 
 const outputBundle = require('metro/src/shared/output/bundle');
 const path = require('path');
-const log = require('./log').out('bundle');
 const saveAssets = require('./saveAssets');
-
 const loadMetroConfig = require('../util/loadMetroConfig');
+const logger = require('../util/logger');
 
 async function buildBundle(
   args: CommandLineArgs,
@@ -51,7 +50,7 @@ async function buildBundle(
   try {
     const bundle = await output.build(server, requestOpts);
 
-    await output.save(bundle, args, log);
+    await output.save(bundle, args, logger.info);
 
     // Save the assets of the bundle
     const outputAssets = await server.getAssets({

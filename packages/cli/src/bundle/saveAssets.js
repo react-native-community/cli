@@ -14,11 +14,11 @@ const fs = require('fs');
 const filterPlatformAssetScales = require('./filterPlatformAssetScales');
 const getAssetDestPathAndroid = require('./getAssetDestPathAndroid');
 const getAssetDestPathIOS = require('./getAssetDestPathIOS');
-const log = require('./log').out('bundle');
+const logger = require('../util/logger');
 
 function saveAssets(assets, platform, assetsDest) {
   if (!assetsDest) {
-    console.warn('Assets destination folder is not set, skipping...');
+    logger.warn('Assets destination folder is not set, skipping...');
     return Promise.resolve();
   }
 
@@ -49,7 +49,7 @@ function copyAll(filesToCopy) {
     return Promise.resolve();
   }
 
-  log(`Copying ${queue.length} asset files`);
+  logger.info(`Copying ${queue.length} asset files`);
   return new Promise((resolve, reject) => {
     const copyNext = error => {
       if (error) {
@@ -57,7 +57,7 @@ function copyAll(filesToCopy) {
         return;
       }
       if (queue.length === 0) {
-        log('Done copying assets');
+        logger.info('Done copying assets');
         resolve();
       } else {
         const src = queue.shift();

@@ -18,10 +18,10 @@ const spawnOpts = {
 
 log.heading = 'rnpm-install';
 
-function install(args) {
+function install(args, ctx) {
   const name = args[0];
 
-  let res = PackageManager.add(name);
+  let res = PackageManager.add(name, ctx.root);
 
   if (res.status) {
     process.exit(res.status);

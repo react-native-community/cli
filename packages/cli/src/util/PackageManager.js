@@ -20,12 +20,12 @@ const spawnOpts = {
  *
  * @param  {String} yarnCommand Yarn command to be executed eg. yarn add package
  * @param  {String} npmCommand  Npm command to be executed eg. npm install package
+ * @param  {string} projectDir  Directory to run the command in
  * @return {object}             spawnSync's result object
  */
-function callYarnOrNpm(yarnCommand, npmCommand) {
+function callYarnOrNpm(yarnCommand, npmCommand, projectDir) {
   let command;
 
-  const projectDir = process.cwd();
   const isYarnAvailable =
     yarn.getYarnVersionIfAvailable() && yarn.isGlobalCliUsingYarn(projectDir);
 
@@ -46,24 +46,28 @@ function callYarnOrNpm(yarnCommand, npmCommand) {
 /**
  * Install package into project using npm or yarn if available
  * @param  {[type]} packageName Package to be installed
+ * @param  {string} projectDir  Root directory of the project
  * @return {[type]}             spawnSync's result object
  */
-function add(packageName) {
+function add(packageName, projectDir) {
   return callYarnOrNpm(
     `yarn add ${packageName}`,
-    `npm install ${packageName} --save`
+    `npm install ${packageName} --save`,
+    projectDir
   );
 }
 
 /**
  * Uninstall package from project using npm or yarn if available
  * @param  {[type]} packageName Package to be uninstalled
+ * @param  {string} projectDir  Root directory of the project
  * @return {Object}             spawnSync's result object
  */
-function remove(packageName) {
+function remove(packageName, projectDir) {
   return callYarnOrNpm(
     `yarn remove ${packageName}`,
-    `npm uninstall --save ${packageName}`
+    `npm uninstall --save ${packageName}`,
+    projectDir
   );
 }
 

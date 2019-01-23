@@ -16,14 +16,6 @@
     "url": "https://github.com/react-native-community/react-native-cli.git"
   },
   "jest": {
-    "displayName": "cli",
-    "testPathIgnorePatterns": [
-      "/node_modules/",
-      "/templates/"
-    ],
-    "unmockedModulePathPatterns": [
-      "promise"
-    ],
     "testEnvironment": "node"
   },
   "dependencies": {

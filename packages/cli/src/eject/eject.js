@@ -74,7 +74,8 @@ function eject() {
       path.resolve(
         'node_modules',
         'react-native',
-        'local-cli',
+        '@react-native-community',
+        'cli',
         'templates',
         'HelloWorld',
         'ios'
@@ -91,7 +92,8 @@ function eject() {
       path.resolve(
         'node_modules',
         'react-native',
-        'local-cli',
+        '@react-native-community',
+        'cli',
         'templates',
         'HelloWorld',
         'android'

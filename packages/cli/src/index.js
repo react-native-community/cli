@@ -10,11 +10,6 @@
 // gracefulify() has to be called before anything else runs
 require('graceful-fs').gracefulify(require('fs'));
 
-// Transpile the source code
-const babelConfig = require('./.babelrc');
-
-require('@babel/register')(babelConfig);
-
 const cli = require('./cliEntry');
 
 if (require.main === module) {

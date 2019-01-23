@@ -17,7 +17,7 @@ const walk = require('../util/walk');
  * Util for creating a new React Native project.
  * Copy the project from a template and use the correct project name in
  * all files.
- * @param srcPath e.g. '/Users/martin/AwesomeApp/node_modules/react-native/local-cli/templates/HelloWorld'
+ * @param srcPath e.g. '/Users/martin/AwesomeApp/node_modules/react-native/template'
  * @param destPath e.g. '/Users/martin/AwesomeApp'
  * @param newProjectName e.g. 'AwesomeApp'
  * @param options e.g. {

@@ -3,9 +3,9 @@
   "version": "1.0.1",
   "description": "React Native CLI",
   "license": "MIT",
-  "main": "cli.js",
+  "main": "build/index.js",
   "bin": {
-    "react-native": "bin.js"
+    "react-native": "build/bin.js"
   },
   "engineStrict": true,
   "engines": {
@@ -15,8 +15,12 @@
     "type": "git",
     "url": "https://github.com/react-native-community/react-native-cli.git"
   },
+  "scripts": {
+    "prepublish": "yarn build",
+    "build": "rm -rf build; babel src --copy-files --out-dir build --ignore '**/__tests__/**','**/__mocks__/**','**/__fixtures__/**'"
+  },
   "jest": {
-    "displayName": "local",
+    "displayName": "cli",
     "testPathIgnorePatterns": [
       "/node_modules/",
       "/templates/"
@@ -27,11 +31,6 @@
     "testEnvironment": "node"
   },
   "dependencies": {
-    "@babel/core": "^7.1.5",
-    "@babel/plugin-transform-strict-mode": "^7.2.0",
-    "@babel/preset-env": "^7.1.5",
-    "@babel/preset-flow": "^7.0.0",
-    "@babel/register": "^7.0.0",
     "chalk": "^1.1.1",
     "commander": "^2.9.0",
     "compression": "^1.7.1",
@@ -67,6 +66,11 @@
     "xmldoc": "^0.4.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.1.5",
+    "@babel/plugin-transform-strict-mode": "^7.2.0",
+    "@babel/preset-env": "^7.1.5",
+    "@babel/preset-flow": "^7.0.0",
     "flow-bin": "0.87.0",
     "react-native": "^0.57.0"
   },

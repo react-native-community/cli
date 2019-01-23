@@ -14,7 +14,7 @@ All work on React Native CLI happens directly on GitHub. Contributors send pull 
 
 Repository is splitted into two packages:
 
-* `local-cli` - Historically, it was included in `react-native` package. Contains all the commands code.
+* `cli` - Historically, it was included in `react-native` package. Contains all the commands code.
 * `global-cli` - Historically, it was a `react-native-cli` package and the only reason this package existed was to initialize an empty project.
 
 ## Testing your changes
@@ -22,7 +22,7 @@ Repository is splitted into two packages:
 You can test your changes by calling `cli.js` directly from the cloned repository. You need to make sure the version of React Native matches the one present in devDependencies of the CLI. Otherwise, you may get unexpected errors.
 
 ```sh
-node /path/to/cloned/project/packages/local-cli/cli.js
+node /path/to/cloned/project/packages/cli/index.js
 ```
 
 ## Typechecking, linting and testing

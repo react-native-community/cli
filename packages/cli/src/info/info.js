@@ -36,10 +36,10 @@ const info = function getInfo(argv, ctx, options) {
       )
       .then(logger.info)
       .catch(err => {
-        logger.error(`Error: unable to print environment info.\n${err}`);
+        logger.error(`Unable to print environment info.\n${err}`);
       });
   } catch (err) {
-    logger.error(`Error: unable to print environment info.\n${err}`);
+    logger.error(`Unable to print environment info.\n${err}`);
   }
 };
 

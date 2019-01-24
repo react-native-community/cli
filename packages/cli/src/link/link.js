@@ -10,9 +10,9 @@
 
 import type { ContextT } from '../core/types.flow';
 
-const log = require('npmlog');
 const { pick } = require('lodash');
 const promiseWaterfall = require('./promiseWaterfall');
+const log = require('../util/logger');
 const getDependencyConfig = require('./getDependencyConfig');
 const commandStub = require('./commandStub');
 const promisify = require('./promisify');
@@ -20,12 +20,8 @@ const getProjectConfig = require('./getProjectConfig');
 const linkDependency = require('./linkDependency');
 const linkAssets = require('./linkAssets');
 const linkAll = require('./linkAll');
-
 const findReactNativeScripts = require('../util/findReactNativeScripts');
-
 const getPlatforms = require('../core/getPlatforms');
-
-log.heading = 'rnpm-link';
 
 type FlagsType = {
   platforms: Array<string>,
@@ -47,10 +43,7 @@ function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
     }
     project = getProjectConfig(ctx, platforms);
   } catch (err) {
-    log.error(
-      'ERRPACKAGEJSON',
-      'No package found. Are you sure this is a React Native project?'
-    );
+    log.error('No package found. Are you sure this is a React Native project?');
     return Promise.reject(err);
   }
   const hasProjectConfig = Object.keys(platforms).reduce(

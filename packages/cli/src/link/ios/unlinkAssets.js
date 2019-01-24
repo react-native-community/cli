@@ -9,8 +9,8 @@
 const fs = require('fs-extra');
 const path = require('path');
 const xcode = require('xcode');
-const log = require('npmlog');
 const { difference } = require('lodash');
+const log = require('../../util/logger');
 
 const groupFilesByType = require('../groupFilesByType');
 const getPlist = require('./getPlist');
@@ -27,16 +27,14 @@ module.exports = function unlinkAssetsIOS(files, projectConfig) {
 
   if (!plist) {
     log.error(
-      'ERRPLIST',
-      "Could not locate Info.plist file. Check if your project has 'INFOPLIST_FILE' set properly"
+      'Could not locate "Info.plist" file. Check if your project has "INFOPLIST_FILE" set properly'
     );
     return;
   }
 
   if (!project.pbxGroupByName('Resources')) {
     log.error(
-      'ERRGROUP',
-      "Group 'Resources' does not exist in your Xcode project. There is nothing to unlink."
+      'Group "Resources" does not exist in your Xcode project. There is nothing to unlink.'
     );
     return;
   }

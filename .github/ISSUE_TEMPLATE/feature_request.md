@@ -1,6 +1,7 @@
 ---
--name: 🗣 Feature request
--about: Suggest an idea for React Native CLI.
+name: 🗣 Feature request
+about: Suggest an idea for React Native CLI.
+labels: 'feature request'
 ---
 
 ## Describe the Feature

@@ -9,20 +9,19 @@
  * @format
  */
 
+const chalk = require('chalk');
 const isInstalledGlobally = require('./util/isInstalledGlobally');
+const logger = require('./util/logger');
 
 if (isInstalledGlobally()) {
-  const chalk = require('chalk');
-
-  console.error(
+  logger.error(
     [
-      chalk.red(
-        'Looks like you installed react-native globally, maybe you meant react-native-cli?'
+      'Looks like you installed react-native globally, maybe you meant react-native-cli? ',
+      'To fix the issue, run: ',
+      chalk.white(
+        'npm uninstall -g react-native && npm install -g react-native-cli'
       ),
-      chalk.red('To fix the issue, run:'),
-      'npm uninstall -g react-native',
-      'npm install -g react-native-cli',
-    ].join('\n')
+    ].join('')
   );
   process.exit(1);
 } else {

@@ -19,6 +19,7 @@ const getCommands = require('./core/getCommands');
 const getLegacyConfig = require('./core/getLegacyConfig');
 const init = require('./init/init');
 const assertRequiredOptions = require('./util/assertRequiredOptions');
+const logger = require('./util/logger');
 const pkg = require('../package.json');
 
 commander.version(pkg.version);
@@ -26,12 +27,9 @@ commander.version(pkg.version);
 const defaultOptParser = val => val;
 
 const handleError = err => {
-  console.error();
-  console.error(err.message || err);
-  console.error();
+  logger.error(err.message || err);
   if (err.stack) {
-    console.error(err.stack);
-    console.error();
+    logger.error(err.stack);
   }
   process.exit(1);
 };
@@ -76,17 +74,15 @@ function printHelpInformation() {
 }
 
 function printUnknownCommand(cmdName) {
-  console.log(
+  logger.error(
     [
-      '',
       cmdName
-        ? chalk.red(`  Unrecognized command '${cmdName}'`)
-        : chalk.red("  You didn't pass any command"),
-      `  Run ${chalk.cyan(
+        ? `  Unrecognized command '${cmdName}'`
+        : "  You didn't pass any command",
+      `  Run ${chalk.white(
         'react-native --help'
       )} to see list of all available commands`,
-      '',
-    ].join('\n')
+    ].join('')
   );
 }
 

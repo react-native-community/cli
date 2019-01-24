@@ -9,8 +9,8 @@
 const fs = require('fs-extra');
 const path = require('path');
 const xcode = require('xcode');
-const log = require('../../util/logger');
 const { difference } = require('lodash');
+const log = require('../../util/logger');
 
 const groupFilesByType = require('../groupFilesByType');
 const getPlist = require('./getPlist');

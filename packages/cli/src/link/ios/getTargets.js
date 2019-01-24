@@ -15,25 +15,31 @@ module.exports = function getTargets(project) {
     firstProject: { targets },
   } = project.getFirstProject();
   const nativeTargetSection = project.pbxNativeTargetSection();
-  return targets.map(target => {
-    const key = target.value;
-    const configurationListId = project.pbxNativeTargetSection()[key]
-      .buildConfigurationList;
-    const configurationList = project.pbxXCConfigurationList()[
-      configurationListId
-    ];
-    const buildConfigurationId = configurationList.buildConfigurations[0].value;
-    const buildConfiguration = project.pbxXCBuildConfigurationSection()[
-      buildConfigurationId
-    ];
-    return {
-      uuid: key,
-      target: nativeTargetSection[key],
-      name: nativeTargetSection[key].productReference_comment,
-      isTVOS:
-        (buildConfiguration.buildSettings.SDKROOT &&
-          buildConfiguration.buildSettings.SDKROOT.indexOf('appletv') !== -1) ||
-        false,
-    };
-  });
+  return targets
+    .map(target => {
+      const key = target.value;
+      // If not a valid target, skip.
+      if (!project.pbxNativeTargetSection()[key]) return undefined;
+      const configurationListId = project.pbxNativeTargetSection()[key]
+        .buildConfigurationList;
+      const configurationList = project.pbxXCConfigurationList()[
+        configurationListId
+      ];
+      const buildConfigurationId =
+        configurationList.buildConfigurations[0].value;
+      const buildConfiguration = project.pbxXCBuildConfigurationSection()[
+        buildConfigurationId
+      ];
+      return {
+        uuid: key,
+        target: nativeTargetSection[key],
+        name: nativeTargetSection[key].productReference_comment,
+        isTVOS:
+          (buildConfiguration.buildSettings.SDKROOT &&
+            buildConfiguration.buildSettings.SDKROOT.indexOf('appletv') !==
+              -1) ||
+          false,
+      };
+    })
+    .filter(target => target !== undefined);
 };

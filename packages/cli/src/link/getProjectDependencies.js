@@ -24,7 +24,7 @@ const EXCLUDED_PROJECTS = [
  * Returns an array of dependencies that should be linked/checked.
  */
 module.exports = function getProjectDependencies(cwd) {
-  const pjson = require(path.join(cwd || process.cwd(), './package.json'));
+  const pjson = require(path.join(cwd, './package.json'));
   return Object.keys(pjson.dependencies || {}).filter(
     name => EXCLUDED_PROJECTS.includes(name) === false
   );

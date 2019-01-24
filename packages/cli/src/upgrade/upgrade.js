@@ -5,7 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  *
  * @format
+ * @flow
  */
+
+import type { ContextT } from '../core/types.flow';
 
 const chalk = require('chalk');
 const fs = require('fs');
@@ -16,14 +19,9 @@ const copyProjectTemplateAndReplace = require('../generator/copyProjectTemplateA
 /**
  * Migrate application to a new version of React Native.
  * See http://facebook.github.io/react-native/docs/upgrading.html
- *
- * IMPORTANT: Assumes the cwd() is the project directory.
- * The code here must only be invoked via the CLI:
- * $ cd MyAwesomeApp
- * $ react-native upgrade
  */
-function validateAndUpgrade() {
-  const projectDir = process.cwd();
+function validateAndUpgrade(argv: *, ctx: ContextT) {
+  const projectDir = ctx.root;
 
   const packageJSON = JSON.parse(
     fs.readFileSync(path.resolve(projectDir, 'package.json'), 'utf8')

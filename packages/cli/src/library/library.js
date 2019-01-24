@@ -16,7 +16,7 @@ const walk = require('../util/walk');
 /**
  * Creates a new native library with the given name
  */
-async function library(argv, config, args) {
+async function library(argv, ctx, args) {
   if (!isValidPackageName(args.name)) {
     throw new Error(
       `${args.name} is not a valid name for a project. Please use a valid ` +
@@ -24,8 +24,7 @@ async function library(argv, config, args) {
     );
   }
 
-  const root = process.cwd();
-  const libraries = path.resolve(root, 'Libraries');
+  const libraries = path.resolve(ctx.root, 'Libraries');
   const libraryDest = path.resolve(libraries, args.name);
   const source = path.resolve(
     'node_modules',

@@ -9,9 +9,8 @@
 
 import type { ContextT } from '../core/types.flow';
 
-const log = require('npmlog');
-
 const { flatten, isEmpty, difference } = require('lodash');
+const log = require('../util/logger');
 const getProjectConfig = require('./getProjectConfig');
 const getDependencyConfig = require('./getDependencyConfig');
 const getProjectDependencies = require('./getProjectDependencies');
@@ -20,8 +19,6 @@ const commandStub = require('./commandStub');
 const promisify = require('./promisify');
 
 const getPlatforms = require('../core/getPlatforms');
-
-log.heading = 'rnpm-link';
 
 const unlinkDependency = (
   platforms,
@@ -88,8 +85,7 @@ function unlink(args: Array<string>, ctx: ContextT) {
     platforms = getPlatforms(ctx.root);
   } catch (err) {
     log.error(
-      'ERRPACKAGEJSON',
-      "No package found. Are you sure it's a React Native project?"
+      "No package.json found. Are you sure it's a React Native project?"
     );
     return Promise.reject(err);
   }
@@ -110,7 +106,7 @@ function unlink(args: Array<string>, ctx: ContextT) {
     otherDependencies = [...allDependencies];
     dependency = otherDependencies.splice(idx, 1)[0]; // eslint-disable-line prefer-destructuring
   } catch (err) {
-    log.warn('ERRINVALIDPROJ', err.message);
+    log.warn(err.message);
     return Promise.reject(err);
   }
 
@@ -162,7 +158,7 @@ function unlink(args: Array<string>, ctx: ContextT) {
     })
     .catch(err => {
       log.error(
-        `It seems something went wrong while unlinking. Error: ${err.message}`
+        `It seems something went wrong while unlinking. Error:\n${err.message}`
       );
       throw err;
     });

@@ -12,6 +12,7 @@ const path = require('path');
 const copyAndReplace = require('../util/copyAndReplace');
 const isValidPackageName = require('../util/isValidPackageName');
 const walk = require('../util/walk');
+const logger = require('../util/logger');
 
 /**
  * Creates a new native library with the given name
@@ -58,13 +59,9 @@ async function library(argv, ctx, args) {
     });
   });
 
-  console.log('Created library in', libraryDest);
-  console.log('Next Steps:');
-  console.log('   Link your library in Xcode:');
-  console.log(
-    '   https://facebook.github.io/react-native/docs/' +
-      'linking-libraries-ios.html#content\n'
-  );
+  logger.info(`Created library in ${libraryDest}.
+Now it needs to be linked in Xcode:
+https://facebook.github.io/react-native/docs/linking-libraries-ios.html#content`);
 }
 
 module.exports = {

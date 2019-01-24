@@ -8,15 +8,13 @@
  */
 
 const { spawnSync } = require('child_process');
-const log = require('npmlog');
+const logger = require('../util/logger');
 const PackageManager = require('../util/PackageManager');
 
 const spawnOpts = {
   stdio: 'inherit',
   stdin: 'inherit',
 };
-
-log.heading = 'rnpm-install';
 
 function install(args, ctx) {
   const name = args[0];
@@ -33,7 +31,7 @@ function install(args, ctx) {
     process.exit(res.status);
   }
 
-  log.info(`Module ${name} has been successfully installed & linked`);
+  logger.info(`Module ${name} has been successfully installed & linked`);
 }
 
 module.exports = {

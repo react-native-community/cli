@@ -12,6 +12,7 @@ const fs = require('fs');
 const path = require('path');
 const { execSync, spawn } = require('child_process');
 const shellQuote = require('shell-quote');
+const logger = require('../../util/logger');
 
 function isTerminalEditor(editor) {
   switch (editor) {
@@ -124,7 +125,7 @@ function guessEditor() {
 }
 
 function printInstructions(title) {
-  console.log(
+  logger.info(
     [
       '',
       chalk.bgBlue.white.bold(` ${title} `),
@@ -189,22 +190,17 @@ function launchEditor(fileName, lineNumber, projectRoots) {
     process.platform === 'win32' &&
     !WINDOWS_FILE_NAME_WHITELIST.test(fileName.trim())
   ) {
-    console.log();
-    console.log(
-      chalk.red(`Could not open ${path.basename(fileName)} in the editor.`)
-    );
-    console.log();
-    console.log(
+    logger.error(`Could not open ${path.basename(fileName)} in the editor.`);
+    logger.info(
       'When running on Windows, file names are checked against a whitelist ' +
         'to protect against remote code execution attacks. File names may ' +
         'consist only of alphanumeric characters (all languages), periods, ' +
         'dashes, slashes, and underscores.'
     );
-    console.log();
     return;
   }
 
-  console.log(
+  logger.info(
     `Opening ${chalk.underline(fileName)} with ${chalk.bold(editor)}`
   );
 
@@ -228,13 +224,13 @@ function launchEditor(fileName, lineNumber, projectRoots) {
     _childProcess = null;
 
     if (errorCode) {
-      console.log(chalk.red('Your editor exited with an error!'));
+      logger.error('Your editor exited with an error!');
       printInstructions('Keep these instructions in mind:');
     }
   });
 
   _childProcess.on('error', error => {
-    console.log(chalk.red(error.message));
+    logger.error(error.message);
     printInstructions('How to fix:');
   });
 }

@@ -15,6 +15,7 @@ const process = require('process');
 const printRunInstructions = require('../generator/printRunInstructions');
 const { createProjectFromTemplate } = require('../generator/templates');
 const yarn = require('../util/yarn');
+const logger = require('../util/logger');
 
 /**
  * Creates the template for a React Native project given the provided
@@ -39,7 +40,7 @@ function init(projectDir, argsOrName) {
   const newProjectName = args[0];
   const options = minimist(args);
 
-  console.log(`Setting up new React Native app in ${projectDir}`);
+  logger.info(`Setting up new React Native app in ${projectDir}`);
   generateProject(projectDir, newProjectName, options);
 }
 
@@ -79,10 +80,10 @@ function generateProject(destinationRoot, newProjectName, options) {
   );
 
   if (yarnVersion) {
-    console.log('Adding React...');
+    logger.info('Adding React...');
     execSync(`yarn add react@${reactVersion}`, { stdio: 'inherit' });
   } else {
-    console.log('Installing React...');
+    logger.info('Installing React...');
     execSync(`npm install react@${reactVersion} --save --save-exact`, {
       stdio: 'inherit',
     });
@@ -90,10 +91,10 @@ function generateProject(destinationRoot, newProjectName, options) {
   if (!options['skip-jest']) {
     const jestDeps = `jest babel-jest metro-react-native-babel-preset react-test-renderer@${reactVersion}`;
     if (yarnVersion) {
-      console.log('Adding Jest...');
+      logger.info('Adding Jest...');
       execSync(`yarn add ${jestDeps} --dev --exact`, { stdio: 'inherit' });
     } else {
-      console.log('Installing Jest...');
+      logger.info('Installing Jest...');
       execSync(`npm install ${jestDeps} --save-dev --save-exact`, {
         stdio: 'inherit',
       });

@@ -8,6 +8,7 @@
  */
 
 const envinfo = require('envinfo');
+const logger = require('../util/logger');
 
 const info = function getInfo(argv, ctx, options) {
   try {
@@ -33,14 +34,12 @@ const info = function getInfo(argv, ctx, options) {
           title: 'React Native Environment Info',
         }
       )
-      .then(console.log)
+      .then(logger.info)
       .catch(err => {
-        console.log('Error: unable to print environment info');
-        console.log(err);
+        logger.error(`Error: unable to print environment info.\n${err}`);
       });
   } catch (err) {
-    console.log('Error: unable to print environment info');
-    console.log(err);
+    logger.error(`Error: unable to print environment info.\n${err}`);
   }
 };
 

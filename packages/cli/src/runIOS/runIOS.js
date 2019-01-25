@@ -17,7 +17,7 @@ const findReactNativeScripts = require('../util/findReactNativeScripts');
 const parseIOSDevicesList = require('./parseIOSDevicesList');
 const findMatchingSimulator = require('./findMatchingSimulator');
 
-const getBuildPath = function(configuration = 'Debug', appName, isDevice) {
+const getBuildPath = function(configuration = 'Debug', appName, isDevice, scheme) {
   let device;
 
   if (isDevice) {
@@ -28,7 +28,7 @@ const getBuildPath = function(configuration = 'Debug', appName, isDevice) {
     device = 'iphonesimulator';
   }
 
-  return `build/Build/Products/${configuration}-${device}/${appName}.app`;
+  return `build/${scheme}/Build/Products/${configuration}-${device}/${appName}.app`;
 };
 const xcprettyAvailable = function() {
   try {
@@ -194,7 +194,7 @@ function runOnSimulator(xcodeProject, args, scheme) {
     if (!appName) {
       appName = scheme;
     }
-    const appPath = getBuildPath(args.configuration, appName);
+    const appPath = getBuildPath(args.configuration, appName, false, scheme);
     console.log(`Installing ${appPath}`);
     child_process.spawnSync('xcrun', ['simctl', 'install', udid, appPath], {
       stdio: 'inherit',
@@ -238,7 +238,7 @@ function runOnDevice(
     }
     const iosDeployInstallArgs = [
       '--bundle',
-      getBuildPath(configuration, appName, true),
+      getBuildPath(configuration, appName, true, scheme),
       '--id',
       selectedDevice.udid,
       '--justlaunch',
@@ -282,7 +282,7 @@ function buildProject(
       '-destination',
       `id=${udid}`,
       '-derivedDataPath',
-      'build',
+      `build/${scheme}`,
     ];
     console.log(`Building using "xcodebuild ${xcodebuildArgs.join(' ')}"`);
     let xcpretty;

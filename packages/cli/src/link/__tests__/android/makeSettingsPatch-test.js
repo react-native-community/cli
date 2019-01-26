@@ -32,7 +32,11 @@ describe('makeSettingsPatch with package "test"', () => {
   it('includes project with correct path', () => {
     const { patch } = makeSettingsPatch(name, dependencyConfig, projectConfig);
 
-    expect(patch).toMatchSnapshot();
+    expect(patch).toMatchInlineSnapshot(`
+"include ':test'
+project(':test').projectDir = new File(rootProject.projectDir, '../node_modules/test/android')
+"
+`);
   });
 
   // Simulate Windows environment on POSIX filesystem
@@ -62,7 +66,11 @@ describe('makeSettingsPatch with package "test"', () => {
 
     jest.dontMock('path');
 
-    expect(patch).toMatchSnapshot();
+    expect(patch).toMatchInlineSnapshot(`
+"include ':test'
+project(':test').projectDir = new File(rootProject.projectDir, '../node_modules/test/android')
+"
+`);
   });
 });
 
@@ -84,6 +92,10 @@ describe('makeSettingsPatch with scoped package "@scoped/test"', () => {
   it('includes project with correct path', () => {
     const { patch } = makeSettingsPatch(name, dependencyConfig, projectConfig);
 
-    expect(patch).toMatchSnapshot();
+    expect(patch).toMatchInlineSnapshot(`
+"include ':@scoped_test'
+project(':@scoped_test').projectDir = new File(rootProject.projectDir, '../node_modules/@scoped/test/android')
+"
+`);
   });
 });

@@ -8,6 +8,7 @@
  */
 
 const path = require('path');
+const slash = require('slash');
 const normalizeProjectName = require('./normalizeProjectName');
 
 module.exports = function makeSettingsPatch(
@@ -15,9 +16,12 @@ module.exports = function makeSettingsPatch(
   androidConfig,
   projectConfig
 ) {
-  const projectDir = path.relative(
-    path.dirname(projectConfig.settingsGradlePath),
-    androidConfig.sourceDir
+  // Gradle expects paths to be posix even on Windows
+  const projectDir = slash(
+    path.relative(
+      path.dirname(projectConfig.settingsGradlePath),
+      androidConfig.sourceDir
+    )
   );
   const normalizedProjectName = normalizeProjectName(name);
 

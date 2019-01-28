@@ -7,19 +7,17 @@
  * @flow
  */
 
+import Metro from 'metro';
+import MetroCore from 'metro-core';
+
+import morgan from 'morgan';
+import path from 'path';
 import type { ContextT } from '../core/types.flow';
+import messageSocket from './util/messageSocket';
+import webSocketProxy from './util/webSocketProxy';
+import MiddlewareManager from './middleware/MiddlewareManager';
 
-const Metro = require('metro');
-
-const { Terminal } = require('metro-core');
-
-const morgan = require('morgan');
-const path = require('path');
-const messageSocket = require('./util/messageSocket');
-const webSocketProxy = require('./util/webSocketProxy');
-const MiddlewareManager = require('./middleware/MiddlewareManager');
-
-const loadMetroConfig = require('../util/loadMetroConfig');
+import loadMetroConfig from '../util/loadMetroConfig';
 
 export type Args = {|
   assetExts?: string[],
@@ -42,7 +40,7 @@ export type Args = {|
 |};
 
 async function runServer(argv: *, ctx: ContextT, args: Args) {
-  const terminal = new Terminal(process.stdout);
+  const terminal = new MetroCore.Terminal(process.stdout);
   const ReporterImpl = getReporterImpl(args.customLogReporterPath || null);
   const reporter = new ReporterImpl(terminal);
 

@@ -8,7 +8,7 @@
  */
 
 import path from 'path';
-import android from './android';
+import { valid, noPackage } from './android';
 
 const fs = jest.requireActual('fs');
 
@@ -17,11 +17,11 @@ const pjson = fs.readFileSync(path.join(__dirname, 'files', 'package.json'));
 export default {
   valid: {
     'package.json': pjson,
-    android: android.valid,
+    android: valid,
   },
   withAssets: {
     'package.json': pjson,
-    android: android.valid,
+    android: valid,
     fonts: {
       'A.ttf': '',
       'B.ttf': '',
@@ -32,6 +32,6 @@ export default {
   },
   noPackage: {
     'package.json': pjson,
-    android: android.noPackage,
+    android: noPackage,
   },
 };

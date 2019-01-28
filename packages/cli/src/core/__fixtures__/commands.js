@@ -7,13 +7,13 @@
  * @format
  */
 
-exports.single = {
+export const single = {
   func: () => {},
   description: 'Test action',
   name: 'test',
 };
 
-exports.multiple = [
+export const multiple = [
   {
     func: () => {},
     description: 'Test action #1',

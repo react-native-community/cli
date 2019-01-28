@@ -9,9 +9,9 @@
 
 import fs from 'fs-extra';
 
-exports.readFile = file => () => fs.readFileSync(file, 'utf8');
+export const readFile = file => () => fs.readFileSync(file, 'utf8');
 
-exports.writeFile = (file, content) =>
+export const writeFile = (file, content) =>
   content
     ? fs.writeFileSync(file, content, 'utf8')
     : c => fs.writeFileSync(file, c, 'utf8');

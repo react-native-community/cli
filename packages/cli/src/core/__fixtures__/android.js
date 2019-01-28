@@ -37,11 +37,11 @@ function generateValidFileStructure(classFileName) {
   };
 }
 
-exports.valid = generateValidFileStructure('ReactPackage.java');
+export const valid = generateValidFileStructure('ReactPackage.java');
 
-exports.validKotlin = generateValidFileStructure('ReactPackage.kt');
+export const validKotlin = generateValidFileStructure('ReactPackage.kt');
 
-exports.userConfigManifest = {
+export const userConfigManifest = {
   src: {
     main: {
       'AndroidManifest.xml': manifest,
@@ -64,7 +64,7 @@ exports.userConfigManifest = {
   },
 };
 
-exports.corrupted = {
+export const corrupted = {
   src: {
     'AndroidManifest.xml': manifest,
     main: {
@@ -77,7 +77,7 @@ exports.corrupted = {
   },
 };
 
-exports.noPackage = {
+export const noPackage = {
   src: {
     'AndroidManifest.xml': manifest,
     main: {

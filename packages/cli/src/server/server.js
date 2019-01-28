@@ -12,7 +12,7 @@ import path from 'path';
 
 export default {
   name: 'start',
-  func: require('./runServer'),
+  func: require('./runServer').default,
   description: 'starts the webserver',
   options: [
     {

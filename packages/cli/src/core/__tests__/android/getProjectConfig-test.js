@@ -10,7 +10,7 @@
 
 import fs from 'fs';
 import { projectConfig as getProjectConfig } from '../../android';
-import mocks from '../../__fixtures__/android';
+import { valid, userConfigManifest } from '../../__fixtures__/android';
 
 jest.mock('path');
 jest.mock('fs');
@@ -21,14 +21,14 @@ describe('android::getProjectConfig', () => {
       empty: {},
       nested: {
         android: {
-          app: mocks.valid,
+          app: valid,
         },
       },
       flat: {
-        android: mocks.valid,
+        android: valid,
       },
       multiple: {
-        android: mocks.userConfigManifest,
+        android: userConfigManifest,
       },
       noManifest: {
         android: {},

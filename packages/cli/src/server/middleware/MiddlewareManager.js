@@ -8,21 +8,21 @@
  * @flow
  */
 
-const compression = require('compression');
-const connect = require('connect');
-const errorhandler = require('errorhandler');
-const path = require('path');
-const serveStatic = require('serve-static');
-const WebSocketServer = require('ws').Server;
+import compression from 'compression';
+import connect from 'connect';
+import errorhandler from 'errorhandler';
+import path from 'path';
+import serveStatic from 'serve-static';
+import WebSocket from 'ws';
 
-const indexPageMiddleware = require('./indexPage');
-const copyToClipBoardMiddleware = require('./copyToClipBoardMiddleware');
-const getSecurityHeadersMiddleware = require('./getSecurityHeadersMiddleware');
-const loadRawBodyMiddleware = require('./loadRawBodyMiddleware');
-const openStackFrameInEditorMiddleware = require('./openStackFrameInEditorMiddleware');
-const statusPageMiddleware = require('./statusPageMiddleware');
-const systraceProfileMiddleware = require('./systraceProfileMiddleware');
-const getDevToolsMiddleware = require('./getDevToolsMiddleware');
+import indexPageMiddleware from './indexPage';
+import copyToClipBoardMiddleware from './copyToClipBoardMiddleware';
+import getSecurityHeadersMiddleware from './getSecurityHeadersMiddleware';
+import loadRawBodyMiddleware from './loadRawBodyMiddleware';
+import openStackFrameInEditorMiddleware from './openStackFrameInEditorMiddleware';
+import statusPageMiddleware from './statusPageMiddleware';
+import systraceProfileMiddleware from './systraceProfileMiddleware';
+import getDevToolsMiddleware from './getDevToolsMiddleware';
 
 type Options = {
   +watchFolders: $ReadOnlyArray<string>,
@@ -30,7 +30,7 @@ type Options = {
 };
 
 type WebSocketProxy = {
-  server: WebSocketServer,
+  server: WebSocket.Server,
   isChromeConnected: () => boolean,
 };
 

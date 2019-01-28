@@ -7,26 +7,26 @@
  * @format
  */
 
-import { valid, pod } from './ios';
-import android from './android';
+import { valid as iosValid, pod } from './ios';
+import { valid as androidValid } from './android';
 
 const flat = {
-  android: android.valid,
-  ios: valid,
+  android: androidValid,
+  ios: iosValid,
   Podfile: 'empty',
 };
 
 const nested = {
   android: {
-    app: android.valid,
+    app: androidValid,
   },
-  ios: valid,
+  ios: iosValid,
 };
 
 const withExamples = {
   Examples: flat,
-  ios: valid,
-  android: android.valid,
+  ios: iosValid,
+  android: androidValid,
 };
 
 const withPods = {

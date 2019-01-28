@@ -10,7 +10,7 @@
 
 import fs from 'fs';
 import findAndroidAppFolder from '../../android/findAndroidAppFolder';
-import mocks from '../../__fixtures__/android';
+import { valid } from '../../__fixtures__/android';
 
 jest.mock('path');
 jest.mock('fs');
@@ -21,11 +21,11 @@ describe('android::findAndroidAppFolder', () => {
       empty: {},
       nested: {
         android: {
-          app: mocks.valid,
+          app: valid,
         },
       },
       flat: {
-        android: mocks.valid,
+        android: valid,
       },
     });
   });

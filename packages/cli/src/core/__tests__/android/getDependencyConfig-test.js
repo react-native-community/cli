@@ -11,7 +11,7 @@
 import fs from 'fs';
 
 import getDependencyConfig from '../../android';
-import mocks from '../../__fixtures__/android';
+import { valid, corrupted } from '../../__fixtures__/android';
 
 jest.mock('path');
 jest.mock('fs');
@@ -24,12 +24,12 @@ describe('android::getDependencyConfig', () => {
       empty: {},
       nested: {
         android: {
-          app: mocks.valid,
+          app: valid,
         },
       },
       corrupted: {
         android: {
-          app: mocks.corrupted,
+          app: corrupted,
         },
       },
       noPackage: {

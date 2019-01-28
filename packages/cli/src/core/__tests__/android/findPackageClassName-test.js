@@ -9,7 +9,7 @@
  */
 
 import fs from 'fs';
-import mocks from '../../__fixtures__/android';
+import { valid, validKotlin } from '../../__fixtures__/android';
 import findPackageClassName from '../../android/findPackageClassName';
 
 jest.mock('path');
@@ -23,10 +23,10 @@ jest.mock('fs');
         {
           empty: {},
           flatJava: {
-            android: mocks.valid,
+            android: valid,
           },
           flatKotlin: {
-            android: mocks.validKotlin,
+            android: validKotlin,
           },
         },
         platform

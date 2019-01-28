@@ -9,20 +9,19 @@
 
 /* eslint-disable consistent-return */
 
+import chalk from 'chalk';
+import childProcess from 'child_process';
+import fs from 'fs';
+import isString from 'lodash/isString';
+import path from 'path';
 import type { ContextT } from '../core/types.flow';
-
-const chalk = require('chalk');
-const { spawnSync, spawn, execFileSync } = require('child_process');
-const fs = require('fs');
-const isString = require('lodash/isString');
-const path = require('path');
-const findReactNativeScripts = require('../util/findReactNativeScripts');
-const isPackagerRunning = require('../util/isPackagerRunning');
-const adb = require('./adb');
-const runOnAllDevices = require('./runOnAllDevices');
-const tryRunAdbReverse = require('./tryRunAdbReverse');
-const tryLaunchAppOnDevice = require('./tryLaunchAppOnDevice');
-const getAdbPath = require('./getAdbPath');
+import findReactNativeScripts from '../util/findReactNativeScripts';
+import isPackagerRunning from '../util/isPackagerRunning';
+import adb from './adb';
+import runOnAllDevices from './runOnAllDevices';
+import tryRunAdbReverse from './tryRunAdbReverse';
+import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
+import getAdbPath from './getAdbPath';
 
 // Verifies this is an Android project
 function checkAndroid(root) {
@@ -36,7 +35,7 @@ function runAndroid(argv: Array<string>, config: ContextT, args: Object) {
   if (!checkAndroid(args.root)) {
     const reactNativeScriptsPath = findReactNativeScripts();
     if (reactNativeScriptsPath) {
-      spawnSync(
+      childProcess.spawnSync(
         reactNativeScriptsPath,
         ['android'].concat(process.argv.slice(1)),
         { stdio: 'inherit' }
@@ -156,7 +155,7 @@ function buildApk(gradlew) {
     console.log(chalk.bold('Building the app...'));
 
     // using '-x lint' in order to ignore linting errors while building the apk
-    execFileSync(gradlew, ['build', '-x', 'lint'], {
+    childProcess.execFileSync(gradlew, ['build', '-x', 'lint'], {
       stdio: [process.stdin, process.stdout, process.stderr],
     });
   } catch (e) {
@@ -178,7 +177,7 @@ function tryInstallAppOnDevice(args, device) {
         `Installing the app on the device (cd android && adb -s ${device} install ${pathToApk}`
       )
     );
-    execFileSync(adbPath, adbArgs, {
+    childProcess.execFileSync(adbPath, adbArgs, {
       stdio: [process.stdin, process.stdout, process.stderr],
     });
   } catch (e) {
@@ -242,27 +241,35 @@ function startServerInNewWindow(port, terminal = process.env.REACT_TERMINAL) {
 
   if (process.platform === 'darwin') {
     if (terminal) {
-      return spawnSync(
+      return childProcess.spawnSync(
         'open',
         ['-a', terminal, launchPackagerScript],
         procConfig
       );
     }
-    return spawnSync('open', [launchPackagerScript], procConfig);
+    return childProcess.spawnSync('open', [launchPackagerScript], procConfig);
   }
   if (process.platform === 'linux') {
     if (terminal) {
       procConfig.detached = true;
-      return spawn(terminal, ['-e', `sh ${launchPackagerScript}`], procConfig);
+      return childProcess.spawn(
+        terminal,
+        ['-e', `sh ${launchPackagerScript}`],
+        procConfig
+      );
     }
     // By default, the child shell process will be attached to the parent
     procConfig.detached = false;
-    return spawn('sh', [launchPackagerScript], procConfig);
+    return childProcess.spawn('sh', [launchPackagerScript], procConfig);
   }
   if (/^win/.test(process.platform)) {
     procConfig.detached = true;
     procConfig.stdio = 'ignore';
-    return spawn('cmd.exe', ['/C', launchPackagerScript], procConfig);
+    return childProcess.spawn(
+      'cmd.exe',
+      ['/C', launchPackagerScript],
+      procConfig
+    );
   }
   console.log(
     chalk.red(`Cannot start the packager. Unknown platform ${process.platform}`)

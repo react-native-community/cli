@@ -10,7 +10,7 @@
 
 import fs from 'fs';
 import findManifest from '../../android/findManifest';
-import mocks from '../../__fixtures__/android';
+import { valid } from '../../__fixtures__/android';
 
 jest.mock('path');
 jest.mock('fs');
@@ -20,7 +20,7 @@ describe('android::findManifest', () => {
     fs.__setMockFilesystem({
       empty: {},
       flat: {
-        android: mocks.valid,
+        android: valid,
       },
     });
   });

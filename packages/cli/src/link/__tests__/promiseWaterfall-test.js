@@ -8,7 +8,7 @@
  * @emails oncall+javascript_foundation
  */
 
-const promiseWaterfall = require('../promiseWaterfall');
+import promiseWaterfall from '../promiseWaterfall';
 
 describe('promiseWaterfall', () => {
   it('should run promises in a sequence', async () => {

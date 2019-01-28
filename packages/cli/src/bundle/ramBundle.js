@@ -6,19 +6,19 @@
  *
  * @format
  */
-const outputUnbundle = require('metro/src/shared/output/RamBundle');
 
-const bundleWithOutput = require('./bundle').withOutput;
-const bundleCommandLineArgs = require('./bundleCommandLineArgs');
+import outputUnbundle from 'metro/src/shared/output/RamBundle';
+import bundleCommandLineArgs from './bundleCommandLineArgs';
+import bundle from './bundle';
 
 /**
  * Builds the bundle starting to look for dependencies at the given entry path.
  */
 function ramBundle(argv, config, args) {
-  return bundleWithOutput(argv, config, args, outputUnbundle);
+  return bundle.withOutput(argv, config, args, outputUnbundle);
 }
 
-module.exports = {
+export default {
   name: 'ram-bundle',
   description:
     'builds javascript as a "Random Access Module" bundle for offline use',

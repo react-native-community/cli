@@ -7,10 +7,9 @@
  * @format
  */
 
-const { spawn } = require('child_process');
-
-const path = require('path');
-const fs = require('fs');
+import childProcess from 'child_process';
+import path from 'path';
+import fs from 'fs';
 
 const xsel = path.join(__dirname, 'external/xsel');
 fs.chmodSync(xsel, '0755');
@@ -21,17 +20,17 @@ fs.chmodSync(xsel, '0755');
 function copyToClipBoard(content) {
   switch (process.platform) {
     case 'darwin': {
-      const child = spawn('pbcopy', []);
+      const child = childProcess.spawn('pbcopy', []);
       child.stdin.end(Buffer.from(content, 'utf8'));
       return true;
     }
     case 'win32': {
-      const child = spawn('clip', []);
+      const child = childProcess.spawn('clip', []);
       child.stdin.end(Buffer.from(content, 'utf8'));
       return true;
     }
     case 'linux': {
-      const child = spawn(xsel, ['--clipboard', '--input']);
+      const child = childProcess.spawn(xsel, ['--clipboard', '--input']);
       child.stdin.end(Buffer.from(content, 'utf8'));
       return true;
     }
@@ -40,4 +39,4 @@ function copyToClipBoard(content) {
   }
 }
 
-module.exports = copyToClipBoard;
+export default copyToClipBoard;

@@ -11,4 +11,4 @@ function sign(source) {
   return source;
 }
 
-module.exports = sign;
+export default sign;

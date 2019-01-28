@@ -8,7 +8,7 @@
  * @format
  */
 
-module.exports = function getSecurityHeadersMiddleware(req, res, next) {
+export default function getSecurityHeadersMiddleware(req, res, next) {
   const address = req.client.server.address();
 
   // Block any cross origin request.
@@ -24,4 +24,4 @@ module.exports = function getSecurityHeadersMiddleware(req, res, next) {
   res.setHeader('X-Content-Type-Options', 'nosniff');
 
   next();
-};
+}

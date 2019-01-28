@@ -8,8 +8,8 @@
  * @flow strict
  */
 
-const path = require('path');
-const fs = require('fs');
+import path from 'path';
+import fs from 'fs';
 
 /**
  * Find symlinked modules inside "node_modules."
@@ -30,7 +30,7 @@ const fs = require('fs');
  * The end result should be a list of all resolved module symlinks for a given
  * root.
  */
-module.exports = function findSymlinkedModules(
+export default function findSymlinkedModules(
   projectRoot: string,
   ignoredRoots?: Array<string> = []
 ) {
@@ -40,7 +40,7 @@ module.exports = function findSymlinkedModules(
     projectRoot,
   ]);
   return resolvedSymlinks;
-};
+}
 
 function findModuleSymlinks(
   modulesPath: string,

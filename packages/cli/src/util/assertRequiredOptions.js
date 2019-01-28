@@ -7,25 +7,25 @@
  * @format
  */
 
-const { Option } = require('commander');
-const { camelCase } = require('lodash');
+import Commander from 'commander';
+import _ from 'lodash';
 
 // Commander.js has a 2 years old open issue to support <...> syntax
 // for options. Until that gets merged, we run the checks manually
 // https://github.com/tj/commander.js/issues/230
-module.exports = function assertRequiredOptions(options, passedOptions) {
+export default function assertRequiredOptions(options, passedOptions) {
   options.forEach(opt => {
-    const option = new Option(opt.command);
+    const option = new Commander.Option(opt.command);
 
     if (!option.required) {
       return;
     }
 
-    const name = camelCase(option.long);
+    const name = _.camelCase(option.long);
 
     if (!passedOptions[name]) {
       // Provide commander.js like error message
       throw new Error(`error: option '${option.long}' missing`);
     }
   });
-};
+}

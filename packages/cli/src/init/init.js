@@ -7,14 +7,15 @@
  * @format
  */
 
-const { execSync } = require('child_process');
-const fs = require('fs');
-const minimist = require('minimist');
-const path = require('path');
-const process = require('process');
-const printRunInstructions = require('../generator/printRunInstructions');
-const { createProjectFromTemplate } = require('../generator/templates');
-const yarn = require('../util/yarn');
+import childProcess from 'child_process';
+
+import fs from 'fs';
+import minimist from 'minimist';
+import path from 'path';
+import process from 'process';
+import printRunInstructions from '../generator/printRunInstructions';
+import { createProjectFromTemplate } from '../generator/templates';
+import yarn from '../util/yarn';
 
 /**
  * Creates the template for a React Native project given the provided
@@ -80,21 +81,28 @@ function generateProject(destinationRoot, newProjectName, options) {
 
   if (yarnVersion) {
     console.log('Adding React...');
-    execSync(`yarn add react@${reactVersion}`, { stdio: 'inherit' });
-  } else {
-    console.log('Installing React...');
-    execSync(`npm install react@${reactVersion} --save --save-exact`, {
+    childProcess.execSync(`yarn add react@${reactVersion}`, {
       stdio: 'inherit',
     });
+  } else {
+    console.log('Installing React...');
+    childProcess.execSync(
+      `npm install react@${reactVersion} --save --save-exact`,
+      {
+        stdio: 'inherit',
+      }
+    );
   }
   if (!options['skip-jest']) {
     const jestDeps = `jest babel-jest metro-react-native-babel-preset react-test-renderer@${reactVersion}`;
     if (yarnVersion) {
       console.log('Adding Jest...');
-      execSync(`yarn add ${jestDeps} --dev --exact`, { stdio: 'inherit' });
+      childProcess.execSync(`yarn add ${jestDeps} --dev --exact`, {
+        stdio: 'inherit',
+      });
     } else {
       console.log('Installing Jest...');
-      execSync(`npm install ${jestDeps} --save-dev --save-exact`, {
+      childProcess.execSync(`npm install ${jestDeps} --save-dev --save-exact`, {
         stdio: 'inherit',
       });
     }
@@ -120,4 +128,4 @@ function addJestToPackageJson(destinationRoot) {
   );
 }
 
-module.exports = init;
+export default init;

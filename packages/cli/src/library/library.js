@@ -7,11 +7,11 @@
  * @format
  */
 
-const fs = require('fs');
-const path = require('path');
-const copyAndReplace = require('../util/copyAndReplace');
-const isValidPackageName = require('../util/isValidPackageName');
-const walk = require('../util/walk');
+import fs from 'fs';
+import path from 'path';
+import copyAndReplace from '../util/copyAndReplace';
+import isValidPackageName from '../util/isValidPackageName';
+import walk from '../util/walk';
 
 /**
  * Creates a new native library with the given name
@@ -67,7 +67,7 @@ async function library(argv, ctx, args) {
   );
 }
 
-module.exports = {
+export default {
   name: 'new-library',
   func: library,
   description: 'generates a native library bridge',

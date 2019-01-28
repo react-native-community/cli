@@ -36,13 +36,12 @@
 // /!\ DO NOT MODIFY THIS FILE /!\
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-const fs = require('fs');
-const path = require('path');
-const exec = require('child_process').exec;
-const execSync = require('child_process').execSync;
-const chalk = require('chalk');
-const prompt = require('prompt');
-const semver = require('semver');
+import fs from 'fs';
+import path from 'path';
+import child_process from 'child_process';
+import chalk from 'chalk';
+import prompt from 'prompt';
+import semver from 'semver';
 /**
  * Used arguments:
  *   -v --version - to print current version of react-native-cli and react-native dependency
@@ -57,7 +56,9 @@ const semver = require('semver');
  *     - "/Users/home/react-native/react-native-0.22.0.tgz" - for package prepared with `npm pack`, useful for e2e tests
  */
 
-const options = require('minimist')(process.argv.slice(2));
+import minimist from 'minimist';
+
+const options = minimist(process.argv.slice(2));
 
 const getCliPath = function() {
   return path.resolve(process.cwd(), 'node_modules', 'react-native', 'cli.js');
@@ -83,10 +84,12 @@ function getYarnVersionIfAvailable() {
   try {
     // execSync returns a Buffer -> convert to string
     if (process.platform.startsWith('win')) {
-      yarnVersion = (execSync('yarn --version 2> NUL').toString() || '').trim();
+      yarnVersion = (
+        childProcess.execSync('yarn --version 2> NUL').toString() || ''
+      ).trim();
     } else {
       yarnVersion = (
-        execSync('yarn --version 2>/dev/null').toString() || ''
+        childProcess.execSync('yarn --version 2>/dev/null').toString() || ''
       ).trim();
     }
   } catch (error) {
@@ -296,7 +299,7 @@ function run(root, projectName, options) {
     }
   }
   try {
-    execSync(installCommand, { stdio: 'inherit' });
+    childProcess.execSync(installCommand, { stdio: 'inherit' });
   } catch (err) {
     console.error(err);
     console.error(`Command \`${installCommand}\` failed.`);

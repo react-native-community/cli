@@ -7,8 +7,8 @@
  * @format
  */
 
-const glob = require('glob');
-const path = require('path');
+import glob from 'glob';
+import path from 'path';
 
 /**
  * Glob pattern to look for xcodeproj
@@ -38,7 +38,7 @@ const GLOB_EXCLUDE_PATTERN = ['**/@(Pods|node_modules)/**'];
  *
  * Note: `./ios/*.xcodeproj` are returned regardless of the name
  */
-module.exports = function findProject(folder) {
+export default function findProject(folder) {
   const projects = glob
     .sync(GLOB_PATTERN, {
       cwd: folder,
@@ -55,4 +55,4 @@ module.exports = function findProject(folder) {
   }
 
   return projects[0];
-};
+}

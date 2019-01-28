@@ -7,8 +7,8 @@
  * @flow
  */
 
-const path = require('path');
-const { union, uniq, flatten } = require('lodash');
+import path from 'path';
+import lodash from 'lodash';
 
 const RNPM_PLUGIN_PATTERNS = [/^rnpm-plugin-/, /^@(.*)\/rnpm-plugin-/];
 
@@ -87,7 +87,7 @@ const findPluginsInFolder = folder => {
     return getEmptyPluginConfig();
   }
 
-  const deps = union(
+  const deps = lodash.union(
     Object.keys(pjson.dependencies || {}),
     Object.keys(pjson.devDependencies || {})
   );
@@ -113,16 +113,16 @@ const findPluginsInFolder = folder => {
  * Find plugins in package.json of the given folder
  * @param {String} folder Path to the folder to get the package.json from
  */
-module.exports = function findPlugins(folder: string) {
+export default function findPlugins(folder: string) {
   const plugin = findPluginsInFolder(folder);
   return {
-    commands: uniq(flatten(plugin.commands)),
-    platforms: uniq(flatten(plugin.platforms)),
+    commands: lodash.uniq(lodash.flatten(plugin.commands)),
+    platforms: lodash.uniq(lodash.flatten(plugin.platforms)),
     haste: {
-      platforms: uniq(flatten(plugin.haste.platforms)),
-      providesModuleNodeModules: uniq(
-        flatten(plugin.haste.providesModuleNodeModules)
+      platforms: lodash.uniq(lodash.flatten(plugin.haste.platforms)),
+      providesModuleNodeModules: lodash.uniq(
+        lodash.flatten(plugin.haste.providesModuleNodeModules)
       ),
     },
   };
-};
+}

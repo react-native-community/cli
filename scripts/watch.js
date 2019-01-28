@@ -9,11 +9,11 @@
  * Watch files for changes and rebuild (copy from 'src/' to `build/`) if changed
  */
 
-const fs = require('fs');
-const { execSync } = require('child_process');
-const path = require('path');
-const chalk = require('chalk');
-const { getPackages } = require('./helpers');
+import fs from 'fs';
+import childProcess from 'child_process';
+import path from 'path';
+import chalk from 'chalk';
+import helpers from './helpers';
 
 const BUILD_CMD = `node ${path.resolve(__dirname, './build.js')}`;
 
@@ -29,7 +29,7 @@ const exists = filename => {
 };
 const rebuild = filename => filesToBuild.set(filename, true);
 
-getPackages().forEach(p => {
+helpers.getPackages().forEach(p => {
   const srcDir = path.resolve(p, 'src');
   try {
     fs.accessSync(srcDir, fs.F_OK);
@@ -65,7 +65,9 @@ setInterval(() => {
   if (files.length) {
     filesToBuild = new Map();
     try {
-      execSync(`${BUILD_CMD} ${files.join(' ')}`, { stdio: [0, 1, 2] });
+      childProcess.execSync(`${BUILD_CMD} ${files.join(' ')}`, {
+        stdio: [0, 1, 2],
+      });
     } catch (e) {
       // omit
     }

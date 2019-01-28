@@ -7,7 +7,7 @@
  * @format
  */
 
-module.exports = function getIOSLinkConfig() {
+export default function getIOSLinkConfig() {
   return {
     isInstalled: require('./common/isInstalled'),
     register: require('./common/registerNativeModule'),
@@ -15,4 +15,4 @@ module.exports = function getIOSLinkConfig() {
     copyAssets: require('./copyAssets'),
     unlinkAssets: require('./unlinkAssets'),
   };
-};
+}

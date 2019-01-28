@@ -6,15 +6,16 @@
  *
  */
 
+import childProcess from 'child_process';
+
+import runOnAllDevices from '../runOnAllDevices';
+
 jest.mock('child_process', () => ({
   execFileSync: jest.fn(),
   spawnSync: jest.fn(),
 }));
 
 jest.mock('../getAdbPath');
-const { execFileSync } = require('child_process');
-
-const runOnAllDevices = require('../runOnAllDevices');
 
 describe('--appFolder', () => {
   beforeEach(() => {
@@ -24,7 +25,9 @@ describe('--appFolder', () => {
   it('uses installDebug as default if no arguments', () => {
     runOnAllDevices({});
 
-    expect(execFileSync.mock.calls[0][1]).toContain('installDebug');
+    expect(childProcess.execFileSync.mock.calls[0][1]).toContain(
+      'installDebug'
+    );
   });
 
   it('uses appFolder and default variant', () => {
@@ -32,7 +35,9 @@ describe('--appFolder', () => {
       appFolder: 'someApp',
     });
 
-    expect(execFileSync.mock.calls[0][1]).toContain('someApp:installDebug');
+    expect(childProcess.execFileSync.mock.calls[0][1]).toContain(
+      'someApp:installDebug'
+    );
   });
 
   it('uses appFolder and variant', () => {
@@ -41,21 +46,25 @@ describe('--appFolder', () => {
       variant: 'debug',
     });
 
-    expect(execFileSync.mock.calls[0][1]).toContain('app:installDebug');
+    expect(childProcess.execFileSync.mock.calls[0][1]).toContain(
+      'app:installDebug'
+    );
 
     runOnAllDevices({
       appFolder: 'anotherApp',
       variant: 'debug',
     });
 
-    expect(execFileSync.mock.calls[1][1]).toContain('anotherApp:installDebug');
+    expect(childProcess.execFileSync.mock.calls[1][1]).toContain(
+      'anotherApp:installDebug'
+    );
 
     runOnAllDevices({
       appFolder: 'anotherApp',
       variant: 'staging',
     });
 
-    expect(execFileSync.mock.calls[2][1]).toContain(
+    expect(childProcess.execFileSync.mock.calls[2][1]).toContain(
       'anotherApp:installStaging'
     );
   });
@@ -66,7 +75,9 @@ describe('--appFolder', () => {
       flavor: 'someFlavor',
     });
 
-    expect(execFileSync.mock.calls[0][1]).toContain('app:installSomeFlavor');
+    expect(childProcess.execFileSync.mock.calls[0][1]).toContain(
+      'app:installSomeFlavor'
+    );
   });
 
   it('uses only installDebug argument', () => {
@@ -74,7 +85,7 @@ describe('--appFolder', () => {
       installDebug: 'someCommand',
     });
 
-    expect(execFileSync.mock.calls[0][1]).toContain('someCommand');
+    expect(childProcess.execFileSync.mock.calls[0][1]).toContain('someCommand');
   });
 
   it('uses appFolder and custom installDebug argument', () => {
@@ -83,6 +94,8 @@ describe('--appFolder', () => {
       installDebug: 'someCommand',
     });
 
-    expect(execFileSync.mock.calls[0][1]).toContain('anotherApp:someCommand');
+    expect(childProcess.execFileSync.mock.calls[0][1]).toContain(
+      'anotherApp:someCommand'
+    );
   });
 });

@@ -9,7 +9,7 @@
  * @format
  */
 
-const isInstalledGlobally = require('./util/isInstalledGlobally');
+import isInstalledGlobally from './util/isInstalledGlobally';
 
 if (isInstalledGlobally()) {
   const chalk = require('chalk');

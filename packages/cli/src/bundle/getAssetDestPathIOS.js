@@ -8,9 +8,8 @@
  * @flow strict
  */
 
+import path from 'path';
 import type { PackagerAsset } from './assetPathUtils';
-
-const path = require('path');
 
 function getAssetDestPathIOS(asset: PackagerAsset, scale: number): string {
   const suffix = scale === 1 ? '' : `@${scale}x`;
@@ -18,4 +17,4 @@ function getAssetDestPathIOS(asset: PackagerAsset, scale: number): string {
   return path.join(asset.httpServerLocation.substr(1), fileName);
 }
 
-module.exports = getAssetDestPathIOS;
+export default getAssetDestPathIOS;

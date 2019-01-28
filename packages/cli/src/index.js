@@ -8,12 +8,15 @@
  */
 
 // gracefulify() has to be called before anything else runs
-require('graceful-fs').gracefulify(require('fs'));
+import fs from 'fs';
+import gracefulFs from 'graceful-fs';
 
-const cli = require('./cliEntry');
+gracefulFs.gracefulify(fs);
+
+const cli = require('./cliEntry').default;
 
 if (require.main === module) {
   cli.run();
 }
 
-module.exports = cli;
+export default cli;

@@ -1,10 +1,10 @@
 // @flow
 
-import type { PlatformsT, ProjectConfigT } from '../core/types.flow';
+import chalk from 'chalk';
+import log from '../util/logger';
+import pollParams from './pollParams';
 
-const chalk = require('chalk');
-const log = require('../util/logger');
-const pollParams = require('./pollParams');
+import type { PlatformsT, ProjectConfigT } from '../core/types.flow';
 
 const linkDependency = async (
   platforms: PlatformsT,
@@ -60,4 +60,4 @@ const linkDependency = async (
   });
 };
 
-module.exports = linkDependency;
+export default linkDependency;

@@ -7,10 +7,10 @@
  * @format
  */
 
-const chalk = require('chalk');
-const path = require('path');
+import chalk from 'chalk';
+import path from 'path';
 
-function printRunInstructions(projectDir, projectName) {
+export default function printRunInstructions(projectDir, projectName) {
   const absoluteProjectDir = path.resolve(projectDir);
   // iOS
   const xcodeProjectPath = `${path.resolve(
@@ -36,5 +36,3 @@ function printRunInstructions(projectDir, projectName) {
   );
   console.log('   react-native run-android');
 }
-
-module.exports = printRunInstructions;

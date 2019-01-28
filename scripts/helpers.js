@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 const PACKAGES_DIR = path.resolve(__dirname, '../packages');
 
@@ -10,7 +10,7 @@ function getPackages() {
     .filter(f => fs.lstatSync(path.resolve(f)).isDirectory());
 }
 
-module.exports = {
+export default {
   getPackages,
   PACKAGES_DIR,
 };

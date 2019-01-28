@@ -2,6 +2,7 @@
  * @flow
  */
 
+import path from 'path';
 import type {
   PlatformsT,
   ContextT,
@@ -9,12 +10,10 @@ import type {
   DependencyConfigT,
 } from '../core/types.flow';
 
-const path = require('path');
-
-const getPackageConfiguration = require('../core/getPackageConfiguration');
-const getParams = require('../core/getParams');
-const getHooks = require('../core/getHooks');
-const getAssets = require('../core/getAssets');
+import getPackageConfiguration from '../core/getPackageConfiguration';
+import getParams from '../core/getParams';
+import getHooks from '../core/getHooks';
+import getAssets from '../core/getAssets';
 
 type DependenciesConfig = {
   config: DependencyConfigT,
@@ -25,7 +24,7 @@ type DependenciesConfig = {
   params: InquirerPromptT[],
 };
 
-module.exports = function getDependencyConfig(
+export default function getDependencyConfig(
   ctx: ContextT,
   availablePlatforms: PlatformsT,
   dependency: string
@@ -54,4 +53,4 @@ module.exports = function getDependencyConfig(
   } catch (e) {
     throw new Error('Failed to get dependency config');
   }
-};
+}

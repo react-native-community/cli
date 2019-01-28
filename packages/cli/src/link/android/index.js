@@ -7,7 +7,7 @@
  * @format
  */
 
-module.exports = function getAndroidLinkConfig() {
+export default function getAndroidLinkConfig() {
   return {
     isInstalled: require('./isInstalled'),
     register: require('./registerNativeModule'),
@@ -15,4 +15,4 @@ module.exports = function getAndroidLinkConfig() {
     copyAssets: require('./copyAssets'),
     unlinkAssets: require('./unlinkAssets'),
   };
-};
+}

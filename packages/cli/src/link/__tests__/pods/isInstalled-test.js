@@ -8,8 +8,8 @@
  * @emails oncall+javascript_foundation
  */
 
-const path = require('path');
-const isInstalled = require('../../pods/isInstalled');
+import path from 'path';
+import isInstalled from '../../pods/isInstalled';
 
 const PODFILES_PATH = path.join(__dirname, '../../__fixtures__/pods');
 

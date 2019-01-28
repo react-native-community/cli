@@ -5,11 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-const url = require('url');
-const WebSocketServer = require('ws').Server;
+import url from 'url';
+import WebSocket from 'ws';
+import notifier from 'node-notifier';
 
 const PROTOCOL_VERSION = 2;
-const notifier = require('node-notifier');
 
 function parseMessage(data, binary) {
   if (binary) {
@@ -54,7 +54,7 @@ function isResponse(message) {
 }
 
 function attachToServer(server, path) {
-  const wss = new WebSocketServer({
+  const wss = new WebSocket.Server({
     server,
     path,
   });
@@ -231,7 +231,7 @@ function attachToServer(server, path) {
   };
 }
 
-module.exports = {
+export default {
   attachToServer,
   parseMessage,
 };

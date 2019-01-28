@@ -7,18 +7,17 @@
  * @flow
  */
 
+import _ from 'lodash';
+
+import log from '../util/logger';
+import getProjectConfig from './getProjectConfig';
+import getDependencyConfig from './getDependencyConfig';
+import getProjectDependencies from './getProjectDependencies';
+import promiseWaterfall from './promiseWaterfall';
+import commandStub from './commandStub';
+import promisify from './promisify';
+import getPlatforms from '../core/getPlatforms';
 import type { ContextT } from '../core/types.flow';
-
-const { flatten, isEmpty, difference } = require('lodash');
-const log = require('../util/logger');
-const getProjectConfig = require('./getProjectConfig');
-const getDependencyConfig = require('./getDependencyConfig');
-const getProjectDependencies = require('./getProjectDependencies');
-const promiseWaterfall = require('./promiseWaterfall');
-const commandStub = require('./commandStub');
-const promisify = require('./promisify');
-
-const getPlatforms = require('../core/getPlatforms');
 
 const unlinkDependency = (
   platforms,
@@ -129,12 +128,12 @@ function unlink(args: Array<string>, ctx: ContextT) {
     .then(() => {
       // @todo move all these to `tasks` array, just like in
       // link
-      const assets = difference(
+      const assets = _.difference(
         dependency.assets,
-        flatten(allDependencies, d => d.assets)
+        _.flatten(allDependencies, d => d.assets)
       );
 
-      if (isEmpty(assets)) {
+      if (_.isEmpty(assets)) {
         return;
       }
 
@@ -164,7 +163,7 @@ function unlink(args: Array<string>, ctx: ContextT) {
     });
 }
 
-module.exports = {
+export default {
   func: unlink,
   description: 'unlink native dependency',
   name: 'unlink <packageName>',

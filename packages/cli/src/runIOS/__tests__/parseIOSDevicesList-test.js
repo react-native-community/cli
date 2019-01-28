@@ -8,8 +8,9 @@
  * @emails oncall+javascript_foundation
  */
 
+import parseIOSDevicesList from '../parseIOSDevicesList';
+
 jest.dontMock('../parseIOSDevicesList');
-const parseIOSDevicesList = require('../parseIOSDevicesList');
 
 describe('parseIOSDevicesList', () => {
   it('parses typical output', () => {

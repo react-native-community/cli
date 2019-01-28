@@ -7,9 +7,9 @@
  * @format
  */
 
-const fs = require('fs');
+import fs from 'fs';
 
-module.exports = function systraceProfileMiddleware(req, res, next) {
+export default function systraceProfileMiddleware(req, res, next) {
   if (req.url !== '/systrace') {
     next();
     return;
@@ -25,4 +25,4 @@ module.exports = function systraceProfileMiddleware(req, res, next) {
     `This message is also printed to your console by the packager so you can copy it :)`;
   console.log(response);
   res.end(response);
-};
+}

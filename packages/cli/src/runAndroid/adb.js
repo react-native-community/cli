@@ -8,7 +8,7 @@
  * @flow strict
  */
 
-const { execSync } = require('child_process');
+import childProcess from 'child_process';
 
 /**
  * Parses the output of the 'adb devices' command
@@ -36,14 +36,14 @@ function parseDevicesResult(result: string): Array<string> {
  */
 function getDevices(): Array<string> {
   try {
-    const devicesResult = execSync('adb devices');
+    const devicesResult = childProcess.execSync('adb devices');
     return parseDevicesResult(devicesResult.toString());
   } catch (e) {
     return [];
   }
 }
 
-module.exports = {
+export default {
   parseDevicesResult,
   getDevices,
 };

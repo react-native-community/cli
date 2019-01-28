@@ -8,13 +8,12 @@
  * @emails oncall+javascript_foundation
  */
 
+import fs from 'fs';
+import { projectConfig as getProjectConfig } from '../../android';
+import mocks from '../../__fixtures__/android';
+
 jest.mock('path');
 jest.mock('fs');
-
-const fs = require('fs');
-
-const getProjectConfig = require('../../android').projectConfig;
-const mocks = require('../../__fixtures__/android');
 
 describe('android::getProjectConfig', () => {
   beforeAll(() => {

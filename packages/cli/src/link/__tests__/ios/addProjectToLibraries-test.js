@@ -8,12 +8,12 @@
  * @emails oncall+javascript_foundation
  */
 
-const xcode = require('xcode');
-const path = require('path');
-const PbxFile = require('xcode/lib/pbxFile');
-const { last } = require('lodash');
+import xcode from 'xcode';
+import path from 'path';
+import PbxFile from 'xcode/lib/pbxFile';
+import lodash from 'lodash';
 
-const addProjectToLibraries = require('../../ios/addProjectToLibraries');
+import addProjectToLibraries from '../../ios/addProjectToLibraries';
 
 const project = xcode.project(
   path.join(__dirname, '../../__fixtures__/project.pbxproj')
@@ -30,7 +30,7 @@ describe('ios::addProjectToLibraries', () => {
 
     addProjectToLibraries(libraries, file);
 
-    const child = last(libraries.children);
+    const child = lodash.last(libraries.children);
 
     expect(child.comment).toBe(file.basename);
   });

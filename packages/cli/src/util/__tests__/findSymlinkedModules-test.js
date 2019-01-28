@@ -8,11 +8,11 @@
  * @emails oncall+javascript_foundation
  */
 
+import fs from 'fs';
+import findSymlinkedModules from '../findSymlinkedModules';
+
 jest.mock('path');
 jest.mock('fs');
-
-const fs = require('fs');
-const findSymlinkedModules = require('../findSymlinkedModules');
 
 describe('findSymlinksForProjectRoot', () => {
   it('correctly finds normal module symlinks', () => {

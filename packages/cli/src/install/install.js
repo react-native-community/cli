@@ -7,9 +7,10 @@
  * @format
  */
 
-const { spawnSync } = require('child_process');
-const log = require('npmlog');
-const PackageManager = require('../util/PackageManager');
+import childProcess from 'child_process';
+
+import log from 'npmlog';
+import PackageManager from '../util/PackageManager';
 
 const spawnOpts = {
   stdio: 'inherit',
@@ -27,7 +28,7 @@ function install(args, ctx) {
     process.exit(res.status);
   }
 
-  res = spawnSync('react-native', ['link', name], spawnOpts);
+  res = childProcess.spawnSync('react-native', ['link', name], spawnOpts);
 
   if (res.status) {
     process.exit(res.status);
@@ -36,7 +37,7 @@ function install(args, ctx) {
   log.info(`Module ${name} has been successfully installed & linked`);
 }
 
-module.exports = {
+export default {
   func: install,
   description: 'install and link native dependencies',
   name: 'install <packageName>',

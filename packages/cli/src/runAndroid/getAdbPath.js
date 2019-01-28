@@ -13,4 +13,4 @@ function getAdbPath() {
     : 'adb';
 }
 
-module.exports = getAdbPath;
+export default getAdbPath;

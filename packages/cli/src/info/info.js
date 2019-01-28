@@ -7,7 +7,7 @@
  * @format
  */
 
-const envinfo = require('envinfo');
+import envinfo from 'envinfo';
 
 const info = function getInfo(argv, ctx, options) {
   try {
@@ -44,7 +44,7 @@ const info = function getInfo(argv, ctx, options) {
   }
 };
 
-module.exports = {
+export default {
   name: 'info',
   description: 'Get relevant version info about OS, toolchain and libraries',
   options: [

@@ -27,7 +27,7 @@ const removeSharedLibraries = require('./removeSharedLibraries');
  *
  * If library is already unlinked, this action is a no-op.
  */
-module.exports = function unregisterNativeModule(
+export default function unregisterNativeModule(
   dependencyConfig,
   projectConfig,
   iOSDependencies
@@ -71,4 +71,4 @@ module.exports = function unregisterNativeModule(
   }
 
   fs.writeFileSync(projectConfig.pbxprojPath, project.writeSync());
-};
+}

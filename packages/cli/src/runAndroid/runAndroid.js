@@ -269,7 +269,7 @@ function startServerInNewWindow(port, terminal = process.env.REACT_TERMINAL) {
   );
 }
 
-module.exports = {
+export default {
   name: 'run-android',
   description:
     'builds your app and starts it on a connected Android emulator or device',

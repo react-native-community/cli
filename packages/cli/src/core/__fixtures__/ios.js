@@ -7,10 +7,11 @@
  * @format
  */
 
-const fs = jest.requireActual('fs');
-const path = require('path');
+import path from 'path';
 
-exports.valid = {
+const fs = jest.requireActual('fs');
+
+export const valid = {
   'demoProject.xcodeproj': {
     'project.pbxproj': fs.readFileSync(
       path.join(__dirname, './files/project.pbxproj')
@@ -19,7 +20,7 @@ exports.valid = {
   'TestPod.podspec': 'empty',
 };
 
-exports.validTestName = {
+export const validTestName = {
   'MyTestProject.xcodeproj': {
     'project.pbxproj': fs.readFileSync(
       path.join(__dirname, './files/project.pbxproj')
@@ -27,6 +28,6 @@ exports.validTestName = {
   },
 };
 
-exports.pod = {
+export const pod = {
   'TestPod.podspec': 'empty',
 };

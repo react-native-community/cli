@@ -7,7 +7,7 @@
  * @flow
  */
 
-const path = require('path');
+import path from 'path';
 
 export type CommandLineArgs = {
   assetsDest?: string,
@@ -28,7 +28,7 @@ export type CommandLineArgs = {
   verbose: boolean,
 };
 
-module.exports = [
+export default [
   {
     command: '--entry-file <path>',
     description:

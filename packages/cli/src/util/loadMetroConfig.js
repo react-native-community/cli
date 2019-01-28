@@ -2,15 +2,13 @@
  * Configuration file of Metro.
  * @flow
  */
+import path from 'path';
+import metro from 'metro';
+import metroConfig from 'metro-config';
 import type { ConfigT } from 'metro-config/src/configTypes.flow';
 
-const path = require('path');
-
-const { createBlacklist } = require('metro');
-const { loadConfig } = require('metro-config');
-const findSymlinkedModules = require('./findSymlinkedModules');
-
-const findPlugins = require('../core/findPlugins');
+import findSymlinkedModules from './findSymlinkedModules';
+import findPlugins from '../core/findPlugins';
 
 const resolveSymlinksForRoots = roots =>
   roots.reduce<string[]>(
@@ -26,7 +24,7 @@ const getWatchFolders = () => {
   return [];
 };
 
-const getBlacklistRE = () => createBlacklist([/.*\/__fixtures__\/.*/]);
+const getBlacklistRE = () => metro.createBlacklist([/.*\/__fixtures__\/.*/]);
 
 /**
  * Default configuration
@@ -80,13 +78,13 @@ export type ConfigOptionsT = {
  *
  * This allows the CLI to always overwrite the file settings.
  */
-module.exports = async function load(
+export default async function load(
   projectRoot: string,
   options?: ConfigOptionsT = {}
 ): Promise<ConfigT> {
   const defaultConfig = getDefaultConfig(projectRoot);
 
-  const config = await loadConfig(
+  const config = await metroConfig.loadConfig(
     {
       cwd: projectRoot,
       ...options,
@@ -114,4 +112,4 @@ module.exports = async function load(
   }
 
   return config;
-};
+}

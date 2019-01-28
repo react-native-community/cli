@@ -8,9 +8,9 @@
  * @flow
  */
 
-const path = require('path');
+import path from 'path';
 
-module.exports = {
+export default {
   name: 'start',
   func: require('./runServer'),
   description: 'starts the webserver',

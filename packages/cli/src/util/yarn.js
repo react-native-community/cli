@@ -7,10 +7,10 @@
  * @format
  */
 
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
-const semver = require('semver');
+import childProcess from 'child_process';
+import fs from 'fs';
+import path from 'path';
+import semver from 'semver';
 
 /**
  * Use Yarn if available, it's much faster than the npm client.
@@ -21,9 +21,11 @@ function getYarnVersionIfAvailable() {
   try {
     // execSync returns a Buffer -> convert to string
     yarnVersion = (
-      execSync('yarn --version', {
-        stdio: [0, 'pipe', 'ignore'],
-      }).toString() || ''
+      childProcess
+        .execSync('yarn --version', {
+          stdio: [0, 'pipe', 'ignore'],
+        })
+        .toString() || ''
     ).trim();
   } catch (error) {
     return null;
@@ -51,7 +53,7 @@ function isGlobalCliUsingYarn(projectDir) {
   return fs.existsSync(path.join(projectDir, 'yarn.lock'));
 }
 
-module.exports = {
+export default {
   getYarnVersionIfAvailable,
   isGlobalCliUsingYarn,
 };

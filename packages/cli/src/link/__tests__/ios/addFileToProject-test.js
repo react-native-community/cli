@@ -8,10 +8,10 @@
  * @emails oncall+javascript_foundation
  */
 
-const xcode = require('xcode');
-const path = require('path');
-const _ = require('lodash');
-const addFileToProject = require('../../ios/addFileToProject');
+import xcode from 'xcode';
+import path from 'path';
+import _ from 'lodash';
+import addFileToProject from '../../ios/addFileToProject';
 
 const project = xcode.project(
   path.join(__dirname, '../../__fixtures__/project.pbxproj')

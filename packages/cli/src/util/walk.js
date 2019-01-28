@@ -7,8 +7,8 @@
  * @format
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 function walk(current) {
   if (!fs.lstatSync(current).isDirectory()) {
@@ -21,4 +21,4 @@ function walk(current) {
   return [].concat.apply([current], files);
 }
 
-module.exports = walk;
+export default walk;

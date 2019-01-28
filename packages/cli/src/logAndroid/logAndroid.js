@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-const chalk = require('chalk');
-const { spawnSync } = require('child_process');
+import chalk from 'chalk';
+import childProcess from 'child_process';
 
 /**
  * Starts adb logcat
@@ -22,14 +22,14 @@ async function logAndroid() {
     chalk.bold(`Starting the logger (${adbPath} ${adbArgs.join(' ')})...`)
   );
 
-  const log = spawnSync(adbPath, adbArgs, { stdio: 'inherit' });
+  const log = childProcess.spawnSync(adbPath, adbArgs, { stdio: 'inherit' });
 
   if (log.error !== null) {
     throw log.error;
   }
 }
 
-module.exports = {
+export default {
   name: 'log-android',
   description: 'starts adb logcat',
   func: logAndroid,

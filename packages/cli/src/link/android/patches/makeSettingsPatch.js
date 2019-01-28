@@ -7,14 +7,10 @@
  * @format
  */
 
-const path = require('path');
-const normalizeProjectName = require('./normalizeProjectName');
+import path from 'path';
+import normalizeProjectName from './normalizeProjectName';
 
-module.exports = function makeSettingsPatch(
-  name,
-  androidConfig,
-  projectConfig
-) {
+export default function makeSettingsPatch(name, androidConfig, projectConfig) {
   const projectDir = path.relative(
     path.dirname(projectConfig.settingsGradlePath),
     androidConfig.sourceDir
@@ -28,4 +24,4 @@ module.exports = function makeSettingsPatch(
       `project(':${normalizedProjectName}').projectDir = ` +
       `new File(rootProject.projectDir, '${projectDir}')\n`,
   };
-};
+}

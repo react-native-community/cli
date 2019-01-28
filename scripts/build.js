@@ -18,24 +18,23 @@
  * NOTE: this script is node@4 compatible
  */
 
-const fs = require('fs');
-const path = require('path');
-const glob = require('glob');
-const mkdirp = require('mkdirp');
-const babel = require('@babel/core');
-const chalk = require('chalk');
-const micromatch = require('micromatch');
-const prettier = require('prettier');
-const stringLength = require('string-length');
-const { PACKAGES_DIR, getPackages } = require('./helpers');
+import fs from 'fs';
+import path from 'path';
+import glob from 'glob';
+import mkdirp from 'mkdirp';
+import babel from '@babel/core';
+import chalk from 'chalk';
+import micromatch from 'micromatch';
+import prettier from 'prettier';
+import stringLength from 'string-length';
+import { PACKAGES_DIR, getPackages } from './helpers';
+import transformOptions from '../babel.config.js';
 
 const OK = chalk.reset.inverse.bold.green(' DONE ');
 const SRC_DIR = 'src';
 const BUILD_DIR = 'build';
 const JS_FILES_PATTERN = '**/*.js';
 const IGNORE_PATTERN = '**/__{tests,mocks,fixtures}__/**';
-
-const transformOptions = require('../babel.config.js');
 
 const prettierConfig = prettier.resolveConfig.sync(__filename);
 prettierConfig.trailingComma = 'none';

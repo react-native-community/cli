@@ -85,7 +85,7 @@ function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
   });
 }
 
-module.exports = {
+export default {
   func: link,
   description: 'scope link command to certain platforms (comma-separated)',
   name: 'link [packageName]',

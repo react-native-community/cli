@@ -8,6 +8,8 @@
  * @emails oncall+javascript_foundation
  */
 
+import getDependencyConfig from '../getDependencyConfig';
+
 const platforms = {
   ios: {
     dependencyConfig: () => ({ sampleiOSKey: '' }),
@@ -23,8 +25,6 @@ jest.setMock('../../core/getPackageConfiguration', folder => {
   }
   return {};
 });
-
-const getDependencyConfig = require('../getDependencyConfig');
 
 describe('getDependencyConfig', () => {
   it("should return an array of dependencies' config", () => {

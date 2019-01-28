@@ -6,7 +6,7 @@
  *
  * @format
  */
-const launchChrome = require('../util/launchChrome');
+import launchChrome from '../util/launchChrome';
 
 function launchChromeDevTools(host, port, args = '') {
   const debuggerURL = `http://${host}:${port}/debugger-ui${args}`;
@@ -25,7 +25,7 @@ function launchDevTools({ host, port, watchFolders }, isChromeConnected) {
   }
 }
 
-module.exports = function getDevToolsMiddleware(options, isChromeConnected) {
+export default function getDevToolsMiddleware(options, isChromeConnected) {
   return function devToolsMiddleware(req, res, next) {
     if (req.url === '/launch-safari-devtools') {
       // TODO: remove `console.log` and dev tools binary
@@ -50,4 +50,4 @@ module.exports = function getDevToolsMiddleware(options, isChromeConnected) {
       next();
     }
   };
-};
+}

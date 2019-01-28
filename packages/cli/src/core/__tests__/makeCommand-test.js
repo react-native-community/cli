@@ -8,6 +8,8 @@
  * @emails oncall+javascript_foundation
  */
 
+import { makeCommand } from '../getHooks';
+
 let spawnError = false;
 
 jest.setMock('child_process', {
@@ -15,8 +17,6 @@ jest.setMock('child_process', {
     on: (event, cb) => cb(spawnError),
   }),
 });
-
-const { makeCommand } = require('../getHooks');
 
 describe('makeCommand', () => {
   const command = makeCommand('echo');

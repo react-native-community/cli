@@ -2,10 +2,10 @@
  * @flow
  */
 
-import type { PlatformsT } from './types.flow';
+import path from 'path';
 
-const path = require('path');
-const findPlugins = require('./findPlugins');
+import findPlugins from './findPlugins';
+import type { PlatformsT } from './types.flow';
 
 /**
  * Support for `ios` and `android` platforms is built-in
@@ -21,7 +21,7 @@ const builtInPlatforms = {
 /**
  * Returns an object with available platforms
  */
-module.exports = function getPlatforms(root: string): PlatformsT {
+export default function getPlatforms(root: string): PlatformsT {
   const plugins = findPlugins(root);
 
   /**
@@ -45,4 +45,4 @@ module.exports = function getPlatforms(root: string): PlatformsT {
     ...builtInPlatforms,
     ...projectPlatforms,
   };
-};
+}

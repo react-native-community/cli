@@ -7,12 +7,12 @@
  * @format
  */
 
-const android = require('./android');
-const ios = require('./ios');
+import { valid, pod } from './ios';
+import android from './android';
 
 const flat = {
   android: android.valid,
-  ios: ios.valid,
+  ios: valid,
   Podfile: 'empty',
 };
 
@@ -20,18 +20,18 @@ const nested = {
   android: {
     app: android.valid,
   },
-  ios: ios.valid,
+  ios: valid,
 };
 
 const withExamples = {
   Examples: flat,
-  ios: ios.valid,
+  ios: valid,
   android: android.valid,
 };
 
 const withPods = {
   Podfile: 'content',
-  ios: ios.pod,
+  ios: pod,
 };
 
-module.exports = { flat, nested, withExamples, withPods };
+export default { flat, nested, withExamples, withPods };

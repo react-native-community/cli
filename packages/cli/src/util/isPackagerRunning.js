@@ -7,7 +7,7 @@
  * @format
  */
 
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
 
 /**
  * Indicates whether or not the packager is running. It returns a promise that
@@ -30,4 +30,4 @@ function isPackagerRunning(packagerPort = process.env.RCT_METRO_PORT || 8081) {
   );
 }
 
-module.exports = isPackagerRunning;
+export default isPackagerRunning;

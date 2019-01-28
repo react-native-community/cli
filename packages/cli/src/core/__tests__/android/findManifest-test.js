@@ -8,12 +8,12 @@
  * @emails oncall+javascript_foundation
  */
 
+import fs from 'fs';
+import findManifest from '../../android/findManifest';
+import mocks from '../../__fixtures__/android';
+
 jest.mock('path');
 jest.mock('fs');
-
-const fs = require('fs');
-const findManifest = require('../../android/findManifest');
-const mocks = require('../../__fixtures__/android');
 
 describe('android::findManifest', () => {
   beforeAll(() => {

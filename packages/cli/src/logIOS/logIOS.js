@@ -7,10 +7,10 @@
  * @format
  */
 
-const chalk = require('chalk');
-const { execFileSync, spawnSync } = require('child_process');
-const os = require('os');
-const path = require('path');
+import chalk from 'chalk';
+import childProcess from 'child_process';
+import os from 'os';
+import path from 'path';
 
 function findAvailableDevice(devices) {
   for (const key of Object.keys(devices)) {
@@ -27,7 +27,7 @@ function findAvailableDevice(devices) {
  * Starts iOS device syslog tail
  */
 async function logIOS() {
-  const rawDevices = execFileSync(
+  const rawDevices = childProcess.execFileSync(
     'xcrun',
     ['simctl', 'list', 'devices', '--json'],
     { encoding: 'utf8' }
@@ -54,16 +54,20 @@ function tailDeviceLogs(udid) {
     'asl'
   );
 
-  const log = spawnSync('syslog', ['-w', '-F', 'std', '-d', logDir], {
-    stdio: 'inherit',
-  });
+  const log = childProcess.spawnSync(
+    'syslog',
+    ['-w', '-F', 'std', '-d', logDir],
+    {
+      stdio: 'inherit',
+    }
+  );
 
   if (log.error !== null) {
     throw log.error;
   }
 }
 
-module.exports = {
+export default {
   name: 'log-ios',
   description: 'starts iOS device syslog tail',
   func: logIOS,

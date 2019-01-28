@@ -8,13 +8,13 @@
  * @flow
  */
 
-import type { ContextT } from '../core/types.flow';
+import chalk from 'chalk';
+import fs from 'fs';
+import path from 'path';
+import semver from 'semver';
 
-const chalk = require('chalk');
-const fs = require('fs');
-const path = require('path');
-const semver = require('semver');
-const copyProjectTemplateAndReplace = require('../generator/copyProjectTemplateAndReplace');
+import copyProjectTemplateAndReplace from '../generator/copyProjectTemplateAndReplace';
+import type { ContextT } from '../core/types.flow';
 
 /**
  * Migrate application to a new version of React Native.
@@ -152,4 +152,4 @@ const upgradeCommand = {
   func: validateAndUpgrade,
 };
 
-module.exports = upgradeCommand;
+export default upgradeCommand;

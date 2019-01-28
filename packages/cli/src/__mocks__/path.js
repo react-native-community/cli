@@ -17,4 +17,4 @@ mockPath.mock = { reset };
 
 reset('posix');
 
-module.exports = mockPath;
+export default mockPath;

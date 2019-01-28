@@ -6,6 +6,5 @@
  *
  * @format
  */
-
-module.exports.out = () => jest.fn();
-module.exports.err = () => jest.fn();
+export const out = () => jest.fn();
+export const err = () => jest.fn();

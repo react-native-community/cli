@@ -78,6 +78,6 @@ function attachToServer(server, path) {
   };
 }
 
-module.exports = {
+export default {
   attachToServer,
 };

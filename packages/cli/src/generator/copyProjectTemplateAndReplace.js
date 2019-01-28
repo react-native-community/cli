@@ -7,11 +7,13 @@
  * @format
  */
 
-const chalk = require('chalk');
-const path = require('path');
-const copyAndReplace = require('../util/copyAndReplace');
-const prompt = require('./promptSync')();
-const walk = require('../util/walk');
+import chalk from 'chalk';
+import path from 'path';
+import copyAndReplace from '../util/copyAndReplace';
+import createPrompt from './promptSync';
+import walk from '../util/walk';
+
+const prompt = createPrompt();
 
 /**
  * Util for creating a new React Native project.
@@ -164,4 +166,4 @@ function upgradeFileContentChangedCallback(
   );
 }
 
-module.exports = copyProjectTemplateAndReplace;
+export default copyProjectTemplateAndReplace;

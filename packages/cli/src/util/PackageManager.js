@@ -7,8 +7,8 @@
  * @format
  */
 
-const { spawnSync } = require('child_process');
-const yarn = require('../util/yarn');
+import childProcess from 'child_process';
+import yarn from './yarn';
 
 const spawnOpts = {
   stdio: 'inherit',
@@ -38,7 +38,7 @@ function callYarnOrNpm(yarnCommand, npmCommand, projectDir) {
   const args = command.split(' ');
   const cmd = args.shift();
 
-  const res = spawnSync(cmd, args, spawnOpts);
+  const res = childProcess.spawnSync(cmd, args, spawnOpts);
 
   return res;
 }
@@ -71,7 +71,7 @@ function remove(packageName, projectDir) {
   );
 }
 
-module.exports = {
+export default {
   add,
   remove,
 };

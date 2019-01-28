@@ -2,9 +2,10 @@
  * @flow
  */
 
-const glob = require('glob');
-const path = require('path');
-const getPackageConfiguration = require('./getPackageConfiguration');
+import glob from 'glob';
+import path from 'path';
+
+import getPackageConfiguration from './getPackageConfiguration';
 
 const findAssetsInFolder = folder =>
   glob.sync(path.join(folder, '**'), { nodir: true });
@@ -15,7 +16,7 @@ const findAssetsInFolder = folder =>
  *
  * It returns an array of absolute paths to files found.
  */
-function findAssets(folder, assets) {
+export function findAssets(folder, assets) {
   return (assets || [])
     .map(asset => path.join(folder, asset))
     .reduce(
@@ -28,9 +29,7 @@ function findAssets(folder, assets) {
 /**
  * Returns a project configuration in a given folder
  */
-module.exports = function getAssets(root: string) {
+export default function getAssets(root: string) {
   const config = getPackageConfiguration(root);
   return findAssets(root, config.assets);
-};
-
-module.exports.findAssets = findAssets;
+}

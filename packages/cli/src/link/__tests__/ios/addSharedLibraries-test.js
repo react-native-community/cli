@@ -8,10 +8,10 @@
  * @emails oncall+javascript_foundation
  */
 
-const xcode = require('xcode');
-const path = require('path');
-const addSharedLibraries = require('../../ios/addSharedLibraries');
-const getGroup = require('../../ios/getGroup');
+import xcode from 'xcode';
+import path from 'path';
+import addSharedLibraries from '../../ios/addSharedLibraries';
+import getGroup from '../../ios/getGroup';
 
 const project = xcode.project(
   path.join(__dirname, '../../__fixtures__/project.pbxproj')

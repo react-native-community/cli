@@ -8,9 +8,9 @@
  * @emails oncall+javascript_foundation
  */
 
-const path = require('path');
-const findLineToAddPod = require('../../pods/findLineToAddPod');
-const readPodfile = require('../../pods/readPodfile');
+import path from 'path';
+import findLineToAddPod from '../../pods/findLineToAddPod';
+import readPodfile from '../../pods/readPodfile';
 
 const PODFILES_PATH = path.join(__dirname, '../../__fixtures__/pods');
 const LINE_AFTER_TARGET_IN_TEST_PODFILE = 4;

@@ -36,7 +36,7 @@ type WebSocketProxy = {
 
 type Connect = $Call<connect>;
 
-module.exports = class MiddlewareManager {
+export default class MiddlewareManager {
   app: Connect;
 
   options: Options;
@@ -71,4 +71,4 @@ module.exports = class MiddlewareManager {
       getDevToolsMiddleware(this.options, () => socket.isChromeConnected())
     );
   }
-};
+}

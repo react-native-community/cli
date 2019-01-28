@@ -9,13 +9,13 @@
 
 /* eslint-disable */
 
-const child_process = require('child_process');
-const fs = require('fs');
-const path = require('path');
-const findXcodeProject = require('./findXcodeProject');
-const findReactNativeScripts = require('../util/findReactNativeScripts');
-const parseIOSDevicesList = require('./parseIOSDevicesList');
-const findMatchingSimulator = require('./findMatchingSimulator');
+import child_process from 'child_process';
+import fs from 'fs';
+import path from 'path';
+import findXcodeProject from './findXcodeProject';
+import findReactNativeScripts from '../util/findReactNativeScripts';
+import parseIOSDevicesList from './parseIOSDevicesList';
+import findMatchingSimulator from './findMatchingSimulator';
 
 const getBuildPath = function(configuration = 'Debug', appName, isDevice) {
   let device;
@@ -379,7 +379,7 @@ function getProcessOptions(launchPackager, port) {
   };
 }
 
-module.exports = {
+export default {
   name: 'run-ios',
   description: 'builds your app and starts it on iOS simulator',
   func: runIOS,
@@ -422,7 +422,7 @@ module.exports = {
       command: '--project-path [string]',
       description:
         'Path relative to project root where the Xcode project ' +
-        "(.xcodeproj) lives.",
+        '(.xcodeproj) lives.',
       default: 'ios',
     },
     {

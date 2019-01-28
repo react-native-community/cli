@@ -7,8 +7,8 @@
  * @flow
  */
 
-const chalk = require('chalk');
-const { spawnSync } = require('child_process');
+import chalk from 'chalk';
+import childProcess from 'child_process';
 
 function tryLaunchAppOnDevice(
   device: string,
@@ -32,7 +32,7 @@ function tryLaunchAppOnDevice(
         `Starting the app on ${device} (${adbPath} ${adbArgs.join(' ')})...`
       )
     );
-    spawnSync(adbPath, adbArgs, { stdio: 'inherit' });
+    childProcess.spawnSync(adbPath, adbArgs, { stdio: 'inherit' });
   } catch (e) {
     console.log(
       chalk.red('adb invocation failed. Do you have adb in your PATH?')
@@ -40,4 +40,4 @@ function tryLaunchAppOnDevice(
   }
 }
 
-module.exports = tryLaunchAppOnDevice;
+export default tryLaunchAppOnDevice;

@@ -7,11 +7,11 @@
  * @format
  */
 
-const chalk = require('chalk');
-const fs = require('fs');
-const path = require('path');
-const { execSync, spawn } = require('child_process');
-const shellQuote = require('shell-quote');
+import chalk from 'chalk';
+import fs from 'fs';
+import path from 'path';
+import childProcess from 'child_process';
+import shellQuote from 'shell-quote';
 
 function isTerminalEditor(editor) {
   switch (editor) {
@@ -99,7 +99,7 @@ function guessEditor() {
   // Potentially we could use similar technique for Windows and Linux
   if (process.platform === 'darwin') {
     try {
-      const output = execSync('ps x').toString();
+      const output = childProcess.execSync('ps x').toString();
       const processNames = Object.keys(COMMON_EDITORS);
       for (let i = 0; i < processNames.length; i++) {
         const processName = processNames[i];
@@ -218,11 +218,11 @@ function launchEditor(fileName, lineNumber, projectRoots) {
   if (process.platform === 'win32') {
     // On Windows, launch the editor in a shell because spawn can only
     // launch .exe files.
-    _childProcess = spawn('cmd.exe', ['/C', editor].concat(args), {
+    _childProcess = childProcess.spawn('cmd.exe', ['/C', editor].concat(args), {
       stdio: 'inherit',
     });
   } else {
-    _childProcess = spawn(editor, args, { stdio: 'inherit' });
+    _childProcess = childProcess.spawn(editor, args, { stdio: 'inherit' });
   }
   _childProcess.on('exit', errorCode => {
     _childProcess = null;
@@ -239,4 +239,4 @@ function launchEditor(fileName, lineNumber, projectRoots) {
   });
 }
 
-module.exports = launchEditor;
+export default launchEditor;

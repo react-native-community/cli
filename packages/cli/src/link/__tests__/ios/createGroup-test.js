@@ -8,12 +8,12 @@
  * @emails oncall+javascript_foundation
  */
 
-const xcode = require('xcode');
-const path = require('path');
-const { last } = require('lodash');
+import xcode from 'xcode';
+import path from 'path';
+import { last } from 'lodash';
 
-const createGroup = require('../../ios/createGroup');
-const getGroup = require('../../ios/getGroup');
+import createGroup from '../../ios/createGroup';
+import getGroup from '../../ios/getGroup';
 
 const project = xcode.project(
   path.join(__dirname, '../../__fixtures__/project.pbxproj')

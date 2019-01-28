@@ -7,10 +7,10 @@
  * @format
  */
 
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
-const copyProjectTemplateAndReplace = require('./copyProjectTemplateAndReplace');
+import fs from 'fs';
+import path from 'path';
+import childProcess from 'child_process';
+import copyProjectTemplateAndReplace from './copyProjectTemplateAndReplace';
 
 /**
  * @param destPath Create the new project at this path.
@@ -19,7 +19,7 @@ const copyProjectTemplateAndReplace = require('./copyProjectTemplateAndReplace')
  * @param yarnVersion Version of yarn available on the system, or null if
  *                    yarn is not available. For example '0.18.1'.
  */
-function createProjectFromTemplate(
+export function createProjectFromTemplate(
   destPath,
   newProjectName,
   template,
@@ -71,11 +71,11 @@ function createFromRemoteTemplate(
   console.log(`Fetching template ${installPackage}...`);
   try {
     if (yarnVersion) {
-      execSync(`yarn add ${installPackage} --ignore-scripts`, {
+      childProcess.execSync(`yarn add ${installPackage} --ignore-scripts`, {
         stdio: 'inherit',
       });
     } else {
-      execSync(
+      childProcess.execSync(
         `npm install ${installPackage} --save --save-exact --ignore-scripts`,
         { stdio: 'inherit' }
       );
@@ -98,9 +98,9 @@ function createFromRemoteTemplate(
     // Clean up the temp files
     try {
       if (yarnVersion) {
-        execSync(`yarn remove ${templateName} --ignore-scripts`);
+        childProcess.execSync(`yarn remove ${templateName} --ignore-scripts`);
       } else {
-        execSync(`npm uninstall ${templateName} --ignore-scripts`);
+        childProcess.execSync(`npm uninstall ${templateName} --ignore-scripts`);
       }
     } catch (err) {
       // Not critical but we still want people to know and report
@@ -136,15 +136,15 @@ function installTemplateDependencies(templatePath, yarnVersion) {
     const depToInstall = `${depName}@${depVersion}`;
     console.log(`Adding ${depToInstall}...`);
     if (yarnVersion) {
-      execSync(`yarn add ${depToInstall}`, { stdio: 'inherit' });
+      childProcess.execSync(`yarn add ${depToInstall}`, { stdio: 'inherit' });
     } else {
-      execSync(`npm install ${depToInstall} --save --save-exact`, {
+      childProcess.execSync(`npm install ${depToInstall} --save --save-exact`, {
         stdio: 'inherit',
       });
     }
   }
   console.log("Linking native dependencies into the project's build files...");
-  execSync('react-native link', { stdio: 'inherit' });
+  childProcess.execSync('react-native link', { stdio: 'inherit' });
 }
 
 function installTemplateDevDependencies(templatePath, yarnVersion) {
@@ -173,15 +173,16 @@ function installTemplateDevDependencies(templatePath, yarnVersion) {
     const depToInstall = `${depName}@${depVersion}`;
     console.log(`Adding ${depToInstall}...`);
     if (yarnVersion) {
-      execSync(`yarn add ${depToInstall} -D`, { stdio: 'inherit' });
-    } else {
-      execSync(`npm install ${depToInstall} --save-dev --save-exact`, {
+      childProcess.execSync(`yarn add ${depToInstall} -D`, {
         stdio: 'inherit',
       });
+    } else {
+      childProcess.execSync(
+        `npm install ${depToInstall} --save-dev --save-exact`,
+        {
+          stdio: 'inherit',
+        }
+      );
     }
   }
 }
-
-module.exports = {
-  createProjectFromTemplate,
-};

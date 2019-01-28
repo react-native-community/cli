@@ -8,16 +8,17 @@
  * @emails oncall+javascript_foundation
  */
 
+import fs from 'fs';
+
+import xcode from 'xcode';
+import getPlistPath from '../../ios/getPlistPath';
+import writePlist from '../../ios/writePlist';
+
 jest.mock('path');
 jest.mock('fs');
 jest.mock('../../ios/getPlistPath', () => jest.fn(() => null));
 
 const { readFileSync } = jest.requireActual('fs');
-const fs = require('fs');
-
-const xcode = require('xcode');
-const getPlistPath = require('../../ios/getPlistPath');
-const writePlist = require('../../ios/writePlist');
 
 const realPath = jest.requireActual('path');
 const projectPath = realPath.join(

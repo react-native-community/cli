@@ -8,13 +8,13 @@
  * @emails oncall+javascript_foundation
  */
 
-const xcode = require('xcode');
-const PbxFile = require('xcode/lib/pbxFile');
-const path = require('path');
-const { last } = require('lodash');
+import xcode from 'xcode';
+import PbxFile from 'xcode/lib/pbxFile';
+import path from 'path';
+import { last } from 'lodash';
 
-const addProjectToLibraries = require('../../ios/addProjectToLibraries');
-const removeProjectFromLibraries = require('../../ios/removeProjectFromLibraries');
+import addProjectToLibraries from '../../ios/addProjectToLibraries';
+import removeProjectFromLibraries from '../../ios/removeProjectFromLibraries';
 
 const project = xcode.project(
   path.join(__dirname, '../../__fixtures__/project.pbxproj')

@@ -2,18 +2,18 @@
  * @flow
  */
 
-import type { CommandT, ProjectCommandT, LocalCommandT } from './types.flow';
+import path from 'path';
 
-const path = require('path');
-const findPlugins = require('./findPlugins');
-const logger = require('../util/logger');
+import findPlugins from './findPlugins';
+import logger from '../util/logger';
+import type { CommandT, ProjectCommandT, LocalCommandT } from './types.flow';
 
 /**
  * List of built-in commands
  */
 const loadLocalCommands = (): Array<LocalCommandT> => [
-  require('../server/server'),
-  require('../runIOS/runIOS'),
+  require('../server/server').default,
+  require('../runIOS/runIOS').default,
   require('../runAndroid/runAndroid'),
   require('../library/library'),
   require('../bundle/bundle'),
@@ -80,7 +80,7 @@ const loadProjectCommands = (root: string): Array<ProjectCommandT> => {
 /**
  * Loads all the commands inside a given `root` folder
  */
-module.exports = (root: string): Array<CommandT> => [
+export default (root: string): Array<CommandT> => [
   ...loadLocalCommands(),
   {
     name: 'init',

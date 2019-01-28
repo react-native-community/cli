@@ -7,8 +7,8 @@
  * @format
  */
 
-const path = require('path');
-const { last, union } = require('lodash');
+import path from 'path';
+import _ from 'lodash';
 
 /**
  * Given an array of directories, it returns the one that contains
@@ -27,7 +27,7 @@ const getOuterDirectory = directories =>
 
     if (
       currentFolders.length === topMostFolders.length &&
-      last(currentFolders) !== last(topMostFolders)
+      _.last(currentFolders) !== _.last(topMostFolders)
     ) {
       return currentFolders.slice(0, -1).join(path.sep);
     }
@@ -49,8 +49,8 @@ const getOuterDirectory = directories =>
  * the end so Xcode marks that location as `recursive` and will look inside
  * every folder of it to locate correct headers.
  */
-module.exports = function getHeaderSearchPath(sourceDir, headers) {
-  const directories = union(headers.map(path.dirname));
+export default function getHeaderSearchPath(sourceDir, headers) {
+  const directories = _.union(headers.map(path.dirname));
 
   return directories.length === 1
     ? `"$(SRCROOT)${path.sep}${path.relative(sourceDir, directories[0])}"`
@@ -58,4 +58,4 @@ module.exports = function getHeaderSearchPath(sourceDir, headers) {
         sourceDir,
         getOuterDirectory(directories)
       )}/**"`;
-};
+}

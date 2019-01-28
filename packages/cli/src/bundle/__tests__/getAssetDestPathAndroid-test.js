@@ -8,10 +8,11 @@
  * @emails oncall+javascript_foundation
  */
 
-jest.dontMock('../getAssetDestPathAndroid').dontMock('../assetPathUtils');
+import path from 'path';
 
-const path = require('path');
-const getAssetDestPathAndroid = require('../getAssetDestPathAndroid');
+import getAssetDestPathAndroid from '../getAssetDestPathAndroid';
+
+jest.dontMock('../getAssetDestPathAndroid').dontMock('../assetPathUtils');
 
 describe('getAssetDestPathAndroid', () => {
   it('should use the right destination folder', () => {

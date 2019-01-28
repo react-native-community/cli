@@ -21,7 +21,7 @@ describe('link', () => {
   });
 
   it('should reject when run in a folder without package.json', done => {
-    const link = require('../link').func;
+    const link = require('../link').default.func;
     link([], { root: '/' }, {}).catch(() => done());
   });
 
@@ -37,7 +37,7 @@ describe('link', () => {
 
     jest.doMock('../getDependencyConfig', () => getDependencyConfig);
 
-    const link = require('../link').func;
+    const link = require('../link').default.func;
     link(['react-native-gradient'], context, {}).then(() => {
       expect(getDependencyConfig.mock.calls[0][2]).toEqual(
         'react-native-gradient'
@@ -58,7 +58,7 @@ describe('link', () => {
 
     jest.doMock('../getDependencyConfig', () => getDependencyConfig);
 
-    const link = require('../link').func;
+    const link = require('../link').default.func;
     await link(['@scope/something@latest'], context, {});
 
     expect(getDependencyConfig.mock.calls[0][2]).toEqual('@scope/something');
@@ -99,7 +99,7 @@ describe('link', () => {
     );
     jest.doMock('../ios/registerNativeModule.js', () => registerNativeModule);
 
-    const link = require('../link').func;
+    const link = require('../link').default.func;
 
     link(['react-native-blur'], context, {}).then(() => {
       expect(registerNativeModule.mock.calls).toHaveLength(2);
@@ -151,7 +151,7 @@ describe('link', () => {
     jest.doMock('../ios/copyAssets.js', () => copyAssets);
     jest.doMock('../android/copyAssets.js', () => copyAssets);
 
-    const link = require('../link').func;
+    const link = require('../link').default.func;
 
     link(['react-native-blur'], context, {}).then(() => {
       expect(copyAssets.mock.calls).toHaveLength(2);
@@ -191,7 +191,7 @@ describe('link', () => {
     jest.doMock('../ios/isInstalled.js', () => jest.fn().mockReturnValue(true));
     jest.doMock('../ios/registerNativeModule.js', () => registerNativeModule);
 
-    const link = require('../link').func;
+    const link = require('../link').default.func;
 
     link(['react-native-blur', {}], context, {}).then(() => {
       expect(registerNativeModule.mock.calls).toHaveLength(0);
@@ -242,7 +242,7 @@ describe('link', () => {
     jest.doMock('../ios/isInstalled.js', () => jest.fn().mockReturnValue(true));
     jest.doMock('../ios/registerNativeModule.js', () => registerNativeModule);
 
-    const link = require('../link').func;
+    const link = require('../link').default.func;
 
     link(['react-native-blur'], context, {}).then(() => {
       expect(registerNativeModule.mock.calls).toHaveLength(1);
@@ -283,7 +283,7 @@ describe('link', () => {
       () => registerIOSNativeModule
     );
 
-    const link = require('../link').func;
+    const link = require('../link').default.func;
     const assertPlaftormsCalledTimes = (android, ios) => {
       expect(registerAndroidNativeModule).toHaveBeenCalledTimes(android);
       expect(registerIOSNativeModule).toHaveBeenCalledTimes(ios);

@@ -9,12 +9,12 @@
 
 /* eslint-disable consistent-return */
 
-const chalk = require('chalk');
-const { spawnSync, execFileSync } = require('child_process');
+import chalk from 'chalk';
+import childProcess from 'child_process';
 
-const adb = require('./adb');
-const tryRunAdbReverse = require('./tryRunAdbReverse');
-const tryLaunchAppOnDevice = require('./tryLaunchAppOnDevice');
+import adb from './adb';
+import tryRunAdbReverse from './tryRunAdbReverse';
+import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
 
 function getCommand(appFolder, command) {
   return appFolder ? `${appFolder}:${command}` : command;
@@ -61,7 +61,7 @@ function runOnAllDevices(
       )
     );
 
-    execFileSync(cmd, gradleArgs, {
+    childProcess.execFileSync(cmd, gradleArgs, {
       stdio: [process.stdin, process.stdout, process.stderr],
     });
   } catch (e) {
@@ -106,7 +106,7 @@ function runOnAllDevices(
           `Starting the app (${adbPath} ${fallbackAdbArgs.join(' ')}...`
         )
       );
-      spawnSync(adbPath, fallbackAdbArgs, { stdio: 'inherit' });
+      childProcess.spawnSync(adbPath, fallbackAdbArgs, { stdio: 'inherit' });
     } catch (e) {
       console.log(
         chalk.red('adb invocation failed. Do you have adb in your PATH?')
@@ -119,4 +119,4 @@ function runOnAllDevices(
   }
 }
 
-module.exports = runOnAllDevices;
+export default runOnAllDevices;

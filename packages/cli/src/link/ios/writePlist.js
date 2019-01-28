@@ -7,16 +7,16 @@
  * @format
  */
 
-const plistParser = require('plist');
-const fs = require('fs');
-const getPlistPath = require('./getPlistPath');
+import plistParser from 'plist';
+import fs from 'fs';
+import getPlistPath from './getPlistPath';
 
 /**
  * Writes to Info.plist located in the iOS project
  *
  * Returns `null` if INFOPLIST_FILE is not specified or file is non-existent.
  */
-module.exports = function writePlist(project, sourceDir, plist) {
+export default function writePlist(project, sourceDir, plist) {
   const plistPath = getPlistPath(project, sourceDir);
 
   if (!plistPath) {
@@ -30,4 +30,4 @@ module.exports = function writePlist(project, sourceDir, plist) {
     plistPath,
     `${plistParser.build(plist, { indent: '\t', offset: -1 })}\n`
   );
-};
+}

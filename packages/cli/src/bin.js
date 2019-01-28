@@ -21,7 +21,7 @@ if (isInstalledGlobally()) {
       chalk.white(
         'npm uninstall -g react-native && npm install -g react-native-cli'
       ),
-    ].join('')
+    ].join('\n')
   );
   process.exit(1);
 } else {

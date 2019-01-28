@@ -77,7 +77,7 @@ function printUnknownCommand(cmdName) {
   logger.error(
     [
       cmdName
-        ? `  Unrecognized command '${cmdName}'`
+        ? `  Unrecognized command "${cmdName}"`
         : "  You didn't pass any command",
       `  Run ${chalk.white(
         'react-native --help'

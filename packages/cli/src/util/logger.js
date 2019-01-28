@@ -7,7 +7,7 @@ const joinMessages = (messages: Array<string>) => messages.join(SEPARATOR);
 
 const info = (...messages: Array<string>) => {
   console.log(
-    `${chalk.black.bgCyan(' INFO ')} ${chalk.cyan(joinMessages(messages))}`
+    `${chalk.black.bgCyan(' INFO ')} ${chalk.reset(joinMessages(messages))}`
   );
 };
 

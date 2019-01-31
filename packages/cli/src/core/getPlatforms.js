@@ -35,7 +35,6 @@ module.exports = function getPlatforms(root: string): PlatformsT {
     (acc, pathToPlatform) =>
       Object.assign(
         acc,
-        // $FlowFixMe non-literal require
         require(path.join(root, 'node_modules', pathToPlatform))
       ),
     {}

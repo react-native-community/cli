@@ -170,7 +170,11 @@ function tryInstallAppOnDevice(args, device) {
   try {
     // "app" is usually the default value for Android apps with only 1 app
     const appFolder = args.appFolder || 'app';
-    const pathToApk = `${appFolder}/build/outputs/apk/${appFolder}-debug.apk`;
+    const variant = (args.variant || 'debug').toLowerCase();
+    const buildDirectory = `${appFolder}/build/outputs/apk/${variant}`;
+    const apkFile = getInstallApkName(appFolder, device, buildDirectory);
+    const pathToApk = `${buildDirectory}/${apkFile}`;
+
     const adbPath = getAdbPath();
     const adbArgs = ['-s', device, 'install', pathToApk];
     console.log(
@@ -189,6 +193,34 @@ function tryInstallAppOnDevice(args, device) {
       )
     );
   }
+}
+
+function getInstallApkName(appFolder, device, buildDirectory) {
+  const gradleFile = fs.readFileSync(`${appFolder}/build.gradle`, 'utf8');
+
+  const enableSeparateBuild = gradleFile.match(
+    /def enableSeparateBuildPerCPUArchitecture.*=.*(true|false)/i
+  );
+
+  if (!enableSeparateBuild || enableSeparateBuild[1] === 'false') {
+    return `${appFolder}-debug.apk`;
+  }
+
+  if (device.indexOf('emulator-') !== -1) {
+    return `${appFolder}-x86-debug.apk`;
+  }
+
+  const deviceApkName = `${appFolder}-armeabi-v7a-debug.apk`;
+  if (fs.existsSync(`${buildDirectory}/${deviceApkName}`)) {
+    return deviceApkName;
+  }
+
+  const universalApk = gradleFile.match(/universalApk.*(true|false)/i);
+  if (universalApk && universalApk[1] === 'true') {
+    return `${appFolder}-universal-debug.apk`;
+  }
+
+  throw new Error('Not found the correct install APK file!');
 }
 
 function installAndLaunchOnDevice(

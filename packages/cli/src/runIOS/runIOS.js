@@ -21,7 +21,7 @@ const { ProcessError } = require('../util/logger');
 
 type FlagsT = {
   simulator: string,
-  configuration: ?string,
+  configuration: string,
   scheme: ?string,
   projectPath: string,
   device: ?string,
@@ -80,7 +80,7 @@ function runIOS(_: Array<string>, ctx: ContextT, args: FlagsT) {
       );
     }
     if (devices && devices.length > 0) {
-      // $FlowIssue: `args.device` is never null here
+      // $FlowIssue: args.device is defined in this context
       console.log(`Could not find device with the name: "${args.device}".`);
       console.log('Choose one of the following:');
       printFoundDevices(devices);
@@ -88,13 +88,19 @@ function runIOS(_: Array<string>, ctx: ContextT, args: FlagsT) {
       console.log('No iOS devices connected.');
     }
   } else if (args.udid) {
+    // $FlowIssue: args.udid is defined in this context
     return runOnDeviceByUdid(args, scheme, xcodeProject, devices);
   }
 
   return runOnSimulator(xcodeProject, args, scheme);
 }
 
-function runOnDeviceByUdid(args, scheme, xcodeProject, devices) {
+function runOnDeviceByUdid(
+  args: FlagsT & { udid: string },
+  scheme,
+  xcodeProject,
+  devices
+) {
   const selectedDevice = matchingDeviceByUdid(devices, args.udid);
 
   if (selectedDevice) {
@@ -111,6 +117,7 @@ function runOnDeviceByUdid(args, scheme, xcodeProject, devices) {
   }
 
   if (devices && devices.length > 0) {
+    // $FlowIssue: args.udid is defined in this context
     console.log(`Could not find device with the udid: "${args.udid}".`);
     console.log('Choose one of the following:');
     printFoundDevices(devices);
@@ -257,7 +264,7 @@ function buildProject(
   xcodeProject,
   udid,
   scheme,
-  configuration = 'Debug',
+  configuration,
   launchPackager = false,
   verbose,
   port
@@ -339,7 +346,7 @@ function bootSimulator(selectedSimulator) {
   }
 }
 
-function getBuildPath(configuration = 'Debug', appName, isDevice, scheme) {
+function getBuildPath(configuration, appName, isDevice, scheme) {
   let device;
 
   if (isDevice) {
@@ -456,6 +463,7 @@ module.exports = {
     {
       command: '--configuration [string]',
       description: 'Explicitly set the scheme configuration to use',
+      default: 'Debug',
     },
     {
       command: '--scheme [string]',

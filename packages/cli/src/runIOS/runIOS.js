@@ -319,8 +319,10 @@ function buildProject(
             [
               `Failed to build iOS project.`,
               `We ran "xcodebuild" command but it exited with error code ${code}.`,
-              `Consider building your app with XCode app to further debug this issue.`,
-            ].join(''),
+              `To debug build logs further, consider building your app with Xcode.app, by opening ${
+                xcodeProject.name
+              }`,
+            ].join(' '),
             errorOutput
           )
         );

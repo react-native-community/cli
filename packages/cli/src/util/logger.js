@@ -1,4 +1,6 @@
-// @flow
+/**
+ * @flow
+ */
 const chalk = require('chalk');
 
 const SEPARATOR = ', ';
@@ -23,32 +25,13 @@ const error = (...messages: Array<string>) => {
   );
 };
 
-const logError = (err: Error) => {
-  console.error(`${chalk.black.bgRed(' ERROR ')} ${chalk.red(err.message)} \n`);
-  if (err instanceof ProcessError) {
-    console.error(`${chalk.grey(err.processError)}`);
-  }
-};
-
 const debug = (...messages: Array<string>) => {
   console.log(`${chalk.black.bgWhite(' DEBUG ')} ${joinMessages(messages)}`);
 };
-
-class ProcessError extends Error {
-  constructor(msg: string, processError: string) {
-    super(msg);
-    this.processError = processError;
-    Error.captureStackTrace(this, ProcessError);
-  }
-
-  processError: string;
-}
 
 module.exports = {
   info,
   warn,
   error,
   debug,
-  logError,
-  ProcessError,
 };

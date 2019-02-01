@@ -17,7 +17,7 @@ const path = require('path');
 const findXcodeProject = require('./findXcodeProject');
 const parseIOSDevicesList = require('./parseIOSDevicesList');
 const findMatchingSimulator = require('./findMatchingSimulator');
-const { ProcessError } = require('../util/logger');
+const { ProcessError } = require('../util/errors');
 
 type FlagsT = {
   simulator: string,

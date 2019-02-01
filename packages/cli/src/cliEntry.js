@@ -27,7 +27,7 @@ commander.version(pkg.version);
 const defaultOptParser = val => val;
 
 const handleError = err => {
-  logger.logError(err);
+  logger.error(err.message);
   process.exit(1);
 };
 
@@ -74,12 +74,12 @@ function printUnknownCommand(cmdName) {
   logger.error(
     [
       cmdName
-        ? `  Unrecognized command "${cmdName}"`
-        : "  You didn't pass any command",
-      `  Run ${chalk.white(
-        'react-native --help'
-      )} to see list of all available commands`,
-    ].join('')
+        ? `Unrecognized command "${cmdName}".`
+        : "You didn't pass any command.",
+      `Run ${chalk.white(
+        '"react-native --help"'
+      )} to see list of all available commands.`,
+    ].join(' ')
   );
 }
 

@@ -220,19 +220,15 @@ function startServerInNewWindow(port, terminal = process.env.REACT_TERMINAL) {
     ? `set RCT_METRO_PORT=${port}`
     : `export RCT_METRO_PORT=${port}`;
 
-  // set up the launchpackager.(command|bat) file
-  const scriptsDir = path.resolve(__dirname, '..', '..', 'scripts');
-  const launchPackagerScript = path.resolve(scriptsDir, scriptFile);
-  const procConfig: Object = { cwd: scriptsDir };
-
   // set up the .packager.(env|bat) file to ensure the packager starts on the right port
-  const packagerEnvFile = path.join(
-    __dirname,
-    '..',
-    '..',
-    'scripts',
-    packagerEnvFilename
+  const launchPackagerScript = require.resolve(
+    `react-native/scripts/${scriptFile}`
   );
+
+  // set up the launchpackager.(command|bat) file
+  const scriptsDir = path.dirname(launchPackagerScript);
+  const packagerEnvFile = path.join(scriptsDir, packagerEnvFilename);
+  const procConfig: Object = { cwd: scriptsDir };
 
   // ensure we overwrite file by passing the 'w' flag
   fs.writeFileSync(packagerEnvFile, portExportContent, {

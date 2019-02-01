@@ -215,28 +215,9 @@ function startServerInNewWindow(port, terminal = process.env.REACT_TERMINAL) {
   /**
    * Set up the `.packager.(env|bat)` file to ensure the packager starts on the right port.
    */
-  let launchPackagerScript;
-  try {
-    launchPackagerScript = require.resolve(
-      `react-native/scripts/${scriptFile}`
-    );
-  } catch (e) {
-    /**
-     * If the `react-native` package is missing, check if we are running from source.
-     *
-     * From `node_modules/@react-native-community/cli/build/run-android to `scripts/`
-     */
-    const possibleScriptLocation = path.resolve(
-      __dirname,
-      `../../../../../scripts/${scriptFile}`
-    );
-    if (!fs.existsSync(possibleScriptLocation)) {
-      throw new Error(
-        `Couldn't locate React Native files. To resolve this issue, try installing Node dependencies once again.`
-      );
-    }
-    launchPackagerScript = possibleScriptLocation;
-  }
+  const launchPackagerScript = require.resolve(
+    `react-native/scripts/${scriptFile}`
+  );
 
   /**
    * Set up the `launchpackager.(command|bat)` file.

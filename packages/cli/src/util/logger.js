@@ -1,4 +1,6 @@
-// @flow
+/**
+ * @flow
+ */
 const chalk = require('chalk');
 
 const SEPARATOR = ', ';

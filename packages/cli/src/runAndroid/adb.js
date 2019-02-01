@@ -5,10 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  *
  * @format
- * @flow strict
+ * @flow
  */
 
 const { execSync, execFileSync } = require('child_process');
+const logger = require('../util/logger');
 
 /**
  * Parses the output of the 'adb devices' command
@@ -39,6 +40,7 @@ function getDevices(adbPath: string): Array<string> {
     const devicesResult = execSync(`${adbPath} devices`);
     return parseDevicesResult(devicesResult.toString());
   } catch (e) {
+    logger.error(e.message);
     return [];
   }
 }
@@ -65,6 +67,7 @@ function getAvailableCPUs(adbPath: string, device: string): Array<string> {
 
     return (cpus || '').trim().split(',');
   } catch (e) {
+    logger.error(e.message);
     return [];
   }
 }

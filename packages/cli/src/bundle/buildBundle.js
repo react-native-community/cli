@@ -23,7 +23,7 @@ async function buildBundle(
   ctx: ContextT,
   output: typeof outputBundle = outputBundle
 ) {
-  const config = await loadMetroConfig(ctx.root, {
+  const config = await loadMetroConfig(ctx, {
     resetCache: args.resetCache,
     config: args.config,
   });

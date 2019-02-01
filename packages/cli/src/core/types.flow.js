@@ -6,6 +6,7 @@
 
 export type ContextT = {
   root: string,
+  reactNativePath: string,
 };
 
 export type LocalCommandT = {

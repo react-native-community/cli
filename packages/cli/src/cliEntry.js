@@ -154,6 +154,7 @@ async function setupAndRun() {
     : (() => {
         try {
           return path.dirname(
+            // $FlowIssue: Wrong `require.resolve` type definition
             require.resolve('react-native/package.json', {
               paths: [root],
             })

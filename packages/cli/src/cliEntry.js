@@ -117,11 +117,20 @@ const addCommand = (command: CommandT, ctx: ContextT) => {
     )
   );
 
-  // This is needed to avoid `unknown option` error by Commander.js
-  cmd.option('--projectRoot [string]', 'Path to the root of the project');
+  cmd
+    .option('--projectRoot [string]', 'Path to the root of the project')
+    .option('--reactNativePath [string]', 'Path to React Native');
 };
 
 async function run() {
+  try {
+    await setupAndRun();
+  } catch (e) {
+    handleError(e);
+  }
+}
+
+async function setupAndRun() {
   const setupEnvScript = /^win/.test(process.platform)
     ? path.join('..', 'setup_env.bat')
     : path.join('..', 'setup_env.sh');
@@ -140,8 +149,25 @@ async function run() {
     ? path.resolve(options.projectRoot)
     : process.cwd();
 
+  const reactNativePath = options.reactNativePath
+    ? path.resolve(options.reactNativePath)
+    : (() => {
+        try {
+          return path.dirname(
+            require.resolve('react-native/package.json', {
+              paths: [root],
+            })
+          );
+        } catch (_ignored) {
+          throw new Error(
+            'Unable to find React Native files. Have you installed project dependencies?'
+          );
+        }
+      })();
+
   const ctx = {
     ...getLegacyConfig(root),
+    reactNativePath,
     root,
   };
 

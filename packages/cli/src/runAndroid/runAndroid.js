@@ -16,7 +16,6 @@ const { spawnSync, spawn, execFileSync } = require('child_process');
 const fs = require('fs');
 const isString = require('lodash/isString');
 const path = require('path');
-const findReactNativeScripts = require('../util/findReactNativeScripts');
 const isPackagerRunning = require('../util/isPackagerRunning');
 const adb = require('./adb');
 const runOnAllDevices = require('./runOnAllDevices');
@@ -34,20 +33,11 @@ function checkAndroid(root) {
  */
 function runAndroid(argv: Array<string>, config: ContextT, args: Object) {
   if (!checkAndroid(args.root)) {
-    const reactNativeScriptsPath = findReactNativeScripts();
-    if (reactNativeScriptsPath) {
-      spawnSync(
-        reactNativeScriptsPath,
-        ['android'].concat(process.argv.slice(1)),
-        { stdio: 'inherit' }
-      );
-    } else {
-      console.log(
-        chalk.red(
-          'Android project not found. Are you sure this is a React Native project?'
-        )
-      );
-    }
+    console.log(
+      chalk.red(
+        'Android project not found. Are you sure this is a React Native project?'
+      )
+    );
     return;
   }
 
@@ -210,7 +200,9 @@ function installAndLaunchOnDevice(
 }
 
 function startServerInNewWindow(port, terminal = process.env.REACT_TERMINAL) {
-  // set up OS-specific filenames and commands
+  /**
+   * Set up OS-specific filenames and commands
+   */
   const isWindows = /^win/.test(process.platform);
   const scriptFile = isWindows
     ? 'launchPackager.bat'
@@ -220,17 +212,24 @@ function startServerInNewWindow(port, terminal = process.env.REACT_TERMINAL) {
     ? `set RCT_METRO_PORT=${port}`
     : `export RCT_METRO_PORT=${port}`;
 
-  // set up the .packager.(env|bat) file to ensure the packager starts on the right port
+  /**
+   * Set up the `.packager.(env|bat)` file to ensure the packager starts on the right port.
+   */
   const launchPackagerScript = require.resolve(
     `react-native/scripts/${scriptFile}`
   );
 
-  // set up the launchpackager.(command|bat) file
+  /**
+   * Set up the `launchpackager.(command|bat)` file.
+   * It lives next to `.packager.(bat|env)`
+   */
   const scriptsDir = path.dirname(launchPackagerScript);
   const packagerEnvFile = path.join(scriptsDir, packagerEnvFilename);
   const procConfig: Object = { cwd: scriptsDir };
 
-  // ensure we overwrite file by passing the 'w' flag
+  /**
+   * Ensure we overwrite file by passing the `w` flag
+   */
   fs.writeFileSync(packagerEnvFile, portExportContent, {
     encoding: 'utf8',
     flag: 'w',

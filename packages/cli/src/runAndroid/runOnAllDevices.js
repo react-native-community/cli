@@ -78,7 +78,7 @@ function runOnAllDevices(
     // `console.log(e.stderr)`
     return Promise.reject(e);
   }
-  const devices = adb.getDevices();
+  const devices = adb.getDevices(adbPath);
   if (devices && devices.length > 0) {
     devices.forEach(device => {
       tryRunAdbReverse(args.port, device);

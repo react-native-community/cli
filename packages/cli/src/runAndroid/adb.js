@@ -8,7 +8,7 @@
  * @flow strict
  */
 
-const { execSync } = require('child_process');
+const { execSync, execFileSync } = require('child_process');
 
 /**
  * Parses the output of the 'adb devices' command
@@ -34,10 +34,36 @@ function parseDevicesResult(result: string): Array<string> {
 /**
  * Executes the commands needed to get a list of devices from ADB
  */
-function getDevices(): Array<string> {
+function getDevices(adbPath: string): Array<string> {
   try {
-    const devicesResult = execSync('adb devices');
+    const devicesResult = execSync(`${adbPath} devices`);
     return parseDevicesResult(devicesResult.toString());
+  } catch (e) {
+    return [];
+  }
+}
+
+/**
+ * Gets available CPUs of devices from ADB
+ */
+function getAvailableCPUs(adbPath: string, device: string): Array<string> {
+  try {
+    const baseArgs = ['-s', device, 'shell', 'getprop'];
+
+    let cpus = execFileSync(
+      adbPath,
+      baseArgs.concat(['ro.product.cpu.abilist'])
+    ).toString();
+
+    // pre-Lollipop
+    if (!cpus || cpus.trim().length === 0) {
+      cpus = execFileSync(
+        adbPath,
+        baseArgs.concat(['ro.product.cpu.abi'])
+      ).toString();
+    }
+
+    return (cpus || '').trim().split(',');
   } catch (e) {
     return [];
   }
@@ -46,4 +72,5 @@ function getDevices(): Array<string> {
 module.exports = {
   parseDevicesResult,
   getDevices,
+  getAvailableCPUs,
 };

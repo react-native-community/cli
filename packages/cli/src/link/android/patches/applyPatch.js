@@ -7,7 +7,7 @@
  * @format
  */
 
-const fs = require('fs');
+import fs from 'fs';
 
 module.exports = function applyPatch(file, patch) {
   fs.writeFileSync(

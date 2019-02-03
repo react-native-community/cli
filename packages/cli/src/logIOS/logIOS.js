@@ -7,10 +7,10 @@
  * @format
  */
 
-const { execFileSync, spawnSync } = require('child_process');
-const os = require('os');
-const path = require('path');
-const logger = require('../util/logger');
+import { execFileSync, spawnSync } from 'child_process';
+import os from 'os';
+import path from 'path';
+import logger from '../util/logger';
 
 function findAvailableDevice(devices) {
   for (const key of Object.keys(devices)) {

@@ -7,8 +7,8 @@
  * @format
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 module.exports = function indexPageMiddleware(req, res, next) {
   if (req.url === '/') {

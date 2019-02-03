@@ -1,18 +1,17 @@
 // @flow
 
+import { uniqBy, flatten } from 'lodash';
+import path from 'path';
 import type { ContextT, PlatformsT, ProjectConfigT } from '../core/types.flow';
-
-const { uniqBy, flatten } = require('lodash');
-const path = require('path');
-const log = require('../util/logger');
-const getAssets = require('../core/getAssets');
-const getProjectDependencies = require('./getProjectDependencies');
-const getDependencyConfig = require('./getDependencyConfig');
-const promiseWaterfall = require('./promiseWaterfall');
-const commandStub = require('./commandStub');
-const promisify = require('./promisify');
-const linkAssets = require('./linkAssets');
-const linkDependency = require('./linkDependency');
+import log from '../util/logger';
+import getAssets from '../core/getAssets';
+import getProjectDependencies from './getProjectDependencies';
+import getDependencyConfig from './getDependencyConfig';
+import promiseWaterfall from './promiseWaterfall';
+import commandStub from './commandStub';
+import promisify from './promisify';
+import linkAssets from './linkAssets';
+import linkDependency from './linkDependency';
 
 const dedupeAssets = assets => uniqBy(assets, asset => path.basename(asset));
 

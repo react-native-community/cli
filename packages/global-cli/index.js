@@ -36,13 +36,13 @@
 // /!\ DO NOT MODIFY THIS FILE /!\
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-const fs = require('fs');
-const path = require('path');
-const exec = require('child_process').exec;
-const execSync = require('child_process').execSync;
-const chalk = require('chalk');
-const prompt = require('prompt');
-const semver = require('semver');
+import fs from 'fs';
+import path from 'path';
+import exec from 'child_process'.exec;
+import execSync from 'child_process'.execSync;
+import chalk from 'chalk';
+import prompt from 'prompt';
+import semver from 'semver';
 /**
  * Used arguments:
  *   -v --version - to print current version of react-native-cli and react-native dependency
@@ -57,7 +57,7 @@ const semver = require('semver');
  *     - "/Users/home/react-native/react-native-0.22.0.tgz" - for package prepared with `npm pack`, useful for e2e tests
  */
 
-const options = require('minimist')(process.argv.slice(2));
+import options from 'minimist')(process.argv.slice(2);
 
 const getCliPath = function() {
   return path.resolve(process.cwd(), 'node_modules', 'react-native', 'cli.js');

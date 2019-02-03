@@ -7,9 +7,9 @@
  * @format
  */
 
-const fs = require('fs-extra');
-const path = require('path');
-const groupFilesByType = require('../groupFilesByType');
+import fs from 'fs-extra';
+import path from 'path';
+import groupFilesByType from '../groupFilesByType';
 
 /**
  * Copies each file from an array of assets provided to targetPath directory

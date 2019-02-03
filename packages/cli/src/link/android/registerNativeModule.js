@@ -7,12 +7,12 @@
  * @format
  */
 
-const applyPatch = require('./patches/applyPatch');
-const makeStringsPatch = require('./patches/makeStringsPatch');
-const makeSettingsPatch = require('./patches/makeSettingsPatch');
-const makeBuildPatch = require('./patches/makeBuildPatch');
-const makeImportPatch = require('./patches/makeImportPatch');
-const makePackagePatch = require('./patches/makePackagePatch');
+import applyPatch from './patches/applyPatch';
+import makeStringsPatch from './patches/makeStringsPatch';
+import makeSettingsPatch from './patches/makeSettingsPatch';
+import makeBuildPatch from './patches/makeBuildPatch';
+import makeImportPatch from './patches/makeImportPatch';
+import makePackagePatch from './patches/makePackagePatch';
 
 module.exports = function registerNativeAndroidModule(
   name,

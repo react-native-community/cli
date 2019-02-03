@@ -7,8 +7,8 @@
  * @format
  */
 
-const fs = require('fs');
-const logger = require('../../util/logger');
+import fs from 'fs';
+import logger from '../../util/logger';
 
 module.exports = function systraceProfileMiddleware(req, res, next) {
   if (req.url !== '/systrace') {

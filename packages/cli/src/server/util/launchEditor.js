@@ -7,12 +7,12 @@
  * @format
  */
 
-const chalk = require('chalk');
-const fs = require('fs');
-const path = require('path');
-const { execSync, spawn } = require('child_process');
-const shellQuote = require('shell-quote');
-const logger = require('../../util/logger');
+import chalk from 'chalk';
+import fs from 'fs';
+import path from 'path';
+import { execSync, spawn } from 'child_process';
+import shellQuote from 'shell-quote';
+import logger from '../../util/logger';
 
 function isTerminalEditor(editor) {
   switch (editor) {

@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-const { spawnSync } = require('child_process');
-const logger = require('../util/logger');
+import { spawnSync } from 'child_process';
+import logger from '../util/logger';
 
 /**
  * Starts adb logcat

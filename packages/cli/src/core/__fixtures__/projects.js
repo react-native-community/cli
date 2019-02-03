@@ -7,8 +7,8 @@
  * @format
  */
 
-const android = require('./android');
-const ios = require('./ios');
+import android from './android';
+import ios from './ios';
 
 const flat = {
   android: android.valid,

@@ -7,19 +7,18 @@
  * @flow
  */
 
+import Metro from 'metro';
+
+import { Terminal } from 'metro-core';
+
+import morgan from 'morgan';
+import path from 'path';
 import type { ContextT } from '../core/types.flow';
+import messageSocket from './util/messageSocket';
+import webSocketProxy from './util/webSocketProxy';
+import MiddlewareManager from './middleware/MiddlewareManager';
 
-const Metro = require('metro');
-
-const { Terminal } = require('metro-core');
-
-const morgan = require('morgan');
-const path = require('path');
-const messageSocket = require('./util/messageSocket');
-const webSocketProxy = require('./util/webSocketProxy');
-const MiddlewareManager = require('./middleware/MiddlewareManager');
-
-const loadMetroConfig = require('../util/loadMetroConfig');
+import loadMetroConfig from '../util/loadMetroConfig';
 
 export type Args = {|
   assetExts?: string[],

@@ -8,17 +8,16 @@
  * @format
  */
 
-import type { ContextT } from '../core/types.flow';
-
 // eslint-disable-next-line
-const child_process = require('child_process');
-const fs = require('fs');
-const path = require('path');
-const logger = require('../util/logger');
-const findXcodeProject = require('./findXcodeProject');
-const parseIOSDevicesList = require('./parseIOSDevicesList');
-const findMatchingSimulator = require('./findMatchingSimulator');
-const { ProcessError } = require('../util/errors');
+import child_process from 'child_process';
+import fs from 'fs';
+import path from 'path';
+import type { ContextT } from '../core/types.flow';
+import findXcodeProject from './findXcodeProject';
+import parseIOSDevicesList from './parseIOSDevicesList';
+import findMatchingSimulator from './findMatchingSimulator';
+import { ProcessError } from '../util/errors';
+import logger from '../util/logger';
 
 type FlagsT = {
   simulator: string,

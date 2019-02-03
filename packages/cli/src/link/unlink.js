@@ -7,18 +7,18 @@
  * @flow
  */
 
+import { flatten, isEmpty, difference } from 'lodash';
 import type { ContextT } from '../core/types.flow';
 
-const { flatten, isEmpty, difference } = require('lodash');
-const log = require('../util/logger');
-const getProjectConfig = require('./getProjectConfig');
-const getDependencyConfig = require('./getDependencyConfig');
-const getProjectDependencies = require('./getProjectDependencies');
-const promiseWaterfall = require('./promiseWaterfall');
-const commandStub = require('./commandStub');
-const promisify = require('./promisify');
+import log from '../util/logger';
+import getProjectConfig from './getProjectConfig';
+import getDependencyConfig from './getDependencyConfig';
+import getProjectDependencies from './getProjectDependencies';
+import promiseWaterfall from './promiseWaterfall';
+import commandStub from './commandStub';
+import promisify from './promisify';
 
-const getPlatforms = require('../core/getPlatforms');
+import getPlatforms from '../core/getPlatforms';
 
 const unlinkDependency = (
   platforms,

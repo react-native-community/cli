@@ -7,8 +7,8 @@
  * @format
  */
 
-const path = require('path');
-const getBuildProperty = require('./getBuildProperty');
+import path from 'path';
+import getBuildProperty from './getBuildProperty';
 
 module.exports = function getPlistPath(project, sourceDir) {
   const plistFile = getBuildProperty(project, 'INFOPLIST_FILE');

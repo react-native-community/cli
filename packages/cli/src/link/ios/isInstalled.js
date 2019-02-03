@@ -7,9 +7,9 @@
  * @format
  */
 
-const xcode = require('xcode');
-const getGroup = require('./getGroup');
-const hasLibraryImported = require('./hasLibraryImported');
+import xcode from 'xcode';
+import getGroup from './getGroup';
+import hasLibraryImported from './hasLibraryImported';
 
 /**
  * Returns true if `xcodeproj` specified by dependencyConfig is present

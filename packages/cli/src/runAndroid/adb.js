@@ -8,7 +8,7 @@
  * @flow strict
  */
 
-const { execSync } = require('child_process');
+import { execSync } from 'child_process';
 
 /**
  * Parses the output of the 'adb devices' command

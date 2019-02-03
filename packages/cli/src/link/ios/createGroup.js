@@ -7,7 +7,7 @@
  * @format
  */
 
-const getGroup = require('./getGroup');
+import getGroup from './getGroup';
 
 const hasGroup = (pbxGroup, name) =>
   pbxGroup.children.find(group => group.comment === name);

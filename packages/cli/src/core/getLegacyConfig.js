@@ -1,14 +1,14 @@
 /**
  * @flow
  */
-const path = require('path');
-const util = require('util');
+import path from 'path';
+import util from 'util';
 
-const getPlatforms = require('./getPlatforms');
-const getPackageConfiguration = require('./getPackageConfiguration');
-const getHooks = require('./getHooks');
-const getAssets = require('./getAssets');
-const getParams = require('./getParams');
+import getPlatforms from './getPlatforms';
+import getPackageConfiguration from './getPackageConfiguration';
+import getHooks from './getHooks';
+import getAssets from './getAssets';
+import getParams from './getParams';
 
 const generateDeprecationMessage = api =>
   `${api} is deprecated and will be removed soon. Please check release notes on how to upgrade`;

@@ -8,13 +8,12 @@
  * @flow
  */
 
+import fs from 'fs';
+import path from 'path';
+import semver from 'semver';
 import type { ContextT } from '../core/types.flow';
-
-const fs = require('fs');
-const path = require('path');
-const semver = require('semver');
-const copyProjectTemplateAndReplace = require('../generator/copyProjectTemplateAndReplace');
-const logger = require('../util/logger');
+import logger from '../util/logger';
+import copyProjectTemplateAndReplace from '../generator/copyProjectTemplateAndReplace';
 
 /**
  * Migrate application to a new version of React Native.

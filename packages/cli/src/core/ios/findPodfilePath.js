@@ -7,8 +7,8 @@
  * @format
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 module.exports = function findPodfilePath(projectFolder) {
   const podFilePath = path.join(projectFolder, '..', 'Podfile');

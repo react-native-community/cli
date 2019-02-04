@@ -128,7 +128,7 @@ function runOnSpecificDevice(
         adbPath
       );
     } else {
-      logger.info(
+      logger.error(
         `Could not find device with the id: "${
           args.deviceId
         }". Choose one of the following:`,
@@ -136,7 +136,7 @@ function runOnSpecificDevice(
       );
     }
   } else {
-    logger.info('No Android devices connected.');
+    logger.error('No Android devices connected.');
   }
 }
 

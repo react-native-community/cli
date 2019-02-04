@@ -57,7 +57,7 @@ const semver = require('semver');
  *     - "/Users/home/react-native/react-native-0.22.0.tgz" - for package prepared with `npm pack`, useful for e2e tests
  */
 
-import options from 'minimist')(process.argv.slice(2);
+const options = require('minimist')(process.argv.slice(2);
 
 const getCliPath = function() {
   return path.resolve(process.cwd(), 'node_modules', 'react-native', 'cli.js');

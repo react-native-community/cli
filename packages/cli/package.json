@@ -51,11 +51,8 @@
     "shell-quote": "1.6.1",
     "slash": "^2.0.0",
     "ws": "^1.1.0",
-    "xcode": "^1.0.0",
+    "xcode": "^2.0.0",
     "xmldoc": "^0.4.0"
-  },
-  "devDependencies": {
-    "react-native": "^0.57.0"
   },
   "peerDependencies": {
     "react-native": "^0.57.0"

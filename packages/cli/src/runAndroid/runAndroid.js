@@ -31,7 +31,7 @@ function checkAndroid(root) {
 /**
  * Starts the app on a connected Android emulator or device.
  */
-function runAndroid(argv: Array<string>, config: ContextT, args: Object) {
+function runAndroid(argv: Array<string>, ctx: ContextT, args: Object) {
   if (!checkAndroid(args.root)) {
     logger.error(
       'Android project not found. Are you sure this is a React Native project?'
@@ -51,7 +51,7 @@ function runAndroid(argv: Array<string>, config: ContextT, args: Object) {
     } else {
       // result == 'not_running'
       logger.info('Starting JS server...');
-      startServerInNewWindow(args.port, args.terminal);
+      startServerInNewWindow(args.port, args.terminal, ctx.reactNativePath);
     }
     return buildAndRun(args);
   });
@@ -193,7 +193,11 @@ function installAndLaunchOnDevice(
   );
 }
 
-function startServerInNewWindow(port, terminal = process.env.REACT_TERMINAL) {
+function startServerInNewWindow(
+  port,
+  terminal = process.env.REACT_TERMINAL,
+  reactNativePath
+) {
   /**
    * Set up OS-specific filenames and commands
    */
@@ -209,8 +213,9 @@ function startServerInNewWindow(port, terminal = process.env.REACT_TERMINAL) {
   /**
    * Set up the `.packager.(env|bat)` file to ensure the packager starts on the right port.
    */
-  const launchPackagerScript = require.resolve(
-    `react-native/scripts/${scriptFile}`
+  const launchPackagerScript = path.join(
+    reactNativePath,
+    `scripts/${scriptFile}`
   );
 
   /**

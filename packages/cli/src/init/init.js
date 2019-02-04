@@ -50,6 +50,7 @@ function init(projectDir, argsOrName) {
  * @param options Command line arguments parsed by minimist.
  */
 function generateProject(destinationRoot, newProjectName, options) {
+  // eslint-disable-next-line import/no-unresolved
   const reactNativePackageJson = require('react-native/package.json');
   const { peerDependencies } = reactNativePackageJson;
   if (!peerDependencies) {

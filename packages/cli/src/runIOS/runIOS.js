@@ -82,11 +82,10 @@ function runIOS(_: Array<string>, ctx: ContextT, args: FlagsT) {
     }
     if (devices && devices.length > 0) {
       // $FlowIssue: args.device is defined in this context
-      logger.info(`Could not find device with the name: "${args.device}".`);
-      logger.info('Choose one of the following:');
-      printFoundDevices(devices);
+      logger.error(`Could not find device with the name: "${args.device}".
+Choose one of the following:${printFoundDevices(devices)}`);
     } else {
-      logger.info('No iOS devices connected.');
+      logger.error('No iOS devices connected.');
     }
   } else if (args.udid) {
     // $FlowIssue: args.udid is defined in this context
@@ -119,11 +118,10 @@ function runOnDeviceByUdid(
 
   if (devices && devices.length > 0) {
     // $FlowIssue: args.udid is defined in this context
-    logger.info(`Could not find device with the udid: "${args.udid}".`);
-    logger.info('Choose one of the following:');
-    printFoundDevices(devices);
+    logger.error(`Could not find device with the udid: "${args.udid}".
+Choose one of the following:\n${printFoundDevices(devices)}`);
   } else {
-    logger.info('No iOS devices connected.');
+    logger.error('No iOS devices connected.');
   }
 }
 
@@ -252,10 +250,9 @@ async function runOnDevice(
   );
 
   if (iosDeployOutput.error) {
-    logger.info('');
-    logger.info('** INSTALLATION FAILED **');
-    logger.info('Make sure you have ios-deploy installed globally.');
-    logger.info('(e.g "npm install -g ios-deploy")');
+    logger.error(
+      `** INSTALLATION FAILED **\nMake sure you have ios-deploy installed globally.\n(e.g "npm install -g ios-deploy")`
+    );
   } else {
     logger.info('** INSTALLATION SUCCEEDED **');
   }
@@ -415,9 +412,11 @@ function formattedDeviceName(simulator) {
 }
 
 function printFoundDevices(devices) {
+  let output = '';
   for (let i = devices.length - 1; i >= 0; i--) {
-    logger.info(`${devices[i].name} Udid: ${devices[i].udid}`);
+    output += `${devices[i].name} Udid: ${devices[i].udid}\n`;
   }
+  return output;
 }
 
 function getProcessOptions(launchPackager, port) {

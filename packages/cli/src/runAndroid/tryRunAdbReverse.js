@@ -7,7 +7,6 @@
  * @flow
  */
 
-const chalk = require('chalk');
 const { execFileSync } = require('child_process');
 const logger = require('../util/logger');
 const getAdbPath = require('./getAdbPath');
@@ -23,7 +22,7 @@ function tryRunAdbReverse(packagerPort: number | string, device: string) {
       adbArgs.unshift('-s', device);
     }
 
-    logger.info(chalk.bold(`Running ${adbPath} ${adbArgs.join(' ')}`));
+    logger.info(`Running ${adbPath} ${adbArgs.join(' ')}`);
 
     execFileSync(adbPath, adbArgs, {
       stdio: [process.stdin, process.stdout, process.stderr],

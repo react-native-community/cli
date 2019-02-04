@@ -161,7 +161,7 @@ async function setupAndRun() {
           );
         } catch (_ignored) {
           throw new Error(
-            'Unable to find React Native files. Have you installed project dependencies?'
+            'Unable to find React Native files. Make sure "react-native" module is installed in your project dependencies.'
           );
         }
       })();

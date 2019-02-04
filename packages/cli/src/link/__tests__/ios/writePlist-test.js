@@ -16,8 +16,8 @@ const { readFileSync } = jest.requireActual('fs');
 const fs = require('fs');
 
 const xcode = require('xcode');
-const getPlistPath = require('../../ios/getPlistPath');
-const writePlist = require('../../ios/writePlist');
+import getPlistPath from '../../ios/getPlistPath';
+import writePlist from '../../ios/writePlist';
 
 const realPath = jest.requireActual('path');
 const projectPath = realPath.join(

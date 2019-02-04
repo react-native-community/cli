@@ -7,7 +7,7 @@
  * @format
  */
 
-const logger = require('../../util/logger');
+import logger from '../../util/logger';
 
 function attachToServer(server, path) {
   const WebSocketServer = require('ws').Server;

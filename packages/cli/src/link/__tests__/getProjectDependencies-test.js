@@ -10,7 +10,7 @@
  */
 
 const path = require('path');
-const getProjectDependencies = require('../getProjectDependencies');
+import getProjectDependencies from '../getProjectDependencies';
 
 const CWD = path.resolve(__dirname, '../../');
 

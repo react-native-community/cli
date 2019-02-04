@@ -12,9 +12,9 @@ jest.mock('path');
 jest.mock('fs');
 
 const fs = require('fs');
-const findPodfilePath = require('../../ios/findPodfilePath');
-const projects = require('../../__fixtures__/projects');
-const ios = require('../../__fixtures__/ios');
+import findPodfilePath from '../../ios/findPodfilePath';
+import projects from '../../__fixtures__/projects';
+import ios from '../../__fixtures__/ios';
 
 describe('ios::findPodfilePath', () => {
   it('returns null if there is no Podfile', () => {

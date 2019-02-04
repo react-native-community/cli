@@ -12,8 +12,8 @@ jest.mock('path');
 jest.mock('fs');
 
 const fs = require('fs');
-const findManifest = require('../../android/findManifest');
-const mocks = require('../../__fixtures__/android');
+import findManifest from '../../android/findManifest';
+import mocks from '../../__fixtures__/android';
 
 describe('android::findManifest', () => {
   beforeAll(() => {

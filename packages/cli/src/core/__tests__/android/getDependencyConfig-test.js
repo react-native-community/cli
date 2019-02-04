@@ -14,7 +14,7 @@ jest.mock('fs');
 const fs = require('fs');
 
 const getDependencyConfig = require('../../android').dependencyConfig;
-const mocks = require('../../__fixtures__/android');
+import mocks from '../../__fixtures__/android';
 
 const userConfig = {};
 

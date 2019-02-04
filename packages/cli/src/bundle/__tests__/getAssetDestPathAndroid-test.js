@@ -11,7 +11,7 @@
 jest.dontMock('../getAssetDestPathAndroid').dontMock('../assetPathUtils');
 
 const path = require('path');
-const getAssetDestPathAndroid = require('../getAssetDestPathAndroid');
+import getAssetDestPathAndroid from '../getAssetDestPathAndroid';
 
 describe('getAssetDestPathAndroid', () => {
   it('should use the right destination folder', () => {

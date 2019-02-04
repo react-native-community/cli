@@ -13,7 +13,7 @@ const path = require('path');
 const PbxFile = require('xcode/lib/pbxFile');
 const { last } = require('lodash');
 
-const addProjectToLibraries = require('../../ios/addProjectToLibraries');
+import addProjectToLibraries from '../../ios/addProjectToLibraries';
 
 const project = xcode.project(
   path.join(__dirname, '../../__fixtures__/project.pbxproj')

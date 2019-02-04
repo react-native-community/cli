@@ -14,7 +14,7 @@ jest.mock('fs');
 const fs = require('fs');
 
 const getProjectConfig = require('../../android').projectConfig;
-const mocks = require('../../__fixtures__/android');
+import mocks from '../../__fixtures__/android';
 
 describe('android::getProjectConfig', () => {
   beforeAll(() => {

@@ -10,7 +10,7 @@
 
 const xcode = require('xcode');
 const path = require('path');
-const getBuildProperty = require('../../ios/getBuildProperty');
+import getBuildProperty from '../../ios/getBuildProperty';
 
 const project = xcode.project(
   path.join(__dirname, '../../__fixtures__/project.pbxproj')

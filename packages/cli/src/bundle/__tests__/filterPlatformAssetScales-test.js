@@ -10,7 +10,7 @@
 
 jest.dontMock('../filterPlatformAssetScales').dontMock('../assetPathUtils');
 
-const filterPlatformAssetScales = require('../filterPlatformAssetScales');
+import filterPlatformAssetScales from '../filterPlatformAssetScales';
 
 describe('filterPlatformAssetScales', () => {
   it('removes everything but 2x and 3x for iOS', () => {

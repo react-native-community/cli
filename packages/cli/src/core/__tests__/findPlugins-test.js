@@ -9,7 +9,7 @@
  */
 
 const path = require('path');
-const findPlugins = require('../findPlugins');
+import findPlugins from '../findPlugins';
 
 const ROOT = path.join(__dirname, '..', '..');
 const pjsonPath = path.join(ROOT, './package.json');

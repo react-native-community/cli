@@ -9,7 +9,7 @@
  */
 
 const path = require('path');
-const isInstalled = require('../../android/isInstalled');
+import isInstalled from '../../android/isInstalled';
 
 const projectConfig = {
   buildGradlePath: path.join(

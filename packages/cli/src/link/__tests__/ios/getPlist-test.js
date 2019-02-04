@@ -10,7 +10,7 @@
 
 const xcode = require('xcode');
 const path = require('path');
-const getPlist = require('../../ios/getPlist');
+import getPlist from '../../ios/getPlist';
 
 const project = xcode.project(
   path.join(__dirname, '../../__fixtures__/project.pbxproj')

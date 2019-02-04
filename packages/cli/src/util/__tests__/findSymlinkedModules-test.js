@@ -12,7 +12,7 @@ jest.mock('path');
 jest.mock('fs');
 
 const fs = require('fs');
-const findSymlinkedModules = require('../findSymlinkedModules');
+import findSymlinkedModules from '../findSymlinkedModules';
 
 describe('findSymlinksForProjectRoot', () => {
   it('correctly finds normal module symlinks', () => {

@@ -11,7 +11,7 @@
 
 jest.dontMock('../findMatchingSimulator');
 
-const findMatchingSimulator = require('../findMatchingSimulator');
+import findMatchingSimulator from '../findMatchingSimulator';
 
 describe('findMatchingSimulator', () => {
   it('should find simulator', () => {

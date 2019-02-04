@@ -10,7 +10,7 @@
 
 jest.dontMock('../findXcodeProject');
 
-const findXcodeProject = require('../findXcodeProject');
+import findXcodeProject from '../findXcodeProject';
 
 describe('findXcodeProject', () => {
   it('should find *.xcodeproj file', () => {

@@ -10,7 +10,7 @@
 
 const xcode = require('xcode');
 const path = require('path');
-const mapHeaderSearchPaths = require('../../ios/mapHeaderSearchPaths');
+import mapHeaderSearchPaths from '../../ios/mapHeaderSearchPaths';
 
 const project = xcode.project(
   path.join(__dirname, '../../__fixtures__/project.pbxproj')

@@ -14,7 +14,7 @@ jest.mock('child_process', () => ({
 jest.mock('../getAdbPath');
 const { execFileSync } = require('child_process');
 
-const runOnAllDevices = require('../runOnAllDevices');
+import runOnAllDevices from '../runOnAllDevices';
 
 describe('--appFolder', () => {
   beforeEach(() => {

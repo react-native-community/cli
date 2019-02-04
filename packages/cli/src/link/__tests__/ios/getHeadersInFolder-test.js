@@ -12,7 +12,7 @@ jest.mock('fs');
 jest.mock('path');
 const fs = require('fs');
 
-const getHeadersInFolder = require('../../ios/getHeadersInFolder');
+import getHeadersInFolder from '../../ios/getHeadersInFolder';
 
 const ROOT_DIR = '/';
 

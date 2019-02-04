@@ -8,8 +8,8 @@
  * @emails oncall+javascript_foundation
  */
 
-const makeBuildPatch = require('../../android/patches/makeBuildPatch');
-const normalizeProjectName = require('../../android/patches/normalizeProjectName');
+import makeBuildPatch from '../../android/patches/makeBuildPatch';
+import normalizeProjectName from '../../android/patches/normalizeProjectName';
 
 const name = 'test';
 const scopedName = '@scoped/test';

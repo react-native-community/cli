@@ -12,8 +12,8 @@ jest.mock('path');
 jest.mock('fs');
 
 const fs = require('fs');
-const findAndroidAppFolder = require('../../android/findAndroidAppFolder');
-const mocks = require('../../__fixtures__/android');
+import findAndroidAppFolder from '../../android/findAndroidAppFolder';
+import mocks from '../../__fixtures__/android';
 
 describe('android::findAndroidAppFolder', () => {
   beforeAll(() => {

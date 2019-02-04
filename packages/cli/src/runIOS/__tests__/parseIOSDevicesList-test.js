@@ -9,7 +9,7 @@
  */
 
 jest.dontMock('../parseIOSDevicesList');
-const parseIOSDevicesList = require('../parseIOSDevicesList');
+import parseIOSDevicesList from '../parseIOSDevicesList';
 
 describe('parseIOSDevicesList', () => {
   it('parses typical output', () => {

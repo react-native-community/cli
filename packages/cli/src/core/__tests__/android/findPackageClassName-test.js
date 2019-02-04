@@ -12,8 +12,8 @@ jest.mock('path');
 jest.mock('fs');
 
 const fs = require('fs');
-const mocks = require('../../__fixtures__/android');
-const findPackageClassName = require('../../android/findPackageClassName');
+import mocks from '../../__fixtures__/android';
+import findPackageClassName from '../../android/findPackageClassName';
 
 ['posix', 'win32'].forEach(platform => {
   let root;

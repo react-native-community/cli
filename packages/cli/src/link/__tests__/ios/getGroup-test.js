@@ -10,7 +10,7 @@
 
 const xcode = require('xcode');
 const path = require('path');
-const getGroup = require('../../ios/getGroup');
+import getGroup from '../../ios/getGroup';
 
 const project = xcode.project(
   path.join(__dirname, '../../__fixtures__/project.pbxproj')

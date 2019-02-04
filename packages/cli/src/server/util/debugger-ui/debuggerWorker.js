@@ -18,11 +18,11 @@ onmessage = (function() {
     var hasWarned = false;
     return function() {
       // Wait until `YellowBox` gets initialized before displaying the warning.
-      if (hasWarned || logger.warn.toString().includes('[native code]')) {
+      if (hasWarned || console.warn.toString().includes('[native code]')) {
         return;
       }
       hasWarned = true;
-      logger.warn(
+      console.warn(
         'Remote debugger is in a background tab which may cause apps to ' +
           'perform slowly. Fix this by foregrounding the tab (or opening it in ' +
           'a separate window).',

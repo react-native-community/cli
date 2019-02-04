@@ -46,7 +46,7 @@ async function runServer(argv: *, ctx: ContextT, args: Args) {
   const ReporterImpl = getReporterImpl(args.customLogReporterPath || null);
   const reporter = new ReporterImpl(terminal);
 
-  const metroConfig = await loadMetroConfig(ctx.root, {
+  const metroConfig = await loadMetroConfig(ctx, {
     config: args.config,
     maxWorkers: args.maxWorkers,
     port: args.port,

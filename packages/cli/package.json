@@ -54,9 +54,6 @@
     "xcode": "^1.0.0",
     "xmldoc": "^0.4.0"
   },
-  "devDependencies": {
-    "react-native": "^0.57.0"
-  },
   "peerDependencies": {
     "react-native": "^0.57.0"
   }

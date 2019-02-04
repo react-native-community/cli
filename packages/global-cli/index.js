@@ -36,13 +36,13 @@
 // /!\ DO NOT MODIFY THIS FILE /!\
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-import fs from 'fs';
-import path from 'path';
-import exec from 'child_process'.exec;
-import execSync from 'child_process'.execSync;
-import chalk from 'chalk';
-import prompt from 'prompt';
-import semver from 'semver';
+const fs = require('fs');
+const path = require('path');
+const exec = require('child_process').exec;
+const execSync = require('child_process').execSync;
+const chalk = require('chalk');
+const prompt = require('prompt');
+const semver = require('semver');
 /**
  * Used arguments:
  *   -v --version - to print current version of react-native-cli and react-native dependency

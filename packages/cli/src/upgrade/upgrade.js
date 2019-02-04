@@ -10,11 +10,11 @@
 
 import type { ContextT } from '../core/types.flow';
 
-const chalk = require('chalk');
 const fs = require('fs');
 const path = require('path');
 const semver = require('semver');
 const copyProjectTemplateAndReplace = require('../generator/copyProjectTemplateAndReplace');
+const logger = require('../util/logger');
 
 /**
  * Migrate application to a new version of React Native.
@@ -90,7 +90,7 @@ function validateAndUpgrade(argv: *, ctx: ContextT) {
     return;
   }
 
-  console.log(
+  logger.info(
     `Upgrading project to react-native v${installed.version}\n` +
       `Check out the release notes and breaking changes: ` +
       `https://github.com/facebook/react-native/releases/tag/v${semver.major(
@@ -122,7 +122,7 @@ function validateAndUpgrade(argv: *, ctx: ContextT) {
 
   upgradeProjectFiles(projectDir, projectName);
 
-  console.log(
+  logger.info(
     `Successfully upgraded this project to react-native v${installed.version}`
   );
 }
@@ -141,7 +141,7 @@ function upgradeProjectFiles(projectDir, projectName) {
 }
 
 function warn(message) {
-  console.warn(chalk.yellow(message));
+  logger.warn(message);
 }
 
 const upgradeCommand = {

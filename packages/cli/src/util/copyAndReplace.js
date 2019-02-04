@@ -82,7 +82,7 @@ function copyAndReplace(
       try {
         const origContent = fs.readFileSync(destPath, 'utf8');
         if (content !== origContent) {
-          // console.log('Content changed: ' + destPath);
+          // logger.info('Content changed: ' + destPath);
           contentChanged = 'changed';
         }
       } catch (err) {

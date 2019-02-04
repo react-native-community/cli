@@ -8,6 +8,7 @@
  */
 
 const fs = require('fs');
+const logger = require('../../util/logger');
 
 module.exports = function systraceProfileMiddleware(req, res, next) {
   if (req.url !== '/systrace') {
@@ -15,7 +16,7 @@ module.exports = function systraceProfileMiddleware(req, res, next) {
     return;
   }
 
-  console.log('Dumping profile information...');
+  logger.info('Dumping profile information...');
   const dumpName = `/tmp/dump_${Date.now()}.json`;
   fs.writeFileSync(dumpName, req.rawBody);
   const response =
@@ -23,6 +24,6 @@ module.exports = function systraceProfileMiddleware(req, res, next) {
     `On Google Chrome navigate to chrome://tracing and then click on "load" ` +
     `to load and visualise your profile.\n\n` +
     `This message is also printed to your console by the packager so you can copy it :)`;
-  console.log(response);
+  logger.info(response);
   res.end(response);
 };

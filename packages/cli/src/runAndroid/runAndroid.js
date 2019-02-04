@@ -11,12 +11,12 @@
 
 import type { ContextT } from '../core/types.flow';
 
-const chalk = require('chalk');
 const { spawnSync, spawn, execFileSync } = require('child_process');
 const fs = require('fs');
 const isString = require('lodash/isString');
 const path = require('path');
 const isPackagerRunning = require('../util/isPackagerRunning');
+const logger = require('../util/logger');
 const adb = require('./adb');
 const runOnAllDevices = require('./runOnAllDevices');
 const tryRunAdbReverse = require('./tryRunAdbReverse');
@@ -33,10 +33,8 @@ function checkAndroid(root) {
  */
 function runAndroid(argv: Array<string>, ctx: ContextT, args: Object) {
   if (!checkAndroid(args.root)) {
-    console.log(
-      chalk.red(
-        'Android project not found. Are you sure this is a React Native project?'
-      )
+    logger.error(
+      'Android project not found. Are you sure this is a React Native project?'
     );
     return;
   }
@@ -47,14 +45,12 @@ function runAndroid(argv: Array<string>, ctx: ContextT, args: Object) {
 
   return isPackagerRunning(args.port).then(result => {
     if (result === 'running') {
-      console.log(chalk.bold('JS server already running.'));
+      logger.info('JS server already running.');
     } else if (result === 'unrecognized') {
-      console.warn(
-        chalk.yellow('JS server not recognized, continuing with build...')
-      );
+      logger.warn('JS server not recognized, continuing with build...');
     } else {
       // result == 'not_running'
-      console.log(chalk.bold('Starting JS server...'));
+      logger.info('Starting JS server...');
       startServerInNewWindow(args.port, args.terminal, ctx.reactNativePath);
     }
     return buildAndRun(args);
@@ -101,7 +97,7 @@ function buildAndRun(args) {
         adbPath
       );
     }
-    console.log(chalk.red('Argument missing for parameter --deviceId'));
+    logger.error('Argument missing for parameter --deviceId');
   } else {
     return runOnAllDevices(
       args,
@@ -132,27 +128,28 @@ function runOnSpecificDevice(
         adbPath
       );
     } else {
-      console.log(`Could not find device with the id: "${args.deviceId}".`);
-      console.log('Choose one of the following:');
-      console.log(devices);
+      logger.error(
+        `Could not find device with the id: "${
+          args.deviceId
+        }". Choose one of the following:`,
+        ...devices
+      );
     }
   } else {
-    console.log('No Android devices connected.');
+    logger.error('No Android devices connected.');
   }
 }
 
 function buildApk(gradlew) {
   try {
-    console.log(chalk.bold('Building the app...'));
+    logger.info('Building the app...');
 
     // using '-x lint' in order to ignore linting errors while building the apk
     execFileSync(gradlew, ['build', '-x', 'lint'], {
       stdio: [process.stdin, process.stdout, process.stderr],
     });
   } catch (e) {
-    console.log(
-      chalk.red('Could not build the app, read the error above for details.\n')
-    );
+    logger.error('Could not build the app, read the error above for details.');
   }
 }
 
@@ -163,20 +160,17 @@ function tryInstallAppOnDevice(args, device) {
     const pathToApk = `${appFolder}/build/outputs/apk/${appFolder}-debug.apk`;
     const adbPath = getAdbPath();
     const adbArgs = ['-s', device, 'install', pathToApk];
-    console.log(
-      chalk.bold(
-        `Installing the app on the device (cd android && adb -s ${device} install ${pathToApk}`
-      )
+    logger.info(
+      `Installing the app on the device (cd android && adb -s ${device} install ${pathToApk}`
     );
     execFileSync(adbPath, adbArgs, {
       stdio: [process.stdin, process.stdout, process.stderr],
     });
   } catch (e) {
-    console.log(e.message);
-    console.log(
-      chalk.red(
-        'Could not install the app on the device, read the error above for details.\n'
-      )
+    logger.error(
+      `${
+        e.message
+      }\nCould not install the app on the device, read the error above for details.`
     );
   }
 }
@@ -264,8 +258,8 @@ function startServerInNewWindow(
     procConfig.stdio = 'ignore';
     return spawn('cmd.exe', ['/C', launchPackagerScript], procConfig);
   }
-  console.log(
-    chalk.red(`Cannot start the packager. Unknown platform ${process.platform}`)
+  logger.error(
+    `Cannot start the packager. Unknown platform ${process.platform}`
   );
 }
 

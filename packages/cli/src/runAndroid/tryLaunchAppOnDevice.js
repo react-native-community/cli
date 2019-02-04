@@ -7,8 +7,8 @@
  * @flow
  */
 
-const chalk = require('chalk');
 const { spawnSync } = require('child_process');
+const logger = require('../util/logger');
 
 function tryLaunchAppOnDevice(
   device: string,
@@ -27,16 +27,12 @@ function tryLaunchAppOnDevice(
       '-n',
       `${packageNameWithSuffix}/${packageName}.${mainActivity}`,
     ];
-    console.log(
-      chalk.bold(
-        `Starting the app on ${device} (${adbPath} ${adbArgs.join(' ')})...`
-      )
+    logger.info(
+      `Starting the app on ${device} (${adbPath} ${adbArgs.join(' ')})...`
     );
     spawnSync(adbPath, adbArgs, { stdio: 'inherit' });
   } catch (e) {
-    console.log(
-      chalk.red('adb invocation failed. Do you have adb in your PATH?')
-    );
+    logger.error('adb invocation failed. Do you have adb in your PATH?');
   }
 }
 

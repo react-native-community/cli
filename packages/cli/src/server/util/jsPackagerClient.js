@@ -8,7 +8,7 @@
  */
 
 const WebSocket = require('ws');
-
+const logger = require('../../util/logger');
 const { parseMessage } = require('./messageSocket');
 
 const PROTOCOL_VERSION = 2;
@@ -34,7 +34,7 @@ class JsPackagerClient {
       if (message === undefined || message.id === undefined) {
         // gracefully ignore wrong messages or broadcasts
       } else if (msgCallback === undefined) {
-        console.warn(`Response with non-existing message id: '${message.id}'`);
+        logger.warn(`Response with non-existing message id: '${message.id}'`);
       } else if (message.error === undefined) {
         msgCallback.resolve(message.result);
       } else {

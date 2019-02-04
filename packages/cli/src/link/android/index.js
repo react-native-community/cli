@@ -9,10 +9,10 @@
 
 export default function getAndroidLinkConfig() {
   return {
-    isInstalled: require('./isInstalled'),
-    register: require('./registerNativeModule'),
-    unregister: require('./unregisterNativeModule'),
-    copyAssets: require('./copyAssets'),
-    unlinkAssets: require('./unlinkAssets'),
+    isInstalled: require('./isInstalled').default,
+    register: require('./registerNativeModule').default,
+    unregister: require('./unregisterNativeModule').default,
+    copyAssets: require('./copyAssets').default,
+    unlinkAssets: require('./unlinkAssets').default,
   };
 }

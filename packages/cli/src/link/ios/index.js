@@ -9,10 +9,10 @@
 
 export default function getIOSLinkConfig() {
   return {
-    isInstalled: require('./common/isInstalled'),
-    register: require('./common/registerNativeModule'),
-    unregister: require('./common/unregisterNativeModule'),
-    copyAssets: require('./copyAssets'),
-    unlinkAssets: require('./unlinkAssets'),
+    isInstalled: require('./common/isInstalled').default,
+    register: require('./common/registerNativeModule').default,
+    unregister: require('./common/unregisterNativeModule').default,
+    copyAssets: require('./copyAssets').default,
+    unlinkAssets: require('./unlinkAssets').default,
   };
 }

@@ -57,3 +57,9 @@ export function projectConfig(folder, userConfig) {
 export const dependencyConfig = projectConfig;
 
 export const linkConfig = require('../../link/ios').default;
+
+export default {
+  projectConfig,
+  dependencyConfig,
+  linkConfig,
+};

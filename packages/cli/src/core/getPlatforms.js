@@ -14,8 +14,8 @@ import type { PlatformsT } from './types.flow';
  * with other platforms
  */
 const builtInPlatforms = {
-  ios: require('./ios'),
-  android: require('./android'),
+  ios: require('./ios').default,
+  android: require('./android').default,
 };
 
 /**

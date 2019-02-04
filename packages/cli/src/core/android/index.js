@@ -129,3 +129,9 @@ export function dependencyConfig(folder, userConfig = {}) {
 }
 
 export const linkConfig = require('../../link/android').default;
+
+export default {
+  projectConfig,
+  dependencyConfig,
+  linkConfig,
+};

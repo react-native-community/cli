@@ -11,6 +11,7 @@ const chalk = require('chalk');
 const { execFileSync, spawnSync } = require('child_process');
 const os = require('os');
 const path = require('path');
+const logger = require('../util/logger');
 
 function findAvailableDevice(devices) {
   for (const key of Object.keys(devices)) {
@@ -37,7 +38,7 @@ async function logIOS() {
 
   const device = findAvailableDevice(devices);
   if (device === undefined) {
-    console.log(chalk.red('No active iOS device found'));
+    logger.info(chalk.red('No active iOS device found'));
     return;
   }
 

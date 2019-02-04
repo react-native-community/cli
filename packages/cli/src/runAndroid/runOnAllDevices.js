@@ -11,7 +11,7 @@
 
 const chalk = require('chalk');
 const { spawnSync, execFileSync } = require('child_process');
-
+const logger = require('../util/logger');
 const adb = require('./adb');
 const tryRunAdbReverse = require('./tryRunAdbReverse');
 const tryLaunchAppOnDevice = require('./tryLaunchAppOnDevice');
@@ -40,7 +40,7 @@ function runOnAllDevices(
         )}${args.variant[0].toUpperCase()}${args.variant.slice(1)}`
       );
     } else if (args.flavor) {
-      console.warn(
+      logger.warn(
         chalk.yellow('--flavor has been deprecated. Use --variant instead')
       );
       gradleArgs.push(
@@ -53,7 +53,7 @@ function runOnAllDevices(
       gradleArgs.push(getCommand(args.appFolder, 'installDebug'));
     }
 
-    console.log(
+    logger.info(
       chalk.bold(
         `Building and installing the app on the device (cd android && ${cmd} ${gradleArgs.join(
           ' '
@@ -65,7 +65,7 @@ function runOnAllDevices(
       stdio: [process.stdin, process.stdout, process.stderr],
     });
   } catch (e) {
-    console.log(
+    logger.info(
       chalk.red(
         'Could not install the app on the device, read the error above for details.\n' +
           'Make sure you have an Android emulator running or a device connected and have\n' +
@@ -75,7 +75,7 @@ function runOnAllDevices(
     );
     // stderr is automatically piped from the gradle process, so the user
     // should see the error already, there is no need to do
-    // `console.log(e.stderr)`
+    // `logger.info(e.stderr)`
     return Promise.reject(e);
   }
   const devices = adb.getDevices();
@@ -101,19 +101,19 @@ function runOnAllDevices(
         '-n',
         `${packageNameWithSuffix}/${packageName}.MainActivity`,
       ];
-      console.log(
+      logger.info(
         chalk.bold(
           `Starting the app (${adbPath} ${fallbackAdbArgs.join(' ')}...`
         )
       );
       spawnSync(adbPath, fallbackAdbArgs, { stdio: 'inherit' });
     } catch (e) {
-      console.log(
+      logger.info(
         chalk.red('adb invocation failed. Do you have adb in your PATH?')
       );
       // stderr is automatically piped from the gradle process, so the user
       // should see the error already, there is no need to do
-      // `console.log(e.stderr)`
+      // `logger.info(e.stderr)`
       return Promise.reject(e);
     }
   }

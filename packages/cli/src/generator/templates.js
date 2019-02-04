@@ -11,6 +11,7 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const copyProjectTemplateAndReplace = require('./copyProjectTemplateAndReplace');
+const logger = require('../util/logger');
 
 /**
  * @param destPath Create the new project at this path.
@@ -68,7 +69,7 @@ function createFromRemoteTemplate(
   }
 
   // Check if the template exists
-  console.log(`Fetching template ${installPackage}...`);
+  logger.info(`Fetching template ${installPackage}...`);
   try {
     if (yarnVersion) {
       execSync(`yarn add ${installPackage} --ignore-scripts`, {
@@ -105,7 +106,7 @@ function createFromRemoteTemplate(
     } catch (err) {
       // Not critical but we still want people to know and report
       // if this the clean up fails.
-      console.warn(
+      logger.warn(
         `Failed to clean up template temp files in node_modules/${templateName}. ` +
           'This is not a critical error, you can work on your app.'
       );
@@ -117,9 +118,9 @@ function installTemplateDependencies(templatePath, yarnVersion) {
   // dependencies.json is a special file that lists additional dependencies
   // that are required by this template
   const dependenciesJsonPath = path.resolve(templatePath, 'dependencies.json');
-  console.log('Adding dependencies for the project...');
+  logger.info('Adding dependencies for the project...');
   if (!fs.existsSync(dependenciesJsonPath)) {
-    console.log('No additional dependencies.');
+    logger.info('No additional dependencies.');
     return;
   }
 
@@ -134,7 +135,7 @@ function installTemplateDependencies(templatePath, yarnVersion) {
   for (const depName of Object.keys(dependencies)) {
     const depVersion = dependencies[depName];
     const depToInstall = `${depName}@${depVersion}`;
-    console.log(`Adding ${depToInstall}...`);
+    logger.info(`Adding ${depToInstall}...`);
     if (yarnVersion) {
       execSync(`yarn add ${depToInstall}`, { stdio: 'inherit' });
     } else {
@@ -143,7 +144,7 @@ function installTemplateDependencies(templatePath, yarnVersion) {
       });
     }
   }
-  console.log("Linking native dependencies into the project's build files...");
+  logger.info("Linking native dependencies into the project's build files...");
   execSync('react-native link', { stdio: 'inherit' });
 }
 
@@ -154,9 +155,9 @@ function installTemplateDevDependencies(templatePath, yarnVersion) {
     templatePath,
     'devDependencies.json'
   );
-  console.log('Adding develop dependencies for the project...');
+  logger.info('Adding develop dependencies for the project...');
   if (!fs.existsSync(devDependenciesJsonPath)) {
-    console.log('No additional develop dependencies.');
+    logger.info('No additional develop dependencies.');
     return;
   }
 
@@ -171,7 +172,7 @@ function installTemplateDevDependencies(templatePath, yarnVersion) {
   for (const depName of Object.keys(dependencies)) {
     const depVersion = dependencies[depName];
     const depToInstall = `${depName}@${depVersion}`;
-    console.log(`Adding ${depToInstall}...`);
+    logger.info(`Adding ${depToInstall}...`);
     if (yarnVersion) {
       execSync(`yarn add ${depToInstall} -D`, { stdio: 'inherit' });
     } else {

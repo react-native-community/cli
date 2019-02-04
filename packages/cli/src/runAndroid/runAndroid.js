@@ -17,6 +17,7 @@ const fs = require('fs');
 const isString = require('lodash/isString');
 const path = require('path');
 const isPackagerRunning = require('../util/isPackagerRunning');
+const logger = require('../util/logger');
 const adb = require('./adb');
 const runOnAllDevices = require('./runOnAllDevices');
 const tryRunAdbReverse = require('./tryRunAdbReverse');
@@ -33,7 +34,7 @@ function checkAndroid(root) {
  */
 function runAndroid(argv: Array<string>, config: ContextT, args: Object) {
   if (!checkAndroid(args.root)) {
-    console.log(
+    logger.info(
       chalk.red(
         'Android project not found. Are you sure this is a React Native project?'
       )
@@ -47,14 +48,14 @@ function runAndroid(argv: Array<string>, config: ContextT, args: Object) {
 
   return isPackagerRunning(args.port).then(result => {
     if (result === 'running') {
-      console.log(chalk.bold('JS server already running.'));
+      logger.info(chalk.bold('JS server already running.'));
     } else if (result === 'unrecognized') {
-      console.warn(
+      logger.warn(
         chalk.yellow('JS server not recognized, continuing with build...')
       );
     } else {
       // result == 'not_running'
-      console.log(chalk.bold('Starting JS server...'));
+      logger.info(chalk.bold('Starting JS server...'));
       startServerInNewWindow(args.port, args.terminal);
     }
     return buildAndRun(args);
@@ -101,7 +102,7 @@ function buildAndRun(args) {
         adbPath
       );
     }
-    console.log(chalk.red('Argument missing for parameter --deviceId'));
+    logger.info(chalk.red('Argument missing for parameter --deviceId'));
   } else {
     return runOnAllDevices(
       args,
@@ -132,25 +133,25 @@ function runOnSpecificDevice(
         adbPath
       );
     } else {
-      console.log(`Could not find device with the id: "${args.deviceId}".`);
-      console.log('Choose one of the following:');
-      console.log(devices);
+      logger.info(`Could not find device with the id: "${args.deviceId}".`);
+      logger.info('Choose one of the following:');
+      logger.info(devices);
     }
   } else {
-    console.log('No Android devices connected.');
+    logger.info('No Android devices connected.');
   }
 }
 
 function buildApk(gradlew) {
   try {
-    console.log(chalk.bold('Building the app...'));
+    logger.info(chalk.bold('Building the app...'));
 
     // using '-x lint' in order to ignore linting errors while building the apk
     execFileSync(gradlew, ['build', '-x', 'lint'], {
       stdio: [process.stdin, process.stdout, process.stderr],
     });
   } catch (e) {
-    console.log(
+    logger.info(
       chalk.red('Could not build the app, read the error above for details.\n')
     );
   }
@@ -163,7 +164,7 @@ function tryInstallAppOnDevice(args, device) {
     const pathToApk = `${appFolder}/build/outputs/apk/${appFolder}-debug.apk`;
     const adbPath = getAdbPath();
     const adbArgs = ['-s', device, 'install', pathToApk];
-    console.log(
+    logger.info(
       chalk.bold(
         `Installing the app on the device (cd android && adb -s ${device} install ${pathToApk}`
       )
@@ -172,8 +173,8 @@ function tryInstallAppOnDevice(args, device) {
       stdio: [process.stdin, process.stdout, process.stderr],
     });
   } catch (e) {
-    console.log(e.message);
-    console.log(
+    logger.info(e.message);
+    logger.info(
       chalk.red(
         'Could not install the app on the device, read the error above for details.\n'
       )
@@ -259,7 +260,7 @@ function startServerInNewWindow(port, terminal = process.env.REACT_TERMINAL) {
     procConfig.stdio = 'ignore';
     return spawn('cmd.exe', ['/C', launchPackagerScript], procConfig);
   }
-  console.log(
+  logger.info(
     chalk.red(`Cannot start the packager. Unknown platform ${process.platform}`)
   );
 }

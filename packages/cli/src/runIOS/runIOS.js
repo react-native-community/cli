@@ -14,6 +14,7 @@ import type { ContextT } from '../core/types.flow';
 const child_process = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const logger = require('../util/logger');
 const findXcodeProject = require('./findXcodeProject');
 const parseIOSDevicesList = require('./parseIOSDevicesList');
 const findMatchingSimulator = require('./findMatchingSimulator');
@@ -53,7 +54,7 @@ function runIOS(_: Array<string>, ctx: ContextT, args: FlagsT) {
   );
   const scheme = args.scheme || inferredSchemeName;
 
-  console.log(
+  logger.info(
     `Found Xcode ${xcodeProject.isWorkspace ? 'workspace' : 'project'} ${
       xcodeProject.name
     }`
@@ -81,11 +82,11 @@ function runIOS(_: Array<string>, ctx: ContextT, args: FlagsT) {
     }
     if (devices && devices.length > 0) {
       // $FlowIssue: args.device is defined in this context
-      console.log(`Could not find device with the name: "${args.device}".`);
-      console.log('Choose one of the following:');
+      logger.info(`Could not find device with the name: "${args.device}".`);
+      logger.info('Choose one of the following:');
       printFoundDevices(devices);
     } else {
-      console.log('No iOS devices connected.');
+      logger.info('No iOS devices connected.');
     }
   } else if (args.udid) {
     // $FlowIssue: args.udid is defined in this context
@@ -118,11 +119,11 @@ function runOnDeviceByUdid(
 
   if (devices && devices.length > 0) {
     // $FlowIssue: args.udid is defined in this context
-    console.log(`Could not find device with the udid: "${args.udid}".`);
-    console.log('Choose one of the following:');
+    logger.info(`Could not find device with the udid: "${args.udid}".`);
+    logger.info('Choose one of the following:');
     printFoundDevices(devices);
   } else {
-    console.log('No iOS devices connected.');
+    logger.info('No iOS devices connected.');
   }
 }
 
@@ -185,7 +186,7 @@ async function runOnSimulator(xcodeProject, args, scheme) {
 
   const appPath = getBuildPath(args.configuration, appName, false, scheme);
 
-  console.log(`Installing ${appPath}`);
+  logger.info(`Installing ${appPath}`);
 
   child_process.spawnSync(
     'xcrun',
@@ -204,7 +205,7 @@ async function runOnSimulator(xcodeProject, args, scheme) {
     // $FlowExpectedError https://github.com/facebook/flow/issues/5675
     .trim();
 
-  console.log(`Launching ${bundleID}`);
+  logger.info(`Launching ${bundleID}`);
 
   child_process.spawnSync(
     'xcrun',
@@ -242,7 +243,7 @@ async function runOnDevice(
     '--justlaunch',
   ];
 
-  console.log(`installing and launching your app on ${selectedDevice.name}...`);
+  logger.info(`installing and launching your app on ${selectedDevice.name}...`);
 
   const iosDeployOutput = child_process.spawnSync(
     'ios-deploy',
@@ -251,12 +252,12 @@ async function runOnDevice(
   );
 
   if (iosDeployOutput.error) {
-    console.log('');
-    console.log('** INSTALLATION FAILED **');
-    console.log('Make sure you have ios-deploy installed globally.');
-    console.log('(e.g "npm install -g ios-deploy")');
+    logger.info('');
+    logger.info('** INSTALLATION FAILED **');
+    logger.info('Make sure you have ios-deploy installed globally.');
+    logger.info('(e.g "npm install -g ios-deploy")');
   } else {
-    console.log('** INSTALLATION SUCCEEDED **');
+    logger.info('** INSTALLATION SUCCEEDED **');
   }
 }
 
@@ -282,7 +283,7 @@ function buildProject(
       '-derivedDataPath',
       `build/${scheme}`,
     ];
-    console.log(`Building using "xcodebuild ${xcodebuildArgs.join(' ')}"`);
+    logger.info(`Building using "xcodebuild ${xcodebuildArgs.join(' ')}"`);
     let xcpretty;
     if (!verbose) {
       xcpretty =
@@ -303,7 +304,7 @@ function buildProject(
       if (xcpretty) {
         xcpretty.stdin.write(data);
       } else {
-        console.log(data.toString());
+        logger.info(data.toString());
       }
     });
     buildProcess.stderr.on('data', data => {
@@ -335,7 +336,7 @@ function buildProject(
 
 function bootSimulator(selectedSimulator) {
   const simulatorFullName = formattedDeviceName(selectedSimulator);
-  console.log(`Launching ${simulatorFullName}...`);
+  logger.info(`Launching ${simulatorFullName}...`);
   try {
     child_process.spawnSync('xcrun', [
       'instruments',
@@ -382,7 +383,7 @@ function xcprettyAvailable() {
 
 function matchingDevice(devices, deviceName) {
   if (deviceName === true && devices.length === 1) {
-    console.log(
+    logger.info(
       `Using first available device ${
         devices[0].name
       } due to lack of name supplied.`
@@ -415,7 +416,7 @@ function formattedDeviceName(simulator) {
 
 function printFoundDevices(devices) {
   for (let i = devices.length - 1; i >= 0; i--) {
-    console.log(`${devices[i].name} Udid: ${devices[i].udid}`);
+    logger.info(`${devices[i].name} Udid: ${devices[i].udid}`);
   }
 }
 

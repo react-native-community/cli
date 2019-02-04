@@ -13,6 +13,7 @@
  * run Flow. */
 const opn = require('opn');
 const { execSync } = require('child_process');
+const logger = require('../../util/logger');
 
 function commandExistsUnixSync(commandName) {
   try {
@@ -49,7 +50,7 @@ function getChromeAppName(): string {
 function launchChrome(url: string) {
   opn(url, { app: [getChromeAppName()] }, err => {
     if (err) {
-      console.error('Google Chrome exited with error:', err);
+      logger.error('Google Chrome exited with error:', err);
     }
   });
 }

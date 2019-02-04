@@ -33,7 +33,7 @@ function init(projectDir, argsOrName) {
 
   // args array is e.g. ['AwesomeApp', '--verbose', '--template', 'navigation']
   if (!args || args.length === 0) {
-    console.error('react-native init requires a project name.');
+    logger.error('react-native init requires a project name.');
     return;
   }
 
@@ -53,7 +53,7 @@ function generateProject(destinationRoot, newProjectName, options) {
   const reactNativePackageJson = require('react-native/package.json');
   const { peerDependencies } = reactNativePackageJson;
   if (!peerDependencies) {
-    console.error(
+    logger.error(
       "Missing React peer dependency in React Native's package.json. Aborting."
     );
     return;
@@ -61,7 +61,7 @@ function generateProject(destinationRoot, newProjectName, options) {
 
   const reactVersion = peerDependencies.react;
   if (!reactVersion) {
-    console.error(
+    logger.error(
       "Missing React peer dependency in React Native's package.json. Aborting."
     );
     return;

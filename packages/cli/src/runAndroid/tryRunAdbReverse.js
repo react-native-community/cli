@@ -29,7 +29,7 @@ function tryRunAdbReverse(packagerPort: number | string, device: string) {
       stdio: [process.stdin, process.stdout, process.stderr],
     });
   } catch (e) {
-    logger.info(chalk.yellow(`Could not run adb reverse: ${e.message}`));
+    logger.info(`Could not run adb reverse: ${e.message}`);
   }
 }
 

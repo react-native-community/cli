@@ -9,7 +9,6 @@
 
 /* eslint-disable consistent-return */
 
-const chalk = require('chalk');
 const { spawnSync, execFileSync } = require('child_process');
 const logger = require('../util/logger');
 const adb = require('./adb');
@@ -40,9 +39,7 @@ function runOnAllDevices(
         )}${args.variant[0].toUpperCase()}${args.variant.slice(1)}`
       );
     } else if (args.flavor) {
-      logger.warn(
-        chalk.yellow('--flavor has been deprecated. Use --variant instead')
-      );
+      logger.warn('--flavor has been deprecated. Use --variant instead');
       gradleArgs.push(
         `${getCommand(
           args.appFolder,

@@ -7,7 +7,6 @@
  * @format
  */
 
-const chalk = require('chalk');
 const copyToClipBoard = require('../util/copyToClipBoard');
 const logger = require('../../util/logger');
 
@@ -19,7 +18,7 @@ module.exports = function copyMiddleware(req, res, next) {
   if (req.url === '/copy-to-clipboard') {
     const ret = copyToClipBoard(req.rawBody);
     if (!ret) {
-      logger.warn(chalk.red('Copy button is not supported on this platform!'));
+      logger.warn('Copy button is not supported on this platform!');
     }
     res.end('OK');
   } else {

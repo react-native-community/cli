@@ -10,7 +10,6 @@
 
 import type { ContextT } from '../core/types.flow';
 
-const chalk = require('chalk');
 const fs = require('fs');
 const path = require('path');
 const semver = require('semver');
@@ -142,7 +141,7 @@ function upgradeProjectFiles(projectDir, projectName) {
 }
 
 function warn(message) {
-  logger.warn(chalk.yellow(message));
+  logger.warn(message);
 }
 
 const upgradeCommand = {

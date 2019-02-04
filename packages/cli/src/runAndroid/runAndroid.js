@@ -11,7 +11,6 @@
 
 import type { ContextT } from '../core/types.flow';
 
-const chalk = require('chalk');
 const { spawnSync, spawn, execFileSync } = require('child_process');
 const fs = require('fs');
 const isString = require('lodash/isString');
@@ -48,9 +47,7 @@ function runAndroid(argv: Array<string>, config: ContextT, args: Object) {
     if (result === 'running') {
       logger.info('JS server already running.');
     } else if (result === 'unrecognized') {
-      logger.warn(
-        chalk.yellow('JS server not recognized, continuing with build...')
-      );
+      logger.warn('JS server not recognized, continuing with build...');
     } else {
       // result == 'not_running'
       logger.info('Starting JS server...');

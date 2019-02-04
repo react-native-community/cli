@@ -38,7 +38,7 @@ async function logIOS() {
 
   const device = findAvailableDevice(devices);
   if (device === undefined) {
-    logger.info(chalk.red('No active iOS device found'));
+    logger.error('No active iOS device found');
     return;
   }
 

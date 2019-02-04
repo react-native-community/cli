@@ -19,9 +19,7 @@ async function logAndroid() {
 
   const adbArgs = ['logcat', '*:S', 'ReactNative:V', 'ReactNativeJS:V'];
 
-  logger.info(
-    chalk.bold(`Starting the logger (${adbPath} ${adbArgs.join(' ')})...`)
-  );
+  logger.info(`Starting the logger (${adbPath} ${adbArgs.join(' ')})...`);
 
   const log = spawnSync(adbPath, adbArgs, { stdio: 'inherit' });
 

@@ -29,15 +29,11 @@ function tryLaunchAppOnDevice(
       `${packageNameWithSuffix}/${packageName}.${mainActivity}`,
     ];
     logger.info(
-      chalk.bold(
-        `Starting the app on ${device} (${adbPath} ${adbArgs.join(' ')})...`
-      )
+      `Starting the app on ${device} (${adbPath} ${adbArgs.join(' ')})...`
     );
     spawnSync(adbPath, adbArgs, { stdio: 'inherit' });
   } catch (e) {
-    logger.info(
-      chalk.red('adb invocation failed. Do you have adb in your PATH?')
-    );
+    logger.error('adb invocation failed. Do you have adb in your PATH?');
   }
 }
 

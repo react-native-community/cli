@@ -7,7 +7,6 @@
  * @format
  */
 
-const chalk = require('chalk');
 const path = require('path');
 const logger = require('../util/logger');
 
@@ -23,19 +22,17 @@ function printRunInstructions(projectDir, projectName) {
     process.cwd(),
     xcodeProjectPath
   );
-  logger.info(chalk.white.bold('To run your app on iOS:'));
-  logger.info(`   cd ${absoluteProjectDir}`);
-  logger.info('   react-native run-ios');
-  logger.info('   - or -');
-  logger.info(`   Open ${relativeXcodeProjectPath} in Xcode`);
-  logger.info('   Hit the Run button');
+  logger.info(`To run your app on iOS:
+    cd ${absoluteProjectDir}
+    react-native run-ios');
+    - or -
+    Open ${relativeXcodeProjectPath} in Xcode
+    Hit the Run button
   // Android
-  logger.info(chalk.white.bold('To run your app on Android:'));
-  logger.info(`   cd ${absoluteProjectDir}`);
-  logger.info(
-    '   Have an Android emulator running (quickest way to get started), or a device connected'
-  );
-  logger.info('   react-native run-android');
+  To run your app on Android:
+    cd ${absoluteProjectDir}
+    Have an Android emulator running (quickest way to get started), or a device connected
+    react-native run-android`);
 }
 
 module.exports = printRunInstructions;

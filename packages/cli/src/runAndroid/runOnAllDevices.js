@@ -54,24 +54,20 @@ function runOnAllDevices(
     }
 
     logger.info(
-      chalk.bold(
-        `Building and installing the app on the device (cd android && ${cmd} ${gradleArgs.join(
-          ' '
-        )})...`
-      )
+      `Building and installing the app on the device (cd android && ${cmd} ${gradleArgs.join(
+        ' '
+      )})...`
     );
 
     execFileSync(cmd, gradleArgs, {
       stdio: [process.stdin, process.stdout, process.stderr],
     });
   } catch (e) {
-    logger.info(
-      chalk.red(
-        'Could not install the app on the device, read the error above for details.\n' +
-          'Make sure you have an Android emulator running or a device connected and have\n' +
-          'set up your Android development environment:\n' +
-          'https://facebook.github.io/react-native/docs/getting-started.html'
-      )
+    logger.error(
+      'Could not install the app on the device, read the error above for details.\n' +
+        'Make sure you have an Android emulator running or a device connected and have\n' +
+        'set up your Android development environment:\n' +
+        'https://facebook.github.io/react-native/docs/getting-started.html'
     );
     // stderr is automatically piped from the gradle process, so the user
     // should see the error already, there is no need to do
@@ -102,15 +98,11 @@ function runOnAllDevices(
         `${packageNameWithSuffix}/${packageName}.MainActivity`,
       ];
       logger.info(
-        chalk.bold(
-          `Starting the app (${adbPath} ${fallbackAdbArgs.join(' ')}...`
-        )
+        `Starting the app (${adbPath} ${fallbackAdbArgs.join(' ')}...`
       );
       spawnSync(adbPath, fallbackAdbArgs, { stdio: 'inherit' });
     } catch (e) {
-      logger.info(
-        chalk.red('adb invocation failed. Do you have adb in your PATH?')
-      );
+      logger.error('adb invocation failed. Do you have adb in your PATH?');
       // stderr is automatically piped from the gradle process, so the user
       // should see the error already, there is no need to do
       // `logger.info(e.stderr)`

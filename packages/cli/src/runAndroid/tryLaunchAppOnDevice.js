@@ -7,7 +7,6 @@
  * @flow
  */
 
-const chalk = require('chalk');
 const { spawnSync } = require('child_process');
 const logger = require('../util/logger');
 

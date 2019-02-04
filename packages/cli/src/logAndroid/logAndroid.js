@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-const chalk = require('chalk');
 const { spawnSync } = require('child_process');
 const logger = require('../util/logger');
 

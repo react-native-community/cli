@@ -43,7 +43,7 @@ function getDevices(): Array<string> {
   }
 }
 
-module.exports = {
+export default {
   parseDevicesResult,
   getDevices,
 };

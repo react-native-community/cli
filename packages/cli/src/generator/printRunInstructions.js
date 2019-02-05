@@ -35,4 +35,4 @@ function printRunInstructions(projectDir, projectName) {
     react-native run-android`);
 }
 
-module.exports = printRunInstructions;
+export default printRunInstructions;

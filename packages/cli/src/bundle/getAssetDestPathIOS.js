@@ -17,4 +17,4 @@ function getAssetDestPathIOS(asset: PackagerAsset, scale: number): string {
   return path.join(asset.httpServerLocation.substr(1), fileName);
 }
 
-module.exports = getAssetDestPathIOS;
+export default getAssetDestPathIOS;

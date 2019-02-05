@@ -49,7 +49,7 @@ const getOuterDirectory = directories =>
  * the end so Xcode marks that location as `recursive` and will look inside
  * every folder of it to locate correct headers.
  */
-module.exports = function getHeaderSearchPath(sourceDir, headers) {
+export default function getHeaderSearchPath(sourceDir, headers) {
   const directories = union(headers.map(path.dirname));
 
   return directories.length === 1
@@ -58,4 +58,4 @@ module.exports = function getHeaderSearchPath(sourceDir, headers) {
         sourceDir,
         getOuterDirectory(directories)
       )}/**"`;
-};
+}

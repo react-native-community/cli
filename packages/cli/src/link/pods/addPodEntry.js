@@ -7,7 +7,7 @@
  * @format
  */
 
-module.exports = function addPodEntry(
+export default function addPodEntry(
   podLines,
   linesToAddEntry,
   podName,
@@ -27,7 +27,7 @@ module.exports = function addPodEntry(
     const { line, indentation } = linesToAddEntry;
     podLines.splice(line, 0, getLineToAdd(newEntry, indentation));
   }
-};
+}
 
 function getLineToAdd(newEntry, indentation) {
   const spaces = Array(indentation + 1).join(' ');

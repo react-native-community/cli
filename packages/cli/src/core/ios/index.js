@@ -11,6 +11,9 @@ import path from 'path';
 import findProject from './findProject';
 import findPodfilePath from './findPodfilePath';
 import findPodspecName from './findPodspecName';
+import linkConfigIos from '../../link/ios';
+
+export const linkConfig = linkConfigIos;
 
 /**
  * For libraries specified without an extension, add '.tbd' for those that
@@ -28,7 +31,7 @@ const mapSharedLibaries = libraries =>
  * Returns project config by analyzing given folder and applying some user defaults
  * when constructing final object
  */
-exports.projectConfig = function projectConfigIOS(folder, userConfig) {
+export function projectConfig(folder, userConfig) {
   const project = userConfig.project || findProject(folder);
 
   /**
@@ -52,8 +55,6 @@ exports.projectConfig = function projectConfigIOS(folder, userConfig) {
     sharedLibraries: mapSharedLibaries(userConfig.sharedLibraries || []),
     plist: userConfig.plist || [],
   };
-};
+}
 
-exports.dependencyConfig = exports.projectConfig;
-
-exports.linkConfig = require('../../link/ios');
+export const dependencyConfig = projectConfig;

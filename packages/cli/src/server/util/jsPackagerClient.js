@@ -118,4 +118,4 @@ class JsPackagerClient {
   }
 }
 
-module.exports = JsPackagerClient;
+export default JsPackagerClient;

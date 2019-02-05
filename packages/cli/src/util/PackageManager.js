@@ -71,7 +71,7 @@ function remove(packageName, projectDir) {
   );
 }
 
-module.exports = {
+export default {
   add,
   remove,
 };

@@ -8,8 +8,9 @@
  * @emails oncall+javascript_foundation
  */
 
-const path = require('path');
 import isInstalled from '../../android/isInstalled';
+
+const path = require('path');
 
 const projectConfig = {
   buildGradlePath: path.join(

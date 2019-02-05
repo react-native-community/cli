@@ -8,10 +8,11 @@
  * @emails oncall+javascript_foundation
  */
 
+import getAssetDestPathAndroid from '../getAssetDestPathAndroid';
+
 jest.dontMock('../getAssetDestPathAndroid').dontMock('../assetPathUtils');
 
 const path = require('path');
-import getAssetDestPathAndroid from '../getAssetDestPathAndroid';
 
 describe('getAssetDestPathAndroid', () => {
   it('should use the right destination folder', () => {

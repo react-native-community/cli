@@ -7,9 +7,9 @@
  * @format
  */
 
-module.exports = function makeImportPatch(packageImportPath) {
+export default function makeImportPatch(packageImportPath) {
   return {
     pattern: 'import com.facebook.react.ReactApplication;',
     patch: `\n${packageImportPath}`,
   };
-};
+}

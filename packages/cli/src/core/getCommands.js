@@ -80,7 +80,7 @@ const loadProjectCommands = (root: string): Array<ProjectCommandT> => {
 /**
  * Loads all the commands inside a given `root` folder
  */
-module.exports = (root: string): Array<CommandT> => [
+export default (root: string): Array<CommandT> => [
   ...loadLocalCommands(),
   {
     name: 'init',

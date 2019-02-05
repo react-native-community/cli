@@ -8,8 +8,9 @@
  * @emails oncall+javascript_foundation
  */
 
-const path = require('path');
 import isInstalled from '../../ios/isInstalled';
+
+const path = require('path');
 
 const baseProjectConfig = {
   pbxprojPath: path.join(__dirname, '../../__fixtures__/project.pbxproj'),

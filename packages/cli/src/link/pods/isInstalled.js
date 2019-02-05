@@ -9,7 +9,7 @@
 
 import readPodfile from './readPodfile';
 
-module.exports = function isInstalled(iOSProject, dependencyConfig) {
+export default function isInstalled(iOSProject, dependencyConfig) {
   if (!iOSProject.podfile) {
     return false;
   }
@@ -26,4 +26,4 @@ module.exports = function isInstalled(iOSProject, dependencyConfig) {
     }
   }
   return false;
-};
+}

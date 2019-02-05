@@ -8,9 +8,10 @@
  * @emails oncall+javascript_foundation
  */
 
+import getTargets from '../../ios/getTargets';
+
 const xcode = require('xcode');
 const path = require('path');
-import getTargets from '../../ios/getTargets';
 
 const project = xcode.project(
   path.join(__dirname, '../../__fixtures__/project.pbxproj')

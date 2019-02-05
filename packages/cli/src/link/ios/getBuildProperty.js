@@ -18,7 +18,7 @@
  * without the property defined (e.g. CocoaPods sections appended to project
  * miss INFOPLIST_FILE), see: https://github.com/alunny/node-xcode/blob/master/lib/pbxProject.js#L1765
  */
-module.exports = function getBuildProperty(project, prop) {
+export default function getBuildProperty(project, prop) {
   const target = project.getFirstTarget().firstTarget;
   const config = project.pbxXCConfigurationList()[
     target.buildConfigurationList
@@ -28,4 +28,4 @@ module.exports = function getBuildProperty(project, prop) {
   ];
 
   return buildSection.buildSettings[prop];
-};
+}

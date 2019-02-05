@@ -8,11 +8,11 @@
  * @emails oncall+javascript_foundation
  */
 
+import getHeadersInFolder from '../../ios/getHeadersInFolder';
+
 jest.mock('fs');
 jest.mock('path');
 const fs = require('fs');
-
-import getHeadersInFolder from '../../ios/getHeadersInFolder';
 
 const ROOT_DIR = '/';
 

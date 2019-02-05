@@ -15,7 +15,7 @@ import hasLibraryImported from './hasLibraryImported';
  * Returns true if `xcodeproj` specified by dependencyConfig is present
  * in a top level `libraryFolder`
  */
-module.exports = function isInstalled(projectConfig, dependencyConfig) {
+export default function isInstalled(projectConfig, dependencyConfig) {
   const project = xcode.project(projectConfig.pbxprojPath).parseSync();
   const libraries = getGroup(project, projectConfig.libraryFolder);
 
@@ -24,4 +24,4 @@ module.exports = function isInstalled(projectConfig, dependencyConfig) {
   }
 
   return hasLibraryImported(libraries, dependencyConfig.projectName);
-};
+}

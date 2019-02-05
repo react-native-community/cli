@@ -8,10 +8,11 @@
  * @emails oncall+javascript_foundation
  */
 
+import getAssetDestPathIOS from '../getAssetDestPathIOS';
+
 jest.dontMock('../getAssetDestPathIOS');
 
 const path = require('path');
-import getAssetDestPathIOS from '../getAssetDestPathIOS';
 
 describe('getAssetDestPathIOS', () => {
   it('should build correct path', () => {

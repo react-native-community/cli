@@ -235,4 +235,4 @@ function launchEditor(fileName, lineNumber, projectRoots) {
   });
 }
 
-module.exports = launchEditor;
+export default launchEditor;

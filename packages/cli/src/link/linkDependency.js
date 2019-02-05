@@ -22,6 +22,7 @@ const linkDependency = async (
       platforms[platform] &&
       platforms[platform].linkConfig &&
       platforms[platform].linkConfig();
+
     if (!linkConfig || !linkConfig.isInstalled || !linkConfig.register) {
       return;
     }
@@ -60,4 +61,4 @@ const linkDependency = async (
   });
 };
 
-module.exports = linkDependency;
+export default linkDependency;

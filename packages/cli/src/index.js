@@ -17,4 +17,4 @@ if (require.main === module) {
   cli.run();
 }
 
-module.exports = cli;
+export default cli;

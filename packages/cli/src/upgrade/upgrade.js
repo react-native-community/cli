@@ -151,4 +151,4 @@ const upgradeCommand = {
   func: validateAndUpgrade,
 };
 
-module.exports = upgradeCommand;
+export default upgradeCommand;

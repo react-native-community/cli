@@ -8,9 +8,9 @@
  * @emails oncall+javascript_foundation
  */
 
-jest.dontMock('../findXcodeProject');
-
 import findXcodeProject from '../findXcodeProject';
+
+jest.dontMock('../findXcodeProject');
 
 describe('findXcodeProject', () => {
   it('should find *.xcodeproj file', () => {

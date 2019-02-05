@@ -34,7 +34,7 @@ function uninstall(args, ctx) {
   logger.info(`Module ${name} has been successfully uninstalled & unlinked`);
 }
 
-module.exports = {
+export default {
   func: uninstall,
   description: 'uninstall and unlink native dependencies',
   name: 'uninstall <packageName>',

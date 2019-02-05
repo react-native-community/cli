@@ -8,8 +8,9 @@
  * @emails oncall+javascript_foundation
  */
 
-const path = require('path');
 import getHeaderSearchPath from '../../ios/getHeaderSearchPath';
+
+const path = require('path');
 
 const SRC_DIR = path.join('react-native-project', 'ios');
 

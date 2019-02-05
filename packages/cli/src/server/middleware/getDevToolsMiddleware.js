@@ -26,7 +26,7 @@ function launchDevTools({ host, port, watchFolders }, isChromeConnected) {
   }
 }
 
-module.exports = function getDevToolsMiddleware(options, isChromeConnected) {
+export default function getDevToolsMiddleware(options, isChromeConnected) {
   return function devToolsMiddleware(req, res, next) {
     if (req.url === '/launch-safari-devtools') {
       // TODO: remove `logger.info` and dev tools binary
@@ -51,4 +51,4 @@ module.exports = function getDevToolsMiddleware(options, isChromeConnected) {
       next();
     }
   };
-};
+}

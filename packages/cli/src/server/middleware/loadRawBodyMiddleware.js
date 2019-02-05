@@ -7,7 +7,7 @@
  * @format
  */
 
-module.exports = function rawBodyMiddleware(req, res, next) {
+export default function rawBodyMiddleware(req, res, next) {
   req.rawBody = '';
   req.setEncoding('utf8');
 
@@ -18,4 +18,4 @@ module.exports = function rawBodyMiddleware(req, res, next) {
   req.on('end', () => {
     next();
   });
-};
+}

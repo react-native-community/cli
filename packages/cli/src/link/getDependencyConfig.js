@@ -24,7 +24,7 @@ type DependenciesConfig = {
   params: InquirerPromptT[],
 };
 
-module.exports = function getDependencyConfig(
+export default function getDependencyConfig(
   ctx: ContextT,
   availablePlatforms: PlatformsT,
   dependency: string
@@ -53,4 +53,4 @@ module.exports = function getDependencyConfig(
   } catch (e) {
     throw new Error('Failed to get dependency config');
   }
-};
+}

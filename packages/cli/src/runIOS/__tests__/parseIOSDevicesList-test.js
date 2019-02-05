@@ -8,8 +8,9 @@
  * @emails oncall+javascript_foundation
  */
 
-jest.dontMock('../parseIOSDevicesList');
 import parseIOSDevicesList from '../parseIOSDevicesList';
+
+jest.dontMock('../parseIOSDevicesList');
 
 describe('parseIOSDevicesList', () => {
   it('parses typical output', () => {

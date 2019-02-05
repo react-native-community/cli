@@ -21,4 +21,4 @@ function walk(current) {
   return [].concat.apply([current], files);
 }
 
-module.exports = walk;
+export default walk;

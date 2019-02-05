@@ -108,4 +108,4 @@ function runOnAllDevices(
   }
 }
 
-module.exports = runOnAllDevices;
+export default runOnAllDevices;

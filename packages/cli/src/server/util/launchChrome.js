@@ -55,4 +55,4 @@ function launchChrome(url: string) {
   });
 }
 
-module.exports = launchChrome;
+export default launchChrome;

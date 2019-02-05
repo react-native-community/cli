@@ -19,7 +19,7 @@ import writePlist from './writePlist';
  * This function works in a similar manner to its Android version,
  * except it does not copy fonts but creates Xcode Group references
  */
-module.exports = function linkAssetsIOS(files, projectConfig) {
+export default function linkAssetsIOS(files, projectConfig) {
   const project = xcode.project(projectConfig.pbxprojPath).parseSync();
   const assets = groupFilesByType(files);
   const plist = getPlist(project, projectConfig.sourceDir);
@@ -48,4 +48,4 @@ module.exports = function linkAssetsIOS(files, projectConfig) {
   fs.writeFileSync(projectConfig.pbxprojPath, project.writeSync());
 
   writePlist(project, projectConfig.sourceDir, plist);
-};
+}

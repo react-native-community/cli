@@ -21,7 +21,7 @@ import removeProductGroup from './removeProductGroup';
  *
  * Returns removed file (that one will have UUID)
  */
-module.exports = function removeProjectFromProject(project, filePath) {
+export default function removeProjectFromProject(project, filePath) {
   const file = project.removeFromPbxFileReferenceSection(new PbxFile(filePath));
   const projectRef = removeFromProjectReferences(project, file);
 
@@ -32,4 +32,4 @@ module.exports = function removeProjectFromProject(project, filePath) {
   removeFromPbxItemContainerProxySection(project, file);
 
   return file;
-};
+}

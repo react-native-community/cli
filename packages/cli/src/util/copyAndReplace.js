@@ -131,4 +131,4 @@ function copyBinaryFile(srcPath, destPath, cb) {
   }
 }
 
-module.exports = copyAndReplace;
+export default copyAndReplace;

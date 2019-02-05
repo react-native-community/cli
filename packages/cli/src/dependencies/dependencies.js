@@ -64,7 +64,7 @@ async function dependencies(argv, configPromise, args, packagerInstance) {
     : Promise.resolve();
 }
 
-module.exports = {
+export default {
   name: 'dependencies',
   description: 'lists dependencies',
   func: util.deprecate(

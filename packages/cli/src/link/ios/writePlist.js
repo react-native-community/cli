@@ -16,7 +16,7 @@ import getPlistPath from './getPlistPath';
  *
  * Returns `null` if INFOPLIST_FILE is not specified or file is non-existent.
  */
-module.exports = function writePlist(project, sourceDir, plist) {
+export default function writePlist(project, sourceDir, plist) {
   const plistPath = getPlistPath(project, sourceDir);
 
   if (!plistPath) {
@@ -30,4 +30,4 @@ module.exports = function writePlist(project, sourceDir, plist) {
     plistPath,
     `${plistParser.build(plist, { indent: '\t', offset: -1 })}\n`
   );
-};
+}

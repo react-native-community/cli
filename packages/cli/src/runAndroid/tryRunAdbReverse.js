@@ -32,4 +32,4 @@ function tryRunAdbReverse(packagerPort: number | string, device: string) {
   }
 }
 
-module.exports = tryRunAdbReverse;
+export default tryRunAdbReverse;

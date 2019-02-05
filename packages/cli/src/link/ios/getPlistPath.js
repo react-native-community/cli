@@ -10,7 +10,7 @@
 import path from 'path';
 import getBuildProperty from './getBuildProperty';
 
-module.exports = function getPlistPath(project, sourceDir) {
+export default function getPlistPath(project, sourceDir) {
   const plistFile = getBuildProperty(project, 'INFOPLIST_FILE');
 
   if (!plistFile) {
@@ -21,4 +21,4 @@ module.exports = function getPlistPath(project, sourceDir) {
     sourceDir,
     plistFile.replace(/"/g, '').replace('$(SRCROOT)', '')
   );
-};
+}

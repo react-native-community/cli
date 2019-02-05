@@ -31,7 +31,7 @@ function makeCommand(command) {
   };
 }
 
-module.exports = function getHooks(root: string) {
+export default function getHooks(root: string) {
   const commands = getPackageConfiguration(root).commands || {};
 
   const acc = {};
@@ -41,6 +41,6 @@ module.exports = function getHooks(root: string) {
   });
 
   return acc;
-};
+}
 
 module.exports.makeCommand = makeCommand;

@@ -21,7 +21,7 @@ const builtInPlatforms = {
 /**
  * Returns an object with available platforms
  */
-module.exports = function getPlatforms(root: string): PlatformsT {
+export default function getPlatforms(root: string): PlatformsT {
   const plugins = findPlugins(root);
 
   /**
@@ -44,4 +44,4 @@ module.exports = function getPlatforms(root: string): PlatformsT {
     ...builtInPlatforms,
     ...projectPlatforms,
   };
-};
+}

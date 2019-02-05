@@ -264,7 +264,7 @@ function startServerInNewWindow(
   );
 }
 
-module.exports = {
+export default {
   name: 'run-android',
   description:
     'builds your app and starts it on a connected Android emulator or device',

@@ -11,10 +11,10 @@
  * Status page so that anyone who needs to can verify that the packager is
  * running on 8081 and not another program / service.
  */
-module.exports = function statusPageMiddleware(req, res, next) {
+export default function statusPageMiddleware(req, res, next) {
   if (req.url === '/status') {
     res.end('packager-status:running');
   } else {
     next();
   }
-};
+}

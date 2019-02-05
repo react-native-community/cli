@@ -14,6 +14,6 @@ import xml from 'xmldoc';
  * @param  {String} manifestPath
  * @return {XMLDocument} Parsed manifest's content
  */
-module.exports = function readManifest(manifestPath) {
+export default function readManifest(manifestPath) {
   return new xml.XmlDocument(fs.readFileSync(manifestPath, 'utf8'));
-};
+}

@@ -9,7 +9,7 @@
 
 const MARKER_TEXT = '# Add new pods below this line';
 
-module.exports = function findMarkedLinesInPodfile(podLines) {
+export default function findMarkedLinesInPodfile(podLines) {
   const result = [];
   for (let i = 0, len = podLines.length; i < len; i++) {
     if (podLines[i].includes(MARKER_TEXT)) {
@@ -17,4 +17,4 @@ module.exports = function findMarkedLinesInPodfile(podLines) {
     }
   }
   return result;
-};
+}

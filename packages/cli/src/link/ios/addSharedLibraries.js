@@ -9,7 +9,7 @@
 
 import createGroupWithMessage from './createGroupWithMessage';
 
-module.exports = function addSharedLibraries(project, libraries) {
+export default function addSharedLibraries(project, libraries) {
   if (!libraries.length) {
     return;
   }
@@ -22,4 +22,4 @@ module.exports = function addSharedLibraries(project, libraries) {
   for (const name of libraries) {
     project.addFramework(name, { target });
   }
-};
+}

@@ -8,13 +8,14 @@
  * @emails oncall+javascript_foundation
  */
 
+import dependencies from '../__fixtures__/dependencies';
+
 jest.mock('path');
 jest.mock('fs');
 
 const fs = require('fs');
 
 const { findAssets } = require('../getAssets');
-import dependencies from '../__fixtures__/dependencies';
 
 describe('findAssets', () => {
   beforeEach(() => {

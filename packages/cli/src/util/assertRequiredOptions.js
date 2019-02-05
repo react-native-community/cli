@@ -13,7 +13,7 @@ import { camelCase } from 'lodash';
 // Commander.js has a 2 years old open issue to support <...> syntax
 // for options. Until that gets merged, we run the checks manually
 // https://github.com/tj/commander.js/issues/230
-module.exports = function assertRequiredOptions(options, passedOptions) {
+export default function assertRequiredOptions(options, passedOptions) {
   options.forEach(opt => {
     const option = new Option(opt.command);
 
@@ -28,4 +28,4 @@ module.exports = function assertRequiredOptions(options, passedOptions) {
       throw new Error(`error: option '${option.long}' missing`);
     }
   });
-};
+}

@@ -8,8 +8,9 @@
  * @emails oncall+javascript_foundation
  */
 
-const path = require('path');
 import findPlugins from '../findPlugins';
+
+const path = require('path');
 
 const ROOT = path.join(__dirname, '..', '..');
 const pjsonPath = path.join(ROOT, './package.json');

@@ -9,7 +9,7 @@
 
 const isWindows = process.platform === 'win32';
 
-module.exports = function isInstalledGlobally() {
+export default function isInstalledGlobally() {
   if (isWindows) {
     const fs = require('fs');
     const path = require('path');
@@ -21,4 +21,4 @@ module.exports = function isInstalledGlobally() {
   // outside of the node_mobules/.bin/react-native executable.
   const script = process.argv[1];
   return script.indexOf('node_modules/.bin/react-native') === -1;
-};
+}

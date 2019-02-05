@@ -14,7 +14,7 @@ import makeBuildPatch from './patches/makeBuildPatch';
 import makeImportPatch from './patches/makeImportPatch';
 import makePackagePatch from './patches/makePackagePatch';
 
-module.exports = function registerNativeAndroidModule(
+export default function registerNativeAndroidModule(
   name,
   androidConfig,
   params,
@@ -39,4 +39,4 @@ module.exports = function registerNativeAndroidModule(
     projectConfig.mainFilePath,
     makeImportPatch(androidConfig.packageImportPath)
   );
-};
+}

@@ -84,7 +84,7 @@ export type ConfigOptionsT = {
  *
  * This allows the CLI to always overwrite the file settings.
  */
-module.exports = async function load(
+export default async function load(
   ctx: ContextT,
   options?: ConfigOptionsT = {}
 ): Promise<ConfigT> {
@@ -99,4 +99,4 @@ module.exports = async function load(
   );
 
   return config;
-};
+}

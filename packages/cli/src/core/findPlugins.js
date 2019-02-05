@@ -113,7 +113,7 @@ const findPluginsInFolder = folder => {
  * Find plugins in package.json of the given folder
  * @param {String} folder Path to the folder to get the package.json from
  */
-module.exports = function findPlugins(folder: string) {
+export default function findPlugins(folder: string) {
   const plugin = findPluginsInFolder(folder);
   return {
     commands: uniq(flatten(plugin.commands)),
@@ -125,4 +125,4 @@ module.exports = function findPlugins(folder: string) {
       ),
     },
   };
-};
+}

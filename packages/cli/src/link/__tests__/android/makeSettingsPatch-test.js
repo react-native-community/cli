@@ -50,7 +50,8 @@ project(':test').projectDir = new File(rootProject.projectDir, '../node_modules/
       return path;
     });
     // eslint-disable-next-line no-shadow
-    const makeSettingsPatch = require('../../android/patches/makeSettingsPatch').default;
+    const makeSettingsPatch = require('../../android/patches/makeSettingsPatch')
+      .default;
     const projectConfigWindows = {
       sourceDir: 'C:\\home\\project\\android\\app',
       settingsGradlePath: 'C:\\home\\project\\android\\settings.gradle',

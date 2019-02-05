@@ -122,4 +122,4 @@ function addJestToPackageJson(destinationRoot) {
   );
 }
 
-module.exports = init;
+export default init;

@@ -8,12 +8,13 @@
  * @emails oncall+javascript_foundation
  */
 
+import mocks from '../../__fixtures__/android';
+import findPackageClassName from '../../android/findPackageClassName';
+
 jest.mock('path');
 jest.mock('fs');
 
 const fs = require('fs');
-import mocks from '../../__fixtures__/android';
-import findPackageClassName from '../../android/findPackageClassName';
 
 ['posix', 'win32'].forEach(platform => {
   let root;

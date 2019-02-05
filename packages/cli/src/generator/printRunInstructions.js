@@ -7,8 +7,8 @@
  * @format
  */
 
-const path = require('path');
-const logger = require('../util/logger');
+import path from 'path';
+import logger from '../util/logger';
 
 function printRunInstructions(projectDir, projectName) {
   const absoluteProjectDir = path.resolve(projectDir);

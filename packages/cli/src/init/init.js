@@ -7,15 +7,15 @@
  * @format
  */
 
-const { execSync } = require('child_process');
-const fs = require('fs');
-const minimist = require('minimist');
-const path = require('path');
-const process = require('process');
-const printRunInstructions = require('../generator/printRunInstructions');
-const { createProjectFromTemplate } = require('../generator/templates');
-const yarn = require('../util/yarn');
-const logger = require('../util/logger');
+import { execSync } from 'child_process';
+import fs from 'fs';
+import minimist from 'minimist';
+import path from 'path';
+import process from 'process';
+import printRunInstructions from '../generator/printRunInstructions';
+import { createProjectFromTemplate } from '../generator/templates';
+import yarn from '../util/yarn';
+import logger from '../util/logger';
 
 /**
  * Creates the template for a React Native project given the provided

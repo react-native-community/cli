@@ -3,15 +3,12 @@
  * @flow
  */
 import type { ConfigT } from 'metro-config/src/configTypes.flow';
+import path from 'path';
+import { createBlacklist } from 'metro';
+import { loadConfig } from 'metro-config';
 import type { ContextT } from '../core/types.flow';
-
-const path = require('path');
-
-const { createBlacklist } = require('metro');
-const { loadConfig } = require('metro-config');
-const findSymlinkedModules = require('./findSymlinkedModules');
-
-const findPlugins = require('../core/findPlugins');
+import findPlugins from '../core/findPlugins';
+import findSymlinkedModules from './findSymlinkedModules';
 
 const resolveSymlinksForRoots = roots =>
   roots.reduce<string[]>(

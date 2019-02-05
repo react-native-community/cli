@@ -2,9 +2,9 @@
  * @flow
  */
 
-const glob = require('glob');
-const path = require('path');
-const getPackageConfiguration = require('./getPackageConfiguration');
+import glob from 'glob';
+import path from 'path';
+import getPackageConfiguration from './getPackageConfiguration';
 
 const findAssetsInFolder = folder =>
   glob.sync(path.join(folder, '**'), { nodir: true });

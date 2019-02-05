@@ -7,8 +7,8 @@
  * @format
  */
 
-const { spawnSync } = require('child_process');
-const yarn = require('../util/yarn');
+import { spawnSync } from 'child_process';
+import yarn from './yarn';
 
 const spawnOpts = {
   stdio: 'inherit',

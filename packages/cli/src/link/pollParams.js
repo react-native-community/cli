@@ -7,7 +7,7 @@
  * @format
  */
 
-const inquirer = require('inquirer');
+import inquirer from 'inquirer';
 
 module.exports = questions =>
   new Promise((resolve, reject) => {

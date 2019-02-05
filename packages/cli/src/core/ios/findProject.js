@@ -7,8 +7,8 @@
  * @format
  */
 
-const glob = require('glob');
-const path = require('path');
+import glob from 'glob';
+import path from 'path';
 
 /**
  * Glob pattern to look for xcodeproj

@@ -7,8 +7,8 @@
  * @format
  */
 
-const copyToClipBoard = require('../util/copyToClipBoard');
-const logger = require('../../util/logger');
+import copyToClipBoard from '../util/copyToClipBoard';
+import logger from '../../util/logger';
 
 /**
  * Handle the request from JS to copy contents onto host system clipboard.

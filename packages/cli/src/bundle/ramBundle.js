@@ -6,10 +6,10 @@
  *
  * @format
  */
-const outputUnbundle = require('metro/src/shared/output/RamBundle');
+import outputUnbundle from 'metro/src/shared/output/RamBundle';
 
-const bundleWithOutput = require('./bundle').withOutput;
-const bundleCommandLineArgs = require('./bundleCommandLineArgs');
+import { withOutput as bundleWithOutput } from './bundle';
+import bundleCommandLineArgs from './bundleCommandLineArgs';
 
 /**
  * Builds the bundle starting to look for dependencies at the given entry path.

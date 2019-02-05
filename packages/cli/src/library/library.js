@@ -7,12 +7,12 @@
  * @format
  */
 
-const fs = require('fs');
-const path = require('path');
-const copyAndReplace = require('../util/copyAndReplace');
-const isValidPackageName = require('../util/isValidPackageName');
-const walk = require('../util/walk');
-const logger = require('../util/logger');
+import fs from 'fs';
+import path from 'path';
+import copyAndReplace from '../util/copyAndReplace';
+import isValidPackageName from '../util/isValidPackageName';
+import walk from '../util/walk';
+import logger from '../util/logger';
 
 /**
  * Creates a new native library with the given name

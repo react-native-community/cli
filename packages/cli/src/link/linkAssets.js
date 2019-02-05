@@ -1,9 +1,9 @@
 // @flow
 
+import { isEmpty } from 'lodash';
 import type { PlatformsT, ProjectConfigT } from '../core/types.flow';
 
-const { isEmpty } = require('lodash');
-const log = require('../util/logger');
+import log from '../util/logger';
 
 const linkAssets = (
   platforms: PlatformsT,

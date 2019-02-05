@@ -2,8 +2,8 @@
  * @flow
  */
 
-const { spawn } = require('child_process');
-const getPackageConfiguration = require('./getPackageConfiguration');
+import { spawn } from 'child_process';
+import getPackageConfiguration from './getPackageConfiguration';
 
 function makeCommand(command) {
   return cb => {

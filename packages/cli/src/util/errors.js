@@ -1,15 +1,11 @@
 /**
  * @flow
  */
-const chalk = require('chalk');
+import chalk from 'chalk';
 
-class ProcessError extends Error {
+export class ProcessError extends Error {
   constructor(msg: string, processError: string) {
     super(`${chalk.red(msg)}\n\n${chalk.gray(processError)}`);
     Error.captureStackTrace(this, ProcessError);
   }
 }
-
-module.exports = {
-  ProcessError,
-};

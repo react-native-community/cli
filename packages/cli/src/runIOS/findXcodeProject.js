@@ -8,7 +8,7 @@
  * @flow strict
  */
 
-const path = require('path');
+import path from 'path';
 
 type ProjectInfo = {
   name: string,

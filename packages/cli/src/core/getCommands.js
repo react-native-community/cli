@@ -2,11 +2,11 @@
  * @flow
  */
 
+import path from 'path';
 import type { CommandT, ProjectCommandT, LocalCommandT } from './types.flow';
 
-const path = require('path');
-const findPlugins = require('./findPlugins');
-const logger = require('../util/logger');
+import findPlugins from './findPlugins';
+import logger from '../util/logger';
 
 /**
  * List of built-in commands

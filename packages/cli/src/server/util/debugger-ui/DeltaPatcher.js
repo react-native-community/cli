@@ -55,7 +55,7 @@
       // Make sure that the first received bundle is a base.
       if (!this._initialized && !bundle.base) {
         throw new Error(
-          'DeltaPatcher should receive a base Bundle when being initialized',
+          'DeltaPatcher should receive a base Bundle when being initialized'
         );
       }
 
@@ -120,7 +120,7 @@
       return [].concat(
         [this._lastBundle.pre],
         Array.from(this._lastBundle.modules.values()),
-        [this._lastBundle.post],
+        [this._lastBundle.post]
       );
     }
   }

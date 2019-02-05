@@ -7,8 +7,8 @@
  * @format
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 // Binary files, don't process these (avoid decoding as utf8)
 const binaryExtensions = ['.png', '.jar'];

@@ -9,19 +9,20 @@
 
 /* eslint-disable consistent-return */
 
+import path from 'path';
+import { spawnSync, spawn, execFileSync } from 'child_process';
+import fs from 'fs';
+import isString from 'lodash/isString';
+
+import isPackagerRunning from '../util/isPackagerRunning';
 import type { ContextT } from '../core/types.flow';
 
-const { spawnSync, spawn, execFileSync } = require('child_process');
-const fs = require('fs');
-const isString = require('lodash/isString');
-const path = require('path');
-const isPackagerRunning = require('../util/isPackagerRunning');
-const logger = require('../util/logger');
-const adb = require('./adb');
-const runOnAllDevices = require('./runOnAllDevices');
-const tryRunAdbReverse = require('./tryRunAdbReverse');
-const tryLaunchAppOnDevice = require('./tryLaunchAppOnDevice');
-const getAdbPath = require('./getAdbPath');
+import adb from './adb';
+import runOnAllDevices from './runOnAllDevices';
+import tryRunAdbReverse from './tryRunAdbReverse';
+import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
+import getAdbPath from './getAdbPath';
+import logger from '../util/logger';
 
 // Verifies this is an Android project
 function checkAndroid(root) {

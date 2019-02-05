@@ -7,19 +7,19 @@
  * @format
  */
 
-const xcode = require('xcode');
-const fs = require('fs');
-const path = require('path');
-const { isEmpty } = require('lodash');
+import xcode from 'xcode';
+import fs from 'fs';
+import path from 'path';
+import { isEmpty } from 'lodash';
 
-const addToHeaderSearchPaths = require('./addToHeaderSearchPaths');
-const getHeadersInFolder = require('./getHeadersInFolder');
-const getHeaderSearchPath = require('./getHeaderSearchPath');
-const getTargets = require('./getTargets');
-const createGroupWithMessage = require('./createGroupWithMessage');
-const addFileToProject = require('./addFileToProject');
-const addProjectToLibraries = require('./addProjectToLibraries');
-const addSharedLibraries = require('./addSharedLibraries');
+import addToHeaderSearchPaths from './addToHeaderSearchPaths';
+import getHeadersInFolder from './getHeadersInFolder';
+import getHeaderSearchPath from './getHeaderSearchPath';
+import getTargets from './getTargets';
+import createGroupWithMessage from './createGroupWithMessage';
+import addFileToProject from './addFileToProject';
+import addProjectToLibraries from './addProjectToLibraries';
+import addSharedLibraries from './addSharedLibraries';
 
 /**
  * Register native module IOS adds given dependency to project by adding

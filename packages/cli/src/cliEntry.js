@@ -8,19 +8,18 @@
  * @flow
  */
 
+import chalk from 'chalk';
+import childProcess from 'child_process';
+import commander from 'commander';
+import minimist from 'minimist';
+import path from 'path';
 import type { CommandT, ContextT } from './core/types.flow';
-
-const chalk = require('chalk');
-const childProcess = require('child_process');
-const commander = require('commander');
-const minimist = require('minimist');
-const path = require('path');
-const getCommands = require('./core/getCommands');
-const getLegacyConfig = require('./core/getLegacyConfig');
-const init = require('./init/init');
-const assertRequiredOptions = require('./util/assertRequiredOptions');
-const logger = require('./util/logger');
-const pkg = require('../package.json');
+import getCommands from './core/getCommands';
+import getLegacyConfig from './core/getLegacyConfig';
+import init from './init/init';
+import assertRequiredOptions from './util/assertRequiredOptions';
+import logger from './util/logger';
+import pkg from '../package.json';
 
 commander.version(pkg.version);
 

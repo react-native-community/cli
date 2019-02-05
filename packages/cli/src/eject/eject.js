@@ -7,10 +7,10 @@
  * @format
  */
 
-const path = require('path');
-const fs = require('fs');
-const copyProjectTemplateAndReplace = require('../generator/copyProjectTemplateAndReplace');
-const logger = require('../util/logger');
+import path from 'path';
+import fs from 'fs';
+import copyProjectTemplateAndReplace from '../generator/copyProjectTemplateAndReplace';
+import logger from '../util/logger';
 
 /**
  * The eject command re-creates the `android` and `ios` native folders. Because native code can be

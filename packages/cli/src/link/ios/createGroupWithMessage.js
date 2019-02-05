@@ -7,9 +7,9 @@
  * @format
  */
 
-const log = require('../../util/logger');
-const createGroup = require('./createGroup');
-const getGroup = require('./getGroup');
+import log from '../../util/logger';
+import createGroup from './createGroup';
+import getGroup from './getGroup';
 
 /**
  * Given project and path of the group, it checks if a group exists at that path,

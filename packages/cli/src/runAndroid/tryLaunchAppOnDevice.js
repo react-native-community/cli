@@ -7,8 +7,8 @@
  * @flow
  */
 
-const { spawnSync } = require('child_process');
-const logger = require('../util/logger');
+import { spawnSync } from 'child_process';
+import logger from '../util/logger';
 
 function tryLaunchAppOnDevice(
   device: string,

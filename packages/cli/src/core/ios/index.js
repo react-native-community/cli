@@ -7,10 +7,10 @@
  * @format
  */
 
-const path = require('path');
-const findProject = require('./findProject');
-const findPodfilePath = require('./findPodfilePath');
-const findPodspecName = require('./findPodspecName');
+import path from 'path';
+import findProject from './findProject';
+import findPodfilePath from './findPodfilePath';
+import findPodspecName from './findPodspecName';
 
 /**
  * For libraries specified without an extension, add '.tbd' for those that

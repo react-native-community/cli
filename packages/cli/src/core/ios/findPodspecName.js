@@ -7,8 +7,8 @@
  * @format
  */
 
-const glob = require('glob');
-const path = require('path');
+import glob from 'glob';
+import path from 'path';
 
 module.exports = function findPodspecName(folder) {
   const podspecs = glob.sync('*.podspec', { cwd: folder });

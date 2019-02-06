@@ -19,13 +19,13 @@ const spawnOpts = {
 function install(args, ctx) {
   const name = args[0];
 
-  let res = new PackageManager({ projectDir: ctx.root }).install([name]);
-
-  if (res.status) {
-    process.exit(res.status);
+  try {
+    new PackageManager({ projectDir: ctx.root }).install([name]);
+  } catch (e) {
+    process.exit(e.status);
   }
 
-  res = spawnSync('react-native', ['link', name], spawnOpts);
+  const res = spawnSync('react-native', ['link', name], spawnOpts);
 
   if (res.status) {
     process.exit(res.status);

@@ -68,6 +68,7 @@ function generateProject(destinationRoot, newProjectName, options) {
     return;
   }
 
+  // TODO: Use `PackageManager` in generator to remove `yarn` calls.
   const yarnVersion =
     !options.npm &&
     yarn.getYarnVersionIfAvailable() &&
@@ -85,22 +86,18 @@ function generateProject(destinationRoot, newProjectName, options) {
     yarnVersion
   );
 
-  const DEPENDENCIES = [`react@${reactVersion}`];
+  logger.info('Adding required dependencies');
+  packageManager.install([`react@${reactVersion}`]);
 
-  const DEV_DEPENDENCIES = [
+  logger.info('Adding required dev dependencies');
+  packageManager.installDev([
     '@babel/core',
     '@babel/runtime',
     'jest',
     'babel-jest',
     'metro-react-native-babel-preset',
     `react-test-renderer@${reactVersion}`,
-  ];
-
-  logger.info('Adding required dependencies');
-  packageManager.install(DEPENDENCIES);
-
-  logger.info('Adding required dev dependencies');
-  packageManager.installDev(DEV_DEPENDENCIES);
+  ]);
 
   addJestToPackageJson(destinationRoot);
   printRunInstructions(destinationRoot, newProjectName);

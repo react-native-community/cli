@@ -27,30 +27,24 @@ export default class PackageManager {
   }
 
   install(packageNames: Array<string>) {
-    if (this.shouldCallYarn()) {
-      this.executeCommand(`yarn add ${packageNames.join(' ')}`);
-    } else {
-      this.executeCommand(
-        `npm install ${packageNames.join(' ')} --save --save-exact`
-      );
-    }
+    return this.shouldCallYarn()
+      ? this.executeCommand(`yarn add ${packageNames.join(' ')}`)
+      : this.executeCommand(
+          `npm install ${packageNames.join(' ')} --save --save-exact`
+        );
   }
 
   installDev(packageNames: Array<string>) {
-    if (this.shouldCallYarn()) {
-      this.executeCommand(`yarn add -D ${packageNames.join(' ')}`);
-    } else {
-      this.executeCommand(
-        `npm install ${packageNames.join(' ')} --save-dev --save-exact`
-      );
-    }
+    return this.shouldCallYarn()
+      ? this.executeCommand(`yarn add -D ${packageNames.join(' ')}`)
+      : this.executeCommand(
+          `npm install ${packageNames.join(' ')} --save-dev --save-exact`
+        );
   }
 
   uninstall(packageNames: Array<string>) {
-    if (this.shouldCallYarn()) {
-      this.executeCommand(`yarn remove ${packageNames.join(' ')}`);
-    } else {
-      this.executeCommand(`npm uninstall ${packageNames.join(' ')} --save`);
-    }
+    return this.shouldCallYarn()
+      ? this.executeCommand(`yarn remove ${packageNames.join(' ')}`)
+      : this.executeCommand(`npm uninstall ${packageNames.join(' ')} --save`);
   }
 }

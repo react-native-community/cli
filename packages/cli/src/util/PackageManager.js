@@ -46,11 +46,11 @@ export default class PackageManager {
     }
   }
 
-  uninstall(packageName: string) {
+  uninstall(packageNames: Array<string>) {
     if (this.shouldCallYarn()) {
-      this.executeCommand(`yarn remove ${packageName}`);
+      this.executeCommand(`yarn remove ${packageNames.join(' ')}`);
     } else {
-      this.executeCommand(`npm uninstall ${packageName} --save`);
+      this.executeCommand(`npm uninstall ${packageNames.join(' ')} --save`);
     }
   }
 }

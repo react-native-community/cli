@@ -5,7 +5,6 @@ import yarn from '../yarn';
 
 const PROJECT_DIR = '/project/directory';
 const PACKAGES = ['react', 'react-native'];
-const PACKAGE = '@babel/core';
 const EXEC_OPTS = { stdio: 'inherit' };
 
 beforeEach(() => {
@@ -21,9 +20,9 @@ describe('yarn', () => {
   });
 
   it('should install', () => {
-    const uut = new PackageManager({ projectDir: PROJECT_DIR });
+    const packageManager = new PackageManager({ projectDir: PROJECT_DIR });
 
-    uut.install(PACKAGES);
+    packageManager.install(PACKAGES);
 
     expect(ChildProcess.execSync).toHaveBeenCalledWith(
       'yarn add react react-native',
@@ -32,9 +31,9 @@ describe('yarn', () => {
   });
 
   it('should installDev', () => {
-    const uut = new PackageManager({ projectDir: PROJECT_DIR });
+    const packageManager = new PackageManager({ projectDir: PROJECT_DIR });
 
-    uut.installDev(PACKAGES);
+    packageManager.installDev(PACKAGES);
 
     expect(ChildProcess.execSync).toHaveBeenCalledWith(
       'yarn add -D react react-native',
@@ -43,12 +42,12 @@ describe('yarn', () => {
   });
 
   it('should uninstall', () => {
-    const uut = new PackageManager({ projectDir: PROJECT_DIR });
+    const packageManager = new PackageManager({ projectDir: PROJECT_DIR });
 
-    uut.uninstall(PACKAGE);
+    packageManager.uninstall(PACKAGES);
 
     expect(ChildProcess.execSync).toHaveBeenCalledWith(
-      `yarn remove ${PACKAGE}`,
+      `yarn remove react react-native`,
       EXEC_OPTS
     );
   });
@@ -56,9 +55,12 @@ describe('yarn', () => {
 
 describe('npm', () => {
   it('should install', () => {
-    const uut = new PackageManager({ projectDir: PROJECT_DIR, forceNpm: true });
+    const packageManager = new PackageManager({
+      projectDir: PROJECT_DIR,
+      forceNpm: true,
+    });
 
-    uut.install(PACKAGES);
+    packageManager.install(PACKAGES);
 
     expect(ChildProcess.execSync).toHaveBeenCalledWith(
       'npm install react react-native --save --save-exact',
@@ -67,9 +69,12 @@ describe('npm', () => {
   });
 
   it('should installDev', () => {
-    const uut = new PackageManager({ projectDir: PROJECT_DIR, forceNpm: true });
+    const packageManager = new PackageManager({
+      projectDir: PROJECT_DIR,
+      forceNpm: true,
+    });
 
-    uut.installDev(PACKAGES);
+    packageManager.installDev(PACKAGES);
 
     expect(ChildProcess.execSync).toHaveBeenCalledWith(
       'npm install react react-native --save-dev --save-exact',
@@ -78,12 +83,15 @@ describe('npm', () => {
   });
 
   it('should uninstall', () => {
-    const uut = new PackageManager({ projectDir: PROJECT_DIR, forceNpm: true });
+    const packageManager = new PackageManager({
+      projectDir: PROJECT_DIR,
+      forceNpm: true,
+    });
 
-    uut.uninstall(PACKAGE);
+    packageManager.uninstall(PACKAGES);
 
     expect(ChildProcess.execSync).toHaveBeenCalledWith(
-      `npm uninstall ${PACKAGE} --save`,
+      `npm uninstall react react-native --save`,
       EXEC_OPTS
     );
   });
@@ -91,9 +99,9 @@ describe('npm', () => {
 
 it('should use npm if yarn is not available', () => {
   jest.spyOn(yarn, 'getYarnVersionIfAvailable').mockImplementation(() => false);
-  const uut = new PackageManager({ projectDir: PROJECT_DIR });
+  const packageManager = new PackageManager({ projectDir: PROJECT_DIR });
 
-  uut.install(PACKAGES);
+  packageManager.install(PACKAGES);
 
   expect(ChildProcess.execSync).toHaveBeenCalledWith(
     `npm install react react-native --save --save-exact`,
@@ -103,9 +111,9 @@ it('should use npm if yarn is not available', () => {
 
 it('should use npm if global cli is not using yarn', () => {
   jest.spyOn(yarn, 'isGlobalCliUsingYarn').mockImplementation(() => false);
-  const uut = new PackageManager({ projectDir: PROJECT_DIR });
+  const packageManager = new PackageManager({ projectDir: PROJECT_DIR });
 
-  uut.install(PACKAGES);
+  packageManager.install(PACKAGES);
 
   expect(ChildProcess.execSync).toHaveBeenCalledWith(
     `npm install react react-native --save --save-exact`,

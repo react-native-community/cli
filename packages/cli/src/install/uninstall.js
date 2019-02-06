@@ -25,7 +25,7 @@ function uninstall(args, ctx) {
     process.exit(res.status);
   }
 
-  res = new PackageManager({ projectDir: ctx.root }).uninstall(name);
+  res = new PackageManager({ projectDir: ctx.root }).uninstall([name]);
 
   if (res.status) {
     process.exit(res.status);

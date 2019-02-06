@@ -7,7 +7,8 @@
  * @format
  */
 
-const { execSync } = require('child_process');
+import PackageManager from '../util/PackageManager';
+
 const fs = require('fs');
 const minimist = require('minimist');
 const path = require('path');
@@ -72,6 +73,11 @@ function generateProject(destinationRoot, newProjectName, options) {
     yarn.getYarnVersionIfAvailable() &&
     yarn.isGlobalCliUsingYarn(destinationRoot);
 
+  const packageManager = new PackageManager({
+    projectDir: destinationRoot,
+    forceNpm: options.npm,
+  });
+
   createProjectFromTemplate(
     destinationRoot,
     newProjectName,
@@ -79,28 +85,24 @@ function generateProject(destinationRoot, newProjectName, options) {
     yarnVersion
   );
 
-  if (yarnVersion) {
-    logger.info('Adding React...');
-    execSync(`yarn add react@${reactVersion}`, { stdio: 'inherit' });
-  } else {
-    logger.info('Installing React...');
-    execSync(`npm install react@${reactVersion} --save --save-exact`, {
-      stdio: 'inherit',
-    });
-  }
-  if (!options['skip-jest']) {
-    const jestDeps = `jest babel-jest metro-react-native-babel-preset react-test-renderer@${reactVersion}`;
-    if (yarnVersion) {
-      logger.info('Adding Jest...');
-      execSync(`yarn add ${jestDeps} --dev --exact`, { stdio: 'inherit' });
-    } else {
-      logger.info('Installing Jest...');
-      execSync(`npm install ${jestDeps} --save-dev --save-exact`, {
-        stdio: 'inherit',
-      });
-    }
-    addJestToPackageJson(destinationRoot);
-  }
+  const DEPENDENCIES = [`react@${reactVersion}`];
+
+  const DEV_DEPENDENCIES = [
+    '@babel/core',
+    '@babel/runtime',
+    'jest',
+    'babel-jest',
+    'metro-react-native-babel-preset',
+    `react-test-renderer@${reactVersion}`,
+  ];
+
+  logger.info('Adding required dependencies');
+  packageManager.install(DEPENDENCIES);
+
+  logger.info('Adding required dev dependencies');
+  packageManager.installDev(DEV_DEPENDENCIES);
+
+  addJestToPackageJson(destinationRoot);
   printRunInstructions(destinationRoot, newProjectName);
 }
 

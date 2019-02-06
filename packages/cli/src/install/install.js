@@ -19,7 +19,7 @@ const spawnOpts = {
 function install(args, ctx) {
   const name = args[0];
 
-  let res = PackageManager.add(name, ctx.root);
+  let res = new PackageManager({ projectDir: ctx.root }).install([name]);
 
   if (res.status) {
     process.exit(res.status);

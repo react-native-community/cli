@@ -25,6 +25,43 @@ You can test your changes by calling `cli.js` directly from the cloned repositor
 node /path/to/cloned/project/packages/cli/index.js
 ```
 
+## Testing `init` command
+
+You can test your changes by installing local npm proxy - `verdaccio`, and publishing custom versions of `@react-native-community/cli` and `react-native`.
+
+* Install `verdaccio`
+```sh
+yarn global add verdaccio
+```
+* Run verdaccio
+```sh
+yarn verdaccio
+```
+* Set npm registry to `verdaccio` proxy server
+```sh
+npm set registry http://localhost:4873/
+```
+* Clone `react-native` and `@react-native-commiunity/cli`
+* Release new version of `@react-native-community/cli` to local npm proxy. If you have any issues, head over to [verdaccio](https://github.com/verdaccio/verdaccio) and check out the docs.
+```
+cd /path/to/cli/packages/cli && npm publish
+```
+* Install new version of `@react-native-community/cli` in `react-native` and publish new version of it.
+```sh
+# RN_CLI_VERSION is the version of localy released cli
+cd /path/to/react-native && yarn add @react-native-community/cli@${RN_CLI_VERSION} && npm publish
+```
+* You are ready to go
+```sh
+# RN_VERSION is the version of localy released react-native
+react-native init --version ${RN_VERSION}
+```
+* Cleanup
+```sh
+npm config set registry https://registry.npmjs.org/
+```
+
+
 ## Typechecking, linting and testing
 
 Currently we use `flow` for typechecking, `eslint` with `prettier` for linting and formatting the code and `jest` for testing.

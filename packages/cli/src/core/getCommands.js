@@ -30,7 +30,7 @@ import info from '../info/info';
  * List of built-in commands
  */
 
-const loadLocalCommands = (): Array<LocalCommandT> => [
+const loadLocalCommands: Array<LocalCommandT> = [
   server,
   runIOS,
   runAndroid,
@@ -100,7 +100,7 @@ const loadProjectCommands = (root: string): Array<ProjectCommandT> => {
  * Loads all the commands inside a given `root` folder
  */
 export default (root: string): Array<CommandT> => [
-  ...loadLocalCommands(),
+  ...loadLocalCommands,
   {
     name: 'init',
     func: () => {

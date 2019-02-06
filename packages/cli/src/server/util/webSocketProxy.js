@@ -7,10 +7,11 @@
  * @format
  */
 
+import ws from 'ws';
 import logger from '../../util/logger';
 
 function attachToServer(server, path) {
-  const WebSocketServer = require('ws').Server;
+  const WebSocketServer = ws.Server;
   const wss = new WebSocketServer({
     server,
     path,
@@ -44,15 +45,15 @@ function attachToServer(server, path) {
     send(debuggerSocket, JSON.stringify({ method: '$disconnected' }));
   };
 
-  wss.on('connection', ws => {
-    const { url } = ws.upgradeReq;
+  wss.on('connection', connection => {
+    const { url } = connection.upgradeReq;
 
     if (url.indexOf('role=debugger') > -1) {
       if (debuggerSocket) {
-        ws.close(1011, 'Another debugger is already connected');
+        connection.close(1011, 'Another debugger is already connected');
         return;
       }
-      debuggerSocket = ws;
+      debuggerSocket = connection;
       debuggerSocket.onerror = debuggerSocketCloseHandler;
       debuggerSocket.onclose = debuggerSocketCloseHandler;
       debuggerSocket.onmessage = ({ data }) => send(clientSocket, data);
@@ -63,12 +64,12 @@ function attachToServer(server, path) {
         clientSocket.onmessage = null;
         clientSocket.close(1011, 'Another client connected');
       }
-      clientSocket = ws;
+      clientSocket = connection;
       clientSocket.onerror = clientSocketCloseHandler;
       clientSocket.onclose = clientSocketCloseHandler;
       clientSocket.onmessage = ({ data }) => send(debuggerSocket, data);
     } else {
-      ws.close(1011, 'Missing role param');
+      connection.close(1011, 'Missing role param');
     }
   });
 

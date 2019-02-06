@@ -16,14 +16,10 @@ const spawnOpts = {
   stdin: 'inherit',
 };
 
-function install(args, ctx) {
+async function install(args, ctx) {
   const name = args[0];
 
-  try {
-    new PackageManager({ projectDir: ctx.root }).install([name]);
-  } catch (e) {
-    process.exit(e.status);
-  }
+  new PackageManager({ projectDir: ctx.root }).install([name]);
 
   const res = spawnSync('react-native', ['link', name], spawnOpts);
 

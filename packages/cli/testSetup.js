@@ -1,7 +1,2 @@
 // @flow
-jest.mock('./src/util/logger', () => ({
-  info: () => {},
-  warn: () => {},
-  error: () => {},
-  debug: () => {},
-}));
+jest.mock('./src/util/logger');

@@ -15,7 +15,7 @@ const findAssetsInFolder = folder =>
  *
  * It returns an array of absolute paths to files found.
  */
-function findAssets(folder, assets) {
+export function findAssets(folder: string, assets?: string[]) {
   return (assets || [])
     .map(asset => path.join(folder, asset))
     .reduce(
@@ -32,5 +32,3 @@ export default function getAssets(root: string) {
   const config = getPackageConfiguration(root);
   return findAssets(root, config.assets);
 }
-
-module.exports.findAssets = findAssets;

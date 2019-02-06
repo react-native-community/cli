@@ -3,31 +3,50 @@
  */
 
 import path from 'path';
-import type { CommandT, ProjectCommandT, LocalCommandT } from './types.flow';
 
 import findPlugins from './findPlugins';
 import logger from '../util/logger';
 
+import type { CommandT, ProjectCommandT, LocalCommandT } from './types.flow';
+
+import server from '../server/server';
+import runIOS from '../runIOS/runIOS';
+import runAndroid from '../runAndroid/runAndroid';
+import library from '../library/library';
+import bundle from '../bundle/bundle';
+import ramBundle from '../bundle/ramBundle';
+import eject from '../eject/eject';
+import link from '../link/link';
+import unlink from '../link/unlink';
+import install from '../install/install';
+import uninstall from '../install/uninstall';
+import upgrade from '../upgrade/upgrade';
+import logAndroid from '../logAndroid/logAndroid';
+import logIOS from '../logIOS/logIOS';
+import dependencies from '../dependencies/dependencies';
+import info from '../info/info';
+
 /**
  * List of built-in commands
  */
+
 const loadLocalCommands = (): Array<LocalCommandT> => [
-  require('../server/server'),
-  require('../runIOS/runIOS'),
-  require('../runAndroid/runAndroid'),
-  require('../library/library'),
-  require('../bundle/bundle'),
-  require('../bundle/ramBundle'),
-  require('../eject/eject'),
-  require('../link/link'),
-  require('../link/unlink'),
-  require('../install/install'),
-  require('../install/uninstall'),
-  require('../upgrade/upgrade'),
-  require('../logAndroid/logAndroid'),
-  require('../logIOS/logIOS'),
-  require('../dependencies/dependencies'),
-  require('../info/info'),
+  server,
+  runIOS,
+  runAndroid,
+  library,
+  bundle,
+  ramBundle,
+  eject,
+  link,
+  unlink,
+  install,
+  uninstall,
+  upgrade,
+  logAndroid,
+  logIOS,
+  dependencies,
+  info,
 ];
 
 /**

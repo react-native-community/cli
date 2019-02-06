@@ -9,10 +9,11 @@
  */
 
 import path from 'path';
+import runServer from './runServer';
 
 export default {
   name: 'start',
-  func: require('./runServer'),
+  func: runServer,
   description: 'starts the webserver',
   options: [
     {

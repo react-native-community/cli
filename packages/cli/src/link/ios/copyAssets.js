@@ -7,13 +7,13 @@
  * @format
  */
 
-const fs = require('fs-extra');
-const path = require('path');
-const xcode = require('xcode');
-const groupFilesByType = require('../groupFilesByType');
-const createGroupWithMessage = require('./createGroupWithMessage');
-const getPlist = require('./getPlist');
-const writePlist = require('./writePlist');
+import fs from 'fs-extra';
+import path from 'path';
+import xcode from 'xcode';
+import groupFilesByType from '../groupFilesByType';
+import createGroupWithMessage from './createGroupWithMessage';
+import getPlist from './getPlist';
+import writePlist from './writePlist';
 
 /**
  * This function works in a similar manner to its Android version,

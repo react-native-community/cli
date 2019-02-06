@@ -7,7 +7,7 @@
  * @format
  */
 
-const launchEditor = require('../util/launchEditor');
+import launchEditor from '../util/launchEditor';
 
 module.exports = function getOpenStackFrameInEditorMiddleware({
   watchFolders,

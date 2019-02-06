@@ -7,8 +7,8 @@
  * @format
  */
 
-const fs = require('fs');
-const makeBuildPatch = require('./patches/makeBuildPatch');
+import fs from 'fs';
+import makeBuildPatch from './patches/makeBuildPatch';
 
 module.exports = function isInstalled(config, name) {
   const buildGradle = fs.readFileSync(config.buildGradlePath);

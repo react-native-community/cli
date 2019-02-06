@@ -7,8 +7,8 @@
  * @format
  */
 
-const { Option } = require('commander');
-const { camelCase } = require('lodash');
+import { Option } from 'commander';
+import { camelCase } from 'lodash';
 
 // Commander.js has a 2 years old open issue to support <...> syntax
 // for options. Until that gets merged, we run the checks manually

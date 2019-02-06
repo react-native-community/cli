@@ -6,11 +6,12 @@
  *
  * @format
  */
-const launchChrome = require('../util/launchChrome');
+import launchChrome from '../util/launchChrome';
+import logger from '../../util/logger';
 
 function launchChromeDevTools(host, port, args = '') {
   const debuggerURL = `http://${host}:${port}/debugger-ui${args}`;
-  console.log('Launching Dev Tools...');
+  logger.info('Launching Dev Tools...');
   launchChrome(debuggerURL);
 }
 
@@ -28,14 +29,14 @@ function launchDevTools({ host, port, watchFolders }, isChromeConnected) {
 module.exports = function getDevToolsMiddleware(options, isChromeConnected) {
   return function devToolsMiddleware(req, res, next) {
     if (req.url === '/launch-safari-devtools') {
-      // TODO: remove `console.log` and dev tools binary
-      console.log(
+      // TODO: remove `logger.info` and dev tools binary
+      logger.info(
         'We removed support for Safari dev-tools. ' +
           'If you still need this, please let us know.'
       );
     } else if (req.url === '/launch-chrome-devtools') {
       // TODO: Remove this case in the future
-      console.log(
+      logger.info(
         'The method /launch-chrome-devtools is deprecated. You are ' +
           ' probably using an application created with an older CLI with the ' +
           ' packager of a newer CLI. Please upgrade your application: ' +

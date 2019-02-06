@@ -7,7 +7,7 @@
  * @format
  */
 
-const PbxFile = require('xcode/lib/pbxFile');
+import PbxFile from 'xcode/lib/pbxFile';
 
 /**
  * Given xcodeproj and filePath, it creates new file

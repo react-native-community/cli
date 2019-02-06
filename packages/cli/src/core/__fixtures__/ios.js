@@ -7,8 +7,9 @@
  * @format
  */
 
+import path from 'path';
+
 const fs = jest.requireActual('fs');
-const path = require('path');
 
 exports.valid = {
   'demoProject.xcodeproj': {

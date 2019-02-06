@@ -7,7 +7,7 @@
  * @format
  */
 
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
 
 /**
  * Indicates whether or not the packager is running. It returns a promise that

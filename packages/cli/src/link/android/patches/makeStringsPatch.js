@@ -7,7 +7,7 @@
  * @format
  */
 
-const toCamelCase = require('lodash').camelCase;
+import { camelCase as toCamelCase } from 'lodash';
 
 module.exports = function makeStringsPatch(params, prefix) {
   const values = Object.keys(params).map(param => {

@@ -7,9 +7,9 @@
  * @format
  */
 
-const path = require('path');
-const slash = require('slash');
-const normalizeProjectName = require('./normalizeProjectName');
+import path from 'path';
+import slash from 'slash';
+import normalizeProjectName from './normalizeProjectName';
 
 module.exports = function makeSettingsPatch(
   name,

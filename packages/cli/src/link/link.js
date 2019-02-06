@@ -8,20 +8,20 @@
  * @flow
  */
 
+import { pick } from 'lodash';
 import type { ContextT } from '../core/types.flow';
 
-const { pick } = require('lodash');
-const promiseWaterfall = require('./promiseWaterfall');
-const log = require('../util/logger');
-const getDependencyConfig = require('./getDependencyConfig');
-const commandStub = require('./commandStub');
-const promisify = require('./promisify');
-const getProjectConfig = require('./getProjectConfig');
-const linkDependency = require('./linkDependency');
-const linkAssets = require('./linkAssets');
-const linkAll = require('./linkAll');
-const findReactNativeScripts = require('../util/findReactNativeScripts');
-const getPlatforms = require('../core/getPlatforms');
+import promiseWaterfall from './promiseWaterfall';
+import log from '../util/logger';
+import getDependencyConfig from './getDependencyConfig';
+import commandStub from './commandStub';
+import promisify from './promisify';
+import getProjectConfig from './getProjectConfig';
+import linkDependency from './linkDependency';
+import linkAssets from './linkAssets';
+import linkAll from './linkAll';
+import findReactNativeScripts from '../util/findReactNativeScripts';
+import getPlatforms from '../core/getPlatforms';
 
 type FlagsType = {
   platforms: Array<string>,

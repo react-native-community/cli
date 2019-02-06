@@ -7,8 +7,8 @@
  * @format
  */
 
-const fs = require('fs');
-const xml = require('xmldoc');
+import fs from 'fs';
+import xml from 'xmldoc';
 
 /**
  * @param  {String} manifestPath

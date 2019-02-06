@@ -7,16 +7,15 @@
  * @format
  */
 
+import fs from 'fs';
+import minimist from 'minimist';
+import path from 'path';
+import process from 'process';
+import printRunInstructions from '../generator/printRunInstructions';
+import { createProjectFromTemplate } from '../generator/templates';
+import yarn from '../util/yarn';
+import logger from '../util/logger';
 import PackageManager from '../util/PackageManager';
-
-const fs = require('fs');
-const minimist = require('minimist');
-const path = require('path');
-const process = require('process');
-const printRunInstructions = require('../generator/printRunInstructions');
-const { createProjectFromTemplate } = require('../generator/templates');
-const yarn = require('../util/yarn');
-const logger = require('../util/logger');
 
 /**
  * Creates the template for a React Native project given the provided
@@ -34,7 +33,7 @@ function init(projectDir, argsOrName) {
 
   // args array is e.g. ['AwesomeApp', '--verbose', '--template', 'navigation']
   if (!args || args.length === 0) {
-    console.error('react-native init requires a project name.');
+    logger.error('react-native init requires a project name.');
     return;
   }
 
@@ -51,10 +50,11 @@ function init(projectDir, argsOrName) {
  * @param options Command line arguments parsed by minimist.
  */
 function generateProject(destinationRoot, newProjectName, options) {
+  // eslint-disable-next-line import/no-unresolved
   const reactNativePackageJson = require('react-native/package.json');
   const { peerDependencies } = reactNativePackageJson;
   if (!peerDependencies) {
-    console.error(
+    logger.error(
       "Missing React peer dependency in React Native's package.json. Aborting."
     );
     return;
@@ -62,7 +62,7 @@ function generateProject(destinationRoot, newProjectName, options) {
 
   const reactVersion = peerDependencies.react;
   if (!reactVersion) {
-    console.error(
+    logger.error(
       "Missing React peer dependency in React Native's package.json. Aborting."
     );
     return;

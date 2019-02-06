@@ -7,8 +7,8 @@
  * @format
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 // Binary files, don't process these (avoid decoding as utf8)
 const binaryExtensions = ['.png', '.jar'];
@@ -82,7 +82,7 @@ function copyAndReplace(
       try {
         const origContent = fs.readFileSync(destPath, 'utf8');
         if (content !== origContent) {
-          // console.log('Content changed: ' + destPath);
+          // logger.info('Content changed: ' + destPath);
           contentChanged = 'changed';
         }
       } catch (err) {

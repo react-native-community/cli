@@ -9,20 +9,20 @@
 
 /* eslint-disable consistent-return */
 
+import path from 'path';
+import { spawnSync, spawn, execFileSync } from 'child_process';
+import fs from 'fs';
+import isString from 'lodash/isString';
+
+import isPackagerRunning from '../util/isPackagerRunning';
 import type { ContextT } from '../core/types.flow';
 
-const chalk = require('chalk');
-const { spawnSync, spawn, execFileSync } = require('child_process');
-const fs = require('fs');
-const isString = require('lodash/isString');
-const path = require('path');
-const findReactNativeScripts = require('../util/findReactNativeScripts');
-const isPackagerRunning = require('../util/isPackagerRunning');
-const adb = require('./adb');
-const runOnAllDevices = require('./runOnAllDevices');
-const tryRunAdbReverse = require('./tryRunAdbReverse');
-const tryLaunchAppOnDevice = require('./tryLaunchAppOnDevice');
-const getAdbPath = require('./getAdbPath');
+import adb from './adb';
+import runOnAllDevices from './runOnAllDevices';
+import tryRunAdbReverse from './tryRunAdbReverse';
+import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
+import getAdbPath from './getAdbPath';
+import logger from '../util/logger';
 
 // Verifies this is an Android project
 function checkAndroid(root) {
@@ -32,22 +32,11 @@ function checkAndroid(root) {
 /**
  * Starts the app on a connected Android emulator or device.
  */
-function runAndroid(argv: Array<string>, config: ContextT, args: Object) {
+function runAndroid(argv: Array<string>, ctx: ContextT, args: Object) {
   if (!checkAndroid(args.root)) {
-    const reactNativeScriptsPath = findReactNativeScripts();
-    if (reactNativeScriptsPath) {
-      spawnSync(
-        reactNativeScriptsPath,
-        ['android'].concat(process.argv.slice(1)),
-        { stdio: 'inherit' }
-      );
-    } else {
-      console.log(
-        chalk.red(
-          'Android project not found. Are you sure this is a React Native project?'
-        )
-      );
-    }
+    logger.error(
+      'Android project not found. Are you sure this is a React Native project?'
+    );
     return;
   }
 
@@ -57,15 +46,13 @@ function runAndroid(argv: Array<string>, config: ContextT, args: Object) {
 
   return isPackagerRunning(args.port).then(result => {
     if (result === 'running') {
-      console.log(chalk.bold('JS server already running.'));
+      logger.info('JS server already running.');
     } else if (result === 'unrecognized') {
-      console.warn(
-        chalk.yellow('JS server not recognized, continuing with build...')
-      );
+      logger.warn('JS server not recognized, continuing with build...');
     } else {
       // result == 'not_running'
-      console.log(chalk.bold('Starting JS server...'));
-      startServerInNewWindow(args.port, args.terminal);
+      logger.info('Starting JS server...');
+      startServerInNewWindow(args.port, args.terminal, ctx.reactNativePath);
     }
     return buildAndRun(args);
   });
@@ -111,7 +98,7 @@ function buildAndRun(args) {
         adbPath
       );
     }
-    console.log(chalk.red('Argument missing for parameter --deviceId'));
+    logger.error('Argument missing for parameter --deviceId');
   } else {
     return runOnAllDevices(
       args,
@@ -142,27 +129,28 @@ function runOnSpecificDevice(
         adbPath
       );
     } else {
-      console.log(`Could not find device with the id: "${args.deviceId}".`);
-      console.log('Choose one of the following:');
-      console.log(devices);
+      logger.error(
+        `Could not find device with the id: "${
+          args.deviceId
+        }". Choose one of the following:`,
+        ...devices
+      );
     }
   } else {
-    console.log('No Android devices connected.');
+    logger.error('No Android devices connected.');
   }
 }
 
 function buildApk(gradlew) {
   try {
-    console.log(chalk.bold('Building the app...'));
+    logger.info('Building the app...');
 
     // using '-x lint' in order to ignore linting errors while building the apk
     execFileSync(gradlew, ['build', '-x', 'lint'], {
       stdio: [process.stdin, process.stdout, process.stderr],
     });
   } catch (e) {
-    console.log(
-      chalk.red('Could not build the app, read the error above for details.\n')
-    );
+    logger.error('Could not build the app, read the error above for details.');
   }
 }
 
@@ -173,20 +161,17 @@ function tryInstallAppOnDevice(args, device) {
     const pathToApk = `${appFolder}/build/outputs/apk/${appFolder}-debug.apk`;
     const adbPath = getAdbPath();
     const adbArgs = ['-s', device, 'install', pathToApk];
-    console.log(
-      chalk.bold(
-        `Installing the app on the device (cd android && adb -s ${device} install ${pathToApk}`
-      )
+    logger.info(
+      `Installing the app on the device (cd android && adb -s ${device} install ${pathToApk}`
     );
     execFileSync(adbPath, adbArgs, {
       stdio: [process.stdin, process.stdout, process.stderr],
     });
   } catch (e) {
-    console.log(e.message);
-    console.log(
-      chalk.red(
-        'Could not install the app on the device, read the error above for details.\n'
-      )
+    logger.error(
+      `${
+        e.message
+      }\nCould not install the app on the device, read the error above for details.`
     );
   }
 }
@@ -209,8 +194,14 @@ function installAndLaunchOnDevice(
   );
 }
 
-function startServerInNewWindow(port, terminal = process.env.REACT_TERMINAL) {
-  // set up OS-specific filenames and commands
+function startServerInNewWindow(
+  port,
+  terminal = process.env.REACT_TERMINAL,
+  reactNativePath
+) {
+  /**
+   * Set up OS-specific filenames and commands
+   */
   const isWindows = /^win/.test(process.platform);
   const scriptFile = isWindows
     ? 'launchPackager.bat'
@@ -220,21 +211,25 @@ function startServerInNewWindow(port, terminal = process.env.REACT_TERMINAL) {
     ? `set RCT_METRO_PORT=${port}`
     : `export RCT_METRO_PORT=${port}`;
 
-  // set up the launchpackager.(command|bat) file
-  const scriptsDir = path.resolve(__dirname, '..', '..', 'scripts');
-  const launchPackagerScript = path.resolve(scriptsDir, scriptFile);
-  const procConfig: Object = { cwd: scriptsDir };
-
-  // set up the .packager.(env|bat) file to ensure the packager starts on the right port
-  const packagerEnvFile = path.join(
-    __dirname,
-    '..',
-    '..',
-    'scripts',
-    packagerEnvFilename
+  /**
+   * Set up the `.packager.(env|bat)` file to ensure the packager starts on the right port.
+   */
+  const launchPackagerScript = path.join(
+    reactNativePath,
+    `scripts/${scriptFile}`
   );
 
-  // ensure we overwrite file by passing the 'w' flag
+  /**
+   * Set up the `launchpackager.(command|bat)` file.
+   * It lives next to `.packager.(bat|env)`
+   */
+  const scriptsDir = path.dirname(launchPackagerScript);
+  const packagerEnvFile = path.join(scriptsDir, packagerEnvFilename);
+  const procConfig: Object = { cwd: scriptsDir };
+
+  /**
+   * Ensure we overwrite file by passing the `w` flag
+   */
   fs.writeFileSync(packagerEnvFile, portExportContent, {
     encoding: 'utf8',
     flag: 'w',
@@ -264,8 +259,8 @@ function startServerInNewWindow(port, terminal = process.env.REACT_TERMINAL) {
     procConfig.stdio = 'ignore';
     return spawn('cmd.exe', ['/C', launchPackagerScript], procConfig);
   }
-  console.log(
-    chalk.red(`Cannot start the packager. Unknown platform ${process.platform}`)
+  logger.error(
+    `Cannot start the packager. Unknown platform ${process.platform}`
   );
 }
 

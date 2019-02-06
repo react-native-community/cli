@@ -8,29 +8,25 @@
  * @flow
  */
 
+import chalk from 'chalk';
+import childProcess from 'child_process';
+import commander from 'commander';
+import minimist from 'minimist';
+import path from 'path';
 import type { CommandT, ContextT } from './core/types.flow';
-
-const chalk = require('chalk');
-const childProcess = require('child_process');
-const commander = require('commander');
-const minimist = require('minimist');
-const path = require('path');
-const getCommands = require('./core/getCommands');
-const getLegacyConfig = require('./core/getLegacyConfig');
-const init = require('./init/init');
-const assertRequiredOptions = require('./util/assertRequiredOptions');
-const logger = require('./util/logger');
-const pkg = require('../package.json');
+import getCommands from './core/getCommands';
+import getLegacyConfig from './core/getLegacyConfig';
+import init from './init/init';
+import assertRequiredOptions from './util/assertRequiredOptions';
+import logger from './util/logger';
+import pkg from '../package.json';
 
 commander.version(pkg.version);
 
 const defaultOptParser = val => val;
 
 const handleError = err => {
-  logger.error(err.message || err);
-  if (err.stack) {
-    logger.error(err.stack);
-  }
+  logger.error(err.message);
   process.exit(1);
 };
 
@@ -77,12 +73,12 @@ function printUnknownCommand(cmdName) {
   logger.error(
     [
       cmdName
-        ? `  Unrecognized command "${cmdName}"`
-        : "  You didn't pass any command",
-      `  Run ${chalk.white(
-        'react-native --help'
-      )} to see list of all available commands`,
-    ].join('')
+        ? `Unrecognized command "${cmdName}".`
+        : "You didn't pass any command.",
+      `Run ${chalk.white(
+        '"react-native --help"'
+      )} to see list of all available commands.`,
+    ].join(' ')
   );
 }
 
@@ -120,11 +116,20 @@ const addCommand = (command: CommandT, ctx: ContextT) => {
     )
   );
 
-  // This is needed to avoid `unknown option` error by Commander.js
-  cmd.option('--projectRoot [string]', 'Path to the root of the project');
+  cmd
+    .option('--projectRoot [string]', 'Path to the root of the project')
+    .option('--reactNativePath [string]', 'Path to React Native');
 };
 
 async function run() {
+  try {
+    await setupAndRun();
+  } catch (e) {
+    handleError(e);
+  }
+}
+
+async function setupAndRun() {
   const setupEnvScript = /^win/.test(process.platform)
     ? path.join('..', 'setup_env.bat')
     : path.join('..', 'setup_env.sh');
@@ -143,8 +148,26 @@ async function run() {
     ? path.resolve(options.projectRoot)
     : process.cwd();
 
+  const reactNativePath = options.reactNativePath
+    ? path.resolve(options.reactNativePath)
+    : (() => {
+        try {
+          return path.dirname(
+            // $FlowIssue: Wrong `require.resolve` type definition
+            require.resolve('react-native/package.json', {
+              paths: [root],
+            })
+          );
+        } catch (_ignored) {
+          throw new Error(
+            'Unable to find React Native files. Make sure "react-native" module is installed in your project dependencies.'
+          );
+        }
+      })();
+
   const ctx = {
     ...getLegacyConfig(root),
+    reactNativePath,
     root,
   };
 

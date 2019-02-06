@@ -7,10 +7,10 @@
  * @format
  */
 
-const PbxFile = require('xcode/lib/pbxFile');
-const removeFromPbxItemContainerProxySection = require('./removeFromPbxItemContainerProxySection');
-const removeFromProjectReferences = require('./removeFromProjectReferences');
-const removeProductGroup = require('./removeProductGroup');
+import PbxFile from 'xcode/lib/pbxFile';
+import removeFromPbxItemContainerProxySection from './removeFromPbxItemContainerProxySection';
+import removeFromProjectReferences from './removeFromProjectReferences';
+import removeProductGroup from './removeProductGroup';
 
 /**
  * Given xcodeproj and filePath, it creates new file

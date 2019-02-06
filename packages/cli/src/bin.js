@@ -9,9 +9,9 @@
  * @format
  */
 
-const chalk = require('chalk');
-const isInstalledGlobally = require('./util/isInstalledGlobally');
-const logger = require('./util/logger');
+import chalk from 'chalk';
+import isInstalledGlobally from './util/isInstalledGlobally';
+import logger from './util/logger';
 
 if (isInstalledGlobally()) {
   logger.error(

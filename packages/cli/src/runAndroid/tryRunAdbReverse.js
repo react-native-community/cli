@@ -7,10 +7,9 @@
  * @flow
  */
 
-const chalk = require('chalk');
-const { execFileSync } = require('child_process');
-
-const getAdbPath = require('./getAdbPath');
+import { execFileSync } from 'child_process';
+import logger from '../util/logger';
+import getAdbPath from './getAdbPath';
 
 // Runs ADB reverse tcp:8081 tcp:8081 to allow loading the jsbundle from the packager
 function tryRunAdbReverse(packagerPort: number | string, device: string) {
@@ -23,13 +22,13 @@ function tryRunAdbReverse(packagerPort: number | string, device: string) {
       adbArgs.unshift('-s', device);
     }
 
-    console.log(chalk.bold(`Running ${adbPath} ${adbArgs.join(' ')}`));
+    logger.info(`Running ${adbPath} ${adbArgs.join(' ')}`);
 
     execFileSync(adbPath, adbArgs, {
       stdio: [process.stdin, process.stdout, process.stderr],
     });
   } catch (e) {
-    console.log(chalk.yellow(`Could not run adb reverse: ${e.message}`));
+    logger.info(`Could not run adb reverse: ${e.message}`);
   }
 }
 

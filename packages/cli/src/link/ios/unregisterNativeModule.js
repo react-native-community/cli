@@ -7,20 +7,20 @@
  * @format
  */
 
-const xcode = require('xcode');
-const path = require('path');
-const fs = require('fs');
-const { difference, isEmpty } = require('lodash');
+import xcode from 'xcode';
+import path from 'path';
+import fs from 'fs';
+import { difference, isEmpty } from 'lodash';
 
-const getGroup = require('./getGroup');
-const getTargets = require('./getTargets');
-const getHeadersInFolder = require('./getHeadersInFolder');
-const getHeaderSearchPath = require('./getHeaderSearchPath');
-const removeProjectFromProject = require('./removeProjectFromProject');
-const removeProjectFromLibraries = require('./removeProjectFromLibraries');
-const removeFromStaticLibraries = require('./removeFromStaticLibraries');
-const removeFromHeaderSearchPaths = require('./removeFromHeaderSearchPaths');
-const removeSharedLibraries = require('./removeSharedLibraries');
+import getGroup from './getGroup';
+import getTargets from './getTargets';
+import getHeadersInFolder from './getHeadersInFolder';
+import getHeaderSearchPath from './getHeaderSearchPath';
+import removeProjectFromProject from './removeProjectFromProject';
+import removeProjectFromLibraries from './removeProjectFromLibraries';
+import removeFromStaticLibraries from './removeFromStaticLibraries';
+import removeFromHeaderSearchPaths from './removeFromHeaderSearchPaths';
+import removeSharedLibraries from './removeSharedLibraries';
 
 /**
  * Unregister native module IOS

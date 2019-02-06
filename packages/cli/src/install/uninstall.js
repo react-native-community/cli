@@ -7,9 +7,9 @@
  * @format
  */
 
-const { spawnSync } = require('child_process');
-const logger = require('../util/logger');
-const PackageManager = require('../util/PackageManager');
+import { spawnSync } from 'child_process';
+import logger from '../util/logger';
+import PackageManager from '../util/PackageManager';
 
 const spawnOpts = {
   stdio: 'inherit',

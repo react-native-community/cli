@@ -7,11 +7,14 @@
  * @format
  */
 
-const chalk = require('chalk');
-const path = require('path');
-const copyAndReplace = require('../util/copyAndReplace');
-const prompt = require('./promptSync')();
-const walk = require('../util/walk');
+import chalk from 'chalk';
+import path from 'path';
+import copyAndReplace from '../util/copyAndReplace';
+import promptInitializer from './promptSync';
+import walk from '../util/walk';
+import logger from '../util/logger';
+
+const prompt = promptInitializer();
 
 /**
  * Util for creating a new React Native project.
@@ -135,11 +138,11 @@ function upgradeFileContentChangedCallback(
   contentChanged
 ) {
   if (contentChanged === 'new') {
-    console.log(`${chalk.bold('new')} ${relativeDestPath}`);
+    logger.info(`${chalk.bold('new')} ${relativeDestPath}`);
     return 'overwrite';
   }
   if (contentChanged === 'changed') {
-    console.log(
+    logger.info(
       `${chalk.bold(relativeDestPath)} ` +
         `has changed in the new version.\nDo you want to keep your ${relativeDestPath} or replace it with the ` +
         `latest version?\nIf you ever made any changes ` +
@@ -150,10 +153,10 @@ function upgradeFileContentChangedCallback(
     );
     const answer = prompt();
     if (answer === 'y') {
-      console.log(`Replacing ${relativeDestPath}`);
+      logger.info(`Replacing ${relativeDestPath}`);
       return 'overwrite';
     }
-    console.log(`Keeping your ${relativeDestPath}`);
+    logger.info(`Keeping your ${relativeDestPath}`);
     return 'keep';
   }
   if (contentChanged === 'identical') {

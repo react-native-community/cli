@@ -7,8 +7,8 @@
  * @format
  */
 
-const path = require('path');
-const { last, union } = require('lodash');
+import path from 'path';
+import { last, union } from 'lodash';
 
 /**
  * Given an array of directories, it returns the one that contains

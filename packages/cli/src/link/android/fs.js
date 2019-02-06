@@ -7,7 +7,7 @@
  * @format
  */
 
-const fs = require('fs-extra');
+import fs from 'fs-extra';
 
 exports.readFile = file => () => fs.readFileSync(file, 'utf8');
 

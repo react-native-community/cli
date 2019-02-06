@@ -1,5 +1,7 @@
-// @flow
-const chalk = require('chalk');
+/**
+ * @flow
+ */
+import chalk from 'chalk';
 
 const SEPARATOR = ', ';
 

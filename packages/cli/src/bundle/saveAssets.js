@@ -7,14 +7,14 @@
  * @format
  */
 
-const mkdirp = require('mkdirp');
-const path = require('path');
-const fs = require('fs');
+import mkdirp from 'mkdirp';
+import path from 'path';
+import fs from 'fs';
 
-const filterPlatformAssetScales = require('./filterPlatformAssetScales');
-const getAssetDestPathAndroid = require('./getAssetDestPathAndroid');
-const getAssetDestPathIOS = require('./getAssetDestPathIOS');
-const logger = require('../util/logger');
+import filterPlatformAssetScales from './filterPlatformAssetScales';
+import getAssetDestPathAndroid from './getAssetDestPathAndroid';
+import getAssetDestPathIOS from './getAssetDestPathIOS';
+import logger from '../util/logger';
 
 function saveAssets(assets, platform, assetsDest) {
   if (!assetsDest) {

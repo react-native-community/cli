@@ -7,6 +7,8 @@
  * @format
  */
 
+const logger = require('../../util/logger');
+
 function attachToServer(server, path) {
   const WebSocketServer = require('ws').Server;
   const wss = new WebSocketServer({
@@ -25,7 +27,7 @@ function attachToServer(server, path) {
     try {
       dest.send(message);
     } catch (e) {
-      console.warn(e);
+      logger.warn(e);
       // Sometimes this call throws 'not opened'
     }
   }

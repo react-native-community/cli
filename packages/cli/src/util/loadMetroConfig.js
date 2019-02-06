@@ -3,14 +3,12 @@
  * @flow
  */
 import type { ConfigT } from 'metro-config/src/configTypes.flow';
-
-const path = require('path');
-
-const { createBlacklist } = require('metro');
-const { loadConfig } = require('metro-config');
-const findSymlinkedModules = require('./findSymlinkedModules');
-
-const findPlugins = require('../core/findPlugins');
+import path from 'path';
+import { createBlacklist } from 'metro';
+import { loadConfig } from 'metro-config';
+import type { ContextT } from '../core/types.flow';
+import findPlugins from '../core/findPlugins';
+import findSymlinkedModules from './findSymlinkedModules';
 
 const resolveSymlinksForRoots = roots =>
   roots.reduce<string[]>(
@@ -34,8 +32,8 @@ const getBlacklistRE = () => createBlacklist([/.*\/__fixtures__\/.*/]);
  * @todo(grabbou): As a separate PR, haste.platforms should be added before "native".
  * Otherwise, a.native.js will not load on Windows or other platforms
  */
-const getDefaultConfig = (root: string) => {
-  const plugins = findPlugins(root);
+const getDefaultConfig = (ctx: ContextT) => {
+  const plugins = findPlugins(ctx.root);
 
   return {
     resolver: {
@@ -46,12 +44,14 @@ const getDefaultConfig = (root: string) => {
         'react-native',
         ...plugins.haste.providesModuleNodeModules,
       ],
+      hasteImplModulePath: path.join(ctx.reactNativePath, 'jest/hasteImpl'),
     },
     serializer: {
       getModulesRunBeforeMainModule: () => [
-        require.resolve('react-native/Libraries/Core/InitializeCore'),
+        path.join(ctx.reactNativePath, 'Libraries/Core/InitializeCore'),
       ],
-      getPolyfills: () => require('react-native/rn-get-polyfills')(),
+      getPolyfills: () =>
+        require(path.join(ctx.reactNativePath, 'rn-get-polyfills'))(),
     },
     server: {
       port: process.env.RCT_METRO_PORT || 8081,
@@ -59,6 +59,10 @@ const getDefaultConfig = (root: string) => {
     transformer: {
       babelTransformerPath: require.resolve(
         'metro-react-native-babel-transformer'
+      ),
+      assetRegistryPath: path.join(
+        ctx.reactNativePath,
+        'Libraries/Image/AssetRegistry'
       ),
     },
     watchFolders: getWatchFolders(),
@@ -81,37 +85,18 @@ export type ConfigOptionsT = {
  * This allows the CLI to always overwrite the file settings.
  */
 module.exports = async function load(
-  projectRoot: string,
+  ctx: ContextT,
   options?: ConfigOptionsT = {}
 ): Promise<ConfigT> {
-  const defaultConfig = getDefaultConfig(projectRoot);
+  const defaultConfig = getDefaultConfig(ctx);
 
   const config = await loadConfig(
     {
-      cwd: projectRoot,
+      cwd: ctx.root,
       ...options,
     },
     defaultConfig
   );
-
-  /**
-   * Workaround for static Metro configuration. If the following properties are defined
-   * in user space, the following code will not run.
-   *
-   * That makes it possible to run CLI in context of `react-native` source code, where
-   * the package does not exist under `node_modules`.
-   */
-  if (config.resolver.hasteImplModulePath === undefined) {
-    config.resolver.hasteImplModulePath = require.resolve(
-      'react-native/jest/hasteImpl'
-    );
-  }
-
-  if (config.transformer.assetRegistryPath === 'missing-asset-registry-path') {
-    config.transformer.assetRegistryPath = require.resolve(
-      'react-native/Libraries/Image/AssetRegistry'
-    );
-  }
 
   return config;
 };

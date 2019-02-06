@@ -12,7 +12,7 @@
 
 /* eslint-disable */
 
-const fs = require('fs');
+import fs from 'fs';
 
 const term = 13; // carriage return
 

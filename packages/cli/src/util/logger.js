@@ -4,29 +4,47 @@
 import chalk from 'chalk';
 
 const SEPARATOR = ', ';
+const TITLE = '[rn-cli]';
 
 const joinMessages = (messages: Array<string>) => messages.join(SEPARATOR);
 
+const getTimestamp = () => {
+  const date = new Date();
+  return `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+};
+
+const getHeader = () => chalk.gray(`${getTimestamp()} ${TITLE}`);
+
 const info = (...messages: Array<string>) => {
   console.log(
-    `${chalk.black.bgCyan(' INFO ')} ${chalk.reset(joinMessages(messages))}`
+    `${getHeader()} ${chalk.cyan('INFO')} ${chalk.reset(
+      joinMessages(messages)
+    )}`
   );
 };
 
 const warn = (...messages: Array<string>) => {
   console.warn(
-    `${chalk.black.bgYellow(' WARN ')} ${chalk.yellow(joinMessages(messages))}`
+    `${getHeader()} ${chalk.yellow('WARN')} ${chalk.yellow(
+      joinMessages(messages)
+    )}`
   );
 };
 
 const error = (...messages: Array<string>) => {
   console.error(
-    `${chalk.black.bgRed(' ERROR ')} ${chalk.red(joinMessages(messages))}`
+    `${getHeader()} ${chalk.red('ERROR')} ${chalk.red(joinMessages(messages))}`
   );
 };
 
 const debug = (...messages: Array<string>) => {
-  console.log(`${chalk.black.bgWhite(' DEBUG ')} ${joinMessages(messages)}`);
+  console.log(
+    `${getHeader()} ${chalk.white('DEBUG')} ${joinMessages(messages)}`
+  );
+};
+
+const log = (...messages: Array<string>) => {
+  console.log(`${joinMessages(messages)}`);
 };
 
 module.exports = {
@@ -34,4 +52,5 @@ module.exports = {
   warn,
   error,
   debug,
+  log,
 };

@@ -7,7 +7,6 @@
  * @format
  */
 
-import { execSync } from 'child_process';
 import fs from 'fs';
 import minimist from 'minimist';
 import path from 'path';
@@ -16,6 +15,7 @@ import printRunInstructions from '../generator/printRunInstructions';
 import { createProjectFromTemplate } from '../generator/templates';
 import yarn from '../util/yarn';
 import logger from '../util/logger';
+import PackageManager from '../util/PackageManager';
 
 /**
  * Creates the template for a React Native project given the provided
@@ -68,10 +68,16 @@ function generateProject(destinationRoot, newProjectName, options) {
     return;
   }
 
+  // TODO: Use `PackageManager` in generator to remove `yarn` calls.
   const yarnVersion =
     !options.npm &&
     yarn.getYarnVersionIfAvailable() &&
     yarn.isGlobalCliUsingYarn(destinationRoot);
+
+  const packageManager = new PackageManager({
+    projectDir: destinationRoot,
+    forceNpm: options.npm,
+  });
 
   createProjectFromTemplate(
     destinationRoot,
@@ -80,28 +86,20 @@ function generateProject(destinationRoot, newProjectName, options) {
     yarnVersion
   );
 
-  if (yarnVersion) {
-    logger.info('Adding React...');
-    execSync(`yarn add react@${reactVersion}`, { stdio: 'inherit' });
-  } else {
-    logger.info('Installing React...');
-    execSync(`npm install react@${reactVersion} --save --save-exact`, {
-      stdio: 'inherit',
-    });
-  }
-  if (!options['skip-jest']) {
-    const jestDeps = `jest babel-jest metro-react-native-babel-preset react-test-renderer@${reactVersion}`;
-    if (yarnVersion) {
-      logger.info('Adding Jest...');
-      execSync(`yarn add ${jestDeps} --dev --exact`, { stdio: 'inherit' });
-    } else {
-      logger.info('Installing Jest...');
-      execSync(`npm install ${jestDeps} --save-dev --save-exact`, {
-        stdio: 'inherit',
-      });
-    }
-    addJestToPackageJson(destinationRoot);
-  }
+  logger.info('Adding required dependencies');
+  packageManager.install([`react@${reactVersion}`]);
+
+  logger.info('Adding required dev dependencies');
+  packageManager.installDev([
+    '@babel/core',
+    '@babel/runtime',
+    'jest',
+    'babel-jest',
+    'metro-react-native-babel-preset',
+    `react-test-renderer@${reactVersion}`,
+  ]);
+
+  addJestToPackageJson(destinationRoot);
   printRunInstructions(destinationRoot, newProjectName);
 }
 

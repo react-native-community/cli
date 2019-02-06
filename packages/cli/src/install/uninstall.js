@@ -16,20 +16,16 @@ const spawnOpts = {
   stdin: 'inherit',
 };
 
-function uninstall(args, ctx) {
+async function uninstall(args, ctx) {
   const name = args[0];
 
-  let res = spawnSync('react-native', ['unlink', name], spawnOpts);
+  const res = spawnSync('react-native', ['unlink', name], spawnOpts);
 
   if (res.status) {
     process.exit(res.status);
   }
 
-  res = PackageManager.remove(name, ctx.root);
-
-  if (res.status) {
-    process.exit(res.status);
-  }
+  new PackageManager({ projectDir: ctx.root }).uninstall([name]);
 
   logger.info(`Module ${name} has been successfully uninstalled & unlinked`);
 }

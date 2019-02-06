@@ -13,7 +13,7 @@ import chalk from 'chalk';
 import logger from '../util/logger';
 
 function printRunInstructions(projectDir: string, projectName: string) {
-  const absoluteProjectDir = path.resolve(projectDir);
+  const relativeProjectDir = path.relative(process.cwd(), projectDir);
   const xcodeProjectPath = `${path.resolve(
     projectDir,
     'ios',
@@ -26,14 +26,14 @@ function printRunInstructions(projectDir: string, projectName: string) {
 
   logger.log(`
   ${chalk.cyan(`Run instructions for ${chalk.bold('iOS')}`)}:
-    • cd ${absoluteProjectDir} && react-native run-ios
+    • cd ${relativeProjectDir} && react-native run-ios
     - or -
     • Open ${relativeXcodeProjectPath} in Xcode
     • Hit the Run button
 
   ${chalk.green(`Run instructions for ${chalk.bold('Android')}`)}:
     • Have an Android emulator running (quickest way to get started), or a device connected.
-    • cd ${absoluteProjectDir} && react-native run-android
+    • cd ${relativeProjectDir} && react-native run-android
 `);
 }
 

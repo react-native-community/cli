@@ -8,12 +8,7 @@ const TITLE = '[rn-cli]';
 
 const joinMessages = (messages: Array<string>) => messages.join(SEPARATOR);
 
-const getTimestamp = () => {
-  const date = new Date();
-  return `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-};
-
-const getHeader = () => chalk.gray(`${getTimestamp()} ${TITLE}`);
+const getHeader = () => chalk.gray(`${TITLE}`);
 
 const info = (...messages: Array<string>) => {
   console.log(

@@ -116,7 +116,7 @@ function installTemplateDependencies(templatePath, destinationRoot) {
 
   let dependencies;
   try {
-    dependencies = JSON.parse(fs.readFileSync(dependenciesJsonPath).toString());
+    dependencies = require(dependenciesJsonPath);
   } catch (err) {
     throw new Error(
       `Could not parse the template's dependencies.json: ${err.message}`
@@ -147,9 +147,7 @@ function installTemplateDevDependencies(templatePath, destinationRoot) {
 
   let dependencies;
   try {
-    dependencies = JSON.parse(
-      fs.readFileSync(devDependenciesJsonPath).toString()
-    );
+    dependencies = require(devDependenciesJsonPath);
   } catch (err) {
     throw new Error(
       `Could not parse the template's devDependencies.json: ${err.message}`

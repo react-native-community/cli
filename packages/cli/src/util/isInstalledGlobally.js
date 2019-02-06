@@ -7,12 +7,13 @@
  * @format
  */
 
+import fs from 'fs';
+import path from 'path';
+
 const isWindows = process.platform === 'win32';
 
 export default function isInstalledGlobally() {
   if (isWindows) {
-    const fs = require('fs');
-    const path = require('path');
     // On Windows, assume we are installed globally if we can't find a
     // package.json above node_modules.
     return !fs.existsSync(path.join(__dirname, '../../../package.json'));

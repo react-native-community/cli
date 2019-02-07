@@ -36,4 +36,4 @@ const withPods = {
 
 export default { flat, nested, withExamples, withPods };
 
-export { flat, nested, withExamples, withPods };
+// export { flat, nested, withExamples, withPods };

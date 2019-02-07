@@ -48,4 +48,4 @@ export default {
   getDevices,
 };
 
-export { parseDevicesResult, getDevices };
+// export { parseDevicesResult, getDevices };

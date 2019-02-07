@@ -18,7 +18,7 @@ import getCommands from './core/getCommands';
 import getLegacyConfig from './core/getLegacyConfig';
 import init from './init/init';
 import assertRequiredOptions from './util/assertRequiredOptions';
-import { error } from './util/logger';
+import logger from './util/logger';
 import pkg from '../package.json';
 
 commander.version(pkg.version);
@@ -26,7 +26,7 @@ commander.version(pkg.version);
 const defaultOptParser = val => val;
 
 const handleError = err => {
-  error(err.message);
+  logger.error(err.message);
   process.exit(1);
 };
 
@@ -70,7 +70,7 @@ function printHelpInformation() {
 }
 
 function printUnknownCommand(cmdName) {
-  error(
+  logger.error(
     [
       cmdName
         ? `Unrecognized command "${cmdName}".`
@@ -196,4 +196,4 @@ export default {
   init,
 };
 
-export { run, init };
+// export { run, init };

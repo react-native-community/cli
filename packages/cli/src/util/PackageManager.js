@@ -48,4 +48,3 @@ export default class PackageManager {
       : this.executeCommand(`npm uninstall ${packageNames.join(' ')} --save`);
   }
 }
-

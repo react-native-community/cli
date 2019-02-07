@@ -52,7 +52,7 @@ function isGlobalCliUsingYarn(projectDir) {
   return fs.existsSync(path.join(projectDir, 'yarn.lock'));
 }
 
-module.exports = {
+export default {
   getYarnVersionIfAvailable,
   isGlobalCliUsingYarn,
 };

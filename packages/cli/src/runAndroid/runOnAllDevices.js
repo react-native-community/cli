@@ -20,6 +20,7 @@ function getCommand(appFolder, command) {
 }
 
 function runOnAllDevices(
+  // eslint-disable-next-line flowtype/no-weak-types
   args: Object,
   cmd: string,
   packageNameWithSuffix: string,
@@ -108,4 +109,4 @@ function runOnAllDevices(
   }
 }
 
-module.exports = runOnAllDevices;
+export default runOnAllDevices;

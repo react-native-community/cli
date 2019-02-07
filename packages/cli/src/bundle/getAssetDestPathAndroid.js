@@ -22,4 +22,4 @@ function getAssetDestPathAndroid(asset: PackagerAsset, scale: number): string {
   return path.join(androidFolder, `${fileName}.${asset.type}`);
 }
 
-module.exports = getAssetDestPathAndroid;
+export default getAssetDestPathAndroid;

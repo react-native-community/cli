@@ -7,4 +7,4 @@
  * @format
  */
 
-module.exports = cb => cb();
+export default cb => cb();

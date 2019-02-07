@@ -8,9 +8,10 @@
  * @emails oncall+javascript_foundation
  */
 
+import removePodEntry from '../../pods/removePodEntry';
+import readPodfile from '../../pods/readPodfile';
+
 const path = require('path');
-const removePodEntry = require('../../pods/removePodEntry');
-const readPodfile = require('../../pods/readPodfile');
 
 const PODFILES_PATH = path.join(__dirname, '../../__fixtures__/pods');
 

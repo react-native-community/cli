@@ -9,7 +9,7 @@
 
 import inquirer from 'inquirer';
 
-module.exports = questions =>
+export default questions =>
   new Promise((resolve, reject) => {
     if (!questions) {
       resolve({});

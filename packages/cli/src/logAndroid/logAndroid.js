@@ -27,7 +27,7 @@ async function logAndroid() {
   }
 }
 
-module.exports = {
+export default {
   name: 'log-android',
   description: 'starts adb logcat',
   func: logAndroid,

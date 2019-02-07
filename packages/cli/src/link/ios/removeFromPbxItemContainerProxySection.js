@@ -12,10 +12,7 @@
  * a new PBXItemContainerProxy is created that contains `containerPortal` value
  * which equals to xcodeproj file.uuid from PBXFileReference section.
  */
-module.exports = function removeFromPbxItemContainerProxySection(
-  project,
-  file
-) {
+export default function removeFromPbxItemContainerProxySection(project, file) {
   const section = project.hash.project.objects.PBXContainerItemProxy;
 
   for (const key of Object.keys(section)) {
@@ -23,4 +20,4 @@ module.exports = function removeFromPbxItemContainerProxySection(
       delete section[key];
     }
   }
-};
+}

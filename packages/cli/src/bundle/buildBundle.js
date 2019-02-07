@@ -65,4 +65,4 @@ async function buildBundle(
   }
 }
 
-module.exports = buildBundle;
+export default buildBundle;

@@ -7,7 +7,7 @@
  * @format
  */
 
-module.exports = function removeSharedLibraries(project, libraries) {
+export default function removeSharedLibraries(project, libraries) {
   if (!libraries.length) {
     return;
   }
@@ -17,4 +17,4 @@ module.exports = function removeSharedLibraries(project, libraries) {
   for (const name of libraries) {
     project.removeFramework(name, { target });
   }
-};
+}

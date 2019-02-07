@@ -9,7 +9,7 @@
 
 import normalizeProjectName from './normalizeProjectName';
 
-module.exports = function makeBuildPatch(name) {
+export default function makeBuildPatch(name) {
   const normalizedProjectName = normalizeProjectName(name);
   const installPattern = new RegExp(
     `(implementation|api|compile)\\w*\\s*\\(*project\\(['"]:${normalizedProjectName}['"]\\)`
@@ -20,4 +20,4 @@ module.exports = function makeBuildPatch(name) {
     pattern: /[^ \t]dependencies {(\r\n|\n)/,
     patch: `    implementation project(':${normalizedProjectName}')\n`,
   };
-};
+}

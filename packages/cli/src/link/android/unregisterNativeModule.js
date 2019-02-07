@@ -17,7 +17,7 @@ import makeStringsPatch from './patches/makeStringsPatch';
 import makeImportPatch from './patches/makeImportPatch';
 import makePackagePatch from './patches/makePackagePatch';
 
-module.exports = function unregisterNativeAndroidModule(
+export default function unregisterNativeAndroidModule(
   name,
   androidConfig,
   projectConfig
@@ -50,4 +50,4 @@ module.exports = function unregisterNativeAndroidModule(
     projectConfig.mainFilePath,
     makeImportPatch(androidConfig.packageImportPath)
   );
-};
+}

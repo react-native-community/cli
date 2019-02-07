@@ -12,6 +12,7 @@
 import chalk from 'chalk';
 import isInstalledGlobally from './util/isInstalledGlobally';
 import logger from './util/logger';
+import cliEntry from '.';
 
 if (isInstalledGlobally()) {
   logger.error(
@@ -25,5 +26,5 @@ if (isInstalledGlobally()) {
   );
   process.exit(1);
 } else {
-  require('.').run();
+  cliEntry.run();
 }

@@ -167,4 +167,4 @@ function upgradeFileContentChangedCallback(
   );
 }
 
-module.exports = copyProjectTemplateAndReplace;
+export default copyProjectTemplateAndReplace;

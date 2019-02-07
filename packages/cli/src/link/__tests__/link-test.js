@@ -100,6 +100,7 @@ describe('link', () => {
     jest.doMock('../ios/registerNativeModule.js', () => registerNativeModule);
 
     const link = require('../link').func;
+    registerNativeModule.mockClear();
 
     link(['react-native-blur'], context, {}).then(() => {
       expect(registerNativeModule.mock.calls).toHaveLength(2);
@@ -224,8 +225,8 @@ describe('link', () => {
     }));
 
     jest.doMock('../../core/getPlatforms', () => () => ({
-      ios: { linkConfig: require('../ios') },
-      android: { linkConfig: require('../android') },
+      ios: { linkConfig: require('../ios').default },
+      android: { linkConfig: require('../android').default },
       windows: { linkConfig: genericLinkConfig },
     }));
 
@@ -243,7 +244,6 @@ describe('link', () => {
     jest.doMock('../ios/registerNativeModule.js', () => registerNativeModule);
 
     const link = require('../link').func;
-
     link(['react-native-blur'], context, {}).then(() => {
       expect(registerNativeModule.mock.calls).toHaveLength(1);
       done();

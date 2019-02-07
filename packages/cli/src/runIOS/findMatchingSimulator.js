@@ -98,4 +98,4 @@ function findMatchingSimulator(simulators, simulatorString) {
   return null;
 }
 
-module.exports = findMatchingSimulator;
+export default findMatchingSimulator;

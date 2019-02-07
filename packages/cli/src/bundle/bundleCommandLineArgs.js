@@ -28,7 +28,7 @@ export type CommandLineArgs = {
   verbose: boolean,
 };
 
-module.exports = [
+export default [
   {
     command: '--entry-file <path>',
     description:

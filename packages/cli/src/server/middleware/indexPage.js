@@ -10,10 +10,10 @@
 import fs from 'fs';
 import path from 'path';
 
-module.exports = function indexPageMiddleware(req, res, next) {
+export default function indexPageMiddleware(req, res, next) {
   if (req.url === '/') {
     res.end(fs.readFileSync(path.join(__dirname, 'index.html')));
   } else {
     next();
   }
-};
+}

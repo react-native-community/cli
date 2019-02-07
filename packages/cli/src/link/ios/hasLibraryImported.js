@@ -12,9 +12,9 @@
  * added, returns true or false depending on whether the library is already linked
  * or not
  */
-module.exports = function hasLibraryImported(libraries, packageName) {
+export default function hasLibraryImported(libraries, packageName) {
   return (
     libraries.children.filter(library => library.comment === packageName)
       .length > 0
   );
-};
+}

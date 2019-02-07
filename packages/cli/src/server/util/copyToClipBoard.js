@@ -40,4 +40,4 @@ function copyToClipBoard(content) {
   }
 }
 
-module.exports = copyToClipBoard;
+export default copyToClipBoard;

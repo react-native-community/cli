@@ -10,7 +10,7 @@
 import glob from 'glob';
 import path from 'path';
 
-module.exports = function findPodspecName(folder) {
+export default function findPodspecName(folder) {
   const podspecs = glob.sync('*.podspec', { cwd: folder });
   let podspecFile = null;
   if (podspecs.length === 0) {
@@ -30,4 +30,4 @@ module.exports = function findPodspecName(folder) {
   }
 
   return podspecFile.replace('.podspec', '');
-};
+}

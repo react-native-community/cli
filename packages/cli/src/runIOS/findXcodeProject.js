@@ -38,4 +38,4 @@ function findXcodeProject(files: Array<string>): ?ProjectInfo {
   return null;
 }
 
-module.exports = findXcodeProject;
+export default findXcodeProject;

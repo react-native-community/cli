@@ -8,9 +8,9 @@
  * @emails oncall+javascript_foundation
  */
 
-jest.dontMock('../filterPlatformAssetScales').dontMock('../assetPathUtils');
+import filterPlatformAssetScales from '../filterPlatformAssetScales';
 
-const filterPlatformAssetScales = require('../filterPlatformAssetScales');
+jest.dontMock('../filterPlatformAssetScales').dontMock('../assetPathUtils');
 
 describe('filterPlatformAssetScales', () => {
   it('removes everything but 2x and 3x for iOS', () => {

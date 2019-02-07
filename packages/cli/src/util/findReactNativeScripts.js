@@ -23,4 +23,4 @@ function findReactNativeScripts(): ?string {
   return null;
 }
 
-module.exports = findReactNativeScripts;
+export default findReactNativeScripts;

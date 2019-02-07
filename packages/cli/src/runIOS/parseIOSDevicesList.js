@@ -33,4 +33,4 @@ function parseIOSDevicesList(text: string): Array<IOSDeviceInfo> {
   return devices;
 }
 
-module.exports = parseIOSDevicesList;
+export default parseIOSDevicesList;

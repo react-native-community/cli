@@ -30,7 +30,7 @@ async function install(args, ctx) {
   logger.info(`Module ${name} has been successfully installed & linked`);
 }
 
-module.exports = {
+export default {
   func: install,
   description: 'install and link native dependencies',
   name: 'install <packageName>',

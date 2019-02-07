@@ -14,8 +14,8 @@ import process from 'process';
 import printRunInstructions from '../generator/printRunInstructions';
 import { createProjectFromTemplate } from '../generator/templates';
 import yarn from '../util/yarn';
-import logger from '../util/logger';
 import PackageManager from '../util/PackageManager';
+import logger from '../util/logger';
 
 /**
  * Creates the template for a React Native project given the provided
@@ -120,4 +120,4 @@ function addJestToPackageJson(destinationRoot) {
   );
 }
 
-module.exports = init;
+export default init;

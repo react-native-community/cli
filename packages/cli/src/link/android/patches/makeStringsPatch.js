@@ -9,7 +9,7 @@
 
 import { camelCase as toCamelCase } from 'lodash';
 
-module.exports = function makeStringsPatch(params, prefix) {
+export default function makeStringsPatch(params, prefix) {
   const values = Object.keys(params).map(param => {
     const name = `${toCamelCase(prefix)}_${param}`;
     return (
@@ -24,4 +24,4 @@ module.exports = function makeStringsPatch(params, prefix) {
     pattern: '<resources>\n',
     patch,
   };
-};
+}

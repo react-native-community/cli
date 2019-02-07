@@ -17,7 +17,7 @@ import groupFilesByType from '../groupFilesByType';
  * For now, the only types of files that are handled are:
  * - Fonts (otf, ttf) - copied to targetPath/fonts under original name
  */
-module.exports = function unlinkAssetsAndroid(files, project) {
+export default function unlinkAssetsAndroid(files, project) {
   const assets = groupFilesByType(files);
 
   (assets.font || []).forEach(file => {
@@ -30,4 +30,4 @@ module.exports = function unlinkAssetsAndroid(files, project) {
       fs.unlinkSync(filePath);
     }
   });
-};
+}

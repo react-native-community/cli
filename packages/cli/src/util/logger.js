@@ -29,9 +29,11 @@ const debug = (...messages: Array<string>) => {
   console.log(`${chalk.black.bgWhite(' DEBUG ')} ${joinMessages(messages)}`);
 };
 
-module.exports = {
+export default {
   info,
   warn,
   error,
   debug,
 };
+
+// export { info, warn, error, debug };

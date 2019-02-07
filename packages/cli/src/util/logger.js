@@ -35,3 +35,5 @@ export default {
   error,
   debug,
 };
+
+export { info, warn, error, debug };

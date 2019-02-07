@@ -47,3 +47,5 @@ export default {
   parseDevicesResult,
   getDevices,
 };
+
+export { parseDevicesResult, getDevices };

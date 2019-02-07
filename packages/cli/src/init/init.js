@@ -14,8 +14,8 @@ import process from 'process';
 import printRunInstructions from '../generator/printRunInstructions';
 import { createProjectFromTemplate } from '../generator/templates';
 import yarn from '../util/yarn';
-import logger from '../util/logger';
 import PackageManager from '../util/PackageManager';
+import { error, info } from '../util/logger';
 
 /**
  * Creates the template for a React Native project given the provided
@@ -33,14 +33,14 @@ function init(projectDir, argsOrName) {
 
   // args array is e.g. ['AwesomeApp', '--verbose', '--template', 'navigation']
   if (!args || args.length === 0) {
-    logger.error('react-native init requires a project name.');
+    error('react-native init requires a project name.');
     return;
   }
 
   const newProjectName = args[0];
   const options = minimist(args);
 
-  logger.info(`Setting up new React Native app in ${projectDir}`);
+  info(`Setting up new React Native app in ${projectDir}`);
   generateProject(projectDir, newProjectName, options);
 }
 
@@ -54,7 +54,7 @@ function generateProject(destinationRoot, newProjectName, options) {
   const reactNativePackageJson = require('react-native/package.json');
   const { peerDependencies } = reactNativePackageJson;
   if (!peerDependencies) {
-    logger.error(
+    error(
       "Missing React peer dependency in React Native's package.json. Aborting."
     );
     return;
@@ -62,7 +62,7 @@ function generateProject(destinationRoot, newProjectName, options) {
 
   const reactVersion = peerDependencies.react;
   if (!reactVersion) {
-    logger.error(
+    error(
       "Missing React peer dependency in React Native's package.json. Aborting."
     );
     return;
@@ -86,10 +86,10 @@ function generateProject(destinationRoot, newProjectName, options) {
     yarnVersion
   );
 
-  logger.info('Adding required dependencies');
+  info('Adding required dependencies');
   packageManager.install([`react@${reactVersion}`]);
 
-  logger.info('Adding required dev dependencies');
+  info('Adding required dev dependencies');
   packageManager.installDev([
     '@babel/core',
     '@babel/runtime',

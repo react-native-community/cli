@@ -95,6 +95,7 @@ function createFromRemoteTemplate(
     });
     installTemplateDependencies(templatePath, yarnVersion);
     installTemplateDevDependencies(templatePath, yarnVersion);
+    executePostInstallScript(templatePath);
   } finally {
     // Clean up the temp files
     try {
@@ -181,6 +182,24 @@ function installTemplateDevDependencies(templatePath, yarnVersion) {
       });
     }
   }
+}
+
+function executePostInstallScript(templatePath) {
+  // rn-template-post-install.js is a special Node.js script that is being executed
+  // to do some extra work needed for this template
+  const postInstallScriptPath = path.resolve(
+    templatePath,
+    'rn-template-post-install.js'
+  );
+  logger.info('Executing template post install script for the project...');
+  if (!fs.existsSync(postInstallScriptPath)) {
+    logger.info('No additional post install script.');
+    return;
+  }
+
+  execSync(`node ${postInstallScriptPath}`, {
+    stdio: 'inherit',
+  });
 }
 
 export { createProjectFromTemplate };

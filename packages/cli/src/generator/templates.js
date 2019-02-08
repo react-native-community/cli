@@ -95,7 +95,7 @@ function createFromRemoteTemplate(
     });
     installTemplateDependencies(templatePath, yarnVersion);
     installTemplateDevDependencies(templatePath, yarnVersion);
-    executePostInstallScript(templatePath);
+    executeTemplatePostInstallScript(templatePath);
   } finally {
     // Clean up the temp files
     try {
@@ -184,7 +184,7 @@ function installTemplateDevDependencies(templatePath, yarnVersion) {
   }
 }
 
-function executePostInstallScript(templatePath) {
+function executeTemplatePostInstallScript(templatePath) {
   // rn-template-post-install.js is a special Node.js script that is being executed
   // to do some extra work needed for this template
   const postInstallScriptPath = path.resolve(

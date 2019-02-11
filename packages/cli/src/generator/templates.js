@@ -91,6 +91,7 @@ function createFromRemoteTemplate(
         'package.json',
         'dependencies.json',
         'devDependencies.json',
+        'rn-template-post-install.js',
       ],
     });
     installTemplateDependencies(templatePath, yarnVersion);

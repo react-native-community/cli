@@ -4,9 +4,9 @@
 
 import type { PlatformsT, ContextT, ProjectConfigT } from '../core/types.flow';
 
-const getPackageConfiguration = require('../core/getPackageConfiguration');
+import getPackageConfiguration from '../core/getPackageConfiguration';
 
-module.exports = function getProjectConfig(
+export default function getProjectConfig(
   ctx: ContextT,
   availablePlatforms: PlatformsT
 ): ProjectConfigT {
@@ -22,4 +22,4 @@ module.exports = function getProjectConfig(
   });
 
   return platformConfigs;
-};
+}

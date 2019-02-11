@@ -7,14 +7,14 @@
  * @format
  */
 
-const { execSync } = require('child_process');
-const fs = require('fs');
-const minimist = require('minimist');
-const path = require('path');
-const process = require('process');
-const printRunInstructions = require('../generator/printRunInstructions');
-const { createProjectFromTemplate } = require('../generator/templates');
-const yarn = require('../util/yarn');
+import fs from 'fs';
+import minimist from 'minimist';
+import path from 'path';
+import process from 'process';
+import printRunInstructions from '../generator/printRunInstructions';
+import { createProjectFromTemplate } from '../generator/templates';
+import PackageManager from '../util/PackageManager';
+import logger from '../util/logger';
 
 /**
  * Creates the template for a React Native project given the provided
@@ -32,14 +32,14 @@ function init(projectDir, argsOrName) {
 
   // args array is e.g. ['AwesomeApp', '--verbose', '--template', 'navigation']
   if (!args || args.length === 0) {
-    console.error('react-native init requires a project name.');
+    logger.error('react-native init requires a project name.');
     return;
   }
 
   const newProjectName = args[0];
   const options = minimist(args);
 
-  console.log(`Setting up new React Native app in ${projectDir}`);
+  logger.info(`Setting up new React Native app in ${projectDir}`);
   generateProject(projectDir, newProjectName, options);
 }
 
@@ -49,10 +49,11 @@ function init(projectDir, argsOrName) {
  * @param options Command line arguments parsed by minimist.
  */
 function generateProject(destinationRoot, newProjectName, options) {
+  // eslint-disable-next-line import/no-unresolved
   const reactNativePackageJson = require('react-native/package.json');
   const { peerDependencies } = reactNativePackageJson;
   if (!peerDependencies) {
-    console.error(
+    logger.error(
       "Missing React peer dependency in React Native's package.json. Aborting."
     );
     return;
@@ -60,46 +61,38 @@ function generateProject(destinationRoot, newProjectName, options) {
 
   const reactVersion = peerDependencies.react;
   if (!reactVersion) {
-    console.error(
+    logger.error(
       "Missing React peer dependency in React Native's package.json. Aborting."
     );
     return;
   }
 
-  const yarnVersion =
-    !options.npm &&
-    yarn.getYarnVersionIfAvailable() &&
-    yarn.isGlobalCliUsingYarn(destinationRoot);
+  const packageManager = new PackageManager({
+    projectDir: destinationRoot,
+    forceNpm: options.npm,
+  });
 
   createProjectFromTemplate(
     destinationRoot,
     newProjectName,
     options.template,
-    yarnVersion
+    destinationRoot
   );
 
-  if (yarnVersion) {
-    console.log('Adding React...');
-    execSync(`yarn add react@${reactVersion}`, { stdio: 'inherit' });
-  } else {
-    console.log('Installing React...');
-    execSync(`npm install react@${reactVersion} --save --save-exact`, {
-      stdio: 'inherit',
-    });
-  }
-  if (!options['skip-jest']) {
-    const jestDeps = `jest babel-jest metro-react-native-babel-preset react-test-renderer@${reactVersion}`;
-    if (yarnVersion) {
-      console.log('Adding Jest...');
-      execSync(`yarn add ${jestDeps} --dev --exact`, { stdio: 'inherit' });
-    } else {
-      console.log('Installing Jest...');
-      execSync(`npm install ${jestDeps} --save-dev --save-exact`, {
-        stdio: 'inherit',
-      });
-    }
-    addJestToPackageJson(destinationRoot);
-  }
+  logger.info('Adding required dependencies');
+  packageManager.install([`react@${reactVersion}`]);
+
+  logger.info('Adding required dev dependencies');
+  packageManager.installDev([
+    '@babel/core',
+    '@babel/runtime',
+    'jest',
+    'babel-jest',
+    'metro-react-native-babel-preset',
+    `react-test-renderer@${reactVersion}`,
+  ]);
+
+  addJestToPackageJson(destinationRoot);
   printRunInstructions(destinationRoot, newProjectName);
 }
 
@@ -120,4 +113,4 @@ function addJestToPackageJson(destinationRoot) {
   );
 }
 
-module.exports = init;
+export default init;

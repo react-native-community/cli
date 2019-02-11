@@ -2,10 +2,10 @@
  * @flow
  */
 
+import path from 'path';
 import type { PlatformsT } from './types.flow';
 
-const path = require('path');
-const findPlugins = require('./findPlugins');
+import findPlugins from './findPlugins';
 
 /**
  * Support for `ios` and `android` platforms is built-in
@@ -21,7 +21,7 @@ const builtInPlatforms = {
 /**
  * Returns an object with available platforms
  */
-module.exports = function getPlatforms(root: string): PlatformsT {
+export default function getPlatforms(root: string): PlatformsT {
   const plugins = findPlugins(root);
 
   /**
@@ -35,7 +35,6 @@ module.exports = function getPlatforms(root: string): PlatformsT {
     (acc, pathToPlatform) =>
       Object.assign(
         acc,
-        // $FlowFixMe non-literal require
         require(path.join(root, 'node_modules', pathToPlatform))
       ),
     {}
@@ -45,4 +44,4 @@ module.exports = function getPlatforms(root: string): PlatformsT {
     ...builtInPlatforms,
     ...projectPlatforms,
   };
-};
+}

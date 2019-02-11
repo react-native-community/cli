@@ -7,12 +7,12 @@
  * @format
  */
 
-const isInstalledIOS = require('../isInstalled');
-const isInstalledPods = require('../../pods/isInstalled');
+import isInstalledIOS from '../isInstalled';
+import isInstalledPods from '../../pods/isInstalled';
 
-module.exports = function isInstalled(projectConfig, name, dependencyConfig) {
+export default function isInstalled(projectConfig, name, dependencyConfig) {
   return (
     isInstalledIOS(projectConfig, dependencyConfig) ||
     isInstalledPods(projectConfig, dependencyConfig)
   );
-};
+}

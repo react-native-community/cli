@@ -6,21 +6,21 @@
  *
  */
 
-const fs = require('fs-extra');
-const path = require('path');
-const xcode = require('xcode');
-const { difference } = require('lodash');
-const log = require('../../util/logger');
+import fs from 'fs-extra';
+import path from 'path';
+import xcode from 'xcode';
+import { difference } from 'lodash';
+import log from '../../util/logger';
 
-const groupFilesByType = require('../groupFilesByType');
-const getPlist = require('./getPlist');
-const writePlist = require('./writePlist');
+import groupFilesByType from '../groupFilesByType';
+import getPlist from './getPlist';
+import writePlist from './writePlist';
 
 /**
  * Unlinks assets from iOS project. Removes references for fonts from `Info.plist`
  * fonts provided by application and from `Resources` group
  */
-module.exports = function unlinkAssetsIOS(files, projectConfig) {
+export default function unlinkAssetsIOS(files, projectConfig) {
   const project = xcode.project(projectConfig.pbxprojPath).parseSync();
   const assets = groupFilesByType(files);
   const plist = getPlist(project, projectConfig.sourceDir);
@@ -58,4 +58,4 @@ module.exports = function unlinkAssetsIOS(files, projectConfig) {
   fs.writeFileSync(projectConfig.pbxprojPath, project.writeSync());
 
   writePlist(project, projectConfig.sourceDir, plist);
-};
+}

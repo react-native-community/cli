@@ -24,7 +24,7 @@ jest.setMock('../../core/getPackageConfiguration', folder => {
   return {};
 });
 
-const getDependencyConfig = require('../getDependencyConfig');
+const getDependencyConfig = require('../getDependencyConfig').default;
 
 describe('getDependencyConfig', () => {
   it("should return an array of dependencies' config", () => {

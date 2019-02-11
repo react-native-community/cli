@@ -8,7 +8,7 @@
  * @emails oncall+javascript_foundation
  */
 
-const groupFilesByType = require('../groupFilesByType');
+import groupFilesByType from '../groupFilesByType';
 
 describe('groupFilesByType', () => {
   it('should group files by its type', () => {

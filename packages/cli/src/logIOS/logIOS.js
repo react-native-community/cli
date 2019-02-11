@@ -7,10 +7,10 @@
  * @format
  */
 
-const chalk = require('chalk');
-const { execFileSync, spawnSync } = require('child_process');
-const os = require('os');
-const path = require('path');
+import { execFileSync, spawnSync } from 'child_process';
+import os from 'os';
+import path from 'path';
+import logger from '../util/logger';
 
 function findAvailableDevice(devices) {
   for (const key of Object.keys(devices)) {
@@ -37,7 +37,7 @@ async function logIOS() {
 
   const device = findAvailableDevice(devices);
   if (device === undefined) {
-    console.log(chalk.red('No active iOS device found'));
+    logger.error('No active iOS device found');
     return;
   }
 
@@ -63,7 +63,7 @@ function tailDeviceLogs(udid) {
   }
 }
 
-module.exports = {
+export default {
   name: 'log-ios',
   description: 'starts iOS device syslog tail',
   func: logIOS,

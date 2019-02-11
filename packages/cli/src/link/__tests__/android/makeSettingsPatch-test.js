@@ -4,78 +4,99 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
- * @emails oncall+javascript_foundation
+ * @flow
  */
 
-const path = require('path');
-const makeSettingsPatch = require('../../android/patches/makeSettingsPatch');
-const normalizeProjectName = require('../../android/patches/normalizeProjectName');
+import makeSettingsPatch from '../../android/patches/makeSettingsPatch';
 
-const name = 'test';
-const scopedName = '@scoped/test';
-const normalizedScopedName = normalizeProjectName('@scoped/test');
 const projectConfig = {
   sourceDir: '/home/project/android/app',
   settingsGradlePath: '/home/project/android/settings.gradle',
 };
-const dependencyConfig = {
-  sourceDir: `/home/project/node_modules/${name}/android`,
-};
-const scopedDependencyConfig = {
-  sourceDir: `/home/project/node_modules/${scopedName}/android`,
-};
 
-describe('makeSettingsPatch', () => {
+describe('makeSettingsPatch with package "test"', () => {
+  const name = 'test';
+  const dependencyConfig = {
+    sourceDir: `/home/project/node_modules/${name}/android`,
+  };
+
   it('should build a patch function', () => {
     expect(
-      Object.prototype.toString(
-        makeSettingsPatch(name, dependencyConfig, projectConfig)
-      )
-    ).toBe('[object Object]');
+      makeSettingsPatch(name, dependencyConfig, projectConfig)
+    ).toMatchObject({
+      pattern: '\n',
+      patch: expect.any(String),
+    });
   });
 
-  it('should make a correct patch', () => {
-    const projectDir = path.relative(
-      path.dirname(projectConfig.settingsGradlePath),
-      dependencyConfig.sourceDir
-    );
-
+  it('includes project with correct path', () => {
     const { patch } = makeSettingsPatch(name, dependencyConfig, projectConfig);
 
-    expect(patch).toBe(
-      `include ':${name}'\n` +
-        `project(':${name}').projectDir = ` +
-        `new File(rootProject.projectDir, '${projectDir}')\n`
+    expect(patch).toMatchInlineSnapshot(`
+"include ':test'
+project(':test').projectDir = new File(rootProject.projectDir, '../node_modules/test/android')
+"
+`);
+  });
+
+  // Simulate Windows environment on POSIX filesystem
+  // TODO: scope this test to Windows-only once we setup CI on Windows
+  it('includes project with correct path on Windows', () => {
+    jest.resetModules();
+    jest.doMock('path', () => {
+      const path = jest.requireActual('path');
+      path.dirname = path.win32.dirname;
+      path.relative = path.win32.relative;
+      return path;
+    });
+    // eslint-disable-next-line no-shadow
+    const makeSettingsPatch = require('../../android/patches/makeSettingsPatch')
+      .default;
+    const projectConfigWindows = {
+      sourceDir: 'C:\\home\\project\\android\\app',
+      settingsGradlePath: 'C:\\home\\project\\android\\settings.gradle',
+    };
+    const dependencyConfigWindows = {
+      sourceDir: `C:\\home\\project\\node_modules\\${name}\\android`,
+    };
+    const { patch } = makeSettingsPatch(
+      name,
+      dependencyConfigWindows,
+      projectConfigWindows
     );
+
+    jest.dontMock('path');
+
+    expect(patch).toMatchInlineSnapshot(`
+"include ':test'
+project(':test').projectDir = new File(rootProject.projectDir, '../node_modules/test/android')
+"
+`);
   });
 });
 
-describe('makeSettingsPatchWithScopedPackage', () => {
+describe('makeSettingsPatch with scoped package "@scoped/test"', () => {
+  const name = '@scoped/test';
+  const dependencyConfig = {
+    sourceDir: `/home/project/node_modules/${name}/android`,
+  };
+
   it('should build a patch function', () => {
     expect(
-      Object.prototype.toString(
-        makeSettingsPatch(scopedName, scopedDependencyConfig, projectConfig)
-      )
-    ).toBe('[object Object]');
+      makeSettingsPatch(name, dependencyConfig, projectConfig)
+    ).toMatchObject({
+      pattern: '\n',
+      patch: expect.any(String),
+    });
   });
 
-  it('should make a correct patch', () => {
-    const projectDir = path.relative(
-      path.dirname(projectConfig.settingsGradlePath),
-      scopedDependencyConfig.sourceDir
-    );
+  it('includes project with correct path', () => {
+    const { patch } = makeSettingsPatch(name, dependencyConfig, projectConfig);
 
-    const { patch } = makeSettingsPatch(
-      scopedName,
-      scopedDependencyConfig,
-      projectConfig
-    );
-
-    expect(patch).toBe(
-      `include ':${normalizedScopedName}'\n` +
-        `project(':${normalizedScopedName}').projectDir = ` +
-        `new File(rootProject.projectDir, '${projectDir}')\n`
-    );
+    expect(patch).toMatchInlineSnapshot(`
+"include ':@scoped_test'
+project(':@scoped_test').projectDir = new File(rootProject.projectDir, '../node_modules/@scoped/test/android')
+"
+`);
   });
 });

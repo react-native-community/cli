@@ -8,7 +8,7 @@
  * @emails oncall+javascript_foundation
  */
 
-const makeStringsPatch = require('../../android/patches/makeStringsPatch');
+import makeStringsPatch from '../../android/patches/makeStringsPatch';
 
 describe('makeStringsPatch', () => {
   it('should export a patch with <string> element', () => {

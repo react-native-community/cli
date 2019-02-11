@@ -1,9 +1,9 @@
 // @flow
 
+import { isEmpty } from 'lodash';
 import type { PlatformsT, ProjectConfigT } from '../core/types.flow';
 
-const { isEmpty } = require('lodash');
-const log = require('../util/logger');
+import log from '../util/logger';
 
 const linkAssets = (
   platforms: PlatformsT,
@@ -32,4 +32,4 @@ const linkAssets = (
   log.info('Assets have been successfully linked to your project');
 };
 
-module.exports = linkAssets;
+export default linkAssets;

@@ -7,8 +7,8 @@
  * @format
  */
 
-const mapHeaderSearchPaths = require('./mapHeaderSearchPaths');
+import mapHeaderSearchPaths from './mapHeaderSearchPaths';
 
-module.exports = function addToHeaderSearchPaths(project, path) {
+export default function addToHeaderSearchPaths(project, path) {
   mapHeaderSearchPaths(project, searchPaths => searchPaths.concat(path));
-};
+}

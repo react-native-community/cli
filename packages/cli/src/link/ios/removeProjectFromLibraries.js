@@ -12,9 +12,9 @@
  * Important: That function mutates `libraries` and it's not pure.
  * It's mainly due to limitations of `xcode` library.
  */
-module.exports = function removeProjectFromLibraries(libraries, file) {
+export default function removeProjectFromLibraries(libraries, file) {
   // eslint-disable-next-line no-param-reassign
   libraries.children = libraries.children.filter(
     library => library.comment !== file.basename
   );
-};
+}

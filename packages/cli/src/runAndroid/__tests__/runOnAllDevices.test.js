@@ -6,6 +6,8 @@
  *
  */
 
+import runOnAllDevices from '../runOnAllDevices';
+
 jest.mock('child_process', () => ({
   execFileSync: jest.fn(),
   spawnSync: jest.fn(),
@@ -13,8 +15,6 @@ jest.mock('child_process', () => ({
 
 jest.mock('../getAdbPath');
 const { execFileSync } = require('child_process');
-
-const runOnAllDevices = require('../runOnAllDevices');
 
 describe('--appFolder', () => {
   beforeEach(() => {

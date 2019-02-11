@@ -1,35 +1,39 @@
-// @flow
-const chalk = require('chalk');
+/**
+ * @flow
+ */
+import chalk from 'chalk';
 
 const SEPARATOR = ', ';
 
-const joinMessages = (messages: Array<string>) => messages.join(SEPARATOR);
+const formatMessages = (messages: Array<string>) =>
+  chalk.reset(messages.join(SEPARATOR));
 
 const info = (...messages: Array<string>) => {
-  console.log(
-    `${chalk.black.bgCyan(' INFO ')} ${chalk.cyan(joinMessages(messages))}`
-  );
+  console.log(`${chalk.cyan.bold('info')} ${formatMessages(messages)}`);
 };
 
 const warn = (...messages: Array<string>) => {
-  console.warn(
-    `${chalk.black.bgYellow(' WARN ')} ${chalk.yellow(joinMessages(messages))}`
-  );
+  console.warn(`${chalk.yellow.bold('warn')} ${formatMessages(messages)}`);
 };
 
 const error = (...messages: Array<string>) => {
-  console.error(
-    `${chalk.black.bgRed(' ERROR ')} ${chalk.red(joinMessages(messages))}`
-  );
+  console.error(`${chalk.red.bold('error')} ${formatMessages(messages)}`);
 };
 
 const debug = (...messages: Array<string>) => {
-  console.log(`${chalk.black.bgWhite(' DEBUG ')} ${joinMessages(messages)}`);
+  console.log(`${chalk.gray.bold('debug')} ${formatMessages(messages)}`);
 };
 
-module.exports = {
+const log = (...messages: Array<string>) => {
+  console.log(`${formatMessages(messages)}`);
+};
+
+export default {
   info,
   warn,
   error,
   debug,
+  log,
 };
+
+// export { info, warn, error, debug };

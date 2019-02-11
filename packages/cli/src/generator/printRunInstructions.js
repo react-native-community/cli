@@ -5,14 +5,15 @@
  * LICENSE file in the root directory of this source tree.
  *
  * @format
+ * @flow
  */
 
-const chalk = require('chalk');
-const path = require('path');
+import path from 'path';
+import chalk from 'chalk';
+import logger from '../util/logger';
 
-function printRunInstructions(projectDir, projectName) {
-  const absoluteProjectDir = path.resolve(projectDir);
-  // iOS
+function printRunInstructions(projectDir: string, projectName: string) {
+  const relativeProjectDir = path.relative(process.cwd(), projectDir);
   const xcodeProjectPath = `${path.resolve(
     projectDir,
     'ios',
@@ -22,19 +23,18 @@ function printRunInstructions(projectDir, projectName) {
     process.cwd(),
     xcodeProjectPath
   );
-  console.log(chalk.white.bold('To run your app on iOS:'));
-  console.log(`   cd ${absoluteProjectDir}`);
-  console.log('   react-native run-ios');
-  console.log('   - or -');
-  console.log(`   Open ${relativeXcodeProjectPath} in Xcode`);
-  console.log('   Hit the Run button');
-  // Android
-  console.log(chalk.white.bold('To run your app on Android:'));
-  console.log(`   cd ${absoluteProjectDir}`);
-  console.log(
-    '   Have an Android emulator running (quickest way to get started), or a device connected'
-  );
-  console.log('   react-native run-android');
+
+  logger.log(`
+  ${chalk.cyan(`Run instructions for ${chalk.bold('iOS')}`)}:
+    • cd ${relativeProjectDir} && react-native run-ios
+    - or -
+    • Open ${relativeXcodeProjectPath} in Xcode
+    • Hit the Run button
+
+  ${chalk.green(`Run instructions for ${chalk.bold('Android')}`)}:
+    • Have an Android emulator running (quickest way to get started), or a device connected.
+    • cd ${relativeProjectDir} && react-native run-android
+`);
 }
 
-module.exports = printRunInstructions;
+export default printRunInstructions;

@@ -7,10 +7,10 @@
  * @format
  */
 
-const PbxFile = require('xcode/lib/pbxFile');
-const removeFromPbxItemContainerProxySection = require('./removeFromPbxItemContainerProxySection');
-const removeFromProjectReferences = require('./removeFromProjectReferences');
-const removeProductGroup = require('./removeProductGroup');
+import PbxFile from 'xcode/lib/pbxFile';
+import removeFromPbxItemContainerProxySection from './removeFromPbxItemContainerProxySection';
+import removeFromProjectReferences from './removeFromProjectReferences';
+import removeProductGroup from './removeProductGroup';
 
 /**
  * Given xcodeproj and filePath, it creates new file
@@ -21,7 +21,7 @@ const removeProductGroup = require('./removeProductGroup');
  *
  * Returns removed file (that one will have UUID)
  */
-module.exports = function removeProjectFromProject(project, filePath) {
+export default function removeProjectFromProject(project, filePath) {
   const file = project.removeFromPbxFileReferenceSection(new PbxFile(filePath));
   const projectRef = removeFromProjectReferences(project, file);
 
@@ -32,4 +32,4 @@ module.exports = function removeProjectFromProject(project, filePath) {
   removeFromPbxItemContainerProxySection(project, file);
 
   return file;
-};
+}

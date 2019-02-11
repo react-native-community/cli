@@ -7,10 +7,10 @@
  * @format
  */
 
-const { spawn } = require('child_process');
+import { spawn } from 'child_process';
 
-const path = require('path');
-const fs = require('fs');
+import path from 'path';
+import fs from 'fs';
 
 const xsel = path.join(__dirname, 'external/xsel');
 fs.chmodSync(xsel, '0755');
@@ -40,4 +40,4 @@ function copyToClipBoard(content) {
   }
 }
 
-module.exports = copyToClipBoard;
+export default copyToClipBoard;

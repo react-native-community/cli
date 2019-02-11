@@ -10,7 +10,7 @@
 /**
  * Given xcodeproj it returns list of targets
  */
-module.exports = function getTargets(project) {
+export default function getTargets(project) {
   const {
     firstProject: { targets },
   } = project.getFirstProject();

@@ -17,7 +17,7 @@
  *
  * Otherwise returns null
  */
-module.exports = function removeFromProjectReferences(project, file) {
+export default function removeFromProjectReferences(project, file) {
   const { firstProject } = project.getFirstProject();
 
   const projectRef = firstProject.projectReferences.find(
@@ -34,4 +34,4 @@ module.exports = function removeFromProjectReferences(project, file) {
   );
 
   return projectRef;
-};
+}

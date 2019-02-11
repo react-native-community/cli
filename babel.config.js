@@ -10,5 +10,11 @@ module.exports = {
     ],
     require.resolve('@babel/preset-flow'),
   ],
-  plugins: [require.resolve('@babel/plugin-transform-strict-mode')],
+  plugins: [
+    require.resolve('@babel/plugin-transform-strict-mode'),
+    [
+      require.resolve('@babel/plugin-transform-modules-commonjs'),
+      { lazy: true },
+    ],
+  ],
 };

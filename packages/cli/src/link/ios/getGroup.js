@@ -20,7 +20,7 @@ const findGroup = (groups, name) =>
  *
  * If path is not provided, it returns top-level group
  */
-module.exports = function getGroup(project, path) {
+export default function getGroup(project, path) {
   const firstProject = getFirstProject(project);
 
   let groups = project.getPBXGroupByKey(firstProject.mainGroup);
@@ -41,4 +41,4 @@ module.exports = function getGroup(project, path) {
   }
 
   return groups;
-};
+}

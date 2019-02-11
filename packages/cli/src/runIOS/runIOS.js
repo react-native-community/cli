@@ -4,62 +4,47 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
+ * @flow
  * @format
  */
 
-/* eslint-disable */
+// eslint-disable-next-line
+import child_process from 'child_process';
+import fs from 'fs';
+import path from 'path';
+import type { ContextT } from '../core/types.flow';
+import findXcodeProject from './findXcodeProject';
+import parseIOSDevicesList from './parseIOSDevicesList';
+import findMatchingSimulator from './findMatchingSimulator';
+import { ProcessError } from '../util/errors';
+import logger from '../util/logger';
 
-const child_process = require('child_process');
-const fs = require('fs');
-const path = require('path');
-const findXcodeProject = require('./findXcodeProject');
-const findReactNativeScripts = require('../util/findReactNativeScripts');
-const parseIOSDevicesList = require('./parseIOSDevicesList');
-const findMatchingSimulator = require('./findMatchingSimulator');
-
-const getBuildPath = function(configuration = 'Debug', appName, isDevice) {
-  let device;
-
-  if (isDevice) {
-    device = 'iphoneos';
-  } else if (appName.toLowerCase().includes('tvos')) {
-    device = 'appletvsimulator';
-  } else {
-    device = 'iphonesimulator';
-  }
-
-  return `build/Build/Products/${configuration}-${device}/${appName}.app`;
-};
-const xcprettyAvailable = function() {
-  try {
-    child_process.execSync('xcpretty --version', {
-      stdio: [0, 'pipe', 'ignore'],
-    });
-  } catch (error) {
-    return false;
-  }
-  return true;
+type FlagsT = {
+  simulator: string,
+  configuration: string,
+  scheme: ?string,
+  projectPath: string,
+  device: ?string,
+  udid: ?string,
+  packager: boolean,
+  verbose: boolean,
+  port: number,
 };
 
-function runIOS(argv, config, args) {
+function runIOS(_: Array<string>, ctx: ContextT, args: FlagsT) {
   if (!fs.existsSync(args.projectPath)) {
-    const reactNativeScriptsPath = findReactNativeScripts();
-    if (reactNativeScriptsPath) {
-      child_process.spawnSync(
-        reactNativeScriptsPath,
-        ['ios'].concat(process.argv.slice(1)),
-        { stdio: 'inherit' }
-      );
-      return;
-    }
     throw new Error(
       'iOS project folder not found. Are you sure this is a React Native project?'
     );
   }
+
   process.chdir(args.projectPath);
+
   const xcodeProject = findXcodeProject(fs.readdirSync('.'));
   if (!xcodeProject) {
-    throw new Error('Could not find Xcode project files in ios folder');
+    throw new Error(
+      `Could not find Xcode project files in "${args.projectPath}" folder`
+    );
   }
 
   const inferredSchemeName = path.basename(
@@ -67,16 +52,20 @@ function runIOS(argv, config, args) {
     path.extname(xcodeProject.name)
   );
   const scheme = args.scheme || inferredSchemeName;
-  console.log(
+
+  logger.info(
     `Found Xcode ${xcodeProject.isWorkspace ? 'workspace' : 'project'} ${
       xcodeProject.name
     }`
   );
+
   const devices = parseIOSDevicesList(
+    // $FlowExpectedError https://github.com/facebook/flow/issues/5675
     child_process.execFileSync('xcrun', ['instruments', '-s'], {
       encoding: 'utf8',
     })
   );
+
   if (args.device) {
     const selectedDevice = matchingDevice(devices, args.device);
     if (selectedDevice) {
@@ -91,23 +80,30 @@ function runIOS(argv, config, args) {
       );
     }
     if (devices && devices.length > 0) {
-      console.log(`Could not find device with the name: "${args.device}".`);
-      console.log('Choose one of the following:');
-      printFoundDevices(devices);
+      // $FlowIssue: args.device is defined in this context
+      logger.error(`Could not find device with the name: "${args.device}".
+Choose one of the following:${printFoundDevices(devices)}`);
     } else {
-      console.log('No iOS devices connected.');
+      logger.error('No iOS devices connected.');
     }
   } else if (args.udid) {
+    // $FlowIssue: args.udid is defined in this context
     return runOnDeviceByUdid(args, scheme, xcodeProject, devices);
-  } else {
-    return runOnSimulator(xcodeProject, args, scheme);
   }
+
+  return runOnSimulator(xcodeProject, args, scheme);
 }
 
-function runOnDeviceByUdid(args, scheme, xcodeProject, devices) {
+function runOnDeviceByUdid(
+  args: FlagsT & { udid: string },
+  scheme,
+  xcodeProject,
+  devices
+) {
   const selectedDevice = matchingDeviceByUdid(devices, args.udid);
+
   if (selectedDevice) {
-    return runOnDevice(
+    runOnDevice(
       selectedDevice,
       scheme,
       xcodeProject,
@@ -116,106 +112,108 @@ function runOnDeviceByUdid(args, scheme, xcodeProject, devices) {
       args.verbose,
       args.port
     );
+    return;
   }
+
   if (devices && devices.length > 0) {
-    console.log(`Could not find device with the udid: "${args.udid}".`);
-    console.log('Choose one of the following:');
-    printFoundDevices(devices);
+    // $FlowIssue: args.udid is defined in this context
+    logger.error(`Could not find device with the udid: "${args.udid}".
+Choose one of the following:\n${printFoundDevices(devices)}`);
   } else {
-    console.log('No iOS devices connected.');
+    logger.error('No iOS devices connected.');
   }
 }
 
-function runOnSimulator(xcodeProject, args, scheme) {
-  return new Promise(resolve => {
-    try {
-      var simulators = JSON.parse(
-        child_process.execFileSync(
-          'xcrun',
-          ['simctl', 'list', '--json', 'devices'],
-          { encoding: 'utf8' }
-        )
-      );
-    } catch (e) {
-      throw new Error('Could not parse the simulator list output');
-    }
-
-    const selectedSimulator = findMatchingSimulator(simulators, args.simulator);
-    if (!selectedSimulator) {
-      throw new Error(`Could not find ${args.simulator} simulator`);
-    }
-
-    /**
-     * Booting simulator through `xcrun simctl boot` will boot it in the `headless` mode
-     * (running in the background).
-     *
-     * In order for user to see the app and the simulator itself, we have to make sure
-     * that the Simulator.app is running.
-     *
-     * We also pass it `-CurrentDeviceUDID` so that when we launch it for the first time,
-     * it will not boot the "default" device, but the one we set. If the app is already running,
-     * this flag has no effect.
-     */
-    const activeDeveloperDir = child_process
-      .execFileSync('xcode-select', ['-p'], { encoding: 'utf8' })
-      .trim();
-    child_process.execFileSync('open', [
-      `${activeDeveloperDir}/Applications/Simulator.app`,
-      '--args',
-      '-CurrentDeviceUDID',
-      selectedSimulator.udid,
-    ]);
-
-    if (!selectedSimulator.booted) {
-      const simulatorFullName = formattedDeviceName(selectedSimulator);
-      console.log(`Launching ${simulatorFullName}...`);
-      try {
-        child_process.spawnSync('xcrun', [
-          'instruments',
-          '-w',
-          selectedSimulator.udid,
-        ]);
-      } catch (e) {
-        // instruments always fail with 255 because it expects more arguments,
-        // but we want it to only launch the simulator
-      }
-    }
-
-    buildProject(
-      xcodeProject,
-      selectedSimulator.udid,
-      scheme,
-      args.configuration,
-      args.packager,
-      args.verbose,
-      args.port
-    ).then(appName => resolve({ udid: selectedSimulator.udid, appName }));
-  }).then(({ udid, appName }) => {
-    if (!appName) {
-      appName = scheme;
-    }
-    const appPath = getBuildPath(args.configuration, appName);
-    console.log(`Installing ${appPath}`);
-    child_process.spawnSync('xcrun', ['simctl', 'install', udid, appPath], {
-      stdio: 'inherit',
-    });
-
-    const bundleID = child_process
-      .execFileSync(
-        '/usr/libexec/PlistBuddy',
-        ['-c', 'Print:CFBundleIdentifier', path.join(appPath, 'Info.plist')],
+async function runOnSimulator(xcodeProject, args, scheme) {
+  let simulators;
+  try {
+    simulators = JSON.parse(
+      // $FlowIssue: https://github.com/facebook/flow/issues/5675
+      child_process.execFileSync(
+        'xcrun',
+        ['simctl', 'list', '--json', 'devices'],
         { encoding: 'utf8' }
       )
-      .trim();
+    );
+  } catch (e) {
+    throw new Error('Could not parse the simulator list output');
+  }
 
-    console.log(`Launching ${bundleID}`);
-    child_process.spawnSync('xcrun', ['simctl', 'launch', udid, bundleID], {
+  const selectedSimulator = findMatchingSimulator(simulators, args.simulator);
+  if (!selectedSimulator) {
+    throw new Error(`Could not find ${args.simulator} simulator`);
+  }
+
+  /**
+   * Booting simulator through `xcrun simctl boot` will boot it in the `headless` mode
+   * (running in the background).
+   *
+   * In order for user to see the app and the simulator itself, we have to make sure
+   * that the Simulator.app is running.
+   *
+   * We also pass it `-CurrentDeviceUDID` so that when we launch it for the first time,
+   * it will not boot the "default" device, but the one we set. If the app is already running,
+   * this flag has no effect.
+   */
+  const activeDeveloperDir = child_process
+    .execFileSync('xcode-select', ['-p'], { encoding: 'utf8' })
+    // $FlowExpectedError https://github.com/facebook/flow/issues/5675
+    .trim();
+
+  child_process.execFileSync('open', [
+    `${activeDeveloperDir}/Applications/Simulator.app`,
+    '--args',
+    '-CurrentDeviceUDID',
+    selectedSimulator.udid,
+  ]);
+
+  if (!selectedSimulator.booted) {
+    bootSimulator(selectedSimulator);
+  }
+
+  const appName = await buildProject(
+    xcodeProject,
+    selectedSimulator.udid,
+    scheme,
+    args.configuration,
+    args.packager,
+    args.verbose,
+    args.port
+  );
+
+  const appPath = getBuildPath(args.configuration, appName, false, scheme);
+
+  logger.info(`Installing ${appPath}`);
+
+  child_process.spawnSync(
+    'xcrun',
+    ['simctl', 'install', selectedSimulator.udid, appPath],
+    {
       stdio: 'inherit',
-    });
-  });
+    }
+  );
+
+  const bundleID = child_process
+    .execFileSync(
+      '/usr/libexec/PlistBuddy',
+      ['-c', 'Print:CFBundleIdentifier', path.join(appPath, 'Info.plist')],
+      { encoding: 'utf8' }
+    )
+    // $FlowExpectedError https://github.com/facebook/flow/issues/5675
+    .trim();
+
+  logger.info(`Launching ${bundleID}`);
+
+  child_process.spawnSync(
+    'xcrun',
+    ['simctl', 'launch', selectedSimulator.udid, bundleID],
+    {
+      stdio: 'inherit',
+    }
+  );
 }
 
-function runOnDevice(
+async function runOnDevice(
   selectedDevice,
   scheme,
   xcodeProject,
@@ -224,7 +222,7 @@ function runOnDevice(
   verbose,
   port
 ) {
-  return buildProject(
+  const appName = await buildProject(
     xcodeProject,
     selectedDevice.udid,
     scheme,
@@ -232,41 +230,38 @@ function runOnDevice(
     launchPackager,
     verbose,
     port
-  ).then(appName => {
-    if (!appName) {
-      appName = scheme;
-    }
-    const iosDeployInstallArgs = [
-      '--bundle',
-      getBuildPath(configuration, appName, true),
-      '--id',
-      selectedDevice.udid,
-      '--justlaunch',
-    ];
-    console.log(
-      `installing and launching your app on ${selectedDevice.name}...`
+  );
+
+  const iosDeployInstallArgs = [
+    '--bundle',
+    getBuildPath(configuration, appName, true, scheme),
+    '--id',
+    selectedDevice.udid,
+    '--justlaunch',
+  ];
+
+  logger.info(`installing and launching your app on ${selectedDevice.name}...`);
+
+  const iosDeployOutput = child_process.spawnSync(
+    'ios-deploy',
+    iosDeployInstallArgs,
+    { encoding: 'utf8' }
+  );
+
+  if (iosDeployOutput.error) {
+    logger.error(
+      `** INSTALLATION FAILED **\nMake sure you have ios-deploy installed globally.\n(e.g "npm install -g ios-deploy")`
     );
-    const iosDeployOutput = child_process.spawnSync(
-      'ios-deploy',
-      iosDeployInstallArgs,
-      { encoding: 'utf8' }
-    );
-    if (iosDeployOutput.error) {
-      console.log('');
-      console.log('** INSTALLATION FAILED **');
-      console.log('Make sure you have ios-deploy installed globally.');
-      console.log('(e.g "npm install -g ios-deploy")');
-    } else {
-      console.log('** INSTALLATION SUCCEEDED **');
-    }
-  });
+  } else {
+    logger.info('** INSTALLATION SUCCEEDED **');
+  }
 }
 
 function buildProject(
   xcodeProject,
   udid,
   scheme,
-  configuration = 'Debug',
+  configuration,
   launchPackager = false,
   verbose,
   port
@@ -282,9 +277,9 @@ function buildProject(
       '-destination',
       `id=${udid}`,
       '-derivedDataPath',
-      'build',
+      `build/${scheme}`,
     ];
-    console.log(`Building using "xcodebuild ${xcodebuildArgs.join(' ')}"`);
+    logger.info(`Building using "xcodebuild ${xcodebuildArgs.join(' ')}"`);
     let xcpretty;
     if (!verbose) {
       xcpretty =
@@ -299,40 +294,92 @@ function buildProject(
       getProcessOptions(launchPackager, port)
     );
     let buildOutput = '';
+    let errorOutput = '';
     buildProcess.stdout.on('data', data => {
       buildOutput += data.toString();
       if (xcpretty) {
         xcpretty.stdin.write(data);
       } else {
-        console.log(data.toString());
+        logger.info(data.toString());
       }
     });
     buildProcess.stderr.on('data', data => {
-      console.error(data.toString());
+      errorOutput += data;
     });
     buildProcess.on('close', code => {
       if (xcpretty) {
         xcpretty.stdin.end();
       }
-      // FULL_PRODUCT_NAME is the actual file name of the app, which actually comes from the Product Name in the build config, which does not necessary match a scheme name,  example output line: export FULL_PRODUCT_NAME="Super App Dev.app"
-      const productNameMatch = /export FULL_PRODUCT_NAME="?(.+).app"?$/m.exec(
-        buildOutput
-      );
-      if (
-        productNameMatch &&
-        productNameMatch.length &&
-        productNameMatch.length > 1
-      ) {
-        return resolve(productNameMatch[1]); // 0 is the full match, 1 is the app name
+      if (code !== 0) {
+        reject(
+          new ProcessError(
+            [
+              `Failed to build iOS project.`,
+              `We ran "xcodebuild" command but it exited with error code ${code}.`,
+              `To debug build logs further, consider building your app with Xcode.app, by opening ${
+                xcodeProject.name
+              }`,
+            ].join(' '),
+            errorOutput
+          )
+        );
+        return;
       }
-      return buildProcess.error ? reject(buildProcess.error) : resolve();
+      resolve(getProductName(buildOutput) || scheme);
     });
   });
 }
 
+function bootSimulator(selectedSimulator) {
+  const simulatorFullName = formattedDeviceName(selectedSimulator);
+  logger.info(`Launching ${simulatorFullName}...`);
+  try {
+    child_process.spawnSync('xcrun', [
+      'instruments',
+      '-w',
+      selectedSimulator.udid,
+    ]);
+  } catch (_ignored) {
+    // instruments always fail with 255 because it expects more arguments,
+    // but we want it to only launch the simulator
+  }
+}
+
+function getBuildPath(configuration, appName, isDevice, scheme) {
+  let device;
+
+  if (isDevice) {
+    device = 'iphoneos';
+  } else if (appName.toLowerCase().includes('tvos')) {
+    device = 'appletvsimulator';
+  } else {
+    device = 'iphonesimulator';
+  }
+
+  return `build/${scheme}/Build/Products/${configuration}-${device}/${appName}.app`;
+}
+
+function getProductName(buildOutput) {
+  const productNameMatch = /export FULL_PRODUCT_NAME="?(.+).app"?$/m.exec(
+    buildOutput
+  );
+  return productNameMatch ? productNameMatch[1] : null;
+}
+
+function xcprettyAvailable() {
+  try {
+    child_process.execSync('xcpretty --version', {
+      stdio: [0, 'pipe', 'ignore'],
+    });
+  } catch (error) {
+    return false;
+  }
+  return true;
+}
+
 function matchingDevice(devices, deviceName) {
   if (deviceName === true && devices.length === 1) {
-    console.log(
+    logger.info(
       `Using first available device ${
         devices[0].name
       } due to lack of name supplied.`
@@ -347,6 +394,7 @@ function matchingDevice(devices, deviceName) {
       return devices[i];
     }
   }
+  return null;
 }
 
 function matchingDeviceByUdid(devices, udid) {
@@ -355,6 +403,7 @@ function matchingDeviceByUdid(devices, udid) {
       return devices[i];
     }
   }
+  return null;
 }
 
 function formattedDeviceName(simulator) {
@@ -362,9 +411,11 @@ function formattedDeviceName(simulator) {
 }
 
 function printFoundDevices(devices) {
+  let output = '';
   for (let i = devices.length - 1; i >= 0; i--) {
-    console.log(`${devices[i].name} Udid: ${devices[i].udid}`);
+    output += `${devices[i].name} Udid: ${devices[i].udid}\n`;
   }
+  return output;
 }
 
 function getProcessOptions(launchPackager, port) {
@@ -379,7 +430,7 @@ function getProcessOptions(launchPackager, port) {
   };
 }
 
-module.exports = {
+export default {
   name: 'run-ios',
   description: 'builds your app and starts it on iOS simulator',
   func: runIOS,
@@ -413,6 +464,7 @@ module.exports = {
     {
       command: '--configuration [string]',
       description: 'Explicitly set the scheme configuration to use',
+      default: 'Debug',
     },
     {
       command: '--scheme [string]',
@@ -422,7 +474,7 @@ module.exports = {
       command: '--project-path [string]',
       description:
         'Path relative to project root where the Xcode project ' +
-        "(.xcodeproj) lives.",
+        '(.xcodeproj) lives.',
       default: 'ios',
     },
     {

@@ -7,12 +7,14 @@
  * @format
  */
 
-module.exports = function getIOSLinkConfig() {
-  return {
-    isInstalled: require('./common/isInstalled'),
-    register: require('./common/registerNativeModule'),
-    unregister: require('./common/unregisterNativeModule'),
-    copyAssets: require('./copyAssets'),
-    unlinkAssets: require('./unlinkAssets'),
-  };
-};
+import isInstalled from './common/isInstalled';
+import register from './common/registerNativeModule';
+import unregister from './common/unregisterNativeModule';
+import copyAssets from './copyAssets';
+import unlinkAssets from './unlinkAssets';
+
+export function getIOSLinkConfig() {
+  return { isInstalled, register, unregister, copyAssets, unlinkAssets };
+}
+
+export default getIOSLinkConfig;

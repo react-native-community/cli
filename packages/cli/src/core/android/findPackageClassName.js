@@ -7,9 +7,9 @@
  * @format
  */
 
-const fs = require('fs');
-const glob = require('glob');
-const path = require('path');
+import fs from 'fs';
+import glob from 'glob';
+import path from 'path';
 
 /**
  * Gets package's class name (class that implements ReactPackage)
@@ -17,7 +17,7 @@ const path = require('path');
  *
  * @param {String} folder Folder to find java/kt files
  */
-module.exports = function getPackageClassName(folder) {
+export default function getPackageClassName(folder) {
   const files = glob.sync('**/+(*.java|*.kt)', { cwd: folder });
 
   const packages = files
@@ -26,4 +26,4 @@ module.exports = function getPackageClassName(folder) {
     .filter(match => match);
 
   return packages.length ? packages[0][1] : null;
-};
+}

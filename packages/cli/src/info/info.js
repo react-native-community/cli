@@ -7,7 +7,8 @@
  * @format
  */
 
-const envinfo = require('envinfo');
+import envinfo from 'envinfo';
+import logger from '../util/logger';
 
 const info = function getInfo(argv, ctx, options) {
   try {
@@ -33,18 +34,16 @@ const info = function getInfo(argv, ctx, options) {
           title: 'React Native Environment Info',
         }
       )
-      .then(console.log)
+      .then(logger.info)
       .catch(err => {
-        console.log('Error: unable to print environment info');
-        console.log(err);
+        logger.error(`Unable to print environment info.\n${err}`);
       });
   } catch (err) {
-    console.log('Error: unable to print environment info');
-    console.log(err);
+    logger.error(`Unable to print environment info.\n${err}`);
   }
 };
 
-module.exports = {
+export default {
   name: 'info',
   description: 'Get relevant version info about OS, toolchain and libraries',
   options: [

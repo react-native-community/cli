@@ -7,13 +7,13 @@
  * @format
  */
 
-const { compact } = require('lodash');
-const isInstalledIOS = require('../isInstalled');
-const isInstalledPods = require('../../pods/isInstalled');
-const unregisterDependencyIOS = require('../unregisterNativeModule');
-const unregisterDependencyPods = require('../../pods/unregisterNativeModule');
+import { compact } from 'lodash';
+import isInstalledIOS from '../isInstalled';
+import isInstalledPods from '../../pods/isInstalled';
+import unregisterDependencyIOS from '../unregisterNativeModule';
+import unregisterDependencyPods from '../../pods/unregisterNativeModule';
 
-module.exports = function unregisterNativeModule(
+export default function unregisterNativeModule(
   name,
   dependencyConfig,
   projectConfig,
@@ -27,4 +27,4 @@ module.exports = function unregisterNativeModule(
   } else if (isPodInstalled) {
     unregisterDependencyPods(dependencyConfig, projectConfig);
   }
-};
+}

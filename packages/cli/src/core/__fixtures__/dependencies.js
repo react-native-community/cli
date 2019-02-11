@@ -7,13 +7,14 @@
  * @format
  */
 
+import path from 'path';
+import android from './android';
+
 const fs = jest.requireActual('fs');
-const path = require('path');
-const android = require('./android');
 
 const pjson = fs.readFileSync(path.join(__dirname, 'files', 'package.json'));
 
-module.exports = {
+export default {
   valid: {
     'package.json': pjson,
     android: android.valid,

@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-const chalk = require('chalk');
-const { spawnSync } = require('child_process');
+import { spawnSync } from 'child_process';
+import logger from '../util/logger';
 
 /**
  * Starts adb logcat
@@ -18,9 +18,7 @@ async function logAndroid() {
 
   const adbArgs = ['logcat', '*:S', 'ReactNative:V', 'ReactNativeJS:V'];
 
-  console.log(
-    chalk.bold(`Starting the logger (${adbPath} ${adbArgs.join(' ')})...`)
-  );
+  logger.info(`Starting the logger (${adbPath} ${adbArgs.join(' ')})...`);
 
   const log = spawnSync(adbPath, adbArgs, { stdio: 'inherit' });
 
@@ -29,7 +27,7 @@ async function logAndroid() {
   }
 }
 
-module.exports = {
+export default {
   name: 'log-android',
   description: 'starts adb logcat',
   func: logAndroid,

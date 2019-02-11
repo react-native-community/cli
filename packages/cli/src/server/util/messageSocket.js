@@ -5,15 +5,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-const url = require('url');
-const WebSocketServer = require('ws').Server;
+import url from 'url';
+import { Server as WebSocketServer } from 'ws';
+import notifier from 'node-notifier';
+import logger from '../../util/logger';
 
 const PROTOCOL_VERSION = 2;
-const notifier = require('node-notifier');
 
 function parseMessage(data, binary) {
   if (binary) {
-    console.error('Expected text message, got binary!');
+    logger.error('Expected text message, got binary!');
     return undefined;
   }
   try {
@@ -21,11 +22,11 @@ function parseMessage(data, binary) {
     if (message.version === PROTOCOL_VERSION) {
       return message;
     }
-    console.error(
+    logger.error(
       `Received message had wrong protocol version: ${message.version}`
     );
   } catch (e) {
-    console.error(`Failed to parse the message as JSON:\n${data}`);
+    logger.error(`Failed to parse the message as JSON:\n${data}`);
   }
   return undefined;
 }
@@ -91,7 +92,7 @@ function attachToServer(server, path) {
         try {
           otherWs.send(JSON.stringify(forwarded));
         } catch (e) {
-          console.error(
+          logger.error(
             `Failed to send broadcast to client: '${otherId}' ` +
               `due to:\n ${e.toString()}`
           );
@@ -114,7 +115,7 @@ function attachToServer(server, path) {
       };
 
       if (message.id === undefined) {
-        console.error(
+        logger.error(
           `Handling message from ${clientId} failed with:\n${error}\n` +
             `message:\n${JSON.stringify(errorMessage)}`
         );
@@ -128,7 +129,7 @@ function attachToServer(server, path) {
             })
           );
         } catch (e) {
-          console.error(
+          logger.error(
             `Failed to reply to ${clientId} with error:\n${error}` +
               `\nmessage:\n${JSON.stringify(errorMessage)}` +
               `\ndue to error: ${e.toString()}`
@@ -200,7 +201,7 @@ function attachToServer(server, path) {
     clientWs.onmessage = event => {
       const message = parseMessage(event.data, event.binary);
       if (message === undefined) {
-        console.error('Received message not matching protocol');
+        logger.error('Received message not matching protocol');
         return;
       }
 
@@ -231,7 +232,4 @@ function attachToServer(server, path) {
   };
 }
 
-module.exports = {
-  attachToServer,
-  parseMessage,
-};
+export default { attachToServer, parseMessage };

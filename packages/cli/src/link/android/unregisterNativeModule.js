@@ -7,17 +7,17 @@
  * @format
  */
 
-const fs = require('fs');
-const toCamelCase = require('lodash').camelCase;
+import fs from 'fs';
+import { camelCase as toCamelCase } from 'lodash';
 
-const revokePatch = require('./patches/revokePatch');
-const makeSettingsPatch = require('./patches/makeSettingsPatch');
-const makeBuildPatch = require('./patches/makeBuildPatch');
-const makeStringsPatch = require('./patches/makeStringsPatch');
-const makeImportPatch = require('./patches/makeImportPatch');
-const makePackagePatch = require('./patches/makePackagePatch');
+import revokePatch from './patches/revokePatch';
+import makeSettingsPatch from './patches/makeSettingsPatch';
+import makeBuildPatch from './patches/makeBuildPatch';
+import makeStringsPatch from './patches/makeStringsPatch';
+import makeImportPatch from './patches/makeImportPatch';
+import makePackagePatch from './patches/makePackagePatch';
 
-module.exports = function unregisterNativeAndroidModule(
+export default function unregisterNativeAndroidModule(
   name,
   androidConfig,
   projectConfig
@@ -50,4 +50,4 @@ module.exports = function unregisterNativeAndroidModule(
     projectConfig.mainFilePath,
     makeImportPatch(androidConfig.packageImportPath)
   );
-};
+}

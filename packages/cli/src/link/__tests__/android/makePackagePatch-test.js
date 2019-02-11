@@ -7,8 +7,8 @@
 
 /* eslint-disable no-template-curly-in-string */
 
-const makePackagePatch = require('../../android/patches/makePackagePatch');
-const applyParams = require('../../android/patches/applyParams');
+import makePackagePatch from '../../android/patches/makePackagePatch';
+import applyParams from '../../android/patches/applyParams';
 
 const packageInstance = "new SomeLibrary(${foo}, ${bar}, 'something')";
 const name = 'some-library';

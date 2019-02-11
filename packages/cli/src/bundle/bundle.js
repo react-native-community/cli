@@ -7,8 +7,8 @@
  * @format
  */
 
-const buildBundle = require('./buildBundle');
-const bundleCommandLineArgs = require('./bundleCommandLineArgs');
+import buildBundle from './buildBundle';
+import bundleCommandLineArgs from './bundleCommandLineArgs';
 
 /**
  * Builds the bundle starting to look for dependencies at the given entry path.
@@ -17,7 +17,7 @@ function bundleWithOutput(_, config, args, output) {
   return buildBundle(args, config, output);
 }
 
-module.exports = {
+export default {
   name: 'bundle',
   description: 'builds the javascript bundle for offline use',
   func: bundleWithOutput,
@@ -25,3 +25,7 @@ module.exports = {
   // Used by `ramBundle.js`
   withOutput: bundleWithOutput,
 };
+
+const withOutput = bundleWithOutput;
+
+export { withOutput };

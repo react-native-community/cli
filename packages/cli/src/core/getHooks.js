@@ -2,11 +2,12 @@
  * @flow
  */
 
-const { spawn } = require('child_process');
-const getPackageConfiguration = require('./getPackageConfiguration');
+import { spawn } from 'child_process';
+import getPackageConfiguration from './getPackageConfiguration';
 
-function makeCommand(command) {
-  return cb => {
+export function makeCommand(command: string) {
+  // eslint-disable-next-line flowtype/no-weak-types
+  return (cb: Function) => {
     if (!cb) {
       throw new Error(
         `You missed a callback function for the ${command} command`
@@ -31,7 +32,7 @@ function makeCommand(command) {
   };
 }
 
-module.exports = function getHooks(root: string) {
+export default function getHooks(root: string) {
   const commands = getPackageConfiguration(root).commands || {};
 
   const acc = {};
@@ -41,6 +42,4 @@ module.exports = function getHooks(root: string) {
   });
 
   return acc;
-};
-
-module.exports.makeCommand = makeCommand;
+}

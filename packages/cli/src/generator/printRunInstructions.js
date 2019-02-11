@@ -5,14 +5,15 @@
  * LICENSE file in the root directory of this source tree.
  *
  * @format
+ * @flow
  */
 
 import path from 'path';
+import chalk from 'chalk';
 import logger from '../util/logger';
 
-function printRunInstructions(projectDir, projectName) {
-  const absoluteProjectDir = path.resolve(projectDir);
-  // iOS
+function printRunInstructions(projectDir: string, projectName: string) {
+  const relativeProjectDir = path.relative(process.cwd(), projectDir);
   const xcodeProjectPath = `${path.resolve(
     projectDir,
     'ios',
@@ -22,17 +23,18 @@ function printRunInstructions(projectDir, projectName) {
     process.cwd(),
     xcodeProjectPath
   );
-  logger.info(`To run your app on iOS:
-    cd ${absoluteProjectDir}
-    react-native run-ios');
+
+  logger.log(`
+  ${chalk.cyan(`Run instructions for ${chalk.bold('iOS')}`)}:
+    • cd ${relativeProjectDir} && react-native run-ios
     - or -
-    Open ${relativeXcodeProjectPath} in Xcode
-    Hit the Run button
-  // Android
-  To run your app on Android:
-    cd ${absoluteProjectDir}
-    Have an Android emulator running (quickest way to get started), or a device connected
-    react-native run-android`);
+    • Open ${relativeXcodeProjectPath} in Xcode
+    • Hit the Run button
+
+  ${chalk.green(`Run instructions for ${chalk.bold('Android')}`)}:
+    • Have an Android emulator running (quickest way to get started), or a device connected.
+    • cd ${relativeProjectDir} && react-native run-android
+`);
 }
 
 export default printRunInstructions;

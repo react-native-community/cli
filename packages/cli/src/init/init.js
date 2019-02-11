@@ -13,7 +13,6 @@ import path from 'path';
 import process from 'process';
 import printRunInstructions from '../generator/printRunInstructions';
 import { createProjectFromTemplate } from '../generator/templates';
-import yarn from '../util/yarn';
 import PackageManager from '../util/PackageManager';
 import logger from '../util/logger';
 
@@ -68,12 +67,6 @@ function generateProject(destinationRoot, newProjectName, options) {
     return;
   }
 
-  // TODO: Use `PackageManager` in generator to remove `yarn` calls.
-  const yarnVersion =
-    !options.npm &&
-    yarn.getYarnVersionIfAvailable() &&
-    yarn.isGlobalCliUsingYarn(destinationRoot);
-
   const packageManager = new PackageManager({
     projectDir: destinationRoot,
     forceNpm: options.npm,
@@ -83,7 +76,7 @@ function generateProject(destinationRoot, newProjectName, options) {
     destinationRoot,
     newProjectName,
     options.template,
-    yarnVersion
+    destinationRoot
   );
 
   logger.info('Adding required dependencies');

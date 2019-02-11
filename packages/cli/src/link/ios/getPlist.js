@@ -16,7 +16,7 @@ import getPlistPath from './getPlistPath';
  *
  * Returns `null` if INFOPLIST_FILE is not specified.
  */
-module.exports = function getPlist(project, sourceDir) {
+export default function getPlist(project, sourceDir) {
   const plistPath = getPlistPath(project, sourceDir);
 
   if (!plistPath || !fs.existsSync(plistPath)) {
@@ -24,4 +24,4 @@ module.exports = function getPlist(project, sourceDir) {
   }
 
   return plistParser.parse(fs.readFileSync(plistPath, 'utf-8'));
-};
+}

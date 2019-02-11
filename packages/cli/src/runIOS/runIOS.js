@@ -430,7 +430,7 @@ function getProcessOptions(launchPackager, port) {
   };
 }
 
-module.exports = {
+export default {
   name: 'run-ios',
   description: 'builds your app and starts it on iOS simulator',
   func: runIOS,

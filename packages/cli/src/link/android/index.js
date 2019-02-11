@@ -7,12 +7,14 @@
  * @format
  */
 
-module.exports = function getAndroidLinkConfig() {
-  return {
-    isInstalled: require('./isInstalled'),
-    register: require('./registerNativeModule'),
-    unregister: require('./unregisterNativeModule'),
-    copyAssets: require('./copyAssets'),
-    unlinkAssets: require('./unlinkAssets'),
-  };
-};
+import isInstalled from './isInstalled';
+import register from './registerNativeModule';
+import unregister from './unregisterNativeModule';
+import copyAssets from './copyAssets';
+import unlinkAssets from './unlinkAssets';
+
+export function getAndroidLinkConfig() {
+  return { isInstalled, register, unregister, copyAssets, unlinkAssets };
+}
+
+export default getAndroidLinkConfig;

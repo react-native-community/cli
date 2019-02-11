@@ -7,7 +7,7 @@
  * @flow
  */
 
-const makeSettingsPatch = require('../../android/patches/makeSettingsPatch');
+import makeSettingsPatch from '../../android/patches/makeSettingsPatch';
 
 const projectConfig = {
   sourceDir: '/home/project/android/app',
@@ -50,7 +50,8 @@ project(':test').projectDir = new File(rootProject.projectDir, '../node_modules/
       return path;
     });
     // eslint-disable-next-line no-shadow
-    const makeSettingsPatch = require('../../android/patches/makeSettingsPatch');
+    const makeSettingsPatch = require('../../android/patches/makeSettingsPatch')
+      .default;
     const projectConfigWindows = {
       sourceDir: 'C:\\home\\project\\android\\app',
       settingsGradlePath: 'C:\\home\\project\\android\\settings.gradle',

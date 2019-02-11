@@ -30,7 +30,7 @@ import fs from 'fs';
  * The end result should be a list of all resolved module symlinks for a given
  * root.
  */
-module.exports = function findSymlinkedModules(
+export default function findSymlinkedModules(
   projectRoot: string,
   ignoredRoots?: Array<string> = []
 ) {
@@ -40,7 +40,7 @@ module.exports = function findSymlinkedModules(
     projectRoot,
   ]);
   return resolvedSymlinks;
-};
+}
 
 function findModuleSymlinks(
   modulesPath: string,

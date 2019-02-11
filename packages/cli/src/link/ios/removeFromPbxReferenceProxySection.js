@@ -11,7 +11,7 @@
  * Every file added to the project from another project is attached to
  * `PBXItemContainerProxy` through `PBXReferenceProxy`.
  */
-module.exports = function removeFromPbxReferenceProxySection(project, file) {
+export default function removeFromPbxReferenceProxySection(project, file) {
   const section = project.hash.project.objects.PBXReferenceProxy;
 
   for (const key of Object.keys(section)) {
@@ -19,4 +19,4 @@ module.exports = function removeFromPbxReferenceProxySection(project, file) {
       delete section[key];
     }
   }
-};
+}

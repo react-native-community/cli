@@ -15,7 +15,7 @@ import removeFromPbxReferenceProxySection from './removeFromPbxReferenceProxySec
  *
  * Similar to `node-xcode` addStaticLibrary
  */
-module.exports = function removeFromStaticLibraries(project, path, opts) {
+export default function removeFromStaticLibraries(project, path, opts) {
   const file = new PbxFile(path);
 
   file.target = opts ? opts.target : undefined;
@@ -27,4 +27,4 @@ module.exports = function removeFromStaticLibraries(project, path, opts) {
   removeFromPbxReferenceProxySection(project, file);
 
   return file;
-};
+}

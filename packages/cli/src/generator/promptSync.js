@@ -138,4 +138,4 @@ function create() {
   }
 }
 
-module.exports = create;
+export default create;

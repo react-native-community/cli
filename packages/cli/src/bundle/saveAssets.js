@@ -82,4 +82,4 @@ function copy(src, dest, callback) {
   });
 }
 
-module.exports = saveAssets;
+export default saveAssets;

@@ -14,7 +14,7 @@ const fs = jest.requireActual('fs');
 
 const pjson = fs.readFileSync(path.join(__dirname, 'files', 'package.json'));
 
-module.exports = {
+export default {
   valid: {
     'package.json': pjson,
     android: android.valid,

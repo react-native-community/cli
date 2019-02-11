@@ -36,4 +36,4 @@ function tryLaunchAppOnDevice(
   }
 }
 
-module.exports = tryLaunchAppOnDevice;
+export default tryLaunchAppOnDevice;

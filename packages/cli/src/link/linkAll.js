@@ -57,4 +57,4 @@ function linkAll(
   });
 }
 
-module.exports = linkAll;
+export default linkAll;

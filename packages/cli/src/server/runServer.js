@@ -119,4 +119,4 @@ function getReporterImpl(customLogReporterPath: ?string) {
   }
 }
 
-module.exports = runServer;
+export default runServer;

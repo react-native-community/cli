@@ -21,7 +21,7 @@ const GLOB_EXCLUDE_PATTERN = [
  * Given folder, it returns an array of all header files
  * inside it, ignoring node_modules and examples
  */
-module.exports = function getHeadersInFolder(folder) {
+export default function getHeadersInFolder(folder) {
   return glob
     .sync('**/*.h', {
       cwd: folder,
@@ -29,4 +29,4 @@ module.exports = function getHeadersInFolder(folder) {
       ignore: GLOB_EXCLUDE_PATTERN,
     })
     .map(file => path.join(folder, file));
-};
+}

@@ -28,7 +28,7 @@ import addSharedLibraries from './addSharedLibraries';
  *
  * If library is already linked, this action is a no-op.
  */
-module.exports = function registerNativeModuleIOS(
+export default function registerNativeModuleIOS(
   dependencyConfig,
   projectConfig
 ) {
@@ -84,4 +84,4 @@ module.exports = function registerNativeModuleIOS(
   }
 
   fs.writeFileSync(projectConfig.pbxprojPath, project.writeSync());
-};
+}

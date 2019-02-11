@@ -64,7 +64,7 @@ Now it needs to be linked in Xcode:
 https://facebook.github.io/react-native/docs/linking-libraries-ios.html#content`);
 }
 
-module.exports = {
+export default {
   name: 'new-library',
   func: library,
   description: 'generates a native library bridge',

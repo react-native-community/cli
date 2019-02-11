@@ -36,6 +36,7 @@ const unlinkDependency = (
       platforms[platform] &&
       platforms[platform].linkConfig &&
       platforms[platform].linkConfig();
+
     if (!linkConfig || !linkConfig.isInstalled || !linkConfig.unregister) {
       return;
     }
@@ -164,7 +165,7 @@ function unlink(args: Array<string>, ctx: ContextT) {
     });
 }
 
-module.exports = {
+export default {
   func: unlink,
   description: 'unlink native dependency',
   name: 'unlink <packageName>',

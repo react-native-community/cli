@@ -19,7 +19,7 @@ const generateDeprecationMessage = api =>
  *
  * This file will be removed from the next version.
  */
-module.exports = (root: string) => ({
+export default (root: string) => ({
   getPlatformConfig: util.deprecate(
     () => getPlatforms(root),
     generateDeprecationMessage('getPlatformConfig()')

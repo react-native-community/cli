@@ -7,7 +7,7 @@
  * @format
  */
 
-module.exports = function findLineToAddPod(podLines, firstTargetLine) {
+export default function findLineToAddPod(podLines, firstTargetLine) {
   // match line with new target: target 'project_name' do (most likely target inside podfile main target)
   const nextTarget = /target ('|")\w+('|") do/g;
   // match line that has only 'end' (if we don't catch new target or function, this would mean this is end of current target)
@@ -29,4 +29,4 @@ module.exports = function findLineToAddPod(podLines, firstTargetLine) {
     }
   }
   return null;
-};
+}

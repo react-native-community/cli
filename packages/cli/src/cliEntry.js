@@ -191,7 +191,9 @@ async function setupAndRun() {
   }
 }
 
-module.exports = {
+export default {
   run,
   init,
 };
+
+// export { run, init };

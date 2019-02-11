@@ -30,4 +30,4 @@ function isPackagerRunning(packagerPort = process.env.RCT_METRO_PORT || 8081) {
   );
 }
 
-module.exports = isPackagerRunning;
+export default isPackagerRunning;

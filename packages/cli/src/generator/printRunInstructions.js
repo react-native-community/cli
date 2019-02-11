@@ -37,4 +37,4 @@ function printRunInstructions(projectDir: string, projectName: string) {
 `);
 }
 
-module.exports = printRunInstructions;
+export default printRunInstructions;

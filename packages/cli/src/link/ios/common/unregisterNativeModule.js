@@ -13,7 +13,7 @@ import isInstalledPods from '../../pods/isInstalled';
 import unregisterDependencyIOS from '../unregisterNativeModule';
 import unregisterDependencyPods from '../../pods/unregisterNativeModule';
 
-module.exports = function unregisterNativeModule(
+export default function unregisterNativeModule(
   name,
   dependencyConfig,
   projectConfig,
@@ -27,4 +27,4 @@ module.exports = function unregisterNativeModule(
   } else if (isPodInstalled) {
     unregisterDependencyPods(dependencyConfig, projectConfig);
   }
-};
+}

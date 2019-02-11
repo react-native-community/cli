@@ -10,9 +10,9 @@
 import fs from 'fs';
 import path from 'path';
 
-module.exports = function findPodfilePath(projectFolder) {
+export default function findPodfilePath(projectFolder) {
   const podFilePath = path.join(projectFolder, '..', 'Podfile');
   const podFileExists = fs.existsSync(podFilePath);
 
   return podFileExists ? podFilePath : null;
-};
+}

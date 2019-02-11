@@ -9,9 +9,9 @@
  * @emails oncall+javascript_foundation
  */
 
-jest.dontMock('../findMatchingSimulator');
+import findMatchingSimulator from '../findMatchingSimulator';
 
-const findMatchingSimulator = require('../findMatchingSimulator');
+jest.dontMock('../findMatchingSimulator');
 
 describe('findMatchingSimulator', () => {
   it('should find simulator', () => {

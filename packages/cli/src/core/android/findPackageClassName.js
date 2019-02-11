@@ -17,7 +17,7 @@ import path from 'path';
  *
  * @param {String} folder Folder to find java/kt files
  */
-module.exports = function getPackageClassName(folder) {
+export default function getPackageClassName(folder) {
   const files = glob.sync('**/+(*.java|*.kt)', { cwd: folder });
 
   const packages = files
@@ -26,4 +26,4 @@ module.exports = function getPackageClassName(folder) {
     .filter(match => match);
 
   return packages.length ? packages[0][1] : null;
-};
+}

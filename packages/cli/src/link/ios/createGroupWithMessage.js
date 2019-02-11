@@ -17,7 +17,7 @@ import getGroup from './getGroup';
  *
  * Returns the existing or newly created group
  */
-module.exports = function createGroupWithMessage(project, path) {
+export default function createGroupWithMessage(project, path) {
   let group = getGroup(project, path);
 
   if (!group) {
@@ -29,4 +29,4 @@ module.exports = function createGroupWithMessage(project, path) {
   }
 
   return group;
-};
+}

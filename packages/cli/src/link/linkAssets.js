@@ -32,4 +32,4 @@ const linkAssets = (
   log.info('Assets have been successfully linked to your project');
 };
 
-module.exports = linkAssets;
+export default linkAssets;

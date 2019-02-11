@@ -15,9 +15,9 @@
  *
  * Returns the value last promise from a sequence resolved
  */
-module.exports = function promiseWaterfall(tasks) {
+export default function promiseWaterfall(tasks) {
   return tasks.reduce(
     (prevTaskPromise, task) => prevTaskPromise.then(task),
     Promise.resolve()
   );
-};
+}

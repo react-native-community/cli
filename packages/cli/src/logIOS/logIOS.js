@@ -63,7 +63,7 @@ function tailDeviceLogs(udid) {
   }
 }
 
-module.exports = {
+export default {
   name: 'log-ios',
   description: 'starts iOS device syslog tail',
   func: logIOS,

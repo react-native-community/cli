@@ -7,7 +7,7 @@
  * @format
  */
 
-module.exports = function removeProductGroup(project, productGroupId) {
+export default function removeProductGroup(project, productGroupId) {
   const section = project.hash.project.objects.PBXGroup;
 
   for (const key of Object.keys(section)) {
@@ -15,4 +15,4 @@ module.exports = function removeProductGroup(project, productGroupId) {
       delete section[key];
     }
   }
-};
+}

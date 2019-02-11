@@ -28,10 +28,12 @@ const log = (...messages: Array<string>) => {
   console.log(`${formatMessages(messages)}`);
 };
 
-module.exports = {
+export default {
   info,
   warn,
   error,
   debug,
   log,
 };
+
+// export { info, warn, error, debug };

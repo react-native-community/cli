@@ -18,7 +18,7 @@ const hasGroup = (pbxGroup, name) =>
  *
  * Returns newly created group
  */
-module.exports = function createGroup(project, path) {
+export default function createGroup(project, path) {
   return path.split('/').reduce((group, name) => {
     if (!hasGroup(group, name)) {
       const uuid = project.pbxCreateGroup(name, '""');
@@ -31,4 +31,4 @@ module.exports = function createGroup(project, path) {
 
     return project.pbxGroupByName(name);
   }, getGroup(project));
-};
+}

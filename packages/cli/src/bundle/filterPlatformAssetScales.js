@@ -41,4 +41,4 @@ function filterPlatformAssetScales(
   return result;
 }
 
-module.exports = filterPlatformAssetScales;
+export default filterPlatformAssetScales;

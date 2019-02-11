@@ -10,7 +10,7 @@
 import registerDependencyIOS from '../registerNativeModule';
 import registerDependencyPods from '../../pods/registerNativeModule';
 
-module.exports = function registerNativeModule(
+export default function registerNativeModule(
   name,
   dependencyConfig,
   params,
@@ -21,4 +21,4 @@ module.exports = function registerNativeModule(
   } else {
     registerDependencyIOS(dependencyConfig, projectConfig);
   }
-};
+}

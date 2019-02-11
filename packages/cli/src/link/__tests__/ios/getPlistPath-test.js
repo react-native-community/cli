@@ -8,9 +8,10 @@
  * @emails oncall+javascript_foundation
  */
 
+import getPlistPath from '../../ios/getPlistPath';
+
 const xcode = require('xcode');
 const path = require('path');
-const getPlistPath = require('../../ios/getPlistPath');
 
 const project = xcode.project(
   path.join(__dirname, '../../__fixtures__/project.pbxproj')

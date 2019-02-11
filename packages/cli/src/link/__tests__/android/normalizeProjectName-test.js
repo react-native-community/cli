@@ -8,7 +8,7 @@
  * @emails oncall+javascript_foundation
  */
 
-const normalizeProjectName = require('../../android/patches/normalizeProjectName');
+import normalizeProjectName from '../../android/patches/normalizeProjectName';
 
 const name = 'test';
 const scopedName = '@scoped/test';

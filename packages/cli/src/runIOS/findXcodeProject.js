@@ -8,7 +8,7 @@
  * @flow strict
  */
 
-const path = require('path');
+import path from 'path';
 
 type ProjectInfo = {
   name: string,
@@ -38,4 +38,4 @@ function findXcodeProject(files: Array<string>): ?ProjectInfo {
   return null;
 }
 
-module.exports = findXcodeProject;
+export default findXcodeProject;

@@ -1,77 +1,50 @@
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * @format
- */
+// @flow
+import { execSync } from 'child_process';
+import yarn from './yarn';
 
-const { spawnSync } = require('child_process');
-const yarn = require('../util/yarn');
-
-const spawnOpts = {
-  stdio: 'inherit',
-  stdin: 'inherit',
+type PackageManagerOptions = {
+  forceNpm?: boolean,
+  projectDir: string,
 };
 
-/**
- * Execute npm or yarn command
- *
- * @param  {String} yarnCommand Yarn command to be executed eg. yarn add package
- * @param  {String} npmCommand  Npm command to be executed eg. npm install package
- * @param  {string} projectDir  Directory to run the command in
- * @return {object}             spawnSync's result object
- */
-function callYarnOrNpm(yarnCommand, npmCommand, projectDir) {
-  let command;
+export default class PackageManager {
+  options: PackageManagerOptions;
 
-  const isYarnAvailable =
-    yarn.getYarnVersionIfAvailable() && yarn.isGlobalCliUsingYarn(projectDir);
-
-  if (isYarnAvailable) {
-    command = yarnCommand;
-  } else {
-    command = npmCommand;
+  constructor(options: PackageManagerOptions) {
+    this.options = options;
   }
 
-  const args = command.split(' ');
-  const cmd = args.shift();
+  executeCommand(command: string) {
+    return execSync(command, { stdio: 'inherit' });
+  }
 
-  const res = spawnSync(cmd, args, spawnOpts);
+  shouldCallYarn() {
+    return (
+      !this.options.forceNpm &&
+      yarn.getYarnVersionIfAvailable() &&
+      yarn.isGlobalCliUsingYarn(this.options.projectDir)
+    );
+  }
 
-  return res;
+  install(packageNames: Array<string>) {
+    return this.shouldCallYarn()
+      ? this.executeCommand(`yarn add ${packageNames.join(' ')}`)
+      : this.executeCommand(
+          `npm install ${packageNames.join(' ')} --save --save-exact`
+        );
+  }
+
+  installDev(packageNames: Array<string>) {
+    return this.shouldCallYarn()
+      ? this.executeCommand(`yarn add -D ${packageNames.join(' ')}`)
+      : this.executeCommand(
+          `npm install ${packageNames.join(' ')} --save-dev --save-exact`
+        );
+  }
+
+  uninstall(packageNames: Array<string>) {
+    return this.shouldCallYarn()
+      ? this.executeCommand(`yarn remove ${packageNames.join(' ')}`)
+      : this.executeCommand(`npm uninstall ${packageNames.join(' ')} --save`);
+  }
 }
-
-/**
- * Install package into project using npm or yarn if available
- * @param  {[type]} packageName Package to be installed
- * @param  {string} projectDir  Root directory of the project
- * @return {[type]}             spawnSync's result object
- */
-function add(packageName, projectDir) {
-  return callYarnOrNpm(
-    `yarn add ${packageName}`,
-    `npm install ${packageName} --save`,
-    projectDir
-  );
-}
-
-/**
- * Uninstall package from project using npm or yarn if available
- * @param  {[type]} packageName Package to be uninstalled
- * @param  {string} projectDir  Root directory of the project
- * @return {Object}             spawnSync's result object
- */
-function remove(packageName, projectDir) {
-  return callYarnOrNpm(
-    `yarn remove ${packageName}`,
-    `npm uninstall --save ${packageName}`,
-    projectDir
-  );
-}
-
-module.exports = {
-  add,
-  remove,
-};

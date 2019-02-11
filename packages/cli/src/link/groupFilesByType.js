@@ -7,8 +7,8 @@
  * @format
  */
 
-const { groupBy } = require('lodash');
-const mime = require('mime');
+import { groupBy } from 'lodash';
+import mime from 'mime';
 
 /**
  * Since there are no officially registered MIME types
@@ -31,6 +31,6 @@ mime.define({
  * Given an array ['fonts/a.ttf', 'images/b.jpg'],
  * the returned object will be: {font: ['fonts/a.ttf'], image: ['images/b.jpg']}
  */
-module.exports = function groupFilesByType(assets) {
+export default function groupFilesByType(assets) {
   return groupBy(assets, type => mime.lookup(type).split('/')[0]);
-};
+}

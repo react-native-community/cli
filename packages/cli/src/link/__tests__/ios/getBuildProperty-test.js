@@ -8,9 +8,10 @@
  * @emails oncall+javascript_foundation
  */
 
+import getBuildProperty from '../../ios/getBuildProperty';
+
 const xcode = require('xcode');
 const path = require('path');
-const getBuildProperty = require('../../ios/getBuildProperty');
 
 const project = xcode.project(
   path.join(__dirname, '../../__fixtures__/project.pbxproj')

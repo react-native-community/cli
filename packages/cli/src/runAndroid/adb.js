@@ -8,8 +8,8 @@
  * @flow
  */
 
-const { execSync, execFileSync } = require('child_process');
-const logger = require('../util/logger');
+import { execSync, execFileSync } from 'child_process';
+import logger from '../util/logger';
 
 /**
  * Parses the output of the 'adb devices' command
@@ -72,7 +72,7 @@ function getAvailableCPUs(adbPath: string, device: string): Array<string> {
   }
 }
 
-module.exports = {
+export default {
   parseDevicesResult,
   getDevices,
   getAvailableCPUs,

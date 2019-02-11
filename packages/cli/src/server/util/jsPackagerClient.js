@@ -7,9 +7,9 @@
  * @format
  */
 
-const WebSocket = require('ws');
-
-const { parseMessage } = require('./messageSocket');
+import WebSocket from 'ws';
+import logger from '../../util/logger';
+import MessageSocket from './messageSocket';
 
 const PROTOCOL_VERSION = 2;
 const TARGET_SERVER = 'server';
@@ -29,12 +29,12 @@ class JsPackagerClient {
     });
 
     this.ws.on('message', (data, flags) => {
-      const message = parseMessage(data, flags.binary);
+      const message = MessageSocket.parseMessage(data, flags.binary);
       const msgCallback = this.msgCallbacks.get(message.id);
       if (message === undefined || message.id === undefined) {
         // gracefully ignore wrong messages or broadcasts
       } else if (msgCallback === undefined) {
-        console.warn(`Response with non-existing message id: '${message.id}'`);
+        logger.warn(`Response with non-existing message id: '${message.id}'`);
       } else if (message.error === undefined) {
         msgCallback.resolve(message.result);
       } else {
@@ -118,4 +118,4 @@ class JsPackagerClient {
   }
 }
 
-module.exports = JsPackagerClient;
+export default JsPackagerClient;

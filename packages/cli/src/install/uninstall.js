@@ -7,34 +7,30 @@
  * @format
  */
 
-const { spawnSync } = require('child_process');
-const logger = require('../util/logger');
-const PackageManager = require('../util/PackageManager');
+import { spawnSync } from 'child_process';
+import logger from '../util/logger';
+import PackageManager from '../util/PackageManager';
 
 const spawnOpts = {
   stdio: 'inherit',
   stdin: 'inherit',
 };
 
-function uninstall(args, ctx) {
+async function uninstall(args, ctx) {
   const name = args[0];
 
-  let res = spawnSync('react-native', ['unlink', name], spawnOpts);
+  const res = spawnSync('react-native', ['unlink', name], spawnOpts);
 
   if (res.status) {
     process.exit(res.status);
   }
 
-  res = PackageManager.remove(name, ctx.root);
-
-  if (res.status) {
-    process.exit(res.status);
-  }
+  new PackageManager({ projectDir: ctx.root }).uninstall([name]);
 
   logger.info(`Module ${name} has been successfully uninstalled & unlinked`);
 }
 
-module.exports = {
+export default {
   func: uninstall,
   description: 'uninstall and unlink native dependencies',
   name: 'uninstall <packageName>',

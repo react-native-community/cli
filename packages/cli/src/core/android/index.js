@@ -7,11 +7,14 @@
  * @format
  */
 
-const path = require('path');
-const findAndroidAppFolder = require('./findAndroidAppFolder');
-const findManifest = require('./findManifest');
-const findPackageClassName = require('./findPackageClassName');
-const readManifest = require('./readManifest');
+import path from 'path';
+import findAndroidAppFolder from './findAndroidAppFolder';
+import findManifest from './findManifest';
+import findPackageClassName from './findPackageClassName';
+import readManifest from './readManifest';
+import linkConfigAndroid from '../../link/android';
+
+export const linkConfig = linkConfigAndroid;
 
 const getPackageName = manifest => manifest.attr.package;
 
@@ -19,7 +22,7 @@ const getPackageName = manifest => manifest.attr.package;
  * Gets android project config by analyzing given folder and taking some
  * defaults specified by user into consideration
  */
-exports.projectConfig = function projectConfigAndroid(folder, userConfig = {}) {
+export function projectConfig(folder, userConfig = {}) {
   const src = userConfig.sourceDir || findAndroidAppFolder(folder);
 
   if (!src) {
@@ -85,16 +88,13 @@ exports.projectConfig = function projectConfigAndroid(folder, userConfig = {}) {
     assetsPath,
     mainFilePath,
   };
-};
+}
 
 /**
  * Same as projectConfigAndroid except it returns
  * different config that applies to packages only
  */
-exports.dependencyConfig = function dependencyConfigAndroid(
-  folder,
-  userConfig = {}
-) {
+export function dependencyConfig(folder, userConfig = {}) {
   const src = userConfig.sourceDir || findAndroidAppFolder(folder);
 
   if (!src) {
@@ -129,6 +129,4 @@ exports.dependencyConfig = function dependencyConfigAndroid(
     userConfig.packageInstance || `new ${packageClassName}()`;
 
   return { sourceDir, folder, manifest, packageImportPath, packageInstance };
-};
-
-exports.linkConfig = require('../../link/android');
+}

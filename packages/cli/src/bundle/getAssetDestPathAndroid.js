@@ -8,10 +8,10 @@
  * @flow strict
  */
 
+import path from 'path';
 import type { PackagerAsset } from './assetPathUtils';
 
-const path = require('path');
-const assetPathUtils = require('./assetPathUtils');
+import assetPathUtils from './assetPathUtils';
 
 function getAssetDestPathAndroid(asset: PackagerAsset, scale: number): string {
   const androidFolder = assetPathUtils.getAndroidResourceFolderName(
@@ -22,4 +22,4 @@ function getAssetDestPathAndroid(asset: PackagerAsset, scale: number): string {
   return path.join(androidFolder, `${fileName}.${asset.type}`);
 }
 
-module.exports = getAssetDestPathAndroid;
+export default getAssetDestPathAndroid;

@@ -7,13 +7,13 @@
  * @format
  */
 
-const applyParams = require('./applyParams');
+import applyParams from './applyParams';
 
-module.exports = function makePackagePatch(packageInstance, params, prefix) {
+export default function makePackagePatch(packageInstance, params, prefix) {
   const processedInstance = applyParams(packageInstance, params, prefix);
 
   return {
     pattern: 'new MainReactPackage()',
     patch: `,\n            ${processedInstance}`,
   };
-};
+}

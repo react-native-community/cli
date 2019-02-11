@@ -7,7 +7,7 @@
 
 /* eslint-disable no-template-curly-in-string */
 
-const applyParams = require('../../android/patches/applyParams');
+import applyParams from '../../android/patches/applyParams';
 
 describe('applyParams', () => {
   it('apply params to the string', () => {

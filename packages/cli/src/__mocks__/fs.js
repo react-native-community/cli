@@ -5,8 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-const path = require('path');
-const MemoryFS = require('metro-memory-fs');
+import path from 'path';
+import MemoryFS from 'metro-memory-fs';
+import util from 'util';
 
 let fs;
 
@@ -26,7 +27,7 @@ function mockDir(dirPath, desc) {
       continue; // eslint-disable-line no-continue
     }
     if (typeof ent !== 'object') {
-      throw new Error(require('util').format('invalid entity:', ent));
+      throw new Error(util.format('invalid entity:', ent));
     }
     if (ent.SYMLINK != null) {
       fs.symlinkSync(ent.SYMLINK, entPath);

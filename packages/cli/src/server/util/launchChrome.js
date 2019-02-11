@@ -11,8 +11,9 @@
 /* $FlowFixMe(>=0.54.0 site=react_native_oss) This comment suppresses an error
  * found when Flow v0.54 was deployed. To see the error delete this comment and
  * run Flow. */
-const opn = require('opn');
-const { execSync } = require('child_process');
+import opn from 'opn';
+import { execSync } from 'child_process';
+import logger from '../../util/logger';
 
 function commandExistsUnixSync(commandName) {
   try {
@@ -49,9 +50,9 @@ function getChromeAppName(): string {
 function launchChrome(url: string) {
   opn(url, { app: [getChromeAppName()] }, err => {
     if (err) {
-      console.error('Google Chrome exited with error:', err);
+      logger.error('Google Chrome exited with error:', err);
     }
   });
 }
 
-module.exports = launchChrome;
+export default launchChrome;

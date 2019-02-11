@@ -7,9 +7,9 @@
  * @format
  */
 
-const fs = require('fs');
+import fs from 'fs';
 
-module.exports = function savePodFile(podfilePath, podLines) {
+export default function savePodFile(podfilePath, podLines) {
   const newPodfile = podLines.join('\n');
   fs.writeFileSync(podfilePath, newPodfile);
-};
+}

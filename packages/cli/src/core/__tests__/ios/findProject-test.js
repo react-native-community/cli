@@ -8,13 +8,14 @@
  * @emails oncall+javascript_foundation
  */
 
+import findProject from '../../ios/findProject';
+import projects from '../../__fixtures__/projects';
+import ios from '../../__fixtures__/ios';
+
 jest.mock('path');
 jest.mock('fs');
 
 const fs = require('fs');
-const findProject = require('../../ios/findProject');
-const projects = require('../../__fixtures__/projects');
-const ios = require('../../__fixtures__/ios');
 
 describe('ios::findProject', () => {
   it('returns path to xcodeproj if found', () => {

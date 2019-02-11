@@ -7,25 +7,21 @@
  * @format
  */
 
-const { spawnSync } = require('child_process');
-const logger = require('../util/logger');
-const PackageManager = require('../util/PackageManager');
+import { spawnSync } from 'child_process';
+import logger from '../util/logger';
+import PackageManager from '../util/PackageManager';
 
 const spawnOpts = {
   stdio: 'inherit',
   stdin: 'inherit',
 };
 
-function install(args, ctx) {
+async function install(args, ctx) {
   const name = args[0];
 
-  let res = PackageManager.add(name, ctx.root);
+  new PackageManager({ projectDir: ctx.root }).install([name]);
 
-  if (res.status) {
-    process.exit(res.status);
-  }
-
-  res = spawnSync('react-native', ['link', name], spawnOpts);
+  const res = spawnSync('react-native', ['link', name], spawnOpts);
 
   if (res.status) {
     process.exit(res.status);
@@ -34,7 +30,7 @@ function install(args, ctx) {
   logger.info(`Module ${name} has been successfully installed & linked`);
 }
 
-module.exports = {
+export default {
   func: install,
   description: 'install and link native dependencies',
   name: 'install <packageName>',

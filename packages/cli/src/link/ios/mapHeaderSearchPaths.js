@@ -24,7 +24,7 @@
  */
 const defaultHeaderPaths = ['"$(inherited)"'];
 
-module.exports = function headerSearchPathIter(project, func) {
+export default function headerSearchPathIter(project, func) {
   const config = project.pbxXCBuildConfigurationSection();
 
   Object.keys(config)
@@ -45,4 +45,4 @@ module.exports = function headerSearchPathIter(project, func) {
         buildSettings.HEADER_SEARCH_PATHS = func(searchPaths);
       }
     });
-};
+}

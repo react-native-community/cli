@@ -7,9 +7,9 @@
  * @format
  */
 
-const fs = require('fs');
+import fs from 'fs';
 
-module.exports = function readPodfile(podfilePath) {
+export default function readPodfile(podfilePath) {
   const podContent = fs.readFileSync(podfilePath, 'utf8');
   return podContent.split(/\r?\n/g);
-};
+}

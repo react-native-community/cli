@@ -7,14 +7,14 @@
  * @format
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 /**
  * @param  {String} folder Folder to seek in
  * @return {String}
  */
-module.exports = function findAndroidAppFolder(folder) {
+export default function findAndroidAppFolder(folder) {
   const flat = 'android';
   const nested = path.join('android', 'app');
 
@@ -27,4 +27,4 @@ module.exports = function findAndroidAppFolder(folder) {
   }
 
   return null;
-};
+}

@@ -7,12 +7,12 @@
  * @format
  */
 
-const fs = require('fs');
-const path = require('path');
-const copyAndReplace = require('../util/copyAndReplace');
-const isValidPackageName = require('../util/isValidPackageName');
-const walk = require('../util/walk');
-const logger = require('../util/logger');
+import fs from 'fs';
+import path from 'path';
+import copyAndReplace from '../util/copyAndReplace';
+import isValidPackageName from '../util/isValidPackageName';
+import walk from '../util/walk';
+import logger from '../util/logger';
 
 /**
  * Creates a new native library with the given name
@@ -64,7 +64,7 @@ Now it needs to be linked in Xcode:
 https://facebook.github.io/react-native/docs/linking-libraries-ios.html#content`);
 }
 
-module.exports = {
+export default {
   name: 'new-library',
   func: library,
   description: 'generates a native library bridge',

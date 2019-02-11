@@ -7,8 +7,8 @@
  * @format
  */
 
-const envinfo = require('envinfo');
-const logger = require('../util/logger');
+import envinfo from 'envinfo';
+import logger from '../util/logger';
 
 const info = function getInfo(argv, ctx, options) {
   try {
@@ -43,7 +43,7 @@ const info = function getInfo(argv, ctx, options) {
   }
 };
 
-module.exports = {
+export default {
   name: 'info',
   description: 'Get relevant version info about OS, toolchain and libraries',
   options: [

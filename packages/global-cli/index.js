@@ -114,7 +114,7 @@ const commands = options._;
 if (cli) {
   cli.run();
 } else {
-  if (options._.length === 0 && (options.h || options.help)) {
+  if (options._.length === 0 && (options.h || options.help) || commands.length === 0) {
     console.log(
       [
         '',
@@ -134,13 +134,6 @@ if (cli) {
       ].join('\n')
     );
     process.exit(0);
-  }
-
-  if (commands.length === 0) {
-    console.error(
-      'You did not pass any commands, run `react-native --help` to see a list of all available commands.'
-    );
-    process.exit(1);
   }
 
   switch (commands[0]) {
@@ -314,11 +307,9 @@ function checkNodeVersion() {
   }
   if (!semver.satisfies(process.version, packageJson.engines.node)) {
     console.error(
-      chalk.red(
         'You are currently running Node %s but React Native requires %s. ' +
           'Please use a supported version of Node.\n' +
-          'See https://facebook.github.io/react-native/docs/getting-started.html'
-      ),
+          'See https://facebook.github.io/react-native/docs/getting-started.html',
       process.version,
       packageJson.engines.node
     );

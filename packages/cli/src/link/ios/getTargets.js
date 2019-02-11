@@ -16,12 +16,11 @@ module.exports = function getTargets(project) {
   } = project.getFirstProject();
   const nativeTargetSection = project.pbxNativeTargetSection();
   return targets
+    .filter(target => nativeTargetSection[target.value] !== undefined)
     .map(target => {
       const key = target.value;
-      // If not a valid target, skip.
-      if (!project.pbxNativeTargetSection()[key]) return undefined;
-      const configurationListId = project.pbxNativeTargetSection()[key]
-        .buildConfigurationList;
+      const configurationListId =
+        nativeTargetSection[key].buildConfigurationList;
       const configurationList = project.pbxXCConfigurationList()[
         configurationListId
       ];
@@ -40,6 +39,5 @@ module.exports = function getTargets(project) {
               -1) ||
           false,
       };
-    })
-    .filter(target => target !== undefined);
+    });
 };

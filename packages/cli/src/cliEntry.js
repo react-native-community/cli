@@ -70,16 +70,16 @@ function printHelpInformation() {
 }
 
 function printUnknownCommand(cmdName) {
-  logger.error(
-    [
-      cmdName
-        ? `Unrecognized command "${cmdName}".`
-        : "You didn't pass any command.",
-      `Run ${chalk.white(
+  if (cmdName) {
+    logger.error(`Unrecognized command "${chalk.bold(cmdName)}".`);
+    logger.info(
+      `Run ${chalk.bold(
         '"react-native --help"'
-      )} to see list of all available commands.`,
-    ].join(' ')
-  );
+      )} to see a list of all available commands.`
+    );
+  } else {
+    commander.outputHelp();
+  }
 }
 
 const addCommand = (command: CommandT, ctx: ContextT) => {

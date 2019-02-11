@@ -72,11 +72,10 @@ function printHelpInformation() {
 function printUnknownCommand(cmdName) {
   cmdName
     ? logger.error(
-        [
-          `Run ${chalk.white(
-            '"react-native --help"'
-          )} to see list of all available commands.`,
-        ].join(' ')
+        `Unrecognized command "${cmdName}".
+        Run ${chalk.white(
+          '"react-native --help"'
+        )} to see list of all available commands.`
       )
     : commander.outputHelp();
 }

@@ -76,7 +76,7 @@ function buildAndRun(args) {
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
 
   // "app" is usually the default value for Android apps with only 1 app
-  const appFolder = args.appFolder || 'app';
+  const { appFolder } = args;
   const packageName = fs
     .readFileSync(`${appFolder}/src/main/AndroidManifest.xml`, 'utf8')
     // $FlowFixMe
@@ -158,8 +158,8 @@ function buildApk(gradlew) {
 function tryInstallAppOnDevice(args, adbPath, device) {
   try {
     // "app" is usually the default value for Android apps with only 1 app
-    const appFolder = args.appFolder || 'app';
-    const variant = (args.variant || 'debug').toLowerCase();
+    const { appFolder } = args;
+    const variant = args.variant.toLowerCase();
     const buildDirectory = `${appFolder}/build/outputs/apk/${variant}`;
     const apkFile = getInstallApkName(
       appFolder,
@@ -322,11 +322,13 @@ export default {
     },
     {
       command: '--variant [string]',
+      default: 'debug',
     },
     {
       command: '--appFolder [string]',
       description:
         'Specify a different application folder name for the android source. If not, we assume is "app"',
+      default: 'app',
     },
     {
       command: '--appId [string]',

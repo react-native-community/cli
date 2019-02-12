@@ -76,7 +76,7 @@ function buildAndRun(args) {
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
 
   // "app" is usually the default value for Android apps with only 1 app
-  const appFolder = args.appFolder || 'app';
+  const { appFolder } = args;
   const packageName = fs
     .readFileSync(`${appFolder}/src/main/AndroidManifest.xml`, 'utf8')
     // $FlowFixMe
@@ -118,7 +118,7 @@ function runOnSpecificDevice(
   packageName,
   adbPath
 ) {
-  const devices = adb.getDevices();
+  const devices = adb.getDevices(adbPath);
   if (devices && devices.length > 0) {
     if (devices.indexOf(args.deviceId) !== -1) {
       buildApk(gradlew);
@@ -155,12 +155,21 @@ function buildApk(gradlew) {
   }
 }
 
-function tryInstallAppOnDevice(args, device) {
+function tryInstallAppOnDevice(args, adbPath, device) {
   try {
     // "app" is usually the default value for Android apps with only 1 app
-    const appFolder = args.appFolder || 'app';
-    const pathToApk = `${appFolder}/build/outputs/apk/${appFolder}-debug.apk`;
-    const adbPath = getAdbPath();
+    const { appFolder } = args;
+    const variant = args.variant.toLowerCase();
+    const buildDirectory = `${appFolder}/build/outputs/apk/${variant}`;
+    const apkFile = getInstallApkName(
+      appFolder,
+      adbPath,
+      variant,
+      device,
+      buildDirectory
+    );
+
+    const pathToApk = `${buildDirectory}/${apkFile}`;
     const adbArgs = ['-s', device, 'install', pathToApk];
     logger.info(
       `Installing the app on the device (cd android && adb -s ${device} install ${pathToApk}`
@@ -177,6 +186,32 @@ function tryInstallAppOnDevice(args, device) {
   }
 }
 
+function getInstallApkName(
+  appFolder,
+  adbPath,
+  variant,
+  device,
+  buildDirectory
+) {
+  const availableCPUs = adb.getAvailableCPUs(adbPath, device);
+
+  // check if there is an apk file like app-armeabi-v7a-debug.apk
+  for (const availableCPU of availableCPUs.concat('universal')) {
+    const apkName = `${appFolder}-${availableCPU}-${variant}.apk`;
+    if (fs.existsSync(`${buildDirectory}/${apkName}`)) {
+      return apkName;
+    }
+  }
+
+  // check if there is a default file like app-debug.apk
+  const apkName = `${appFolder}-${variant}.apk`;
+  if (fs.existsSync(`${buildDirectory}/${apkName}`)) {
+    return apkName;
+  }
+
+  throw new Error('Not found the correct install APK file!');
+}
+
 function installAndLaunchOnDevice(
   args,
   selectedDevice,
@@ -185,7 +220,7 @@ function installAndLaunchOnDevice(
   adbPath
 ) {
   tryRunAdbReverse(args.port, selectedDevice);
-  tryInstallAppOnDevice(args, selectedDevice);
+  tryInstallAppOnDevice(args, adbPath, selectedDevice);
   tryLaunchAppOnDevice(
     selectedDevice,
     packageNameWithSuffix,
@@ -287,11 +322,13 @@ export default {
     },
     {
       command: '--variant [string]',
+      default: 'debug',
     },
     {
       command: '--appFolder [string]',
       description:
         'Specify a different application folder name for the android source. If not, we assume is "app"',
+      default: 'app',
     },
     {
       command: '--appId [string]',

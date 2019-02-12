@@ -5,10 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  *
  * @format
- * @flow strict
+ * @flow
  */
 
-import { execSync } from 'child_process';
+import { execSync, execFileSync } from 'child_process';
 
 /**
  * Parses the output of the 'adb devices' command
@@ -34,10 +34,36 @@ function parseDevicesResult(result: string): Array<string> {
 /**
  * Executes the commands needed to get a list of devices from ADB
  */
-function getDevices(): Array<string> {
+function getDevices(adbPath: string): Array<string> {
   try {
-    const devicesResult = execSync('adb devices');
+    const devicesResult = execSync(`${adbPath} devices`);
     return parseDevicesResult(devicesResult.toString());
+  } catch (e) {
+    return [];
+  }
+}
+
+/**
+ * Gets available CPUs of devices from ADB
+ */
+function getAvailableCPUs(adbPath: string, device: string): Array<string> {
+  try {
+    const baseArgs = ['-s', device, 'shell', 'getprop'];
+
+    let cpus = execFileSync(
+      adbPath,
+      baseArgs.concat(['ro.product.cpu.abilist'])
+    ).toString();
+
+    // pre-Lollipop
+    if (!cpus || cpus.trim().length === 0) {
+      cpus = execFileSync(
+        adbPath,
+        baseArgs.concat(['ro.product.cpu.abi'])
+      ).toString();
+    }
+
+    return (cpus || '').trim().split(',');
   } catch (e) {
     return [];
   }
@@ -46,6 +72,5 @@ function getDevices(): Array<string> {
 export default {
   parseDevicesResult,
   getDevices,
+  getAvailableCPUs,
 };
-
-// export { parseDevicesResult, getDevices };

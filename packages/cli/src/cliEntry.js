@@ -118,6 +118,11 @@ const addCommand = (command: CommandT, ctx: ContextT) => {
       typeof opt.default === 'function' ? opt.default(ctx) : opt.default
     )
   );
+
+  // Redefined here to appear in the `--help` section
+  cmd
+    .option('--projectRoot [string]', 'Path to the root of the project')
+    .option('--reactNativePath [string]', 'Path to React Native');
 };
 
 async function run() {

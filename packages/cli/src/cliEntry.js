@@ -21,7 +21,10 @@ import assertRequiredOptions from './util/assertRequiredOptions';
 import logger from './util/logger';
 import pkg from '../package.json';
 
-commander.version(pkg.version);
+commander
+  .version(pkg.version)
+  .option('--projectRoot [string]', 'Path to the root of the project')
+  .option('--reactNativePath [string]', 'Path to React Native');
 
 const defaultOptParser = val => val;
 
@@ -116,6 +119,7 @@ const addCommand = (command: CommandT, ctx: ContextT) => {
     )
   );
 
+  // Redefined here to appear in the `--help` section
   cmd
     .option('--projectRoot [string]', 'Path to the root of the project')
     .option('--reactNativePath [string]', 'Path to React Native');
@@ -177,17 +181,12 @@ async function setupAndRun() {
 
   commander.parse(process.argv);
 
-  const isValidCommand = commands.find(
-    cmd => cmd.name.split(' ')[0] === process.argv[2]
-  );
+  const command = commander.args[0];
 
-  if (!isValidCommand) {
-    printUnknownCommand(process.argv[2]);
-    return;
-  }
-
-  if (!commander.args.length) {
+  if (!command) {
     commander.help();
+  } else if (typeof command === 'string') {
+    printUnknownCommand(commander.args);
   }
 }
 

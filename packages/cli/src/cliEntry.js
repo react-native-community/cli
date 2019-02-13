@@ -185,9 +185,7 @@ async function setupAndRun() {
 
   if (!command) {
     commander.help();
-  }
-
-  if (typeof command === 'string') {
+  } else if (typeof command === 'string') {
     printUnknownCommand(commander.args);
   }
 }

@@ -32,7 +32,7 @@ const getBlacklistRE = () => createBlacklist([/.*\/__fixtures__\/.*/]);
  * @todo(grabbou): As a separate PR, haste.platforms should be added before "native".
  * Otherwise, a.native.js will not load on Windows or other platforms
  */
-const getDefaultConfig = (ctx: ContextT) => {
+export const getDefaultConfig = (ctx: ContextT) => {
   const plugins = findPlugins(ctx.root);
 
   return {

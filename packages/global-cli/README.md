@@ -2,22 +2,54 @@
 
 `react-native-cli` is a command line tool for initializing React Native projects.
 
-## Usage
+## Installation
 
-We recommend using `react-native-cli` with `npx` so you don't need to pollute your global packages scope.
+Install it as a global module:
+
+```sh
+yarn global add react-native-cli
+```
+
+It will create a global `react-native` binary (even though the package name is `react-native-cli`).
+
+## Usage
 
 To create a new React Native Project called "AwesomeProject" you can run:
 
 ```sh
-npx react-native-cli init AwesomeProject
+react-native init AwesomeProject
 ```
 
-It will install `react-native`, `react`, `jest` and a bunch of other necessary packages from the default template.
+It will install `react-native`, `react`, `jest` and a bunch of other necessary packages from the [default template](https://github.com/facebook/react-native/tree/master/template).
 
 After it's finished, your AwesomeProject should be ready to use. From this point, you should use your local `react-native` binary to run the proper [React Native CLI](../cli):
 
 ```
 yarn react-native link native-dep
+```
+
+## Options
+
+### `--template`
+
+Use a custom template.
+
+Example: this will install init your AwesomeProject using template called `react-native-template-samplename` from npm:
+
+```
+react-native init AwesomeProject --template samplename
+```
+
+You can also pass remote git address and local filepath as a `--template` parameter.
+
+### `--version`
+
+Use a custom version. By default `react-native init` will use the latest stable.
+
+Example: this will install init your AwesomeProject using version `0.57.0`:
+
+```
+react-native init AwesomeProject --template 0.57.0
 ```
 
 ## Future work

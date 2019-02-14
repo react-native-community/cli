@@ -48,7 +48,9 @@ const getDefaultConfig = (ctx: ContextT) => {
     },
     serializer: {
       getModulesRunBeforeMainModule: () => [
-        path.join(ctx.reactNativePath, 'Libraries/Core/InitializeCore'),
+        require.resolve(
+          path.join(ctx.reactNativePath, 'Libraries/Core/InitializeCore')
+        ),
       ],
       getPolyfills: () =>
         require(path.join(ctx.reactNativePath, 'rn-get-polyfills'))(),

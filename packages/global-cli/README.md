@@ -24,7 +24,7 @@ It will install `react-native`, `react`, `jest` and a bunch of other necessary p
 
 After it's finished, your AwesomeProject should be ready to use. From this point, you should use your local `react-native` binary to run the proper [React Native CLI](../cli):
 
-```
+```sh
 yarn react-native link native-dep
 ```
 
@@ -36,7 +36,7 @@ Use a custom template.
 
 Example: this will install init your AwesomeProject using template called `react-native-template-samplename` from npm:
 
-```
+```sh
 react-native init AwesomeProject --template samplename
 ```
 
@@ -48,8 +48,14 @@ Use a custom version. By default `react-native init` will use the latest stable.
 
 Example: this will install init your AwesomeProject using version `0.57.0`:
 
+```sh
+react-native init AwesomeProject --version 0.57.0
 ```
-react-native init AwesomeProject --template 0.57.0
+
+You can also install a specific tag, like `next`, using:
+
+```sh
+react-native init AwesomeProject --version react-native@next
 ```
 
 ## Future work

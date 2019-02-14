@@ -56,4 +56,4 @@ react-native init AwesomeProject --template 0.57.0
 
 We understand this is counter-intuitive to have two packages for interacting with React Native and it makes the first experience with the framework a bit confusing.
 
-That's why, as a part of [Lean Core](https://github.com/facebook/react-native/issues/23313) initiative, there's an ongoing effort to remove this module so we can use just `react-native` as the only package necessary to install and run React Native commands.
+That's why, as a part of [Lean Core](https://github.com/facebook/react-native/issues/23313) initiative, there's an [ongoing effort](https://github.com/react-native-community/react-native-cli/issues/76) to remove this module so we can use just `react-native` as the only package necessary to install and run React Native commands.

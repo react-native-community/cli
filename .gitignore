@@ -3,6 +3,6 @@ node_modules
 .vscode
 .idea
 package-lock.json
-npm-debug.log
+*.log
 build/
 .eslintcache

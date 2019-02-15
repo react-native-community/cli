@@ -26,6 +26,11 @@ commander
   .option('--projectRoot [string]', 'Path to the root of the project')
   .option('--reactNativePath [string]', 'Path to React Native');
 
+commander.on('command:*', () => {
+  printUnknownCommand(commander.args.join(' '));
+  process.exit(1);
+});
+
 const defaultOptParser = val => val;
 
 const handleError = err => {
@@ -181,12 +186,8 @@ async function setupAndRun() {
 
   commander.parse(process.argv);
 
-  const command = commander.args[0];
-
-  if (!command) {
-    commander.help();
-  } else if (typeof command === 'string') {
-    printUnknownCommand(commander.args);
+  if (!options._.length) {
+    commander.outputHelp();
   }
 }
 

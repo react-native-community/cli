@@ -3,7 +3,7 @@
 import { uniqBy, flatten } from 'lodash';
 import path from 'path';
 import type { ContextT, PlatformsT, ProjectConfigT } from '../core/types.flow';
-import log from '../util/logger';
+import logger from '../util/logger';
 import getAssets from '../core/getAssets';
 import getProjectDependencies from './getProjectDependencies';
 import getDependencyConfig from './getDependencyConfig';
@@ -20,7 +20,7 @@ function linkAll(
   platforms: PlatformsT,
   project: ProjectConfigT
 ) {
-  log.warn(
+  logger.warn(
     'Running `react-native link` without package name is deprecated and will be removed ' +
       'in next release. If you use this command to link your project assets, ' +
       'please let us know about your use case here: https://goo.gl/RKTeoc'
@@ -49,7 +49,7 @@ function linkAll(
   );
 
   return promiseWaterfall(tasks).catch(err => {
-    log.error(
+    logger.error(
       `Something went wrong while linking. Error: ${err.message} \n` +
         'Please file an issue here: https://github.com/facebook/react-native/issues'
     );

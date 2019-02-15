@@ -107,6 +107,15 @@ export type DependencyConfigT = {
   ios: ?DependencyConfigIOST,
 };
 
+export type DependenciesConfig = {
+  config: DependencyConfigT,
+  name: string,
+  path: string,
+  assets: string[],
+  commands: { [name: string]: string },
+  params: InquirerPromptT[],
+};
+
 /**
  * Available platforms. Additional plugins should assert the type on their own.
  */

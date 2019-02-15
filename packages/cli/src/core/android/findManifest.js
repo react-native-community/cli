@@ -19,7 +19,13 @@ import path from 'path';
 export default function findManifest(folder) {
   const manifestPath = glob.sync(path.join('**', 'AndroidManifest.xml'), {
     cwd: folder,
-    ignore: ['node_modules/**', '**/build/**', '**/debug/**', 'Examples/**', 'examples/**'],
+    ignore: [
+      'node_modules/**',
+      '**/build/**',
+      '**/debug/**',
+      'Examples/**',
+      'examples/**'
+    ],
   })[0];
 
   return manifestPath ? path.join(folder, manifestPath) : null;

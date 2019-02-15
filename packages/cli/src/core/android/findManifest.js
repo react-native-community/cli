@@ -24,7 +24,7 @@ export default function findManifest(folder) {
       '**/build/**',
       '**/debug/**',
       'Examples/**',
-      'examples/**'
+      'examples/**',
     ],
   })[0];
 

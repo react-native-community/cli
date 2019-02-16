@@ -31,7 +31,7 @@ Builds your app and starts it on iOS simulator.
 
 #### Options
 
-### `--simulator [simulator_name]`
+#### `--simulator [simulator_name]`
 
 Explicitly set the simulator to use. Optionally include iOS version between parenthesis at the end to match an exact version, e.g. `"iPhone 6 (10.0)"`.
 
@@ -45,35 +45,35 @@ Example: this will launch your projet directly onto the iPhone XS Max simulator:
 react-native run-ios --simulator "iPhone XS Max"
 ```
 
-### `--configuration [string]`
+#### `--configuration [string]`
 
 Explicitly set the scheme configuration to use default: 'Debug'.
 
-### `--scheme [string]`
+#### `--scheme [string]`
 
 Explicitly set Xcode scheme to use.
 
-### `--project-path [string]`
+#### `--project-path [string]`
 
 Path relative to project root where the Xcode project (.xcodeproj) lives. default: 'ios'.
 
-### `--device [string]`
+#### `--device [string]`
 
 Explicitly set device to use by name. The value is not required if you have a single device connected.
 
-### `--udid [string]`
+#### `--udid [string]`
 
 Explicitly set device to use by udid.
 
-### `--no-packager`
+#### `--no-packager`
 
 Do not launch packager while building.
 
-### `--verbose`
+#### `--verbose`
 
 Do not use `xcpretty` even if installed.
 
-### `--port [number]`
+#### `--port [number]`
 
 Runs packager on specified port
 

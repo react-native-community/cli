@@ -27,6 +27,7 @@
     "envinfo": "^5.7.0",
     "errorhandler": "^1.5.0",
     "escape-string-regexp": "^1.0.5",
+    "execa": "^1.0.0",
     "fs-extra": "^1.0.0",
     "glob": "^7.1.1",
     "graceful-fs": "^4.1.3",

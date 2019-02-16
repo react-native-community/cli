@@ -40,7 +40,7 @@ export type Args = {|
   config?: string,
 |};
 
-async function runServer(argv: *, ctx: ContextT, args: Args) {
+async function runServer(argv: Array<string>, ctx: ContextT, args: Args) {
   const terminal = new Terminal(process.stdout);
   const ReporterImpl = getReporterImpl(args.customLogReporterPath || null);
   const reporter = new ReporterImpl(terminal);
@@ -106,7 +106,6 @@ function getReporterImpl(customLogReporterPath: ?string) {
   try {
     // First we let require resolve it, so we can require packages in node_modules
     // as expected. eg: require('my-package/reporter');
-    /* $FlowFixMe: can't type dynamic require */
     return require(customLogReporterPath);
   } catch (e) {
     if (e.code !== 'MODULE_NOT_FOUND') {
@@ -114,7 +113,6 @@ function getReporterImpl(customLogReporterPath: ?string) {
     }
     // If that doesn't work, then we next try relative to the cwd, eg:
     // require('./reporter');
-    /* $FlowFixMe: can't type dynamic require */
     return require(path.resolve(customLogReporterPath));
   }
 }

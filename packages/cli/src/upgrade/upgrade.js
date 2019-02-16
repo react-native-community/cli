@@ -19,7 +19,7 @@ import copyProjectTemplateAndReplace from '../generator/copyProjectTemplateAndRe
  * Migrate application to a new version of React Native.
  * See http://facebook.github.io/react-native/docs/upgrading.html
  */
-function validateAndUpgrade(argv: *, ctx: ContextT) {
+function validateAndUpgrade(argv: Array<string>, ctx: ContextT) {
   const projectDir = ctx.root;
 
   const packageJSON = JSON.parse(

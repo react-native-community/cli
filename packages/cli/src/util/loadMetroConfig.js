@@ -71,7 +71,7 @@ export const getDefaultConfig = (ctx: ContextT) => {
   };
 };
 
-export type ConfigOptionsT = {
+export type ConfigOptionsT = {|
   maxWorkers?: number,
   port?: number,
   resetCache?: boolean,
@@ -79,7 +79,7 @@ export type ConfigOptionsT = {
   sourceExts?: string[],
   reporter?: any, // eslint-disable-line flowtype/no-weak-types
   config?: string,
-};
+|};
 
 /**
  * Loads Metro Config and applies `options` on top of the resolved config.
@@ -88,6 +88,7 @@ export type ConfigOptionsT = {
  */
 export default async function load(
   ctx: ContextT,
+  // $FlowFixMe - troubles with empty object being inexact
   options?: ConfigOptionsT = {}
 ): Promise<ConfigT> {
   const defaultConfig = getDefaultConfig(ctx);

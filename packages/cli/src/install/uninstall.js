@@ -4,30 +4,24 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
+ * @flow
  */
 
-import { spawnSync } from 'child_process';
+import type { ContextT } from '../core/types.flow';
 import logger from '../util/logger';
 import PackageManager from '../util/PackageManager';
+import link from '../link/unlink';
 
-const spawnOpts = {
-  stdio: 'inherit',
-  stdin: 'inherit',
-};
-
-async function uninstall(args, ctx) {
+async function uninstall(args: Array<string>, ctx: ContextT) {
   const name = args[0];
 
-  const res = spawnSync('react-native', ['unlink', name], spawnOpts);
+  logger.info(`Unlinking "${name}"...`);
+  await link.func([name], ctx);
 
-  if (res.status) {
-    process.exit(res.status);
-  }
-
+  logger.info(`Uninstalling "${name}"...`);
   new PackageManager({ projectDir: ctx.root }).uninstall([name]);
 
-  logger.info(`Module ${name} has been successfully uninstalled & unlinked`);
+  logger.success(`Successfully uninstalled and unlinked "${name}"`);
 }
 
 export default {

@@ -123,10 +123,7 @@ const installDeps = async (newVersion, projectDir) => {
   const pm = new PackageManager({ projectDir });
   const deps = [
     `react-native@${newVersion}`,
-    ...Object.entries(peerDeps).map(
-      // $FlowFixMe - Object.entries type definition is poor
-      ([module, version]) => `${module}@${version}`
-    ),
+    ...Object.keys(peerDeps).map(module => `${module}@${peerDeps[module]}`),
   ];
   pm.install(deps);
 };

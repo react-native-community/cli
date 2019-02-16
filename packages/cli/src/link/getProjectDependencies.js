@@ -4,7 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
+ * @flow
  */
 
 import path from 'path';
@@ -23,9 +23,9 @@ const EXCLUDED_PROJECTS = [
 /**
  * Returns an array of dependencies that should be linked/checked.
  */
-export default function getProjectDependencies(cwd) {
-  const pjson = require(path.join(cwd, './package.json'));
-  return Object.keys(pjson.dependencies || {}).filter(
+export default function getProjectDependencies(cwd: string) {
+  const pkgJson = require(path.join(cwd, './package.json'));
+  return (Object.keys(pkgJson.dependencies || {}).filter(
     name => EXCLUDED_PROJECTS.includes(name) === false
-  );
+  ): Array<string>);
 }

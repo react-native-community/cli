@@ -6,23 +6,13 @@ import path from 'path';
 import type {
   PlatformsT,
   ContextT,
-  InquirerPromptT,
-  DependencyConfigT,
+  DependenciesConfig,
 } from '../core/types.flow';
 
 import getPackageConfiguration from '../core/getPackageConfiguration';
 import getParams from '../core/getParams';
 import getHooks from '../core/getHooks';
 import getAssets from '../core/getAssets';
-
-type DependenciesConfig = {
-  config: DependencyConfigT,
-  name: string,
-  path: string,
-  assets: string[],
-  commands: { [name: string]: string },
-  params: InquirerPromptT[],
-};
 
 export default function getDependencyConfig(
   ctx: ContextT,

@@ -1,13 +1,4 @@
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * @flow
- */
-
-import https from 'https';
+// @flow
 import path from 'path';
 import fs from 'fs';
 import semver from 'semver';
@@ -15,21 +6,7 @@ import execa from 'execa';
 import type { ContextT } from '../core/types.flow';
 import logger from '../util/logger';
 import PackageManager from '../util/PackageManager';
-
-const fetch = (url: string) =>
-  new Promise((resolve, reject) => {
-    const request = https.get(url, response => {
-      if (response.statusCode < 200 || response.statusCode > 299) {
-        reject(
-          new Error(`Failed to load page, status code: ${response.statusCode}`)
-        );
-      }
-      const body = [];
-      response.on('data', chunk => body.push(chunk));
-      response.on('end', () => resolve(body.join('')));
-    });
-    request.on('error', err => reject(err));
-  });
+import { fetch } from './helpers';
 
 const getLatestRNVersion = async (): Promise<string> => {
   logger.info('No version passed. Fetching latest...');
@@ -79,12 +56,15 @@ const getPatch = async (currentVersion, newVersion, projectDir) => {
 
 const getVersionToUpgradeTo = async (argv, currentVersion, projectDir) => {
   const newVersion = argv[0]
-    ? semver.valid(argv[0]) || semver.coerce(argv[0]).version
+    ? semver.valid(argv[0]) ||
+      (semver.coerce(argv[0]) ? semver.coerce(argv[0]).version : null)
     : await getLatestRNVersion();
 
   if (!newVersion) {
     logger.error(
-      `Provided version "${newVersion}" is not allowed. Please pass a valid semver version`
+      `Provided version "${
+        argv[0]
+      }" is not allowed. Please pass a valid semver version`
     );
     return null;
   }
@@ -95,11 +75,11 @@ const getVersionToUpgradeTo = async (argv, currentVersion, projectDir) => {
     );
     return null;
   }
-
   if (currentVersion === newVersion) {
     const {
       dependencies: { 'react-native': version },
     } = require(path.join(projectDir, 'package.json'));
+
     if (semver.satisfies(newVersion, version)) {
       logger.warn(
         `Specified version "${newVersion}" is already installed in node_modules and it satisfies "${version}" semver range. No need to upgrade`
@@ -158,7 +138,7 @@ async function upgrade(argv: Array<string>, ctx: ContextT) {
   }
 
   if (patch === '') {
-    // Yay, nothing to diff!
+    logger.info('Diff has no changes to apply, proceeding further');
     await installDeps(newVersion, projectDir);
     logger.success(
       `Upgraded React Native to v${newVersion} 🎉. Now you can review and commit the changes`

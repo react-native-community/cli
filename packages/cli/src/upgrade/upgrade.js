@@ -104,7 +104,12 @@ const getVersionToUpgradeTo = async (argv, currentVersion, projectDir) => {
   return newVersion;
 };
 
-const installDeps = async (newVersion, projectDir) => {
+const installDeps = async (newVersion, projectDir, patchSuccess) => {
+  if (!patchSuccess) {
+    logger.warn(
+      'Continuing after failure. Most of the files are upgraded but you will need to deal with some conflicts manually'
+    );
+  }
   logger.info(
     `Installing react-native@${newVersion} and its peer dependencies...`
   );
@@ -114,7 +119,7 @@ const installDeps = async (newVersion, projectDir) => {
     `react-native@${newVersion}`,
     ...Object.keys(peerDeps).map(module => `${module}@${peerDeps[module]}`),
   ];
-  await pm.install(deps);
+  await pm.install(deps, { silent: true });
   await execa('git', ['add', 'package.json']);
   try {
     await execa('git', ['add', 'yarn.lock']);
@@ -126,6 +131,54 @@ const installDeps = async (newVersion, projectDir) => {
   } catch (error) {
     // ignore
   }
+};
+
+const applyPatch = async (
+  currentVersion: string,
+  newVersion: string,
+  tmpPatchFile: string
+) => {
+  let filesToExclude = ['package.json'];
+  try {
+    try {
+      const excludes = filesToExclude.map(e => `--exclude=${e}`);
+      await execa('git', [
+        'apply',
+        '--check',
+        tmpPatchFile,
+        ...excludes,
+        '-p2',
+        '--3way',
+      ]);
+      logger.info(`Applying diff...`);
+    } catch (error) {
+      filesToExclude = [
+        ...filesToExclude,
+        ...error.stderr
+          .split('\n')
+          .filter(x => x.includes('does not exist in index'))
+          .map(x => x.replace(/^error: (.*): does not exist in index$/, '$1')),
+      ].filter(Boolean);
+
+      logger.info(`Applying diff (excluding: ${filesToExclude.join(', ')})...`);
+    } finally {
+      const excludes = filesToExclude.map(e => `--exclude=${e}`);
+      await execa('git', ['apply', tmpPatchFile, ...excludes, '-p2', '--3way']);
+    }
+  } catch (error) {
+    if (error.stderr) {
+      logger.log(`${chalk.dim(error.stderr.trim())}`);
+    }
+    logger.error('Automatically applying diff failed');
+    logger.info(
+      `Here's the diff we tried to apply: ${rnDiffPurgeUrl}/compare/version/${currentVersion}...version/${newVersion}`
+    );
+    logger.info(
+      `You may find release notes helpful: https://github.com/facebook/react-native/releases/tag/v${newVersion}`
+    );
+    return false;
+  }
+  return true;
 };
 
 /**
@@ -169,62 +222,14 @@ async function upgrade(argv: Array<string>, ctx: ContextT, args: FlagsT) {
     return;
   }
 
-  try {
-    let filesToExclude = ['package.json'];
+  let patchSuccess;
 
+  try {
     fs.writeFileSync(tmpPatchFile, patch);
     await execa('git', ['remote', 'add', tmpRemote, rnDiffGitAddress]);
     await execa('git', ['fetch', '--no-tags', tmpRemote]);
-
-    try {
-      try {
-        const excludes = filesToExclude.map(e => `--exclude=${e}`);
-        await execa('git', [
-          'apply',
-          '--check',
-          tmpPatchFile,
-          ...excludes,
-          '-p2',
-          '--3way',
-        ]);
-        logger.info(`Applying diff...`);
-      } catch (error) {
-        filesToExclude = [
-          ...filesToExclude,
-          ...error.stderr
-            .split('\n')
-            .filter(x => x.includes('does not exist in index'))
-            .map(x =>
-              x.replace(/^error: (.*): does not exist in index$/, '$1')
-            ),
-        ].filter(Boolean);
-
-        logger.info(
-          `Applying diff (excluding: ${filesToExclude.join(', ')})...`
-        );
-      } finally {
-        const excludes = filesToExclude.map(e => `--exclude=${e}`);
-        await execa('git', [
-          'apply',
-          tmpPatchFile,
-          ...excludes,
-          '-p2',
-          '--3way',
-        ]);
-      }
-    } catch (error) {
-      if (error.stderr) {
-        logger.log(chalk.dim(error.stderr));
-      }
-      logger.error(
-        'Automatically applying diff failed. Please run "git diff", review the conflicts and resolve them'
-      );
-      logger.info(
-        `Here's the diff we tried to apply: ${rnDiffPurgeUrl}/compare/version/${currentVersion}...version/${newVersion}`
-      );
-      logger.info(
-        `You may find release notes helpful: https://github.com/facebook/react-native/releases/tag/v${newVersion}`
-      );
+    patchSuccess = await applyPatch(currentVersion, newVersion, tmpPatchFile);
+    if (!patchSuccess) {
       return;
     }
   } catch (error) {
@@ -235,10 +240,20 @@ async function upgrade(argv: Array<string>, ctx: ContextT, args: FlagsT) {
     } catch (e) {
       // ignore
     }
-    await installDeps(newVersion, projectDir);
+    await installDeps(newVersion, projectDir, patchSuccess);
     logger.info('Running "git status" to check what changed...');
     await execa('git', ['status'], { stdio: 'inherit' });
     await execa('git', ['remote', 'remove', tmpRemote]);
+
+    if (!patchSuccess) {
+      logger.warn(
+        'Please run "git diff" to review the conflicts and resolve them'
+      );
+      // eslint-disable-next-line no-unsafe-finally
+      throw new Error(
+        'Upgrade failed. Please see the messages above for details'
+      );
+    }
   }
 
   logger.success(

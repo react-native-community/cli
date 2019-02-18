@@ -112,6 +112,7 @@ test('fetches empty patch and installs deps', async () => {
   expect(flushOutput()).toMatchInlineSnapshot(`
 "info Fetching diff between v0.57.8 and v0.58.4...
 info Diff has no changes to apply, proceeding further
+warn Continuing after failure. Most of the files are upgraded but you will need to deal with some conflicts manually
 info Installing react-native@0.58.4 and its peer dependencies...
 $ execa npm info react-native@0.58.4 peerDependencies --json
 $ yarn add react-native@0.58.4 react@16.6.3
@@ -172,7 +173,14 @@ test('cleans up if patching fails,', async () => {
     return Promise.resolve({ stdout: '' });
   });
 
-  await upgrade.func([newVersion], ctx, opts);
+  try {
+    await upgrade.func([newVersion], ctx, opts);
+  } catch (error) {
+    expect(error.message).toBe(
+      'Upgrade failed. Please see the messages above for details'
+    );
+  }
+
   expect(flushOutput()).toMatchInlineSnapshot(`
 "info Fetching diff between v0.57.8 and v0.58.4...
 [fs] write tmp-upgrade-rn.patch
@@ -181,12 +189,12 @@ $ execa git fetch --no-tags tmp-rn-diff-purge
 $ execa git apply --check tmp-upgrade-rn.patch --exclude=package.json -p2 --3way
 info Applying diff (excluding: package.json, .flowconfig)...
 $ execa git apply tmp-upgrade-rn.patch --exclude=package.json --exclude=.flowconfig -p2 --3way
-[2merror: .flowconfig: does not exist in index
-[22m
-error Automatically applying diff failed. Please run \\"git diff\\", review the conflicts and resolve them
+[2merror: .flowconfig: does not exist in index[22m
+error Automatically applying diff failed
 info Here's the diff we tried to apply: https://github.com/pvinis/rn-diff-purge/compare/version/0.57.8...version/0.58.4
 info You may find release notes helpful: https://github.com/facebook/react-native/releases/tag/v0.58.4
 [fs] unlink tmp-upgrade-rn.patch
+warn Continuing after failure. Most of the files are upgraded but you will need to deal with some conflicts manually
 info Installing react-native@0.58.4 and its peer dependencies...
 $ execa npm info react-native@0.58.4 peerDependencies --json
 $ yarn add react-native@0.58.4 react@16.6.3
@@ -195,6 +203,7 @@ $ execa git add yarn.lock
 $ execa git add package-lock.json
 info Running \\"git status\\" to check what changed...
 $ execa git status
-$ execa git remote remove tmp-rn-diff-purge"
+$ execa git remote remove tmp-rn-diff-purge
+warn Please run \\"git diff\\" to review the conflicts and resolve them"
 `);
 });

@@ -48,6 +48,7 @@ jest.mock('../../util/logger', () => ({
   error: jest.fn((...args) => mockPushLog('error', args)),
   warn: jest.fn((...args) => mockPushLog('warn', args)),
   success: jest.fn((...args) => mockPushLog('success', args)),
+  log: jest.fn((...args) => mockPushLog(args)),
 }));
 
 const currentVersion = '0.57.8';
@@ -126,12 +127,15 @@ test('fetches regular patch, adds remote, applies patch, installs deps, removes 
 [fs] write tmp-upgrade-rn.patch
 $ execa git remote add tmp-rn-diff-purge https://github.com/pvinis/rn-diff-purge.git
 $ execa git fetch tmp-rn-diff-purge
+$ execa git apply --check tmp-upgrade-rn.patch --exclude=package.json -p2 --3way
 info Applying diff...
 $ execa git apply tmp-upgrade-rn.patch --exclude=package.json -p2 --3way
+[fs] unlink tmp-upgrade-rn.patch
 info Installing react-native@0.58.4 and its peer dependencies...
 $ execa npm info react-native@0.58.4 peerDependencies --json
 $ yarn add react-native@0.58.4 react@16.6.3
-[fs] unlink tmp-upgrade-rn.patch
+info Running \\"git status\\" to check what changed...
+$ execa git status
 $ execa git remote remove tmp-rn-diff-purge
 success Upgraded React Native to v0.58.4 🎉. Now you can review and commit the changes"
 `);
@@ -153,7 +157,11 @@ test('cleans up if patching fails,', async () => {
       });
     }
     if (command === 'git' && args[0] === 'apply') {
-      throw new Error({ code: 1, stderr: 'error patching' });
+      // eslint-disable-next-line prefer-promise-reject-errors
+      return Promise.reject({
+        code: 1,
+        stderr: 'error: .flowconfig: does not exist in index\n',
+      });
     }
     return Promise.resolve({ stdout: '' });
   });
@@ -164,11 +172,20 @@ test('cleans up if patching fails,', async () => {
 [fs] write tmp-upgrade-rn.patch
 $ execa git remote add tmp-rn-diff-purge https://github.com/pvinis/rn-diff-purge.git
 $ execa git fetch tmp-rn-diff-purge
-info Applying diff...
-$ execa git apply tmp-upgrade-rn.patch --exclude=package.json -p2 --3way
-error Applying diff failed. Please review the conflicts and resolve them.
+$ execa git apply --check tmp-upgrade-rn.patch --exclude=package.json -p2 --3way
+info Applying diff (excluding: package.json, .flowconfig)...
+$ execa git apply tmp-upgrade-rn.patch --exclude=package.json --exclude=.flowconfig -p2 --3way
+[2merror: .flowconfig: does not exist in index
+[22m
+error Automatically applying diff failed. Please run \\"git diff\\", review the conflicts and resolve them
+info Here's the diff we tried to apply: https://github.com/pvinis/rn-diff-purge/compare/version/0.57.8...version/0.58.4
 info You may find release notes helpful: https://github.com/facebook/react-native/releases/tag/v0.58.4
 [fs] unlink tmp-upgrade-rn.patch
+info Installing react-native@0.58.4 and its peer dependencies...
+$ execa npm info react-native@0.58.4 peerDependencies --json
+$ yarn add react-native@0.58.4 react@16.6.3
+info Running \\"git status\\" to check what changed...
+$ execa git status
 $ execa git remote remove tmp-rn-diff-purge"
 `);
 });

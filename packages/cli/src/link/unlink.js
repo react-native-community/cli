@@ -91,7 +91,7 @@ function unlink(args: Array<string>, ctx: ContextT) {
     return Promise.reject(err);
   }
 
-  const allDependencies = getProjectDependencies().map(dependency =>
+  const allDependencies = getProjectDependencies(ctx.root).map(dependency =>
     getDependencyConfig(ctx, platforms, dependency)
   );
   let otherDependencies;

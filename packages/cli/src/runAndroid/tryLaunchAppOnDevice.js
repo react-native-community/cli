@@ -15,7 +15,7 @@ function tryLaunchAppOnDevice(
   packageNameWithSuffix: string,
   packageName: string,
   adbPath: string,
-  mainActivity: string
+  mainActivity: *
 ) {
   try {
     const adbArgs = [

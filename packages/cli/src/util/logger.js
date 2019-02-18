@@ -8,10 +8,6 @@ const SEPARATOR = ', ';
 const formatMessages = (messages: Array<string>) =>
   chalk.reset(messages.join(SEPARATOR));
 
-const success = (...messages: Array<string>) => {
-  console.log(`${chalk.green.bold('success')} ${formatMessages(messages)}`);
-};
-
 const info = (...messages: Array<string>) => {
   console.log(`${chalk.cyan.bold('info')} ${formatMessages(messages)}`);
 };
@@ -33,7 +29,6 @@ const log = (...messages: Array<string>) => {
 };
 
 export default {
-  success,
   info,
   warn,
   error,

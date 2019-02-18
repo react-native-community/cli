@@ -4,6 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
+ * @format
  * @flow
  */
 
@@ -11,7 +12,7 @@ import { pick } from 'lodash';
 import type { ContextT } from '../core/types.flow';
 
 import promiseWaterfall from './promiseWaterfall';
-import logger from '../util/logger';
+import log from '../util/logger';
 import getDependencyConfig from './getDependencyConfig';
 import commandStub from './commandStub';
 import promisify from './promisify';
@@ -42,9 +43,7 @@ function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
     }
     project = getProjectConfig(ctx, platforms);
   } catch (err) {
-    logger.error(
-      'No package found. Are you sure this is a React Native project?'
-    );
+    log.error('No package found. Are you sure this is a React Native project?');
     return Promise.reject(err);
   }
   const hasProjectConfig = Object.keys(platforms).reduce(
@@ -78,7 +77,7 @@ function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
   ];
 
   return promiseWaterfall(tasks).catch(err => {
-    logger.error(
+    log.error(
       `Something went wrong while linking. Error: ${err.message} \n` +
         'Please file an issue here: https://github.com/facebook/react-native/issues'
     );

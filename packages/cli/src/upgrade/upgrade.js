@@ -174,7 +174,7 @@ async function upgrade(argv: Array<string>, ctx: ContextT, args: FlagsT) {
 
     fs.writeFileSync(tmpPatchFile, patch);
     await execa('git', ['remote', 'add', tmpRemote, rnDiffGitAddress]);
-    await execa('git', ['fetch', tmpRemote]);
+    await execa('git', ['fetch', '--no-tags', tmpRemote]);
 
     try {
       try {

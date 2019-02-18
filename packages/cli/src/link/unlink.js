@@ -9,14 +9,16 @@
 
 import { flatten, isEmpty, difference } from 'lodash';
 import type { ContextT } from '../core/types.flow';
-import logger from '../util/logger';
+
+import log from '../util/logger';
 import getProjectConfig from './getProjectConfig';
 import getDependencyConfig from './getDependencyConfig';
 import getProjectDependencies from './getProjectDependencies';
 import promiseWaterfall from './promiseWaterfall';
 import commandStub from './commandStub';
 import promisify from './promisify';
-import getPlatforms, { getPlatformName } from '../core/getPlatforms';
+
+import getPlatforms from '../core/getPlatforms';
 
 const unlinkDependency = (
   platforms,
@@ -46,15 +48,11 @@ const unlinkDependency = (
     );
 
     if (!isInstalled) {
-      logger.info(
-        `${getPlatformName(platform)} module "${packageName}" is not installed`
-      );
+      log.info(`Platform '${platform}' module ${packageName} is not installed`);
       return;
     }
 
-    logger.info(
-      `Unlinking "${packageName}" ${getPlatformName(platform)} dependency`
-    );
+    log.info(`Unlinking ${packageName} ${platform} dependency`);
 
     linkConfig.unregister(
       packageName,
@@ -65,10 +63,10 @@ const unlinkDependency = (
       otherDependencies
     );
 
-    logger.success(
-      `${getPlatformName(platform)} module "${
+    log.info(
+      `Platform '${platform}' module ${
         dependency.name
-      }" has been successfully unlinked`
+      } has been successfully unlinked`
     );
   });
 };
@@ -87,13 +85,13 @@ function unlink(args: Array<string>, ctx: ContextT) {
   try {
     platforms = getPlatforms(ctx.root);
   } catch (err) {
-    logger.error(
+    log.error(
       "No package.json found. Are you sure it's a React Native project?"
     );
     return Promise.reject(err);
   }
 
-  const allDependencies = getProjectDependencies(ctx.root).map(dependency =>
+  const allDependencies = getProjectDependencies().map(dependency =>
     getDependencyConfig(ctx, platforms, dependency)
   );
   let otherDependencies;
@@ -103,12 +101,13 @@ function unlink(args: Array<string>, ctx: ContextT) {
     const idx = allDependencies.findIndex(p => p.name === packageName);
 
     if (idx === -1) {
-      throw new Error(`Project "${packageName}" is not a react-native library`);
+      throw new Error(`Project ${packageName} is not a react-native library`);
     }
 
     otherDependencies = [...allDependencies];
     dependency = otherDependencies.splice(idx, 1)[0]; // eslint-disable-line prefer-destructuring
   } catch (err) {
+    log.warn(err.message);
     return Promise.reject(err);
   }
 
@@ -149,17 +148,17 @@ function unlink(args: Array<string>, ctx: ContextT) {
           return;
         }
 
-        logger.info(`Unlinking assets from ${platform} project`);
+        log.info(`Unlinking assets from ${platform} project`);
         // $FlowFixMe: We check for platorm existence on line 150
         linkConfig.unlinkAssets(assets, project[platform]);
       });
 
-      logger.info(
+      log.info(
         `${packageName} assets has been successfully unlinked from your project`
       );
     })
     .catch(err => {
-      logger.error(
+      log.error(
         `It seems something went wrong while unlinking. Error:\n${err.message}`
       );
       throw err;

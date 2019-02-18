@@ -4,25 +4,30 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
+ * @format
  */
 
-import type { ContextT } from '../core/types.flow';
+import { spawnSync } from 'child_process';
 import logger from '../util/logger';
 import PackageManager from '../util/PackageManager';
-import link from '../link/link';
 
-async function install(args: Array<string>, ctx: ContextT) {
+const spawnOpts = {
+  stdio: 'inherit',
+  stdin: 'inherit',
+};
+
+async function install(args, ctx) {
   const name = args[0];
 
-  logger.info(`Installing "${name}"...`);
   new PackageManager({ projectDir: ctx.root }).install([name]);
 
-  logger.info(`Linking "${name}"...`);
-  // eslint-disable-next-line import/no-named-as-default-member
-  await link.func([name], ctx, { platforms: [] });
+  const res = spawnSync('react-native', ['link', name], spawnOpts);
 
-  logger.success(`Successfully installed and linked "${name}"`);
+  if (res.status) {
+    process.exit(res.status);
+  }
+
+  logger.info(`Module ${name} has been successfully installed & linked`);
 }
 
 export default {

@@ -35,7 +35,7 @@ node ./node_modules/.bin/react-native start
 
 You can also add npm scripts to call it with whichever package manager you use:
 
-```json
+```json5
 {
   "scripts": {
     "start": "react-native start"

@@ -1,18 +1,15 @@
 // @flow
 
-import type {
-  PlatformsT,
-  ProjectConfigT,
-  DependenciesConfig,
-} from '../core/types.flow';
-import logger from '../util/logger';
+import chalk from 'chalk';
+import type { PlatformsT, ProjectConfigT } from '../core/types.flow';
+
+import log from '../util/logger';
 import pollParams from './pollParams';
-import { getPlatformName } from '../core/getPlatforms';
 
 const linkDependency = async (
   platforms: PlatformsT,
   project: ProjectConfigT,
-  dependency: DependenciesConfig
+  dependency: *
 ) => {
   const params = await pollParams(dependency.params);
 
@@ -37,30 +34,29 @@ const linkDependency = async (
     );
 
     if (isInstalled) {
-      logger.info(
-        `${getPlatformName(platform)} module "${
-          dependency.name
-        }" is already linked`
+      log.info(
+        chalk.grey(
+          `Platform '${platform}' module ${dependency.name} is already linked`
+        )
       );
       return;
     }
 
-    logger.info(
-      `Linking "${dependency.name}" ${getPlatformName(platform)} dependency`
-    );
+    log.info(`Linking ${dependency.name} ${platform} dependency`);
 
     linkConfig.register(
       dependency.name,
-      dependency.config[platform] || {},
+      // $FlowFixMe: We check if dependency.config[platform] exists on line 42
+      dependency.config[platform],
       params,
       // $FlowFixMe: We check if project[platform] exists on line 42
       project[platform]
     );
 
-    logger.success(
-      `${getPlatformName(platform)} module "${
+    log.info(
+      `Platform '${platform}' module ${
         dependency.name
-      }" has been successfully linked`
+      } has been successfully linked`
     );
   });
 };

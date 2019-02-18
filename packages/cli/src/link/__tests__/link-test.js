@@ -224,15 +224,11 @@ describe('link', () => {
       commands: {},
     }));
 
-    jest.doMock('../../core/getPlatforms', () => {
-      const fn = () => ({
-        ios: { linkConfig: require('../ios').default },
-        android: { linkConfig: require('../android').default },
-        windows: { linkConfig: genericLinkConfig },
-      });
-      fn.getPlatformName = jest.fn();
-      return fn;
-    });
+    jest.doMock('../../core/getPlatforms', () => () => ({
+      ios: { linkConfig: require('../ios').default },
+      android: { linkConfig: require('../android').default },
+      windows: { linkConfig: genericLinkConfig },
+    }));
 
     jest.doMock('../getDependencyConfig', () => getDependencyConfig);
 
@@ -273,14 +269,10 @@ describe('link', () => {
       register: registerIOSNativeModule,
     });
 
-    jest.doMock('../../core/getPlatforms', () => {
-      const fn = () => ({
-        android: { linkConfig: genericAndroidLinkConfig },
-        ios: { linkConfig: genericIOSLinkConfig },
-      });
-      fn.getPlatformName = jest.fn();
-      return fn;
-    });
+    jest.doMock('../../core/getPlatforms', () => () => ({
+      android: { linkConfig: genericAndroidLinkConfig },
+      ios: { linkConfig: genericIOSLinkConfig },
+    }));
 
     jest.doMock(
       '../android/registerNativeModule.js',

@@ -45,12 +45,3 @@ export default function getPlatforms(root: string): PlatformsT {
     ...projectPlatforms,
   };
 }
-
-const names = {
-  ios: 'iOS',
-  android: 'Android',
-};
-
-export function getPlatformName(name: string) {
-  return names[name] || name;
-}

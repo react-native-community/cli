@@ -115,6 +115,9 @@ info Diff has no changes to apply, proceeding further
 info Installing react-native@0.58.4 and its peer dependencies...
 $ execa npm info react-native@0.58.4 peerDependencies --json
 $ yarn add react-native@0.58.4 react@16.6.3
+$ execa git add package.json
+$ execa git add yarn.lock
+$ execa git add package-lock.json
 success Upgraded React Native to v0.58.4 🎉. Now you can review and commit the changes"
 `);
 });
@@ -134,6 +137,9 @@ $ execa git apply tmp-upgrade-rn.patch --exclude=package.json -p2 --3way
 info Installing react-native@0.58.4 and its peer dependencies...
 $ execa npm info react-native@0.58.4 peerDependencies --json
 $ yarn add react-native@0.58.4 react@16.6.3
+$ execa git add package.json
+$ execa git add yarn.lock
+$ execa git add package-lock.json
 info Running \\"git status\\" to check what changed...
 $ execa git status
 $ execa git remote remove tmp-rn-diff-purge
@@ -184,6 +190,9 @@ info You may find release notes helpful: https://github.com/facebook/react-nativ
 info Installing react-native@0.58.4 and its peer dependencies...
 $ execa npm info react-native@0.58.4 peerDependencies --json
 $ yarn add react-native@0.58.4 react@16.6.3
+$ execa git add package.json
+$ execa git add yarn.lock
+$ execa git add package-lock.json
 info Running \\"git status\\" to check what changed...
 $ execa git status
 $ execa git remote remove tmp-rn-diff-purge"

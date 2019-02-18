@@ -114,7 +114,18 @@ const installDeps = async (newVersion, projectDir) => {
     `react-native@${newVersion}`,
     ...Object.keys(peerDeps).map(module => `${module}@${peerDeps[module]}`),
   ];
-  pm.install(deps);
+  await pm.install(deps);
+  await execa('git', ['add', 'package.json']);
+  try {
+    await execa('git', ['add', 'yarn.lock']);
+  } catch (error) {
+    // ignore
+  }
+  try {
+    await execa('git', ['add', 'package-lock.json']);
+  } catch (error) {
+    // ignore
+  }
 };
 
 /**

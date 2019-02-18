@@ -3,7 +3,7 @@ import execa from 'execa';
 import path from 'path';
 import fs from 'fs';
 import snapshotDiff from 'snapshot-diff';
-import * as upgrade from '../newUpgrade';
+import upgrade from '../upgrade';
 import { fetch } from '../helpers';
 import logger from '../../util/logger';
 
@@ -57,6 +57,9 @@ const ctx = {
   root: '/project/root',
   reactNativePath: '',
 };
+const opts = {
+  legacy: false,
+};
 
 const samplePatch = jest
   .requireActual('fs')
@@ -77,26 +80,26 @@ beforeEach(() => {
 });
 
 test('uses latest version of react-native when none passed', async () => {
-  await upgrade.default.func([], ctx);
+  await upgrade.func([], ctx, opts);
   expect(execa).toBeCalledWith('npm', ['info', 'react-native', 'version']);
 });
 
 test('errors when invalid version passed', async () => {
-  await upgrade.default.func(['next'], ctx);
+  await upgrade.func(['next'], ctx, opts);
   expect(logger.error).toBeCalledWith(
     'Provided version "next" is not allowed. Please pass a valid semver version'
   );
 });
 
 test('errors when older version passed', async () => {
-  await upgrade.default.func([olderVersion], ctx);
+  await upgrade.func([olderVersion], ctx, opts);
   expect(logger.error).toBeCalledWith(
     `Trying to upgrade from newer version "${currentVersion}" to older "${olderVersion}"`
   );
 });
 
 test('warns when dependency upgrade version is in semver range', async () => {
-  await upgrade.default.func([currentVersion], ctx);
+  await upgrade.func([currentVersion], ctx, opts);
   expect(logger.warn).toBeCalledWith(
     `Specified version "${currentVersion}" is already installed in node_modules and it satisfies "^0.57.8" semver range. No need to upgrade`
   );
@@ -104,7 +107,7 @@ test('warns when dependency upgrade version is in semver range', async () => {
 
 test('fetches empty patch and installs deps', async () => {
   (fetch: any).mockImplementation(() => Promise.resolve(''));
-  await upgrade.default.func([newVersion], ctx);
+  await upgrade.func([newVersion], ctx, opts);
   expect(flushOutput()).toMatchInlineSnapshot(`
 "info Fetching diff between v0.57.8 and v0.58.4...
 info Diff has no changes to apply, proceeding further
@@ -117,7 +120,7 @@ success Upgraded React Native to v0.58.4 🎉. Now you can review and commit the
 
 test('fetches regular patch, adds remote, applies patch, installs deps, removes remote,', async () => {
   (fetch: any).mockImplementation(() => Promise.resolve(samplePatch));
-  await upgrade.default.func([newVersion], ctx);
+  await upgrade.func([newVersion], ctx, opts);
   expect(flushOutput()).toMatchInlineSnapshot(`
 "info Fetching diff between v0.57.8 and v0.58.4...
 [fs] write tmp-upgrade-rn.patch
@@ -155,7 +158,7 @@ test('cleans up if patching fails,', async () => {
     return Promise.resolve({ stdout: '' });
   });
 
-  await upgrade.default.func([newVersion], ctx);
+  await upgrade.func([newVersion], ctx, opts);
   expect(flushOutput()).toMatchInlineSnapshot(`
 "info Fetching diff between v0.57.8 and v0.58.4...
 [fs] write tmp-upgrade-rn.patch

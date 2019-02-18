@@ -129,7 +129,7 @@ test('fetches regular patch, adds remote, applies patch, installs deps, removes 
 "info Fetching diff between v0.57.8 and v0.58.4...
 [fs] write tmp-upgrade-rn.patch
 $ execa git remote add tmp-rn-diff-purge https://github.com/pvinis/rn-diff-purge.git
-$ execa git fetch tmp-rn-diff-purge
+$ execa git fetch --no-tags tmp-rn-diff-purge
 $ execa git apply --check tmp-upgrade-rn.patch --exclude=package.json -p2 --3way
 info Applying diff...
 $ execa git apply tmp-upgrade-rn.patch --exclude=package.json -p2 --3way
@@ -177,7 +177,7 @@ test('cleans up if patching fails,', async () => {
 "info Fetching diff between v0.57.8 and v0.58.4...
 [fs] write tmp-upgrade-rn.patch
 $ execa git remote add tmp-rn-diff-purge https://github.com/pvinis/rn-diff-purge.git
-$ execa git fetch tmp-rn-diff-purge
+$ execa git fetch --no-tags tmp-rn-diff-purge
 $ execa git apply --check tmp-upgrade-rn.patch --exclude=package.json -p2 --3way
 info Applying diff (excluding: package.json, .flowconfig)...
 $ execa git apply tmp-upgrade-rn.patch --exclude=package.json --exclude=.flowconfig -p2 --3way

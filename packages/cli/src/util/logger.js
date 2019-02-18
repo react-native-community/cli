@@ -24,6 +24,10 @@ const error = (...messages: Array<string>) => {
   console.error(`${chalk.red.bold('error')} ${formatMessages(messages)}`);
 };
 
+const success = (...messages: Array<string>) => {
+  console.log(`${chalk.green.bold('success')} ${formatMessages(messages)}`);
+};
+
 const debug = (...messages: Array<string>) => {
   console.log(`${chalk.gray.bold('debug')} ${formatMessages(messages)}`);
 };
@@ -37,8 +41,7 @@ export default {
   info,
   warn,
   error,
+  success,
   debug,
   log,
 };
-
-// export { info, warn, error, debug };

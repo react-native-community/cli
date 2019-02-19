@@ -23,7 +23,7 @@ import findReactNativeScripts from '../util/findReactNativeScripts';
 import getPlatforms from '../core/getPlatforms';
 
 type FlagsType = {
-  platforms: Array<string>,
+  platforms?: Array<string>,
 };
 
 /**

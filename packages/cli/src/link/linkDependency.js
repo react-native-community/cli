@@ -57,7 +57,7 @@ const linkDependency = async (
       project[platform]
     );
 
-    logger.success(
+    logger.info(
       `${getPlatformName(platform)} module "${
         dependency.name
       }" has been successfully linked`

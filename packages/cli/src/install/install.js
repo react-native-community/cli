@@ -20,7 +20,7 @@ async function install(args: Array<string>, ctx: ContextT) {
 
   logger.info(`Linking "${name}"...`);
   // eslint-disable-next-line import/no-named-as-default-member
-  await link.func([name], ctx, { platforms: [] });
+  await link.func([name], ctx, { platforms: undefined });
 
   logger.success(`Successfully installed and linked "${name}"`);
 }

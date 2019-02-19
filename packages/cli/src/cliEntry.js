@@ -142,7 +142,13 @@ async function setupAndRun() {
     ? path.join('..', 'setup_env.bat')
     : path.join('..', 'setup_env.sh');
 
-  childProcess.execFileSync(path.join(__dirname, setupEnvScript));
+  try {
+    childProcess.execFileSync(path.join(__dirname, setupEnvScript));
+  } catch (error) {
+    logger.warn(
+      `Failed to run environment setup script, but we can continue without it. You may want to apply the steps manually.\n${error}`
+    );
+  }
 
   /**
    * Read passed `options` and take the "global" settings

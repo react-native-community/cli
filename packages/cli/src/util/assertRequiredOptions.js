@@ -25,7 +25,7 @@ export default function assertRequiredOptions(options, passedOptions) {
 
     if (!passedOptions[name]) {
       // Provide commander.js like error message
-      throw new Error(`error: option '${option.long}' missing`);
+      throw new Error(`Option "${option.long}" is missing`);
     }
   });
 }

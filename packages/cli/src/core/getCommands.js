@@ -74,10 +74,8 @@ const loadProjectCommands = (root: string): Array<ProjectCommandT> => {
             .join(path.sep)
         : pathToCommands.split(path.sep)[0];
 
-    // $FlowFixMe: Non-literal require
     const pkg = require(path.join(root, 'node_modules', name, 'package.json'));
 
-    // $FlowFixMe: Non-literal require
     const requiredCommands:
       | ProjectCommandT
       | Array<ProjectCommandT> = require(path.join(

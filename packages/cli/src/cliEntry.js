@@ -147,7 +147,7 @@ async function setupAndRun() {
       childProcess.execFileSync(absolutePath, { stdio: 'pipe' });
     } catch (error) {
       logger.warn(
-        `Failed to run environment setup script "${scriptName}".\n\n${chalk.red(
+        `Failed to run environment setup script "${scriptName}"\n\n${chalk.red(
           error
         )}`
       );

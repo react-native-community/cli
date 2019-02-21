@@ -60,8 +60,8 @@ function createFromRemoteTemplate(
 ) {
   let installPackage;
   let templateName;
-  if (template.includes('://')) {
-    // URL, e.g. git://, file://
+  if (template.includes(':/')) {
+    // URL, e.g. git://, file://, file:/
     installPackage = template;
     templateName = template.substr(template.lastIndexOf('/') + 1);
   } else {

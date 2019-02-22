@@ -1,20 +1,16 @@
 // @flow
 
 import { isEmpty } from 'lodash';
-import type {
-  PlatformsT,
-  ProjectConfigT,
-  DependenciesConfig,
-} from '../core/types.flow';
+import type { PlatformsT, ProjectConfigT } from '../core/types.flow';
 
 import logger from '../util/logger';
 
 const linkAssets = (
   platforms: PlatformsT,
   project: ProjectConfigT,
-  dependency: DependenciesConfig
+  assets: Array<string>
 ) => {
-  if (isEmpty(dependency.assets)) {
+  if (isEmpty(assets)) {
     return;
   }
 
@@ -30,7 +26,7 @@ const linkAssets = (
 
     logger.info(`Linking assets to ${platform} project`);
     // $FlowFixMe: We check for existence of project[platform]
-    linkConfig.copyAssets(dependency.assets, project[platform]);
+    linkConfig.copyAssets(assets, project[platform]);
   });
 
   logger.info('Assets have been successfully linked to your project');

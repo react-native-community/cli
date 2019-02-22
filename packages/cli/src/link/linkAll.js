@@ -13,7 +13,8 @@ import promisify from './promisify';
 import linkAssets from './linkAssets';
 import linkDependency from './linkDependency';
 
-const dedupeAssets = assets => uniqBy(assets, asset => path.basename(asset));
+const dedupeAssets = (assets: Array<string>): Array<string> =>
+  uniqBy(assets, asset => path.basename(asset));
 
 function linkAll(
   context: ContextT,

@@ -74,7 +74,7 @@ function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
     () => promisify(dependencyConfig.commands.prelink || commandStub),
     () => linkDependency(platforms, project, dependencyConfig),
     () => promisify(dependencyConfig.commands.postlink || commandStub),
-    () => linkAssets(platforms, project, dependencyConfig),
+    () => linkAssets(platforms, project, dependencyConfig.assets),
   ];
 
   return promiseWaterfall(tasks).catch(err => {

@@ -40,5 +40,3 @@ export default {
   debug,
   log,
 };
-
-// export { info, warn, error, debug };

@@ -14,8 +14,10 @@ export default class PackageManager {
     this.options = options;
   }
 
-  executeCommand(command: string) {
-    return execSync(command, { stdio: 'inherit' });
+  executeCommand(command: string, options?: { silent: boolean }) {
+    return execSync(command, {
+      stdio: options && options.silent ? 'pipe' : 'inherit',
+    });
   }
 
   shouldCallYarn() {
@@ -26,11 +28,12 @@ export default class PackageManager {
     );
   }
 
-  install(packageNames: Array<string>) {
+  install(packageNames: Array<string>, options?: { silent: boolean }) {
     return this.shouldCallYarn()
-      ? this.executeCommand(`yarn add ${packageNames.join(' ')}`)
+      ? this.executeCommand(`yarn add ${packageNames.join(' ')}`, options)
       : this.executeCommand(
-          `npm install ${packageNames.join(' ')} --save --save-exact`
+          `npm install ${packageNames.join(' ')} --save --save-exact`,
+          options
         );
   }
 

@@ -138,11 +138,24 @@ async function run() {
 }
 
 async function setupAndRun() {
-  const setupEnvScript = /^win/.test(process.platform)
-    ? path.join('..', 'setup_env.bat')
-    : path.join('..', 'setup_env.sh');
+  // We only have a setup script for UNIX envs currently
+  if (process.platform !== 'win32') {
+    const scriptName = 'setup_env.sh';
+    const absolutePath = path.join(__dirname, '..', scriptName);
 
-  childProcess.execFileSync(path.join(__dirname, setupEnvScript));
+    try {
+      childProcess.execFileSync(absolutePath, { stdio: 'pipe' });
+    } catch (error) {
+      logger.warn(
+        `Failed to run environment setup script "${scriptName}"\n\n${chalk.red(
+          error
+        )}`
+      );
+      logger.info(
+        `React Native CLI will continue to run if your local environment matches what React Native expects. If it does fail, check out "${absolutePath}" and adjust your environment to match it.`
+      );
+    }
+  }
 
   /**
    * Read passed `options` and take the "global" settings

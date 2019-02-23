@@ -39,6 +39,10 @@ function runOnAllDevices(
     const tasks = args.tasks || ['install' + toPascalCase(args.variant)];
     const gradleArgs = getTaskNames(args.appFolder, tasks);
 
+    if (args.port != null) {
+      gradleArgs.push('-PreactNativeDevServerPort=' + args.port);
+    }
+
     logger.info('Installing the app...');
     logger.debug(
       `Running command "cd android && ${cmd} ${gradleArgs.join(' ')}"`,

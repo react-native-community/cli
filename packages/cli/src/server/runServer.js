@@ -24,7 +24,7 @@ export type Args = {|
   assetExts?: string[],
   cert?: string,
   customLogReporterPath?: string,
-  host: string,
+  host?: string,
   https?: boolean,
   maxWorkers?: number,
   key?: string,

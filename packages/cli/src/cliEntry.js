@@ -12,6 +12,7 @@ import childProcess from 'child_process';
 import commander from 'commander';
 import minimist from 'minimist';
 import path from 'path';
+import { loadConfig } from 'metro';
 import type { CommandT, ContextT } from './core/types.flow';
 import getCommands from './core/getCommands';
 import getLegacyConfig from './core/getLegacyConfig';
@@ -163,28 +164,40 @@ async function setupAndRun() {
    * @todo(grabbou): Consider unifying this by removing either `commander`
    * or `minimist`
    */
+
+  const metroConfig = await loadConfig();
+
   const options = minimist(process.argv.slice(2));
 
-  const root = options.projectRoot
-    ? path.resolve(options.projectRoot)
-    : process.cwd();
+  let root = null;
+  let reactNativePath = null;
 
-  const reactNativePath = options.reactNativePath
-    ? path.resolve(options.reactNativePath)
-    : (() => {
-        try {
-          return path.dirname(
-            // $FlowIssue: Wrong `require.resolve` type definition
-            require.resolve('react-native/package.json', {
-              paths: [root],
-            })
-          );
-        } catch (_ignored) {
-          throw new Error(
-            'Unable to find React Native files. Make sure "react-native" module is installed in your project dependencies.'
-          );
-        }
-      })();
+  if (options.projectRoot) {
+    root = path.resolve(options.projectRoot);
+  } else if (metroConfig.root) {
+    root = path.resolve(metroConfig.projectRoot);
+  } else {
+    root = process.cwd();
+  }
+
+  if (options.reactNativePath) {
+    reactNativePath = path.resolve(options.reactNativePath);
+  } else if (metroConfig.reactNativePath) {
+    reactNativePath = path.resolve(metroConfig.reactNativePath);
+  } else {
+    try {
+      reactNativePath = path.dirname(
+        // $FlowIssue: Wrong `require.resolve` type definition
+        require.resolve('react-native/package.json', {
+          paths: [root],
+        })
+      );
+    } catch (_ignored) {
+      throw new Error(
+        'Unable to find React Native files. Make sure "react-native" module is installed in your project dependencies.'
+      );
+    }
+  }
 
   const ctx = {
     ...getLegacyConfig(root),

@@ -26,7 +26,7 @@ import getDevToolsMiddleware from './getDevToolsMiddleware';
 
 type Options = {
   +watchFolders: $ReadOnlyArray<string>,
-  +host?: string,
+  +host: string,
 };
 
 type WebSocketProxy = {
@@ -46,7 +46,7 @@ export default class MiddlewareManager {
 
     this.options = options;
     this.app = connect()
-      .use(getSecurityHeadersMiddleware)
+      .use(getSecurityHeadersMiddleware(this.options))
       .use(loadRawBodyMiddleware)
       .use(compression())
       .use('/debugger-ui', serveStatic(debuggerUIFolder))

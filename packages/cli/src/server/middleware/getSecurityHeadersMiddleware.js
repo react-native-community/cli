@@ -8,20 +8,22 @@
  * @format
  */
 
-export default function getSecurityHeadersMiddleware(req, res, next) {
-  const address = req.client.server.address();
+export default function getSecurityHeadersMiddleware({ host }) {
+  return (req, res, next) => {
+    const address = req.client.server.address();
 
-  // Block any cross origin request.
-  if (
-    req.headers.origin &&
-    req.headers.origin !== `http://localhost:${address.port}`
-  ) {
-    next(new Error('Unauthorized'));
-    return;
-  }
+    // Block any cross origin request.
+    if (
+      req.headers.origin &&
+      req.headers.origin !== `http://${host}:${address.port}`
+    ) {
+      next(new Error('Unauthorized'));
+      return;
+    }
 
-  // Block MIME-type sniffing.
-  res.setHeader('X-Content-Type-Options', 'nosniff');
+    // Block MIME-type sniffing.
+    res.setHeader('X-Content-Type-Options', 'nosniff');
 
-  next();
+    next();
+  };
 }

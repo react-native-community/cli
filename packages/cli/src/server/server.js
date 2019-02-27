@@ -19,6 +19,7 @@ export default {
     {
       command: '--port [number]',
       parse: (val: string) => Number(val),
+      default: 8081,
     },
     {
       command: '--host [string]',

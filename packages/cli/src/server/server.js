@@ -22,7 +22,7 @@ export default {
     },
     {
       command: '--host [string]',
-      default: '0.0.0.0',
+      default: '',
     },
     {
       command: '--watchFolders [list]',

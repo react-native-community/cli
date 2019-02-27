@@ -9,20 +9,20 @@
 import launchChrome from '../util/launchChrome';
 import logger from '../../util/logger';
 
-function launchChromeDevTools(host, port, args = '') {
-  const debuggerURL = `http://${host}:${port}/debugger-ui${args}`;
+function launchChromeDevTools(port, args = '') {
+  const debuggerURL = `http://localhost:${port}/debugger-ui${args}`;
   logger.info('Launching Dev Tools...');
   launchChrome(debuggerURL);
 }
 
-function launchDevTools({ host, port, watchFolders }, isChromeConnected) {
+function launchDevTools({ port, watchFolders }, isChromeConnected) {
   // Explicit config always wins
   const customDebugger = process.env.REACT_DEBUGGER;
   if (customDebugger) {
     customDebugger({ watchFolders, customDebugger });
   } else if (!isChromeConnected()) {
     // Dev tools are not yet open; we need to open a session
-    launchChromeDevTools(host, port);
+    launchChromeDevTools(port);
   }
 }
 

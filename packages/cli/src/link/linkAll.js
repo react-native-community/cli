@@ -52,7 +52,7 @@ function linkAll(
   return promiseWaterfall(tasks).catch(err => {
     logger.error(
       `Something went wrong while linking. Error: ${err.message} \n` +
-        'Please file an issue here: https://github.com/facebook/react-native/issues'
+        'Please file an issue here: https://github.com/react-native-community/react-native-cli/issues'
     );
     throw err;
   });

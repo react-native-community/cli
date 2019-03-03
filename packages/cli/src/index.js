@@ -8,9 +8,7 @@
  */
 
 // gracefulify() has to be called before anything else runs
-// eslint-disable-next-line no-unused-vars
-import gracefulFs from './util/gracefulFs';
-
+import './util/gracefulifyFs';
 import cli from './cliEntry';
 
 if (require.main === module) {

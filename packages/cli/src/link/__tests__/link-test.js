@@ -145,7 +145,7 @@ describe('link', () => {
     );
     jest.doMock('../ios/registerNativeModule.js', () => jest.fn());
 
-    jest.doMock('../../core/getAssets', () => projectAssets);
+    jest.doMock('../../tools/getAssets', () => projectAssets);
 
     const copyAssets = jest.fn();
 
@@ -157,7 +157,7 @@ describe('link', () => {
     link(['react-native-blur'], context, {}).then(() => {
       expect(copyAssets.mock.calls).toHaveLength(2);
       expect(copyAssets.mock.calls[0][0]).toEqual(dependencyAssets);
-      jest.unmock('../../core/getAssets');
+      jest.unmock('../../tools/getAssets');
       done();
     });
   });
@@ -224,7 +224,7 @@ describe('link', () => {
       commands: {},
     }));
 
-    jest.doMock('../../core/getPlatforms', () => {
+    jest.doMock('../../tools/getPlatforms', () => {
       const fn = () => ({
         ios: { linkConfig: require('../ios').default },
         android: { linkConfig: require('../android').default },
@@ -256,7 +256,7 @@ describe('link', () => {
 
   it('should link only for specific platforms if --platforms is used', async () => {
     jest.doMock('../getProjectDependencies', () => () => ['react-native-maps']);
-    jest.doMock('../../core/getPackageConfiguration', () => () => ({
+    jest.doMock('../../tools/getPackageConfiguration', () => () => ({
       assets: [],
     }));
 
@@ -273,7 +273,7 @@ describe('link', () => {
       register: registerIOSNativeModule,
     });
 
-    jest.doMock('../../core/getPlatforms', () => {
+    jest.doMock('../../tools/getPlatforms', () => {
       const fn = () => ({
         android: { linkConfig: genericAndroidLinkConfig },
         ios: { linkConfig: genericIOSLinkConfig },

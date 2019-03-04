@@ -4,10 +4,10 @@ import type {
   PlatformsT,
   ProjectConfigT,
   DependenciesConfig,
-} from '../core/types.flow';
+} from '../tools/types.flow';
 import logger from '../util/logger';
 import pollParams from './pollParams';
-import { getPlatformName } from '../core/getPlatforms';
+import { getPlatformName } from '../tools/getPlatforms';
 
 const linkDependency = async (
   platforms: PlatformsT,

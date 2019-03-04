@@ -12,7 +12,7 @@
 import child_process from 'child_process';
 import fs from 'fs';
 import path from 'path';
-import type { ContextT } from '../core/types.flow';
+import type { ContextT } from '../tools/types.flow';
 import findXcodeProject from './findXcodeProject';
 import parseIOSDevicesList from './parseIOSDevicesList';
 import findMatchingSimulator from './findMatchingSimulator';

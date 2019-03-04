@@ -2,9 +2,9 @@
  * @flow
  */
 
-import type { PlatformsT, ContextT, ProjectConfigT } from '../core/types.flow';
+import type { PlatformsT, ContextT, ProjectConfigT } from '../tools/types.flow';
 
-import getPackageConfiguration from '../core/getPackageConfiguration';
+import getPackageConfiguration from '../tools/getPackageConfiguration';
 
 export default function getProjectConfig(
   ctx: ContextT,

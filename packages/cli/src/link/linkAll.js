@@ -2,9 +2,9 @@
 
 import { uniqBy, flatten } from 'lodash';
 import path from 'path';
-import type { ContextT, PlatformsT, ProjectConfigT } from '../core/types.flow';
+import type { ContextT, PlatformsT, ProjectConfigT } from '../tools/types.flow';
 import logger from '../util/logger';
-import getAssets from '../core/getAssets';
+import getAssets from '../tools/getAssets';
 import getProjectDependencies from './getProjectDependencies';
 import getDependencyConfig from './getDependencyConfig';
 import promiseWaterfall from './promiseWaterfall';

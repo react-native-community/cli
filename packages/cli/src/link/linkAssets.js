@@ -1,7 +1,7 @@
 // @flow
 
 import { isEmpty } from 'lodash';
-import type { PlatformsT, ProjectConfigT } from '../core/types.flow';
+import type { PlatformsT, ProjectConfigT } from '../tools/types.flow';
 
 import logger from '../util/logger';
 

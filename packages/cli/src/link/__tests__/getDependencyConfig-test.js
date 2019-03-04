@@ -17,7 +17,7 @@ const platforms = {
   },
 };
 
-jest.setMock('../../core/getPackageConfiguration', folder => {
+jest.setMock('../../tools/getPackageConfiguration', folder => {
   if (folder === '/root/node_modules/abcd') {
     throw new Error('Cannot require');
   }

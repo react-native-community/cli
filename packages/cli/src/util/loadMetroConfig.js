@@ -5,8 +5,8 @@
 import path from 'path';
 import { createBlacklist } from 'metro';
 import { loadConfig } from 'metro-config';
-import type { ContextT } from '../core/types.flow';
-import findPlugins from '../core/findPlugins';
+import type { ContextT } from '../tools/types.flow';
+import findPlugins from '../tools/findPlugins';
 import findSymlinkedModules from './findSymlinkedModules';
 
 const resolveSymlinksForRoots = roots =>
@@ -48,7 +48,7 @@ export const getDefaultConfig = (ctx: ContextT) => {
     serializer: {
       getModulesRunBeforeMainModule: () => [
         require.resolve(
-          path.join(ctx.reactNativePath, 'Libraries/Core/InitializeCore')
+          path.join(ctx.reactNativePath, 'Libraries/tools/InitializeCore')
         ),
       ],
       getPolyfills: () =>

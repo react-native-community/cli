@@ -11,7 +11,7 @@
 import fs from 'fs';
 import path from 'path';
 import semver from 'semver';
-import type { ContextT } from '../core/types.flow';
+import type { ContextT } from '../tools/types.flow';
 import logger from '../util/logger';
 import copyProjectTemplateAndReplace from '../generator/copyProjectTemplateAndReplace';
 

@@ -15,7 +15,7 @@ import fs from 'fs';
 import isString from 'lodash/isString';
 
 import isPackagerRunning from '../util/isPackagerRunning';
-import type { ContextT } from '../core/types.flow';
+import type { ContextT } from '../tools/types.flow';
 
 import adb from './adb';
 import runOnAllDevices from './runOnAllDevices';

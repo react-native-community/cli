@@ -8,7 +8,7 @@
  */
 
 import { pick } from 'lodash';
-import type { ContextT } from '../core/types.flow';
+import type { ContextT } from '../tools/types.flow';
 
 import promiseWaterfall from './promiseWaterfall';
 import logger from '../util/logger';
@@ -20,7 +20,7 @@ import linkDependency from './linkDependency';
 import linkAssets from './linkAssets';
 import linkAll from './linkAll';
 import findReactNativeScripts from '../util/findReactNativeScripts';
-import getPlatforms from '../core/getPlatforms';
+import getPlatforms from '../tools/getPlatforms';
 
 type FlagsType = {
   platforms?: Array<string>,

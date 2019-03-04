@@ -7,12 +7,12 @@ import type {
   PlatformsT,
   ContextT,
   DependenciesConfig,
-} from '../core/types.flow';
+} from '../tools/types.flow';
 
-import getPackageConfiguration from '../core/getPackageConfiguration';
-import getParams from '../core/getParams';
-import getHooks from '../core/getHooks';
-import getAssets from '../core/getAssets';
+import getPackageConfiguration from '../tools/getPackageConfiguration';
+import getParams from '../tools/getParams';
+import getHooks from '../tools/getHooks';
+import getAssets from '../tools/getAssets';
 
 export default function getDependencyConfig(
   ctx: ContextT,

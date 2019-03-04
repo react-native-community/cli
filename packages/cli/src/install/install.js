@@ -7,7 +7,7 @@
  * @flow
  */
 
-import type { ContextT } from '../core/types.flow';
+import type { ContextT } from '../tools/types.flow';
 import logger from '../util/logger';
 import PackageManager from '../util/PackageManager';
 import link from '../link/link';

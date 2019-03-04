@@ -12,7 +12,7 @@ import Server from 'metro/src/Server';
 import outputBundle from 'metro/src/shared/output/bundle';
 import path from 'path';
 import type { CommandLineArgs } from './bundleCommandLineArgs';
-import type { ContextT } from '../core/types.flow';
+import type { ContextT } from '../tools/types.flow';
 import saveAssets from './saveAssets';
 import loadMetroConfig from '../util/loadMetroConfig';
 import logger from '../util/logger';

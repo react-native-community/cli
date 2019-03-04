@@ -5,7 +5,7 @@ import fs from 'fs';
 import chalk from 'chalk';
 import semver from 'semver';
 import execa from 'execa';
-import type { ContextT } from '../core/types.flow';
+import type { ContextT } from '../tools/types.flow';
 import logger from '../util/logger';
 import PackageManager from '../util/PackageManager';
 import { fetch } from './helpers';

@@ -8,7 +8,7 @@
  */
 
 import { flatten, isEmpty, difference } from 'lodash';
-import type { ContextT } from '../core/types.flow';
+import type { ContextT } from '../tools/types.flow';
 import logger from '../util/logger';
 import getProjectConfig from './getProjectConfig';
 import getDependencyConfig from './getDependencyConfig';
@@ -16,7 +16,7 @@ import getProjectDependencies from './getProjectDependencies';
 import promiseWaterfall from './promiseWaterfall';
 import commandStub from './commandStub';
 import promisify from './promisify';
-import getPlatforms, { getPlatformName } from '../core/getPlatforms';
+import getPlatforms, { getPlatformName } from '../tools/getPlatforms';
 
 const unlinkDependency = (
   platforms,

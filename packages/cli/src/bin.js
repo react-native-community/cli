@@ -6,25 +6,9 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
+ * @flow
  */
 
-import chalk from 'chalk';
-import isInstalledGlobally from './util/isInstalledGlobally';
-import logger from './util/logger';
 import cliEntry from '.';
 
-if (isInstalledGlobally()) {
-  logger.error(
-    [
-      'Looks like you installed react-native globally, maybe you meant react-native-cli? ',
-      'To fix the issue, run: ',
-      chalk.white(
-        'npm uninstall -g react-native && npm install -g react-native-cli'
-      ),
-    ].join('\n')
-  );
-  process.exit(1);
-} else {
-  cliEntry.run();
-}
+cliEntry.run();

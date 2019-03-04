@@ -18,7 +18,7 @@ export type LocalCommandT = {
     command: string,
     description?: string,
     parse?: (val: string) => any,
-    default?: ((ctx: ContextT) => mixed) | mixed,
+    default?: string | boolean | number,
   }>,
   examples?: Array<{
     desc: string,

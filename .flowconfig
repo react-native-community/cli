@@ -42,6 +42,7 @@ module.ignore_non_literal_requires=true
 [lints]
 all=warn
 unnecessary-optional-chain=off
+dynamic-export=off
 
 # There is an ESLint rule for this
 unclear-type=off
@@ -64,4 +65,4 @@ untyped-import
 untyped-type-import
 
 [version]
-^0.87.0
+^0.94.0

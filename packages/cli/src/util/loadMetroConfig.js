@@ -2,7 +2,6 @@
  * Configuration file of Metro.
  * @flow
  */
-import type { ConfigT } from 'metro-config/src/configTypes.flow';
 import path from 'path';
 import { createBlacklist } from 'metro';
 import { loadConfig } from 'metro-config';
@@ -90,7 +89,7 @@ export default async function load(
   ctx: ContextT,
   // $FlowFixMe - troubles with empty object being inexact
   options?: ConfigOptionsT = {}
-): Promise<ConfigT> {
+) {
   const defaultConfig = getDefaultConfig(ctx);
 
   const config = await loadConfig(

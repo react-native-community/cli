@@ -10,6 +10,5 @@ import type { PackageConfigurationT } from './types.flow';
 export default function getPackageConfiguration(
   folder: string
 ): PackageConfigurationT {
-  // $FlowFixMe: Non-literal require
   return require(path.join(folder, './package.json')).rnpm || {};
 }

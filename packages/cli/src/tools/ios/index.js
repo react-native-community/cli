@@ -11,7 +11,7 @@ import path from 'path';
 import findProject from './findProject';
 import findPodfilePath from './findPodfilePath';
 import findPodspecName from './findPodspecName';
-import linkConfigIos from '../../link/ios';
+import linkConfigIos from '../../commands/link/ios';
 
 export const linkConfig = linkConfigIos;
 

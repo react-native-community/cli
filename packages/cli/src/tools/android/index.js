@@ -12,7 +12,7 @@ import findAndroidAppFolder from './findAndroidAppFolder';
 import findManifest from './findManifest';
 import findPackageClassName from './findPackageClassName';
 import readManifest from './readManifest';
-import linkConfigAndroid from '../../link/android';
+import linkConfigAndroid from '../../commands/link/android';
 
 export const linkConfig = linkConfigAndroid;
 

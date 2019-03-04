@@ -13,11 +13,11 @@ import commander from 'commander';
 import minimist from 'minimist';
 import path from 'path';
 import type { CommandT, ContextT } from './tools/types.flow';
-import getCommands from './tools/getCommands';
 import getLegacyConfig from './tools/getLegacyConfig';
-import init from './init/init';
-import assertRequiredOptions from './util/assertRequiredOptions';
-import logger from './util/logger';
+import { getCommands } from './commands';
+import init from './commands/init/init';
+import assertRequiredOptions from './tools/assertRequiredOptions';
+import logger from './tools/logger';
 import pkg from '../package.json';
 
 commander

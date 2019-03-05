@@ -8,7 +8,7 @@
  */
 
 // gracefulify() has to be called before anything else runs
-import './util/gracefulifyFs';
+import './tools/gracefulifyFs';
 import cli from './cliEntry';
 
 if (require.main === module) {

@@ -12,12 +12,12 @@ import childProcess from 'child_process';
 import commander from 'commander';
 import minimist from 'minimist';
 import path from 'path';
-import type { CommandT, ContextT } from './core/types.flow';
-import getCommands from './core/getCommands';
-import getLegacyConfig from './core/getLegacyConfig';
-import init from './init/init';
-import assertRequiredOptions from './util/assertRequiredOptions';
-import logger from './util/logger';
+import type { CommandT, ContextT } from './tools/types.flow';
+import getLegacyConfig from './tools/getLegacyConfig';
+import { getCommands } from './commands';
+import init from './commands/init/init';
+import assertRequiredOptions from './tools/assertRequiredOptions';
+import logger from './tools/logger';
 import pkg from '../package.json';
 
 commander

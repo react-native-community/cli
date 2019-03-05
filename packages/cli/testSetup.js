@@ -1,2 +1,2 @@
 // @flow
-jest.mock('./src/util/logger');
+jest.mock('./src/tools/logger');

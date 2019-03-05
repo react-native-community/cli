@@ -27,7 +27,7 @@ describe('parseIOSDevicesList', () => {
         'Blank',
         'System Usage',
         'Zombies',
-      ].join('\n')
+      ].join('\n'),
     );
 
     expect(devices).toEqual([
@@ -41,7 +41,7 @@ describe('parseIOSDevicesList', () => {
 
   it('ignores garbage', () => {
     expect(parseIOSDevicesList('Something went terribly wrong (-42)')).toEqual(
-      []
+      [],
     );
   });
 });

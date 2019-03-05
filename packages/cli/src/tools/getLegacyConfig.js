@@ -22,7 +22,7 @@ const generateDeprecationMessage = api =>
 export default (root: string) => ({
   getPlatformConfig: util.deprecate(
     () => getPlatforms(root),
-    generateDeprecationMessage('getPlatformConfig()')
+    generateDeprecationMessage('getPlatformConfig()'),
   ),
   getProjectConfig: util.deprecate(() => {
     const platforms = getPlatforms(root);

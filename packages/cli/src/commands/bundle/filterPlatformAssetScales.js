@@ -14,7 +14,7 @@ const ALLOWED_SCALES = {
 
 function filterPlatformAssetScales(
   platform: string,
-  scales: $ReadOnlyArray<number>
+  scales: $ReadOnlyArray<number>,
 ): $ReadOnlyArray<number> {
   const whitelist = ALLOWED_SCALES[platform];
   if (!whitelist) {

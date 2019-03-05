@@ -23,7 +23,7 @@ export default function copyAssetsAndroid(files, project) {
   (assets.font || []).forEach(asset =>
     fs.copySync(
       asset,
-      path.join(project.assetsPath, 'fonts', path.basename(asset))
-    )
+      path.join(project.assetsPath, 'fonts', path.basename(asset)),
+    ),
   );
 }

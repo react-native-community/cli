@@ -23,7 +23,7 @@ describe('findXcodeProject', () => {
         'PodFile',
         'Podfile.lock',
         'Pods',
-      ])
+      ]),
     ).toEqual({
       name: 'AwesomeApp.xcodeproj',
       isWorkspace: false,
@@ -41,7 +41,7 @@ describe('findXcodeProject', () => {
         'PodFile',
         'Podfile.lock',
         'Pods',
-      ])
+      ]),
     ).toEqual({
       name: 'AwesomeApp.xcworkspace',
       isWorkspace: true,
@@ -57,7 +57,7 @@ describe('findXcodeProject', () => {
         'PodFile',
         'Podfile.lock',
         'Pods',
-      ])
+      ]),
     ).toEqual(null);
   });
 });

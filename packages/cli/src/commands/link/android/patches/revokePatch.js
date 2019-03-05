@@ -12,6 +12,6 @@ import fs from 'fs';
 export default function revokePatch(file, patch) {
   fs.writeFileSync(
     file,
-    fs.readFileSync(file, 'utf8').replace(patch.patch, '')
+    fs.readFileSync(file, 'utf8').replace(patch.patch, ''),
   );
 }

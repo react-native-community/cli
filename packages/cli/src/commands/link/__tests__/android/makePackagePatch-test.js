@@ -5,8 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-/* eslint-disable no-template-curly-in-string */
-
 import makePackagePatch from '../../android/patches/makePackagePatch';
 import applyParams from '../../android/patches/applyParams';
 
@@ -24,7 +22,7 @@ describe('makePackagePatch@0.20', () => {
   });
 
   it('MainActivity contains a correct 0.20 import patch', () => {
-    const { patch } = makePackagePatch(packageInstance, params, name);
+    const {patch} = makePackagePatch(packageInstance, params, name);
     const processedInstance = applyParams(packageInstance, params, name);
 
     expect(patch).toBe(`,\n            ${processedInstance}`);

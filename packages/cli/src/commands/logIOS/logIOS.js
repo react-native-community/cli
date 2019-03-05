@@ -7,7 +7,7 @@
  * @format
  */
 
-import { execFileSync, spawnSync } from 'child_process';
+import {execFileSync, spawnSync} from 'child_process';
 import os from 'os';
 import path from 'path';
 import logger from '../../tools/logger';
@@ -30,10 +30,10 @@ async function logIOS() {
   const rawDevices = execFileSync(
     'xcrun',
     ['simctl', 'list', 'devices', '--json'],
-    { encoding: 'utf8' }
+    {encoding: 'utf8'},
   );
 
-  const { devices } = JSON.parse(rawDevices);
+  const {devices} = JSON.parse(rawDevices);
 
   const device = findAvailableDevice(devices);
   if (device === undefined) {
@@ -51,7 +51,7 @@ function tailDeviceLogs(udid) {
     'Logs',
     'CoreSimulator',
     udid,
-    'asl'
+    'asl',
   );
 
   const log = spawnSync('syslog', ['-w', '-F', 'std', '-d', logDir], {

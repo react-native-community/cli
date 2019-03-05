@@ -24,7 +24,7 @@ const info = function getInfo(argv, ctx, options) {
               !options.packages.includes('*')) ||
             !options.packages
               ? ['react', 'react-native'].concat(
-                  (options.packages || '').split(',')
+                  (options.packages || '').split(','),
                 )
               : options.packages,
           npmGlobalPackages: '*react-native*',
@@ -32,7 +32,7 @@ const info = function getInfo(argv, ctx, options) {
         {
           clipboard: !!options.clipboard,
           title: 'React Native Environment Info',
-        }
+        },
       )
       .then(logger.info)
       .catch(err => {

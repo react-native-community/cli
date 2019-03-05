@@ -13,7 +13,7 @@ import connect from 'connect';
 import errorhandler from 'errorhandler';
 import path from 'path';
 import serveStatic from 'serve-static';
-import { Server as WebSocketServer } from 'ws';
+import {Server as WebSocketServer} from 'ws';
 
 import indexPageMiddleware from './indexPage';
 import copyToClipBoardMiddleware from './copyToClipBoardMiddleware';
@@ -68,7 +68,7 @@ export default class MiddlewareManager {
 
   attachDevToolsSocket(socket: WebSocketProxy) {
     this.app.use(
-      getDevToolsMiddleware(this.options, () => socket.isChromeConnected())
+      getDevToolsMiddleware(this.options, () => socket.isChromeConnected()),
     );
   }
 }

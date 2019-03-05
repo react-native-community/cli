@@ -7,8 +7,8 @@
  * @flow
  */
 
-import { flatten, isEmpty, difference } from 'lodash';
-import type { ContextT } from '../../tools/types.flow';
+import {flatten, isEmpty, difference} from 'lodash';
+import type {ContextT} from '../../tools/types.flow';
 import logger from '../../tools/logger';
 import getProjectConfig from './getProjectConfig';
 import getDependencyConfig from './getDependencyConfig';
@@ -16,14 +16,14 @@ import getProjectDependencies from './getProjectDependencies';
 import promiseWaterfall from './promiseWaterfall';
 import commandStub from './commandStub';
 import promisify from './promisify';
-import getPlatforms, { getPlatformName } from '../../tools/getPlatforms';
+import getPlatforms, {getPlatformName} from '../../tools/getPlatforms';
 
 const unlinkDependency = (
   platforms,
   project,
   dependency,
   packageName,
-  otherDependencies
+  otherDependencies,
 ) => {
   Object.keys(platforms || {}).forEach(platform => {
     if (!project[platform] || !dependency.config[platform]) {
@@ -42,18 +42,18 @@ const unlinkDependency = (
     const isInstalled = linkConfig.isInstalled(
       project[platform],
       packageName,
-      dependency.config[platform]
+      dependency.config[platform],
     );
 
     if (!isInstalled) {
       logger.info(
-        `${getPlatformName(platform)} module "${packageName}" is not installed`
+        `${getPlatformName(platform)} module "${packageName}" is not installed`,
       );
       return;
     }
 
     logger.info(
-      `Unlinking "${packageName}" ${getPlatformName(platform)} dependency`
+      `Unlinking "${packageName}" ${getPlatformName(platform)} dependency`,
     );
 
     linkConfig.unregister(
@@ -62,13 +62,13 @@ const unlinkDependency = (
       dependency.config[platform],
       // $FlowFixMe: We check for existence on line 38
       project[platform],
-      otherDependencies
+      otherDependencies,
     );
 
     logger.info(
       `${getPlatformName(platform)} module "${
         dependency.name
-      }" has been successfully unlinked`
+      }" has been successfully unlinked`,
     );
   });
 };
@@ -88,13 +88,13 @@ function unlink(args: Array<string>, ctx: ContextT) {
     platforms = getPlatforms(ctx.root);
   } catch (err) {
     logger.error(
-      "No package.json found. Are you sure it's a React Native project?"
+      "No package.json found. Are you sure it's a React Native project?",
     );
     return Promise.reject(err);
   }
 
   const allDependencies = getProjectDependencies(ctx.root).map(dependency =>
-    getDependencyConfig(ctx, platforms, dependency)
+    getDependencyConfig(ctx, platforms, dependency),
   );
   let otherDependencies;
   let dependency;
@@ -107,7 +107,7 @@ function unlink(args: Array<string>, ctx: ContextT) {
     }
 
     otherDependencies = [...allDependencies];
-    dependency = otherDependencies.splice(idx, 1)[0]; // eslint-disable-line prefer-destructuring
+    dependency = otherDependencies.splice(idx, 1)[0];
   } catch (err) {
     return Promise.reject(err);
   }
@@ -122,7 +122,7 @@ function unlink(args: Array<string>, ctx: ContextT) {
         project,
         dependency,
         packageName,
-        otherDependencies
+        otherDependencies,
       ),
     () => promisify(dependency.commands.postunlink || commandStub),
   ];
@@ -133,7 +133,7 @@ function unlink(args: Array<string>, ctx: ContextT) {
       // link
       const assets = difference(
         dependency.assets,
-        flatten(allDependencies, d => d.assets)
+        flatten(allDependencies, d => d.assets),
       );
 
       if (isEmpty(assets)) {
@@ -155,12 +155,12 @@ function unlink(args: Array<string>, ctx: ContextT) {
       });
 
       logger.info(
-        `${packageName} assets has been successfully unlinked from your project`
+        `${packageName} assets has been successfully unlinked from your project`,
       );
     })
     .catch(err => {
       logger.error(
-        `It seems something went wrong while unlinking. Error:\n${err.message}`
+        `It seems something went wrong while unlinking. Error:\n${err.message}`,
       );
       throw err;
     });

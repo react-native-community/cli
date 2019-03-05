@@ -14,7 +14,7 @@ import copyAssets from './copyAssets';
 import unlinkAssets from './unlinkAssets';
 
 export function getIOSLinkConfig() {
-  return { isInstalled, register, unregister, copyAssets, unlinkAssets };
+  return {isInstalled, register, unregister, copyAssets, unlinkAssets};
 }
 
 export default getIOSLinkConfig;

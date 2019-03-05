@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { spawnSync } from 'child_process';
+import {spawnSync} from 'child_process';
 import logger from '../../tools/logger';
 
 /**
@@ -20,7 +20,7 @@ async function logAndroid() {
 
   logger.info(`Starting the logger (${adbPath} ${adbArgs.join(' ')})...`);
 
-  const log = spawnSync(adbPath, adbArgs, { stdio: 'inherit' });
+  const log = spawnSync(adbPath, adbArgs, {stdio: 'inherit'});
 
   if (log.error !== null) {
     throw log.error;

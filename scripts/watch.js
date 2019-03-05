@@ -10,10 +10,10 @@
  */
 
 const fs = require('fs');
-const { execSync } = require('child_process');
+const {execSync} = require('child_process');
 const path = require('path');
 const chalk = require('chalk');
-const { getPackages } = require('./helpers');
+const {getPackages} = require('./helpers');
 
 const BUILD_CMD = `node ${path.resolve(__dirname, './build.js')}`;
 
@@ -33,7 +33,7 @@ getPackages().forEach(p => {
   const srcDir = path.resolve(p, 'src');
   try {
     fs.accessSync(srcDir, fs.F_OK);
-    fs.watch(path.resolve(p, 'src'), { recursive: true }, (event, filename) => {
+    fs.watch(path.resolve(p, 'src'), {recursive: true}, (event, filename) => {
       const filePath = path.resolve(srcDir, filename);
 
       if ((event === 'change' || event === 'rename') && exists(filePath)) {
@@ -47,8 +47,8 @@ getPackages().forEach(p => {
             `${chalk.red('  \u2022 ') +
               path.relative(
                 path.resolve(srcDir, '..', '..'),
-                buildFile
-              )} (deleted)\n`
+                buildFile,
+              )} (deleted)\n`,
           );
         } catch (e) {
           // omit
@@ -65,7 +65,7 @@ setInterval(() => {
   if (files.length) {
     filesToBuild = new Map();
     try {
-      execSync(`${BUILD_CMD} ${files.join(' ')}`, { stdio: [0, 1, 2] });
+      execSync(`${BUILD_CMD} ${files.join(' ')}`, {stdio: [0, 1, 2]});
     } catch (e) {
       // omit
     }

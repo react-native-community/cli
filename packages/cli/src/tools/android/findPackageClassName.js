@@ -18,7 +18,7 @@ import path from 'path';
  * @param {String} folder Folder to find java/kt files
  */
 export default function getPackageClassName(folder) {
-  const files = glob.sync('**/+(*.java|*.kt)', { cwd: folder });
+  const files = glob.sync('**/+(*.java|*.kt)', {cwd: folder});
 
   const packages = files
     .map(filePath => fs.readFileSync(path.join(folder, filePath), 'utf8'))

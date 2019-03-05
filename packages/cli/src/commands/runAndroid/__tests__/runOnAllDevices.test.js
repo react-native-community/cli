@@ -14,7 +14,7 @@ jest.mock('child_process', () => ({
 }));
 
 jest.mock('../getAdbPath');
-const { execFileSync } = require('child_process');
+const {execFileSync} = require('child_process');
 
 describe('--appFolder', () => {
   beforeEach(() => {
@@ -56,7 +56,7 @@ describe('--appFolder', () => {
     });
 
     expect(execFileSync.mock.calls[2][1]).toContain(
-      'anotherApp:installStaging'
+      'anotherApp:installStaging',
     );
   });
 

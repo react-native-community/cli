@@ -10,7 +10,7 @@
 import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
-import { execSync, spawn } from 'child_process';
+import {execSync, spawn} from 'child_process';
 import shellQuote from 'shell-quote';
 import logger from '../../tools/logger';
 
@@ -80,7 +80,7 @@ function getArgumentsForLineNumber(editor, fileName, lineNumber, workspace) {
     case 'code':
       return addWorkspaceToArgumentsIfExists(
         ['-g', `${fileName}:${lineNumber}`],
-        workspace
+        workspace,
       );
     // For all others, drop the lineNumber until we have
     // a mapping above, since providing the lineNumber incorrectly
@@ -136,7 +136,7 @@ function printInstructions(title) {
       '  export REACT_EDITOR=atom to your ~/.bashrc or ~/.zshrc depending on ',
       '  which shell you use.',
       '',
-    ].join('\n')
+    ].join('\n'),
   );
 }
 
@@ -167,7 +167,7 @@ function launchEditor(fileName, lineNumber, projectRoots) {
     return;
   }
 
-  let [editor, ...args] = guessEditor(); // eslint-disable-line prefer-const
+  let [editor, ...args] = guessEditor();
   if (!editor) {
     printInstructions('PRO TIP');
     return;
@@ -176,7 +176,7 @@ function launchEditor(fileName, lineNumber, projectRoots) {
   const workspace = findRootForFile(projectRoots, fileName);
   if (lineNumber) {
     args = args.concat(
-      getArgumentsForLineNumber(editor, fileName, lineNumber, workspace)
+      getArgumentsForLineNumber(editor, fileName, lineNumber, workspace),
     );
   } else {
     args.push(fileName);
@@ -195,13 +195,13 @@ function launchEditor(fileName, lineNumber, projectRoots) {
       'When running on Windows, file names are checked against a whitelist ' +
         'to protect against remote code execution attacks. File names may ' +
         'consist only of alphanumeric characters (all languages), periods, ' +
-        'dashes, slashes, and underscores.'
+        'dashes, slashes, and underscores.',
     );
     return;
   }
 
   logger.info(
-    `Opening ${chalk.underline(fileName)} with ${chalk.bold(editor)}`
+    `Opening ${chalk.underline(fileName)} with ${chalk.bold(editor)}`,
   );
 
   if (_childProcess && isTerminalEditor(editor)) {
@@ -218,7 +218,7 @@ function launchEditor(fileName, lineNumber, projectRoots) {
       stdio: 'inherit',
     });
   } else {
-    _childProcess = spawn(editor, args, { stdio: 'inherit' });
+    _childProcess = spawn(editor, args, {stdio: 'inherit'});
   }
   _childProcess.on('exit', errorCode => {
     _childProcess = null;

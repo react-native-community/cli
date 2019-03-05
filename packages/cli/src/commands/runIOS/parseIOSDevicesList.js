@@ -26,7 +26,7 @@ function parseIOSDevicesList(text: string): Array<IOSDeviceInfo> {
       const name = device[1];
       const version = device[2];
       const udid = device[3];
-      devices.push({ udid, name, version });
+      devices.push({udid, name, version});
     }
   });
 

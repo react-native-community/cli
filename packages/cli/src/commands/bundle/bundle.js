@@ -28,4 +28,4 @@ export default {
 
 const withOutput = bundleWithOutput;
 
-export { withOutput };
+export {withOutput};

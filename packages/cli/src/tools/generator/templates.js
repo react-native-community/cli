@@ -8,7 +8,7 @@
  * @flow
  */
 
-import { execSync } from 'child_process';
+import {execSync} from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import copyProjectTemplateAndReplace from './copyProjectTemplateAndReplace';
@@ -26,7 +26,7 @@ function createProjectFromTemplate(
   destPath: string,
   newProjectName: string,
   template: string,
-  destinationRoot: string
+  destinationRoot: string,
 ) {
   const templatePath = path.dirname(require.resolve('react-native/template'));
   copyProjectTemplateAndReplace(templatePath, destPath, newProjectName);
@@ -56,7 +56,7 @@ function createFromRemoteTemplate(
   template: string,
   destPath: string,
   newProjectName: string,
-  destinationRoot: string
+  destinationRoot: string,
 ) {
   let installPackage;
   let templateName;
@@ -72,7 +72,7 @@ function createFromRemoteTemplate(
 
   // Check if the template exists
   logger.info(`Fetching template ${installPackage}...`);
-  const packageManager = new PackageManager({ projectDir: destinationRoot });
+  const packageManager = new PackageManager({projectDir: destinationRoot});
   try {
     packageManager.install([installPackage]);
     const templatePath = path.resolve('node_modules', templateName);
@@ -98,7 +98,7 @@ function createFromRemoteTemplate(
       // if this the clean up fails.
       logger.warn(
         `Failed to clean up template temp files in node_modules/${templateName}. ` +
-          'This is not a critical error, you can work on your app.'
+          'This is not a critical error, you can work on your app.',
       );
     }
   }
@@ -119,17 +119,17 @@ function installTemplateDependencies(templatePath, destinationRoot) {
     dependencies = require(dependenciesJsonPath);
   } catch (err) {
     throw new Error(
-      `Could not parse the template's dependencies.json: ${err.message}`
+      `Could not parse the template's dependencies.json: ${err.message}`,
     );
   }
   const dependenciesToInstall = Object.keys(dependencies).map(
-    depName => `${depName}@${dependencies[depName]}`
+    depName => `${depName}@${dependencies[depName]}`,
   );
-  new PackageManager({ projectDir: destinationRoot }).install(
-    dependenciesToInstall
+  new PackageManager({projectDir: destinationRoot}).install(
+    dependenciesToInstall,
   );
   logger.info("Linking native dependencies into the project's build files...");
-  execSync('react-native link', { stdio: 'inherit' });
+  execSync('react-native link', {stdio: 'inherit'});
 }
 
 function installTemplateDevDependencies(templatePath, destinationRoot) {
@@ -137,7 +137,7 @@ function installTemplateDevDependencies(templatePath, destinationRoot) {
   // that are required by this template
   const devDependenciesJsonPath = path.resolve(
     templatePath,
-    'devDependencies.json'
+    'devDependencies.json',
   );
   logger.info('Adding develop dependencies for the project...');
   if (!fs.existsSync(devDependenciesJsonPath)) {
@@ -150,16 +150,16 @@ function installTemplateDevDependencies(templatePath, destinationRoot) {
     dependencies = require(devDependenciesJsonPath);
   } catch (err) {
     throw new Error(
-      `Could not parse the template's devDependencies.json: ${err.message}`
+      `Could not parse the template's devDependencies.json: ${err.message}`,
     );
   }
 
   const dependenciesToInstall = Object.keys(dependencies).map(
-    depName => `${depName}@${dependencies[depName]}`
+    depName => `${depName}@${dependencies[depName]}`,
   );
-  new PackageManager({ projectDir: destinationRoot }).installDev(
-    dependenciesToInstall
+  new PackageManager({projectDir: destinationRoot}).installDev(
+    dependenciesToInstall,
   );
 }
 
-export { createProjectFromTemplate };
+export {createProjectFromTemplate};

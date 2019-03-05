@@ -3,16 +3,16 @@
  * @flow
  */
 import path from 'path';
-import { createBlacklist } from 'metro';
-import { loadConfig } from 'metro-config';
-import type { ContextT } from './types.flow';
+import {createBlacklist} from 'metro';
+import {loadConfig} from 'metro-config';
+import type {ContextT} from './types.flow';
 import findPlugins from './findPlugins';
 import findSymlinkedModules from './findSymlinkedModules';
 
 const resolveSymlinksForRoots = roots =>
   roots.reduce<string[]>(
     (arr, rootPath) => arr.concat(findSymlinkedModules(rootPath, roots)),
-    [...roots]
+    [...roots],
   );
 
 const getWatchFolders = () => {
@@ -48,7 +48,7 @@ export const getDefaultConfig = (ctx: ContextT) => {
     serializer: {
       getModulesRunBeforeMainModule: () => [
         require.resolve(
-          path.join(ctx.reactNativePath, 'Libraries/tools/InitializeCore')
+          path.join(ctx.reactNativePath, 'Libraries/tools/InitializeCore'),
         ),
       ],
       getPolyfills: () =>
@@ -59,11 +59,11 @@ export const getDefaultConfig = (ctx: ContextT) => {
     },
     transformer: {
       babelTransformerPath: require.resolve(
-        'metro-react-native-babel-transformer'
+        'metro-react-native-babel-transformer',
       ),
       assetRegistryPath: path.join(
         ctx.reactNativePath,
-        'Libraries/Image/AssetRegistry'
+        'Libraries/Image/AssetRegistry',
       ),
     },
     watchFolders: getWatchFolders(),
@@ -76,7 +76,7 @@ export type ConfigOptionsT = {|
   resetCache?: boolean,
   watchFolders?: string[],
   sourceExts?: string[],
-  reporter?: any, // eslint-disable-line flowtype/no-weak-types
+  reporter?: any,
   config?: string,
 |};
 
@@ -85,10 +85,10 @@ export type ConfigOptionsT = {|
  *
  * This allows the CLI to always overwrite the file settings.
  */
-export default async function load(
+export default (async function load(
   ctx: ContextT,
   // $FlowFixMe - troubles with empty object being inexact
-  options?: ConfigOptionsT = {}
+  options?: ConfigOptionsT = {},
 ) {
   const defaultConfig = getDefaultConfig(ctx);
 
@@ -97,8 +97,8 @@ export default async function load(
       cwd: ctx.root,
       ...options,
     },
-    defaultConfig
+    defaultConfig,
   );
 
   return config;
-}
+});

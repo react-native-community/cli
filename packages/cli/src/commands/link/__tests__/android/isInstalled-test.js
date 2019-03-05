@@ -15,7 +15,7 @@ const path = require('path');
 const projectConfig = {
   buildGradlePath: path.join(
     __dirname,
-    '../../__fixtures__/android/patchedBuild.gradle'
+    '../../__fixtures__/android/patchedBuild.gradle',
   ),
 };
 
@@ -37,6 +37,6 @@ describe('android::isInstalled', () => {
     'properly detects if %p project is already in build.gradle',
     (project, isPresent) => {
       expect(isInstalled(projectConfig, project)).toBe(isPresent);
-    }
+    },
   );
 });

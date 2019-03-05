@@ -3,7 +3,7 @@
  */
 
 import path from 'path';
-import type { PlatformsT } from './types.flow';
+import type {PlatformsT} from './types.flow';
 
 import findPlugins from './findPlugins';
 
@@ -35,9 +35,9 @@ export default function getPlatforms(root: string): PlatformsT {
     (acc, pathToPlatform) =>
       Object.assign(
         acc,
-        require(path.join(root, 'node_modules', pathToPlatform))
+        require(path.join(root, 'node_modules', pathToPlatform)),
       ),
-    {}
+    {},
   );
 
   return {

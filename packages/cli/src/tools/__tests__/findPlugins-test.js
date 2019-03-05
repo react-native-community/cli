@@ -24,9 +24,9 @@ describe('findPlugins', () => {
     jest.doMock(
       pjsonPath,
       () => ({
-        dependencies: { 'rnpm-plugin-test': '*' },
+        dependencies: {'rnpm-plugin-test': '*'},
       }),
-      { virtual: true }
+      {virtual: true},
     );
 
     expect(findPlugins(ROOT)).toHaveProperty('commands');
@@ -37,7 +37,7 @@ describe('findPlugins', () => {
   });
 
   it('returns an empty array if there are no plugins in this folder', () => {
-    jest.doMock(pjsonPath, () => ({}), { virtual: true });
+    jest.doMock(pjsonPath, () => ({}), {virtual: true});
     expect(findPlugins(ROOT)).toHaveProperty('commands');
     expect(findPlugins(ROOT)).toHaveProperty('platforms');
     expect(findPlugins(ROOT).commands).toHaveLength(0);
@@ -55,10 +55,10 @@ describe('findPlugins', () => {
     jest.doMock(
       pjsonPath,
       () => ({
-        dependencies: { 'rnpm-plugin-test': '*' },
-        devDependencies: { 'rnpm-plugin-test-2': '*' },
+        dependencies: {'rnpm-plugin-test': '*'},
+        devDependencies: {'rnpm-plugin-test-2': '*'},
       }),
-      { virtual: true }
+      {virtual: true},
     );
     expect(findPlugins(ROOT)).toHaveProperty('commands');
     expect(findPlugins(ROOT)).toHaveProperty('platforms');
@@ -70,10 +70,10 @@ describe('findPlugins', () => {
     jest.doMock(
       pjsonPath,
       () => ({
-        dependencies: { 'rnpm-plugin-test': '*' },
-        devDependencies: { 'rnpm-plugin-test': '*' },
+        dependencies: {'rnpm-plugin-test': '*'},
+        devDependencies: {'rnpm-plugin-test': '*'},
       }),
-      { virtual: true }
+      {virtual: true},
     );
     expect(findPlugins(ROOT).commands).toHaveLength(1);
   });
@@ -89,7 +89,7 @@ describe('findPlugins', () => {
           '@react-native-org/test': '*',
         },
       }),
-      { virtual: true }
+      {virtual: true},
     );
 
     expect(findPlugins(ROOT)).toHaveProperty('commands');

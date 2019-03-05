@@ -15,11 +15,11 @@ function launchChromeDevTools(port, args = '') {
   launchChrome(debuggerURL);
 }
 
-function launchDevTools({ port, watchFolders }, isChromeConnected) {
+function launchDevTools({port, watchFolders}, isChromeConnected) {
   // Explicit config always wins
   const customDebugger = process.env.REACT_DEBUGGER;
   if (customDebugger) {
-    customDebugger({ watchFolders, customDebugger });
+    customDebugger({watchFolders, customDebugger});
   } else if (!isChromeConnected()) {
     // Dev tools are not yet open; we need to open a session
     launchChromeDevTools(port);
@@ -32,7 +32,7 @@ export default function getDevToolsMiddleware(options, isChromeConnected) {
       // TODO: remove `logger.info` and dev tools binary
       logger.info(
         'We removed support for Safari dev-tools. ' +
-          'If you still need this, please let us know.'
+          'If you still need this, please let us know.',
       );
     } else if (req.url === '/launch-chrome-devtools') {
       // TODO: Remove this case in the future
@@ -40,7 +40,7 @@ export default function getDevToolsMiddleware(options, isChromeConnected) {
         'The method /launch-chrome-devtools is deprecated. You are ' +
           ' probably using an application created with an older CLI with the ' +
           ' packager of a newer CLI. Please upgrade your application: ' +
-          'https://facebook.github.io/react-native/docs/upgrading.html'
+          'https://facebook.github.io/react-native/docs/upgrading.html',
       );
       launchDevTools(options, isChromeConnected);
       res.end('OK');

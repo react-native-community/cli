@@ -7,12 +7,12 @@ import type {
 } from '../../tools/types.flow';
 import logger from '../../tools/logger';
 import pollParams from './pollParams';
-import { getPlatformName } from '../../tools/getPlatforms';
+import {getPlatformName} from '../../tools/getPlatforms';
 
 const linkDependency = async (
   platforms: PlatformsT,
   project: ProjectConfigT,
-  dependency: DependenciesConfig
+  dependency: DependenciesConfig,
 ) => {
   const params = await pollParams(dependency.params);
 
@@ -33,20 +33,20 @@ const linkDependency = async (
     const isInstalled = linkConfig.isInstalled(
       project[platform],
       dependency.name,
-      dependency.config[platform]
+      dependency.config[platform],
     );
 
     if (isInstalled) {
       logger.info(
         `${getPlatformName(platform)} module "${
           dependency.name
-        }" is already linked`
+        }" is already linked`,
       );
       return;
     }
 
     logger.info(
-      `Linking "${dependency.name}" ${getPlatformName(platform)} dependency`
+      `Linking "${dependency.name}" ${getPlatformName(platform)} dependency`,
     );
 
     linkConfig.register(
@@ -54,13 +54,13 @@ const linkDependency = async (
       dependency.config[platform] || {},
       params,
       // $FlowFixMe: We check if project[platform] exists on line 42
-      project[platform]
+      project[platform],
     );
 
     logger.info(
       `${getPlatformName(platform)} module "${
         dependency.name
-      }" has been successfully linked`
+      }" has been successfully linked`,
     );
   });
 };

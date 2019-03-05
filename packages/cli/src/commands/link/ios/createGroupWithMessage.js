@@ -24,7 +24,7 @@ export default function createGroupWithMessage(project, path) {
     group = createGroup(project, path);
 
     log.warn(
-      `Group '${path}' does not exist in your Xcode project. We have created it automatically for you.`
+      `Group '${path}' does not exist in your Xcode project. We have created it automatically for you.`,
     );
   }
 

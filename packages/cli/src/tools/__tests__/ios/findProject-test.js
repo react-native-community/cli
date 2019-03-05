@@ -24,22 +24,22 @@ describe('ios::findProject', () => {
   });
 
   it('returns null if there are no projects', () => {
-    fs.__setMockFilesystem({ testDir: projects });
+    fs.__setMockFilesystem({testDir: projects});
     expect(findProject('/')).toBeNull();
   });
 
   it('returns ios project regardless of its name', () => {
-    fs.__setMockFilesystem({ ios: ios.validTestName });
+    fs.__setMockFilesystem({ios: ios.validTestName});
     expect(findProject('/')).not.toBeNull();
   });
 
   it('ignores node_modules', () => {
-    fs.__setMockFilesystem({ node_modules: projects.flat });
+    fs.__setMockFilesystem({node_modules: projects.flat});
     expect(findProject('/')).toBeNull();
   });
 
   it('ignores Pods', () => {
-    fs.__setMockFilesystem({ Pods: projects.flat });
+    fs.__setMockFilesystem({Pods: projects.flat});
     expect(findProject('/')).toBeNull();
   });
 

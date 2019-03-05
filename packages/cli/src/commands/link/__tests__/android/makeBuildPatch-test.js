@@ -18,33 +18,33 @@ const normalizedScopedName = normalizeProjectName('@scoped/test');
 describe('makeBuildPatch', () => {
   it('should build a patch function', () => {
     expect(Object.prototype.toString(makeBuildPatch(name))).toBe(
-      '[object Object]'
+      '[object Object]',
     );
   });
 
   it('should make a correct patch', () => {
-    const { patch } = makeBuildPatch(name);
+    const {patch} = makeBuildPatch(name);
     expect(patch).toBe(`    implementation project(':${name}')\n`);
   });
 
   it('should make a correct install check pattern', () => {
-    const { installPattern } = makeBuildPatch(name);
+    const {installPattern} = makeBuildPatch(name);
     expect(installPattern.toString()).toEqual(expect.stringContaining(name));
   });
 });
 
 describe('makeBuildPatchWithScopedPackage', () => {
   it('should make a correct patch', () => {
-    const { patch } = makeBuildPatch(scopedName);
+    const {patch} = makeBuildPatch(scopedName);
     expect(patch).toBe(
-      `    implementation project(':${normalizedScopedName}')\n`
+      `    implementation project(':${normalizedScopedName}')\n`,
     );
   });
 
   it('should make a correct install check pattern', () => {
-    const { installPattern } = makeBuildPatch(scopedName);
+    const {installPattern} = makeBuildPatch(scopedName);
     expect(installPattern.toString()).toEqual(
-      expect.stringContaining(normalizedScopedName)
+      expect.stringContaining(normalizedScopedName),
     );
   });
 });

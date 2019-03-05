@@ -46,7 +46,7 @@ export default function findProject(folder) {
     })
     .filter(
       project =>
-        path.dirname(project) === IOS_BASE || !TEST_PROJECTS.test(project)
+        path.dirname(project) === IOS_BASE || !TEST_PROJECTS.test(project),
     )
     .sort(project => (path.dirname(project) === IOS_BASE ? -1 : 1));
 

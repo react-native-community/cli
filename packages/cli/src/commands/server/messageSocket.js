@@ -6,7 +6,7 @@
  */
 
 import url from 'url';
-import { Server as WebSocketServer } from 'ws';
+import {Server as WebSocketServer} from 'ws';
 import notifier from 'node-notifier';
 import logger from '../../tools/logger';
 
@@ -23,7 +23,7 @@ function parseMessage(data, binary) {
       return message;
     }
     logger.error(
-      `Received message had wrong protocol version: ${message.version}`
+      `Received message had wrong protocol version: ${message.version}`,
     );
   } catch (e) {
     logger.error(`Failed to parse the message as JSON:\n${data}`);
@@ -66,7 +66,7 @@ function attachToServer(server, path) {
     const clientWs = clients.get(clientId);
     if (clientWs === undefined) {
       throw new Error(
-        `could not find id "${clientId}" while forwarding request`
+        `could not find id "${clientId}" while forwarding request`,
       );
     }
     return clientWs;
@@ -94,7 +94,7 @@ function attachToServer(server, path) {
         } catch (e) {
           logger.error(
             `Failed to send broadcast to client: '${otherId}' ` +
-              `due to:\n ${e.toString()}`
+              `due to:\n ${e.toString()}`,
           );
         }
       }
@@ -117,7 +117,7 @@ function attachToServer(server, path) {
       if (message.id === undefined) {
         logger.error(
           `Handling message from ${clientId} failed with:\n${error}\n` +
-            `message:\n${JSON.stringify(errorMessage)}`
+            `message:\n${JSON.stringify(errorMessage)}`,
         );
       } else {
         try {
@@ -126,13 +126,13 @@ function attachToServer(server, path) {
               version: PROTOCOL_VERSION,
               error,
               id: message.id,
-            })
+            }),
           );
         } catch (e) {
           logger.error(
             `Failed to reply to ${clientId} with error:\n${error}` +
               `\nmessage:\n${JSON.stringify(errorMessage)}` +
-              `\ndue to error: ${e.toString()}`
+              `\ndue to error: ${e.toString()}`,
           );
         }
       }
@@ -161,7 +161,7 @@ function attachToServer(server, path) {
           version: PROTOCOL_VERSION,
           result,
           id: message.id,
-        })
+        }),
       );
     }
 
@@ -174,8 +174,8 @@ function attachToServer(server, path) {
           id:
             message.id === undefined
               ? undefined
-              : { requestId: message.id, clientId },
-        })
+              : {requestId: message.id, clientId},
+        }),
       );
     }
 
@@ -186,18 +186,17 @@ function attachToServer(server, path) {
           result: message.result,
           error: message.error,
           id: message.id.requestId,
-        })
+        }),
       );
     }
 
     clients.set(clientId, clientWs);
     const onCloseHandler = () => {
-      clientWs.onmessage = null; // eslint-disable-line no-param-reassign
+      clientWs.onmessage = null;
       clients.delete(clientId);
     };
-    clientWs.onclose = onCloseHandler; // eslint-disable-line no-param-reassign
-    clientWs.onerror = onCloseHandler; // eslint-disable-line no-param-reassign
-    // eslint-disable-next-line no-param-reassign
+    clientWs.onclose = onCloseHandler;
+    clientWs.onerror = onCloseHandler;
     clientWs.onmessage = event => {
       const message = parseMessage(event.data, event.binary);
       if (message === undefined) {
@@ -227,9 +226,9 @@ function attachToServer(server, path) {
 
   return {
     broadcast: (method, params) => {
-      handleSendBroadcast(null, { method, params });
+      handleSendBroadcast(null, {method, params});
     },
   };
 }
 
-export default { attachToServer, parseMessage };
+export default {attachToServer, parseMessage};

@@ -12,7 +12,7 @@ import minimist from 'minimist';
 import path from 'path';
 import process from 'process';
 import printRunInstructions from '../../tools/generator/printRunInstructions';
-import { createProjectFromTemplate } from '../../tools/generator/templates';
+import {createProjectFromTemplate} from '../../tools/generator/templates';
 import PackageManager from '../../tools/PackageManager';
 import logger from '../../tools/logger';
 
@@ -49,12 +49,11 @@ function init(projectDir, argsOrName) {
  * @param options Command line arguments parsed by minimist.
  */
 function generateProject(destinationRoot, newProjectName, options) {
-  // eslint-disable-next-line import/no-unresolved
   const reactNativePackageJson = require('react-native/package.json');
-  const { peerDependencies } = reactNativePackageJson;
+  const {peerDependencies} = reactNativePackageJson;
   if (!peerDependencies) {
     logger.error(
-      "Missing React peer dependency in React Native's package.json. Aborting."
+      "Missing React peer dependency in React Native's package.json. Aborting.",
     );
     return;
   }
@@ -62,7 +61,7 @@ function generateProject(destinationRoot, newProjectName, options) {
   const reactVersion = peerDependencies.react;
   if (!reactVersion) {
     logger.error(
-      "Missing React peer dependency in React Native's package.json. Aborting."
+      "Missing React peer dependency in React Native's package.json. Aborting.",
     );
     return;
   }
@@ -76,7 +75,7 @@ function generateProject(destinationRoot, newProjectName, options) {
     destinationRoot,
     newProjectName,
     options.template,
-    destinationRoot
+    destinationRoot,
   );
 
   logger.info('Adding required dependencies');
@@ -109,7 +108,7 @@ function addJestToPackageJson(destinationRoot) {
   };
   fs.writeFileSync(
     packageJSONPath,
-    `${JSON.stringify(packageJSON, null, 2)}\n`
+    `${JSON.stringify(packageJSON, null, 2)}\n`,
   );
 }
 

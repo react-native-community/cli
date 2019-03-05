@@ -14,10 +14,10 @@ import removeProjectFromLibraries from '../../ios/removeProjectFromLibraries';
 const xcode = require('xcode');
 const PbxFile = require('xcode/lib/pbxFile');
 const path = require('path');
-const { last } = require('lodash');
+const {last} = require('lodash');
 
 const project = xcode.project(
-  path.join(__dirname, '../../__fixtures__/project.pbxproj')
+  path.join(__dirname, '../../__fixtures__/project.pbxproj'),
 );
 
 describe('ios::removeProjectFromLibraries', () => {
@@ -26,7 +26,7 @@ describe('ios::removeProjectFromLibraries', () => {
 
     addProjectToLibraries(
       project.pbxGroupByName('Libraries'),
-      new PbxFile('fakePath')
+      new PbxFile('fakePath'),
     );
   });
 

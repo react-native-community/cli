@@ -25,7 +25,7 @@ onmessage = (function() {
       console.warn(
         'Remote debugger is in a background tab which may cause apps to ' +
           'perform slowly. Fix this by foregrounding the tab (or opening it in ' +
-          'a separate window).'
+          'a separate window).',
       );
     };
   })();
@@ -56,7 +56,7 @@ onmessage = (function() {
     var object = message.data;
 
     var sendReply = function(result, error) {
-      postMessage({ replyID: object.id, result: result, error: error });
+      postMessage({replyID: object.id, result: result, error: error});
     };
 
     var handler = messageHandlers[object.method];
@@ -71,7 +71,7 @@ onmessage = (function() {
         if (typeof __fbBatchedBridge === 'object') {
           returnValue = __fbBatchedBridge[object.method].apply(
             null,
-            object.arguments
+            object.arguments,
           );
         } else {
           error = 'Failed to call function, __fbBatchedBridge is undefined';

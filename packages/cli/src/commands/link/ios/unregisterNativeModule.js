@@ -10,7 +10,7 @@
 import xcode from 'xcode';
 import path from 'path';
 import fs from 'fs';
-import { difference, isEmpty } from 'lodash';
+import {difference, isEmpty} from 'lodash';
 
 import getGroup from './getGroup';
 import getTargets from './getTargets';
@@ -30,7 +30,7 @@ import removeSharedLibraries from './removeSharedLibraries';
 export default function unregisterNativeModule(
   dependencyConfig,
   projectConfig,
-  iOSDependencies
+  iOSDependencies,
 ) {
   const project = xcode.project(projectConfig.pbxprojPath).parseSync();
   const dependencyProject = xcode
@@ -41,7 +41,7 @@ export default function unregisterNativeModule(
 
   const file = removeProjectFromProject(
     project,
-    path.relative(projectConfig.sourceDir, dependencyConfig.projectPath)
+    path.relative(projectConfig.sourceDir, dependencyConfig.projectPath),
   );
 
   removeProjectFromLibraries(libraries, file);
@@ -56,8 +56,8 @@ export default function unregisterNativeModule(
     dependencyConfig.sharedLibraries,
     iOSDependencies.reduce(
       (libs, dependency) => libs.concat(dependency.sharedLibraries),
-      projectConfig.sharedLibraries
-    )
+      projectConfig.sharedLibraries,
+    ),
   );
 
   removeSharedLibraries(project, sharedLibraries);
@@ -66,7 +66,7 @@ export default function unregisterNativeModule(
   if (!isEmpty(headers)) {
     removeFromHeaderSearchPaths(
       project,
-      getHeaderSearchPath(projectConfig.sourceDir, headers)
+      getHeaderSearchPath(projectConfig.sourceDir, headers),
     );
   }
 

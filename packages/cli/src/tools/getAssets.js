@@ -7,7 +7,7 @@ import path from 'path';
 import getPackageConfiguration from './getPackageConfiguration';
 
 const findAssetsInFolder = folder =>
-  glob.sync(path.join(folder, '**'), { nodir: true });
+  glob.sync(path.join(folder, '**'), {nodir: true});
 
 /**
  * Given an array of assets folders, e.g. ['Fonts', 'Images'],
@@ -21,7 +21,7 @@ export function findAssets(folder: string, assets?: string[]) {
     .reduce(
       (acc, assetPath) =>
         (acc.concat(findAssetsInFolder(assetPath)): Array<string>),
-      []
+      [],
     );
 }
 

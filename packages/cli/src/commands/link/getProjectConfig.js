@@ -12,16 +12,16 @@ import getPackageConfiguration from '../../tools/getPackageConfiguration';
 
 export default function getProjectConfig(
   ctx: ContextT,
-  availablePlatforms: PlatformsT
+  availablePlatforms: PlatformsT,
 ): ProjectConfigT {
   const config = getPackageConfiguration(ctx.root);
 
-  const platformConfigs = { ios: undefined, android: undefined };
+  const platformConfigs = {ios: undefined, android: undefined};
 
   Object.keys(availablePlatforms).forEach(platform => {
     platformConfigs[platform] = availablePlatforms[platform].projectConfig(
       ctx.root,
-      config[platform] || {}
+      config[platform] || {},
     );
   });
 

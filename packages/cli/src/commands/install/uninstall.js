@@ -7,7 +7,7 @@
  * @flow
  */
 
-import type { ContextT } from '../../tools/types.flow';
+import type {ContextT} from '../../tools/types.flow';
 import logger from '../../tools/logger';
 import PackageManager from '../../tools/PackageManager';
 import link from '../link/unlink';
@@ -19,7 +19,7 @@ async function uninstall(args: Array<string>, ctx: ContextT) {
   await link.func([name], ctx);
 
   logger.info(`Uninstalling "${name}"...`);
-  new PackageManager({ projectDir: ctx.root }).uninstall([name]);
+  new PackageManager({projectDir: ctx.root}).uninstall([name]);
 
   logger.success(`Successfully uninstalled and unlinked "${name}"`);
 }

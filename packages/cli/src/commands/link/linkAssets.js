@@ -1,14 +1,14 @@
 // @flow
 
-import { isEmpty } from 'lodash';
-import type { PlatformsT, ProjectConfigT } from '../../tools/types.flow';
+import {isEmpty} from 'lodash';
+import type {PlatformsT, ProjectConfigT} from '../../tools/types.flow';
 
 import logger from '../../tools/logger';
 
 const linkAssets = (
   platforms: PlatformsT,
   project: ProjectConfigT,
-  assets: Array<string>
+  assets: Array<string>,
 ) => {
   if (isEmpty(assets)) {
     return;

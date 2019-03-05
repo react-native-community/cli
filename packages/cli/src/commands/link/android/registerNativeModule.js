@@ -18,13 +18,13 @@ export default function registerNativeAndroidModule(
   name,
   androidConfig,
   params,
-  projectConfig
+  projectConfig,
 ) {
   const buildPatch = makeBuildPatch(name);
 
   applyPatch(
     projectConfig.settingsGradlePath,
-    makeSettingsPatch(name, androidConfig, projectConfig)
+    makeSettingsPatch(name, androidConfig, projectConfig),
   );
 
   applyPatch(projectConfig.buildGradlePath, buildPatch);
@@ -32,11 +32,11 @@ export default function registerNativeAndroidModule(
 
   applyPatch(
     projectConfig.mainFilePath,
-    makePackagePatch(androidConfig.packageInstance, params, name)
+    makePackagePatch(androidConfig.packageInstance, params, name),
   );
 
   applyPatch(
     projectConfig.mainFilePath,
-    makeImportPatch(androidConfig.packageImportPath)
+    makeImportPatch(androidConfig.packageImportPath),
   );
 }

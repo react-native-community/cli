@@ -37,6 +37,9 @@
       "es6": true,
       "jest": true,
       "node": true
+    },
+    "rules": {
+      "prettier/prettier": [2, "fb"]
     }
   },
   "jest": {

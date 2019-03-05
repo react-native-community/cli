@@ -129,7 +129,7 @@ test('fetches regular patch, adds remote, applies patch, installs deps, removes 
   expect(flushOutput()).toMatchInlineSnapshot(`
 "info Fetching diff between v0.57.8 and v0.58.4...
 [fs] write tmp-upgrade-rn.patch
-$ execa git remote add tmp-rn-diff-purge https://github.com/pvinis/rn-diff-purge.git
+$ execa git remote add tmp-rn-diff-purge https://github.com/react-native-community/rn-diff-purge.git
 $ execa git fetch --no-tags tmp-rn-diff-purge
 $ execa git apply --check tmp-upgrade-rn.patch --exclude=package.json -p2 --3way
 info Applying diff...
@@ -179,14 +179,14 @@ test('cleans up if patching fails,', async () => {
   expect(flushOutput()).toMatchInlineSnapshot(`
 "info Fetching diff between v0.57.8 and v0.58.4...
 [fs] write tmp-upgrade-rn.patch
-$ execa git remote add tmp-rn-diff-purge https://github.com/pvinis/rn-diff-purge.git
+$ execa git remote add tmp-rn-diff-purge https://github.com/react-native-community/rn-diff-purge.git
 $ execa git fetch --no-tags tmp-rn-diff-purge
 $ execa git apply --check tmp-upgrade-rn.patch --exclude=package.json -p2 --3way
 info Applying diff (excluding: package.json, .flowconfig)...
 $ execa git apply tmp-upgrade-rn.patch --exclude=package.json --exclude=.flowconfig -p2 --3way
 [2merror: .flowconfig: does not exist in index[22m
 error Automatically applying diff failed
-info Here's the diff we tried to apply: https://github.com/pvinis/rn-diff-purge/compare/version/0.57.8...version/0.58.4
+info Here's the diff we tried to apply: https://github.com/react-native-community/rn-diff-purge/compare/version/0.57.8...version/0.58.4
 info You may find release notes helpful: https://github.com/facebook/react-native/releases/tag/v0.58.4
 [fs] unlink tmp-upgrade-rn.patch
 warn Continuing after failure. Most of the files are upgraded but you will need to deal with some conflicts manually

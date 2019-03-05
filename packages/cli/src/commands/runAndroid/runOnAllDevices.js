@@ -7,7 +7,6 @@
  * @flow
  */
 
-
 import {spawnSync, execFileSync} from 'child_process';
 import logger from '../../tools/logger';
 import adb from './adb';

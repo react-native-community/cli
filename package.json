@@ -39,13 +39,6 @@
       "node": true
     }
   },
-  "prettier": {
-    "singleQuote": true,
-    "trailingComma": "all",
-    "bracketSpacing": false,
-    "jsxBracketSameLine": true,
-    "parser": "flow"
-  },
   "jest": {
     "projects": [
       "packages/*"

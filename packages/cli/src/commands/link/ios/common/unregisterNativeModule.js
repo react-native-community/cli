@@ -7,7 +7,7 @@
  * @format
  */
 
-import { compact } from 'lodash';
+import {compact} from 'lodash';
 import isInstalledIOS from '../isInstalled';
 import isInstalledPods from '../../pods/isInstalled';
 import unregisterDependencyIOS from '../unregisterNativeModule';
@@ -17,7 +17,7 @@ export default function unregisterNativeModule(
   name,
   dependencyConfig,
   projectConfig,
-  otherDependencies
+  otherDependencies,
 ) {
   const isIosInstalled = isInstalledIOS(projectConfig, dependencyConfig);
   const isPodInstalled = isInstalledPods(projectConfig, dependencyConfig);

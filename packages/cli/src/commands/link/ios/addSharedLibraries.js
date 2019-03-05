@@ -20,6 +20,6 @@ export default function addSharedLibraries(project, libraries) {
   const target = project.getFirstTarget().uuid;
 
   for (const name of libraries) {
-    project.addFramework(name, { target });
+    project.addFramework(name, {target});
   }
 }

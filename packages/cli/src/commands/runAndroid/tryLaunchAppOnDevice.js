@@ -7,7 +7,7 @@
  * @flow
  */
 
-import { spawnSync } from 'child_process';
+import {spawnSync} from 'child_process';
 import logger from '../../tools/logger';
 
 function tryLaunchAppOnDevice(
@@ -15,7 +15,7 @@ function tryLaunchAppOnDevice(
   packageNameWithSuffix: string,
   packageName: string,
   adbPath: string,
-  mainActivity: string
+  mainActivity: string,
 ) {
   try {
     const adbArgs = [
@@ -28,9 +28,9 @@ function tryLaunchAppOnDevice(
       `${packageNameWithSuffix}/${packageName}.${mainActivity}`,
     ];
     logger.info(
-      `Starting the app on ${device} (${adbPath} ${adbArgs.join(' ')})...`
+      `Starting the app on ${device} (${adbPath} ${adbArgs.join(' ')})...`,
     );
-    spawnSync(adbPath, adbArgs, { stdio: 'inherit' });
+    spawnSync(adbPath, adbArgs, {stdio: 'inherit'});
   } catch (e) {
     logger.error('adb invocation failed. Do you have adb in your PATH?');
   }

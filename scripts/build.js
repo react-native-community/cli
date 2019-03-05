@@ -26,7 +26,7 @@ const babel = require('@babel/core');
 const chalk = require('chalk');
 const micromatch = require('micromatch');
 const stringLength = require('string-length');
-const { PACKAGES_DIR, getPackages } = require('./helpers');
+const {PACKAGES_DIR, getPackages} = require('./helpers');
 
 const OK = chalk.reset.inverse.bold.green(' DONE ');
 const SRC_DIR = 'src';
@@ -82,7 +82,7 @@ function buildFile(file, silent) {
     silent ||
       process.stdout.write(
         `${chalk.dim('  \u2022 ') +
-          path.relative(PACKAGES_DIR, file)} (ignore)\n`
+          path.relative(PACKAGES_DIR, file)} (ignore)\n`,
       );
     return;
   }
@@ -96,7 +96,7 @@ function buildFile(file, silent) {
         `${chalk.red('  \u2022 ') +
           path.relative(PACKAGES_DIR, file) +
           chalk.red(' \u21D2 ') +
-          path.relative(PACKAGES_DIR, destPath)} (copy)\n`
+          path.relative(PACKAGES_DIR, destPath)} (copy)\n`,
       );
   } else {
     const options = Object.assign({}, transformOptions);
@@ -109,7 +109,7 @@ function buildFile(file, silent) {
         `${chalk.green('  \u2022 ') +
           path.relative(PACKAGES_DIR, file) +
           chalk.green(' \u21D2 ') +
-          path.relative(PACKAGES_DIR, destPath)}\n`
+          path.relative(PACKAGES_DIR, destPath)}\n`,
       );
   }
 }

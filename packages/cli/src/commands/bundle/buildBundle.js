@@ -11,8 +11,8 @@ import Server from 'metro/src/Server';
 
 import outputBundle from 'metro/src/shared/output/bundle';
 import path from 'path';
-import type { CommandLineArgs } from './bundleCommandLineArgs';
-import type { ContextT } from '../../tools/types.flow';
+import type {CommandLineArgs} from './bundleCommandLineArgs';
+import type {ContextT} from '../../tools/types.flow';
 import saveAssets from './saveAssets';
 import loadMetroConfig from '../../tools/loadMetroConfig';
 import logger from '../../tools/logger';
@@ -20,7 +20,7 @@ import logger from '../../tools/logger';
 async function buildBundle(
   args: CommandLineArgs,
   ctx: ContextT,
-  output: typeof outputBundle = outputBundle
+  output: typeof outputBundle = outputBundle,
 ) {
   const config = await loadMetroConfig(ctx, {
     resetCache: args.resetCache,

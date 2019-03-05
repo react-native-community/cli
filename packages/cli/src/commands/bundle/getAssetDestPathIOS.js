@@ -9,7 +9,7 @@
  */
 
 import path from 'path';
-import type { PackagerAsset } from './assetPathUtils';
+import type {PackagerAsset} from './assetPathUtils';
 
 function getAssetDestPathIOS(asset: PackagerAsset, scale: number): string {
   const suffix = scale === 1 ? '' : `@${scale}x`;

@@ -9,7 +9,7 @@
 
 import launchEditor from '../launchEditor';
 
-export default function getOpenStackFrameInEditorMiddleware({ watchFolders }) {
+export default function getOpenStackFrameInEditorMiddleware({watchFolders}) {
   return (req, res, next) => {
     if (req.url === '/open-stack-frame') {
       const frame = JSON.parse(req.rawBody);

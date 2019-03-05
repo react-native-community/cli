@@ -26,6 +26,6 @@ const EXCLUDED_PROJECTS = [
 export default function getProjectDependencies(cwd: string) {
   const pkgJson = require(path.join(cwd, './package.json'));
   return (Object.keys(pkgJson.dependencies || {}).filter(
-    name => EXCLUDED_PROJECTS.includes(name) === false
+    name => EXCLUDED_PROJECTS.includes(name) === false,
   ): Array<string>);
 }

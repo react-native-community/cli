@@ -10,10 +10,10 @@
 
 const platforms = {
   ios: {
-    dependencyConfig: () => ({ sampleiOSKey: '' }),
+    dependencyConfig: () => ({sampleiOSKey: ''}),
   },
   android: {
-    dependencyConfig: () => ({ sampleAndroidKey: '' }),
+    dependencyConfig: () => ({sampleAndroidKey: ''}),
   },
 };
 
@@ -29,9 +29,9 @@ const getDependencyConfig = require('../getDependencyConfig').default;
 describe('getDependencyConfig', () => {
   it("should return an array of dependencies' config", () => {
     const dependencies = getDependencyConfig(
-      { root: '/root' },
+      {root: '/root'},
       platforms,
-      'react-native-windows'
+      'react-native-windows',
     );
 
     expect(dependencies).toMatchSnapshot();
@@ -39,7 +39,7 @@ describe('getDependencyConfig', () => {
 
   it('should throw on invalid react-native dependency', () => {
     expect(() =>
-      getDependencyConfig({ root: '/root' }, platforms, 'abcd')
+      getDependencyConfig({root: '/root'}, platforms, 'abcd'),
     ).toThrowError();
   });
 });

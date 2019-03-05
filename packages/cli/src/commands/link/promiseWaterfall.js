@@ -18,6 +18,6 @@
 export default function promiseWaterfall(tasks) {
   return tasks.reduce(
     (prevTaskPromise, task) => prevTaskPromise.then(task),
-    Promise.resolve()
+    Promise.resolve(),
   );
 }

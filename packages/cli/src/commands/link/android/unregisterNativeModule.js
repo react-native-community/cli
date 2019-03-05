@@ -8,7 +8,7 @@
  */
 
 import fs from 'fs';
-import { camelCase as toCamelCase } from 'lodash';
+import {camelCase as toCamelCase} from 'lodash';
 
 import revokePatch from './patches/revokePatch';
 import makeSettingsPatch from './patches/makeSettingsPatch';
@@ -20,7 +20,7 @@ import makePackagePatch from './patches/makePackagePatch';
 export default function unregisterNativeAndroidModule(
   name,
   androidConfig,
-  projectConfig
+  projectConfig,
 ) {
   const buildPatch = makeBuildPatch(name);
   const strings = fs.readFileSync(projectConfig.stringsPath, 'utf8');
@@ -30,12 +30,12 @@ export default function unregisterNativeAndroidModule(
     /moduleConfig="true" name="(\w+)">(.*)</g,
     (_, param, value) => {
       params[param.slice(toCamelCase(name).length + 1)] = value;
-    }
+    },
   );
 
   revokePatch(
     projectConfig.settingsGradlePath,
-    makeSettingsPatch(name, androidConfig, projectConfig)
+    makeSettingsPatch(name, androidConfig, projectConfig),
   );
 
   revokePatch(projectConfig.buildGradlePath, buildPatch);
@@ -43,11 +43,11 @@ export default function unregisterNativeAndroidModule(
 
   revokePatch(
     projectConfig.mainFilePath,
-    makePackagePatch(androidConfig.packageInstance, params, name)
+    makePackagePatch(androidConfig.packageInstance, params, name),
   );
 
   revokePatch(
     projectConfig.mainFilePath,
-    makeImportPatch(androidConfig.packageImportPath)
+    makeImportPatch(androidConfig.packageImportPath),
   );
 }

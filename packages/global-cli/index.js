@@ -68,7 +68,7 @@ const getRNPkgJsonPath = function() {
     process.cwd(),
     'node_modules',
     'react-native',
-    'package.json'
+    'package.json',
   );
 };
 
@@ -114,7 +114,10 @@ const commands = options._;
 if (cli) {
   cli.run();
 } else {
-  if (options._.length === 0 && (options.h || options.help) || commands.length === 0) {
+  if (
+    (options._.length === 0 && (options.h || options.help)) ||
+    commands.length === 0
+  ) {
     console.log(
       [
         '',
@@ -131,7 +134,7 @@ if (cli) {
         '    -v, --version use a specific version of React Native',
         '    --template use an app template. Use --template to see available templates.',
         '',
-      ].join('\n')
+      ].join('\n'),
     );
     process.exit(0);
   }
@@ -149,7 +152,7 @@ if (cli) {
       console.error(
         'Command `%s` unrecognized. ' +
           'Make sure that you have run `npm install` and that you are inside a react-native project.',
-        commands[0]
+        commands[0],
       );
       process.exit(1);
       break;
@@ -161,7 +164,7 @@ function validateProjectName(name) {
     console.error(
       '"%s" is not a valid name for a project. Please use a valid identifier ' +
         'name (alphanumeric).',
-      name
+      name,
     );
     process.exit(1);
   }
@@ -170,7 +173,7 @@ function validateProjectName(name) {
     console.error(
       '"%s" is not a valid name for a project. Please do not use the ' +
         'reserved word "React".',
-      name
+      name,
     );
     process.exit(1);
   }
@@ -220,7 +223,7 @@ function createProject(name, options) {
 
   console.log(
     'This will walk you through creating a new React Native project in',
-    root
+    root,
   );
 
   if (!fs.existsSync(root)) {
@@ -239,7 +242,7 @@ function createProject(name, options) {
   };
   fs.writeFileSync(
     path.join(root, 'package.json'),
-    JSON.stringify(packageJson)
+    JSON.stringify(packageJson),
   );
   process.chdir(root);
 
@@ -278,18 +281,18 @@ function run(root, projectName, options) {
     console.log(`Installing ${getInstallPackage(rnPackage)}...`);
     if (!forceNpmClient) {
       console.log(
-        'Consider installing yarn to make this faster: https://yarnpkg.com'
+        'Consider installing yarn to make this faster: https://yarnpkg.com',
       );
     }
     installCommand = `npm install --save --save-exact ${getInstallPackage(
-      rnPackage
+      rnPackage,
     )}`;
     if (options.verbose) {
       installCommand += ' --verbose';
     }
   }
   try {
-    execSync(installCommand, { stdio: 'inherit' });
+    execSync(installCommand, {stdio: 'inherit'});
   } catch (err) {
     console.error(err);
     console.error(`Command \`${installCommand}\` failed.`);
@@ -307,11 +310,11 @@ function checkNodeVersion() {
   }
   if (!semver.satisfies(process.version, packageJson.engines.node)) {
     console.error(
-        'You are currently running Node %s but React Native requires %s. ' +
-          'Please use a supported version of Node.\n' +
-          'See https://facebook.github.io/react-native/docs/getting-started.html',
+      'You are currently running Node %s but React Native requires %s. ' +
+        'Please use a supported version of Node.\n' +
+        'See https://facebook.github.io/react-native/docs/getting-started.html',
       process.version,
-      packageJson.engines.node
+      packageJson.engines.node,
     );
   }
 }
@@ -322,7 +325,7 @@ function printVersionsAndExit(reactNativePackageJsonPath) {
     console.log(`react-native: ${require(reactNativePackageJsonPath).version}`);
   } catch (e) {
     console.log(
-      'react-native: n/a - not inside a React Native project directory'
+      'react-native: n/a - not inside a React Native project directory',
     );
   }
   process.exit();

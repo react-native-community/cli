@@ -48,7 +48,7 @@ class JsPackagerClient {
       () =>
         new Promise((resolve, reject) => {
           const messageId = getMessageId();
-          this.msgCallbacks.set(messageId, { resolve, reject });
+          this.msgCallbacks.set(messageId, {resolve, reject});
           this.ws.send(
             JSON.stringify({
               version: PROTOCOL_VERSION,
@@ -62,9 +62,9 @@ class JsPackagerClient {
                 this.msgCallbacks.delete(messageId);
                 reject(error);
               }
-            }
+            },
           );
-        })
+        }),
     );
   }
 
@@ -85,9 +85,9 @@ class JsPackagerClient {
               } else {
                 resolve();
               }
-            }
+            },
           );
-        })
+        }),
     );
   }
 
@@ -102,9 +102,9 @@ class JsPackagerClient {
           reject(
             new Error(
               `Results received from server are of wrong format:\n${JSON.stringify(
-                response
-              )}`
-            )
+                response,
+              )}`,
+            ),
           );
         } else {
           resolve(response);

@@ -15,7 +15,7 @@ jest.mock('path');
 jest.mock('fs');
 jest.mock('../../ios/getPlistPath', () => jest.fn(() => null));
 
-const { readFileSync } = jest.requireActual('fs');
+const {readFileSync} = jest.requireActual('fs');
 const fs = require('fs');
 
 const xcode = require('xcode');
@@ -23,13 +23,13 @@ const xcode = require('xcode');
 const realPath = jest.requireActual('path');
 const projectPath = realPath.join(
   __dirname,
-  '../../__fixtures__/project.pbxproj'
+  '../../__fixtures__/project.pbxproj',
 );
 const infoPlistPath = realPath.join(__dirname, '../../__fixtures__/Info.plist');
 
 fs.readFileSync = jest.fn(() => readFileSync(projectPath).toString());
 
-const { writeFileSync } = fs;
+const {writeFileSync} = fs;
 fs.writeFileSync = jest.fn(writeFileSync);
 
 const project = xcode.project('/Basic/project.pbxproj');
@@ -51,7 +51,7 @@ describe('ios::writePlist', () => {
     const infoPlist = readFileSync(infoPlistPath).toString();
     expect(fs.writeFileSync).toHaveBeenCalledWith(
       '/Basic/Info.plist',
-      infoPlist
+      infoPlist,
     );
   });
 

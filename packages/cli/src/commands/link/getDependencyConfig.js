@@ -17,18 +17,18 @@ import getAssets from '../../tools/getAssets';
 export default function getDependencyConfig(
   ctx: ContextT,
   availablePlatforms: PlatformsT,
-  dependency: string
+  dependency: string,
 ): DependenciesConfig {
   try {
     const folder = path.join(ctx.root, 'node_modules', dependency);
     const config = getPackageConfiguration(folder);
 
-    const platformConfigs = { ios: undefined, android: undefined };
+    const platformConfigs = {ios: undefined, android: undefined};
 
     Object.keys(availablePlatforms).forEach(platform => {
       platformConfigs[platform] = availablePlatforms[platform].dependencyConfig(
         folder,
-        config[platform] || {}
+        config[platform] || {},
       );
     });
 

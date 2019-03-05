@@ -5,14 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-/* eslint-disable no-template-curly-in-string */
-
 import applyParams from '../../android/patches/applyParams';
 
 describe('applyParams', () => {
   it('apply params to the string', () => {
-    expect(applyParams('${foo}', { foo: 'foo' }, 'react-native')).toEqual(
-      'getResources().getString(R.string.reactNative_foo)'
+    expect(applyParams('${foo}', {foo: 'foo'}, 'react-native')).toEqual(
+      'getResources().getString(R.string.reactNative_foo)',
     );
   });
 

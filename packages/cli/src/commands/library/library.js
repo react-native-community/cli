@@ -21,7 +21,7 @@ async function library(argv, ctx, args) {
   if (!isValidPackageName(args.name)) {
     throw new Error(
       `${args.name} is not a valid name for a project. Please use a valid ` +
-        `identifier name (alphanumeric).`
+        'identifier name (alphanumeric).',
     );
   }
 
@@ -31,7 +31,7 @@ async function library(argv, ctx, args) {
     'node_modules',
     'react-native',
     'Libraries',
-    'Sample'
+    'Sample',
   );
 
   if (!fs.existsSync(libraries)) {
@@ -52,7 +52,7 @@ async function library(argv, ctx, args) {
 
     const dest = path.relative(
       source,
-      f.replace(/Sample/g, args.name).replace(/^_/, '.')
+      f.replace(/Sample/g, args.name).replace(/^_/, '.'),
     );
     copyAndReplace(path.resolve(source, f), path.resolve(libraryDest, dest), {
       Sample: args.name,

@@ -24,7 +24,7 @@ export default function unlinkAssetsAndroid(files, project) {
     const filePath = path.join(
       project.assetsPath,
       'fonts',
-      path.basename(file)
+      path.basename(file),
     );
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);

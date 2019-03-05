@@ -7,7 +7,7 @@
  * @flow
  */
 
-import { execFileSync } from 'child_process';
+import {execFileSync} from 'child_process';
 import logger from '../../tools/logger';
 import getAdbPath from './getAdbPath';
 

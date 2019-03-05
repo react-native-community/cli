@@ -34,7 +34,7 @@ function copyProjectTemplateAndReplace(
   srcPath,
   destPath,
   newProjectName,
-  options = {}
+  options = {},
 ) {
   if (!srcPath) {
     throw new Error('Need a path to copy from');
@@ -67,7 +67,7 @@ function copyProjectTemplateAndReplace(
     }
 
     const relativeFilePath = translateFilePath(
-      path.relative(srcPath, absoluteSrcFilePath)
+      path.relative(srcPath, absoluteSrcFilePath),
     )
       .replace(/HelloWorld/g, newProjectName)
       .replace(/helloworld/g, newProjectName.toLowerCase());
@@ -94,7 +94,7 @@ function copyProjectTemplateAndReplace(
         upgradeFileContentChangedCallback(
           absoluteSrcFilePath,
           relativeFilePath,
-          contentChanged
+          contentChanged,
         );
     }
     copyAndReplace(
@@ -105,7 +105,7 @@ function copyProjectTemplateAndReplace(
         HelloWorld: newProjectName,
         helloworld: newProjectName.toLowerCase(),
       },
-      contentChangedCallback
+      contentChangedCallback,
     );
   });
 }
@@ -135,7 +135,7 @@ function translateFilePath(filePath) {
 function upgradeFileContentChangedCallback(
   absoluteSrcFilePath,
   relativeDestPath,
-  contentChanged
+  contentChanged,
 ) {
   if (contentChanged === 'new') {
     logger.info(`${chalk.bold('new')} ${relativeDestPath}`);
@@ -145,11 +145,11 @@ function upgradeFileContentChangedCallback(
     logger.info(
       `${chalk.bold(relativeDestPath)} ` +
         `has changed in the new version.\nDo you want to keep your ${relativeDestPath} or replace it with the ` +
-        `latest version?\nIf you ever made any changes ` +
-        `to this file, you'll probably want to keep it.\n` +
+        'latest version?\nIf you ever made any changes ' +
+        "to this file, you'll probably want to keep it.\n" +
         `You can see the new version here: ${absoluteSrcFilePath}\n` +
         `Do you want to replace ${relativeDestPath}? ` +
-        `Answer y to replace, n to keep your version: `
+        'Answer y to replace, n to keep your version: ',
     );
     const answer = prompt();
     if (answer === 'y') {
@@ -163,7 +163,7 @@ function upgradeFileContentChangedCallback(
     return 'keep';
   }
   throw new Error(
-    `Unknown file changed state: ${relativeDestPath}, ${contentChanged}`
+    `Unknown file changed state: ${relativeDestPath}, ${contentChanged}`,
   );
 }
 

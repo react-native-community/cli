@@ -17,7 +17,7 @@ describe('makeStringsPatch', () => {
     };
 
     expect(makeStringsPatch(params, 'module').patch).toContain(
-      '<string moduleConfig="true" name="module_keyA">valueA</string>'
+      '<string moduleConfig="true" name="module_keyA">valueA</string>',
     );
   });
 

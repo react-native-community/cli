@@ -4,7 +4,7 @@ import path from 'path';
 import fs from 'fs';
 import snapshotDiff from 'snapshot-diff';
 import upgrade from '../upgrade';
-import { fetch } from '../helpers';
+import {fetch} from '../helpers';
 import logger from '../../../tools/logger';
 
 jest.mock('https');
@@ -18,26 +18,26 @@ jest.mock('execa', () => {
         stdout: '{"react": "16.6.3"}',
       });
     }
-    return Promise.resolve({ stdout: '' });
+    return Promise.resolve({stdout: ''});
   });
   return module;
 });
 jest.mock(
   '/project/root/node_modules/react-native/package.json',
-  () => ({ name: 'react-native', version: '0.57.8' }),
-  { virtual: true }
+  () => ({name: 'react-native', version: '0.57.8'}),
+  {virtual: true},
 );
 jest.mock(
   '/project/root/package.json',
-  () => ({ name: 'TestApp', dependencies: { 'react-native': '^0.57.8' } }),
-  { virtual: true }
+  () => ({name: 'TestApp', dependencies: {'react-native': '^0.57.8'}}),
+  {virtual: true},
 );
 jest.mock('../../../tools/PackageManager', () =>
   jest.fn(() => ({
     install: args => {
       mockPushLog('$ yarn add', ...args);
     },
-  }))
+  })),
 );
 jest.mock('../helpers', () => ({
   ...jest.requireActual('../helpers'),
@@ -88,21 +88,21 @@ test('uses latest version of react-native when none passed', async () => {
 test('errors when invalid version passed', async () => {
   await upgrade.func(['next'], ctx, opts);
   expect(logger.error).toBeCalledWith(
-    'Provided version "next" is not allowed. Please pass a valid semver version'
+    'Provided version "next" is not allowed. Please pass a valid semver version',
   );
 });
 
 test('errors when older version passed', async () => {
   await upgrade.func([olderVersion], ctx, opts);
   expect(logger.error).toBeCalledWith(
-    `Trying to upgrade from newer version "${currentVersion}" to older "${olderVersion}"`
+    `Trying to upgrade from newer version "${currentVersion}" to older "${olderVersion}"`,
   );
 });
 
 test('warns when dependency upgrade version is in semver range', async () => {
   await upgrade.func([currentVersion], ctx, opts);
   expect(logger.warn).toBeCalledWith(
-    `Specified version "${currentVersion}" is already installed in node_modules and it satisfies "^0.57.8" semver range. No need to upgrade`
+    `Specified version "${currentVersion}" is already installed in node_modules and it satisfies "^0.57.8" semver range. No need to upgrade`,
   );
 });
 
@@ -146,14 +146,12 @@ $ execa git status
 $ execa git remote remove tmp-rn-diff-purge
 success Upgraded React Native to v0.58.4 🎉. Now you can review and commit the changes"
 `);
-
   expect(
     snapshotDiff(samplePatch, fs.writeFileSync.mock.calls[0][1], {
       contextLines: 1,
-    })
+    }),
   ).toMatchSnapshot('RnDiffApp is replaced with app name (TestApp)');
 });
-
 test('cleans up if patching fails,', async () => {
   (fetch: any).mockImplementation(() => Promise.resolve(samplePatch));
   (execa: any).mockImplementation((command, args) => {
@@ -164,23 +162,20 @@ test('cleans up if patching fails,', async () => {
       });
     }
     if (command === 'git' && args[0] === 'apply') {
-      // eslint-disable-next-line prefer-promise-reject-errors
       return Promise.reject({
         code: 1,
         stderr: 'error: .flowconfig: does not exist in index\n',
       });
     }
-    return Promise.resolve({ stdout: '' });
+    return Promise.resolve({stdout: ''});
   });
-
   try {
     await upgrade.func([newVersion], ctx, opts);
   } catch (error) {
     expect(error.message).toBe(
-      'Upgrade failed. Please see the messages above for details'
+      'Upgrade failed. Please see the messages above for details',
     );
   }
-
   expect(flushOutput()).toMatchInlineSnapshot(`
 "info Fetching diff between v0.57.8 and v0.58.4...
 [fs] write tmp-upgrade-rn.patch

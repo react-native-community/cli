@@ -12,9 +12,9 @@ import childProcess from 'child_process';
 import commander from 'commander';
 import minimist from 'minimist';
 import path from 'path';
-import type { CommandT, ContextT } from './tools/types.flow';
+import type {CommandT, ContextT} from './tools/types.flow';
 import getLegacyConfig from './tools/getLegacyConfig';
-import { getCommands } from './commands';
+import {getCommands} from './commands';
 import init from './commands/init/init';
 import assertRequiredOptions from './tools/assertRequiredOptions';
 import logger from './tools/logger';
@@ -81,8 +81,8 @@ function printUnknownCommand(cmdName) {
     logger.error(`Unrecognized command "${chalk.bold(cmdName)}".`);
     logger.info(
       `Run ${chalk.bold(
-        '"react-native --help"'
-      )} to see a list of all available commands.`
+        '"react-native --help"',
+      )} to see a list of all available commands.`,
     );
   } else {
     commander.outputHelp();
@@ -119,8 +119,8 @@ const addCommand = (command: CommandT, ctx: ContextT) => {
       opt.command,
       opt.description,
       opt.parse || defaultOptParser,
-      opt.default
-    )
+      opt.default,
+    ),
   );
 
   // Redefined here to appear in the `--help` section
@@ -144,15 +144,15 @@ async function setupAndRun() {
     const absolutePath = path.join(__dirname, '..', scriptName);
 
     try {
-      childProcess.execFileSync(absolutePath, { stdio: 'pipe' });
+      childProcess.execFileSync(absolutePath, {stdio: 'pipe'});
     } catch (error) {
       logger.warn(
         `Failed to run environment setup script "${scriptName}"\n\n${chalk.red(
-          error
-        )}`
+          error,
+        )}`,
       );
       logger.info(
-        `React Native CLI will continue to run if your local environment matches what React Native expects. If it does fail, check out "${absolutePath}" and adjust your environment to match it.`
+        `React Native CLI will continue to run if your local environment matches what React Native expects. If it does fail, check out "${absolutePath}" and adjust your environment to match it.`,
       );
     }
   }
@@ -177,11 +177,11 @@ async function setupAndRun() {
             // $FlowIssue: Wrong `require.resolve` type definition
             require.resolve('react-native/package.json', {
               paths: [root],
-            })
+            }),
           );
         } catch (_ignored) {
           throw new Error(
-            'Unable to find React Native files. Make sure "react-native" module is installed in your project dependencies.'
+            'Unable to find React Native files. Make sure "react-native" module is installed in your project dependencies.',
           );
         }
       })();

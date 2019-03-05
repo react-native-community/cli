@@ -25,7 +25,7 @@ describe('getAssetDestPathAndroid', () => {
     const expectDestPathForScaleToStartWith = (scale, location) => {
       if (!getAssetDestPathAndroid(asset, scale).startsWith(location)) {
         throw new Error(
-          `asset for scale ${scale} should start with path '${location}'`
+          `asset for scale ${scale} should start with path '${location}'`,
         );
       }
     };
@@ -45,7 +45,7 @@ describe('getAssetDestPathAndroid', () => {
     };
 
     expect(getAssetDestPathAndroid(asset, 1)).toBe(
-      path.normalize('drawable-mdpi/app_test_icon.png')
+      path.normalize('drawable-mdpi/app_test_icon.png'),
     );
   });
 
@@ -67,7 +67,7 @@ describe('getAssetDestPathAndroid', () => {
     };
 
     expect(getAssetDestPathAndroid(asset, 1)).toBe(
-      path.normalize('raw/app_test_video.mp4')
+      path.normalize('raw/app_test_video.mp4'),
     );
   });
 });

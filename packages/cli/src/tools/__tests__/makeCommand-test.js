@@ -16,7 +16,7 @@ jest.setMock('child_process', {
   }),
 });
 
-const { makeCommand } = require('../getHooks');
+const {makeCommand} = require('../getHooks');
 
 describe('makeCommand', () => {
   const command = makeCommand('echo');

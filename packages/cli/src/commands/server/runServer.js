@@ -9,11 +9,11 @@
 
 import Metro from 'metro';
 
-import { Terminal } from 'metro-core';
+import {Terminal} from 'metro-core';
 
 import morgan from 'morgan';
 import path from 'path';
-import type { ContextT } from '../../tools/types.flow';
+import type {ContextT} from '../../tools/types.flow';
 import messageSocket from './messageSocket';
 import webSocketProxy from './webSocketProxy';
 import MiddlewareManager from './middleware/MiddlewareManager';
@@ -64,7 +64,7 @@ async function runServer(argv: Array<string>, ctx: ContextT, args: Args) {
   middlewareManager.getConnectInstance().use(morgan('combined'));
 
   metroConfig.watchFolders.forEach(
-    middlewareManager.serveStatic.bind(middlewareManager)
+    middlewareManager.serveStatic.bind(middlewareManager),
   );
 
   metroConfig.server.enhanceMiddleware = middleware =>
@@ -80,7 +80,7 @@ async function runServer(argv: Array<string>, ctx: ContextT, args: Args) {
 
   const wsProxy = webSocketProxy.attachToServer(
     serverInstance,
-    '/debugger-proxy'
+    '/debugger-proxy',
   );
   const ms = messageSocket.attachToServer(serverInstance, '/message');
   middlewareManager.attachDevToolsSocket(wsProxy);

@@ -11,7 +11,7 @@ export default function addPodEntry(
   podLines,
   linesToAddEntry,
   podName,
-  nodePath
+  nodePath,
 ) {
   const newEntry = `pod '${podName}', :path => '../node_modules/${nodePath}'\n`;
 
@@ -20,11 +20,11 @@ export default function addPodEntry(
   }
 
   if (Array.isArray(linesToAddEntry)) {
-    linesToAddEntry.map(({ line, indentation }, idx) =>
-      podLines.splice(line + idx, 0, getLineToAdd(newEntry, indentation))
+    linesToAddEntry.map(({line, indentation}, idx) =>
+      podLines.splice(line + idx, 0, getLineToAdd(newEntry, indentation)),
     );
   } else {
-    const { line, indentation } = linesToAddEntry;
+    const {line, indentation} = linesToAddEntry;
     podLines.splice(line, 0, getLineToAdd(newEntry, indentation));
   }
 }

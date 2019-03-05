@@ -17,7 +17,7 @@ import savePodFile from './savePodFile';
 export default function registerNativeModulePods(
   name,
   dependencyConfig,
-  iOSProject
+  iOSProject,
 ) {
   const podLines = readPodfile(iOSProject.podfile);
   const linesToAddEntry = getLinesToAddEntry(podLines, iOSProject);
@@ -25,7 +25,7 @@ export default function registerNativeModulePods(
   savePodFile(iOSProject.podfile, podLines);
 }
 
-function getLinesToAddEntry(podLines, { projectName }) {
+function getLinesToAddEntry(podLines, {projectName}) {
   const linesToAddPodWithMarker = findMarkedLinesInPodfile(podLines);
   if (linesToAddPodWithMarker.length > 0) {
     return linesToAddPodWithMarker;

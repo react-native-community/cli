@@ -16,8 +16,8 @@ export default function makeSettingsPatch(name, androidConfig, projectConfig) {
   const projectDir = slash(
     path.relative(
       path.dirname(projectConfig.settingsGradlePath),
-      androidConfig.sourceDir
-    )
+      androidConfig.sourceDir,
+    ),
   );
   const normalizedProjectName = normalizeProjectName(name);
 

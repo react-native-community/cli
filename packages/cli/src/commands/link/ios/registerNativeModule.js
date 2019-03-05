@@ -10,7 +10,7 @@
 import xcode from 'xcode';
 import fs from 'fs';
 import path from 'path';
-import { isEmpty } from 'lodash';
+import {isEmpty} from 'lodash';
 
 import addToHeaderSearchPaths from './addToHeaderSearchPaths';
 import getHeadersInFolder from './getHeadersInFolder';
@@ -30,7 +30,7 @@ import addSharedLibraries from './addSharedLibraries';
  */
 export default function registerNativeModuleIOS(
   dependencyConfig,
-  projectConfig
+  projectConfig,
 ) {
   const project = xcode.project(projectConfig.pbxprojPath).parseSync();
   const dependencyProject = xcode
@@ -39,11 +39,11 @@ export default function registerNativeModuleIOS(
 
   const libraries = createGroupWithMessage(
     project,
-    projectConfig.libraryFolder
+    projectConfig.libraryFolder,
   );
   const file = addFileToProject(
     project,
-    path.relative(projectConfig.sourceDir, dependencyConfig.projectPath)
+    path.relative(projectConfig.sourceDir, dependencyConfig.projectPath),
   );
 
   const targets = getTargets(project);
@@ -79,7 +79,7 @@ export default function registerNativeModuleIOS(
   if (!isEmpty(headers)) {
     addToHeaderSearchPaths(
       project,
-      getHeaderSearchPath(projectConfig.sourceDir, headers)
+      getHeaderSearchPath(projectConfig.sourceDir, headers),
     );
   }
 

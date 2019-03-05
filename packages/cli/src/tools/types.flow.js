@@ -2,8 +2,6 @@
  * @flow
  */
 
-/* eslint-disable flowtype/no-weak-types */
-
 export type ContextT = {
   root: string,
   reactNativePath: string,
@@ -64,7 +62,7 @@ export type PlatformConfigT<ProjectConfigT, DependencyConfigT, ParamsT> = {
       string,
       DependencyConfigT,
       ProjectConfigT,
-      Array<DependencyConfigT>
+      Array<DependencyConfigT>,
     ) => void,
     copyAssets: (string[], ProjectConfigT) => void,
     unlinkAssets: (string[], ProjectConfigT) => void,
@@ -112,7 +110,7 @@ export type DependenciesConfig = {
   name: string,
   path: string,
   assets: string[],
-  commands: { [name: string]: string },
+  commands: {[name: string]: string},
   params: InquirerPromptT[],
 };
 
@@ -123,12 +121,12 @@ export type PlatformsT = {
   ios: PlatformConfigT<
     ProjectConfigIOST,
     DependencyConfigIOST,
-    IOSConfigParamsT
+    IOSConfigParamsT,
   >,
   android: PlatformConfigT<
     ProjectConfigAndroidT,
     DependencyConfigAndroidT,
-    AndroidConfigParamsT
+    AndroidConfigParamsT,
   >,
   [name: string]: PlatformConfigT<any, any, any>,
 };
@@ -140,7 +138,7 @@ export type InquirerPromptT = any;
  */
 export type PackageConfigurationT = {
   assets?: string[],
-  commands?: { [name: string]: string },
+  commands?: {[name: string]: string},
   params?: InquirerPromptT[],
   android: AndroidConfigParamsT,
   ios: IOSConfigParamsT,

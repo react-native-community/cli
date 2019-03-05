@@ -16,7 +16,7 @@ const pbxFile = require('xcode/lib/pbxFile');
 const path = require('path');
 
 const project = xcode.project(
-  path.join(__dirname, '../../__fixtures__/project.pbxproj')
+  path.join(__dirname, '../../__fixtures__/project.pbxproj'),
 );
 const filePath = '../../__fixtures__/linearGradient.pbxproj';
 
@@ -28,7 +28,7 @@ describe('ios::addFileToProject', () => {
 
   it('should return removed file', () => {
     expect(
-      removeProjectFromProject(project, filePath) instanceof pbxFile
+      removeProjectFromProject(project, filePath) instanceof pbxFile,
     ).toBeTruthy();
   });
 

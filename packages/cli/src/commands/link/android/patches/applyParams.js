@@ -7,7 +7,7 @@
  * @format
  */
 
-import { camelCase as toCamelCase } from 'lodash';
+import {camelCase as toCamelCase} from 'lodash';
 
 export default function applyParams(str, params, prefix) {
   return str.replace(/\$\{(\w+)\}/g, (pattern, param) => {

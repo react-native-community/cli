@@ -1,14 +1,13 @@
 // @flow
-/* eslint-disable consistent-return */
 import path from 'path';
 import fs from 'fs';
 import chalk from 'chalk';
 import semver from 'semver';
 import execa from 'execa';
-import type { ContextT } from '../../tools/types.flow';
+import type {ContextT} from '../../tools/types.flow';
 import logger from '../../tools/logger';
 import PackageManager from '../../tools/PackageManager';
-import { fetch } from './helpers';
+import {fetch} from './helpers';
 import legacyUpgrade from './legacyUpgrade';
 
 type FlagsT = {
@@ -19,14 +18,14 @@ const rnDiffPurgeUrl = 'https://github.com/pvinis/rn-diff-purge';
 
 const getLatestRNVersion = async (): Promise<string> => {
   logger.info('No version passed. Fetching latest...');
-  const { stdout } = await execa('npm', ['info', 'react-native', 'version']);
+  const {stdout} = await execa('npm', ['info', 'react-native', 'version']);
   return stdout;
 };
 
 const getRNPeerDeps = async (
-  version: string
-): Promise<{ [key: string]: string }> => {
-  const { stdout } = await execa('npm', [
+  version: string,
+): Promise<{[key: string]: string}> => {
+  const {stdout} = await execa('npm', [
     'info',
     `react-native@${version}`,
     'peerDependencies',
@@ -40,20 +39,20 @@ const getPatch = async (currentVersion, newVersion, projectDir) => {
   let patch;
 
   const rnDiffAppName = 'RnDiffApp';
-  const { name } = require(path.join(projectDir, 'package.json'));
+  const {name} = require(path.join(projectDir, 'package.json'));
 
   logger.info(`Fetching diff between v${currentVersion} and v${newVersion}...`);
 
   try {
     patch = await fetch(
-      `${rnDiffPurgeUrl}/compare/version/${currentVersion}...version/${newVersion}.diff`
+      `${rnDiffPurgeUrl}/compare/version/${currentVersion}...version/${newVersion}.diff`,
     );
   } catch (error) {
     logger.error(
-      `Failed to fetch diff for react-native@${newVersion}. Maybe it's not released yet?`
+      `Failed to fetch diff for react-native@${newVersion}. Maybe it's not released yet?`,
     );
     logger.info(
-      `For available releases to diff see: https://github.com/pvinis/rn-diff-purge#version-changes`
+      'For available releases to diff see: https://github.com/pvinis/rn-diff-purge#version-changes',
     );
     return null;
   }
@@ -73,30 +72,30 @@ const getVersionToUpgradeTo = async (argv, currentVersion, projectDir) => {
     logger.error(
       `Provided version "${
         argv[0]
-      }" is not allowed. Please pass a valid semver version`
+      }" is not allowed. Please pass a valid semver version`,
     );
     return null;
   }
 
   if (currentVersion > newVersion) {
     logger.error(
-      `Trying to upgrade from newer version "${currentVersion}" to older "${newVersion}"`
+      `Trying to upgrade from newer version "${currentVersion}" to older "${newVersion}"`,
     );
     return null;
   }
   if (currentVersion === newVersion) {
     const {
-      dependencies: { 'react-native': version },
+      dependencies: {'react-native': version},
     } = require(path.join(projectDir, 'package.json'));
 
     if (semver.satisfies(newVersion, version)) {
       logger.warn(
-        `Specified version "${newVersion}" is already installed in node_modules and it satisfies "${version}" semver range. No need to upgrade`
+        `Specified version "${newVersion}" is already installed in node_modules and it satisfies "${version}" semver range. No need to upgrade`,
       );
       return null;
     }
     logger.error(
-      `Dependency mismatch. Specified version "${newVersion}" is already installed in node_modules and it doesn't satisfy "${version}" semver range of your "react-native" dependency. Please re-install your dependencies`
+      `Dependency mismatch. Specified version "${newVersion}" is already installed in node_modules and it doesn't satisfy "${version}" semver range of your "react-native" dependency. Please re-install your dependencies`,
     );
     return null;
   }
@@ -107,19 +106,19 @@ const getVersionToUpgradeTo = async (argv, currentVersion, projectDir) => {
 const installDeps = async (newVersion, projectDir, patchSuccess) => {
   if (!patchSuccess) {
     logger.warn(
-      'Continuing after failure. Most of the files are upgraded but you will need to deal with some conflicts manually'
+      'Continuing after failure. Most of the files are upgraded but you will need to deal with some conflicts manually',
     );
   }
   logger.info(
-    `Installing react-native@${newVersion} and its peer dependencies...`
+    `Installing react-native@${newVersion} and its peer dependencies...`,
   );
   const peerDeps = await getRNPeerDeps(newVersion);
-  const pm = new PackageManager({ projectDir });
+  const pm = new PackageManager({projectDir});
   const deps = [
     `react-native@${newVersion}`,
     ...Object.keys(peerDeps).map(module => `${module}@${peerDeps[module]}`),
   ];
-  await pm.install(deps, { silent: true });
+  await pm.install(deps, {silent: true});
   await execa('git', ['add', 'package.json']);
   try {
     await execa('git', ['add', 'yarn.lock']);
@@ -136,7 +135,7 @@ const installDeps = async (newVersion, projectDir, patchSuccess) => {
 const applyPatch = async (
   currentVersion: string,
   newVersion: string,
-  tmpPatchFile: string
+  tmpPatchFile: string,
 ) => {
   let filesToExclude = ['package.json'];
   try {
@@ -150,7 +149,7 @@ const applyPatch = async (
         '-p2',
         '--3way',
       ]);
-      logger.info(`Applying diff...`);
+      logger.info('Applying diff...');
     } catch (error) {
       filesToExclude = [
         ...filesToExclude,
@@ -171,10 +170,10 @@ const applyPatch = async (
     }
     logger.error('Automatically applying diff failed');
     logger.info(
-      `Here's the diff we tried to apply: ${rnDiffPurgeUrl}/compare/version/${currentVersion}...version/${newVersion}`
+      `Here's the diff we tried to apply: ${rnDiffPurgeUrl}/compare/version/${currentVersion}...version/${newVersion}`,
     );
     logger.info(
-      `You may find release notes helpful: https://github.com/facebook/react-native/releases/tag/v${newVersion}`
+      `You may find release notes helpful: https://github.com/facebook/react-native/releases/tag/v${newVersion}`,
     );
     return false;
   }
@@ -188,19 +187,19 @@ async function upgrade(argv: Array<string>, ctx: ContextT, args: FlagsT) {
   if (args.legacy) {
     return legacyUpgrade.func(argv, ctx);
   }
-  const rnDiffGitAddress = `https://github.com/pvinis/rn-diff-purge.git`;
+  const rnDiffGitAddress = 'https://github.com/pvinis/rn-diff-purge.git';
   const tmpRemote = 'tmp-rn-diff-purge';
   const tmpPatchFile = 'tmp-upgrade-rn.patch';
   const projectDir = ctx.root;
-  const { version: currentVersion } = require(path.join(
+  const {version: currentVersion} = require(path.join(
     projectDir,
-    'node_modules/react-native/package.json'
+    'node_modules/react-native/package.json',
   ));
 
   const newVersion = await getVersionToUpgradeTo(
     argv,
     currentVersion,
-    projectDir
+    projectDir,
   );
 
   if (!newVersion) {
@@ -217,11 +216,10 @@ async function upgrade(argv: Array<string>, ctx: ContextT, args: FlagsT) {
     logger.info('Diff has no changes to apply, proceeding further');
     await installDeps(newVersion, projectDir);
     logger.success(
-      `Upgraded React Native to v${newVersion} 🎉. Now you can review and commit the changes`
+      `Upgraded React Native to v${newVersion} 🎉. Now you can review and commit the changes`,
     );
     return;
   }
-
   let patchSuccess;
 
   try {
@@ -242,25 +240,22 @@ async function upgrade(argv: Array<string>, ctx: ContextT, args: FlagsT) {
     }
     await installDeps(newVersion, projectDir, patchSuccess);
     logger.info('Running "git status" to check what changed...');
-    await execa('git', ['status'], { stdio: 'inherit' });
+    await execa('git', ['status'], {stdio: 'inherit'});
     await execa('git', ['remote', 'remove', tmpRemote]);
 
     if (!patchSuccess) {
       logger.warn(
-        'Please run "git diff" to review the conflicts and resolve them'
+        'Please run "git diff" to review the conflicts and resolve them',
       );
-      // eslint-disable-next-line no-unsafe-finally
       throw new Error(
-        'Upgrade failed. Please see the messages above for details'
+        'Upgrade failed. Please see the messages above for details',
       );
     }
   }
-
   logger.success(
-    `Upgraded React Native to v${newVersion} 🎉. Now you can review and commit the changes`
+    `Upgraded React Native to v${newVersion} 🎉. Now you can review and commit the changes`,
   );
 }
-
 const upgradeCommand = {
   name: 'upgrade [version]',
   description:
@@ -275,5 +270,4 @@ const upgradeCommand = {
     },
   ],
 };
-
 export default upgradeCommand;

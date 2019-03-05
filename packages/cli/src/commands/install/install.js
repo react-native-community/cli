@@ -7,7 +7,7 @@
  * @flow
  */
 
-import type { ContextT } from '../../tools/types.flow';
+import type {ContextT} from '../../tools/types.flow';
 import logger from '../../tools/logger';
 import PackageManager from '../../tools/PackageManager';
 import link from '../link/link';
@@ -16,11 +16,10 @@ async function install(args: Array<string>, ctx: ContextT) {
   const name = args[0];
 
   logger.info(`Installing "${name}"...`);
-  new PackageManager({ projectDir: ctx.root }).install([name]);
+  new PackageManager({projectDir: ctx.root}).install([name]);
 
   logger.info(`Linking "${name}"...`);
-  // eslint-disable-next-line import/no-named-as-default-member
-  await link.func([name], ctx, { platforms: undefined });
+  await link.func([name], ctx, {platforms: undefined});
 
   logger.success(`Successfully installed and linked "${name}"`);
 }

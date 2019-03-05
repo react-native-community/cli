@@ -18,10 +18,10 @@
  * Otherwise returns null
  */
 export default function removeFromProjectReferences(project, file) {
-  const { firstProject } = project.getFirstProject();
+  const {firstProject} = project.getFirstProject();
 
   const projectRef = firstProject.projectReferences.find(
-    item => item.ProjectRef === file.uuid
+    item => item.ProjectRef === file.uuid,
   );
 
   if (!projectRef) {
@@ -30,7 +30,7 @@ export default function removeFromProjectReferences(project, file) {
 
   firstProject.projectReferences.splice(
     firstProject.projectReferences.indexOf(projectRef),
-    1
+    1,
   );
 
   return projectRef;

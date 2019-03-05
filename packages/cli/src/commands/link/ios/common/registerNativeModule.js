@@ -14,7 +14,7 @@ export default function registerNativeModule(
   name,
   dependencyConfig,
   params,
-  projectConfig
+  projectConfig,
 ) {
   if (projectConfig.podfile && dependencyConfig.podspec) {
     registerDependencyPods(name, dependencyConfig, projectConfig);

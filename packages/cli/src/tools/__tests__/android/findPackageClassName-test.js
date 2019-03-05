@@ -30,7 +30,7 @@ const fs = require('fs');
             android: mocks.validKotlin,
           },
         },
-        platform
+        platform,
       );
     });
 
@@ -40,13 +40,13 @@ const fs = require('fs');
 
     it('returns the name of the java class implementing ReactPackage', () => {
       expect(findPackageClassName(`${root}flatJava`)).toBe(
-        'SomeExampleJavaPackage'
+        'SomeExampleJavaPackage',
       );
     });
 
     it('returns the name of the kotlin class implementing ReactPackage', () => {
       expect(findPackageClassName(`${root}flatKotlin`)).toBe(
-        'SomeExampleKotlinPackage'
+        'SomeExampleKotlinPackage',
       );
     });
 

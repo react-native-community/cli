@@ -18,7 +18,7 @@ async function dependencies(argv, configPromise, args, packagerInstance) {
   const config = await configPromise;
   if (!fs.existsSync(rootModuleAbsolutePath)) {
     return Promise.reject(
-      new Error(`File ${rootModuleAbsolutePath} does not exist`)
+      new Error(`File ${rootModuleAbsolutePath} does not exist`),
     );
   }
 
@@ -26,7 +26,7 @@ async function dependencies(argv, configPromise, args, packagerInstance) {
 
   const relativePath = path.relative(
     config.projectRoot,
-    rootModuleAbsolutePath
+    rootModuleAbsolutePath,
   );
 
   const options = {
@@ -69,7 +69,7 @@ export default {
   description: 'lists dependencies',
   func: util.deprecate(
     dependencies,
-    'dependencies command was moved to metro, and will be removed from cli in next release'
+    'dependencies command was moved to metro, and will be removed from cli in next release',
   ),
   options: [
     {

@@ -6,7 +6,7 @@ export const fetch = (url: string) =>
     const request = https.get(url, response => {
       if (response.statusCode < 200 || response.statusCode > 299) {
         reject(
-          new Error(`Failed to load page, status code: ${response.statusCode}`)
+          new Error(`Failed to load page, status code: ${response.statusCode}`),
         );
       }
       const body = [];

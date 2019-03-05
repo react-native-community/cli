@@ -7,8 +7,8 @@
  * @flow
  */
 
-import { pick } from 'lodash';
-import type { ContextT } from '../../tools/types.flow';
+import {pick} from 'lodash';
+import type {ContextT} from '../../tools/types.flow';
 
 import promiseWaterfall from './promiseWaterfall';
 import logger from '../../tools/logger';
@@ -43,13 +43,13 @@ function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
     project = getProjectConfig(ctx, platforms);
   } catch (err) {
     logger.error(
-      'No package found. Are you sure this is a React Native project?'
+      'No package found. Are you sure this is a React Native project?',
     );
     return Promise.reject(err);
   }
   const hasProjectConfig = Object.keys(platforms).reduce(
     (acc, key) => acc || key in project,
-    false
+    false,
   );
   if (!hasProjectConfig && findReactNativeScripts()) {
     throw new Error(
@@ -57,7 +57,7 @@ function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
         'If you need to include a library that relies on custom native code, ' +
         'you might have to eject first. ' +
         'See https://github.com/react-community/create-react-native-app/blob/master/EJECTING.md ' +
-        'for more information.'
+        'for more information.',
     );
   }
 
@@ -80,7 +80,7 @@ function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
   return promiseWaterfall(tasks).catch(err => {
     logger.error(
       `Something went wrong while linking. Error: ${err.message} \n` +
-        'Please file an issue here: https://github.com/react-native-community/react-native-cli/issues'
+        'Please file an issue here: https://github.com/react-native-community/react-native-cli/issues',
     );
     throw err;
   });

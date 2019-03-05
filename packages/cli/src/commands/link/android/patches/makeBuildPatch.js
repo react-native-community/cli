@@ -12,7 +12,7 @@ import normalizeProjectName from './normalizeProjectName';
 export default function makeBuildPatch(name) {
   const normalizedProjectName = normalizeProjectName(name);
   const installPattern = new RegExp(
-    `(implementation|api|compile)\\w*\\s*\\(*project\\(['"]:${normalizedProjectName}['"]\\)`
+    `(implementation|api|compile)\\w*\\s*\\(*project\\(['"]:${normalizedProjectName}['"]\\)`,
   );
 
   return {

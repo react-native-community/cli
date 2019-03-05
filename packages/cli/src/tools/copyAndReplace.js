@@ -29,7 +29,7 @@ function copyAndReplace(
   srcPath,
   destPath,
   replacements,
-  contentChangedCallback
+  contentChangedCallback,
 ) {
   if (fs.lstatSync(srcPath).isDirectory()) {
     if (!fs.existsSync(destPath)) {

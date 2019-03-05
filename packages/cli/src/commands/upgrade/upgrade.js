@@ -14,7 +14,7 @@ type FlagsT = {
   legacy: boolean,
 };
 
-const rnDiffPurgeUrl = 'https://github.com/pvinis/rn-diff-purge';
+const rnDiffPurgeUrl = 'https://github.com/react-native-community/rn-diff-purge';
 
 const getLatestRNVersion = async (): Promise<string> => {
   logger.info('No version passed. Fetching latest...');
@@ -52,7 +52,7 @@ const getPatch = async (currentVersion, newVersion, projectDir) => {
       `Failed to fetch diff for react-native@${newVersion}. Maybe it's not released yet?`,
     );
     logger.info(
-      'For available releases to diff see: https://github.com/pvinis/rn-diff-purge#version-changes',
+      'For available releases to diff see: https://github.com/react-native-community/rn-diff-purge#version-changes',
     );
     return null;
   }
@@ -187,7 +187,7 @@ async function upgrade(argv: Array<string>, ctx: ContextT, args: FlagsT) {
   if (args.legacy) {
     return legacyUpgrade.func(argv, ctx);
   }
-  const rnDiffGitAddress = 'https://github.com/pvinis/rn-diff-purge.git';
+  const rnDiffGitAddress = 'https://github.com/react-native-community/rn-diff-purge.git';
   const tmpRemote = 'tmp-rn-diff-purge';
   const tmpPatchFile = 'tmp-upgrade-rn.patch';
   const projectDir = ctx.root;

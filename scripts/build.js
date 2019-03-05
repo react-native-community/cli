@@ -25,7 +25,6 @@ const mkdirp = require('mkdirp');
 const babel = require('@babel/core');
 const chalk = require('chalk');
 const micromatch = require('micromatch');
-const prettier = require('prettier');
 const stringLength = require('string-length');
 const { PACKAGES_DIR, getPackages } = require('./helpers');
 
@@ -36,10 +35,6 @@ const JS_FILES_PATTERN = '**/*.js';
 const IGNORE_PATTERN = '**/__{tests,mocks,fixtures}__/**';
 
 const transformOptions = require('../babel.config.js');
-
-const prettierConfig = prettier.resolveConfig.sync(__filename);
-prettierConfig.trailingComma = 'none';
-prettierConfig.parser = 'babel';
 
 const adjustToTerminalWidth = str => {
   const columns = process.stdout.columns || 80;
@@ -106,9 +101,8 @@ function buildFile(file, silent) {
   } else {
     const options = Object.assign({}, transformOptions);
     const transformed = babel.transformFileSync(file, options).code;
-    const prettyCode = prettier.format(transformed, prettierConfig);
 
-    fs.writeFileSync(destPath, prettyCode);
+    fs.writeFileSync(destPath, transformed);
 
     silent ||
       process.stdout.write(

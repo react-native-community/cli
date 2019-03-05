@@ -157,7 +157,7 @@ function installTemplateDevDependencies(templatePath, destinationRoot) {
   const dependenciesToInstall = Object.keys(dependencies).map(
     depName => `${depName}@${dependencies[depName]}`
   );
-  new PackageManager({ projectDir: destinationRoot }).install(
+  new PackageManager({ projectDir: destinationRoot }).installDev(
     dependenciesToInstall
   );
 }

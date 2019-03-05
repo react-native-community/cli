@@ -11,8 +11,7 @@
     "lint": "eslint . --cache --report-unused-disable-directives",
     "flow-check": "flow check",
     "postinstall": "yarn build",
-    "publish": "yarn build-clean && yarn build && lerna publish",
-    "prettier": "prettier --write \"./**/*.js\"s"
+    "publish": "yarn build-clean && yarn build && lerna publish"
   },
   "dependencies": {
     "@babel/core": "^7.0.0",

@@ -71,15 +71,7 @@ function eject() {
   if (!doesIOSExist) {
     logger.info('Generating the iOS folder.');
     copyProjectTemplateAndReplace(
-      path.resolve(
-        'node_modules',
-        'react-native',
-        '@react-native-community',
-        'cli',
-        'templates',
-        'HelloWorld',
-        'ios',
-      ),
+      path.resolve('node_modules', 'react-native', 'template', 'ios'),
       path.resolve('ios'),
       appName,
       templateOptions,
@@ -89,15 +81,7 @@ function eject() {
   if (!doesAndroidExist) {
     logger.info('Generating the Android folder.');
     copyProjectTemplateAndReplace(
-      path.resolve(
-        'node_modules',
-        'react-native',
-        '@react-native-community',
-        'cli',
-        'templates',
-        'HelloWorld',
-        'android',
-      ),
+      path.resolve('node_modules', 'react-native', 'template', 'android'),
       path.resolve('android'),
       appName,
       templateOptions,

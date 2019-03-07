@@ -10,20 +10,19 @@
 import chalk from 'chalk';
 import childProcess from 'child_process';
 import commander from 'commander';
-import minimist from 'minimist';
 import path from 'path';
 import type {CommandT, ContextT} from './tools/types.flow';
 import getLegacyConfig from './tools/getLegacyConfig';
 import {getCommands} from './commands';
 import init from './commands/init/init';
-import assertRequiredOptions from './tools/assertRequiredOptions';
 import logger from './tools/logger';
 import pkg from '../package.json';
 
 commander
-  .version(pkg.version)
+  .option('--version', 'Print CLI version')
   .option('--projectRoot [string]', 'Path to the root of the project')
-  .option('--reactNativePath [string]', 'Path to React Native');
+  .option('--reactNativePath [string]', 'Path to React Native')
+  .parse(process.argv);
 
 commander.on('command:*', () => {
   printUnknownCommand(commander.args.join(' '));
@@ -39,35 +38,34 @@ const handleError = err => {
 
 // Custom printHelpInformation command inspired by internal Commander.js
 // one modified to suit our needs
-function printHelpInformation() {
+function printHelpInformation(examples) {
   let cmdName = this._name;
   if (this._alias) {
     cmdName = `${cmdName}|${this._alias}`;
   }
 
   const sourceInformation = this.pkg
-    ? [`  ${chalk.bold('Source:')} ${this.pkg.name}@${this.pkg.version}`, '']
+    ? [`${chalk.bold('Source:')} ${this.pkg.name}@${this.pkg.version}`, '']
     : [];
 
   let output = [
+    chalk.bold(`react-native ${cmdName} ${this.usage()}`),
     '',
-    chalk.bold(chalk.cyan(`  react-native ${cmdName} ${this.usage()}`)),
-    this._description ? `  ${this._description}` : '',
+    this._description ? `${this._description}` : '',
     '',
     ...sourceInformation,
-    `  ${chalk.bold('Options:')}`,
+    `${chalk.bold('Options:')}`,
     '',
-    this.optionHelp().replace(/^/gm, '    '),
-    '',
+    this.optionHelp().replace(/^/gm, '  '),
   ];
 
-  if (this.examples && this.examples.length > 0) {
-    const formattedUsage = this.examples
-      .map(example => `    ${example.desc}: \n    ${chalk.cyan(example.cmd)}`)
+  if (examples && examples.length > 0) {
+    const formattedUsage = examples
+      .map(example => `  ${example.desc}: \n  ${chalk.cyan(example.cmd)}`)
       .join('\n\n');
 
     output = output.concat([
-      chalk.bold('  Example usage:'),
+      chalk.bold('\nExample usage:'),
       '',
       formattedUsage,
     ]);
@@ -93,26 +91,18 @@ const addCommand = (command: CommandT, ctx: ContextT) => {
   const options = command.options || [];
 
   const cmd = commander
-    .command(command.name, undefined, {
-      noHelp: !command.description,
-    })
+    .command(command.name, undefined, {noHelp: !command.description})
     .description(command.description)
     .action(function handleAction(...args) {
       const passedOptions = this.opts();
       const argv: Array<string> = Array.from(args).slice(0, -1);
 
       Promise.resolve()
-        .then(() => {
-          assertRequiredOptions(options, passedOptions);
-          return command.func(argv, ctx, passedOptions);
-        })
+        .then(() => command.func(argv, ctx, passedOptions))
         .catch(handleError);
     });
 
-  cmd.helpInformation = printHelpInformation.bind(cmd);
-  cmd.examples = command.examples;
-  // $FlowFixMe: This is either null or not
-  cmd.pkg = command.pkg;
+  cmd.helpInformation = printHelpInformation.bind(cmd, command.examples);
 
   options.forEach(opt =>
     cmd.option(
@@ -122,11 +112,6 @@ const addCommand = (command: CommandT, ctx: ContextT) => {
       opt.default,
     ),
   );
-
-  // Redefined here to appear in the `--help` section
-  cmd
-    .option('--projectRoot [string]', 'Path to the root of the project')
-    .option('--reactNativePath [string]', 'Path to React Native');
 };
 
 async function run() {
@@ -157,20 +142,12 @@ async function setupAndRun() {
     }
   }
 
-  /**
-   * Read passed `options` and take the "global" settings
-   *
-   * @todo(grabbou): Consider unifying this by removing either `commander`
-   * or `minimist`
-   */
-  const options = minimist(process.argv.slice(2));
-
-  const root = options.projectRoot
-    ? path.resolve(options.projectRoot)
+  const root = commander.projectRoot
+    ? path.resolve(commander.projectRoot)
     : process.cwd();
 
-  const reactNativePath = options.reactNativePath
-    ? path.resolve(options.reactNativePath)
+  const reactNativePath = commander.reactNativePath
+    ? path.resolve(commander.reactNativePath)
     : (() => {
         try {
           return path.dirname(
@@ -198,8 +175,15 @@ async function setupAndRun() {
 
   commander.parse(process.argv);
 
-  if (!options._.length) {
+  if (commander.rawArgs.length === 2) {
     commander.outputHelp();
+  }
+
+  // We handle --version as a special case like this because both `commander`
+  // and `yargs` append it to every command and we don't want to do that.
+  // E.g. outside command `init` has --version flag and we want to preserve it.
+  if (commander.args.length === 0 && commander.version === true) {
+    console.log(pkg.version);
   }
 }
 

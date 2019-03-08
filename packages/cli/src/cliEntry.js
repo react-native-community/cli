@@ -15,8 +15,9 @@ import type {CommandT, ContextT} from './tools/types.flow';
 import getLegacyConfig from './tools/getLegacyConfig';
 import {getCommands} from './commands';
 import init from './commands/init/init';
+import assertRequiredOptions from './tools/assertRequiredOptions';
 import logger from './tools/logger';
-import pkg from '../package.json';
+import pkgJson from '../package.json';
 
 commander
   .option('--version', 'Print CLI version')
@@ -38,14 +39,14 @@ const handleError = err => {
 
 // Custom printHelpInformation command inspired by internal Commander.js
 // one modified to suit our needs
-function printHelpInformation(examples) {
+function printHelpInformation(examples, pkg) {
   let cmdName = this._name;
   if (this._alias) {
     cmdName = `${cmdName}|${this._alias}`;
   }
 
-  const sourceInformation = this.pkg
-    ? [`${chalk.bold('Source:')} ${this.pkg.name}@${this.pkg.version}`, '']
+  const sourceInformation = pkg
+    ? [`${chalk.bold('Source:')} ${pkg.name}@${pkg.version}`, '']
     : [];
 
   let output = [
@@ -98,11 +99,19 @@ const addCommand = (command: CommandT, ctx: ContextT) => {
       const argv: Array<string> = Array.from(args).slice(0, -1);
 
       Promise.resolve()
-        .then(() => command.func(argv, ctx, passedOptions))
+        .then(() => {
+          assertRequiredOptions(options, passedOptions);
+          return command.func(argv, ctx, passedOptions);
+        })
         .catch(handleError);
     });
 
-  cmd.helpInformation = printHelpInformation.bind(cmd, command.examples);
+  cmd.helpInformation = printHelpInformation.bind(
+    cmd,
+    command.examples,
+    // $FlowFixMe - we know pkg may be missing...
+    command.pkg,
+  );
 
   options.forEach(opt =>
     cmd.option(
@@ -183,7 +192,7 @@ async function setupAndRun() {
   // and `yargs` append it to every command and we don't want to do that.
   // E.g. outside command `init` has --version flag and we want to preserve it.
   if (commander.args.length === 0 && commander.version === true) {
-    console.log(pkg.version);
+    console.log(pkgJson.version);
   }
 }
 

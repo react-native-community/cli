@@ -13,7 +13,7 @@ import normalizeProjectName from './normalizeProjectName';
 export default function makeBuildPatch(name, buildGradlePath) {
   const normalizedProjectName = normalizeProjectName(name);
   const installPattern = new RegExp(
-    `(implementation|api|compile)\\w*\\s*\\(*project\\(['"]:${normalizedProjectName}['"]\\)`,
+    `(implementation|api|compile)\\w*\\s*\\(*project\\s*\\(['"]:${normalizedProjectName}['"]\\)`,
   );
 
   return {
@@ -34,7 +34,7 @@ function makePatchString(normalizedProjectName, buildGradlePath) {
   const depTypes = ['compile', 'api', 'implementation'];
   for (const type of depTypes) {
     const depPattern = new RegExp(
-      `(${type})\\w*\\s*\\(*project\\(['"]:${normalizedProjectName}['"]\\)`,
+      `(${type})\\w*\\s*\\(*project\\s*\\(['"]:${normalizedProjectName}['"]\\)`,
     );
 
     if (depPattern.test(buildGradle)) {

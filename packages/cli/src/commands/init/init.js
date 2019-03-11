@@ -49,22 +49,8 @@ function init(projectDir, argsOrName) {
  * @param options Command line arguments parsed by minimist.
  */
 function generateProject(destinationRoot, newProjectName, options) {
-  const reactNativePackageJson = require('react-native/package.json');
-  const {peerDependencies} = reactNativePackageJson;
-  if (!peerDependencies) {
-    logger.error(
-      "Missing React peer dependency in React Native's package.json. Aborting.",
-    );
-    return;
-  }
-
-  const reactVersion = peerDependencies.react;
-  if (!reactVersion) {
-    logger.error(
-      "Missing React peer dependency in React Native's package.json. Aborting.",
-    );
-    return;
-  }
+  const pkgJson = require('react-native/package.json');
+  const reactVersion = pkgJson.peerDependencies.react;
 
   const packageManager = new PackageManager({
     projectDir: destinationRoot,

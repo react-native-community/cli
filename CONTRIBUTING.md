@@ -35,7 +35,7 @@ yarn global add verdaccio
 ```
 * Run verdaccio
 ```sh
-yarn verdaccio
+verdaccio
 ```
 * Set npm registry to `verdaccio` proxy server
 ```sh

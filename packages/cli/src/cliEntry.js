@@ -22,8 +22,7 @@ import pkgJson from '../package.json';
 commander
   .option('--version', 'Print CLI version')
   .option('--projectRoot [string]', 'Path to the root of the project')
-  .option('--reactNativePath [string]', 'Path to React Native')
-  .parse(process.argv);
+  .option('--reactNativePath [string]', 'Path to React Native');
 
 commander.on('command:*', () => {
   printUnknownCommand(commander.args.join(' '));

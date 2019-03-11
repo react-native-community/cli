@@ -48,7 +48,7 @@ export const getDefaultConfig = (ctx: ContextT) => {
     serializer: {
       getModulesRunBeforeMainModule: () => [
         require.resolve(
-          path.join(ctx.reactNativePath, 'Libraries/tools/InitializeCore'),
+          path.join(ctx.reactNativePath, 'Libraries/Core/InitializeCore'),
         ),
       ],
       getPolyfills: () =>

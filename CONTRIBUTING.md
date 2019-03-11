@@ -22,7 +22,7 @@ Repository is splitted into two packages:
 You can test your changes by calling `cli.js` directly from the cloned repository. You need to make sure the version of React Native matches the one present in devDependencies of the CLI. Otherwise, you may get unexpected errors.
 
 ```sh
-node /path/to/cloned/project/packages/cli/index.js
+node /path/to/cloned/project/packages/cli/build/index.js
 ```
 
 ## Testing `init` command

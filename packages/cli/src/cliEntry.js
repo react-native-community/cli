@@ -120,6 +120,15 @@ const addCommand = (command: CommandT, ctx: ContextT) => {
       opt.default,
     ),
   );
+
+  /**
+   * We want all commands (like "start", "link") to accept these flags, so we
+   * add them here instead of in every single command. This way they'll be
+   * displayed in commands --help menus.
+   */
+  cmd
+    .option('--projectRoot [string]', 'Path to the root of the project')
+    .option('--reactNativePath [string]', 'Path to React Native');
 };
 
 async function run() {

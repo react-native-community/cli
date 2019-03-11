@@ -50,12 +50,9 @@ function printHelpInformation(examples, pkg) {
 
   let output = [
     chalk.bold(`react-native ${cmdName} ${this.usage()}`),
-    '',
-    this._description ? `${this._description}` : '',
-    '',
+    this._description ? `\n${this._description}\n` : '',
     ...sourceInformation,
     `${chalk.bold('Options:')}`,
-    '',
     this.optionHelp().replace(/^/gm, '  '),
   ];
 
@@ -64,14 +61,10 @@ function printHelpInformation(examples, pkg) {
       .map(example => `  ${example.desc}: \n  ${chalk.cyan(example.cmd)}`)
       .join('\n\n');
 
-    output = output.concat([
-      chalk.bold('\nExample usage:'),
-      '',
-      formattedUsage,
-    ]);
+    output = output.concat([chalk.bold('\nExample usage:'), formattedUsage]);
   }
 
-  return output.concat(['', '']).join('\n');
+  return output.join('\n');
 }
 
 function printUnknownCommand(cmdName) {

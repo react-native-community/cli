@@ -122,9 +122,9 @@ const addCommand = (command: CommandT, ctx: ContextT) => {
   );
 
   /**
-   * We want all commands (like "start", "link") to accept these flags, so we
-   * add them here instead of in every single command. This way they'll be
-   * displayed in commands --help menus.
+   * We want every command (like "start", "link") to accept below options.
+   * To achieve that we append them to regular options of each command here.
+   * This way they'll be displayed in the commands --help menus.
    */
   cmd
     .option('--projectRoot [string]', 'Path to the root of the project')

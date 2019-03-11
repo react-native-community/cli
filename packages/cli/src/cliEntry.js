@@ -84,7 +84,7 @@ const addCommand = (command: CommandT, ctx: ContextT) => {
   const options = command.options || [];
 
   const cmd = commander
-    .command(command.name, undefined, {noHelp: !command.description})
+    .command(command.name)
     .description(command.description)
     .action(function handleAction(...args) {
       const passedOptions = this.opts();

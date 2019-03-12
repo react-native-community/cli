@@ -5,7 +5,6 @@
 import path from 'path';
 
 import findPlugins from '../tools/findPlugins';
-import logger from '../tools/logger';
 
 import type {
   CommandT,
@@ -29,6 +28,7 @@ import logAndroid from './logAndroid/logAndroid';
 import logIOS from './logIOS/logIOS';
 import dependencies from './dependencies/dependencies';
 import info from './info/info';
+import init from './init';
 
 /**
  * List of built-in commands
@@ -51,6 +51,7 @@ const loadLocalCommands: Array<LocalCommandT> = [
   logIOS,
   dependencies,
   info,
+  init,
 ];
 
 /**
@@ -102,19 +103,5 @@ const loadProjectCommands = (root: string): Array<ProjectCommandT> => {
  * Loads all the commands inside a given `root` folder
  */
 export function getCommands(root: string): Array<CommandT> {
-  return [
-    ...loadLocalCommands,
-    {
-      name: 'init',
-      func: () => {
-        logger.warn(
-          [
-            'Looks like a React Native project already exists in the current',
-            'folder. Run this command from a different folder or remove node_modules/react-native',
-          ].join('\n')
-        );
-      },
-    },
-    ...loadProjectCommands(root),
-  ];
+  return [...loadLocalCommands, ...loadProjectCommands(root)];
 }

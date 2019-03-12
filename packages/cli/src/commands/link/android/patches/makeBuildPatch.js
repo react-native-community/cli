@@ -7,17 +7,45 @@
  * @format
  */
 
+import fs from 'fs';
 import normalizeProjectName from './normalizeProjectName';
 
-export default function makeBuildPatch(name) {
+const depConfigs = ['compile', 'api', 'implementation'];
+
+export default function makeBuildPatch(name, buildGradlePath) {
   const normalizedProjectName = normalizeProjectName(name);
   const installPattern = new RegExp(
-    `(implementation|api|compile)\\w*\\s*\\(*project\\(['"]:${normalizedProjectName}['"]\\)`,
+    buildDepRegExp(normalizedProjectName, ...depConfigs),
   );
 
   return {
     installPattern,
     pattern: /[^ \t]dependencies {(\r\n|\n)/,
-    patch: `    implementation project(':${normalizedProjectName}')\n`,
+    patch: makePatchString(normalizedProjectName, buildGradlePath),
   };
+}
+
+function makePatchString(normalizedProjectName, buildGradlePath) {
+  const defaultPatchString = `    implementation project(':${normalizedProjectName}')\n`;
+  if (!buildGradlePath) {
+    return defaultPatchString;
+  }
+
+  const buildGradle = fs.readFileSync(buildGradlePath);
+
+  for (const config of depConfigs) {
+    const depPattern = new RegExp(
+      buildDepRegExp(normalizedProjectName, config),
+    );
+    if (depPattern.test(buildGradle)) {
+      return `    ${config} project(':${normalizedProjectName}')\n`;
+    }
+  }
+
+  return defaultPatchString;
+}
+
+function buildDepRegExp(normalizedProjectName, ...configs) {
+  const orConfigs = configs.join('|');
+  return `(${orConfigs})\\w*\\s*\\(*project\\s*\\(['"]:${normalizedProjectName}['"]\\)`;
 }

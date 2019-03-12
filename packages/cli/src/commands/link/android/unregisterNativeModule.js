@@ -22,7 +22,7 @@ export default function unregisterNativeAndroidModule(
   androidConfig,
   projectConfig,
 ) {
-  const buildPatch = makeBuildPatch(name);
+  const buildPatch = makeBuildPatch(name, projectConfig.buildGradlePath);
   const strings = fs.readFileSync(projectConfig.stringsPath, 'utf8');
   const params = {};
 

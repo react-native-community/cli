@@ -10,6 +10,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 import groupFilesByType from '../groupFilesByType';
+import logger from '../../../tools/logger';
 
 /**
  * Copies each file from an array of assets provided to targetPath directory
@@ -24,6 +25,7 @@ export default function copyAssetsAndroid(
   const assets = groupFilesByType(files);
 
   (assets.font || []).forEach(asset => {
+    logger.debug(`Linking asset ${asset}`);
     const fontsDir = path.join(project.assetsPath, 'fonts');
     // @todo: replace with fs.mkdirSync(path, {recursive}) + fs.copyFileSync
     // and get rid of fs-extra once we move to Node 10

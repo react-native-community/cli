@@ -8,8 +8,13 @@
  */
 
 import fs from 'fs';
+import logger from '../../../../tools/logger';
 
 export default function revokePatch(file, patch) {
+  if (file) {
+    logger.debug(`Patching ${file}`);
+  }
+
   fs.writeFileSync(
     file,
     fs.readFileSync(file, 'utf8').replace(patch.patch, ''),

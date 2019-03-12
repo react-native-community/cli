@@ -10,6 +10,7 @@
 import fs from 'fs';
 import path from 'path';
 import groupFilesByType from '../groupFilesByType';
+import logger from '../../../tools/logger';
 
 /**
  * Copies each file from an array of assets provided to targetPath directory
@@ -21,6 +22,7 @@ export default function unlinkAssetsAndroid(files, project) {
   const assets = groupFilesByType(files);
 
   (assets.font || []).forEach(file => {
+    logger.debug(`Unlinking asset ${file}`);
     const filePath = path.join(
       project.assetsPath,
       'fonts',

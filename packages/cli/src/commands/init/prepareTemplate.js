@@ -4,16 +4,34 @@ import path from 'path';
 import PackageManager from '../../tools/PackageManager';
 import walk from '../../tools/walk';
 
+const FILE_PROTOCOL = /file:/;
+
+function fixPaths(reactNativePath: string) {
+  if (path.isAbsolute(reactNativePath)) {
+    return reactNativePath;
+  }
+
+  return path.resolve(process.cwd(), '..', reactNativePath);
+}
+
+function getReactNativeVersion(version: string) {
+  if (version.match(FILE_PROTOCOL)) {
+    return fixPaths(version.replace(FILE_PROTOCOL, ''));
+  }
+
+  return `react-native@${version}`;
+}
+
 function getExternalTemplate(templateName: string) {
   const packageManager = new PackageManager({});
   packageManager.install([templateName]);
   fs.copySync(path.join('node_modules', templateName), process.cwd());
 }
 
-function getReactNativeTemplate(version?: string) {
+function getReactNativeTemplate(version: string) {
   const packageManager = new PackageManager({});
 
-  packageManager.install([`react-native@${version || 'latest'}`]);
+  packageManager.install([getReactNativeVersion(version)]);
 
   // We should use `path.dirname(require.resolve('react-native/template'));`, but for now
   // I use this version, because react-native doesn't exist in cli context
@@ -84,7 +102,7 @@ export function prepareExternalTemplate(
 
 export function prepareReactNativeTemplate(
   projectName: string,
-  version?: string,
+  version: string,
 ) {
   getReactNativeTemplate(version);
   changeNameInTemplate(projectName);

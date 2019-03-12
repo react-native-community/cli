@@ -1,5 +1,6 @@
 // @flow
 import fs from 'fs-extra';
+import minimist from 'minimist';
 import type {ContextT} from '../../tools/types.flow';
 import {validateProjectName} from './validate';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
@@ -12,7 +13,6 @@ import logger from '../../tools/logger';
 
 type Options = {|
   template?: string,
-  version?: string,
 |};
 
 type ExternalTemplateOptions = $Diff<Options, {template: string}> & {
@@ -27,15 +27,12 @@ function createFromExternalTemplate(
   return prepareExternalTemplate(projectName, options.template);
 }
 
-function createFromReactNativeTemplate(
-  projectName: string,
-  rnVersion?: string,
-) {
+function createFromReactNativeTemplate(projectName: string, rnVersion: string) {
   logger.info('Initializing new project');
   return prepareReactNativeTemplate(projectName, rnVersion);
 }
 
-function createProject(projectName: string, options: Options) {
+function createProject(projectName: string, options: Options, version: string) {
   fs.mkdirSync(projectName);
   process.chdir(projectName);
 
@@ -44,7 +41,7 @@ function createProject(projectName: string, options: Options) {
     return createFromExternalTemplate(projectName, options);
   }
 
-  return createFromReactNativeTemplate(projectName, options.version);
+  return createFromReactNativeTemplate(projectName, version);
 }
 
 export default function initialize(
@@ -55,11 +52,13 @@ export default function initialize(
   try {
     validateProjectName(projectName);
 
+    const version: string = minimist(process.argv).version || 'latest';
+
     if (fs.existsSync(projectName)) {
       throw new DirectoryAlreadyExistsError(projectName);
     }
 
-    createProject(projectName, options);
+    createProject(projectName, options, version);
 
     printRunInstructions(process.cwd(), projectName);
   } catch (e) {

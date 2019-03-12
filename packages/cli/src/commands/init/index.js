@@ -7,12 +7,12 @@ export default {
   description: 'initialize new project',
   options: [
     {
-      command: '--rn-version [string]',
-      description: 'version of RN',
+      command: '--version [string]',
+      description: 'Version of RN',
     },
     {
       command: '--template [string]',
-      description: 'custom template',
+      description: 'Custom template',
     },
   ],
 };

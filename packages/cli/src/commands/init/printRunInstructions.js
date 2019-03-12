@@ -17,11 +17,11 @@ function printRunInstructions(projectDir: string, projectName: string) {
   const xcodeProjectPath = `${path.resolve(
     projectDir,
     'ios',
-    projectName
+    projectName,
   )}.xcodeproj`;
   const relativeXcodeProjectPath = path.relative(
     process.cwd(),
-    xcodeProjectPath
+    xcodeProjectPath,
   );
 
   logger.log(`

@@ -1,7 +1,7 @@
 // @flow
 import fs from 'fs-extra';
-import type { ContextT } from '../../tools/types.flow';
-import { validateProjectName } from './validate';
+import type {ContextT} from '../../tools/types.flow';
+import {validateProjectName} from './validate';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
 import {
   prepareExternalTemplate,
@@ -15,13 +15,13 @@ type Options = {|
   version?: string,
 |};
 
-type ExternalTemplateOptions = $Diff<Options, { template: string }> & {
+type ExternalTemplateOptions = $Diff<Options, {template: string}> & {
   template: string,
 };
 
 function createFromExternalTemplate(
   projectName: string,
-  options: ExternalTemplateOptions
+  options: ExternalTemplateOptions,
 ) {
   logger.info('Initializing new project from extrenal template');
   return prepareExternalTemplate(projectName, options.template);
@@ -29,7 +29,7 @@ function createFromExternalTemplate(
 
 function createFromReactNativeTemplate(
   projectName: string,
-  rnVersion?: string
+  rnVersion?: string,
 ) {
   logger.info('Initializing new project');
   return prepareReactNativeTemplate(projectName, rnVersion);
@@ -50,7 +50,7 @@ function createProject(projectName: string, options: Options) {
 export default function initialize(
   [projectName]: Array<string>,
   context: ContextT,
-  options: Options
+  options: Options,
 ) {
   try {
     validateProjectName(projectName);

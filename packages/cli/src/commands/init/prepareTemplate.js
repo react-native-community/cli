@@ -21,7 +21,7 @@ function getReactNativeTemplate(version?: string) {
     process.cwd(),
     'node_modules',
     'react-native',
-    'template'
+    'template',
   );
 
   fs.copySync(templatePath, process.cwd());
@@ -48,7 +48,7 @@ function isNonBinaryFile(filePath: string) {
 function renameFile(filePath: string, oldName: string, newName: string) {
   const newFileName = path.join(
     path.dirname(filePath),
-    path.basename(filePath).replace(new RegExp(oldName, 'g'), newName)
+    path.basename(filePath).replace(new RegExp(oldName, 'g'), newName),
   );
 
   fs.moveSync(filePath, newFileName);
@@ -76,7 +76,7 @@ function changeNameInTemplate(projectName: string) {
 
 export function prepareExternalTemplate(
   projectName: string,
-  templateName: string
+  templateName: string,
 ) {
   getExternalTemplate(templateName);
   changeNameInTemplate(projectName);
@@ -84,7 +84,7 @@ export function prepareExternalTemplate(
 
 export function prepareReactNativeTemplate(
   projectName: string,
-  version?: string
+  version?: string,
 ) {
   getReactNativeTemplate(version);
   changeNameInTemplate(projectName);

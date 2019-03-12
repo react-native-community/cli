@@ -17,6 +17,7 @@ import {getCommands} from './commands';
 import init from './commands/init/init';
 import assertRequiredOptions from './tools/assertRequiredOptions';
 import logger from './tools/logger';
+import findPlugins from './tools/findPlugins';
 import pkgJson from '../package.json';
 
 commander
@@ -202,4 +203,4 @@ export default {
   init,
 };
 
-// export { run, init };
+export {run, init, findPlugins};

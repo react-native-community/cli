@@ -4,7 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
+ * @flow
  */
 
 import {groupBy} from 'lodash';
@@ -31,6 +31,6 @@ mime.define({
  * Given an array ['fonts/a.ttf', 'images/b.jpg'],
  * the returned object will be: {font: ['fonts/a.ttf'], image: ['images/b.jpg']}
  */
-export default function groupFilesByType(assets) {
+export default function groupFilesByType(assets: Array<string>) {
   return groupBy(assets, type => mime.lookup(type).split('/')[0]);
 }

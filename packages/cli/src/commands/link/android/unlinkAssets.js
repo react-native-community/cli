@@ -7,7 +7,7 @@
  * @format
  */
 
-import fs from 'fs-extra';
+import fs from 'fs';
 import path from 'path';
 import groupFilesByType from '../groupFilesByType';
 

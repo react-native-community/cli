@@ -10,8 +10,6 @@
 // Simplified version of:
 // https://github.com/0x00A/prompt-sync/blob/master/index.js
 
-/* eslint-disable */
-
 import fs from 'fs';
 
 const term = 13; // carriage return
@@ -112,7 +110,7 @@ function create() {
 
       if (masked) {
         process.stdout.write(
-          `\u001b[2K\u001b[0G${ask}${Array(str.length + 1).join(echo)}`
+          `\u001b[2K\u001b[0G${ask}${Array(str.length + 1).join(echo)}`,
         );
       } else {
         process.stdout.write('\u001b[s');
@@ -122,7 +120,7 @@ function create() {
           process.stdout.write(`\u001b[2K\u001b[0G${ask}${str}`);
         } else {
           process.stdout.write(
-            `\u001b[2K\u001b[0G${str}\u001b[${str.length - insert}D`
+            `\u001b[2K\u001b[0G${str}\u001b[${str.length - insert}D`,
           );
         }
         process.stdout.write('\u001b[u');

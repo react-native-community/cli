@@ -7,15 +7,13 @@
  * @flow
  */
 
-/* eslint-disable consistent-return */
-
 import path from 'path';
-import { spawnSync, spawn, execFileSync } from 'child_process';
+import {spawnSync, spawn, execFileSync} from 'child_process';
 import fs from 'fs';
 import isString from 'lodash/isString';
 
 import isPackagerRunning from '../../tools/isPackagerRunning';
-import type { ContextT } from '../../tools/types.flow';
+import type {ContextT} from '../../tools/types.flow';
 
 import adb from './adb';
 import runOnAllDevices from './runOnAllDevices';
@@ -32,11 +30,10 @@ function checkAndroid(root) {
 /**
  * Starts the app on a connected Android emulator or device.
  */
-// eslint-disable-next-line flowtype/no-weak-types
 function runAndroid(argv: Array<string>, ctx: ContextT, args: Object) {
   if (!checkAndroid(args.root)) {
     logger.error(
-      'Android project not found. Are you sure this is a React Native project?'
+      'Android project not found. Are you sure this is a React Native project?',
     );
     return;
   }
@@ -76,7 +73,7 @@ function buildAndRun(args) {
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
 
   // "app" is usually the default value for Android apps with only 1 app
-  const { appFolder } = args;
+  const {appFolder} = args;
   const packageName = fs
     .readFileSync(`${appFolder}/src/main/AndroidManifest.xml`, 'utf8')
     // $FlowFixMe
@@ -85,7 +82,7 @@ function buildAndRun(args) {
   const packageNameWithSuffix = getPackageNameWithSuffix(
     args.appId,
     args.appIdSuffix,
-    packageName
+    packageName,
   );
 
   const adbPath = getAdbPath();
@@ -96,7 +93,7 @@ function buildAndRun(args) {
         cmd,
         packageNameWithSuffix,
         packageName,
-        adbPath
+        adbPath,
       );
     }
     logger.error('Argument missing for parameter --deviceId');
@@ -106,7 +103,7 @@ function buildAndRun(args) {
       cmd,
       packageNameWithSuffix,
       packageName,
-      adbPath
+      adbPath,
     );
   }
 }
@@ -116,7 +113,7 @@ function runOnSpecificDevice(
   gradlew,
   packageNameWithSuffix,
   packageName,
-  adbPath
+  adbPath,
 ) {
   const devices = adb.getDevices(adbPath);
   if (devices && devices.length > 0) {
@@ -127,14 +124,14 @@ function runOnSpecificDevice(
         args.deviceId,
         packageNameWithSuffix,
         packageName,
-        adbPath
+        adbPath,
       );
     } else {
       logger.error(
         `Could not find device with the id: "${
           args.deviceId
         }". Choose one of the following:`,
-        ...devices
+        ...devices,
       );
     }
   } else {
@@ -158,7 +155,7 @@ function buildApk(gradlew) {
 function tryInstallAppOnDevice(args, adbPath, device) {
   try {
     // "app" is usually the default value for Android apps with only 1 app
-    const { appFolder } = args;
+    const {appFolder} = args;
     const variant = args.variant.toLowerCase();
     const buildDirectory = `${appFolder}/build/outputs/apk/${variant}`;
     const apkFile = getInstallApkName(
@@ -166,13 +163,13 @@ function tryInstallAppOnDevice(args, adbPath, device) {
       adbPath,
       variant,
       device,
-      buildDirectory
+      buildDirectory,
     );
 
     const pathToApk = `${buildDirectory}/${apkFile}`;
     const adbArgs = ['-s', device, 'install', pathToApk];
     logger.info(
-      `Installing the app on the device (cd android && adb -s ${device} install ${pathToApk}`
+      `Installing the app on the device (cd android && adb -s ${device} install ${pathToApk}`,
     );
     execFileSync(adbPath, adbArgs, {
       stdio: [process.stdin, process.stdout, process.stderr],
@@ -181,7 +178,7 @@ function tryInstallAppOnDevice(args, adbPath, device) {
     logger.error(
       `${
         e.message
-      }\nCould not install the app on the device, read the error above for details.`
+      }\nCould not install the app on the device, read the error above for details.`,
     );
   }
 }
@@ -191,7 +188,7 @@ function getInstallApkName(
   adbPath,
   variant,
   device,
-  buildDirectory
+  buildDirectory,
 ) {
   const availableCPUs = adb.getAvailableCPUs(adbPath, device);
 
@@ -217,7 +214,7 @@ function installAndLaunchOnDevice(
   selectedDevice,
   packageNameWithSuffix,
   packageName,
-  adbPath
+  adbPath,
 ) {
   tryRunAdbReverse(args.port, selectedDevice);
   tryInstallAppOnDevice(args, adbPath, selectedDevice);
@@ -226,14 +223,14 @@ function installAndLaunchOnDevice(
     packageNameWithSuffix,
     packageName,
     adbPath,
-    args.mainActivity
+    args.mainActivity,
   );
 }
 
 function startServerInNewWindow(
   port,
   terminal = process.env.REACT_TERMINAL,
-  reactNativePath
+  reactNativePath,
 ) {
   /**
    * Set up OS-specific filenames and commands
@@ -252,7 +249,7 @@ function startServerInNewWindow(
    */
   const launchPackagerScript = path.join(
     reactNativePath,
-    `scripts/${scriptFile}`
+    `scripts/${scriptFile}`,
   );
 
   /**
@@ -261,8 +258,7 @@ function startServerInNewWindow(
    */
   const scriptsDir = path.dirname(launchPackagerScript);
   const packagerEnvFile = path.join(scriptsDir, packagerEnvFilename);
-  // eslint-disable-next-line flowtype/no-weak-types
-  const procConfig: Object = { cwd: scriptsDir };
+  const procConfig: Object = {cwd: scriptsDir};
 
   /**
    * Ensure we overwrite file by passing the `w` flag
@@ -277,7 +273,7 @@ function startServerInNewWindow(
       return spawnSync(
         'open',
         ['-a', terminal, launchPackagerScript],
-        procConfig
+        procConfig,
       );
     }
     return spawnSync('open', [launchPackagerScript], procConfig);
@@ -297,7 +293,7 @@ function startServerInNewWindow(
     return spawn('cmd.exe', ['/C', launchPackagerScript], procConfig);
   }
   logger.error(
-    `Cannot start the packager. Unknown platform ${process.platform}`
+    `Cannot start the packager. Unknown platform ${process.platform}`,
   );
 }
 

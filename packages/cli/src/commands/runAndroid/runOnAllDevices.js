@@ -7,9 +7,7 @@
  * @flow
  */
 
-/* eslint-disable consistent-return */
-
-import { spawnSync, execFileSync } from 'child_process';
+import {spawnSync, execFileSync} from 'child_process';
 import logger from '../../tools/logger';
 import adb from './adb';
 import tryRunAdbReverse from './tryRunAdbReverse';
@@ -20,12 +18,11 @@ function getCommand(appFolder, command) {
 }
 
 function runOnAllDevices(
-  // eslint-disable-next-line flowtype/no-weak-types
   args: Object,
   cmd: string,
   packageNameWithSuffix: string,
   packageName: string,
-  adbPath: string
+  adbPath: string,
 ) {
   try {
     const gradleArgs = [];
@@ -36,16 +33,16 @@ function runOnAllDevices(
       gradleArgs.push(
         `${getCommand(
           args.appFolder,
-          'install'
-        )}${args.variant[0].toUpperCase()}${args.variant.slice(1)}`
+          'install',
+        )}${args.variant[0].toUpperCase()}${args.variant.slice(1)}`,
       );
     } else if (args.flavor) {
       logger.warn('--flavor has been deprecated. Use --variant instead');
       gradleArgs.push(
         `${getCommand(
           args.appFolder,
-          'install'
-        )}${args.flavor[0].toUpperCase()}${args.flavor.slice(1)}`
+          'install',
+        )}${args.flavor[0].toUpperCase()}${args.flavor.slice(1)}`,
       );
     } else {
       gradleArgs.push(getCommand(args.appFolder, 'installDebug'));
@@ -53,8 +50,8 @@ function runOnAllDevices(
 
     logger.info(
       `Building and installing the app on the device (cd android && ${cmd} ${gradleArgs.join(
-        ' '
-      )})...`
+        ' ',
+      )})...`,
     );
 
     execFileSync(cmd, gradleArgs, {
@@ -65,7 +62,7 @@ function runOnAllDevices(
       'Could not install the app on the device, read the error above for details.\n' +
         'Make sure you have an Android emulator running or a device connected and have\n' +
         'set up your Android development environment:\n' +
-        'https://facebook.github.io/react-native/docs/getting-started.html'
+        'https://facebook.github.io/react-native/docs/getting-started.html',
     );
     // stderr is automatically piped from the gradle process, so the user
     // should see the error already, there is no need to do
@@ -81,7 +78,7 @@ function runOnAllDevices(
         packageNameWithSuffix,
         packageName,
         adbPath,
-        args.mainActivity
+        args.mainActivity,
       );
     });
   } else {
@@ -96,9 +93,9 @@ function runOnAllDevices(
         `${packageNameWithSuffix}/${packageName}.MainActivity`,
       ];
       logger.info(
-        `Starting the app (${adbPath} ${fallbackAdbArgs.join(' ')}...`
+        `Starting the app (${adbPath} ${fallbackAdbArgs.join(' ')}...`,
       );
-      spawnSync(adbPath, fallbackAdbArgs, { stdio: 'inherit' });
+      spawnSync(adbPath, fallbackAdbArgs, {stdio: 'inherit'});
     } catch (e) {
       logger.error('adb invocation failed. Do you have adb in your PATH?');
       // stderr is automatically piped from the gradle process, so the user

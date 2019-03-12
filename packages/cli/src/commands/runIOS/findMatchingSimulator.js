@@ -7,8 +7,6 @@
  * @format
  */
 
-/* eslint-disable */
-
 /**
  * Takes in a parsed simulator list and a desired name, and returns an object with the matching simulator. The desired
  * name can optionally include the iOS version in between parenthesis after the device name. Ex: "iPhone 6 (9.2)" in
@@ -43,9 +41,12 @@ function findMatchingSimulator(simulators, simulatorString) {
     const device = devices[versionDescriptor];
     let version = versionDescriptor;
 
-    if ((/^com\.apple\.CoreSimulator\.SimRuntime\./g).test(version)) {
+    if (/^com\.apple\.CoreSimulator\.SimRuntime\./g.test(version)) {
       // Transform "com.apple.CoreSimulator.SimRuntime.iOS-12-2" into "iOS 12.2"
-      version = version.replace(/^com\.apple\.CoreSimulator\.SimRuntime\.([^-]+)-([^-]+)-([^-]+)$/g, '$1 $2.$3');
+      version = version.replace(
+        /^com\.apple\.CoreSimulator\.SimRuntime\.([^-]+)-([^-]+)-([^-]+)$/g,
+        '$1 $2.$3',
+      );
     }
 
     // Making sure the version of the simulator is an iOS or tvOS (Removes Apple Watch, etc)

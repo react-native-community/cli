@@ -11,7 +11,7 @@
 import fs from 'fs';
 import path from 'path';
 import semver from 'semver';
-import type { ContextT } from '../../tools/types.flow';
+import type {ContextT} from '../../tools/types.flow';
 import logger from '../../tools/logger';
 import copyProjectTemplateAndReplace from '../../tools/generator/copyProjectTemplateAndReplace';
 
@@ -23,7 +23,7 @@ function validateAndUpgrade(argv: Array<string>, ctx: ContextT) {
   const projectDir = ctx.root;
 
   const packageJSON = JSON.parse(
-    fs.readFileSync(path.resolve(projectDir, 'package.json'), 'utf8')
+    fs.readFileSync(path.resolve(projectDir, 'package.json'), 'utf8'),
   );
 
   warn(
@@ -33,14 +33,14 @@ function validateAndUpgrade(argv: Array<string>, ctx: ContextT) {
       '- Go back to the old version of React Native\n' +
       '- Run "npm install -g react-native-git-upgrade"\n' +
       '- Run "react-native-git-upgrade"\n' +
-      'See https://facebook.github.io/react-native/docs/upgrading.html'
+      'See https://facebook.github.io/react-native/docs/upgrading.html',
   );
 
   const projectName = packageJSON.name;
   if (!projectName) {
     warn(
       'Your project needs to have a name, declared in package.json, ' +
-        'such as "name": "AwesomeApp". Please add a project name. Aborting.'
+        'such as "name": "AwesomeApp". Please add a project name. Aborting.',
     );
     return;
   }
@@ -49,7 +49,7 @@ function validateAndUpgrade(argv: Array<string>, ctx: ContextT) {
   if (!version) {
     warn(
       'Your "package.json" file doesn\'t seem to declare "react-native" as ' +
-        'a dependency. Nothing to upgrade. Aborting.'
+        'a dependency. Nothing to upgrade. Aborting.',
     );
     return;
   }
@@ -58,7 +58,7 @@ function validateAndUpgrade(argv: Array<string>, ctx: ContextT) {
     warn(
       'Some major releases introduce breaking changes.\n' +
         'Please use a caret version number in your "package.json" file \n' +
-        'to avoid breakage. Use e.g. react-native: ^0.38.0. Aborting.'
+        'to avoid breakage. Use e.g. react-native: ^0.38.0. Aborting.',
     );
     return;
   }
@@ -66,15 +66,15 @@ function validateAndUpgrade(argv: Array<string>, ctx: ContextT) {
   const installed = JSON.parse(
     fs.readFileSync(
       path.resolve(projectDir, 'node_modules/react-native/package.json'),
-      'utf8'
-    )
+      'utf8',
+    ),
   );
 
   if (!semver.satisfies(installed.version, version)) {
     warn(
       'react-native version in "package.json" doesn\'t match ' +
         'the installed version in "node_modules".\n' +
-        'Try running "npm install" to fix this. Aborting.'
+        'Try running "npm install" to fix this. Aborting.',
     );
     return;
   }
@@ -84,17 +84,17 @@ function validateAndUpgrade(argv: Array<string>, ctx: ContextT) {
   if (!semver.valid(v)) {
     warn(
       "A valid version number for 'react-native' is not specified in your " +
-        "'package.json' file. Aborting."
+        "'package.json' file. Aborting.",
     );
     return;
   }
 
   logger.info(
     `Upgrading project to react-native v${installed.version}\n` +
-      `Check out the release notes and breaking changes: ` +
+      'Check out the release notes and breaking changes: ' +
       `https://github.com/facebook/react-native/releases/tag/v${semver.major(
-        v
-      )}.${semver.minor(v)}.0`
+        v,
+      )}.${semver.minor(v)}.0`,
   );
 
   // >= v0.21.0, we require react to be a peer dependency
@@ -103,7 +103,7 @@ function validateAndUpgrade(argv: Array<string>, ctx: ContextT) {
       'Your "package.json" file doesn\'t seem to have "react" as a dependency.\n' +
         '"react" was changed from a dependency to a peer dependency in react-native v0.21.0.\n' +
         'Therefore, it\'s necessary to include "react" in your project\'s dependencies.\n' +
-        'Please run "npm install --save react", then re-run "react-native upgrade".\n'
+        'Please run "npm install --save react", then re-run "react-native upgrade".\n',
     );
     return;
   }
@@ -115,14 +115,14 @@ function validateAndUpgrade(argv: Array<string>, ctx: ContextT) {
         'to do it automatically.\n' +
         'Just run:\n' +
         '"npm install -g rnpm && npm install rnpm-plugin-upgrade@0.26 --save-dev", ' +
-        'then run "rnpm upgrade".'
+        'then run "rnpm upgrade".',
     );
   }
 
   upgradeProjectFiles(projectDir, projectName);
 
   logger.info(
-    `Successfully upgraded this project to react-native v${installed.version}`
+    `Successfully upgraded this project to react-native v${installed.version}`,
   );
 }
 
@@ -135,7 +135,7 @@ function upgradeProjectFiles(projectDir, projectName) {
     path.dirname(require.resolve('react-native/template')),
     projectDir,
     projectName,
-    { upgrade: true }
+    {upgrade: true},
   );
 }
 

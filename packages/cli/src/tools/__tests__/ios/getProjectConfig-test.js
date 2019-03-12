@@ -21,7 +21,7 @@ describe('ios::getProjectConfig', () => {
   const userConfig = {};
 
   beforeEach(() => {
-    fs.__setMockFilesystem({ testDir: projects });
+    fs.__setMockFilesystem({testDir: projects});
   });
 
   it('returns an object with ios project configuration', () => {

@@ -23,7 +23,7 @@ describe('getAssetDestPathIOS', () => {
     };
 
     expect(getAssetDestPathIOS(asset, 1)).toBe(
-      path.normalize('assets/test/icon.png')
+      path.normalize('assets/test/icon.png'),
     );
   });
 
@@ -35,10 +35,10 @@ describe('getAssetDestPathIOS', () => {
     };
 
     expect(getAssetDestPathIOS(asset, 2)).toBe(
-      path.normalize('assets/test/icon@2x.png')
+      path.normalize('assets/test/icon@2x.png'),
     );
     expect(getAssetDestPathIOS(asset, 3)).toBe(
-      path.normalize('assets/test/icon@3x.png')
+      path.normalize('assets/test/icon@3x.png'),
     );
   });
 });

@@ -34,6 +34,6 @@ const withPods = {
   ios: ios.pod,
 };
 
-export default { flat, nested, withExamples, withPods };
+export default {flat, nested, withExamples, withPods};
 
 // export { flat, nested, withExamples, withPods };

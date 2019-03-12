@@ -9,14 +9,14 @@
  */
 
 import opn from 'opn';
-import { execSync } from 'child_process';
+import {execSync} from 'child_process';
 import logger from '../../tools/logger';
 
 function commandExistsUnixSync(commandName) {
   try {
     const stdout = execSync(
       `command -v ${commandName} 2>/dev/null` +
-        ` && { echo >&1 '${commandName} found'; exit 0; }`
+        ` && { echo >&1 '${commandName} found'; exit 0; }`,
     );
     return !!stdout;
   } catch (error) {
@@ -45,7 +45,7 @@ function getChromeAppName(): string {
 }
 
 function launchChrome(url: string) {
-  opn(url, { app: [getChromeAppName()] }, err => {
+  opn(url, {app: [getChromeAppName()]}, err => {
     if (err) {
       logger.error('Google Chrome exited with error:', err);
     }

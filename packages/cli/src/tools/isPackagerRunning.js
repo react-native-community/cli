@@ -23,10 +23,11 @@ function isPackagerRunning(packagerPort = process.env.RCT_METRO_PORT || 8081) {
     res =>
       res
         .text()
-        .then(body =>
-          body === 'packager-status:running' ? 'running' : 'unrecognized'
+        .then(
+          body =>
+            body === 'packager-status:running' ? 'running' : 'unrecognized',
         ),
-    () => 'not_running'
+    () => 'not_running',
   );
 }
 

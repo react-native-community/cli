@@ -9,5 +9,5 @@
 
 export default func =>
   new Promise((resolve, reject) =>
-    func((err, res) => (err ? reject(err) : resolve(res)))
+    func((err, res) => (err ? reject(err) : resolve(res))),
   );

@@ -8,15 +8,14 @@
  * @format
  */
 
-// eslint-disable-next-line
 import child_process from 'child_process';
 import fs from 'fs';
 import path from 'path';
-import type { ContextT } from '../../tools/types.flow';
+import type {ContextT} from '../../tools/types.flow';
 import findXcodeProject from './findXcodeProject';
 import parseIOSDevicesList from './parseIOSDevicesList';
 import findMatchingSimulator from './findMatchingSimulator';
-import { ProcessError } from '../../tools/errors';
+import {ProcessError} from '../../tools/errors';
 import logger from '../../tools/logger';
 
 type FlagsT = {
@@ -34,7 +33,7 @@ type FlagsT = {
 function runIOS(_: Array<string>, ctx: ContextT, args: FlagsT) {
   if (!fs.existsSync(args.projectPath)) {
     throw new Error(
-      'iOS project folder not found. Are you sure this is a React Native project?'
+      'iOS project folder not found. Are you sure this is a React Native project?',
     );
   }
 
@@ -43,27 +42,27 @@ function runIOS(_: Array<string>, ctx: ContextT, args: FlagsT) {
   const xcodeProject = findXcodeProject(fs.readdirSync('.'));
   if (!xcodeProject) {
     throw new Error(
-      `Could not find Xcode project files in "${args.projectPath}" folder`
+      `Could not find Xcode project files in "${args.projectPath}" folder`,
     );
   }
 
   const inferredSchemeName = path.basename(
     xcodeProject.name,
-    path.extname(xcodeProject.name)
+    path.extname(xcodeProject.name),
   );
   const scheme = args.scheme || inferredSchemeName;
 
   logger.info(
     `Found Xcode ${xcodeProject.isWorkspace ? 'workspace' : 'project'} ${
       xcodeProject.name
-    }`
+    }`,
   );
 
   const devices = parseIOSDevicesList(
     // $FlowExpectedError https://github.com/facebook/flow/issues/5675
     child_process.execFileSync('xcrun', ['instruments', '-s'], {
       encoding: 'utf8',
-    })
+    }),
   );
 
   if (args.device) {
@@ -76,7 +75,7 @@ function runIOS(_: Array<string>, ctx: ContextT, args: FlagsT) {
         args.configuration,
         args.packager,
         args.verbose,
-        args.port
+        args.port,
       );
     }
     if (devices && devices.length > 0) {
@@ -95,10 +94,10 @@ Choose one of the following:${printFoundDevices(devices)}`);
 }
 
 function runOnDeviceByUdid(
-  args: FlagsT & { udid: string },
+  args: FlagsT & {udid: string},
   scheme,
   xcodeProject,
-  devices
+  devices,
 ) {
   const selectedDevice = matchingDeviceByUdid(devices, args.udid);
 
@@ -110,7 +109,7 @@ function runOnDeviceByUdid(
       args.configuration,
       args.packager,
       args.verbose,
-      args.port
+      args.port,
     );
     return;
   }
@@ -132,8 +131,8 @@ async function runOnSimulator(xcodeProject, args, scheme) {
       child_process.execFileSync(
         'xcrun',
         ['simctl', 'list', '--json', 'devices'],
-        { encoding: 'utf8' }
-      )
+        {encoding: 'utf8'},
+      ),
     );
   } catch (e) {
     throw new Error('Could not parse the simulator list output');
@@ -156,7 +155,7 @@ async function runOnSimulator(xcodeProject, args, scheme) {
    * this flag has no effect.
    */
   const activeDeveloperDir = child_process
-    .execFileSync('xcode-select', ['-p'], { encoding: 'utf8' })
+    .execFileSync('xcode-select', ['-p'], {encoding: 'utf8'})
     // $FlowExpectedError https://github.com/facebook/flow/issues/5675
     .trim();
 
@@ -178,7 +177,7 @@ async function runOnSimulator(xcodeProject, args, scheme) {
     args.configuration,
     args.packager,
     args.verbose,
-    args.port
+    args.port,
   );
 
   const appPath = getBuildPath(args.configuration, appName, false, scheme);
@@ -190,14 +189,14 @@ async function runOnSimulator(xcodeProject, args, scheme) {
     ['simctl', 'install', selectedSimulator.udid, appPath],
     {
       stdio: 'inherit',
-    }
+    },
   );
 
   const bundleID = child_process
     .execFileSync(
       '/usr/libexec/PlistBuddy',
       ['-c', 'Print:CFBundleIdentifier', path.join(appPath, 'Info.plist')],
-      { encoding: 'utf8' }
+      {encoding: 'utf8'},
     )
     // $FlowExpectedError https://github.com/facebook/flow/issues/5675
     .trim();
@@ -209,7 +208,7 @@ async function runOnSimulator(xcodeProject, args, scheme) {
     ['simctl', 'launch', selectedSimulator.udid, bundleID],
     {
       stdio: 'inherit',
-    }
+    },
   );
 }
 
@@ -220,7 +219,7 @@ async function runOnDevice(
   configuration,
   launchPackager,
   verbose,
-  port
+  port,
 ) {
   const appName = await buildProject(
     xcodeProject,
@@ -229,7 +228,7 @@ async function runOnDevice(
     configuration,
     launchPackager,
     verbose,
-    port
+    port,
   );
 
   const iosDeployInstallArgs = [
@@ -245,12 +244,12 @@ async function runOnDevice(
   const iosDeployOutput = child_process.spawnSync(
     'ios-deploy',
     iosDeployInstallArgs,
-    { encoding: 'utf8' }
+    {encoding: 'utf8'},
   );
 
   if (iosDeployOutput.error) {
     logger.error(
-      `** INSTALLATION FAILED **\nMake sure you have ios-deploy installed globally.\n(e.g "npm install -g ios-deploy")`
+      '** INSTALLATION FAILED **\nMake sure you have ios-deploy installed globally.\n(e.g "npm install -g ios-deploy")',
     );
   } else {
     logger.info('** INSTALLATION SUCCEEDED **');
@@ -264,7 +263,7 @@ function buildProject(
   configuration,
   launchPackager = false,
   verbose,
-  port
+  port,
 ) {
   return new Promise((resolve, reject) => {
     const xcodebuildArgs = [
@@ -291,7 +290,7 @@ function buildProject(
     const buildProcess = child_process.spawn(
       'xcodebuild',
       xcodebuildArgs,
-      getProcessOptions(launchPackager, port)
+      getProcessOptions(launchPackager, port),
     );
     let buildOutput = '';
     let errorOutput = '';
@@ -314,14 +313,14 @@ function buildProject(
         reject(
           new ProcessError(
             [
-              `Failed to build iOS project.`,
+              'Failed to build iOS project.',
               `We ran "xcodebuild" command but it exited with error code ${code}.`,
               `To debug build logs further, consider building your app with Xcode.app, by opening ${
                 xcodeProject.name
               }`,
             ].join(' '),
-            errorOutput
-          )
+            errorOutput,
+          ),
         );
         return;
       }
@@ -361,7 +360,7 @@ function getBuildPath(configuration, appName, isDevice, scheme) {
 
 function getProductName(buildOutput) {
   const productNameMatch = /export FULL_PRODUCT_NAME="?(.+).app"?$/m.exec(
-    buildOutput
+    buildOutput,
   );
   return productNameMatch ? productNameMatch[1] : null;
 }
@@ -382,7 +381,7 @@ function matchingDevice(devices, deviceName) {
     logger.info(
       `Using first available device ${
         devices[0].name
-      } due to lack of name supplied.`
+      } due to lack of name supplied.`,
     );
     return devices[0];
   }
@@ -421,12 +420,12 @@ function printFoundDevices(devices) {
 function getProcessOptions(launchPackager, port) {
   if (launchPackager) {
     return {
-      env: { ...process.env, RCT_METRO_PORT: port },
+      env: {...process.env, RCT_METRO_PORT: port},
     };
   }
 
   return {
-    env: { ...process.env, RCT_NO_LAUNCH_PACKAGER: true },
+    env: {...process.env, RCT_NO_LAUNCH_PACKAGER: true},
   };
 }
 

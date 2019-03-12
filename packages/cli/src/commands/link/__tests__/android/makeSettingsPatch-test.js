@@ -22,7 +22,7 @@ describe('makeSettingsPatch with package "test"', () => {
 
   it('should build a patch function', () => {
     expect(
-      makeSettingsPatch(name, dependencyConfig, projectConfig)
+      makeSettingsPatch(name, dependencyConfig, projectConfig),
     ).toMatchObject({
       pattern: '\n',
       patch: expect.any(String),
@@ -30,7 +30,7 @@ describe('makeSettingsPatch with package "test"', () => {
   });
 
   it('includes project with correct path', () => {
-    const { patch } = makeSettingsPatch(name, dependencyConfig, projectConfig);
+    const {patch} = makeSettingsPatch(name, dependencyConfig, projectConfig);
 
     expect(patch).toMatchInlineSnapshot(`
 "include ':test'
@@ -59,10 +59,10 @@ project(':test').projectDir = new File(rootProject.projectDir, '../node_modules/
     const dependencyConfigWindows = {
       sourceDir: `C:\\home\\project\\node_modules\\${name}\\android`,
     };
-    const { patch } = makeSettingsPatch(
+    const {patch} = makeSettingsPatch(
       name,
       dependencyConfigWindows,
-      projectConfigWindows
+      projectConfigWindows,
     );
 
     jest.dontMock('path');
@@ -83,7 +83,7 @@ describe('makeSettingsPatch with scoped package "@scoped/test"', () => {
 
   it('should build a patch function', () => {
     expect(
-      makeSettingsPatch(name, dependencyConfig, projectConfig)
+      makeSettingsPatch(name, dependencyConfig, projectConfig),
     ).toMatchObject({
       pattern: '\n',
       patch: expect.any(String),
@@ -91,7 +91,7 @@ describe('makeSettingsPatch with scoped package "@scoped/test"', () => {
   });
 
   it('includes project with correct path', () => {
-    const { patch } = makeSettingsPatch(name, dependencyConfig, projectConfig);
+    const {patch} = makeSettingsPatch(name, dependencyConfig, projectConfig);
 
     expect(patch).toMatchInlineSnapshot(`
 "include ':@scoped_test'

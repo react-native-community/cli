@@ -8,7 +8,7 @@
  */
 import outputUnbundle from 'metro/src/shared/output/RamBundle';
 
-import { withOutput as bundleWithOutput } from './bundle';
+import {withOutput as bundleWithOutput} from './bundle';
 import bundleCommandLineArgs from './bundleCommandLineArgs';
 
 /**

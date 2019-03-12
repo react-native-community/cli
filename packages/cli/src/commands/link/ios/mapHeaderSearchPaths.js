@@ -30,7 +30,7 @@ export default function headerSearchPathIter(project, func) {
   Object.keys(config)
     .filter(ref => ref.indexOf('_comment') === -1)
     .forEach(ref => {
-      const { buildSettings } = config[ref];
+      const {buildSettings} = config[ref];
       const shouldVisitBuildSettings =
         (Array.isArray(buildSettings.OTHER_LDFLAGS)
           ? buildSettings.OTHER_LDFLAGS

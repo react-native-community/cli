@@ -56,8 +56,8 @@ function getAndroidResourceFolderName(asset: PackagerAsset, scale: number) {
   if (!suffix) {
     throw new Error(
       `Don't know which android drawable suffix to use for asset: ${JSON.stringify(
-        asset
-      )}`
+        asset,
+      )}`,
     );
   }
   const androidFolder = `drawable-${suffix}`;

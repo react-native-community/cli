@@ -12,7 +12,7 @@
  */
 export default function getTargets(project) {
   const {
-    firstProject: { targets },
+    firstProject: {targets},
   } = project.getFirstProject();
   const nativeTargetSection = project.pbxNativeTargetSection();
   return targets

@@ -2,15 +2,14 @@
  * @flow
  */
 
-import { spawn } from 'child_process';
+import {spawn} from 'child_process';
 import getPackageConfiguration from './getPackageConfiguration';
 
 export function makeCommand(command: string) {
-  // eslint-disable-next-line flowtype/no-weak-types
   return (cb: Function) => {
     if (!cb) {
       throw new Error(
-        `You missed a callback function for the ${command} command`
+        `You missed a callback function for the ${command} command`,
       );
     }
 

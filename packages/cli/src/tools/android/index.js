@@ -53,28 +53,28 @@ export function projectConfig(folder, userConfig = {}) {
   const mainFilePath = path.join(
     sourceDir,
     userConfig.mainFilePath ||
-      `src/main/java/${packageFolder}/MainApplication.java`
+      `src/main/java/${packageFolder}/MainApplication.java`,
   );
 
   const stringsPath = path.join(
     sourceDir,
-    userConfig.stringsPath || 'src/main/res/values/strings.xml'
+    userConfig.stringsPath || 'src/main/res/values/strings.xml',
   );
 
   const settingsGradlePath = path.join(
     folder,
     'android',
-    userConfig.settingsGradlePath || 'settings.gradle'
+    userConfig.settingsGradlePath || 'settings.gradle',
   );
 
   const assetsPath = path.join(
     sourceDir,
-    userConfig.assetsPath || 'src/main/assets'
+    userConfig.assetsPath || 'src/main/assets',
   );
 
   const buildGradlePath = path.join(
     sourceDir,
-    userConfig.buildGradlePath || 'build.gradle'
+    userConfig.buildGradlePath || 'build.gradle',
   );
 
   return {
@@ -128,5 +128,5 @@ export function dependencyConfig(folder, userConfig = {}) {
   const packageInstance =
     userConfig.packageInstance || `new ${packageClassName}()`;
 
-  return { sourceDir, folder, manifest, packageImportPath, packageInstance };
+  return {sourceDir, folder, manifest, packageImportPath, packageInstance};
 }

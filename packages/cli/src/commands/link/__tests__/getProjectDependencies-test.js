@@ -29,7 +29,7 @@ describe('getProjectDependencies', () => {
           '@react-native-community/cli': '*',
         },
       }),
-      { virtual: true }
+      {virtual: true},
     );
 
     expect(getProjectDependencies(CWD)).toEqual(['lodash']);

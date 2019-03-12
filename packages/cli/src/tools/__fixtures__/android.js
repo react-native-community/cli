@@ -11,10 +11,10 @@ const fs = jest.requireActual('fs');
 const path = jest.requireActual('path');
 
 const manifest = fs.readFileSync(
-  path.join(__dirname, './files/AndroidManifest.xml')
+  path.join(__dirname, './files/AndroidManifest.xml'),
 );
 const mainJavaClass = fs.readFileSync(
-  path.join(__dirname, './files/Main.java')
+  path.join(__dirname, './files/Main.java'),
 );
 
 function generateValidFileStructure(classFileName) {
@@ -27,7 +27,7 @@ function generateValidFileStructure(classFileName) {
             example: {
               'Main.java': mainJavaClass,
               [classFileName]: fs.readFileSync(
-                path.join(__dirname, `./files/${classFileName}`)
+                path.join(__dirname, `./files/${classFileName}`),
               ),
             },
           },
@@ -50,7 +50,7 @@ exports.userConfigManifest = {
           example: {
             'Main.java': mainJavaClass,
             'ReactPackage.java': fs.readFileSync(
-              path.join(__dirname, './files/ReactPackage.java')
+              path.join(__dirname, './files/ReactPackage.java'),
             ),
           },
         },
@@ -58,7 +58,7 @@ exports.userConfigManifest = {
     },
     debug: {
       'AndroidManifest.xml': fs.readFileSync(
-        path.join(__dirname, './files/AndroidManifest-debug.xml')
+        path.join(__dirname, './files/AndroidManifest-debug.xml'),
       ),
     },
   },

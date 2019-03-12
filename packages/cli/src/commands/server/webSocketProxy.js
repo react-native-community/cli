@@ -42,11 +42,11 @@ function attachToServer(server, path) {
 
   const clientSocketCloseHandler = () => {
     clientSocket = null;
-    send(debuggerSocket, JSON.stringify({ method: '$disconnected' }));
+    send(debuggerSocket, JSON.stringify({method: '$disconnected'}));
   };
 
   wss.on('connection', connection => {
-    const { url } = connection.upgradeReq;
+    const {url} = connection.upgradeReq;
 
     if (url.indexOf('role=debugger') > -1) {
       if (debuggerSocket) {
@@ -56,7 +56,7 @@ function attachToServer(server, path) {
       debuggerSocket = connection;
       debuggerSocket.onerror = debuggerSocketCloseHandler;
       debuggerSocket.onclose = debuggerSocketCloseHandler;
-      debuggerSocket.onmessage = ({ data }) => send(clientSocket, data);
+      debuggerSocket.onmessage = ({data}) => send(clientSocket, data);
     } else if (url.indexOf('role=client') > -1) {
       if (clientSocket) {
         clientSocket.onerror = null;
@@ -67,7 +67,7 @@ function attachToServer(server, path) {
       clientSocket = connection;
       clientSocket.onerror = clientSocketCloseHandler;
       clientSocket.onclose = clientSocketCloseHandler;
-      clientSocket.onmessage = ({ data }) => send(debuggerSocket, data);
+      clientSocket.onmessage = ({data}) => send(debuggerSocket, data);
     } else {
       connection.close(1011, 'Missing role param');
     }

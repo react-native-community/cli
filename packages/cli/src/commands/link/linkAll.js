@@ -1,6 +1,6 @@
 // @flow
 
-import { uniqBy, flatten } from 'lodash';
+import {uniqBy, flatten} from 'lodash';
 import path from 'path';
 import type {
   ContextT,
@@ -23,25 +23,25 @@ const dedupeAssets = (assets: Array<string>): Array<string> =>
 function linkAll(
   context: ContextT,
   platforms: PlatformsT,
-  project: ProjectConfigT
+  project: ProjectConfigT,
 ) {
   logger.warn(
     'Running `react-native link` without package name is deprecated and will be removed ' +
       'in next release. If you use this command to link your project assets, ' +
-      'please let us know about your use case here: https://goo.gl/RKTeoc'
+      'please let us know about your use case here: https://goo.gl/RKTeoc',
   );
 
   const projectAssets = getAssets(context.root);
   const dependencies = getProjectDependencies(context.root);
   const depenendenciesConfig = dependencies.map(dependnecy =>
-    getDependencyConfig(context, platforms, dependnecy)
+    getDependencyConfig(context, platforms, dependnecy),
   );
 
   const assets = dedupeAssets(
     depenendenciesConfig.reduce(
       (acc, dependency) => acc.concat(dependency.assets),
-      projectAssets
-    )
+      projectAssets,
+    ),
   );
 
   const tasks = flatten(
@@ -50,13 +50,13 @@ function linkAll(
       () => linkDependency(platforms, project, config),
       () => promisify(config.commands.postlink || commandStub),
       () => linkAssets(platforms, project, assets),
-    ])
+    ]),
   );
 
   return promiseWaterfall(tasks).catch(err => {
     logger.error(
       `Something went wrong while linking. Error: ${err.message} \n` +
-        'Please file an issue here: https://github.com/react-native-community/react-native-cli/issues'
+        'Please file an issue here: https://github.com/react-native-community/react-native-cli/issues',
     );
     throw err;
   });

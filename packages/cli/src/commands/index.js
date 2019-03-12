@@ -86,16 +86,16 @@ const loadProjectCommands = (root: string): Array<ProjectCommandT> => {
       | Array<ProjectCommandT> = require(path.join(
       root,
       'node_modules',
-      pathToCommands
+      pathToCommands,
     ));
 
     if (Array.isArray(requiredCommands)) {
       return acc.concat(
-        requiredCommands.map(requiredCommand => ({ ...requiredCommand, pkg }))
+        requiredCommands.map(requiredCommand => ({...requiredCommand, pkg})),
       );
     }
 
-    return acc.concat({ ...requiredCommands });
+    return acc.concat({...requiredCommands});
   }, []);
 };
 

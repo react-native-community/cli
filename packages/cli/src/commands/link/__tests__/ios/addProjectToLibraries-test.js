@@ -13,10 +13,10 @@ import addProjectToLibraries from '../../ios/addProjectToLibraries';
 const xcode = require('xcode');
 const path = require('path');
 const PbxFile = require('xcode/lib/pbxFile');
-const { last } = require('lodash');
+const {last} = require('lodash');
 
 const project = xcode.project(
-  path.join(__dirname, '../../__fixtures__/project.pbxproj')
+  path.join(__dirname, '../../__fixtures__/project.pbxproj'),
 );
 
 describe('ios::addProjectToLibraries', () => {

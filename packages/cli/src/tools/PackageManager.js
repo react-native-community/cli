@@ -1,5 +1,5 @@
 // @flow
-import { execSync } from 'child_process';
+import {execSync} from 'child_process';
 import yarn from './yarn';
 
 type PackageManagerOptions = {
@@ -14,7 +14,7 @@ export default class PackageManager {
     this.options = options;
   }
 
-  executeCommand(command: string, options?: { silent: boolean }) {
+  executeCommand(command: string, options?: {silent: boolean}) {
     return execSync(command, {
       stdio: options && options.silent ? 'pipe' : 'inherit',
     });
@@ -24,12 +24,12 @@ export default class PackageManager {
     return !this.options.forceNpm && yarn.getYarnVersionIfAvailable();
   }
 
-  install(packageNames: Array<string>, options?: { silent: boolean }) {
+  install(packageNames: Array<string>, options?: {silent: boolean}) {
     return this.shouldCallYarn()
       ? this.executeCommand(`yarn add ${packageNames.join(' ')}`, options)
       : this.executeCommand(
           `npm install ${packageNames.join(' ')} --save --save-exact`,
-          options
+          options,
         );
   }
 
@@ -37,7 +37,7 @@ export default class PackageManager {
     return this.shouldCallYarn()
       ? this.executeCommand(`yarn add -D ${packageNames.join(' ')}`)
       : this.executeCommand(
-          `npm install ${packageNames.join(' ')} --save-dev --save-exact`
+          `npm install ${packageNames.join(' ')} --save-dev --save-exact`,
         );
   }
 

@@ -25,9 +25,8 @@ const mkdirp = require('mkdirp');
 const babel = require('@babel/core');
 const chalk = require('chalk');
 const micromatch = require('micromatch');
-const prettier = require('prettier');
 const stringLength = require('string-length');
-const { PACKAGES_DIR, getPackages } = require('./helpers');
+const {PACKAGES_DIR, getPackages} = require('./helpers');
 
 const OK = chalk.reset.inverse.bold.green(' DONE ');
 const SRC_DIR = 'src';
@@ -36,10 +35,6 @@ const JS_FILES_PATTERN = '**/*.js';
 const IGNORE_PATTERN = '**/__{tests,mocks,fixtures}__/**';
 
 const transformOptions = require('../babel.config.js');
-
-const prettierConfig = prettier.resolveConfig.sync(__filename);
-prettierConfig.trailingComma = 'none';
-prettierConfig.parser = 'babel';
 
 const adjustToTerminalWidth = str => {
   const columns = process.stdout.columns || 80;
@@ -87,7 +82,7 @@ function buildFile(file, silent) {
     silent ||
       process.stdout.write(
         `${chalk.dim('  \u2022 ') +
-          path.relative(PACKAGES_DIR, file)} (ignore)\n`
+          path.relative(PACKAGES_DIR, file)} (ignore)\n`,
       );
     return;
   }
@@ -101,21 +96,20 @@ function buildFile(file, silent) {
         `${chalk.red('  \u2022 ') +
           path.relative(PACKAGES_DIR, file) +
           chalk.red(' \u21D2 ') +
-          path.relative(PACKAGES_DIR, destPath)} (copy)\n`
+          path.relative(PACKAGES_DIR, destPath)} (copy)\n`,
       );
   } else {
     const options = Object.assign({}, transformOptions);
     const transformed = babel.transformFileSync(file, options).code;
-    const prettyCode = prettier.format(transformed, prettierConfig);
 
-    fs.writeFileSync(destPath, prettyCode);
+    fs.writeFileSync(destPath, transformed);
 
     silent ||
       process.stdout.write(
         `${chalk.green('  \u2022 ') +
           path.relative(PACKAGES_DIR, file) +
           chalk.green(' \u21D2 ') +
-          path.relative(PACKAGES_DIR, destPath)}\n`
+          path.relative(PACKAGES_DIR, destPath)}\n`,
       );
   }
 }

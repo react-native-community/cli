@@ -18,7 +18,7 @@ describe('promiseWaterfall', () => {
 
     // Check that tasks[0] is executed before tasks[1].
     expect(tasks[0].mock.invocationCallOrder[0]).toBeLessThan(
-      tasks[1].mock.invocationCallOrder[0]
+      tasks[1].mock.invocationCallOrder[0],
     );
   });
 

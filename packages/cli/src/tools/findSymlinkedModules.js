@@ -32,7 +32,7 @@ import fs from 'fs';
  */
 export default function findSymlinkedModules(
   projectRoot: string,
-  ignoredRoots?: Array<string> = []
+  ignoredRoots?: Array<string> = [],
 ) {
   const nodeModuleRoot = path.join(projectRoot, 'node_modules');
   const resolvedSymlinks = findModuleSymlinks(nodeModuleRoot, [
@@ -44,7 +44,7 @@ export default function findSymlinkedModules(
 
 function findModuleSymlinks(
   modulesPath: string,
-  ignoredPaths: Array<string> = []
+  ignoredPaths: Array<string> = [],
 ): Array<string> {
   if (!fs.existsSync(modulesPath)) {
     return [];
@@ -58,7 +58,7 @@ function findModuleSymlinks(
     if (folderName.startsWith('@')) {
       const scopedModuleFolders = fs.readdirSync(folderPath);
       maybeSymlinkPaths.push(
-        ...scopedModuleFolders.map(name => path.join(folderPath, name))
+        ...scopedModuleFolders.map(name => path.join(folderPath, name)),
       );
     } else {
       maybeSymlinkPaths.push(folderPath);
@@ -76,9 +76,9 @@ function findModuleSymlinks(
         findModuleSymlinks(path.join(symlinkPath, 'node_modules'), [
           ...ignoredPaths,
           ...symlinks,
-        ])
+        ]),
       ),
-    []
+    [],
   );
 
   return [...new Set([...symlinks, ...nestedSymlinks])];
@@ -89,7 +89,7 @@ function resolveSymlinkPaths(maybeSymlinkPaths, ignoredPaths) {
     if (fs.lstatSync(maybeSymlinkPath).isSymbolicLink()) {
       const resolved = path.resolve(
         path.dirname(maybeSymlinkPath),
-        fs.readlinkSync(maybeSymlinkPath)
+        fs.readlinkSync(maybeSymlinkPath),
       );
       if (ignoredPaths.indexOf(resolved) === -1 && fs.existsSync(resolved)) {
         links.push(resolved);

@@ -28,7 +28,7 @@ function saveAssets(assets, platform, assetsDest) {
   const filesToCopy = Object.create(null); // Map src -> dest
   assets.forEach(asset => {
     const validScales = new Set(
-      filterPlatformAssetScales(platform, asset.scales)
+      filterPlatformAssetScales(platform, asset.scales),
     );
     asset.scales.forEach((scale, idx) => {
       if (!validScales.has(scale)) {

@@ -13,10 +13,10 @@ import getGroup from '../../ios/getGroup';
 
 const xcode = require('xcode');
 const path = require('path');
-const { last } = require('lodash');
+const {last} = require('lodash');
 
 const project = xcode.project(
-  path.join(__dirname, '../../__fixtures__/project.pbxproj')
+  path.join(__dirname, '../../__fixtures__/project.pbxproj'),
 );
 
 describe('ios::createGroup', () => {
@@ -49,7 +49,7 @@ describe('ios::createGroup', () => {
     const mainGroup = getGroup(project);
 
     expect(
-      mainGroup.children.filter(group => group.comment === 'Libraries')
+      mainGroup.children.filter(group => group.comment === 'Libraries'),
     ).toHaveLength(1);
     expect(last(outerGroup.children).comment).toBe(createdGroup.name);
   });

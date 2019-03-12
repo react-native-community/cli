@@ -7,7 +7,7 @@
  * @format
  */
 
-import fs from 'fs-extra';
+import fs from 'fs';
 import path from 'path';
 import xcode from 'xcode';
 import groupFilesByType from '../groupFilesByType';
@@ -31,7 +31,7 @@ export default function linkAssetsIOS(files, projectConfig) {
       .map(asset =>
         project.addResourceFile(path.relative(projectConfig.sourceDir, asset), {
           target: project.getFirstTarget().uuid,
-        })
+        }),
       )
       .filter(file => file) // xcode returns false if file is already there
       .map(file => file.basename);

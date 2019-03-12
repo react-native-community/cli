@@ -8,7 +8,7 @@
  * @flow
  */
 
-import { execSync, execFileSync } from 'child_process';
+import {execSync, execFileSync} from 'child_process';
 
 /**
  * Parses the output of the 'adb devices' command
@@ -52,14 +52,14 @@ function getAvailableCPUs(adbPath: string, device: string): Array<string> {
 
     let cpus = execFileSync(
       adbPath,
-      baseArgs.concat(['ro.product.cpu.abilist'])
+      baseArgs.concat(['ro.product.cpu.abilist']),
     ).toString();
 
     // pre-Lollipop
     if (!cpus || cpus.trim().length === 0) {
       cpus = execFileSync(
         adbPath,
-        baseArgs.concat(['ro.product.cpu.abi'])
+        baseArgs.concat(['ro.product.cpu.abi']),
       ).toString();
     }
 

@@ -29,7 +29,7 @@ function eject() {
   if (doesIOSExist && doesAndroidExist) {
     logger.error(
       'Both the iOS and Android folders already exist! Please delete `ios` and/or `android` ' +
-        'before ejecting.'
+        'before ejecting.',
     );
     process.exit(1);
   }
@@ -41,9 +41,9 @@ function eject() {
     logger.error(
       'Eject requires an `app.json` config file to be located at ' +
         `${path.resolve(
-          'app.json'
+          'app.json',
         )}, and it must at least specify a \`name\` for the project ` +
-        "name, and a `displayName` for the app's home screen label."
+        "name, and a `displayName` for the app's home screen label.",
     );
     process.exit(1);
   }
@@ -52,56 +52,39 @@ function eject() {
   if (!appName) {
     logger.error(
       'App `name` must be defined in the `app.json` config file to define the project name. ' +
-        'It must not contain any spaces or dashes.'
+        'It must not contain any spaces or dashes.',
     );
     process.exit(1);
   }
 
-  // eslint-disable-next-line prefer-destructuring
   const displayName = appConfig.displayName;
   if (!displayName) {
     logger.error(
       'App `displayName` must be defined in the `app.json` config file, to define the label ' +
-        'of the app on the home screen.'
+        'of the app on the home screen.',
     );
     process.exit(1);
   }
 
-  const templateOptions = { displayName };
+  const templateOptions = {displayName};
 
   if (!doesIOSExist) {
     logger.info('Generating the iOS folder.');
     copyProjectTemplateAndReplace(
-      path.resolve(
-        'node_modules',
-        'react-native',
-        '@react-native-community',
-        'cli',
-        'templates',
-        'HelloWorld',
-        'ios'
-      ),
+      path.resolve('node_modules', 'react-native', 'template', 'ios'),
       path.resolve('ios'),
       appName,
-      templateOptions
+      templateOptions,
     );
   }
 
   if (!doesAndroidExist) {
     logger.info('Generating the Android folder.');
     copyProjectTemplateAndReplace(
-      path.resolve(
-        'node_modules',
-        'react-native',
-        '@react-native-community',
-        'cli',
-        'templates',
-        'HelloWorld',
-        'android'
-      ),
+      path.resolve('node_modules', 'react-native', 'template', 'android'),
       path.resolve('android'),
       appName,
-      templateOptions
+      templateOptions,
     );
   }
 }

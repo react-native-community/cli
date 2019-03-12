@@ -15,11 +15,11 @@ jest.mock('fs');
 
 const fs = require('fs');
 
-const { findAssets } = require('../getAssets');
+const {findAssets} = require('../getAssets');
 
 describe('findAssets', () => {
   beforeEach(() => {
-    fs.__setMockFilesystem({ testDir: dependencies.withAssets });
+    fs.__setMockFilesystem({testDir: dependencies.withAssets});
   });
 
   it('returns an array of all files in given folders', () => {

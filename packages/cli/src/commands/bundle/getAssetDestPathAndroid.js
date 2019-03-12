@@ -9,14 +9,14 @@
  */
 
 import path from 'path';
-import type { PackagerAsset } from './assetPathUtils';
+import type {PackagerAsset} from './assetPathUtils';
 
 import assetPathUtils from './assetPathUtils';
 
 function getAssetDestPathAndroid(asset: PackagerAsset, scale: number): string {
   const androidFolder = assetPathUtils.getAndroidResourceFolderName(
     asset,
-    scale
+    scale,
   );
   const fileName = assetPathUtils.getAndroidResourceIdentifier(asset);
   return path.join(androidFolder, `${fileName}.${asset.type}`);

@@ -42,7 +42,7 @@ export default class MiddlewareManager {
   options: Options;
 
   constructor(options: Options) {
-    const debuggerUIFolder = path.join(__dirname, '..', 'util', 'debugger-ui');
+    const debuggerUIFolder = path.join(__dirname, '..', 'debugger-ui');
 
     this.options = options;
     this.app = connect()

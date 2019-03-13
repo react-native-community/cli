@@ -46,4 +46,10 @@ export default class PackageManager {
       ? this.executeCommand(`yarn remove ${packageNames.join(' ')}`)
       : this.executeCommand(`npm uninstall ${packageNames.join(' ')} --save`);
   }
+
+  installAll() {
+    return this.shouldCallYarn()
+      ? this.executeCommand('yarn install')
+      : this.executeCommand('npm install');
+  }
 }

@@ -167,9 +167,10 @@ async function setupAndRun() {
             }),
           );
         } catch (_ignored) {
-          throw new Error(
-            'Unable to find React Native files. Make sure "react-native" module is installed in your project dependencies.',
-          );
+          // Do not check for it in `init` command
+          // throw new Error(
+          //   'Unable to find React Native files. Make sure "react-native" module is installed in your project dependencies.',
+          // );
         }
       })();
 

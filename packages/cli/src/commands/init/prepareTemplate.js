@@ -6,6 +6,16 @@ import walk from '../../tools/walk';
 
 const FILE_PROTOCOL = /file:/;
 
+function getTemplateName(): string {
+  try {
+    return JSON.parse(
+      fs.readFileSync(path.join(process.cwd(), 'app.json'), 'utf8'),
+    ).templateName;
+  } catch (e) {
+    throw new Error('Cannot retrieve templateName');
+  }
+}
+
 function fixPaths(reactNativePath: string) {
   if (path.isAbsolute(reactNativePath)) {
     return reactNativePath;
@@ -25,7 +35,10 @@ function getReactNativeVersion(version: string) {
 function getExternalTemplate(templateName: string) {
   const packageManager = new PackageManager({});
   packageManager.install([templateName]);
-  fs.copySync(path.join('node_modules', templateName), process.cwd());
+  fs.copySync(
+    path.join('node_modules', templateName, 'template'),
+    process.cwd(),
+  );
 }
 
 function getReactNativeTemplate(version: string) {
@@ -45,11 +58,18 @@ function getReactNativeTemplate(version: string) {
   fs.copySync(templatePath, process.cwd());
 }
 
-function replaceNameInUTF8File(filePath: string, projectName: string) {
+function replaceNameInUTF8File(
+  filePath: string,
+  projectName: string,
+  templateName: string,
+) {
   const content = fs
     .readFileSync(filePath, 'utf8')
-    .replace(/ProjectName/g, projectName)
-    .replace(/projectname/g, projectName.toLowerCase());
+    .replace(new RegExp(templateName, 'g'), projectName)
+    .replace(
+      new RegExp(templateName.toLowerCase(), 'g'),
+      projectName.toLowerCase(),
+    );
 
   fs.writeFileSync(filePath, content, 'utf8');
 }
@@ -77,17 +97,23 @@ function shouldRenameFile(filePath: string, nameToReplace: string) {
 }
 
 function changeNameInTemplate(projectName: string) {
+  const templateName = getTemplateName();
+
   walk(process.cwd())
     .reverse()
     .forEach((filePath: string) => {
       if (isNonBinaryFile(filePath)) {
-        replaceNameInUTF8File(filePath, projectName);
+        replaceNameInUTF8File(filePath, projectName, templateName);
       }
-      if (shouldRenameFile(filePath, 'ProjectName')) {
-        renameFile(filePath, 'ProjectName', projectName);
+      if (shouldRenameFile(filePath, templateName)) {
+        renameFile(filePath, templateName, projectName);
       }
-      if (shouldRenameFile(filePath, 'projectname')) {
-        renameFile(filePath, 'projectname', projectName.toLowerCase());
+      if (shouldRenameFile(filePath, templateName.toLowerCase())) {
+        renameFile(
+          filePath,
+          templateName.toLowerCase(),
+          projectName.toLowerCase(),
+        );
       }
     });
 }
@@ -97,6 +123,7 @@ export function prepareExternalTemplate(
   templateName: string,
 ) {
   getExternalTemplate(templateName);
+  new PackageManager({}).installAll();
   changeNameInTemplate(projectName);
 }
 
@@ -105,5 +132,6 @@ export function prepareReactNativeTemplate(
   version: string,
 ) {
   getReactNativeTemplate(version);
+  new PackageManager({}).installAll();
   changeNameInTemplate(projectName);
 }

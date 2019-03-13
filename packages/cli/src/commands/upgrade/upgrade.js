@@ -236,7 +236,7 @@ async function upgrade(argv: Array<string>, ctx: ContextT, args: FlagsT) {
     throw new Error(error.stderr || error);
   } finally {
     try {
-      // fs.unlinkSync(tmpPatchFile);
+      fs.unlinkSync(tmpPatchFile);
     } catch (e) {
       // ignore
     }

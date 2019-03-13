@@ -71,6 +71,8 @@ function generateProject(destinationRoot, newProjectName, options) {
   packageManager.installDev([
     '@babel/core',
     '@babel/runtime',
+    '@react-native-community/eslint-config',
+    'eslint',
     'jest',
     'babel-jest',
     'metro-react-native-babel-preset',
@@ -89,6 +91,7 @@ function addJestToPackageJson(destinationRoot) {
   const packageJSON = JSON.parse(fs.readFileSync(packageJSONPath));
 
   packageJSON.scripts.test = 'jest';
+  packageJSON.scripts.lint = 'eslint .';
   packageJSON.jest = {
     preset: 'react-native',
   };

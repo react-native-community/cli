@@ -201,6 +201,7 @@ async function setupAndRun() {
 export default {
   run,
   init,
+  findPlugins,
 };
 
 export {run, init, findPlugins};

@@ -112,8 +112,7 @@ test('fetches empty patch and installs deps', async () => {
   expect(flushOutput()).toMatchInlineSnapshot(`
 "info Fetching diff between v0.57.8 and v0.58.4...
 info Diff has no changes to apply, proceeding further
-warn Continuing after failure. Most of the files are upgraded but you will need to deal with some conflicts manually
-info Installing react-native@0.58.4 and its peer dependencies...
+info Installing \\"react-native@0.58.4\\" and its peer dependencies...
 $ execa npm info react-native@0.58.4 peerDependencies --json
 $ yarn add react-native@0.58.4 react@16.6.3
 $ execa git add package.json
@@ -135,7 +134,8 @@ $ execa git apply --check tmp-upgrade-rn.patch --exclude=package.json -p2 --3way
 info Applying diff...
 $ execa git apply tmp-upgrade-rn.patch --exclude=package.json -p2 --3way
 [fs] unlink tmp-upgrade-rn.patch
-info Installing react-native@0.58.4 and its peer dependencies...
+$ execa git status -s
+info Installing \\"react-native@0.58.4\\" and its peer dependencies...
 $ execa npm info react-native@0.58.4 peerDependencies --json
 $ yarn add react-native@0.58.4 react@16.6.3
 $ execa git add package.json
@@ -186,19 +186,13 @@ info Applying diff (excluding: package.json, .flowconfig)...
 $ execa git apply tmp-upgrade-rn.patch --exclude=package.json --exclude=.flowconfig -p2 --3way
 [2merror: .flowconfig: does not exist in index[22m
 error Automatically applying diff failed
-info Here's the diff we tried to apply: https://github.com/react-native-community/rn-diff-purge/compare/version/0.57.8...version/0.58.4
-info You may find release notes helpful: https://github.com/facebook/react-native/releases/tag/v0.58.4
 [fs] unlink tmp-upgrade-rn.patch
-warn Continuing after failure. Most of the files are upgraded but you will need to deal with some conflicts manually
-info Installing react-native@0.58.4 and its peer dependencies...
-$ execa npm info react-native@0.58.4 peerDependencies --json
-$ yarn add react-native@0.58.4 react@16.6.3
-$ execa git add package.json
-$ execa git add yarn.lock
-$ execa git add package-lock.json
-info Running \\"git status\\" to check what changed...
-$ execa git status
+$ execa git status -s
+error Patch failed to apply for unknown reason. Please fall back to manual way of upgrading
 $ execa git remote remove tmp-rn-diff-purge
-warn Please run \\"git diff\\" to review the conflicts and resolve them"
+info You may find these resources helpful:
+• Release notes: [4m[2mhttps://github.com/facebook/react-native/releases/tag/v0.58.4[22m[24m
+• Comparison between versions: [4m[2mhttps://github.com/react-native-community/rn-diff-purge/compare/version/0.57.8..version/0.58.4[22m[24m
+• Git diff: [4m[2mhttps://github.com/react-native-community/rn-diff-purge/compare/version/0.57.8..version/0.58.4.diff[22m[24m"
 `);
 });

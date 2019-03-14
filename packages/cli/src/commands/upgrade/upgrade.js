@@ -104,14 +104,9 @@ const getVersionToUpgradeTo = async (argv, currentVersion, projectDir) => {
   return newVersion;
 };
 
-const installDeps = async (newVersion, projectDir, patchSuccess) => {
-  if (!patchSuccess) {
-    logger.warn(
-      'Continuing after failure. Most of the files are upgraded but you will need to deal with some conflicts manually',
-    );
-  }
+const installDeps = async (newVersion, projectDir) => {
   logger.info(
-    `Installing react-native@${newVersion} and its peer dependencies...`,
+    `Installing "react-native@${newVersion}" and its peer dependencies...`,
   );
   const peerDeps = await getRNPeerDeps(newVersion);
   const pm = new PackageManager({projectDir});
@@ -170,12 +165,6 @@ const applyPatch = async (
       logger.log(`${chalk.dim(error.stderr.trim())}`);
     }
     logger.error('Automatically applying diff failed');
-    logger.info(
-      `Here's the diff we tried to apply: ${rnDiffPurgeUrl}/compare/version/${currentVersion}...version/${newVersion}`,
-    );
-    logger.info(
-      `You may find release notes helpful: https://github.com/facebook/react-native/releases/tag/v${newVersion}`,
-    );
     return false;
   }
   return true;
@@ -188,8 +177,7 @@ async function upgrade(argv: Array<string>, ctx: ContextT, args: FlagsT) {
   if (args.legacy) {
     return legacyUpgrade.func(argv, ctx);
   }
-  const rnDiffGitAddress =
-    'https://github.com/react-native-community/rn-diff-purge.git';
+  const rnDiffGitAddress = `${rnDiffPurgeUrl}.git`;
   const tmpRemote = 'tmp-rn-diff-purge';
   const tmpPatchFile = 'tmp-upgrade-rn.patch';
   const projectDir = ctx.root;
@@ -229,9 +217,6 @@ async function upgrade(argv: Array<string>, ctx: ContextT, args: FlagsT) {
     await execa('git', ['remote', 'add', tmpRemote, rnDiffGitAddress]);
     await execa('git', ['fetch', '--no-tags', tmpRemote]);
     patchSuccess = await applyPatch(currentVersion, newVersion, tmpPatchFile);
-    if (!patchSuccess) {
-      return;
-    }
   } catch (error) {
     throw new Error(error.stderr || error);
   } finally {
@@ -240,15 +225,44 @@ async function upgrade(argv: Array<string>, ctx: ContextT, args: FlagsT) {
     } catch (e) {
       // ignore
     }
-    await installDeps(newVersion, projectDir, patchSuccess);
-    logger.info('Running "git status" to check what changed...');
-    await execa('git', ['status'], {stdio: 'inherit'});
+    const {stdout} = await execa('git', ['status', '-s']);
+    if (!patchSuccess) {
+      if (stdout) {
+        logger.warn(
+          'Continuing after failure. Most of the files are upgraded but you will need to deal with some conflicts manually',
+        );
+        await installDeps(newVersion, projectDir);
+        logger.info('Running "git status" to check what changed...');
+        await execa('git', ['status'], {stdio: 'inherit'});
+      } else {
+        logger.error(
+          'Patch failed to apply for unknown reason. Please fall back to manual way of upgrading',
+        );
+      }
+    } else {
+      await installDeps(newVersion, projectDir);
+      logger.info('Running "git status" to check what changed...');
+      await execa('git', ['status'], {stdio: 'inherit'});
+    }
     await execa('git', ['remote', 'remove', tmpRemote]);
 
     if (!patchSuccess) {
-      logger.warn(
-        'Please run "git diff" to review the conflicts and resolve them',
-      );
+      if (stdout) {
+        logger.warn(
+          'Please run "git diff" to review the conflicts and resolve them',
+        );
+      }
+      logger.info(`You may find these resources helpful:
+• Release notes: ${chalk.underline.dim(
+        `https://github.com/facebook/react-native/releases/tag/v${newVersion}`,
+      )}
+• Comparison between versions: ${chalk.underline.dim(
+        `${rnDiffPurgeUrl}/compare/version/${currentVersion}..version/${newVersion}`,
+      )}
+• Git diff: ${chalk.underline.dim(
+        `${rnDiffPurgeUrl}/compare/version/${currentVersion}..version/${newVersion}.diff`,
+      )}`);
+
       throw new Error(
         'Upgrade failed. Please see the messages above for details',
       );

@@ -10,6 +10,7 @@
 import chalk from 'chalk';
 import childProcess from 'child_process';
 import commander from 'commander';
+import minimist from 'minimist';
 import path from 'path';
 import type {CommandT, ContextT} from './tools/types.flow';
 import getLegacyConfig from './tools/getLegacyConfig';
@@ -153,12 +154,19 @@ async function setupAndRun() {
     }
   }
 
-  const root = commander.projectRoot
-    ? path.resolve(commander.projectRoot)
+  /**
+   * At this point, commander arguments are not parsed yet because we need to
+   * add all the commands and their options. That's why we resort to using
+   * minimist for parsing some global options.
+   */
+  const options = minimist(process.argv.slice(2));
+
+  const root = options.projectRoot
+    ? path.resolve(options.projectRoot)
     : process.cwd();
 
-  const reactNativePath = commander.reactNativePath
-    ? path.resolve(commander.reactNativePath)
+  const reactNativePath = options.reactNativePath
+    ? path.resolve(options.reactNativePath)
     : (() => {
         try {
           return path.dirname(

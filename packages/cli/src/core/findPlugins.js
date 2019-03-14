@@ -9,4 +9,4 @@
 
 import findPlugins from '../tools/findPlugins';
 
-module.exports = findPlugins;
+export default findPlugins;

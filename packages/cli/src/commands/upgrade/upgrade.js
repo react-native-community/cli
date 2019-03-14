@@ -165,11 +165,6 @@ const applyPatch = async (
       logger.log(`${chalk.dim(error.stderr.trim())}`);
     }
     logger.error('Automatically applying diff failed');
-    logger.info(
-      `Here's the diff we tried to apply: ${chalk.underline.dim(
-        `${rnDiffPurgeUrl}/compare/version/${currentVersion}...version/${newVersion}`,
-      )}`,
-    );
     return false;
   }
   return true;
@@ -230,8 +225,8 @@ async function upgrade(argv: Array<string>, ctx: ContextT, args: FlagsT) {
     } catch (e) {
       // ignore
     }
+    const {stdout} = await execa('git', ['status', '-s']);
     if (!patchSuccess) {
-      const {stdout} = await execa('git', ['status', '-s']);
       if (stdout) {
         logger.warn(
           'Continuing after failure. Most of the files are upgraded but you will need to deal with some conflicts manually',
@@ -241,7 +236,7 @@ async function upgrade(argv: Array<string>, ctx: ContextT, args: FlagsT) {
         await execa('git', ['status'], {stdio: 'inherit'});
       } else {
         logger.error(
-          'Patch failed to apply for unknown reason. Please fall back to manual way of upgrading using links above',
+          'Patch failed to apply for unknown reason. Please fall back to manual way of upgrading',
         );
       }
     } else {
@@ -252,11 +247,22 @@ async function upgrade(argv: Array<string>, ctx: ContextT, args: FlagsT) {
     await execa('git', ['remote', 'remove', tmpRemote]);
 
     if (!patchSuccess) {
-      logger.warn(
-        `Please run "git diff" to review the conflicts and resolve them. You may find release notes helpful: ${chalk.underline.dim(
-          `https://github.com/facebook/react-native/releases/tag/v${newVersion}`,
-        )}`,
-      );
+      if (stdout) {
+        logger.warn(
+          'Please run "git diff" to review the conflicts and resolve them',
+        );
+      }
+      logger.info(`You may find these resources helpful:
+• Release notes: ${chalk.underline.dim(
+        `https://github.com/facebook/react-native/releases/tag/v${newVersion}`,
+      )}
+• Comparison between versions: ${chalk.underline.dim(
+        `${rnDiffPurgeUrl}/compare/version/${currentVersion}..version/${newVersion}`,
+      )}
+• Git diff: ${chalk.underline.dim(
+        `${rnDiffPurgeUrl}/compare/version/${currentVersion}..version/${newVersion}.diff`,
+      )}`);
+
       throw new Error(
         'Upgrade failed. Please see the messages above for details',
       );

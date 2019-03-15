@@ -11,6 +11,7 @@ import Server from 'metro/src/Server';
 
 import outputBundle from 'metro/src/shared/output/bundle';
 import path from 'path';
+import chalk from 'chalk';
 import type {CommandLineArgs} from './bundleCommandLineArgs';
 import type {ContextT} from '../../tools/types.flow';
 import saveAssets from './saveAssets';
@@ -26,6 +27,20 @@ async function buildBundle(
     resetCache: args.resetCache,
     config: args.config,
   });
+
+  if (config.resolver.platforms.indexOf(args.platform) === -1) {
+    console.log(
+      chalk.red(
+        [
+          `Invalid platform (${args.platform}) selected.`,
+          'Available platforms are:',
+          config.resolver.platforms.join(', '),
+          'If you are trying to bundle for an out-of-tree platform, it may not be installed.',
+        ].join('\n'),
+      ),
+    );
+    throw new Error('Invalid platform selected.');
+  }
 
   // This is used by a bazillion of npm modules we don't control so we don't
   // have other choice than defining it as an env variable here.

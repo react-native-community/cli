@@ -8,6 +8,7 @@
  */
 import launchChrome from '../launchChrome';
 import logger from '../../../tools/logger';
+import {exec} from 'child_process';
 
 function launchChromeDevTools(port, args = '') {
   const debuggerURL = `http://localhost:${port}/debugger-ui${args}`;
@@ -15,15 +16,31 @@ function launchChromeDevTools(port, args = '') {
   launchChrome(debuggerURL);
 }
 
+function escapePath(pathname) {
+  // " Can escape paths with spaces in OS X, Windows, and *nix
+  return `"${pathname}"`;
+}
+
 function launchDevTools({port, watchFolders}, isChromeConnected) {
   // Explicit config always wins
   const customDebugger = process.env.REACT_DEBUGGER;
   if (customDebugger) {
-    customDebugger({watchFolders, customDebugger});
+    startCustomDebugger({watchFolders, customDebugger});
   } else if (!isChromeConnected()) {
     // Dev tools are not yet open; we need to open a session
     launchChromeDevTools(port);
   }
+}
+
+function startCustomDebugger({watchFolders, customDebugger}) {
+  const folders = watchFolders.map(escapePath).join(' ');
+  const command = `${customDebugger} ${folders}`;
+  console.log('Starting custom debugger by executing:', command);
+  exec(command, function(error, stdout, stderr) {
+    if (error !== null) {
+      console.log('Error while starting custom debugger:', error);
+    }
+  });
 }
 
 export default function getDevToolsMiddleware(options, isChromeConnected) {

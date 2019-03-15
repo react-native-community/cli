@@ -32,7 +32,9 @@ async function buildBundle(
     console.log(
       chalk.red(
         [
-          `Invalid platform (${args.platform}) selected.`,
+          `Invalid platform ${
+            args.platform ? `(${args.platform}) ` : ''
+          }selected.`,
           'Available platforms are:',
           config.resolver.platforms.join(', '),
           'If you are trying to bundle for an out-of-tree platform, it may not be installed.',

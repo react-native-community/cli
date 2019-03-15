@@ -1,18 +1,7 @@
 // @flow
-import fs from 'fs-extra';
 import path from 'path';
 
 const FILE_PROTOCOL = /file:/;
-
-export function getTemplateName(): string {
-  try {
-    return JSON.parse(
-      fs.readFileSync(path.join(process.cwd(), 'app.json'), 'utf8'),
-    ).templateName;
-  } catch (e) {
-    throw new Error('Cannot retrieve templateName');
-  }
-}
 
 function fixPaths(reactNativePath: string) {
   if (path.isAbsolute(reactNativePath)) {

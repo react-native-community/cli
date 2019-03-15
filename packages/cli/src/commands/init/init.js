@@ -4,32 +4,52 @@ import minimist from 'minimist';
 import type {ContextT} from '../../tools/types.flow';
 import {validateProjectName} from './validate';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
-import {
-  prepareExternalTemplate,
-  prepareReactNativeTemplate,
-} from './prepareTemplate';
 import printRunInstructions from './printRunInstructions';
 import logger from '../../tools/logger';
+import {
+  fetchTemplate,
+  getTemplateConfig,
+  copyTemplate,
+  executePostInstallScript,
+} from './template';
+import {changePlaceholderInTemplate} from './editTemplate';
+import PackageManager from '../../tools/PackageManager';
+import {getReactNativeVersion} from './utils';
 
 type Options = {|
   template?: string,
 |};
 
-type ExternalTemplateOptions = $Diff<Options, {template: string}> & {
-  template: string,
-};
-
-function createFromExternalTemplate(
-  projectName: string,
-  options: ExternalTemplateOptions,
-) {
+function createFromExternalTemplate(projectName: string, template: string) {
   logger.info('Initializing new project from extrenal template');
-  return prepareExternalTemplate(projectName, options.template);
+
+  fetchTemplate(template);
+  const templateConfig = getTemplateConfig(template);
+  copyTemplate(template, templateConfig.templateDir);
+  changePlaceholderInTemplate(projectName, templateConfig.placeholderName);
+
+  new PackageManager({}).installAll();
+
+  if (templateConfig.postInitScript) {
+    executePostInstallScript(template, templateConfig.postInitScript);
+  }
 }
 
-function createFromReactNativeTemplate(projectName: string, rnVersion: string) {
+function createFromReactNativeTemplate(projectName: string, version: string) {
   logger.info('Initializing new project');
-  return prepareReactNativeTemplate(projectName, rnVersion);
+
+  const template = getReactNativeVersion(version);
+
+  fetchTemplate(template);
+  const templateConfig = getTemplateConfig(template);
+  copyTemplate(template, templateConfig.templateDir);
+  changePlaceholderInTemplate(projectName, templateConfig.placeholderName);
+
+  new PackageManager({}).installAll();
+
+  if (templateConfig.postInitScript) {
+    executePostInstallScript(template, templateConfig.postInitScript);
+  }
 }
 
 function createProject(projectName: string, options: Options, version: string) {
@@ -37,8 +57,7 @@ function createProject(projectName: string, options: Options, version: string) {
   process.chdir(projectName);
 
   if (options.template) {
-    // $FlowFixMe: Flow goes stupid here
-    return createFromExternalTemplate(projectName, options);
+    return createFromExternalTemplate(projectName, options.template);
   }
 
   return createFromReactNativeTemplate(projectName, version);

@@ -20,6 +20,7 @@ import createGroupWithMessage from './createGroupWithMessage';
 import addFileToProject from './addFileToProject';
 import addProjectToLibraries from './addProjectToLibraries';
 import addSharedLibraries from './addSharedLibraries';
+import logger from '../../../tools/logger';
 
 /**
  * Register native module IOS adds given dependency to project by adding
@@ -32,6 +33,7 @@ export default function registerNativeModuleIOS(
   dependencyConfig,
   projectConfig,
 ) {
+  logger.debug(`Reading ${projectConfig.pbxprojPath}`);
   const project = xcode.project(projectConfig.pbxprojPath).parseSync();
   const dependencyProject = xcode
     .project(dependencyConfig.pbxprojPath)
@@ -55,6 +57,7 @@ export default function registerNativeModuleIOS(
     if (!product.isTVOS) {
       for (i = 0; i < targets.length; i++) {
         if (!targets[i].isTVOS) {
+          logger.debug(`Adding ${product.name} to ${targets[i].target.name}`);
           project.addStaticLibrary(product.name, {
             target: targets[i].uuid,
           });
@@ -65,6 +68,7 @@ export default function registerNativeModuleIOS(
     if (product.isTVOS) {
       for (i = 0; i < targets.length; i++) {
         if (targets[i].isTVOS) {
+          logger.debug(`Adding ${product.name} to ${targets[i].target.name}`);
           project.addStaticLibrary(product.name, {
             target: targets[i].uuid,
           });
@@ -83,5 +87,6 @@ export default function registerNativeModuleIOS(
     );
   }
 
+  logger.debug(`Writing changes to ${projectConfig.pbxprojPath}`);
   fs.writeFileSync(projectConfig.pbxprojPath, project.writeSync());
 }

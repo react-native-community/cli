@@ -8,11 +8,13 @@
  */
 
 import mapHeaderSearchPaths from './mapHeaderSearchPaths';
+import logger from '../../../tools/logger';
 
 /**
  * Given Xcode project and absolute path, it makes sure there are no headers referring to it
  */
 export default function addToHeaderSearchPaths(project, path) {
+  logger.debug(`Removing ${path} from header search paths`);
   mapHeaderSearchPaths(project, searchPaths =>
     searchPaths.filter(searchPath => searchPath !== path),
   );

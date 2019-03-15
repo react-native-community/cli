@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  * @format
+ * @flow
  */
 
 import fs from 'fs';
@@ -18,7 +19,10 @@ import logger from '../../../tools/logger';
  * For now, the only types of files that are handled are:
  * - Fonts (otf, ttf) - copied to targetPath/fonts under original name
  */
-export default function unlinkAssetsAndroid(files, project) {
+export default function unlinkAssetsAndroid(
+  files: Array<string>,
+  project: {assetsPath: string},
+) {
   const assets = groupFilesByType(files);
 
   logger.debug(`Assets path: ${project.assetsPath}`);

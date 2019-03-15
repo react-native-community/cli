@@ -27,7 +27,6 @@ import uninstall from './install/uninstall';
 import upgrade from './upgrade/upgrade';
 import logAndroid from './logAndroid/logAndroid';
 import logIOS from './logIOS/logIOS';
-import dependencies from './dependencies/dependencies';
 import info from './info/info';
 
 /**
@@ -49,7 +48,6 @@ const loadLocalCommands: Array<LocalCommandT> = [
   upgrade,
   logAndroid,
   logIOS,
-  dependencies,
   info,
 ];
 

@@ -22,13 +22,15 @@ export default function unlinkAssetsAndroid(files, project) {
   const assets = groupFilesByType(files);
 
   (assets.font || []).forEach(file => {
-    logger.debug(`Unlinking asset ${file}`);
     const filePath = path.join(
       project.assetsPath,
       'fonts',
       path.basename(file),
     );
     if (fs.existsSync(filePath)) {
+      logger.debug(
+        `Removing asset ${file} from ${path.join(project.assetsPath, 'fonts')}`,
+      );
       fs.unlinkSync(filePath);
     }
   });

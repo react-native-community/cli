@@ -25,8 +25,8 @@ export default function copyAssetsAndroid(
   const assets = groupFilesByType(files);
 
   (assets.font || []).forEach(asset => {
-    logger.debug(`Linking asset ${asset}`);
     const fontsDir = path.join(project.assetsPath, 'fonts');
+    logger.debug(`Copying asset ${asset} to ${fontsDir}`);
     // @todo: replace with fs.mkdirSync(path, {recursive}) + fs.copyFileSync
     // and get rid of fs-extra once we move to Node 10
     fs.copySync(asset, path.join(fontsDir, path.basename(asset)));

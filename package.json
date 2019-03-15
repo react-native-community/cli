@@ -10,7 +10,7 @@
     "test": "jest",
     "lint": "eslint . --cache --report-unused-disable-directives",
     "flow-check": "flow check",
-    "postinstall": "yarn build",
+    "postinstall": "yarn build-clean && yarn build",
     "publish": "yarn build-clean && yarn build && lerna publish"
   },
   "dependencies": {

@@ -21,6 +21,7 @@ import logger from '../../../tools/logger';
 export default function unlinkAssetsAndroid(files, project) {
   const assets = groupFilesByType(files);
 
+  logger.debug(`Assets path: ${project.assetsPath}`);
   (assets.font || []).forEach(file => {
     const filePath = path.join(
       project.assetsPath,
@@ -28,9 +29,7 @@ export default function unlinkAssetsAndroid(files, project) {
       path.basename(file),
     );
     if (fs.existsSync(filePath)) {
-      logger.debug(
-        `Removing asset ${file} from ${path.join(project.assetsPath, 'fonts')}`,
-      );
+      logger.debug(`Removing asset ${filePath}`);
       fs.unlinkSync(filePath);
     }
   });

@@ -14,14 +14,16 @@ import {
 } from './template';
 import {changePlaceholderInTemplate} from './editTemplate';
 import PackageManager from '../../tools/PackageManager';
-import {getReactNativeVersion} from './utils';
+import {supportProtocols} from './protocols';
 
 type Options = {|
   template?: string,
 |};
 
-function createFromExternalTemplate(projectName: string, template: string) {
+function createFromExternalTemplate(projectName: string, templateName: string) {
   logger.info('Initializing new project from extrenal template');
+
+  const template = supportProtocols(templateName);
 
   fetchTemplate(template);
   const templateConfig = getTemplateConfig(template);
@@ -38,7 +40,7 @@ function createFromExternalTemplate(projectName: string, template: string) {
 function createFromReactNativeTemplate(projectName: string, version: string) {
   logger.info('Initializing new project');
 
-  const template = getReactNativeVersion(version);
+  const template = supportProtocols(version, 'react-native@{version}');
 
   fetchTemplate(template);
   const templateConfig = getTemplateConfig(template);

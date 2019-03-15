@@ -1,4 +1,5 @@
 // @flow
+import {execFileSync} from 'child_process';
 import fs from 'fs-extra';
 import path from 'path';
 import PackageManager from '../../tools/PackageManager';
@@ -32,4 +33,8 @@ export function copyTemplate(templateName: string, templateDir: string) {
 export function executePostInstallScript(
   templateName: string,
   postInitScript: string,
-) {}
+) {
+  execFileSync(
+    path.join(process.cwd(), 'node_modules', templateName, postInitScript),
+  );
+}

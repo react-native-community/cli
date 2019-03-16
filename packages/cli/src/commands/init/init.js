@@ -41,6 +41,12 @@ function createFromExternalTemplate(projectName: string, templateName: string) {
 function createFromReactNativeTemplate(projectName: string, version: string) {
   logger.info('Initializing new project');
 
+  if (version !== 'latest' && !semver.satisfies(version, '0.60.0')) {
+    throw new Error(
+      'Cannot use React Native CLI to initialize project with version less than 0.60.0',
+    );
+  }
+
   const TEMPLATE_NAME = 'react-native';
 
   const {packageDir} = supportProtocols(version, `${TEMPLATE_NAME}@${version}`);
@@ -80,19 +86,13 @@ export default function initialize(
      * Commander is stripping `version` from options automatically.
      * We have to use `minimist` to take that directly from `process.argv`
      */
-    const version: string = minimist(process.argv).version;
-
-    if (version && !semver.satisfies(version, '0.60.0')) {
-      throw new Error(
-        'Cannot use React Native CLI to initialize project with version less than 0.60.0',
-      );
-    }
+    const version: string = minimist(process.argv).version || 'latest';
 
     if (fs.existsSync(projectName)) {
       throw new DirectoryAlreadyExistsError(projectName);
     }
 
-    createProject(projectName, options, version || 'latest');
+    createProject(projectName, options, version);
 
     printRunInstructions(process.cwd(), projectName);
   } catch (e) {

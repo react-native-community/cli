@@ -24,10 +24,8 @@ export function getTemplateConfig(templateName: string): TemplateConfig {
 }
 
 export function copyTemplate(templateName: string, templateDir: string) {
-  fs.copySync(
-    path.join('node_modules', templateName, templateDir),
-    process.cwd(),
-  );
+  const templatePath = path.join('node_modules', templateName, templateDir);
+  fs.copySync(templatePath, process.cwd());
 }
 
 export function executePostInstallScript(

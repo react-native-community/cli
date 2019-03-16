@@ -48,6 +48,9 @@ export function changePlaceholderInTemplate(
   walk(process.cwd())
     .reverse()
     .forEach((filePath: string) => {
+      if (filePath.includes('node_modules')) {
+        return;
+      }
       if (isNonBinaryFile(filePath)) {
         replaceNameInUTF8File(filePath, projectName, placeholderName);
       }

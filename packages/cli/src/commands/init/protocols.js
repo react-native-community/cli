@@ -11,14 +11,27 @@ function fixPaths(reactNativePath: string) {
   return path.resolve(process.cwd(), '..', reactNativePath);
 }
 
-function handleFileProtocol(packageName: string) {
-  return fixPaths(packageName.replace(FILE_PROTOCOL, ''));
+function handleFileProtocol(rawPackageName: string) {
+  const packageDir = fixPaths(rawPackageName.replace(FILE_PROTOCOL, ''));
+
+  return {
+    packageDir,
+    packageName: require(path.join(packageDir, 'package.json')).name,
+  };
 }
 
-export function supportProtocols(packageName: string, defaultPackage?: string) {
-  if (packageName.match(FILE_PROTOCOL)) {
-    return handleFileProtocol(packageName);
+export function supportProtocols(
+  rawPackageName: string,
+  defaultPackage?: string,
+) {
+  if (rawPackageName.match(FILE_PROTOCOL)) {
+    return handleFileProtocol(rawPackageName);
   }
 
-  return defaultPackage || packageName;
+  const packageName = defaultPackage || rawPackageName;
+
+  return {
+    packageDir: packageName,
+    packageName,
+  };
 }

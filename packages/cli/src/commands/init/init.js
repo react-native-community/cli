@@ -23,34 +23,36 @@ type Options = {|
 function createFromExternalTemplate(projectName: string, templateName: string) {
   logger.info('Initializing new project from extrenal template');
 
-  const template = supportProtocols(templateName);
+  const {packageDir, packageName} = supportProtocols(templateName);
 
-  fetchTemplate(template);
-  const templateConfig = getTemplateConfig(template);
-  copyTemplate(template, templateConfig.templateDir);
-  changePlaceholderInTemplate(projectName, templateConfig.placeholderName);
+  fetchTemplate(packageDir);
+  const templateConfig = getTemplateConfig(packageName);
+  copyTemplate(packageName, templateConfig.templateDir);
+  changePlaceholderInTemplate(packageName, templateConfig.placeholderName);
 
   new PackageManager({}).installAll();
 
   if (templateConfig.postInitScript) {
-    executePostInstallScript(template, templateConfig.postInitScript);
+    executePostInstallScript(templateName, templateConfig.postInitScript);
   }
 }
 
 function createFromReactNativeTemplate(projectName: string, version: string) {
   logger.info('Initializing new project');
 
-  const template = supportProtocols(version, 'react-native@{version}');
+  const TEMPLATE_NAME = 'react-native';
 
-  fetchTemplate(template);
-  const templateConfig = getTemplateConfig(template);
-  copyTemplate(template, templateConfig.templateDir);
+  const {packageDir} = supportProtocols(version, `${TEMPLATE_NAME}@${version}`);
+
+  fetchTemplate(packageDir);
+  const templateConfig = getTemplateConfig(TEMPLATE_NAME);
+  copyTemplate(TEMPLATE_NAME, templateConfig.templateDir);
   changePlaceholderInTemplate(projectName, templateConfig.placeholderName);
 
   new PackageManager({}).installAll();
 
   if (templateConfig.postInitScript) {
-    executePostInstallScript(template, templateConfig.postInitScript);
+    executePostInstallScript(TEMPLATE_NAME, templateConfig.postInitScript);
   }
 }
 

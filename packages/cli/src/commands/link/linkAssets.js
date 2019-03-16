@@ -39,14 +39,18 @@ const linkAssets = (
 };
 
 function linkAssetsCommand(_: Array<string>, ctx: ContextT, opts: LinkOptions) {
+  let platforms, project;
   try {
-    const {platforms, project} = getPlatformsAndProject(ctx, opts);
-    const projectAssets = getAssets(ctx.root);
-
-    return linkAssets(platforms, project, projectAssets);
+    const config = getPlatformsAndProject(ctx, opts);
+    platforms = config.platforms;
+    project = config.project;
   } catch (err) {
     throw new ReactNativeNotFound(err);
   }
+
+  const projectAssets = getAssets(ctx.root);
+
+  return linkAssets(platforms, project, projectAssets);
 }
 
 export {linkAssets};

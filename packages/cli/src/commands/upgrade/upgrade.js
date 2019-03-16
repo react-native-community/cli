@@ -15,7 +15,9 @@ type FlagsT = {
 };
 
 const rnDiffPurgeUrl =
-  'https://github.com/react-native-community/rn-diff-purge';
+  'https://github.com/pvinis/rn-diff-purge';
+const rnDiffPurgeRawUrl =
+  'https://raw.githubusercontent.com/pvinis/rn-diff-purge/master/diffs';
 
 const getLatestRNVersion = async (): Promise<string> => {
   logger.info('No version passed. Fetching latest...');
@@ -46,7 +48,7 @@ const getPatch = async (currentVersion, newVersion, projectDir) => {
 
   try {
     patch = await fetch(
-      `${rnDiffPurgeUrl}/compare/version/${currentVersion}...version/${newVersion}.diff`,
+      `${rnDiffPurgeRawUrl}/${currentVersion}..${newVersion}.diff`,
     );
   } catch (error) {
     logger.error(
@@ -255,7 +257,7 @@ async function upgrade(argv: Array<string>, ctx: ContextT, args: FlagsT) {
         `${rnDiffPurgeUrl}/compare/version/${currentVersion}..version/${newVersion}`,
       )}
 • Git diff: ${chalk.underline.dim(
-        `${rnDiffPurgeUrl}/compare/version/${currentVersion}..version/${newVersion}.diff`,
+        `${rnDiffPurgeRawUrl}/${currentVersion}..${newVersion}.diff`,
       )}`);
 
       throw new Error(

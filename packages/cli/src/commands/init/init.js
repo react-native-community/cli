@@ -8,7 +8,7 @@ import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
 import printRunInstructions from './printRunInstructions';
 import logger from '../../tools/logger';
 import {
-  fetchTemplate,
+  installTemplatePackage,
   getTemplateConfig,
   copyTemplate,
   executePostInstallScript,
@@ -26,7 +26,7 @@ function createFromExternalTemplate(projectName: string, templateName: string) {
 
   const {packageDir, packageName} = supportProtocols(templateName);
 
-  fetchTemplate(packageDir);
+  installTemplatePackage(packageDir);
   const templateConfig = getTemplateConfig(packageName);
   copyTemplate(packageName, templateConfig.templateDir);
   changePlaceholderInTemplate(packageName, templateConfig.placeholderName);
@@ -51,7 +51,7 @@ function createFromReactNativeTemplate(projectName: string, version: string) {
 
   const {packageDir} = supportProtocols(version, `${TEMPLATE_NAME}@${version}`);
 
-  fetchTemplate(packageDir);
+  installTemplatePackage(packageDir);
   const templateConfig = getTemplateConfig(TEMPLATE_NAME);
   copyTemplate(TEMPLATE_NAME, templateConfig.templateDir);
   changePlaceholderInTemplate(projectName, templateConfig.placeholderName);

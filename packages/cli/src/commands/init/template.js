@@ -10,17 +10,12 @@ export type TemplateConfig = {
   postInitScript?: string,
 };
 
-export function fetchTemplate(templateName: string) {
+export function installTemplatePackage(templateName: string) {
   new PackageManager({}).install([templateName]);
 }
 
 export function getTemplateConfig(templateName: string): TemplateConfig {
-  return require(path.join(
-    process.cwd(),
-    'node_modules',
-    templateName,
-    'template.config',
-  ));
+  return require(path.join('node_modules', templateName, 'template.config'));
 }
 
 export function copyTemplate(templateName: string, templateDir: string) {

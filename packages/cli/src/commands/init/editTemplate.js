@@ -19,15 +19,6 @@ function replaceNameInUTF8File(
   fs.writeFileSync(filePath, content, 'utf8');
 }
 
-const BINARY_EXT = ['.png', '.jar'];
-
-function isNonBinaryFile(filePath: string) {
-  return (
-    !BINARY_EXT.some(ext => filePath.includes(ext)) &&
-    !fs.statSync(filePath).isDirectory()
-  );
-}
-
 function renameFile(filePath: string, oldName: string, newName: string) {
   const newFileName = path.join(
     path.dirname(filePath),
@@ -51,7 +42,7 @@ export function changePlaceholderInTemplate(
       if (filePath.includes('node_modules')) {
         return;
       }
-      if (isNonBinaryFile(filePath)) {
+      if (!fs.statSync(filePath).isDirectory()) {
         replaceNameInUTF8File(filePath, projectName, placeholderName);
       }
       if (shouldRenameFile(filePath, placeholderName)) {

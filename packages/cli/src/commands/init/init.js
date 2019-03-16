@@ -1,6 +1,7 @@
 // @flow
 import fs from 'fs-extra';
 import minimist from 'minimist';
+import semver from 'semver';
 import type {ContextT} from '../../tools/types.flow';
 import {validateProjectName} from './validate';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
@@ -79,13 +80,19 @@ export default function initialize(
      * Commander is stripping `version` from options automatically.
      * We have to use `minimist` to take that directly from `process.argv`
      */
-    const version: string = minimist(process.argv).version || 'latest';
+    const version: string = minimist(process.argv).version;
+
+    if (version && !semver.satisfies(version, '0.60.0')) {
+      throw new Error(
+        'Cannot use React Native CLI to initialize project with version less than 0.60.0',
+      );
+    }
 
     if (fs.existsSync(projectName)) {
       throw new DirectoryAlreadyExistsError(projectName);
     }
 
-    createProject(projectName, options, version);
+    createProject(projectName, options, version || 'latest');
 
     printRunInstructions(process.cwd(), projectName);
   } catch (e) {

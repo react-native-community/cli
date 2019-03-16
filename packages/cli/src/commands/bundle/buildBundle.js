@@ -29,19 +29,21 @@ async function buildBundle(
   });
 
   if (config.resolver.platforms.indexOf(args.platform) === -1) {
-    console.log(
-      chalk.red(
-        [
-          `Invalid platform ${
-            args.platform ? `(${args.platform}) ` : ''
-          }selected.`,
-          'Available platforms are:',
-          config.resolver.platforms.join(', '),
-          'If you are trying to bundle for an out-of-tree platform, it may not be installed.',
-        ].join('\n'),
-      ),
+    logger.error(
+      `Invalid platform ${
+        args.platform ? `"${chalk.bold(args.platform)}" ` : ''
+      }selected.`,
     );
-    throw new Error('Invalid platform selected.');
+
+    logger.info(
+      `Available platforms are: ${config.resolver.platforms
+        .map(x => `"${chalk.bold(x)}"`)
+        .join(
+          ', ',
+        )}. If you are trying to bundle for an out-of-tree platform, it may not be installed.`,
+    );
+
+    throw new Error('Bundling failed');
   }
 
   // This is used by a bazillion of npm modules we don't control so we don't

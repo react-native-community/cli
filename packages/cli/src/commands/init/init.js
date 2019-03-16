@@ -41,7 +41,7 @@ function createFromExternalTemplate(projectName: string, templateName: string) {
 function createFromReactNativeTemplate(projectName: string, version: string) {
   logger.info('Initializing new project');
 
-  if (version !== 'latest' && !semver.satisfies(version, '0.60.0')) {
+  if (semver.valid(version) && !semver.satisfies(version, '0.60.0')) {
     throw new Error(
       'Cannot use React Native CLI to initialize project with version less than 0.60.0',
     );

@@ -1,18 +1,11 @@
 // @flow
 import path from 'path';
+import {URL} from 'url';
 
 const FILE_PROTOCOL = /file:/;
 
-function fixPaths(reactNativePath: string) {
-  if (path.isAbsolute(reactNativePath)) {
-    return reactNativePath;
-  }
-
-  return path.resolve(process.cwd(), '..', reactNativePath);
-}
-
 function handleFileProtocol(rawPackageName: string) {
-  const packageDir = fixPaths(rawPackageName.replace(FILE_PROTOCOL, ''));
+  const packageDir = new URL(rawPackageName).pathname;
 
   return {
     packageDir,

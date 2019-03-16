@@ -15,7 +15,7 @@ export function installTemplatePackage(templateName: string) {
 }
 
 export function getTemplateConfig(templateName: string): TemplateConfig {
-  return require(path.join('node_modules', templateName, 'template.config'));
+  return require(path.resolve('node_modules', templateName, 'template.config'));
 }
 
 export function copyTemplate(templateName: string, templateDir: string) {

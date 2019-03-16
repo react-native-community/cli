@@ -11,11 +11,10 @@ export class ProcessError extends Error {
 }
 
 export class ReactNativeNotFound extends Error {
-  constructor() {
+  constructor(err: Error) {
     super(
-      chalk.red(
-        'No package found. Are you sure this is a React Native project?',
-      ),
+      `No package found. Are you sure this is a React Native project?
+      \n${chalk.gray(err)}`,
     );
   }
 }

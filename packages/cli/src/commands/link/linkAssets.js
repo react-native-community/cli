@@ -5,7 +5,7 @@ import type {
   ProjectConfigT,
   ContextT,
 } from '../../tools/types.flow';
-import type {LinkFlagsType} from './types.flow';
+import type {LinkOptions} from './types.flow';
 import logger from '../../tools/logger';
 import getPlatformsAndProject from './getPlatformsAndProject';
 import getAssets from '../../tools/getAssets';
@@ -38,18 +38,14 @@ const linkAssets = (
   logger.info('Assets have been successfully linked to your project');
 };
 
-function linkAssetsCommand(
-  _: Array<string>,
-  ctx: ContextT,
-  opts: LinkFlagsType,
-) {
+function linkAssetsCommand(_: Array<string>, ctx: ContextT, opts: LinkOptions) {
   try {
     const {platforms, project} = getPlatformsAndProject(ctx, opts);
     const projectAssets = getAssets(ctx.root);
 
     return linkAssets(platforms, project, projectAssets);
   } catch (err) {
-    throw new ReactNativeNotFound();
+    throw new ReactNativeNotFound(err);
   }
 }
 

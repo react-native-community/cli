@@ -3,9 +3,9 @@ import {pick} from 'lodash';
 import getProjectConfig from './getProjectConfig';
 import getPlatforms from '../../tools/getPlatforms';
 import type {ContextT} from '../../tools/types.flow';
-import type {LinkFlagsType} from './types.flow';
+import type {LinkOptions} from './types.flow';
 
-function getPlatformsAndProject(ctx: ContextT, opts: LinkFlagsType) {
+function getPlatformsAndProject(ctx: ContextT, opts: LinkOptions) {
   let platforms = getPlatforms(ctx.root);
   if (opts.platforms) {
     platforms = pick(platforms, opts.platforms);

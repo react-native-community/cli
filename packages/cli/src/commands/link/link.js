@@ -8,7 +8,7 @@
  */
 
 import type {ContextT} from '../../tools/types.flow';
-import type {LinkFlagsType} from './types.flow';
+import type {LinkOptions} from './types.flow';
 import promiseWaterfall from './promiseWaterfall';
 import logger from '../../tools/logger';
 import getDependencyConfig from './getDependencyConfig';
@@ -16,7 +16,6 @@ import commandStub from './commandStub';
 import promisify from './promisify';
 import linkDependency from './linkDependency';
 import {linkAssets} from './linkAssets';
-import findReactNativeScripts from '../../tools/findReactNativeScripts';
 import {ReactNativeNotFound} from '../../tools/errors';
 import getPlatformsAndProject from './getPlatformsAndProject';
 
@@ -27,7 +26,7 @@ import getPlatformsAndProject from './getPlatformsAndProject';
 function link(
   [rawPackageName]: Array<string>,
   ctx: ContextT,
-  opts: LinkFlagsType,
+  opts: LinkOptions,
 ) {
   let platforms;
   let project;
@@ -37,22 +36,8 @@ function link(
     platforms = config.platforms;
     project = config.project;
   } catch (err) {
-    throw new ReactNativeNotFound();
+    throw new ReactNativeNotFound(err);
   }
-  const hasProjectConfig = Object.keys(platforms).reduce(
-    (acc, key) => acc || key in project,
-    false,
-  );
-  if (!hasProjectConfig && findReactNativeScripts()) {
-    throw new Error(
-      '`react-native link <package>` can not be used in Create React Native App projects. ' +
-        'If you need to include a library that relies on custom native code, ' +
-        'you might have to eject first. ' +
-        'See https://github.com/react-community/create-react-native-app/blob/master/EJECTING.md ' +
-        'for more information.',
-    );
-  }
-
   // Trim the version / tag out of the package name (eg. package@latest)
   const packageName = rawPackageName.replace(/^(.+?)(@.+?)$/gi, '$1');
 

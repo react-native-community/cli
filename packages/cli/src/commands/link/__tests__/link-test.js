@@ -20,7 +20,7 @@ describe('link', () => {
     jest.resetModules();
   });
 
-  it('should reject when run in a folder without package.json', () => {
+  it('should throw when run in a folder without package.json', () => {
     const link = require('../link').func;
     expect(() => link([], {root: '/'}, {})).toThrowError();
   });

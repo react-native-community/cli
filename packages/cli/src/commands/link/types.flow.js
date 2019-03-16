@@ -1,5 +1,5 @@
 // @flow
 
-export type LinkFlagsType = {
+export type LinkOptions = {
   platforms?: Array<string>,
 };

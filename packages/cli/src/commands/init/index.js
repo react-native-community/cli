@@ -4,7 +4,7 @@ import init from './init';
 export default {
   func: init,
   name: 'init <packageName>',
-  description: 'initialize new project',
+  description: 'initialize new React Native project',
   options: [
     {
       command: '--version [string]',

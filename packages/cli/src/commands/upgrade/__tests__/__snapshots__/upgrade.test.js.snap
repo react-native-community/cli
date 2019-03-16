@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`fetches regular patch, adds remote, applies patch, installs deps, removes remote,: RnDiffApp is replaced with app name (TestApp) 1`] = `
+"Snapshot Diff:
+- First value
++ Second value
+
+@@ -1,5 +1,5 @@
+- diff --git a/RnDiffApp/android/build.gradle b/RnDiffApp/android/build.gradle
++ diff --git a/TestApp/android/build.gradle b/TestApp/android/build.gradle
+  index 85d8f2f8..a1e80854 100644
+- --- a/RnDiffApp/android/build.gradle
+- +++ b/RnDiffApp/android/build.gradle
++ --- a/TestApp/android/build.gradle
++ +++ b/TestApp/android/build.gradle
+  @@ -9,8 +9,8 @@ buildscript {
+@@ -28,6 +28,6 @@
+  
+- diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
++ diff --git a/TestApp/package.json b/TestApp/package.json
+  index 4e617645..c82829bd 100644
+- --- a/RnDiffApp/package.json
+- +++ b/RnDiffApp/package.json
++ --- a/TestApp/package.json
++ +++ b/TestApp/package.json
+  @@ -7,14 +7,14 @@"
+`;

@@ -21,6 +21,7 @@ import bundle from './bundle/bundle';
 import ramBundle from './bundle/ramBundle';
 import eject from './eject/eject';
 import link from './link/link';
+import linkAssets from './link/linkAssets';
 import unlink from './link/unlink';
 import install from './install/install';
 import uninstall from './install/uninstall';
@@ -42,6 +43,7 @@ const loadLocalCommands: Array<LocalCommandT> = [
   ramBundle,
   eject,
   link,
+  linkAssets,
   unlink,
   install,
   uninstall,

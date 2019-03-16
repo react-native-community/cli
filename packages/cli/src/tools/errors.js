@@ -9,3 +9,13 @@ export class ProcessError extends Error {
     Error.captureStackTrace(this, ProcessError);
   }
 }
+
+export class ReactNativeNotFound extends Error {
+  constructor() {
+    super(
+      chalk.red(
+        'No package found. Are you sure this is a React Native project?',
+      ),
+    );
+  }
+}

@@ -7,42 +7,37 @@
  * @flow
  */
 
-import {pick} from 'lodash';
 import type {ContextT} from '../../tools/types.flow';
-
+import type {LinkFlagsType} from './types.flow';
 import promiseWaterfall from './promiseWaterfall';
 import logger from '../../tools/logger';
 import getDependencyConfig from './getDependencyConfig';
 import commandStub from './commandStub';
 import promisify from './promisify';
-import getProjectConfig from './getProjectConfig';
 import linkDependency from './linkDependency';
-import linkAssets from './linkAssets';
+import {linkAssets} from './linkAssets';
 import findReactNativeScripts from '../../tools/findReactNativeScripts';
-import getPlatforms from '../../tools/getPlatforms';
-
-type FlagsType = {
-  platforms?: Array<string>,
-};
+import {ReactNativeNotFound} from '../../tools/errors';
+import getPlatformsAndProject from './getPlatformsAndProject';
 
 /**
  *
  * @param args [packageName] - links native dependencies and assets for provided package
  */
-function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
+function link(
+  [rawPackageName]: Array<string>,
+  ctx: ContextT,
+  opts: LinkFlagsType,
+) {
   let platforms;
   let project;
   try {
-    platforms = getPlatforms(ctx.root);
-    if (opts.platforms) {
-      platforms = pick(platforms, opts.platforms);
-    }
-    project = getProjectConfig(ctx, platforms);
+    let config = getPlatformsAndProject(ctx, opts);
+
+    platforms = config.platforms;
+    project = config.project;
   } catch (err) {
-    logger.error(
-      'No package found. Are you sure this is a React Native project?',
-    );
-    return Promise.reject(err);
+    throw new ReactNativeNotFound();
   }
   const hasProjectConfig = Object.keys(platforms).reduce(
     (acc, key) => acc || key in project,
@@ -94,5 +89,3 @@ export default {
     },
   ],
 };
-
-// link;

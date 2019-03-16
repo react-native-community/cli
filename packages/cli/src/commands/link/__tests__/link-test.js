@@ -8,7 +8,7 @@
  * @emails oncall+javascript_foundation
  */
 
-jest.mock('chalk', () => ({grey: str => str}));
+jest.mock('chalk', () => ({grey: str => str, red: str => str}));
 jest.mock('../../../tools/logger');
 
 const context = {
@@ -20,9 +20,9 @@ describe('link', () => {
     jest.resetModules();
   });
 
-  it('should reject when run in a folder without package.json', done => {
+  it('should reject when run in a folder without package.json', () => {
     const link = require('../link').func;
-    link([], {root: '/'}, {}).catch(() => done());
+    expect(() => link([], {root: '/'}, {})).toThrowError();
   });
 
   it('should accept a name of a dependency to link', done => {

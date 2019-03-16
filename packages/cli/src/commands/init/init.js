@@ -29,7 +29,7 @@ function createFromExternalTemplate(projectName: string, templateName: string) {
   installTemplatePackage(packageDir);
   const templateConfig = getTemplateConfig(packageName);
   copyTemplate(packageName, templateConfig.templateDir);
-  changePlaceholderInTemplate(packageName, templateConfig.placeholderName);
+  changePlaceholderInTemplate(projectName, templateConfig.placeholderName);
 
   new PackageManager({}).installAll();
 

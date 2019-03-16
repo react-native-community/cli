@@ -20,7 +20,7 @@ import linkDependency from './linkDependency';
 import linkAssets from './linkAssets';
 import linkAll from './linkAll';
 import findReactNativeScripts from '../../tools/findReactNativeScripts';
-import getPlatforms from '../../tools/getPlatforms';
+import getPlatforms, {getPlatformName} from '../../tools/getPlatforms';
 
 type FlagsType = {
   platforms?: Array<string>,
@@ -37,9 +37,21 @@ function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
   let project;
   try {
     platforms = getPlatforms(ctx.root);
+    logger.debug(
+      'Available platforms: ' +
+        `${Object.getOwnPropertyNames(platforms)
+          .map(platform => getPlatformName(platform))
+          .join(', ')}`,
+    );
     if (opts.platforms) {
       platforms = pick(platforms, opts.platforms);
     }
+    logger.debug(
+      'Targeted platforms: ' +
+        `${Object.getOwnPropertyNames(platforms)
+          .map(platform => getPlatformName(platform))
+          .join(', ')}`,
+    );
     project = getProjectConfig(ctx, platforms);
   } catch (err) {
     logger.error(
@@ -62,8 +74,13 @@ function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
   }
 
   if (rawPackageName === undefined) {
+    logger.debug(
+      'No package name provided, will attemp to link all possible packages.',
+    );
     return linkAll(ctx, platforms, project);
   }
+
+  logger.debug(`Package to link: ${rawPackageName}`);
 
   // Trim the version / tag out of the package name (eg. package@latest)
   const packageName = rawPackageName.replace(/^(.+?)(@.+?)$/gi, '$1');

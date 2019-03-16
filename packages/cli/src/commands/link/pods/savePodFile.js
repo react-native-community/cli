@@ -8,8 +8,10 @@
  */
 
 import fs from 'fs';
+import logger from '../../../tools/logger';
 
 export default function savePodFile(podfilePath, podLines) {
   const newPodfile = podLines.join('\n');
+  logger.debug(`Writing changes to ${podfilePath}`);
   fs.writeFileSync(podfilePath, newPodfile);
 }

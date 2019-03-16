@@ -8,7 +8,9 @@
  */
 
 import mapHeaderSearchPaths from './mapHeaderSearchPaths';
+import logger from '../../../tools/logger';
 
 export default function addToHeaderSearchPaths(project, path) {
+  logger.debug(`Adding ${path} to header search paths`);
   mapHeaderSearchPaths(project, searchPaths => searchPaths.concat(path));
 }

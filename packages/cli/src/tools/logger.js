@@ -5,6 +5,8 @@ import chalk from 'chalk';
 
 const SEPARATOR = ', ';
 
+let verbose = false;
+
 const formatMessages = (messages: Array<string>) =>
   chalk.reset(messages.join(SEPARATOR));
 
@@ -25,11 +27,17 @@ const error = (...messages: Array<string>) => {
 };
 
 const debug = (...messages: Array<string>) => {
-  console.log(`${chalk.gray.bold('debug')} ${formatMessages(messages)}`);
+  if (verbose) {
+    console.log(`${chalk.gray.bold('debug')} ${formatMessages(messages)}`);
+  }
 };
 
 const log = (...messages: Array<string>) => {
   console.log(`${formatMessages(messages)}`);
+};
+
+const setVerbose = (level: boolean) => {
+  verbose = level;
 };
 
 export default {
@@ -39,4 +47,5 @@ export default {
   error,
   debug,
   log,
+  setVerbose,
 };

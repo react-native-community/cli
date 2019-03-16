@@ -39,7 +39,9 @@ const linkAssets = (
 };
 
 function linkAssetsCommand(_: Array<string>, ctx: ContextT, opts: LinkOptions) {
-  let platforms, project;
+  let platforms;
+  let project;
+
   try {
     const config = getPlatformsAndProject(ctx, opts);
     platforms = config.platforms;

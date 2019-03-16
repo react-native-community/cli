@@ -30,7 +30,8 @@ function link(
 ) {
   logger.debug(`Package to link: ${rawPackageName}`);
 
-  let platforms, project;
+  let platforms;
+  let project;
 
   try {
     let config = getPlatformsAndProject(ctx, opts);

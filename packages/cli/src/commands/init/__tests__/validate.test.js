@@ -24,7 +24,7 @@ test.each([
     error: ReservedNameError,
   },
 ])(
-  "'%s' should be invalid anme",
+  "'%s' is invalid name",
   ({name, error}: {name: string, error: Error}) => {
     expect(() => validateProjectName(name)).toThrowError(error);
   },

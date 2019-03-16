@@ -5,11 +5,13 @@
  * LICENSE file in the root directory of this source tree.
  *
  * @format
+ * @flow
  */
 
 import fs from 'fs';
 import path from 'path';
 import groupFilesByType from '../groupFilesByType';
+import logger from '../../../tools/logger';
 
 /**
  * Copies each file from an array of assets provided to targetPath directory
@@ -17,9 +19,13 @@ import groupFilesByType from '../groupFilesByType';
  * For now, the only types of files that are handled are:
  * - Fonts (otf, ttf) - copied to targetPath/fonts under original name
  */
-export default function unlinkAssetsAndroid(files, project) {
+export default function unlinkAssetsAndroid(
+  files: Array<string>,
+  project: {assetsPath: string},
+) {
   const assets = groupFilesByType(files);
 
+  logger.debug(`Assets path: ${project.assetsPath}`);
   (assets.font || []).forEach(file => {
     const filePath = path.join(
       project.assetsPath,
@@ -27,6 +33,7 @@ export default function unlinkAssetsAndroid(files, project) {
       path.basename(file),
     );
     if (fs.existsSync(filePath)) {
+      logger.debug(`Removing asset ${filePath}`);
       fs.unlinkSync(filePath);
     }
   });

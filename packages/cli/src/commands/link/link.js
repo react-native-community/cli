@@ -28,6 +28,8 @@ function link(
   ctx: ContextT,
   opts: LinkOptions,
 ) {
+  logger.debug(`Package to link: ${rawPackageName}`);
+
   let platforms;
   let project;
   try {

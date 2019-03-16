@@ -15,6 +15,7 @@ import log from '../../../tools/logger';
 import groupFilesByType from '../groupFilesByType';
 import getPlist from './getPlist';
 import writePlist from './writePlist';
+import logger from '../../../tools/logger';
 
 /**
  * Unlinks assets from iOS project. Removes references for fonts from `Info.plist`
@@ -41,12 +42,13 @@ export default function unlinkAssetsIOS(files, projectConfig) {
 
   const removeResourceFiles = (f = []) =>
     (f || [])
-      .map(asset =>
-        project.removeResourceFile(
+      .map(asset => {
+        logger.debug(`Unlinking asset ${asset}`);
+        return project.removeResourceFile(
           path.relative(projectConfig.sourceDir, asset),
           {target: project.getFirstTarget().uuid},
-        ),
-      )
+        );
+      })
       .map(file => file.basename);
 
   removeResourceFiles(assets.image);

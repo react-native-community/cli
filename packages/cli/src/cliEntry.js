@@ -24,7 +24,8 @@ import pkgJson from '../package.json';
 commander
   .option('--version', 'Print CLI version')
   .option('--projectRoot [string]', 'Path to the root of the project')
-  .option('--reactNativePath [string]', 'Path to React Native');
+  .option('--reactNativePath [string]', 'Path to React Native')
+  .option('--verbose', 'Increase logging verbosity');
 
 commander.on('command:*', () => {
   printUnknownCommand(commander.args.join(' '));
@@ -204,6 +205,8 @@ async function setupAndRun() {
   if (commander.args.length === 0 && commander.version === true) {
     console.log(pkgJson.version);
   }
+
+  logger.setVerbose(commander.verbose);
 }
 
 export default {

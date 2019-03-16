@@ -9,6 +9,7 @@
 
 import fs from 'fs';
 import removePodEntry from './removePodEntry';
+import logger from '../../../tools/logger';
 
 /**
  * Unregister native module IOS with CocoaPods
@@ -16,5 +17,6 @@ import removePodEntry from './removePodEntry';
 export default function unregisterNativeModule(dependencyConfig, iOSProject) {
   const podContent = fs.readFileSync(iOSProject.podfile, 'utf8');
   const removed = removePodEntry(podContent, dependencyConfig.podspec);
+  logger.debug(`Writing changes to ${iOSProject.podfile}`);
   fs.writeFileSync(iOSProject.podfile, removed);
 }

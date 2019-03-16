@@ -14,6 +14,7 @@ import groupFilesByType from '../groupFilesByType';
 import createGroupWithMessage from './createGroupWithMessage';
 import getPlist from './getPlist';
 import writePlist from './writePlist';
+import logger from '../../../tools/logger';
 
 /**
  * This function works in a similar manner to its Android version,
@@ -28,11 +29,13 @@ export default function linkAssetsIOS(files, projectConfig) {
 
   function addResourceFile(f) {
     return (f || [])
-      .map(asset =>
-        project.addResourceFile(path.relative(projectConfig.sourceDir, asset), {
-          target: project.getFirstTarget().uuid,
-        }),
-      )
+      .map(asset => {
+        logger.debug(`Linking asset ${asset}`);
+        return project.addResourceFile(
+          path.relative(projectConfig.sourceDir, asset),
+          {target: project.getFirstTarget().uuid},
+        );
+      })
       .filter(file => file) // xcode returns false if file is already there
       .map(file => file.basename);
   }

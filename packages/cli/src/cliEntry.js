@@ -156,23 +156,27 @@ async function setupAndRun() {
     ? path.resolve(commander.projectRoot)
     : process.cwd();
 
-  const reactNativePath = commander.reactNativePath
-    ? path.resolve(commander.reactNativePath)
-    : (() => {
-        try {
-          return path.dirname(
-            // $FlowIssue: Wrong `require.resolve` type definition
-            require.resolve('react-native/package.json', {
-              paths: [root],
-            }),
-          );
-        } catch (_ignored) {
-          // Do not check for it in `init` command
-          // throw new Error(
-          //   'Unable to find React Native files. Make sure "react-native" module is installed in your project dependencies.',
-          // );
-        }
-      })();
+  let reactNativePath;
+
+  // Do not check for it in `init` command
+  if (!process.argv.includes('init')) {
+    reactNativePath = commander.reactNativePath
+      ? path.resolve(commander.reactNativePath)
+      : (() => {
+          try {
+            return path.dirname(
+              // $FlowIssue: Wrong `require.resolve` type definition
+              require.resolve('react-native/package.json', {
+                paths: [root],
+              }),
+            );
+          } catch (_ignored) {
+            throw new Error(
+              'Unable to find React Native files. Make sure "react-native" module is installed in your project dependencies.',
+            );
+          }
+        })();
+  }
 
   const ctx = {
     ...getLegacyConfig(root),

@@ -75,6 +75,10 @@ export default function initialize(
   try {
     validateProjectName(projectName);
 
+    /**
+     * Commander is stripping `version` from options automatically.
+     * We have to use `minimist` to take that directly from `process.argv`
+     */
     const version: string = minimist(process.argv).version || 'latest';
 
     if (fs.existsSync(projectName)) {

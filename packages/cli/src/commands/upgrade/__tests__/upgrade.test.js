@@ -1,36 +1,36 @@
 // @flow
-import execa from 'execa';
-import path from 'path';
-import fs from 'fs';
-import snapshotDiff from 'snapshot-diff';
-import upgrade from '../upgrade';
-import {fetch} from '../helpers';
-import logger from '../../../tools/logger';
+import execa from "execa";
+import path from "path";
+import fs from "fs";
+import snapshotDiff from "snapshot-diff";
+import upgrade from "../upgrade";
+import { fetch } from "../helpers";
+import logger from "../../../tools/logger";
 
-jest.mock('https');
-jest.mock('fs');
-jest.mock('path');
-jest.mock('execa', () => {
+jest.mock("https");
+jest.mock("fs");
+jest.mock("path");
+jest.mock("execa", () => {
   const module = jest.fn((command, args) => {
-    mockPushLog('$', 'execa', command, args);
-    if (command === 'npm' && args[3] === '--json') {
+    mockPushLog("$", "execa", command, args);
+    if (command === "npm" && args[3] === "--json") {
       return Promise.resolve({
-        stdout: '{"react": "16.6.3"}',
+        stdout: '{"react": "16.6.3"}'
       });
     }
-    return Promise.resolve({stdout: ''});
+    return Promise.resolve({ stdout: "" });
   });
   return module;
 });
 jest.mock(
-  '/project/root/node_modules/react-native/package.json',
-  () => ({name: 'react-native', version: '0.57.8'}),
-  {virtual: true},
+  "/project/root/node_modules/react-native/package.json",
+  () => ({ name: "react-native", version: "0.57.8" }),
+  { virtual: true }
 );
 jest.mock(
-  '/project/root/package.json',
-  () => ({name: 'TestApp', dependencies: {'react-native': '^0.57.8'}}),
-  {virtual: true},
+  "/project/root/package.json",
+  () => ({ name: "TestApp", dependencies: { "react-native": "^0.57.8" } }),
+  { virtual: true }
 );
 jest.mock('../../../tools/PackageManager', () => ({
   install: args => {
@@ -41,71 +41,71 @@ jest.mock('../helpers', () => ({
   ...jest.requireActual('../helpers'),
   fetch: jest.fn(() => Promise.resolve('patch')),
 }));
-jest.mock('../../../tools/logger', () => ({
-  info: jest.fn((...args) => mockPushLog('info', args)),
-  error: jest.fn((...args) => mockPushLog('error', args)),
-  warn: jest.fn((...args) => mockPushLog('warn', args)),
-  success: jest.fn((...args) => mockPushLog('success', args)),
-  log: jest.fn((...args) => mockPushLog(args)),
+jest.mock("../../../tools/logger", () => ({
+  info: jest.fn((...args) => mockPushLog("info", args)),
+  error: jest.fn((...args) => mockPushLog("error", args)),
+  warn: jest.fn((...args) => mockPushLog("warn", args)),
+  success: jest.fn((...args) => mockPushLog("success", args)),
+  log: jest.fn((...args) => mockPushLog(args))
 }));
 
-const currentVersion = '0.57.8';
-const newVersion = '0.58.4';
-const olderVersion = '0.56.0';
+const currentVersion = "0.57.8";
+const newVersion = "0.58.4";
+const olderVersion = "0.56.0";
 const ctx = {
-  root: '/project/root',
-  reactNativePath: '',
+  root: "/project/root",
+  reactNativePath: ""
 };
 const opts = {
-  legacy: false,
+  legacy: false
 };
 
 const samplePatch = jest
-  .requireActual('fs')
-  .readFileSync(path.join(__dirname, './sample.patch'), 'utf8');
+  .requireActual("fs")
+  .readFileSync(path.join(__dirname, "./sample.patch"), "utf8");
 
 let logs = [];
 const mockPushLog = (...args) =>
-  logs.push(args.map(x => (Array.isArray(x) ? x.join(' ') : x)).join(' '));
-const flushOutput = () => logs.join('\n');
+  logs.push(args.map(x => (Array.isArray(x) ? x.join(" ") : x)).join(" "));
+const flushOutput = () => logs.join("\n");
 
 beforeEach(() => {
   jest.clearAllMocks();
   // $FlowFixMe
-  fs.writeFileSync = jest.fn(filename => mockPushLog('[fs] write', filename));
+  fs.writeFileSync = jest.fn(filename => mockPushLog("[fs] write", filename));
   // $FlowFixMe
-  fs.unlinkSync = jest.fn((...args) => mockPushLog('[fs] unlink', args));
+  fs.unlinkSync = jest.fn((...args) => mockPushLog("[fs] unlink", args));
   logs = [];
 });
 
-test('uses latest version of react-native when none passed', async () => {
+test("uses latest version of react-native when none passed", async () => {
   await upgrade.func([], ctx, opts);
-  expect(execa).toBeCalledWith('npm', ['info', 'react-native', 'version']);
+  expect(execa).toBeCalledWith("npm", ["info", "react-native", "version"]);
 });
 
-test('errors when invalid version passed', async () => {
-  await upgrade.func(['next'], ctx, opts);
+test("errors when invalid version passed", async () => {
+  await upgrade.func(["next"], ctx, opts);
   expect(logger.error).toBeCalledWith(
-    'Provided version "next" is not allowed. Please pass a valid semver version',
+    'Provided version "next" is not allowed. Please pass a valid semver version'
   );
 });
 
-test('errors when older version passed', async () => {
+test("errors when older version passed", async () => {
   await upgrade.func([olderVersion], ctx, opts);
   expect(logger.error).toBeCalledWith(
-    `Trying to upgrade from newer version "${currentVersion}" to older "${olderVersion}"`,
+    `Trying to upgrade from newer version "${currentVersion}" to older "${olderVersion}"`
   );
 });
 
-test('warns when dependency upgrade version is in semver range', async () => {
+test("warns when dependency upgrade version is in semver range", async () => {
   await upgrade.func([currentVersion], ctx, opts);
   expect(logger.warn).toBeCalledWith(
-    `Specified version "${currentVersion}" is already installed in node_modules and it satisfies "^0.57.8" semver range. No need to upgrade`,
+    `Specified version "${currentVersion}" is already installed in node_modules and it satisfies "^0.57.8" semver range. No need to upgrade`
   );
 });
 
-test('fetches empty patch and installs deps', async () => {
-  (fetch: any).mockImplementation(() => Promise.resolve(''));
+test("fetches empty patch and installs deps", async () => {
+  (fetch: any).mockImplementation(() => Promise.resolve(""));
   await upgrade.func([newVersion], ctx, opts);
   expect(flushOutput()).toMatchInlineSnapshot(`
 "info Fetching diff between v0.57.8 and v0.58.4...
@@ -120,7 +120,7 @@ success Upgraded React Native to v0.58.4 🎉. Now you can review and commit the
 `);
 });
 
-test('fetches regular patch, adds remote, applies patch, installs deps, removes remote,', async () => {
+test("fetches regular patch, adds remote, applies patch, installs deps, removes remote,", async () => {
   (fetch: any).mockImplementation(() => Promise.resolve(samplePatch));
   await upgrade.func([newVersion], ctx, opts);
   expect(flushOutput()).toMatchInlineSnapshot(`
@@ -143,32 +143,32 @@ success Upgraded React Native to v0.58.4 🎉. Now you can review and commit the
 `);
   expect(
     snapshotDiff(samplePatch, fs.writeFileSync.mock.calls[0][1], {
-      contextLines: 1,
-    }),
-  ).toMatchSnapshot('RnDiffApp is replaced with app name (TestApp)');
+      contextLines: 1
+    })
+  ).toMatchSnapshot("RnDiffApp is replaced with app name (TestApp)");
 });
-test('cleans up if patching fails,', async () => {
+test("cleans up if patching fails,", async () => {
   (fetch: any).mockImplementation(() => Promise.resolve(samplePatch));
   (execa: any).mockImplementation((command, args) => {
-    mockPushLog('$', 'execa', command, args);
-    if (command === 'npm' && args[3] === '--json') {
+    mockPushLog("$", "execa", command, args);
+    if (command === "npm" && args[3] === "--json") {
       return Promise.resolve({
-        stdout: '{"react": "16.6.3"}',
+        stdout: '{"react": "16.6.3"}'
       });
     }
-    if (command === 'git' && args[0] === 'apply') {
+    if (command === "git" && args[0] === "apply") {
       return Promise.reject({
         code: 1,
-        stderr: 'error: .flowconfig: does not exist in index\n',
+        stderr: "error: .flowconfig: does not exist in index\n"
       });
     }
-    return Promise.resolve({stdout: ''});
+    return Promise.resolve({ stdout: "" });
   });
   try {
     await upgrade.func([newVersion], ctx, opts);
   } catch (error) {
     expect(error.message).toBe(
-      'Upgrade failed. Please see the messages above for details',
+      "Upgrade failed. Please see the messages above for details"
     );
   }
   expect(flushOutput()).toMatchInlineSnapshot(`
@@ -184,7 +184,7 @@ $ execa git status -s
 error Patch failed to apply for unknown reason. Please fall back to manual way of upgrading
 info You may find these resources helpful:
 • Release notes: [4m[2mhttps://github.com/facebook/react-native/releases/tag/v0.58.4[22m[24m
-• Comparison between versions: [4m[2mhttps://github.com/pvinis/rn-diff-purge/compare/version/0.57.8..version/0.58.4[22m[24m
-• Git diff: [4m[2mhttps://raw.githubusercontent.com/pvinis/rn-diff-purge/master/diffs/0.57.8..0.58.4.diff[22m[24m"
+• Comparison between versions: [4m[2mhttps://github.com/pvinis/rn-diff-purge/compare/version/0.57.8..version/0.58.4[22m[24m
+• Git diff: [4m[2mhttps://raw.githubusercontent.com/pvinis/rn-diff-purge/master/diffs/0.57.8..0.58.4.diff[22m[24m"
 `);
 });

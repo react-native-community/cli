@@ -6,7 +6,8 @@ import semver from 'semver';
 import execa from 'execa';
 import type {ContextT} from '../../tools/types.flow';
 import logger from '../../tools/logger';
-import PackageManager from '../../tools/PackageManager';
+import * as PackageManager from '../../tools/PackageManager';
+import {isProjectUsingYarn} from '../../tools/yarn';
 import {fetch} from './helpers';
 import legacyUpgrade from './legacyUpgrade';
 
@@ -109,12 +110,14 @@ const installDeps = async (newVersion, projectDir) => {
     `Installing "react-native@${newVersion}" and its peer dependencies...`,
   );
   const peerDeps = await getRNPeerDeps(newVersion);
-  const pm = new PackageManager({projectDir});
   const deps = [
     `react-native@${newVersion}`,
     ...Object.keys(peerDeps).map(module => `${module}@${peerDeps[module]}`),
   ];
-  await pm.install(deps, {silent: true});
+  PackageManager.install(deps, {
+    silent: true,
+    preferYarn: isProjectUsingYarn(projectDir),
+  });
   await execa('git', ['add', 'package.json']);
   try {
     await execa('git', ['add', 'yarn.lock']);

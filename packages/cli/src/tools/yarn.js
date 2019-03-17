@@ -17,7 +17,7 @@ import logger from './logger';
  * Use Yarn if available, it's much faster than the npm client.
  * Return the version of yarn installed on the system, null if yarn is not available.
  */
-function getYarnVersionIfAvailable() {
+export function getYarnVersionIfAvailable() {
   let yarnVersion;
   try {
     // execSync returns a Buffer -> convert to string
@@ -48,11 +48,6 @@ function getYarnVersionIfAvailable() {
  * Let's be safe and not mix yarn and npm in a single project.
  * @param projectDir e.g. /Users/martin/AwesomeApp
  */
-function isGlobalCliUsingYarn(projectDir) {
+export function isProjectUsingYarn(projectDir) {
   return fs.existsSync(path.join(projectDir, 'yarn.lock'));
 }
-
-export default {
-  getYarnVersionIfAvailable,
-  isGlobalCliUsingYarn,
-};

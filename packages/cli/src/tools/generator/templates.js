@@ -13,7 +13,8 @@ import fs from 'fs';
 import path from 'path';
 import copyProjectTemplateAndReplace from './copyProjectTemplateAndReplace';
 import logger from '../logger';
-import PackageManager from '../PackageManager';
+import * as PackageManager from '../PackageManager';
+import {isProjectUsingYarn} from '../yarn';
 
 /**
  * @param destPath Create the new project at this path.
@@ -72,9 +73,10 @@ function createFromRemoteTemplate(
 
   // Check if the template exists
   logger.info(`Fetching template ${installPackage}...`);
-  const packageManager = new PackageManager({projectDir: destinationRoot});
   try {
-    packageManager.install([installPackage]);
+    PackageManager.install([installPackage], {
+      preferYarn: isProjectUsingYarn(destinationRoot),
+    });
     const templatePath = path.resolve('node_modules', templateName);
     copyProjectTemplateAndReplace(templatePath, destPath, newProjectName, {
       // Every template contains a dummy package.json file included
@@ -92,7 +94,9 @@ function createFromRemoteTemplate(
   } finally {
     // Clean up the temp files
     try {
-      packageManager.uninstall([templateName]);
+      PackageManager.uninstall([templateName], {
+        preferYarn: isProjectUsingYarn(destinationRoot),
+      });
     } catch (err) {
       // Not critical but we still want people to know and report
       // if this the clean up fails.
@@ -125,9 +129,9 @@ function installTemplateDependencies(templatePath, destinationRoot) {
   const dependenciesToInstall = Object.keys(dependencies).map(
     depName => `${depName}@${dependencies[depName]}`,
   );
-  new PackageManager({projectDir: destinationRoot}).install(
-    dependenciesToInstall,
-  );
+  PackageManager.install(dependenciesToInstall, {
+    preferYarn: isProjectUsingYarn(destinationRoot),
+  });
   logger.info("Linking native dependencies into the project's build files...");
   execSync('react-native link', {stdio: 'inherit'});
 }
@@ -157,9 +161,9 @@ function installTemplateDevDependencies(templatePath, destinationRoot) {
   const dependenciesToInstall = Object.keys(dependencies).map(
     depName => `${depName}@${dependencies[depName]}`,
   );
-  new PackageManager({projectDir: destinationRoot}).installDev(
-    dependenciesToInstall,
-  );
+  PackageManager.installDev(dependenciesToInstall, {
+    preferYarn: isProjectUsingYarn(destinationRoot),
+  });
 }
 
 export {createProjectFromTemplate};

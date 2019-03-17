@@ -32,13 +32,11 @@ jest.mock(
   () => ({name: 'TestApp', dependencies: {'react-native': '^0.57.8'}}),
   {virtual: true},
 );
-jest.mock('../../../tools/PackageManager', () =>
-  jest.fn(() => ({
-    install: args => {
-      mockPushLog('$ yarn add', ...args);
-    },
-  })),
-);
+jest.mock('../../../tools/PackageManager', () => ({
+  install: args => {
+    mockPushLog('$ yarn add', ...args);
+  },
+}));
 jest.mock('../helpers', () => ({
   ...jest.requireActual('../helpers'),
   fetch: jest.fn(() => Promise.resolve('patch')),

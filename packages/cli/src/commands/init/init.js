@@ -13,7 +13,7 @@ import path from 'path';
 import process from 'process';
 import printRunInstructions from '../../tools/generator/printRunInstructions';
 import {createProjectFromTemplate} from '../../tools/generator/templates';
-import PackageManager from '../../tools/PackageManager';
+import * as PackageManager from '../../tools/PackageManager';
 import logger from '../../tools/logger';
 
 /**
@@ -52,11 +52,6 @@ function generateProject(destinationRoot, newProjectName, options) {
   const pkgJson = require('react-native/package.json');
   const reactVersion = pkgJson.peerDependencies.react;
 
-  const packageManager = new PackageManager({
-    projectDir: destinationRoot,
-    forceNpm: options.npm,
-  });
-
   createProjectFromTemplate(
     destinationRoot,
     newProjectName,
@@ -65,10 +60,10 @@ function generateProject(destinationRoot, newProjectName, options) {
   );
 
   logger.info('Adding required dependencies');
-  packageManager.install([`react@${reactVersion}`]);
+  PackageManager.install([`react@${reactVersion}`]);
 
   logger.info('Adding required dev dependencies');
-  packageManager.installDev([
+  PackageManager.installDev([
     '@babel/core',
     '@babel/runtime',
     'jest',

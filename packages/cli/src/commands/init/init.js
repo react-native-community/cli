@@ -92,19 +92,19 @@ export default function initialize(
   context: ContextT,
   options: Options,
 ) {
+  validateProjectName(projectName);
+
+  /**
+   * Commander is stripping `version` from options automatically.
+   * We have to use `minimist` to take that directly from `process.argv`
+   */
+  const version: string = minimist(process.argv).version || 'latest';
+
+  if (fs.existsSync(projectName)) {
+    throw new DirectoryAlreadyExistsError(projectName);
+  }
+
   try {
-    validateProjectName(projectName);
-
-    /**
-     * Commander is stripping `version` from options automatically.
-     * We have to use `minimist` to take that directly from `process.argv`
-     */
-    const version: string = minimist(process.argv).version || 'latest';
-
-    if (fs.existsSync(projectName)) {
-      throw new DirectoryAlreadyExistsError(projectName);
-    }
-
     createProject(projectName, options, version);
 
     printRunInstructions(process.cwd(), projectName);

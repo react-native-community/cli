@@ -54,7 +54,7 @@ function generateProject(destinationRoot, newProjectName, options) {
   const reactVersion = pkgJson.peerDependencies.react;
 
   const packageManagerOptions = {
-    preferYarn: options.npm || isProjectUsingYarn(destinationRoot),
+    preferYarn: !options.npm && isProjectUsingYarn(destinationRoot),
   };
 
   createProjectFromTemplate(

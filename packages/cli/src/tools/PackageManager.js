@@ -1,53 +1,52 @@
 // @flow
 import {execSync} from 'child_process';
-import yarn from './yarn';
+import {getYarnVersionIfAvailable, isProjectUsingYarn} from './yarn';
 
-type PackageManagerOptions = {
-  forceNpm?: boolean,
-  projectDir: string,
-};
+type Options = {|
+  preferYarn?: boolean,
+  silent?: boolean,
+|};
 
-export default class PackageManager {
-  options: PackageManagerOptions;
+let projectDir;
 
-  constructor(options: PackageManagerOptions) {
-    this.options = options;
+function executeCommand(command: string, options?: Options) {
+  return execSync(command, {
+    stdio: options && options.silent ? 'pipe' : 'inherit',
+  });
+}
+
+function shouldUseYarn(options?: Options) {
+  if (options && options.preferYarn !== undefined) {
+    return options.preferYarn && getYarnVersionIfAvailable();
   }
 
-  executeCommand(command: string, options?: {silent: boolean}) {
-    return execSync(command, {
-      stdio: options && options.silent ? 'pipe' : 'inherit',
-    });
-  }
+  return isProjectUsingYarn(projectDir) && getYarnVersionIfAvailable();
+}
 
-  shouldCallYarn() {
-    return (
-      !this.options.forceNpm &&
-      yarn.getYarnVersionIfAvailable() &&
-      yarn.isGlobalCliUsingYarn(this.options.projectDir)
-    );
-  }
+export function setProjectDir(dir: string) {
+  projectDir = dir;
+}
 
-  install(packageNames: Array<string>, options?: {silent: boolean}) {
-    return this.shouldCallYarn()
-      ? this.executeCommand(`yarn add ${packageNames.join(' ')}`, options)
-      : this.executeCommand(
-          `npm install ${packageNames.join(' ')} --save --save-exact`,
-          options,
-        );
-  }
+export function install(packageNames: Array<string>, options?: Options) {
+  return shouldUseYarn(options)
+    ? executeCommand(`yarn add ${packageNames.join(' ')}`, options)
+    : executeCommand(
+        `npm install ${packageNames.join(' ')} --save --save-exact`,
+        options,
+      );
+}
 
-  installDev(packageNames: Array<string>) {
-    return this.shouldCallYarn()
-      ? this.executeCommand(`yarn add -D ${packageNames.join(' ')}`)
-      : this.executeCommand(
-          `npm install ${packageNames.join(' ')} --save-dev --save-exact`,
-        );
-  }
+export function installDev(packageNames: Array<string>, options?: Options) {
+  return shouldUseYarn(options)
+    ? executeCommand(`yarn add -D ${packageNames.join(' ')}`, options)
+    : executeCommand(
+        `npm install ${packageNames.join(' ')} --save-dev --save-exact`,
+        options,
+      );
+}
 
-  uninstall(packageNames: Array<string>) {
-    return this.shouldCallYarn()
-      ? this.executeCommand(`yarn remove ${packageNames.join(' ')}`)
-      : this.executeCommand(`npm uninstall ${packageNames.join(' ')} --save`);
-  }
+export function uninstall(packageNames: Array<string>, options?: Options) {
+  return shouldUseYarn(options)
+    ? executeCommand(`yarn remove ${packageNames.join(' ')}`, options)
+    : executeCommand(`npm uninstall ${packageNames.join(' ')} --save`, options);
 }

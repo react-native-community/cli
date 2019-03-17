@@ -126,8 +126,6 @@ test('fetches regular patch, adds remote, applies patch, installs deps, removes 
   expect(flushOutput()).toMatchInlineSnapshot(`
 "info Fetching diff between v0.57.8 and v0.58.4...
 [fs] write tmp-upgrade-rn.patch
-$ execa git remote add tmp-rn-diff-purge https://github.com/react-native-community/rn-diff-purge.git
-$ execa git fetch --no-tags tmp-rn-diff-purge
 $ execa git apply --check tmp-upgrade-rn.patch --exclude=package.json -p2 --3way
 info Applying diff...
 $ execa git apply tmp-upgrade-rn.patch --exclude=package.json -p2 --3way
@@ -141,7 +139,6 @@ $ execa git add yarn.lock
 $ execa git add package-lock.json
 info Running \\"git status\\" to check what changed...
 $ execa git status
-$ execa git remote remove tmp-rn-diff-purge
 success Upgraded React Native to v0.58.4 🎉. Now you can review and commit the changes"
 `);
   expect(
@@ -177,8 +174,6 @@ test('cleans up if patching fails,', async () => {
   expect(flushOutput()).toMatchInlineSnapshot(`
 "info Fetching diff between v0.57.8 and v0.58.4...
 [fs] write tmp-upgrade-rn.patch
-$ execa git remote add tmp-rn-diff-purge https://github.com/react-native-community/rn-diff-purge.git
-$ execa git fetch --no-tags tmp-rn-diff-purge
 $ execa git apply --check tmp-upgrade-rn.patch --exclude=package.json -p2 --3way
 info Applying diff (excluding: package.json, .flowconfig)...
 $ execa git apply tmp-upgrade-rn.patch --exclude=package.json --exclude=.flowconfig -p2 --3way
@@ -187,7 +182,6 @@ error Automatically applying diff failed
 [fs] unlink tmp-upgrade-rn.patch
 $ execa git status -s
 error Patch failed to apply for unknown reason. Please fall back to manual way of upgrading
-$ execa git remote remove tmp-rn-diff-purge
 info You may find these resources helpful:
 • Release notes: [4m[2mhttps://github.com/facebook/react-native/releases/tag/v0.58.4[22m[24m
 • Comparison between versions: [4m[2mhttps://github.com/react-native-community/rn-diff-purge/compare/version/0.57.8..version/0.58.4[22m[24m

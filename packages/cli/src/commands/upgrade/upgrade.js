@@ -178,8 +178,6 @@ async function upgrade(argv: Array<string>, ctx: ContextT, args: FlagsT) {
   if (args.legacy) {
     return legacyUpgrade.func(argv, ctx);
   }
-  const rnDiffGitAddress = `${rnDiffPurgeUrl}.git`;
-  const tmpRemote = 'tmp-rn-diff-purge';
   const tmpPatchFile = 'tmp-upgrade-rn.patch';
   const projectDir = ctx.root;
   const {version: currentVersion} = require(path.join(
@@ -215,8 +213,6 @@ async function upgrade(argv: Array<string>, ctx: ContextT, args: FlagsT) {
 
   try {
     fs.writeFileSync(tmpPatchFile, patch);
-    await execa('git', ['remote', 'add', tmpRemote, rnDiffGitAddress]);
-    await execa('git', ['fetch', '--no-tags', tmpRemote]);
     patchSuccess = await applyPatch(currentVersion, newVersion, tmpPatchFile);
   } catch (error) {
     throw new Error(error.stderr || error);
@@ -245,8 +241,6 @@ async function upgrade(argv: Array<string>, ctx: ContextT, args: FlagsT) {
       logger.info('Running "git status" to check what changed...');
       await execa('git', ['status'], {stdio: 'inherit'});
     }
-    await execa('git', ['remote', 'remove', tmpRemote]);
-
     if (!patchSuccess) {
       if (stdout) {
         logger.warn(

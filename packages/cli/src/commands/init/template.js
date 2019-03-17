@@ -2,7 +2,7 @@
 import {execFileSync} from 'child_process';
 import fs from 'fs-extra';
 import path from 'path';
-import PackageManager from '../../tools/PackageManager';
+import * as PackageManager from '../../tools/PackageManager';
 
 export type TemplateConfig = {
   placeholderName: string,
@@ -11,7 +11,7 @@ export type TemplateConfig = {
 };
 
 export function installTemplatePackage(templateName: string) {
-  new PackageManager({}).install([templateName]);
+  PackageManager.install([templateName]);
 }
 
 export function getTemplateConfig(templateName: string): TemplateConfig {

@@ -14,7 +14,6 @@ import path from 'path';
 import copyProjectTemplateAndReplace from './copyProjectTemplateAndReplace';
 import logger from '../logger';
 import * as PackageManager from '../PackageManager';
-import {isProjectUsingYarn} from '../yarn';
 
 /**
  * @param destPath Create the new project at this path.
@@ -74,9 +73,7 @@ function createFromRemoteTemplate(
   // Check if the template exists
   logger.info(`Fetching template ${installPackage}...`);
   try {
-    PackageManager.install([installPackage], {
-      preferYarn: isProjectUsingYarn(destinationRoot),
-    });
+    PackageManager.install([installPackage]);
     const templatePath = path.resolve('node_modules', templateName);
     copyProjectTemplateAndReplace(templatePath, destPath, newProjectName, {
       // Every template contains a dummy package.json file included
@@ -94,9 +91,7 @@ function createFromRemoteTemplate(
   } finally {
     // Clean up the temp files
     try {
-      PackageManager.uninstall([templateName], {
-        preferYarn: isProjectUsingYarn(destinationRoot),
-      });
+      PackageManager.uninstall([templateName]);
     } catch (err) {
       // Not critical but we still want people to know and report
       // if this the clean up fails.
@@ -129,9 +124,7 @@ function installTemplateDependencies(templatePath, destinationRoot) {
   const dependenciesToInstall = Object.keys(dependencies).map(
     depName => `${depName}@${dependencies[depName]}`,
   );
-  PackageManager.install(dependenciesToInstall, {
-    preferYarn: isProjectUsingYarn(destinationRoot),
-  });
+  PackageManager.install(dependenciesToInstall);
   logger.info("Linking native dependencies into the project's build files...");
   execSync('react-native link', {stdio: 'inherit'});
 }
@@ -161,9 +154,7 @@ function installTemplateDevDependencies(templatePath, destinationRoot) {
   const dependenciesToInstall = Object.keys(dependencies).map(
     depName => `${depName}@${dependencies[depName]}`,
   );
-  PackageManager.installDev(dependenciesToInstall, {
-    preferYarn: isProjectUsingYarn(destinationRoot),
-  });
+  PackageManager.installDev(dependenciesToInstall);
 }
 
 export {createProjectFromTemplate};

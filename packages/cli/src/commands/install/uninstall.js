@@ -10,7 +10,6 @@
 import type {ContextT} from '../../tools/types.flow';
 import logger from '../../tools/logger';
 import * as PackageManager from '../../tools/PackageManager';
-import {isProjectUsingYarn} from '../../tools/yarn';
 import link from '../link/unlink';
 
 async function uninstall(args: Array<string>, ctx: ContextT) {
@@ -20,9 +19,7 @@ async function uninstall(args: Array<string>, ctx: ContextT) {
   await link.func([name], ctx);
 
   logger.info(`Uninstalling "${name}"...`);
-  PackageManager.uninstall([name], {
-    preferYarn: isProjectUsingYarn(ctx.root),
-  });
+  PackageManager.uninstall([name]);
 
   logger.success(`Successfully uninstalled and unlinked "${name}"`);
 }

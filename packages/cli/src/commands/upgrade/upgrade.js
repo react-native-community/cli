@@ -116,7 +116,6 @@ const installDeps = async (newVersion, projectDir) => {
   ];
   PackageManager.install(deps, {
     silent: true,
-    preferYarn: isProjectUsingYarn(projectDir),
   });
   await execa('git', ['add', 'package.json']);
   try {

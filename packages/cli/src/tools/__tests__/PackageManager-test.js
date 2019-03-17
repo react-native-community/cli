@@ -2,8 +2,10 @@
 import ChildProcess from 'child_process';
 import * as PackageManager from '../PackageManager';
 import * as yarn from '../yarn';
+
 const PACKAGES = ['react', 'react-native'];
 const EXEC_OPTS = {stdio: 'inherit'};
+const PROJECT_ROOT = '/some/dir';
 
 beforeEach(() => {
   jest.spyOn(ChildProcess, 'execSync').mockImplementation(() => {});
@@ -81,4 +83,30 @@ it('should use npm if yarn is not available', () => {
     'npm install react react-native --save --save-exact',
     EXEC_OPTS,
   );
+});
+
+it('should use npm if project is not using yarn', () => {
+  jest.spyOn(yarn, 'isProjectUsingYarn').mockImplementation(() => false);
+
+  PackageManager.setProjectDir(PROJECT_ROOT);
+  PackageManager.install(PACKAGES);
+
+  expect(ChildProcess.execSync).toHaveBeenCalledWith(
+    'npm install react react-native --save --save-exact',
+    EXEC_OPTS,
+  );
+  expect(yarn.isProjectUsingYarn).toHaveBeenCalledWith(PROJECT_ROOT);
+});
+
+it('should use yarn if project is using yarn', () => {
+  jest.spyOn(yarn, 'isProjectUsingYarn').mockImplementation(() => false);
+
+  PackageManager.setProjectDir(PROJECT_ROOT);
+  PackageManager.install(PACKAGES);
+
+  expect(ChildProcess.execSync).toHaveBeenCalledWith(
+    'yarn add react react-native',
+    EXEC_OPTS,
+  );
+  expect(yarn.isProjectUsingYarn).toHaveBeenCalledWith(PROJECT_ROOT);
 });

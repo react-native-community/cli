@@ -10,16 +10,13 @@
 import type {ContextT} from '../../tools/types.flow';
 import logger from '../../tools/logger';
 import * as PackageManager from '../../tools/PackageManager';
-import {isProjectUsingYarn} from '../../tools/yarn';
 import link from '../link/link';
 
 async function install(args: Array<string>, ctx: ContextT) {
   const name = args[0];
 
   logger.info(`Installing "${name}"...`);
-  PackageManager.install([name], {
-    preferYarn: isProjectUsingYarn(ctx.root),
-  });
+  PackageManager.install([name]);
 
   logger.info(`Linking "${name}"...`);
   await link.func([name], ctx, {platforms: undefined});

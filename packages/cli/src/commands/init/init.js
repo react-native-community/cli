@@ -11,7 +11,7 @@ import {
   installTemplatePackage,
   getTemplateConfig,
   copyTemplate,
-  executePostInstallScript,
+  executePostInitScript,
 } from './template';
 import {changePlaceholderInTemplate} from './editTemplate';
 import * as PackageManager from '../../tools/PackageManager';
@@ -36,11 +36,11 @@ function createFromExternalTemplate(
   copyTemplate(packageName, templateConfig.templateDir);
   changePlaceholderInTemplate(projectName, templateConfig.placeholderName);
 
-  PackageManager.installAll({preferYarn: !npm});
-
   if (templateConfig.postInitScript) {
-    executePostInstallScript(templateName, templateConfig.postInitScript);
+    executePostInitScript(packageName, templateConfig.postInitScript);
   }
+
+  PackageManager.installAll({preferYarn: !npm});
 }
 
 function createFromReactNativeTemplate(
@@ -65,11 +65,11 @@ function createFromReactNativeTemplate(
   copyTemplate(TEMPLATE_NAME, templateConfig.templateDir);
   changePlaceholderInTemplate(projectName, templateConfig.placeholderName);
 
-  PackageManager.installAll({preferYarn: !npm});
-
   if (templateConfig.postInitScript) {
-    executePostInstallScript(TEMPLATE_NAME, templateConfig.postInitScript);
+    executePostInitScript(TEMPLATE_NAME, templateConfig.postInitScript);
   }
+
+  PackageManager.installAll({preferYarn: !npm});
 }
 
 function createProject(projectName: string, options: Options, version: string) {

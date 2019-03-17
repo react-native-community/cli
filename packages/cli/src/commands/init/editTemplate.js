@@ -2,12 +2,15 @@
 import fs from 'fs-extra';
 import path from 'path';
 import walk from '../../tools/walk';
+import logger from '../../tools/logger';
 
 function replaceNameInUTF8File(
   filePath: string,
   projectName: string,
   templateName: string,
 ) {
+  logger.debug(`Replacing in ${filePath}`);
+
   const content = fs
     .readFileSync(filePath, 'utf8')
     .replace(new RegExp(templateName, 'g'), projectName)
@@ -25,6 +28,8 @@ function renameFile(filePath: string, oldName: string, newName: string) {
     path.basename(filePath).replace(new RegExp(oldName, 'g'), newName),
   );
 
+  logger.debug(`Renaming ${filePath} -> file:${newFileName}`);
+
   fs.moveSync(filePath, newFileName);
 }
 
@@ -32,14 +37,20 @@ function shouldRenameFile(filePath: string, nameToReplace: string) {
   return path.basename(filePath).includes(nameToReplace);
 }
 
+function shouldIgnoreFile(filePath: string) {
+  return filePath.match(/node_modules|yarn.lock|package-lock.json/g);
+}
+
 export function changePlaceholderInTemplate(
   projectName: string,
   placeholderName: string,
 ) {
+  logger.debug(`Changing ${placeholderName} for ${projectName} in template`);
+
   walk(process.cwd())
     .reverse()
     .forEach((filePath: string) => {
-      if (filePath.includes('node_modules')) {
+      if (shouldIgnoreFile(filePath)) {
         return;
       }
       if (!fs.statSync(filePath).isDirectory()) {

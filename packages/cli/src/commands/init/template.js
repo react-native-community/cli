@@ -3,6 +3,7 @@ import {execFileSync} from 'child_process';
 import fs from 'fs-extra';
 import path from 'path';
 import * as PackageManager from '../../tools/PackageManager';
+import logger from '../../tools/logger';
 
 export type TemplateConfig = {
   placeholderName: string,
@@ -11,23 +12,37 @@ export type TemplateConfig = {
 };
 
 export function installTemplatePackage(templateName: string, npm?: boolean) {
+  logger.debug(`Installing template from ${templateName}`);
   PackageManager.install([templateName], {preferYarn: !npm});
 }
 
 export function getTemplateConfig(templateName: string): TemplateConfig {
-  return require(path.resolve('node_modules', templateName, 'template.config'));
+  const configFilePath = path.resolve(
+    'node_modules',
+    templateName,
+    'template.config',
+  );
+
+  logger.debug(`Getting config from ${configFilePath}.js`);
+
+  return require(configFilePath);
 }
 
 export function copyTemplate(templateName: string, templateDir: string) {
-  const templatePath = path.join('node_modules', templateName, templateDir);
+  const templatePath = path.resolve('node_modules', templateName, templateDir);
+
+  logger.debug(`Copying template from ${templatePath}`);
+
   fs.copySync(templatePath, process.cwd());
 }
 
-export function executePostInstallScript(
+export function executePostInitScript(
   templateName: string,
   postInitScript: string,
 ) {
-  execFileSync(
-    path.join(process.cwd(), 'node_modules', templateName, postInitScript),
-  );
+  const scriptPath = path.resolve('node_modules', templateName, postInitScript);
+
+  logger.debug(`Executing post init script located ${scriptPath}`);
+
+  execFileSync(scriptPath);
 }

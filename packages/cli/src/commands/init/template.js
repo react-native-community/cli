@@ -10,8 +10,8 @@ export type TemplateConfig = {
   postInitScript?: string,
 };
 
-export function installTemplatePackage(templateName: string) {
-  PackageManager.install([templateName]);
+export function installTemplatePackage(templateName: string, npm?: boolean) {
+  PackageManager.install([templateName], {preferYarn: !npm});
 }
 
 export function getTemplateConfig(templateName: string): TemplateConfig {

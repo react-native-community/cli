@@ -19,26 +19,35 @@ import {supportProtocols} from './protocols';
 
 type Options = {|
   template?: string,
+  npm?: boolean,
 |};
 
-function createFromExternalTemplate(projectName: string, templateName: string) {
+function createFromExternalTemplate(
+  projectName: string,
+  templateName: string,
+  npm?: boolean,
+) {
   logger.info('Initializing new project from extrenal template');
 
   const {packageDir, packageName} = supportProtocols(templateName);
 
-  installTemplatePackage(packageDir);
+  installTemplatePackage(packageDir, npm);
   const templateConfig = getTemplateConfig(packageName);
   copyTemplate(packageName, templateConfig.templateDir);
   changePlaceholderInTemplate(projectName, templateConfig.placeholderName);
 
-  PackageManager.installAll();
+  PackageManager.installAll({preferYarn: !npm});
 
   if (templateConfig.postInitScript) {
     executePostInstallScript(templateName, templateConfig.postInitScript);
   }
 }
 
-function createFromReactNativeTemplate(projectName: string, version: string) {
+function createFromReactNativeTemplate(
+  projectName: string,
+  version: string,
+  npm?: boolean,
+) {
   logger.info('Initializing new project');
 
   if (semver.valid(version) && !semver.satisfies(version, '0.60.0')) {
@@ -51,12 +60,12 @@ function createFromReactNativeTemplate(projectName: string, version: string) {
 
   const {packageDir} = supportProtocols(version, `${TEMPLATE_NAME}@${version}`);
 
-  installTemplatePackage(packageDir);
+  installTemplatePackage(packageDir, npm);
   const templateConfig = getTemplateConfig(TEMPLATE_NAME);
   copyTemplate(TEMPLATE_NAME, templateConfig.templateDir);
   changePlaceholderInTemplate(projectName, templateConfig.placeholderName);
 
-  PackageManager.installAll();
+  PackageManager.installAll({preferYarn: !npm});
 
   if (templateConfig.postInitScript) {
     executePostInstallScript(TEMPLATE_NAME, templateConfig.postInitScript);
@@ -68,10 +77,14 @@ function createProject(projectName: string, options: Options, version: string) {
   process.chdir(projectName);
 
   if (options.template) {
-    return createFromExternalTemplate(projectName, options.template);
+    return createFromExternalTemplate(
+      projectName,
+      options.template,
+      options.npm,
+    );
   }
 
-  return createFromReactNativeTemplate(projectName, version);
+  return createFromReactNativeTemplate(projectName, version, options.npm);
 }
 
 export default function initialize(

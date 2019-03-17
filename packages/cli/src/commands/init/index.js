@@ -14,5 +14,9 @@ export default {
       command: '--template [string]',
       description: 'Custom template',
     },
+    {
+      command: '--npm',
+      description: 'Force use of npm during initialization',
+    },
   ],
 };

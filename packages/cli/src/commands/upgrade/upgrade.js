@@ -14,8 +14,7 @@ type FlagsT = {
   legacy: boolean,
 };
 
-const rnDiffPurgeUrl =
-  'https://github.com/pvinis/rn-diff-purge';
+const rnDiffPurgeUrl = 'https://github.com/pvinis/rn-diff-purge';
 const rnDiffPurgeRawUrl =
   'https://raw.githubusercontent.com/pvinis/rn-diff-purge/master/diffs';
 

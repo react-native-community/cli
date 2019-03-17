@@ -7,9 +7,10 @@
  * @flow
  */
 
-import fs from 'fs';
+import fs from 'fs-extra';
 import path from 'path';
 import groupFilesByType from '../groupFilesByType';
+import logger from '../../../tools/logger';
 
 /**
  * Copies each file from an array of assets provided to targetPath directory
@@ -23,10 +24,12 @@ export default function copyAssetsAndroid(
 ) {
   const assets = groupFilesByType(files);
 
-  (assets.font || []).forEach(asset =>
-    fs.copyFileSync(
-      asset,
-      path.join(project.assetsPath, 'fonts', path.basename(asset)),
-    ),
-  );
+  logger.debug(`Assets path: ${project.assetsPath}`);
+  (assets.font || []).forEach(asset => {
+    const fontsDir = path.join(project.assetsPath, 'fonts');
+    logger.debug(`Copying asset ${asset}`);
+    // @todo: replace with fs.mkdirSync(path, {recursive}) + fs.copyFileSync
+    // and get rid of fs-extra once we move to Node 10
+    fs.copySync(asset, path.join(fontsDir, path.basename(asset)));
+  });
 }

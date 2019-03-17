@@ -7,6 +7,8 @@
  * @format
  */
 
+import logger from '../../../tools/logger';
+
 export default function addPodEntry(
   podLines,
   linesToAddEntry,
@@ -20,11 +22,13 @@ export default function addPodEntry(
   }
 
   if (Array.isArray(linesToAddEntry)) {
-    linesToAddEntry.map(({line, indentation}, idx) =>
-      podLines.splice(line + idx, 0, getLineToAdd(newEntry, indentation)),
-    );
+    linesToAddEntry.map(({line, indentation}, idx) => {
+      logger.debug(`Adding ${podName} to Pod file"`);
+      podLines.splice(line + idx, 0, getLineToAdd(newEntry, indentation));
+    });
   } else {
     const {line, indentation} = linesToAddEntry;
+    logger.debug(`Adding ${podName} to Pod file"`);
     podLines.splice(line, 0, getLineToAdd(newEntry, indentation));
   }
 }

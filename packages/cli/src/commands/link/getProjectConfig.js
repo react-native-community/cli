@@ -9,6 +9,8 @@ import type {
 } from '../../tools/types.flow';
 
 import getPackageConfiguration from '../../tools/getPackageConfiguration';
+import {getPlatformName} from '../../tools/getPlatforms';
+import logger from '../../tools/logger';
 
 export default function getProjectConfig(
   ctx: ContextT,
@@ -19,6 +21,7 @@ export default function getProjectConfig(
   const platformConfigs = {ios: undefined, android: undefined};
 
   Object.keys(availablePlatforms).forEach(platform => {
+    logger.debug(`Getting project config for ${getPlatformName(platform)}...`);
     platformConfigs[platform] = availablePlatforms[platform].projectConfig(
       ctx.root,
       config[platform] || {},

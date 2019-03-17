@@ -21,6 +21,7 @@ import removeProjectFromLibraries from './removeProjectFromLibraries';
 import removeFromStaticLibraries from './removeFromStaticLibraries';
 import removeFromHeaderSearchPaths from './removeFromHeaderSearchPaths';
 import removeSharedLibraries from './removeSharedLibraries';
+import logger from '../../../tools/logger';
 
 /**
  * Unregister native module IOS
@@ -32,6 +33,7 @@ export default function unregisterNativeModule(
   projectConfig,
   iOSDependencies,
 ) {
+  logger.debug(`Reading ${projectConfig.pbxprojPath}`);
   const project = xcode.project(projectConfig.pbxprojPath).parseSync();
   const dependencyProject = xcode
     .project(dependencyConfig.pbxprojPath)
@@ -47,6 +49,11 @@ export default function unregisterNativeModule(
   removeProjectFromLibraries(libraries, file);
 
   getTargets(dependencyProject).forEach(target => {
+    logger.debug(
+      `Removing ${target.name} from ${
+        project.getFirstTarget().firstTarget.name
+      }`,
+    );
     removeFromStaticLibraries(project, target.name, {
       target: project.getFirstTarget().uuid,
     });
@@ -70,5 +77,6 @@ export default function unregisterNativeModule(
     );
   }
 
+  logger.debug(`Writing changes to ${projectConfig.pbxprojPath}`);
   fs.writeFileSync(projectConfig.pbxprojPath, project.writeSync());
 }

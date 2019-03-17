@@ -10,6 +10,7 @@
 import chalk from 'chalk';
 import childProcess from 'child_process';
 import commander from 'commander';
+import minimist from 'minimist';
 import path from 'path';
 import type {CommandT, ContextT} from './tools/types.flow';
 import getLegacyConfig from './tools/getLegacyConfig';
@@ -17,12 +18,15 @@ import {getCommands} from './commands';
 import init from './commands/init/init';
 import assertRequiredOptions from './tools/assertRequiredOptions';
 import logger from './tools/logger';
+import findPlugins from './tools/findPlugins';
+import {setProjectDir} from './tools/PackageManager';
 import pkgJson from '../package.json';
 
 commander
   .option('--version', 'Print CLI version')
   .option('--projectRoot [string]', 'Path to the root of the project')
-  .option('--reactNativePath [string]', 'Path to React Native');
+  .option('--reactNativePath [string]', 'Path to React Native')
+  .option('--verbose', 'Increase logging verbosity');
 
 commander.on('command:*', () => {
   printUnknownCommand(commander.args.join(' '));
@@ -152,16 +156,23 @@ async function setupAndRun() {
     }
   }
 
-  const root = commander.projectRoot
-    ? path.resolve(commander.projectRoot)
+  /**
+   * At this point, commander arguments are not parsed yet because we need to
+   * add all the commands and their options. That's why we resort to using
+   * minimist for parsing some global options.
+   */
+  const options = minimist(process.argv.slice(2));
+
+  const root = options.projectRoot
+    ? path.resolve(options.projectRoot)
     : process.cwd();
 
   let reactNativePath;
 
   // Do not check for it in `init` command
   if (!process.argv.includes('init')) {
-    reactNativePath = commander.reactNativePath
-      ? path.resolve(commander.reactNativePath)
+    reactNativePath = options.reactNativePath
+      ? path.resolve(options.reactNativePath)
       : (() => {
           try {
             return path.dirname(
@@ -184,6 +195,8 @@ async function setupAndRun() {
     root,
   };
 
+  setProjectDir(ctx.root);
+
   const commands = getCommands(ctx.root);
 
   commands.forEach(command => addCommand(command, ctx));
@@ -200,11 +213,14 @@ async function setupAndRun() {
   if (commander.args.length === 0 && commander.version === true) {
     console.log(pkgJson.version);
   }
+
+  logger.setVerbose(commander.verbose);
 }
 
 export default {
   run,
   init,
+  findPlugins,
 };
 
-// export { run, init };
+export {run, init, findPlugins};

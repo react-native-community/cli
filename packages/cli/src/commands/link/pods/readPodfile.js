@@ -8,8 +8,10 @@
  */
 
 import fs from 'fs';
+import logger from '../../../tools/logger';
 
 export default function readPodfile(podfilePath) {
+  logger.debug(`Reading ${podfilePath}`);
   const podContent = fs.readFileSync(podfilePath, 'utf8');
   return podContent.split(/\r?\n/g);
 }

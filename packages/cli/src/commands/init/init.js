@@ -14,7 +14,7 @@ import {
   executePostInstallScript,
 } from './template';
 import {changePlaceholderInTemplate} from './editTemplate';
-import PackageManager from '../../tools/PackageManager';
+import * as PackageManager from '../../tools/PackageManager';
 import {supportProtocols} from './protocols';
 
 type Options = {|
@@ -31,7 +31,7 @@ function createFromExternalTemplate(projectName: string, templateName: string) {
   copyTemplate(packageName, templateConfig.templateDir);
   changePlaceholderInTemplate(projectName, templateConfig.placeholderName);
 
-  new PackageManager({}).installAll();
+  PackageManager.installAll();
 
   if (templateConfig.postInitScript) {
     executePostInstallScript(templateName, templateConfig.postInitScript);
@@ -56,7 +56,7 @@ function createFromReactNativeTemplate(projectName: string, version: string) {
   copyTemplate(TEMPLATE_NAME, templateConfig.templateDir);
   changePlaceholderInTemplate(projectName, templateConfig.placeholderName);
 
-  new PackageManager({}).installAll();
+  PackageManager.installAll();
 
   if (templateConfig.postInitScript) {
     executePostInstallScript(TEMPLATE_NAME, templateConfig.postInitScript);

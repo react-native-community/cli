@@ -33,7 +33,7 @@ exports[`should edit template 3`] = `
 - First value
 + Second value
 
-@@ -4,10 +4,10 @@
+@@ -4,12 +4,12 @@
     \\"/android/com\\",
 -   \\"/android/com/placeholdername\\",
 -   \\"/android/com/placeholdername/Main.java\\",
@@ -43,12 +43,16 @@ exports[`should edit template 3`] = `
 +   \\"/android/com/projectname/ProjectName.java\\",
     \\"/ios\\",
 -   \\"/ios/PlaceholderName\\",
--   \\"/ios/PlaceholderName-tvOS\\",
 -   \\"/ios/PlaceholderName/AppDelegate.m\\",
+-   \\"/ios/PlaceholderName-tvOS\\",
+-   \\"/ios/PlaceholderName-tvOS/.gitkeep\\",
 -   \\"/ios/PlaceholderNameTests\\",
+-   \\"/ios/PlaceholderNameTests/.gitkeep\\",
 +   \\"/ios/ProjectName\\",
-+   \\"/ios/ProjectName-tvOS\\",
 +   \\"/ios/ProjectName/AppDelegate.m\\",
++   \\"/ios/ProjectName-tvOS\\",
++   \\"/ios/ProjectName-tvOS/.gitkeep\\",
 +   \\"/ios/ProjectNameTests\\",
++   \\"/ios/ProjectNameTests/.gitkeep\\",
     \\"/node_modules\\","
 `;

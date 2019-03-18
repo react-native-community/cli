@@ -36,6 +36,9 @@ test('should edit template', () => {
   const transformedTree = walk(testPath).map(e => e.replace(testPath, ''));
   const fixtureTree = walk(FIXTURE_DIR).map(e => e.replace(FIXTURE_DIR, ''));
 
+  transformedTree.sort();
+  fixtureTree.sort();
+
   const oldJavaFile = fs.readFileSync(
     path.resolve(
       FIXTURE_DIR,
@@ -66,9 +69,13 @@ test('should edit template', () => {
     'utf8',
   );
 
-  expect(snapshotDiff(oldCFile, newCFile)).toMatchSnapshot();
-  expect(snapshotDiff(oldJavaFile, newJavaFile)).toMatchSnapshot();
-  expect(snapshotDiff(fixtureTree, transformedTree)).toMatchSnapshot();
+  expect(snapshotDiff(oldCFile, newCFile, {contextLines: 1})).toMatchSnapshot();
+  expect(
+    snapshotDiff(oldJavaFile, newJavaFile, {contextLines: 1}),
+  ).toMatchSnapshot();
+  expect(
+    snapshotDiff(fixtureTree, transformedTree, {contextLines: 1}),
+  ).toMatchSnapshot();
 
   fs.removeSync(testPath);
 });

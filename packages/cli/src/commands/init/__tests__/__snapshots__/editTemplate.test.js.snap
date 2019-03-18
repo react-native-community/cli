@@ -5,18 +5,11 @@ exports[`should edit template 1`] = `
 - First value
 + Second value
 
-@@ -8,10 +8,10 @@
-  
-  - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-  {
-    RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
+@@ -12,3 +12,3 @@
     RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
 -                                             moduleName:@\\"PlaceholderName\\"
 +                                             moduleName:@\\"ProjectName\\"
-                                              initialProperties:nil];
-  }
-  
-  @end"
+                                              initialProperties:nil];"
 `;
 
 exports[`should edit template 2`] = `
@@ -24,16 +17,15 @@ exports[`should edit template 2`] = `
 - First value
 + Second value
 
+@@ -1,2 +1,2 @@
 - com.placeholdername;
 + com.projectname;
   
-  public static class Main {
+@@ -4,3 +4,3 @@
     public static void run() {
 -     String name = \\"PlaceholderName\\";
 +     String name = \\"ProjectName\\";
-    }
-  }
-  "
+    }"
 `;
 
 exports[`should edit template 3`] = `
@@ -41,9 +33,7 @@ exports[`should edit template 3`] = `
 - First value
 + Second value
 
-  Array [
-    \\"\\",
-    \\"/android\\",
+@@ -4,10 +4,10 @@
     \\"/android/com\\",
 -   \\"/android/com/placeholdername\\",
 -   \\"/android/com/placeholdername/Main.java\\",
@@ -53,14 +43,12 @@ exports[`should edit template 3`] = `
 +   \\"/android/com/projectname/ProjectName.java\\",
     \\"/ios\\",
 -   \\"/ios/PlaceholderName\\",
--   \\"/ios/PlaceholderName/AppDelegate.m\\",
 -   \\"/ios/PlaceholderName-tvOS\\",
+-   \\"/ios/PlaceholderName/AppDelegate.m\\",
 -   \\"/ios/PlaceholderNameTests\\",
 +   \\"/ios/ProjectName\\",
-+   \\"/ios/ProjectName/AppDelegate.m\\",
 +   \\"/ios/ProjectName-tvOS\\",
++   \\"/ios/ProjectName/AppDelegate.m\\",
 +   \\"/ios/ProjectNameTests\\",
-    \\"/node_modules\\",
-    \\"/node_modules/PlaceholderName\\",
-  ]"
+    \\"/node_modules\\","
 `;

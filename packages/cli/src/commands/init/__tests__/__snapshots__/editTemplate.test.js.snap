@@ -1,0 +1,66 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should edit template 1`] = `
+"Snapshot Diff:
+- First value
++ Second value
+
+@@ -8,10 +8,10 @@
+  
+  - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+  {
+    RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
+    RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
+-                                             moduleName:@\\"PlaceholderName\\"
++                                             moduleName:@\\"ProjectName\\"
+                                              initialProperties:nil];
+  }
+  
+  @end"
+`;
+
+exports[`should edit template 2`] = `
+"Snapshot Diff:
+- First value
++ Second value
+
+- com.placeholdername;
++ com.projectname;
+  
+  public static class Main {
+    public static void run() {
+-     String name = \\"PlaceholderName\\";
++     String name = \\"ProjectName\\";
+    }
+  }
+  "
+`;
+
+exports[`should edit template 3`] = `
+"Snapshot Diff:
+- First value
++ Second value
+
+  Array [
+    \\"\\",
+    \\"/android\\",
+    \\"/android/com\\",
+-   \\"/android/com/placeholdername\\",
+-   \\"/android/com/placeholdername/Main.java\\",
+-   \\"/android/com/placeholdername/PlaceholderName.java\\",
++   \\"/android/com/projectname\\",
++   \\"/android/com/projectname/Main.java\\",
++   \\"/android/com/projectname/ProjectName.java\\",
+    \\"/ios\\",
+-   \\"/ios/PlaceholderName\\",
+-   \\"/ios/PlaceholderName/AppDelegate.m\\",
+-   \\"/ios/PlaceholderName-tvOS\\",
+-   \\"/ios/PlaceholderNameTests\\",
++   \\"/ios/ProjectName\\",
++   \\"/ios/ProjectName/AppDelegate.m\\",
++   \\"/ios/ProjectName-tvOS\\",
++   \\"/ios/ProjectNameTests\\",
+    \\"/node_modules\\",
+    \\"/node_modules/PlaceholderName\\",
+  ]"
+`;

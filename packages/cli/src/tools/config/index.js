@@ -11,19 +11,43 @@ import getProjectDependencies from '../../commands/link/getProjectDependencies';
 const explorer = comsmiconfig('react-native');
 
 type DependencyConfig = {
-  ios: {},
-  android: {},
+  ios: ?DependencyConfigIOS,
+  android: ?DependencyConfigAndroid,
+};
+
+type DependencyConfigIOS = DetectedDependencyConfigIOS & {
+  project: string,
+};
+
+type DetectedDependencyConfigIOS = {
+  podspec: string,
+};
+
+type DependencyConfigAndroid = DetectedDependencyConfigAndroid & {
+  sourceDir: string,
+  manifestPath: string,
+  packageName: string,
+  packageClassName: string,
+};
+
+type DetectedDependencyConfigAndroid = {
+  packageImportPath: string,
+  packageInstance: string,
+};
+
+type PlatformConfig<T, K> = {
+  getDependencyConfig: (string, T) => ?K,
+};
+
+type Platforms = {
+  [key: string]: PlatformConfig<*>,
+  ios: PlatformConfig<DependencyConfigIOS, DetectedDependencyConfigIOS>,
+  android: PlatformConfig<DependencyConfigAndroid, DetectedDependencyAndroid>,
 };
 
 type ProjectConfig = {
-  ios: {},
-  android: {},
-};
-
-type Config = {
   root: string,
   reactNativePath: string,
-  project: ProjectConfig,
   dependencies: {
     [key: string]: DependencyConfig,
   },
@@ -42,8 +66,8 @@ function readConfigFromDisk(root: string) {
   return config;
 }
 
-function getDefaultConfig(config: Config, root: string) {
-  const platforms = {
+function getDefaultConfig(config: ProjectConfig, root: string) {
+  const platforms: Platforms = {
     ios: {
       getDependencyConfig: require('../ios').getDependencyConfig,
     },
@@ -99,7 +123,7 @@ function getDefaultConfig(config: Config, root: string) {
   );
 }
 
-async function loadConfig(opts: Options = defaultOptions): Config {
+async function loadConfig(opts: Options = defaultOptions): ProjectConfig {
   const config = readConfigFromDisk(opts.root);
 
   return {

@@ -62,7 +62,13 @@ export const dependencyConfig = projectConfig;
 /**
  * New version of `ios` configuration
  */
-export function getDependencyConfig(folder) {
+export function getDependencyConfig(folder, userConfig) {
+  const project = userConfig.project || findProject(folder);
+
+  if (!project) {
+    return null;
+  }
+
   return {
     podspec: findPodspecName(folder),
   };

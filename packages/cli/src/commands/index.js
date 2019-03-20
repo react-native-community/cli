@@ -28,6 +28,7 @@ import upgrade from './upgrade/upgrade';
 import logAndroid from './logAndroid/logAndroid';
 import logIOS from './logIOS/logIOS';
 import info from './info/info';
+import config from './config/config';
 
 /**
  * List of built-in commands
@@ -49,6 +50,7 @@ const loadLocalCommands: Array<LocalCommandT> = [
   logAndroid,
   logIOS,
   info,
+  config,
 ];
 
 /**

@@ -16,7 +16,13 @@ export default function getSecurityHeadersMiddleware(req, res, next) {
     req.headers.origin &&
     req.headers.origin !== `http://localhost:${address.port}`
   ) {
-    next(new Error('Unauthorized'));
+    next(
+      new Error(
+        'Unauthorized request from ' +
+          req.headers.origin +
+          '. This may happen because of a conflicting browser extension. Please try to disable it and try again.',
+      ),
+    );
     return;
   }
 

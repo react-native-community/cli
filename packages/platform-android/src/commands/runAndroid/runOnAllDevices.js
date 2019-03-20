@@ -11,6 +11,7 @@ import {spawnSync, execFileSync} from 'child_process';
 import {logger} from '@react-native-community/cli-tools';
 import adb from './adb';
 import tryRunAdbReverse from './tryRunAdbReverse';
+import getLaunchPackageName from './getLaunchPackageName';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
 
 function getCommand(appFolder, command) {
@@ -20,7 +21,6 @@ function getCommand(appFolder, command) {
 function runOnAllDevices(
   args: Object,
   cmd: string,
-  packageNameWithSuffix: string,
   packageName: string,
   adbPath: string,
 ) {
@@ -69,13 +69,14 @@ function runOnAllDevices(
     // `logger.info(e.stderr)`
     return Promise.reject(e);
   }
+
   const devices = adb.getDevices(adbPath);
   if (devices && devices.length > 0) {
     devices.forEach(device => {
       tryRunAdbReverse(args.port, device);
       tryLaunchAppOnDevice(
         device,
-        packageNameWithSuffix,
+        getLaunchPackageName(args.variant),
         packageName,
         adbPath,
         args.mainActivity,

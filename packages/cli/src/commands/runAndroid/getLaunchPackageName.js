@@ -44,7 +44,10 @@ function findBuildTypes(filePath) {
 
 function splitVariant(gradleFilePath, variant) {
   // Split the variant into buildType and flavor
-  const buildTypes = findBuildTypes(gradleFilePath, 'buildTypes', ['debug', 'release']);
+  const buildTypes = findBuildTypes(gradleFilePath, 'buildTypes', [
+    'debug',
+    'release',
+  ]);
   const regexp = new RegExp(buildTypes.join('|'), 'gi');
   const match = regexp.exec(variant);
   let flavor = null;
@@ -53,13 +56,15 @@ function splitVariant(gradleFilePath, variant) {
     flavor = variant.substring(0, match.index);
     buildType = variant.substring(match.index);
   }
-  return { buildType, flavor };
+  return {buildType, flavor};
 }
 
 function isSeparateBuildEnabled(gradleFilePath) {
   // Check if separate build enabled for different processors
   const content = fs.readFileSync(gradleFilePath, 'utf8');
-  const separateBuild = content.match(/enableSeparateBuildPerCPUArchitecture\s+=\s+([\w]+)/)[1];
+  const separateBuild = content.match(
+    /enableSeparateBuildPerCPUArchitecture\s+=\s+([\w]+)/,
+  )[1];
   return separateBuild.toLowerCase() === 'true';
 }
 
@@ -69,7 +74,7 @@ function getManifestFile(variant) {
   const gradleFilePath = 'app/build.gradle';
 
   // We first need to identify build type and flavor from the specified variant
-  const { buildType, flavor } = splitVariant(gradleFilePath, variant);
+  const {buildType, flavor} = splitVariant(gradleFilePath, variant);
 
   // Using the buildtype and flavor we create the path to the correct AndroidManifest.xml
   const paths = ['app/build/intermediates/merged_manifests/'];

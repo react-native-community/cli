@@ -91,7 +91,7 @@ function runOnAllDevices(
         'am',
         'start',
         '-n',
-        `${packageNameWithSuffix}/${packageName}.MainActivity`,
+        `${getLaunchPackageName(args.variant)}/${packageName}.MainActivity`,
       ];
       logger.info(
         `Starting the app (${adbPath} ${fallbackAdbArgs.join(' ')}...`,

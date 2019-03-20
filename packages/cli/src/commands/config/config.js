@@ -22,7 +22,7 @@ export default {
     const platforms = getPlatforms(config.root);
     const project = getProjectConfig(config, platforms);
 
-    const depenendencies = getProjectDependencies(config.root).reduce(
+    const dependencies = getProjectDependencies(config.root).reduce(
       (acc, dependency) => {
         acc[dependency] = getDependencyConfig(config, platforms, dependency);
         return acc;
@@ -36,7 +36,7 @@ export default {
           ...config,
           platforms: Object.keys(platforms),
           project,
-          depenendencies,
+          dependencies,
         },
         null,
         2,

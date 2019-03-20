@@ -3,35 +3,103 @@
  */
 import comsmiconfig from 'cosmiconfig';
 import path from 'path';
+import merge from 'deepmerge';
+import {get} from 'lodash';
 
 import getPlatforms from './getPlatforms';
-
-// @todo(mike): move this out to `tools`
 import getProjectDependencies from '../commands/link/getProjectDependencies';
 
 const explorer = comsmiconfig('react-native');
 
+type DependencyConfig = {
+  ios: {},
+  android: {},
+};
+
+type ProjectConfig = {
+  ios: {},
+  android: {},
+};
+
 type Config = {
   root: string,
   reactNativePath: string,
+  project: ProjectConfig,
+  dependencies: {
+    [key: string]: DependencyConfig,
+  },
 };
 
 type Options = {
   root: ?string,
-  dependencies: boolean,
 };
 
 const defaultOptions = {
   root: process.cwd(),
-  dependencies: false,
 };
 
-// todo make overrides with options
+function readConfigFromDisk(root: string) {
+  const {config} = explorer.searchSync(root) || {config: {}};
+  return config;
+}
+
+/**
+ * Loads default CLI configuration
+ */
+function getDefaultConfig(config: Config, root: string) {
+  const platforms = getPlatforms(root);
+
+  const dependencies = getProjectDependencies(root).reduce(
+    (deps, dependency) => {
+      const folder = path.join(root, 'node_modules', dependency);
+      const dependencyConfig = readConfigFromDisk(folder);
+
+      deps[dependency] = Object.keys(platforms).reduce(
+        (acc, platform) => {
+          const dependencyPlatformConfig = get(
+            dependencyConfig,
+            `dependency.${platform}`,
+            {},
+          );
+          if (dependencyPlatformConfig === null) {
+            return acc;
+          }
+          const detectedConfig = platforms[platform].dependencyConfig(
+            folder,
+            dependencyPlatformConfig,
+          );
+          if (detectedConfig === null) {
+            return acc;
+          }
+          acc[platform] = {
+            ...dependencyPlatformConfig,
+            ...detectedConfig,
+          };
+          return acc;
+        },
+        {
+          ios: null,
+          android: null,
+        },
+      );
+      return deps;
+    },
+    {},
+  );
+
+  return merge(
+    {
+      dependencies,
+    },
+    config,
+  );
+}
+
 async function loadConfig(opts: Options = defaultOptions): Config {
-  const {config} = (await explorer.search(opts.root)) || {config: {}};
+  const config = readConfigFromDisk(opts.root);
 
   return {
-    ...config,
+    ...getDefaultConfig(config, opts.root),
     root: opts.root,
     reactNativePath: config.reactNativePath
       ? path.resolve(config.reactNativePath)

@@ -108,6 +108,7 @@ export type ConfigT = {|
   dependencies: {
     [key: string]: {
       name: string,
+      root: string,
       platforms: {
         android?: DependencyConfigAndroidT | null,
         ios?: DependencyConfigIOST | null,

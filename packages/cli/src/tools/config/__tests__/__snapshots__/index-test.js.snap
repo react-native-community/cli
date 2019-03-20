@@ -80,6 +80,7 @@ Object {
       "sourceDir": "./abc",
     },
   },
+  "root": "<<REPLACED>>/node_modules/react-native-test",
 }
 `;
 
@@ -113,6 +114,7 @@ Object {
       "sourceDir": "<<REPLACED>>/node_modules/react-native-foo/customLocation",
     },
   },
+  "root": "<<REPLACED>>/node_modules/react-native-foo",
 }
 `;
 
@@ -137,6 +139,7 @@ Object {
       "sourceDir": "<<REPLACED>>/node_modules/react-native-test/customLocation",
     },
   },
+  "root": "<<REPLACED>>/node_modules/react-native-test",
 }
 `;
 
@@ -151,6 +154,7 @@ Object {
       "android": null,
       "ios": null,
     },
+    "root": "<<REPLACED>>/node_modules/react-native",
   },
   "react-native-test": Object {
     "assets": Array [],
@@ -172,6 +176,7 @@ Object {
         "sourceDir": "<<REPLACED>>/node_modules/react-native-test/ios",
       },
     },
+    "root": "<<REPLACED>>/node_modules/react-native-test",
   },
 }
 `;

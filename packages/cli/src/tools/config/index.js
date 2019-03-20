@@ -76,6 +76,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
           get [dependencyName]() {
             return merge(
               {
+                root,
                 name: dependencyName,
                 platforms: Object.keys(finalConfig.platforms).reduce(
                   (dependency, platform) => {

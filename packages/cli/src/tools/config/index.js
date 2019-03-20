@@ -7,6 +7,7 @@ import merge from 'deepmerge';
 import {get} from 'lodash';
 
 import getProjectDependencies from '../../commands/link/getProjectDependencies';
+import * as dependency from './dependency';
 
 const explorer = comsmiconfig('react-native');
 
@@ -15,19 +16,17 @@ type DependencyConfig = {
   android: ?DependencyConfigAndroid,
 };
 
-type DependencyConfigIOS = DetectedDependencyConfigIOS & {
-  project?: string,
+type DependencyConfigIOS = {
+  podspec?: string,
 };
 
 type DetectedDependencyConfigIOS = {
   podspec: string,
 };
 
-type DependencyConfigAndroid = DetectedDependencyConfigAndroid & {
-  sourceDir?: string,
-  manifestPath?: string,
-  packageName?: string,
-  packageClassName?: string,
+type DependencyConfigAndroid = {
+  packageImportPath?: string,
+  packageInstance?: string,
 };
 
 type DetectedDependencyConfigAndroid = {
@@ -42,7 +41,10 @@ type PlatformConfig<T, K> = {
 type Platforms = {
   [key: string]: PlatformConfig<*>,
   ios: PlatformConfig<DependencyConfigIOS, DetectedDependencyConfigIOS>,
-  android: PlatformConfig<DependencyConfigAndroid, DetectedDependencyAndroid>,
+  android: PlatformConfig<
+    DependencyConfigAndroid,
+    DetectedDependencyConfigAndroid,
+  >,
 };
 
 type ProjectConfig = {
@@ -57,7 +59,10 @@ type Options = {
   root: ?string,
 };
 
-const defaultOptions = {
+/**
+ * Default options
+ */
+const DEFAULT_OPTIONS: Options = {
   root: process.cwd(),
 };
 
@@ -69,51 +74,48 @@ function readConfigFromDisk(root: string) {
 function getDefaultConfig(config: ProjectConfig, root: string) {
   const platforms: Platforms = {
     ios: {
-      getDependencyConfig: require('../ios').getDependencyConfig,
+      getDependencyConfig: dependency.ios,
     },
     android: {
-      getDependencyConfig: require('../android').getDependencyConfig,
+      getDependencyConfig: dependency.android,
     },
     ...config.platforms,
   };
 
-  const dependencies = getProjectDependencies(root).reduce(
-    (deps, dependency) => {
-      const folder = path.join(root, 'node_modules', dependency);
-      const dependencyConfig = readConfigFromDisk(folder);
+  const dependencies = getProjectDependencies(root).reduce((deps, dep) => {
+    const folder = path.join(root, 'node_modules', dep);
+    const dependencyConfig = readConfigFromDisk(folder);
 
-      deps[dependency] = Object.keys(platforms).reduce(
-        (acc, platform) => {
-          const dependencyPlatformConfig = get(
-            dependencyConfig,
-            `dependency.${platform}`,
-            {},
-          );
-          if (dependencyPlatformConfig === null) {
-            return acc;
-          }
-          const detectedConfig = platforms[platform].getDependencyConfig(
-            folder,
-            dependencyPlatformConfig,
-          );
-          if (detectedConfig === null) {
-            return acc;
-          }
-          acc[platform] = {
-            ...detectedConfig,
-            ...dependencyPlatformConfig,
-          };
+    deps[dep] = Object.keys(platforms).reduce(
+      (acc, platform) => {
+        const dependencyPlatformConfig = get(
+          dependencyConfig,
+          `dependency.${platform}`,
+          {},
+        );
+        if (dependencyPlatformConfig === null) {
           return acc;
-        },
-        {
-          ios: null,
-          android: null,
-        },
-      );
-      return deps;
-    },
-    {},
-  );
+        }
+        const detectedConfig = platforms[platform].getDependencyConfig(
+          folder,
+          dependencyPlatformConfig,
+        );
+        if (detectedConfig === null) {
+          return acc;
+        }
+        acc[platform] = {
+          ...detectedConfig,
+          ...dependencyPlatformConfig,
+        };
+        return acc;
+      },
+      {
+        ios: null,
+        android: null,
+      },
+    );
+    return deps;
+  }, {});
 
   return merge(
     {
@@ -123,7 +125,7 @@ function getDefaultConfig(config: ProjectConfig, root: string) {
   );
 }
 
-async function loadConfig(opts: Options = defaultOptions): ProjectConfig {
+async function loadConfig(opts: Options = DEFAULT_OPTIONS): ProjectConfig {
   const config = readConfigFromDisk(opts.root);
 
   return {

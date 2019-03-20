@@ -6,7 +6,7 @@
  *
  * @format
  */
-import loadConfig from '../../tools/loadConfig';
+import loadConfig from '../../tools/config';
 
 export default {
   name: 'config',

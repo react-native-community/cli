@@ -6,8 +6,7 @@ import path from 'path';
 import merge from 'deepmerge';
 import {get} from 'lodash';
 
-import getPlatforms from './getPlatforms';
-import getProjectDependencies from '../commands/link/getProjectDependencies';
+import getProjectDependencies from '../../commands/link/getProjectDependencies';
 
 const explorer = comsmiconfig('react-native');
 
@@ -43,11 +42,16 @@ function readConfigFromDisk(root: string) {
   return config;
 }
 
-/**
- * Loads default CLI configuration
- */
 function getDefaultConfig(config: Config, root: string) {
-  const platforms = getPlatforms(root);
+  const platforms = {
+    ios: {
+      getDependencyConfig: require('../ios').getDependencyConfig,
+    },
+    android: {
+      getDependencyConfig: require('../android').getDependencyConfig,
+    },
+    ...config.platforms,
+  };
 
   const dependencies = getProjectDependencies(root).reduce(
     (deps, dependency) => {
@@ -64,7 +68,7 @@ function getDefaultConfig(config: Config, root: string) {
           if (dependencyPlatformConfig === null) {
             return acc;
           }
-          const detectedConfig = platforms[platform].dependencyConfig(
+          const detectedConfig = platforms[platform].getDependencyConfig(
             folder,
             dependencyPlatformConfig,
           );
@@ -72,8 +76,8 @@ function getDefaultConfig(config: Config, root: string) {
             return acc;
           }
           acc[platform] = {
-            ...dependencyPlatformConfig,
             ...detectedConfig,
+            ...dependencyPlatformConfig,
           };
           return acc;
         },

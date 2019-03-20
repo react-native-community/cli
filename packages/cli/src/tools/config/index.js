@@ -16,7 +16,7 @@ type DependencyConfig = {
 };
 
 type DependencyConfigIOS = DetectedDependencyConfigIOS & {
-  project: string,
+  project?: string,
 };
 
 type DetectedDependencyConfigIOS = {
@@ -24,10 +24,10 @@ type DetectedDependencyConfigIOS = {
 };
 
 type DependencyConfigAndroid = DetectedDependencyConfigAndroid & {
-  sourceDir: string,
-  manifestPath: string,
-  packageName: string,
-  packageClassName: string,
+  sourceDir?: string,
+  manifestPath?: string,
+  packageName?: string,
+  packageClassName?: string,
 };
 
 type DetectedDependencyConfigAndroid = {

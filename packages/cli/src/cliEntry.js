@@ -80,7 +80,7 @@ function printUnknownCommand(cmdName) {
   }
 }
 
-const addCommand = (command: CommandT, root: string) => {
+const addCommand = (command: CommandT) => {
   const options = command.options || [];
 
   const cmd = commander
@@ -149,7 +149,7 @@ async function setupAndRun() {
   // @todo this shouldn't be called here
   setProjectDir(root);
 
-  getCommands(root).forEach(command => addCommand(command, root));
+  getCommands(root).forEach(command => addCommand(command));
 
   commander.parse(process.argv);
 

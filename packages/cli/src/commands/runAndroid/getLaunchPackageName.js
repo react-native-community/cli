@@ -69,7 +69,7 @@ function splitVariant(gradleFilePath, variant) {
 }
 
 function isSeparateBuildEnabled(gradleFilePath) {
-  // Check if separate build enabled for different processors
+  // Check if separate is build enabled for different processors
   const content = fs.readFileSync(gradleFilePath, 'utf8');
   const match = content.match(/(\w+)\senableSeparateBuildPerCPUArchitecture/);
   let separateBuild = '';

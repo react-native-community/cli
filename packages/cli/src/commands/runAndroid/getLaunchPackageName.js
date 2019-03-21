@@ -1,14 +1,25 @@
+/**
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 import fs from 'fs';
 
 function findPreviousTerm(content, endPos) {
-  while (content[endPos] === ' ') {
-    --endPos;
+  let pos = endPos;
+
+  while (content[pos] === ' ') {
+    --pos;
   }
-  const regex = new RegExp('\\w');
+  const regex = /\w/;
   const word = [];
-  while (regex.exec(content[endPos])) {
-    word.push(content[endPos]);
-    --endPos;
+  while (regex.exec(content[pos])) {
+    word.push(content[pos]);
+    --pos;
   }
   return word.reverse().join('');
 }
@@ -16,11 +27,12 @@ function findPreviousTerm(content, endPos) {
 function findBuildTypes(filePath) {
   // Read the gradle file and get list of buildTypes defined for the project.
   const content = fs.readFileSync(filePath, 'utf8');
-  const regex = new RegExp('buildType\\s+{', 'ig');
-  const buildTypes = ['debug', 'release'];
+  const regex = /buildTypes+/gi;
+  const buildTypes = [];
   const match = regex.exec(content);
   if (!match) {
-    return buildTypes;
+    // Assume default types if buildTypes is not present
+    return ['debug', 'release'];
   }
   const buildTypeStartPos = regex.lastIndex;
   let counter = 1;
@@ -44,10 +56,7 @@ function findBuildTypes(filePath) {
 
 function splitVariant(gradleFilePath, variant) {
   // Split the variant into buildType and flavor
-  const buildTypes = findBuildTypes(gradleFilePath, 'buildTypes', [
-    'debug',
-    'release',
-  ]);
+  const buildTypes = findBuildTypes(gradleFilePath);
   const regexp = new RegExp(buildTypes.join('|'), 'gi');
   const match = regexp.exec(variant);
   let flavor = null;
@@ -62,10 +71,12 @@ function splitVariant(gradleFilePath, variant) {
 function isSeparateBuildEnabled(gradleFilePath) {
   // Check if separate build enabled for different processors
   const content = fs.readFileSync(gradleFilePath, 'utf8');
-  const separateBuild = content.match(
-    /enableSeparateBuildPerCPUArchitecture\s+=\s+([\w]+)/,
-  )[1];
-  return separateBuild.toLowerCase() === 'true';
+  const match = content.match(/(\w+)\senableSeparateBuildPerCPUArchitecture/);
+  let separateBuild = '';
+  if (match != null) {
+    separateBuild = match[1];
+  }
+  return separateBuild.toLowerCase() === 'enable';
 }
 
 function getManifestFile(variant) {
@@ -91,13 +102,18 @@ function getManifestFile(variant) {
   return paths.join('/');
 }
 
-export default function getLaunchPackageName(variant) {
+export default function getLaunchPackageName(variant: string) {
   // Get the complete launch path, as specified by the gradle build script
   const manifestFile = getManifestFile(variant || 'debug');
   const content = fs.readFileSync(manifestFile, 'utf8');
 
   // Get the package name to launch, specified by the generated manifest file
-  const packageName = content.match(/package="(.+?)"/)[1];
+  const matched = content.match(/package="(.+?)"/);
+  let packageName = '';
+
+  if (matched != null) {
+    packageName = matched[1];
+  }
 
   return packageName;
 }

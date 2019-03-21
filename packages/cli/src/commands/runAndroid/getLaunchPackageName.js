@@ -8,6 +8,7 @@
  */
 
 import fs from 'fs';
+import path from 'path';
 
 function findPreviousTerm(content, endPos) {
   let pos = endPos;
@@ -82,13 +83,13 @@ function isSeparateBuildEnabled(gradleFilePath) {
 function getManifestFile(variant) {
   // get the path to the correct manifest file to find the correct package name to be used while
   // starting the app
-  const gradleFilePath = 'app/build.gradle';
+  const gradleFilePath = path.join('app', 'build.gradle');
 
   // We first need to identify build type and flavor from the specified variant
   const {buildType, flavor} = splitVariant(gradleFilePath, variant);
 
   // Using the buildtype and flavor we create the path to the correct AndroidManifest.xml
-  const paths = ['app/build/intermediates/merged_manifests/'];
+  const paths = ['app', 'build', 'intermediates', 'merged_manifests'];
   if (flavor) {
     paths.push(flavor);
   }
@@ -99,7 +100,7 @@ function getManifestFile(variant) {
 
   paths.push(buildType);
   paths.push('AndroidManifest.xml');
-  return paths.join('/');
+  return path.join(...paths);
 }
 
 export default function getLaunchPackageName(variant: string) {

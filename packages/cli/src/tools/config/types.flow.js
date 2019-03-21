@@ -22,7 +22,7 @@ export type InputDependencyConfigAndroid = {
 export type DependencyConfigAndroid = {
   packageImportPath: string,
   packageInstance: string,
-  sourceDir: string,
+  sourceDir: string | null,
 };
 
 export type PlatformConfig<T, K> = {

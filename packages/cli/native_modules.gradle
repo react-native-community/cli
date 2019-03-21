@@ -162,7 +162,7 @@ class ReactNativeModules {
     dependencies.each { name, value ->
       def androidConfig = value["android"]
 
-      if (androidConfig != null) {
+      if (androidConfig != null && androidConfig["sourceDir"] != null) {
         this.logger.info("${LOG_PREFIX}Automatically adding native module '${name}'")
 
         HashMap reactNativeModuleConfig = new HashMap<String, String>()

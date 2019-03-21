@@ -11,7 +11,7 @@ def use_native_modules!(packages = nil)
   packages.each do |package_name, package|
     next unless package["ios"]
 
-    podspec_path = File.join(package["root"], package["ios"]["podspec"])
+    podspec_path = File.join(package["root"], "#{package["ios"]["podspec"]}.podspec")
     spec = Pod::Specification.from_file(podspec_path)
 
     # We want to do a look up inside the current CocoaPods target
@@ -67,7 +67,7 @@ if $0 == __FILE__
   ios_package = {
     "root" => "/Users/grabbou/Repositories/WebViewDemoApp/node_modules/react",
     "ios" => {
-      "podspec" => "React.podspec",
+      "podspec" => "React",
       "buildPhases" => [{
         "path" => "/Users/grabbou/Repositories/WebViewDemoApp/node_modules/react/ios/build_phase_script.sh",
         "name" => "My Name",
@@ -98,7 +98,7 @@ if $0 == __FILE__
       spec.singleton_class.send(:define_method, :name) { "ios-dep" }
 
       Pod::Specification.singleton_class.send(:define_method, :from_file) do |podspec_path|
-        podspec_path.must_equal File.join(ios_package["root"], ios_package["ios"]["podspec"])
+        podspec_path.must_equal File.join(ios_package["root"], "#{ios_package["ios"]["podspec"]}.podspec")
         spec
       end
 

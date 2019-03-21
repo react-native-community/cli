@@ -132,7 +132,7 @@ Object {
       "pbxprojPath": "<<REPLACED>>/node_modules/react-native-test/customLocation/customProject.xcodeproj/project.pbxproj",
       "plist": Array [],
       "podfile": null,
-      "podspec": null,
+      "podspec": "ReactNativeTest",
       "projectName": "customProject.xcodeproj",
       "projectPath": "<<REPLACED>>/node_modules/react-native-test/customLocation/customProject.xcodeproj",
       "sharedLibraries": Array [],

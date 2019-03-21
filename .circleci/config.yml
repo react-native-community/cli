@@ -2,7 +2,7 @@ version: 2
 
 defaults: &defaults
   docker:
-    - image: circleci/node:8
+    - image: circleci/ruby:2.4-node
   working_directory: ~/react-native-cli
 
 jobs:

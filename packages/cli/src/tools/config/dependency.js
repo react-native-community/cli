@@ -61,7 +61,11 @@ export function android(
     return null;
   }
 
-  return {packageImportPath, packageInstance};
+  return {
+    packageImportPath,
+    packageInstance,
+    sourceDir: getAndroidSourceDir(folder),
+  };
 }
 
 export function ios(

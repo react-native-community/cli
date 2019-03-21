@@ -22,11 +22,18 @@ public class PackageList {
 """
 
 class ReactNativeModules {
+  private Logger logger
   private Project project
   private DefaultSettings defaultSettings
   private ExtraPropertiesExtension extension
   private ArrayList<HashMap<String, String>> reactNativeModules
+
+  private static String LOG_PREFIX = ":ReactNative:"
   private static String REACT_NATIVE_CONFIG_CMD = "react-native config"
+
+  ReactNativeModules(Logger logger) {
+    this.logger = logger
+  }
 
   void applySettingsGradle(DefaultSettings defaultSettings, ExtraPropertiesExtension extraPropertiesExtension) {
     this.defaultSettings = defaultSettings
@@ -79,8 +86,10 @@ class ReactNativeModules {
    */
   File getReactNativeProjectRoot() {
     if (this.extension.has("reactNativeProjectRoot")) {
+      File rnRoot = File(this.extension.get("reactNativeProjectRoot"))
       // allow custom React Native project roots for non-standard directory structures
-      return new File(this.extension.get("reactNativeProjectRoot"))
+      this.logger.debug("${LOG_PREFIX}Using custom React Native project root path '${rnRoot.toString()}'")
+      return rnRoot
     }
 
     File androidRoot
@@ -91,6 +100,7 @@ class ReactNativeModules {
       androidRoot = this.defaultSettings.rootProject.projectDir
     }
 
+    this.logger.debug("${LOG_PREFIX}Using default React Native project root path '${androidRoot.parentFile.toString()}'")
     return androidRoot.parentFile
   }
 
@@ -132,27 +142,39 @@ class ReactNativeModules {
     if (this.reactNativeModules != null) return this.reactNativeModules
     ArrayList<HashMap<String, String>> reactNativeModules = new ArrayList<HashMap<String, String>>()
 
-    def cmdProcess = Runtime.getRuntime().exec(REACT_NATIVE_CONFIG_CMD, null, getReactNativeProjectRoot())
+    def cmdProcess
+
+    try {
+      cmdProcess = Runtime.getRuntime().exec(REACT_NATIVE_CONFIG_CMD, null, getReactNativeProjectRoot())
+    } catch(Exception exception) {
+      if (exception.message.contains("No such file or directory")) {
+        this.logger.warn("${LOG_PREFIX}Skipping automatic imports of native modules. (NO_GLOBAL_CLI)")
+        return reactNativeModules
+      }
+
+      throw exception
+    }
+
     def reactNativeConfigOutput = cmdProcess.in.text
-
-    // TODO(salakar): validate output to provide better user warnings/errors, e.g. detect if `react-native` exists, or cli version contains the config command
     def json = new JsonSlurper().parseText(reactNativeConfigOutput)
+    def dependencies = json["dependencies"]
 
-    json.forEach { value ->
-      String name = value["name"]
-      String path = value["path"]
-      def config = value["config"]
-      def androidConfig = config["android"]
+    dependencies.each { name, value ->
+      def androidConfig = value["android"]
 
       if (androidConfig != null) {
-        String androidSourceDir = androidConfig["sourceDir"]
+        this.logger.info("${LOG_PREFIX}Automatically adding native module '${name}'")
+
         HashMap reactNativeModuleConfig = new HashMap<String, String>()
         reactNativeModuleConfig.put("name", name)
-        reactNativeModuleConfig.put("path", path)
-        reactNativeModuleConfig.put("androidSourceDir", androidSourceDir)
+        reactNativeModuleConfig.put("androidSourceDir", androidConfig["sourceDir"])
         reactNativeModuleConfig.put("packageInstance", androidConfig["packageInstance"])
         reactNativeModuleConfig.put("packageImportPath", androidConfig["packageImportPath"])
+        this.logger.trace("${LOG_PREFIX}'${name}': ${reactNativeModuleConfig.toMapString()}")
+
         reactNativeModules.add(reactNativeModuleConfig)
+      } else {
+        this.logger.info("${LOG_PREFIX}Skipping native module '${name}'")
       }
     }
 
@@ -164,7 +186,7 @@ class ReactNativeModules {
  *    Exported Extensions
  * ------------------------ */
 
-def autoModules = new ReactNativeAutoModules()
+def autoModules = new ReactNativeModules(logger)
 
 ext.applyNativeModulesSettingsGradle = { DefaultSettings defaultSettings ->
   autoModules.applySettingsGradle(defaultSettings, ext)

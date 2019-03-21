@@ -35,14 +35,14 @@ def use_native_modules!(packages = nil)
         # see https://www.rubydoc.info/gems/cocoapods-core/Pod/Podfile/DSL#script_phase-instance_method
         # for the full object keys
 
-        # Support passing in a path instead of the raw script
+        # Support passing in a path relative to the root of the package
         if phase["path"]
-          phase["script"] = File.read(phase["path"])
+          phase["script"] = File.read(File.expand_path(phase["path"], package["root"]))
           phase.delete("path")
         end
 
         # Support converting the execution position into a symbol
-        if phase["execution_position"] 
+        if phase["execution_position"]
           phase["execution_position"] = phase["execution_position"].to_sym
         end
 
@@ -86,31 +86,31 @@ if $0 == __FILE__
     end
   end
 
-  script_phase = {
-    "script" => "123",
-    "name" => "My Name",
-    "execution_position" => "before_compile",
-    "input" => "string"
-  }
-
-  ios_package = {
-    "root" => "/Users/grabbou/Repositories/WebViewDemoApp/node_modules/react",
-    "ios" => {
-      "podspec" => "React",
-    },
-    "android" => nil,
-  }
-  android_package = {
-    "root" => "/Users/grabbou/Repositories/WebViewDemoApp/node_modules/react-native-google-play-game-services",
-    "ios" => nil,
-    "android" => {
-      # This is where normally more config would be
-    }
-  }
-  config = { "ios-dep" => ios_package, "android-dep" => android_package }
-
   describe "use_native_modules!" do
     before do
+      @script_phase = {
+        "script" => "123",
+        "name" => "My Name",
+        "execution_position" => "before_compile",
+        "input" => "string"
+      }
+
+      @ios_package = ios_package = {
+        "root" => "/Users/grabbou/Repositories/WebViewDemoApp/node_modules/react",
+        "ios" => {
+          "podspec" => "React",
+        },
+        "android" => nil,
+      }
+      @android_package = {
+        "root" => "/Users/grabbou/Repositories/WebViewDemoApp/node_modules/react-native-google-play-game-services",
+        "ios" => nil,
+        "android" => {
+          # This is where normally more config would be
+        }
+      }
+      @config = { "ios-dep" => @ios_package, "android-dep" => @android_package }
+
       @activated_pods = activated_pods = []
       @current_target_definition_dependencies = current_target_definition_dependencies = []
       @printed_messages = printed_messages = []
@@ -120,6 +120,10 @@ if $0 == __FILE__
       @spec = spec = Object.new
 
       spec.singleton_class.send(:define_method, :name) { "ios-dep" }
+
+      podfile.singleton_class.send(:define_method, :use_native_modules) do |config|
+        use_native_modules!(config)
+      end
 
       Pod::Specification.singleton_class.send(:define_method, :from_file) do |podspec_path|
         podspec_path.must_equal File.join(ios_package["root"], "#{ios_package["ios"]["podspec"]}.podspec")
@@ -148,13 +152,10 @@ if $0 == __FILE__
     end
 
     it "activates iOS pods" do
-      @podfile.instance_eval do
-        use_native_modules!(config)
-      end
-
+      @podfile.use_native_modules(@config)
       @activated_pods.must_equal [{
         name: "ios-dep",
-        options: { path: ios_package["root"] }
+        options: { path: @ios_package["root"] }
       }]
     end
 
@@ -162,11 +163,7 @@ if $0 == __FILE__
       activated_pod = Object.new
       activated_pod.singleton_class.send(:define_method, :name) { "ios-dep" }
       @current_target_definition_dependencies << activated_pod
-
-      @podfile.instance_eval do
-        use_native_modules!(config)
-      end
-
+      @podfile.use_native_modules(@config)
       @activated_pods.must_equal []
     end
 
@@ -174,46 +171,52 @@ if $0 == __FILE__
       activated_pod = Object.new
       activated_pod.singleton_class.send(:define_method, :name) { "ios-dep/foo/bar" }
       @current_target_definition_dependencies << activated_pod
-
-      @podfile.instance_eval do
-        use_native_modules!(config)
-      end
-
+      @podfile.use_native_modules(@config)
       @activated_pods.must_equal []
     end
 
-    it "sets up script_phases and passes in the options directly" do
-      @podfile.instance_eval do
-        config["ios-dep"]["ios"]["scriptPhases"] = [script_phase]
-        use_native_modules!(config)
-      end
-
-      @activated_pods.must_equal [{
-        name: "ios-dep",
-        options: { path: ios_package["root"] }
-      }]
-      @added_scripts.must_equal [{
-        "script" => "123", 
-        "name" => "My Name", 
-        "execution_position" => :before_compile, 
-        "input" => "string"}]
-    end
-
     it "prints out the native module pods that were found" do
-      @podfile.instance_eval do
-        use_native_modules!({})
-      end
-      @podfile.instance_eval do
-        use_native_modules!({ "pkg-1" => ios_package })
-      end
-      @podfile.instance_eval do
-        use_native_modules!({ "pkg-1" => ios_package, "pkg-2" => ios_package })
-      end
-
+      @podfile.use_native_modules({})
+      @podfile.use_native_modules({ "pkg-1" => @ios_package })
+      @podfile.use_native_modules({ "pkg-1" => @ios_package, "pkg-2" => @ios_package })
       @printed_messages.must_equal [
         "Detected native module pod for ios-dep",
         "Detected native module pods for ios-dep, and ios-dep"
       ]
+    end
+
+    describe "concerning script_phases" do
+      it "uses the options directly" do
+        @config["ios-dep"]["ios"]["scriptPhases"] = [@script_phase]
+        @podfile.use_native_modules(@config)
+        @added_scripts.must_equal [{
+          "script" => "123",
+          "name" => "My Name",
+          "execution_position" => :before_compile,
+          "input" => "string"
+        }]
+      end
+
+      it "reads a script file relative to the package root" do
+        @script_phase.delete("script")
+        @script_phase["path"] = "./some_shell_script.sh"
+        @config["ios-dep"]["ios"]["scriptPhases"] = [@script_phase]
+
+        file_read_mock = MiniTest::Mock.new
+        file_read_mock.expect(:call, "contents from file", [File.join(@ios_package["root"], "some_shell_script.sh")])
+
+        File.stub(:read, file_read_mock) do
+          @podfile.use_native_modules(@config)
+        end
+
+        @added_scripts.must_equal [{
+          "script" => "contents from file",
+          "name" => "My Name",
+          "execution_position" => :before_compile,
+          "input" => "string"
+        }]
+        file_read_mock.verify
+      end
     end
   end
 end

@@ -20,13 +20,16 @@ describe('run-android::getLaunchPackageName', () => {
     switch (filename) {
       case 'app/build.gradle':
         return actualFs.readFileSync(
-          actualPath.join(__dirname, './sampleBuild.gradle'),
+          actualPath.join(__dirname, '../__fixtures__/sampleBuild.gradle'),
           'utf8',
         );
       // Use default case to catch generated debug manifest
       default:
         return actualFs.readFileSync(
-          actualPath.join(__dirname, './sampleGeneratedDebugManifest.xml'),
+          actualPath.join(
+            __dirname,
+            '../__fixtures__/sampleGeneratedDebugManifest.xml',
+          ),
           'utf8',
         );
     }

@@ -28,6 +28,28 @@ def use_native_modules!(packages = nil)
     end
 
     pod spec.name, :path => package["root"]
+
+    if package["ios"]["scriptPhases"]
+      # Can be either an object, or an array of objects
+      Array(package["ios"]["scriptPhases"]).each do |phase|
+        # see https://www.rubydoc.info/gems/cocoapods-core/Pod/Podfile/DSL#script_phase-instance_method
+        # for the full object keys
+
+        # Support passing in a path instead of the raw script
+        if phase["path"]
+          phase["script"] = File.read(phase["path"])
+          phase.delete("path")
+        end
+
+        # Support converting the execution position into a symbol
+        if phase["execution_position"] 
+          phase["execution_position"] = phase["execution_position"].to_sym
+        end
+
+        script_phase phase
+      end
+    end
+
     found_pods.push spec
   end
 
@@ -64,16 +86,17 @@ if $0 == __FILE__
     end
   end
 
+  script_phase = {
+    "script" => "123",
+    "name" => "My Name",
+    "execution_position" => "before_compile",
+    "input" => "string"
+  }
+
   ios_package = {
     "root" => "/Users/grabbou/Repositories/WebViewDemoApp/node_modules/react",
     "ios" => {
       "podspec" => "React",
-      "buildPhases" => [{
-        "path" => "/Users/grabbou/Repositories/WebViewDemoApp/node_modules/react/ios/build_phase_script.sh",
-        "name" => "My Name",
-        "executionPosition" => "before_compile",
-        "input" => "string"
-      }],
     },
     "android" => nil,
   }
@@ -91,6 +114,7 @@ if $0 == __FILE__
       @activated_pods = activated_pods = []
       @current_target_definition_dependencies = current_target_definition_dependencies = []
       @printed_messages = printed_messages = []
+      @added_scripts = added_scripts = []
       @target_definition = target_definition = Object.new
       @podfile = podfile = Object.new
       @spec = spec = Object.new
@@ -108,6 +132,10 @@ if $0 == __FILE__
 
       podfile.singleton_class.send(:define_method, :pod) do |name, options|
         activated_pods << { name: name, options: options }
+      end
+
+      podfile.singleton_class.send(:define_method, :script_phase) do |options|
+        added_scripts << options
       end
 
       target_definition.singleton_class.send(:define_method, :dependencies) do
@@ -152,6 +180,23 @@ if $0 == __FILE__
       end
 
       @activated_pods.must_equal []
+    end
+
+    it "sets up script_phases and passes in the options directly" do
+      @podfile.instance_eval do
+        config["ios-dep"]["ios"]["scriptPhases"] = [script_phase]
+        use_native_modules!(config)
+      end
+
+      @activated_pods.must_equal [{
+        name: "ios-dep",
+        options: { path: ios_package["root"] }
+      }]
+      @added_scripts.must_equal [{
+        "script" => "123", 
+        "name" => "My Name", 
+        "execution_position" => :before_compile, 
+        "input" => "string"}]
     end
 
     it "prints out the native module pods that were found" do

@@ -52,6 +52,7 @@ function generateProject(destinationRoot, newProjectName, options) {
   const pkgJson = require('react-native/package.json');
   const reactVersion = pkgJson.peerDependencies.react;
 
+  PackageManager.setProjectDir(destinationRoot);
   createProjectFromTemplate(
     destinationRoot,
     newProjectName,

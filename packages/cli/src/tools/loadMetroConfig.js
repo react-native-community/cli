@@ -73,6 +73,7 @@ export const getDefaultConfig = (ctx: ContextT) => {
 export type ConfigOptionsT = {|
   maxWorkers?: number,
   port?: number,
+  projectRoot?: string,
   resetCache?: boolean,
   watchFolders?: string[],
   sourceExts?: string[],
@@ -85,20 +86,8 @@ export type ConfigOptionsT = {|
  *
  * This allows the CLI to always overwrite the file settings.
  */
-export default (async function load(
-  ctx: ContextT,
-  // $FlowFixMe - troubles with empty object being inexact
-  options?: ConfigOptionsT = {},
-) {
+export default function load(ctx: ContextT, options?: ConfigOptionsT) {
   const defaultConfig = getDefaultConfig(ctx);
 
-  const config = await loadConfig(
-    {
-      cwd: ctx.root,
-      ...options,
-    },
-    defaultConfig,
-  );
-
-  return config;
-});
+  return loadConfig({cwd: ctx.root, ...options}, defaultConfig);
+}

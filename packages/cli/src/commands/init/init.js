@@ -60,6 +60,7 @@ function generateProject(destinationRoot, newProjectName, options) {
   );
 
   logger.info('Adding required dependencies');
+  PackageManager.setProjectDir(destinationRoot);
   PackageManager.install([`react@${reactVersion}`]);
 
   logger.info('Adding required dev dependencies');

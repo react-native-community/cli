@@ -19,6 +19,8 @@ import init from './commands/init/initCompat';
 import assertRequiredOptions from './tools/assertRequiredOptions';
 import {logger} from '@react-native-community/cli-tools';
 import {setProjectDir} from './tools/packageManager';
+import findPlugins from './tools/findPlugins';
+import getNewerReleaseDataIfAvailable from './tools/getLatestRelease/getLatestRelease';
 import pkgJson from '../package.json';
 import loadConfig from './tools/config';
 
@@ -184,6 +186,16 @@ async function setupAndRun() {
   }
 
   logger.setVerbose(commander.verbose);
+
+  const newerRelease = await getNewerReleaseDataIfAvailable();
+  if (newerRelease) {
+    logger.info('A newer version of React Native is available!');
+    logger.info('');
+    logger.info(`Version: ${newerRelease.tag_name}`);
+    logger.info(`Changelog: ${newerRelease.html_url}`);
+    logger.info('');
+    logger.info('Upgrade to the newer version by running react-native upgrade');
+  }
 }
 
 export default {

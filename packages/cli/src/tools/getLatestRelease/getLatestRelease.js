@@ -24,7 +24,7 @@ type Release = {
  * If the latest release is not newer or if it's a prerelease, the function
  * will return null.
  */
-export async function getNewerReleaseDataIfAvailable() {
+export default (async function() {
   logger.debug('Checking for a newer version of React Native');
   try {
     const currentVersion = require(getRNPkgJsonPath()).version;
@@ -78,7 +78,7 @@ export async function getNewerReleaseDataIfAvailable() {
     );
     return null;
   }
-}
+});
 
 type Headers = {
   'User-Agent': string,

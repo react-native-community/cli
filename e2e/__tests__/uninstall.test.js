@@ -42,17 +42,10 @@ test('uninstall fails when package is not installed', () => {
   expect(code).toBe(1);
 });
 
-test('uninstall module with yarn', () => {
-  writeFiles(DIR, {'yarn.lock': ''});
-  const {stdout, code} = runCli(DIR, ['uninstall', pkg]);
-
-  expect(stdout).toContain(`Unlinking "${pkg}"`);
-  expect(stdout).toContain(`Uninstalling "${pkg}"`);
-  expect(stdout).toContain(`Successfully uninstalled and unlinked "${pkg}"`);
-  expect(code).toBe(0);
-});
-
-test('uninstall module with npm', () => {
+test.each(['yarn', 'npm'])('uninstall module with %s', pm => {
+  if (pm === 'yarn') {
+    writeFiles(DIR, {'yarn.lock': ''});
+  }
   const {stdout, code} = runCli(DIR, ['uninstall', pkg]);
 
   expect(stdout).toContain(`Unlinking "${pkg}"`);

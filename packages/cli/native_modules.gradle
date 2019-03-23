@@ -135,15 +135,17 @@ class ReactNativeModules {
    * @param outputDir
    * @param generatedFileName
    * @param generatedFileContentsTemplate
+   * @param applicationId
    */
-  void generatePackagesFile(File outputDir, String generatedFileName, String generatedFileContentsTemplate) {
+  void generatePackagesFile(File outputDir, String generatedFileName, String generatedFileContentsTemplate, String applicationId) {
     ArrayList<HashMap<String, String>>[] packages = this.reactNativeModules
 
     String packageImports = ""
     String packageClassInstances = ""
 
     if (packages.size() > 0) {
-      packageImports = packages.collect { "// ${it.name}\n${it.packageImportPath}" }.join(';\n')
+      packageImports = "import ${applicationId}.BuildConfig;\n\n"
+      packageImports = packageImports + packages.collect { "// ${it.name}\n${it.packageImportPath}" }.join(';\n')
       packageClassInstances = ",\n      " + packages.collect { it.packageInstance }.join(',')
     }
 
@@ -220,10 +222,16 @@ ext.applyNativeModulesSettingsGradle = { DefaultSettings defaultSettings ->
 ext.applyNativeModulesAppBuildGradle = { Project project ->
   autoModules.applyBuildGradle(project, ext)
 
+  def applicationId
   def generatedSrcDir = new File(buildDir, "generated/rncli/src/main/java/com/facebook/react")
 
+  // TODO(salakar): not sure if this is the best way of getting the package name (used to import BuildConfig)
+  project.android.applicationVariants.all { variant ->
+    applicationId = [variant.mergedFlavor.applicationId, variant.buildType.applicationIdSuffix].findAll().join()
+  }
+
   task generatePackageList << {
-    autoModules.generatePackagesFile(generatedSrcDir, generatedFileName, generatedFileContentsTemplate)
+    autoModules.generatePackagesFile(generatedSrcDir, generatedFileName, generatedFileContentsTemplate, applicationId)
   }
 
   preBuild.dependsOn generatePackageList

@@ -4,33 +4,31 @@ import os from 'os';
 import path from 'path';
 import {createDirectory} from 'jest-util';
 import rimraf from 'rimraf';
-import execa, {type SyncResult, type ThenableChildProcess} from 'execa';
+import execa from 'execa';
 import {Writable} from 'readable-stream';
-import stripAnsi from 'strip-ansi';
 
 const CLI_PATH = path.resolve(__dirname, '../packages/cli/build/bin.js');
 
-type RunCliOptions = {
+type RunOptions = {
   nodeOptions?: string,
   nodePath?: string,
-  stripAnsi?: boolean, // remove colors from stdout and stderr,
   timeout?: number, // kill the process after X milliseconds
 };
 
-export function runCli(
+export function run(
   dir: string,
   args?: Array<string>,
-  options: RunCliOptions = {},
+  options: RunOptions = {},
 ) {
   return spawnCli(dir, args, options);
 }
 
 // Runs cli until a given output is achieved, then kills it with `SIGTERM`
-export async function until(
+export async function runUntil(
   dir: string,
   args: Array<string> | void,
   text: string,
-  options: RunCliOptions = {},
+  options: RunOptions = {},
 ) {
   const spawnPromise = spawnCliAsync(dir, args, {timeout: 30000, ...options});
 
@@ -108,11 +106,7 @@ export const copyDir = (src: string, dest: string) => {
 export const getTempDirectory = (name: string) =>
   path.resolve(os.tmpdir(), name);
 
-function spawnCli(
-  dir: string,
-  args?: Array<string>,
-  options: RunCliOptions = {},
-) {
+function spawnCli(dir: string, args?: Array<string>, options: RunOptions = {}) {
   const {spawnArgs, spawnOptions} = getCliArguments({dir, args, options});
 
   return execa.sync(process.execPath, spawnArgs, spawnOptions);
@@ -121,7 +115,7 @@ function spawnCli(
 function spawnCliAsync(
   dir: string,
   args?: Array<string>,
-  options: RunCliOptions = {},
+  options: RunOptions = {},
 ) {
   const {spawnArgs, spawnOptions} = getCliArguments({dir, args, options});
 

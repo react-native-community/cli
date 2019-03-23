@@ -1,6 +1,6 @@
 // @flow
 import path from 'path';
-import {runCli, getTempDirectory, cleanup, writeFiles} from '../helpers';
+import {run, getTempDirectory, cleanup, writeFiles} from '../helpers';
 
 const DIR = getTempDirectory('command-install-test');
 const pkg = 'react-native-config';
@@ -18,7 +18,7 @@ test.each(['yarn', 'npm'])('install module with %s', pm => {
   if (pm === 'yarn') {
     writeFiles(DIR, {'yarn.lock': ''});
   }
-  const {stdout, code} = runCli(DIR, ['install', pkg]);
+  const {stdout, code} = run(DIR, ['install', pkg]);
 
   expect(stdout).toContain(`Installing "${pkg}"`);
   expect(stdout).toContain(`Linking "${pkg}"`);

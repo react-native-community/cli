@@ -4,40 +4,36 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
+ * @flow
  */
 
 import envinfo from 'envinfo';
 import logger from '../../tools/logger';
+import type {ContextT} from '../../tools/types.flow';
 
-const info = function getInfo(argv, ctx, options) {
+const info = async function getInfo(
+  argv: Array<string>,
+  ctx: ContextT,
+  options: {packages?: boolean | string},
+) {
   try {
-    envinfo
-      .run(
-        {
-          System: ['OS', 'CPU', 'Memory', 'Shell'],
-          Binaries: ['Node', 'Yarn', 'npm', 'Watchman'],
-          IDEs: ['Xcode', 'Android Studio'],
-          SDKs: ['iOS SDK', 'Android SDK'],
-          npmPackages:
-            (typeof options.packages === 'string' &&
-              !options.packages.includes('*')) ||
-            !options.packages
-              ? ['react', 'react-native'].concat(
-                  (options.packages || '').split(','),
-                )
-              : options.packages,
-          npmGlobalPackages: '*react-native*',
-        },
-        {
-          clipboard: !!options.clipboard,
-          title: 'React Native Environment Info',
-        },
-      )
-      .then(logger.info)
-      .catch(err => {
-        logger.error(`Unable to print environment info.\n${err}`);
-      });
+    logger.info('Fetching system and libraries information...');
+    const output = await envinfo.run({
+      System: ['OS', 'CPU', 'Memory', 'Shell'],
+      Binaries: ['Node', 'Yarn', 'npm', 'Watchman'],
+      IDEs: ['Xcode', 'Android Studio'],
+      SDKs: ['iOS SDK', 'Android SDK'],
+      npmPackages:
+        (typeof options.packages === 'string' &&
+          !options.packages.includes('*')) ||
+        !options.packages
+          ? ['react', 'react-native', '@react-native-community/cli'].concat(
+              (options.packages || '').split(','),
+            )
+          : options.packages,
+      npmGlobalPackages: '*react-native*',
+    });
+    logger.log(output.trim());
   } catch (err) {
     logger.error(`Unable to print environment info.\n${err}`);
   }
@@ -51,11 +47,6 @@ export default {
       command: '--packages [string]',
       description:
         'Which packages from your package.json to include, in addition to the default React Native and React versions.',
-    },
-    {
-      command: '--clipboard [boolean]',
-      description:
-        'Automagically copy the environment report output to the clipboard',
     },
   ],
   examples: [

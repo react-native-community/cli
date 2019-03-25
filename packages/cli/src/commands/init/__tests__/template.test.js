@@ -82,5 +82,7 @@ test('executePostInitScript', () => {
     TEMPLATE_NAME,
     SCRIPT_PATH,
   );
-  expect(ChildProcess.execFileSync).toHaveBeenCalledWith(RESOLVED_PATH);
+  expect(ChildProcess.execFileSync).toHaveBeenCalledWith(RESOLVED_PATH, {
+    stdio: 'inherit',
+  });
 });

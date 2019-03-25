@@ -44,5 +44,5 @@ export function executePostInitScript(
 
   logger.debug(`Executing post init script located ${scriptPath}`);
 
-  execFileSync(scriptPath);
+  execFileSync(scriptPath, {stdio: 'inherit'});
 }

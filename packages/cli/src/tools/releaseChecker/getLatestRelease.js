@@ -7,7 +7,7 @@ import semver from 'semver';
 import fs from 'fs';
 import logger from '../logger';
 
-type Release = {
+export type Release = {
   tag_name: string,
   html_url: string,
   draft: boolean,
@@ -24,10 +24,9 @@ type Release = {
  * If the latest release is not newer or if it's a prerelease, the function
  * will return null.
  */
-export default (async function() {
+export default (async function(currentVersion: string) {
   logger.debug('Checking for a newer version of React Native');
   try {
-    const currentVersion = require(getRNPkgJsonPath()).version;
     logger.debug(`Current version: ${currentVersion}`);
 
     const cache = cacheManager.get();
@@ -127,15 +126,6 @@ function getLatestRelease(eTag: ?string) {
       .on('error', error => reject(error));
   });
 }
-
-const getRNPkgJsonPath = function() {
-  return path.resolve(
-    process.cwd(),
-    'node_modules',
-    'react-native',
-    'package.json',
-  );
-};
 
 const cacheManager = {
   get: (): ?{release: Release, eTag: string} => {

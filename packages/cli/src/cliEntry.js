@@ -21,6 +21,7 @@ import {logger} from '@react-native-community/cli-tools';
 import {setProjectDir} from './tools/packageManager';
 import findPlugins from './tools/findPlugins';
 import getLatestRelease from './tools/releaseChecker/getLatestRelease';
+import printNewRelease from './tools/releaseChecker/printNewRelease';
 import pkgJson from '../package.json';
 import loadConfig from './tools/config';
 
@@ -187,14 +188,14 @@ async function setupAndRun() {
 
   logger.setVerbose(commander.verbose);
 
-  const latestRelease = await getLatestRelease();
+  const {version: currentVersion} = require(path.join(
+    ctx.root,
+    'node_modules/react-native/package.json',
+  ));
+  const latestRelease = await getLatestRelease(currentVersion);
+
   if (latestRelease) {
-    logger.info('A newer version of React Native is available!');
-    logger.info('');
-    logger.info(`Version: ${latestRelease.tag_name}`);
-    logger.info(`Changelog: ${latestRelease.html_url}`);
-    logger.info('');
-    logger.info('Upgrade to the newer version by running react-native upgrade');
+    printNewRelease(latestRelease, currentVersion);
   }
 }
 

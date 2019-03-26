@@ -5,7 +5,7 @@
 import path from 'path';
 import {createBlacklist} from 'metro';
 import {loadConfig} from 'metro-config';
-import type {ContextT} from './types.flow';
+import type {ConfigT} from './config/types.flow';
 import findSymlinkedModules from './findSymlinkedModules';
 
 const resolveSymlinksForRoots = roots =>
@@ -30,7 +30,7 @@ const getBlacklistRE = () => createBlacklist([/.*\/__fixtures__\/.*/]);
  * @todo(grabbou): As a separate PR, haste.platforms should be added before "native".
  * Otherwise, a.native.js will not load on Windows or other platforms
  */
-export const getDefaultConfig = (ctx: ContextT) => {
+export const getDefaultConfig = (ctx: ConfigT) => {
   return {
     resolver: {
       resolverMainFields: ['react-native', 'browser', 'main'],
@@ -83,7 +83,7 @@ export type ConfigOptionsT = {|
  * This allows the CLI to always overwrite the file settings.
  */
 export default (async function load(
-  ctx: ContextT,
+  ctx: ConfigT,
   // $FlowFixMe - troubles with empty object being inexact
   options?: ConfigOptionsT = {},
 ) {

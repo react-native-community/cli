@@ -6,6 +6,8 @@ import type {
   AndroidConfigParamsT,
   IOSConfigParamsT,
   InquirerPromptT,
+  DependencyConfigAndroidT,
+  DependencyConfigIOST,
 } from '../types.flow';
 
 /**
@@ -26,6 +28,62 @@ export type ProjectUserConfigT = {
 };
 
 /**
+ * Project configuration after being processed by the loading mechanism
+ */
+export type ProjectConfigT = {
+  reactNativePath: string,
+};
+
+/**
+ * An array of assets defined by a library to link to a project
+ */
+type AssetsT = Array<string>;
+
+/**
+ * A map of hooks to run pre/post some of the CLI actions
+ */
+type HooksT = {
+  [key: string]: string,
+  prelink?: string,
+  postlink?: string,
+};
+
+/**
+ * Params to ask during linking process if library requires additional
+ * configuration
+ */
+type ParamsT = InquirerPromptT[];
+
+/**
+ * Defines an array of commands that a dependency can add to a React Native CLI
+ */
+type CommandsT = Array<string>;
+
+/**
+ * A map with additional platforms that ship with a dependency.
+ *
+ * String format is deprecated and will be removed in the future.
+ */
+export type PlatformsT = {
+  [key: string]:
+    | string
+    | {
+        dependencyConfig?: Function,
+        projectConfig?: Function,
+        linkConfig?: Function,
+      },
+};
+
+/**
+ * Metro-related configuration to define to make 3rd party platforms
+ * work.
+ */
+type MetroConfigT = {
+  platforms: Array<string>,
+  providesModuleNodeModules: Array<string>,
+};
+
+/**
  * Configuration that ships with a dependency
  */
 export type DependencyUserConfigT = {
@@ -42,36 +100,34 @@ export type DependencyUserConfigT = {
       ios?: ?IOSConfigParamsT,
       [key: string]: any,
     },
-    /**
-     * An array of assets defined by a library to link to a project
-     */
-    assets?: Array<string>,
-    /**
-     * A map of hooks to run pre/post some of the CLI actions
-     */
-    hooks?: {
-      [key: string]: string,
-      prelink?: string,
-      postlink?: string,
-    },
-    /**
-     * Params to ask during linking process if library requires additional
-     * configuration
-     */
-    params?: InquirerPromptT[],
+    assets?: AssetsT,
+    hooks?: HooksT,
+    params?: ParamsT,
   },
+  commands?: CommandsT,
+  platforms?: PlatformsT,
+};
+
+/**
+ * Dependency configuration after being processed by the CLI
+ */
+export type DependencyConfigT = {
   /**
-   * Defines an array of commands that a dependency can add to a React Native CLI
+   * Dependency location on the disk
    */
-  commands?: Array<string>,
+  root: string,
   /**
-   * A map with additional platforms that ship with a dependency.
-   *
-   * String format is deprecated and will be removed in the future.
+   * An object containing configuration for each of the dependencies,
+   * or null, if dependency does not support given platform
    */
-  platforms?: {
-    [key: string]: string,
+  platforms: {
+    android: DependencyConfigAndroidT | null,
+    ios: DependencyConfigIOST | null,
+    [key: string]: any,
   },
+  assets: AssetsT,
+  hooks: HooksT,
+  params: ParamsT,
 };
 
 /**
@@ -82,15 +138,15 @@ export type LegacyDependencyUserConfigT = {
   /**
    * See DependencyUserConfigT.dependency.assets
    */
-  assets?: Array<string>,
+  assets?: AssetsT,
   /**
    * See DependencyUserConfigT.dependency.hooks
    */
-  commands?: {[name: string]: string},
+  commands?: HooksT,
   /**
    * See DependencyUserConfigT.dependency.params
    */
-  params?: InquirerPromptT[],
+  params?: ParamsT,
   /**
    * See DependencyUserConfigT.dependency.platforms.android
    */
@@ -102,19 +158,36 @@ export type LegacyDependencyUserConfigT = {
   /**
    * See DependencyUserConfigT.commands
    */
-  plugin?: string | Array<string>,
+  plugin?: string | CommandsT,
   /**
    * See DependencyUserConfigT.platforms
    */
-  platform?: string,
+  platform?: PlatformsT,
   /**
-   * Metro-related configuration to define to make 3rd party platforms
-   * work.
-   *
    * We don't read this configuration, but infer it from other properties.
    */
-  haste?: {
-    platforms: Array<string>,
-    providesModuleNodeModules: Array<string>,
-  },
+  haste?: MetroConfigT,
 };
+
+export type DependenciesConfigT = {
+  dependencies: {
+    [key: string]: DependencyConfigT,
+  },
+  /**
+   * An array of platforms collected by parsing dependencies
+   */
+  platforms: PlatformsT,
+  /**
+   * An array of commands collected by parsing dependencies
+   */
+  commands: CommandsT,
+  /**
+   * Extra Metro configuration to use to support additonal platforms
+   */
+  haste: MetroConfigT,
+};
+
+export type ConfigT = ProjectConfigT &
+  DependenciesConfigT & {
+    root: string,
+  };

@@ -8,7 +8,7 @@
  */
 import {multipleValidOptions} from 'jest-validate';
 
-import type {UserConfigT, LegacyDependencyUserConfigT} from './types.flow';
+import {type UserConfigT, type LegacyDependencyUserConfigT} from './types.flow';
 
 const projectConfig = {
   reactNativePath: '.',

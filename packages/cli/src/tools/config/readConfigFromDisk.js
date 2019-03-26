@@ -8,7 +8,10 @@ import path from 'path';
 import {validate} from 'jest-validate';
 import dedent from 'dedent';
 
-import type {DependencyUserConfigT, ProjectUserConfigT} from './types.flow';
+import {
+  type DependencyUserConfigT,
+  type ProjectUserConfigT,
+} from './types.flow';
 
 import resolveReactNativePath from './resolveReactNativePath';
 import getPackageConfiguration from '../getPackageConfiguration';

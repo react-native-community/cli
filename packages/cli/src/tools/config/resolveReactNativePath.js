@@ -5,8 +5,8 @@ import path from 'path';
 import dedent from 'dedent';
 
 /**
- * Finds path to React Native inside `node_modules`
- * or throws an error otherwise
+ * Finds path to React Native inside `node_modules` or throws
+ * an error otherwise.
  */
 export default function resolveReactNativePath() {
   try {

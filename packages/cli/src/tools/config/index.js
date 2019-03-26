@@ -13,12 +13,18 @@ import findDependencies from './findDependencies';
 import {
   readProjectConfigFromDisk,
   readDependencyConfigFromDisk,
+  readLegacyDependencyConfigFromDisk,
 } from './readConfigFromDisk';
 
 function loadConfig() {
   const defaultConfig = findDependencies().reduce(
     (acc, dependencyName) => {
-      const config = readDependencyConfigFromDisk(dependencyName);
+      const root = path.resolve(process.cwd(), 'node_modules', dependencyName);
+
+      const config =
+        readDependencyConfigFromDisk(dependencyName) ||
+        readLegacyDependencyConfigFromDisk(dependencyName);
+      console.log(config);
       return {
         dependencies: {
           ...acc.dependencies,
@@ -29,7 +35,7 @@ function loadConfig() {
                 return dependency;
               }
               const detectedConfig = acc.platforms[platform].dependencyConfig(
-                config.root,
+                root,
                 platformConfig,
               );
               if (detectedConfig === null) {
@@ -50,8 +56,12 @@ function loadConfig() {
         ),
         platforms: {
           ...acc.platforms,
-          ...mapValues(config.platforms, pathToPlatform =>
-            require(path.join(dependencyName, pathToPlatform)),
+          ...mapValues(
+            config.platforms,
+            pathOrObject =>
+              typeof pathOrObject === 'string'
+                ? require(path.join(dependencyName, pathOrObject))
+                : pathOrObject,
           ),
         },
         haste: {
@@ -65,7 +75,6 @@ function loadConfig() {
       };
     },
     {
-      root: process.cwd(),
       dependencies: {},
       commands: [],
       platforms: {
@@ -79,7 +88,10 @@ function loadConfig() {
     },
   );
 
-  return merge(defaultConfig, readProjectConfigFromDisk());
+  return merge(
+    {...defaultConfig, root: process.cwd()},
+    readProjectConfigFromDisk(),
+  );
 }
 
 export default loadConfig;

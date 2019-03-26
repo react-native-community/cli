@@ -35,7 +35,7 @@ commander.on('command:*', () => {
 const defaultOptParser = val => val;
 
 const handleError = err => {
-  logger.error(err.message);
+  logger.error(err.stack);
   process.exit(1);
 };
 
@@ -150,7 +150,7 @@ async function setupAndRun() {
 
   setProjectDir(ctx.root);
 
-  const commands = getCommands(ctx.commands);
+  const commands = getCommands(ctx);
 
   commands.forEach(command => addCommand(command, ctx));
 

@@ -3,7 +3,7 @@
  *
  * Loads and validates a project configuration
  */
-
+import {get} from 'lodash';
 import comsmiconfig from 'cosmiconfig';
 import path from 'path';
 import {validate} from 'jest-validate';
@@ -11,6 +11,7 @@ import {validate} from 'jest-validate';
 import type {ProjectConfig, DependencyConfig} from './types.flow';
 
 import resolveReactNativePath from './resolveReactNativePath';
+import getPackageConfiguration from '../getPackageConfiguration';
 
 const exampleProjectConfig: ProjectConfig = {
   reactNativePath: '.',
@@ -59,7 +60,11 @@ export function readDependencyConfigFromDisk(
     searchPlaces,
   });
 
-  const {config} = explorer.searchSync(root) || {config: {}};
+  const {config} = explorer.searchSync(root) || {config: undefined};
+
+  if (!config) {
+    return null;
+  }
 
   validate(config, {
     exampleConfig,
@@ -70,8 +75,18 @@ export function readDependencyConfigFromDisk(
     },
   });
 
+  return config;
+}
+
+export function readLegacyDependencyConfigFromDisk(dependencyName: string) {
+  const root = path.resolve(process.cwd(), 'node_modules', dependencyName);
+  const config = getPackageConfiguration(root);
+
   return {
-    ...config,
-    root,
+    commands: [].concat(config.plugin),
+    platforms: config.platform
+      ? require(path.join(root, config.platform))
+      : undefined,
+    haste: config.haste,
   };
 }

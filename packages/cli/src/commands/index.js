@@ -4,7 +4,6 @@
 
 import path from 'path';
 
-import findPlugins from '../tools/findPlugins';
 import logger from '../tools/logger';
 
 import type {
@@ -59,10 +58,10 @@ const loadLocalCommands: Array<LocalCommandT> = [
  * This checks all CLI plugins for presence of 3rd party packages that define commands
  * and loads them
  */
-const loadProjectCommands = (root: string): Array<ProjectCommandT> => {
-  const plugins = findPlugins(root);
-
-  return plugins.commands.reduce((acc: Array<CommandT>, pathToCommands) => {
+const loadProjectCommands = (
+  commands: Array<string>,
+): Array<ProjectCommandT> => {
+  return commands.reduce((acc: Array<CommandT>, pathToCommands: string) => {
     /**
      * `pathToCommand` is a path to a file where commands are defined, relative to `node_modules`
      * folder.
@@ -78,12 +77,17 @@ const loadProjectCommands = (root: string): Array<ProjectCommandT> => {
             .join(path.sep)
         : pathToCommands.split(path.sep)[0];
 
-    const pkg = require(path.join(root, 'node_modules', name, 'package.json'));
+    const pkg = require(path.join(
+      process.cwd(),
+      'node_modules',
+      name,
+      'package.json',
+    ));
 
     const requiredCommands:
       | ProjectCommandT
       | Array<ProjectCommandT> = require(path.join(
-      root,
+      process.cwd(),
       'node_modules',
       pathToCommands,
     ));
@@ -101,7 +105,7 @@ const loadProjectCommands = (root: string): Array<ProjectCommandT> => {
 /**
  * Loads all the commands inside a given `root` folder
  */
-export function getCommands(root: string): Array<CommandT> {
+export function getCommands(commands: Array<string>): Array<CommandT> {
   return [
     ...loadLocalCommands,
     {
@@ -115,6 +119,6 @@ export function getCommands(root: string): Array<CommandT> {
         );
       },
     },
-    ...loadProjectCommands(root),
+    ...loadProjectCommands(commands),
   ];
 }

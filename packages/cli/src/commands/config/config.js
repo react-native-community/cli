@@ -6,14 +6,10 @@
  *
  * @format
  */
-import loadConfig from '../../tools/config';
-
 export default {
   name: 'config',
   description: 'Print CLI configuration',
-  func: async () => {
-    const config = await loadConfig();
-
-    console.log(JSON.stringify(config, null, 2));
+  func: async (_, ctx) => {
+    console.log(JSON.stringify(ctx, null, 2));
   },
 };

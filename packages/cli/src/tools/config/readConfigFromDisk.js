@@ -3,10 +3,10 @@
  *
  * Loads and validates a project configuration
  */
-import {get} from 'lodash';
 import comsmiconfig from 'cosmiconfig';
 import path from 'path';
 import {validate} from 'jest-validate';
+import dedent from 'dedent';
 
 import type {ProjectConfig, DependencyConfig} from './types.flow';
 
@@ -94,6 +94,57 @@ export function readLegacyDependencyConfigFromDisk(dependencyName: string) {
   if (Object.keys(config).length === 0) {
     return undefined;
   }
+
+  validate(config, {
+    exampleConfig: exampleDeprecatedConfig,
+    deprecatedConfig: {
+      plugin: ({plugin}) => dedent`
+        Setting \`rnpm.plugin\` in \`package.json\` in order to extend
+        React Native CLI has been deprecated and will stop working in the next
+        React Native release.
+
+        Consider setting the following in the \`package.json\` instead:
+        {
+          "react-native": {
+            "commands": ${JSON.stringify([].concat(plugin))}
+          }
+        }`,
+      platform: ({platform}) => dedent`
+        Setting \`rnpm.platform\` in \`package.json\` in order to define
+        additional platforms has been deprecated and will stop working in the next
+        React Native release.
+
+        Consider setting the following in the \`package.json\` instead:
+        {
+          "react-native": {
+            "platforms": {
+              "<name_of_the_platform>": "${platform}"
+            }
+          }
+        }`,
+      haste: ({haste}) => dedent`
+        Setting \`rnpm.haste\` in \`package.json\` in order to define
+        additional settings for Metro has been deprecated and will stop
+        working in next release.
+
+        Consider setting the following in the \`package.json\` instead:
+        {
+          "react-native": {
+            "haste": {
+              "platforms": ${JSON.stringify(haste.platforms)},
+              "providesModuleNodeModules": ${JSON.stringify(
+                haste.providesModuleNodeModules,
+              )}
+            }
+          }
+        }`,
+    },
+    title: {
+      warning: `Warnings from ${dependencyName}`,
+      error: `Errors from ${dependencyName}`,
+      deprecation: `Deprecations from ${dependencyName}`,
+    },
+  });
 
   return {
     commands: [].concat(config.plugin),

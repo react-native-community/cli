@@ -23,41 +23,40 @@ function loadConfig() {
 
       const config =
         readDependencyConfigFromDisk(dependencyName) ||
-        readLegacyDependencyConfigFromDisk(dependencyName);
-      console.log(config);
+        readLegacyDependencyConfigFromDisk(dependencyName) ||
+        {};
+
       return {
         dependencies: {
           ...acc.dependencies,
           get [dependencyName]() {
             return Object.keys(acc.platforms).reduce((dependency, platform) => {
-              const platformConfig = get(config, `dependency.${platform}`, {});
-              if (platformConfig === null) {
-                return dependency;
-              }
+              const customConfig = get(config, `dependency.${platform}`, {});
               const detectedConfig = acc.platforms[platform].dependencyConfig(
                 root,
-                platformConfig,
+                customConfig,
               );
               if (detectedConfig === null) {
-                return dependency;
+                dependency[platform] = null;
+              } else {
+                dependency[platform] = {
+                  ...detectedConfig,
+                  ...customConfig,
+                };
               }
-              dependency[platform] = {
-                ...detectedConfig,
-                ...platformConfig,
-              };
               return dependency;
             }, {});
           },
         },
         commands: acc.commands.concat(
-          (config.commands || []).map(pathToCommand =>
+          get(config, 'commands', []).map(pathToCommand =>
             path.join(dependencyName, pathToCommand),
           ),
         ),
         platforms: {
           ...acc.platforms,
           ...mapValues(
-            config.platforms,
+            get(config, 'platforms', {}),
             pathOrObject =>
               typeof pathOrObject === 'string'
                 ? require(path.join(dependencyName, pathOrObject))

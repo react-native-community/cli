@@ -28,6 +28,15 @@ const exampleDependencyConfig = {
   commands: ['./local-cli/runWindows/runWindows.js'],
 };
 
+const exampleDeprecatedConfig = {
+  plugin: './path/to/a/plugin.js',
+  platform: './path/to/a/platform.js',
+  haste: {
+    platforms: ['windows'],
+    providesModuleNodeModules: ['react-native-windows'],
+  },
+};
+
 const exampleConfig = {
   ...exampleProjectConfig,
   ...exampleDependencyConfig,
@@ -63,7 +72,7 @@ export function readDependencyConfigFromDisk(
   const {config} = explorer.searchSync(root) || {config: undefined};
 
   if (!config) {
-    return null;
+    return undefined;
   }
 
   validate(config, {
@@ -81,6 +90,10 @@ export function readDependencyConfigFromDisk(
 export function readLegacyDependencyConfigFromDisk(dependencyName: string) {
   const root = path.resolve(process.cwd(), 'node_modules', dependencyName);
   const config = getPackageConfiguration(root);
+
+  if (Object.keys(config).length === 0) {
+    return undefined;
+  }
 
   return {
     commands: [].concat(config.plugin),

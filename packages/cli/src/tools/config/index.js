@@ -31,17 +31,17 @@ function loadConfig() {
           ...acc.dependencies,
           get [dependencyName]() {
             return Object.keys(acc.platforms).reduce((dependency, platform) => {
-              const customConfig = get(config, `dependency.${platform}`, {});
+              const platformConfig = get(config, `dependency.${platform}`, {});
               const detectedConfig = acc.platforms[platform].dependencyConfig(
                 root,
-                customConfig,
+                platformConfig,
               );
               if (detectedConfig === null) {
                 dependency[platform] = null;
               } else {
                 dependency[platform] = {
                   ...detectedConfig,
-                  ...customConfig,
+                  ...platformConfig,
                 };
               }
               return dependency;

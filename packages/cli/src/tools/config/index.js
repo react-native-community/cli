@@ -19,11 +19,11 @@ import {
 function loadConfig() {
   const defaultConfig = findDependencies().reduce(
     (acc, dependencyName) => {
-      const root = path.resolve(process.cwd(), 'node_modules', dependencyName);
+      const root = path.join(process.cwd(), 'node_modules', dependencyName);
 
       const config =
-        readDependencyConfigFromDisk(dependencyName) ||
-        readLegacyDependencyConfigFromDisk(dependencyName) ||
+        readDependencyConfigFromDisk(root, dependencyName) ||
+        readLegacyDependencyConfigFromDisk(root, dependencyName) ||
         {};
 
       return {

@@ -63,16 +63,15 @@ export function readProjectConfigFromDisk(): ProjectConfig {
 }
 
 export function readDependencyConfigFromDisk(
+  rootFolder: string,
   dependencyName: string,
 ): DependencyConfig {
-  const root = path.resolve(process.cwd(), 'node_modules', dependencyName);
-
   const explorer = comsmiconfig('react-native', {
-    stopDir: root,
+    stopDir: rootFolder,
     searchPlaces,
   });
 
-  const {config} = explorer.searchSync(root) || {config: undefined};
+  const {config} = explorer.searchSync(rootFolder) || {config: undefined};
 
   if (!config) {
     return undefined;
@@ -90,9 +89,11 @@ export function readDependencyConfigFromDisk(
   return config;
 }
 
-export function readLegacyDependencyConfigFromDisk(dependencyName: string) {
-  const root = path.resolve(process.cwd(), 'node_modules', dependencyName);
-  const config = getPackageConfiguration(root);
+export function readLegacyDependencyConfigFromDisk(
+  rootFolder: string,
+  dependencyName: string,
+) {
+  const config = getPackageConfiguration(rootFolder);
 
   if (Object.keys(config).length === 0) {
     return undefined;
@@ -152,7 +153,7 @@ export function readLegacyDependencyConfigFromDisk(dependencyName: string) {
   return {
     commands: [].concat(config.plugin),
     platforms: config.platform
-      ? require(path.join(root, config.platform))
+      ? require(path.join(rootFolder, config.platform))
       : undefined,
     haste: config.haste,
   };

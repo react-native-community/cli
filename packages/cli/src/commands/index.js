@@ -64,7 +64,7 @@ const loadProjectCommands = ({
   root,
   commands,
 }: ConfigT): Array<ProjectCommandT> => {
-  return commands.reduce((acc: Array<CommandT>, pathToCommands: string) => {
+  return commands.reduce((acc: Array<ProjectCommandT>, cmdPath: string) => {
     /**
      * `pathToCommand` is a path to a file where commands are defined, relative to `node_modules`
      * folder.
@@ -73,12 +73,12 @@ const loadProjectCommands = ({
      * into consideration.
      */
     const name =
-      pathToCommands[0] === '@'
-        ? pathToCommands
+      cmdPath[0] === '@'
+        ? cmdPath
             .split(path.sep)
             .slice(0, 2)
             .join(path.sep)
-        : pathToCommands.split(path.sep)[0];
+        : cmdPath.split(path.sep)[0];
 
     const pkg = require(path.join(root, 'node_modules', name, 'package.json'));
 
@@ -87,7 +87,7 @@ const loadProjectCommands = ({
       | Array<ProjectCommandT> = require(path.join(
       root,
       'node_modules',
-      pathToCommands,
+      cmdPath,
     ));
 
     if (Array.isArray(requiredCommands)) {
@@ -96,7 +96,7 @@ const loadProjectCommands = ({
       );
     }
 
-    return acc.concat({...requiredCommands});
+    return acc.concat({...requiredCommands, pkg});
   }, []);
 };
 

@@ -2,10 +2,9 @@
  * @flow
  */
 
-export type ContextT = {
-  root: string,
-  reactNativePath: string,
-};
+import {type ConfigT} from './config/types.flow';
+
+export type ContextT = ConfigT;
 
 export type LocalCommandT = {
   name: string,

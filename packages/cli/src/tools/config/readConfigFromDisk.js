@@ -5,7 +5,7 @@
  */
 import comsmiconfig from 'cosmiconfig';
 import path from 'path';
-import {validate} from 'jest-validate';
+import {validate, multipleValidOptions} from 'jest-validate';
 import dedent from 'dedent';
 
 import type {ProjectConfig, DependencyConfig} from './types.flow';
@@ -29,7 +29,10 @@ const exampleDependencyConfig = {
 };
 
 const exampleDeprecatedConfig = {
-  plugin: './path/to/a/plugin.js',
+  plugin: multipleValidOptions('./path/to/a/plugin.js', [
+    './path/to/foo/plugin.js',
+    './path/to/bar/plugin.js',
+  ]),
   platform: './path/to/a/platform.js',
   haste: {
     platforms: ['windows'],

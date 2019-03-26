@@ -26,6 +26,14 @@ function loadConfig() {
         readLegacyDependencyConfigFromDisk(root, dependencyName) ||
         {};
 
+      const platforms = mapValues(
+        get(config, 'platforms', {}),
+        pathOrObject =>
+          typeof pathOrObject === 'string'
+            ? require(path.join(dependencyName, pathOrObject))
+            : pathOrObject,
+      );
+
       return {
         dependencies: {
           ...acc.dependencies,
@@ -55,21 +63,13 @@ function loadConfig() {
         ),
         platforms: {
           ...acc.platforms,
-          ...mapValues(
-            get(config, 'platforms', {}),
-            pathOrObject =>
-              typeof pathOrObject === 'string'
-                ? require(path.join(dependencyName, pathOrObject))
-                : pathOrObject,
-          ),
+          ...platforms,
         },
         haste: {
           providesModuleNodeModules: acc.haste.providesModuleNodeModules.concat(
-            get(config, 'haste.providesModuleNodeModules', []),
+            Object.keys(platforms).length > 0 ? dependencyName : [],
           ),
-          platforms: acc.haste.platforms.concat(
-            get(config, 'haste.platforms', []),
-          ),
+          platforms: [...acc.haste.platforms, ...Object.keys(platforms)],
         },
       };
     },

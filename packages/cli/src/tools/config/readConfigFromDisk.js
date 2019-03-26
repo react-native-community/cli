@@ -5,49 +5,29 @@
  */
 import comsmiconfig from 'cosmiconfig';
 import path from 'path';
-import {validate, multipleValidOptions} from 'jest-validate';
+import {validate} from 'jest-validate';
 import dedent from 'dedent';
 
-import type {ProjectConfig, DependencyConfig} from './types.flow';
+import type {DependencyUserConfigT, ProjectUserConfigT} from './types.flow';
 
 import resolveReactNativePath from './resolveReactNativePath';
 import getPackageConfiguration from '../getPackageConfiguration';
 
-const exampleProjectConfig: ProjectConfig = {
-  reactNativePath: '.',
-};
+import {
+  config as exampleConfig,
+  legacyConfig as exampleLegacyConfig,
+} from './samples';
 
-const exampleDependencyConfig = {
-  dependency: {
-    android: '',
-    ios: '',
-  },
-  platforms: {
-    windows: './platform.js',
-  },
-  commands: ['./local-cli/runWindows/runWindows.js'],
-};
-
-const exampleDeprecatedConfig = {
-  plugin: multipleValidOptions('./path/to/a/plugin.js', [
-    './path/to/foo/plugin.js',
-    './path/to/bar/plugin.js',
-  ]),
-  platform: './path/to/a/platform.js',
-  haste: {
-    platforms: ['windows'],
-    providesModuleNodeModules: ['react-native-windows'],
-  },
-};
-
-const exampleConfig = {
-  ...exampleProjectConfig,
-  ...exampleDependencyConfig,
-};
-
+/**
+ * Places to look for the new configuration
+ */
 const searchPlaces = ['react-native.config.js', 'package.json'];
 
-export function readProjectConfigFromDisk(): ProjectConfig {
+/**
+ * Reads a project configuration as defined by the user in the current
+ * workspace.
+ */
+export function readProjectConfigFromDisk(): ProjectUserConfigT {
   const explorer = comsmiconfig('react-native', {searchPlaces});
 
   const {config} = explorer.searchSync() || {config: {}};
@@ -62,10 +42,17 @@ export function readProjectConfigFromDisk(): ProjectConfig {
   };
 }
 
+/**
+ * Reads a dependency configuration as defined by the developer
+ * inside `node_modules`.
+ *
+ * Returns `undefined` when no custom configuration is found
+ * in the dependency root.
+ */
 export function readDependencyConfigFromDisk(
   rootFolder: string,
   dependencyName: string,
-): DependencyConfig {
+): ?DependencyUserConfigT {
   const explorer = comsmiconfig('react-native', {
     stopDir: rootFolder,
     searchPlaces,
@@ -89,18 +76,27 @@ export function readDependencyConfigFromDisk(
   return config;
 }
 
+/**
+ * Reads a legacy configuaration from a `package.json` "rnpm" key.
+ *
+ * Prints deprecation warnings for each of the keys along the upgrade instructions.
+ *
+ * Returns `undefined` when no configuration is provided.
+ */
 export function readLegacyDependencyConfigFromDisk(
   rootFolder: string,
   dependencyName: string,
-) {
+): ?DependencyUserConfigT {
   const config = getPackageConfiguration(rootFolder);
 
+  // For historical reasons, `getPackageConfiguration` always returns an
+  // object, including empty when no cofinguration found.
   if (Object.keys(config).length === 0) {
     return undefined;
   }
 
   validate(config, {
-    exampleConfig: exampleDeprecatedConfig,
+    exampleConfig: exampleLegacyConfig,
     deprecatedConfig: {
       plugin: ({plugin}) => dedent`
         Setting \`rnpm.plugin\` in \`package.json\` in order to extend
@@ -131,14 +127,64 @@ export function readLegacyDependencyConfigFromDisk(
         additional settings for Metro has been deprecated and will stop
         working in next release.
 
+        We now automatically configure Metro to support your platform.`,
+      ios: ({ios}) => dedent`
+        Setting \`rnpm.ios\` in \`package.json\` has been deprecated and will stop
+        working in next release.
+
         Consider setting the following in the \`package.json\` instead:
         {
           "react-native": {
-            "haste": {
-              "platforms": ${JSON.stringify(haste.platforms)},
-              "providesModuleNodeModules": ${JSON.stringify(
-                haste.providesModuleNodeModules,
-              )}
+            "dependency": {
+              "ios": ${JSON.stringify(ios)}
+            }
+          }
+        }`,
+      android: ({android}) => dedent`
+        Setting \`rnpm.android\` in \`package.json\` has been deprecated and will stop
+        working in next release.
+
+        Consider setting the following in the \`package.json\` instead:
+        {
+          "react-native": {
+            "dependency": {
+              "android": ${JSON.stringify(android)}
+            }
+          }
+        }`,
+      assets: ({assets}) => dedent`
+        Setting \`rnpm.assets\` in \`package.json\` has been deprecated and will stop
+        working in next release.
+
+        Consider setting the following in the \`package.json\` instead:
+        {
+          "react-native": {
+            "dependency": {
+              "assets": ${JSON.stringify(assets)}
+            }
+          }
+        }`,
+      commands: ({commands}) => dedent`
+        Setting \`rnpm.commands\` in \`package.json\` has been deprecated and will stop
+        working in next release.
+
+        Consider setting the following in the \`package.json\` instead:
+        {
+          "react-native": {
+            "dependency": {
+              "hooks": ${JSON.stringify(commands)}
+            }
+          }
+        }`,
+      params: ({params}) => dedent`
+        Setting \`rnpm.params\` in \`package.json\` has been deprecated and will stop
+        working in next release.
+
+        Consider setting the following in the \`package.json\` instead:
+        {
+          "react-native": {
+            "dependency": {
+              "params": ${JSON.stringify(params)}
             }
           }
         }`,
@@ -151,10 +197,18 @@ export function readLegacyDependencyConfigFromDisk(
   });
 
   return {
-    commands: [].concat(config.plugin),
+    dependency: {
+      platforms: {
+        ios: config.ios,
+        android: config.android,
+      },
+      assets: config.assets,
+      hooks: config.commands,
+      params: config.params,
+    },
+    commands: [].concat(config.plugin || []),
     platforms: config.platform
       ? require(path.join(rootFolder, config.platform))
       : undefined,
-    haste: config.haste,
   };
 }

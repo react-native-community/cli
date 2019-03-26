@@ -2,8 +2,13 @@
  * @flow
  */
 import path from 'path';
+import dedent from 'dedent';
 
-function resolveReactNativePath() {
+/**
+ * Finds path to React Native inside `node_modules`
+ * or throws an error otherwise
+ */
+export default function resolveReactNativePath() {
   try {
     return path.dirname(
       // $FlowIssue: Wrong `require.resolve` type definition
@@ -12,10 +17,17 @@ function resolveReactNativePath() {
       }),
     );
   } catch (_ignored) {
-    throw new Error(
-      'Unable to find React Native files. Make sure "react-native" module is installed in your project dependencies.',
-    );
+    throw new Error(dedent`
+      Unable to find React Native files. Make sure "react-native" module is installed
+      in your project dependencies.
+
+      If you are using React Native from a non-standard location, consider setting:
+      {
+        "react-native": {
+          "reactNativePath": "./path/to/react-native"
+        }
+      }
+      in your \`package.json\`.
+    `);
   }
 }
-
-export default resolveReactNativePath;

@@ -58,9 +58,10 @@ const loadLocalCommands: Array<LocalCommandT> = [
  * This checks all CLI plugins for presence of 3rd party packages that define commands
  * and loads them
  */
-const loadProjectCommands = (
-  commands: Array<string>,
-): Array<ProjectCommandT> => {
+const loadProjectCommands = ({
+  root,
+  commands,
+}: ContextT): Array<ProjectCommandT> => {
   return commands.reduce((acc: Array<CommandT>, pathToCommands: string) => {
     /**
      * `pathToCommand` is a path to a file where commands are defined, relative to `node_modules`
@@ -77,17 +78,12 @@ const loadProjectCommands = (
             .join(path.sep)
         : pathToCommands.split(path.sep)[0];
 
-    const pkg = require(path.join(
-      process.cwd(),
-      'node_modules',
-      name,
-      'package.json',
-    ));
+    const pkg = require(path.join(root, 'node_modules', name, 'package.json'));
 
     const requiredCommands:
       | ProjectCommandT
       | Array<ProjectCommandT> = require(path.join(
-      process.cwd(),
+      root,
       'node_modules',
       pathToCommands,
     ));
@@ -105,7 +101,7 @@ const loadProjectCommands = (
 /**
  * Loads all the commands inside a given `root` folder
  */
-export function getCommands(commands: Array<string>): Array<CommandT> {
+export function getCommands(ctx: ContextT): Array<CommandT> {
   return [
     ...loadLocalCommands,
     {
@@ -119,6 +115,6 @@ export function getCommands(commands: Array<string>): Array<CommandT> {
         );
       },
     },
-    ...loadProjectCommands(commands),
+    ...loadProjectCommands(ctx),
   ];
 }

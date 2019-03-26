@@ -89,16 +89,16 @@ const addCommand = (command: CommandT, ctx: ContextT) => {
   const cmd = commander
     .command(command.name)
     .description(command.description)
-    .action(async function handleAction(...args) {
+    .action(function handleAction(...args) {
       const passedOptions = this.opts();
       const argv: Array<string> = Array.from(args).slice(0, -1);
 
-      try {
-        assertRequiredOptions(options, passedOptions);
-        return command.func(argv, ctx, passedOptions);
-      } catch (e) {
-        handleError(e);
-      }
+      Promise.resolve()
+        .then(() => {
+          assertRequiredOptions(options, passedOptions);
+          return command.func(argv, ctx, passedOptions);
+        })
+        .catch(handleError);
     });
 
   cmd.helpInformation = printHelpInformation.bind(
@@ -146,13 +146,8 @@ async function setupAndRun() {
     }
   }
 
-  const ctx = {
-    ...loadConfig(),
-    // @todo: Let's use process.cwd directly where possible
-    root: process.cwd(),
-  };
+  const ctx = loadConfig();
 
-  // @todo this shouldn't be called here
   setProjectDir(ctx.root);
 
   const commands = getCommands(ctx.commands);

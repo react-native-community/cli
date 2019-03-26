@@ -65,6 +65,7 @@ function loadConfig() {
       };
     },
     {
+      root: process.cwd(),
       dependencies: {},
       commands: [],
       platforms: {

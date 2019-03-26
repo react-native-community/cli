@@ -162,7 +162,7 @@ export type LegacyDependencyUserConfigT = {
   /**
    * See DependencyUserConfigT.platforms
    */
-  platform?: PlatformsT,
+  platform?: string,
   /**
    * We don't read this configuration, but infer it from other properties.
    */

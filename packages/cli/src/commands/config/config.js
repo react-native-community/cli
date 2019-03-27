@@ -11,6 +11,6 @@ export default {
   description: 'Print CLI configuration',
   func: async (_, ctx) => {
     const a = JSON.stringify(ctx, null, 2);
-    console.log();
+    console.log(a);
   },
 };

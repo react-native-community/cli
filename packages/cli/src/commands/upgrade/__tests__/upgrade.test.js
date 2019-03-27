@@ -20,17 +20,22 @@ jest.mock('execa', () => {
         stdout: '{"react": "16.6.3"}',
       });
     }
+    if (command === 'git' && args[0] === 'rev-parse') {
+      return Promise.resolve({
+        stdout: 'ReactNativeApp/',
+      });
+    }
     return Promise.resolve({stdout: ''});
   });
   return module;
 });
 jest.mock(
-  '/project/root/node_modules/react-native/package.json',
+  '/project/root/ReactNativeApp/node_modules/react-native/package.json',
   () => ({name: 'react-native', version: '0.57.8'}),
   {virtual: true},
 );
 jest.mock(
-  '/project/root/package.json',
+  '/project/root/ReactNativeApp/package.json',
   () => ({name: 'TestApp', dependencies: {'react-native': '^0.57.8'}}),
   {virtual: true},
 );
@@ -94,6 +99,19 @@ test('uses latest version of react-native when none passed', async () => {
   expect(execa).toBeCalledWith('npm', ['info', 'react-native', 'version']);
 }, 60000);
 
+test('applies patch in current working directory', async () => {
+  (fetch: any).mockImplementation(() => Promise.resolve(samplePatch));
+  await upgrade.func([newVersion], ctx, opts);
+  expect(execa).toBeCalledWith('git', [
+    'apply',
+    'tmp-upgrade-rn.patch',
+    '--exclude=ReactNativeApp/package.json',
+    '-p2',
+    '--3way',
+    '--directory=ReactNativeApp/',
+  ]);
+});
+
 test('errors when invalid version passed', async () => {
   await upgrade.func(['next'], ctx, opts);
   expect(logger.error).toBeCalledWith(
@@ -137,9 +155,10 @@ test('fetches regular patch, adds remote, applies patch, installs deps, removes 
   expect(flushOutput()).toMatchInlineSnapshot(`
 "info Fetching diff between v0.57.8 and v0.58.4...
 [fs] write tmp-upgrade-rn.patch
-$ execa git apply --check tmp-upgrade-rn.patch --exclude=package.json -p2 --3way
+$ execa git rev-parse --show-prefix
+$ execa git apply --check tmp-upgrade-rn.patch --exclude=ReactNativeApp/package.json -p2 --3way --directory=ReactNativeApp/
 info Applying diff...
-$ execa git apply tmp-upgrade-rn.patch --exclude=package.json -p2 --3way
+$ execa git apply tmp-upgrade-rn.patch --exclude=ReactNativeApp/package.json -p2 --3way --directory=ReactNativeApp/
 [fs] unlink tmp-upgrade-rn.patch
 $ execa git status -s
 info Installing \\"react-native@0.58.4\\" and its peer dependencies...
@@ -173,6 +192,11 @@ test('cleans up if patching fails,', async () => {
         stderr: 'error: .flowconfig: does not exist in index\n',
       });
     }
+    if (command === 'git' && args[0] === 'rev-parse') {
+      return Promise.resolve({
+        stdout: 'ReactNativeApp/',
+      });
+    }
     return Promise.resolve({stdout: ''});
   });
   try {
@@ -185,9 +209,10 @@ test('cleans up if patching fails,', async () => {
   expect(flushOutput()).toMatchInlineSnapshot(`
 "info Fetching diff between v0.57.8 and v0.58.4...
 [fs] write tmp-upgrade-rn.patch
-$ execa git apply --check tmp-upgrade-rn.patch --exclude=package.json -p2 --3way
+$ execa git rev-parse --show-prefix
+$ execa git apply --check tmp-upgrade-rn.patch --exclude=ReactNativeApp/package.json -p2 --3way --directory=ReactNativeApp/
 info Applying diff (excluding: package.json, .flowconfig)...
-$ execa git apply tmp-upgrade-rn.patch --exclude=package.json --exclude=.flowconfig -p2 --3way
+$ execa git apply tmp-upgrade-rn.patch --exclude=ReactNativeApp/package.json --exclude=ReactNativeApp/.flowconfig -p2 --3way --directory=ReactNativeApp/
 error: .flowconfig: does not exist in index
 error Automatically applying diff failed
 [fs] unlink tmp-upgrade-rn.patch

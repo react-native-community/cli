@@ -137,9 +137,15 @@ const applyPatch = async (
   tmpPatchFile: string,
 ) => {
   let filesToExclude = ['package.json'];
+  const {stdout: relativePathFromRoot} = await execa('git', [
+    'rev-parse',
+    '--show-prefix',
+  ]);
   try {
     try {
-      const excludes = filesToExclude.map(e => `--exclude=${e}`);
+      const excludes = filesToExclude.map(
+        e => `--exclude=${path.join(relativePathFromRoot, e)}`,
+      );
       await execa('git', [
         'apply',
         '--check',
@@ -147,6 +153,7 @@ const applyPatch = async (
         ...excludes,
         '-p2',
         '--3way',
+        `--directory=${relativePathFromRoot}`,
       ]);
       logger.info('Applying diff...');
     } catch (error) {
@@ -160,8 +167,17 @@ const applyPatch = async (
 
       logger.info(`Applying diff (excluding: ${filesToExclude.join(', ')})...`);
     } finally {
-      const excludes = filesToExclude.map(e => `--exclude=${e}`);
-      await execa('git', ['apply', tmpPatchFile, ...excludes, '-p2', '--3way']);
+      const excludes = filesToExclude.map(
+        e => `--exclude=${path.join(relativePathFromRoot, e)}`,
+      );
+      await execa('git', [
+        'apply',
+        tmpPatchFile,
+        ...excludes,
+        '-p2',
+        '--3way',
+        `--directory=${relativePathFromRoot}`,
+      ]);
     }
   } catch (error) {
     if (error.stderr) {

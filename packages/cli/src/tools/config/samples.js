@@ -44,35 +44,36 @@ const dependencyConfig = {
   commands: ['./local-cli/runWindows/runWindows.js'],
 };
 
+export const detectedDependencyConfig = {
+  root: './path/to/library',
+  platforms: {
+    ios: {
+      sourceDir: './path/to/library/ios',
+      folder: './path/to/library',
+      pbxprojPath: './path/to/library/ios/CodePush.xcodeproj/project.pbxproj',
+      podfile: './path/to/podfile',
+      podspec: 'CodePush',
+      projectPath: './path/to/library/ios/CodePush.xcodeproj',
+      projectName: 'CodePush.xcodeproj',
+      libraryFolder: 'Libraries',
+      sharedLibraries: ['libz'],
+    },
+    android: {
+      sourceDir: './path/to/library/android/app',
+      folder: './path/to/library',
+      manifest: {},
+      packageImportPath: 'import com.hello.MyPackage;',
+      packageInstance: 'new MyPackage()',
+    },
+  },
+  assets: dependencyConfig.dependency.assets,
+  hooks: dependencyConfig.dependency.hooks,
+  params: dependencyConfig.dependency.params,
+};
+
 const projectConfig = {
   dependencies: {
-    'react-native-webview': {
-      root: './path/to/library',
-      platforms: {
-        ios: {
-          sourceDir: './path/to/library/ios',
-          folder: './path/to/library',
-          pbxprojPath:
-            './path/to/library/ios/CodePush.xcodeproj/project.pbxproj',
-          podfile: './path/to/podfile',
-          podspec: 'CodePush',
-          projectPath: './path/to/library/ios/CodePush.xcodeproj',
-          projectName: 'CodePush.xcodeproj',
-          libraryFolder: 'Libraries',
-          sharedLibraries: ['libz'],
-        },
-        android: {
-          sourceDir: './path/to/library/android/app',
-          folder: './path/to/library',
-          manifest: {},
-          packageImportPath: 'import com.hello.MyPackage;',
-          packageInstance: 'new MyPackage()',
-        },
-      },
-      assets: dependencyConfig.dependency.assets,
-      hooks: dependencyConfig.dependency.hooks,
-      params: dependencyConfig.dependency.params,
-    },
+    'react-native-webview': detectedDependencyConfig,
   },
   commands: dependencyConfig.commands,
   haste: {

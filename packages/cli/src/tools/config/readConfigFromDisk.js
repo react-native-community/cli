@@ -3,6 +3,7 @@
  *
  * Loads and validates a project configuration
  */
+import {forEach} from 'lodash';
 import comsmiconfig from 'cosmiconfig';
 import path from 'path';
 import {validate} from 'jest-validate';
@@ -19,6 +20,7 @@ import getPackageConfiguration from '../getPackageConfiguration';
 import {
   config as exampleConfig,
   legacyConfig as exampleLegacyConfig,
+  detectedDependencyConfig,
 } from './samples';
 
 /**
@@ -33,12 +35,19 @@ const searchPlaces = ['react-native.config.js', 'package.json'];
 export function readProjectConfigFromDisk(): ProjectUserConfigT {
   const explorer = comsmiconfig('react-native', {searchPlaces});
 
-  const {config} = explorer.searchSync() || {config: {}};
+  const {
+    config: {dependencies, ...config},
+  } = explorer.searchSync() || {config: {}};
 
   validate(config, {exampleConfig});
 
+  forEach(dependencies, dependency =>
+    validate(dependency, {exampleConfig: detectedDependencyConfig}),
+  );
+
   return {
     ...config,
+    dependencies,
     reactNativePath: config.reactNativePath
       ? config.reactNativePath
       : resolveReactNativePath(),

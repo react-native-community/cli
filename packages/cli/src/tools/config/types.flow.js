@@ -14,7 +14,9 @@ import type {
  * Depending on the context, the configuration of the CLI can have both configurations
  * within.
  */
-export type UserConfigT = ProjectUserConfigT & DependencyUserConfigT;
+export type UserConfigT = ProjectUserConfigT &
+  DependenciesUserConfigT &
+  DependencyUserConfigT;
 
 /**
  * Configuration that ships with a project
@@ -166,6 +168,19 @@ export type LegacyDependencyUserConfigT = {
   /**
    * We don't read this configuration, but infer it from other properties.
    */
+  haste?: MetroConfigT,
+};
+
+/**
+ * Users can override "DependenciesConfigT" that we have automatically generated
+ * during the CLI startup
+ */
+export type DependenciesUserConfigT = {
+  dependencies?: {
+    [key: string]: ?DependencyConfigT,
+  },
+  platforms?: PlatformsT,
+  commands?: CommandsT,
   haste?: MetroConfigT,
 };
 

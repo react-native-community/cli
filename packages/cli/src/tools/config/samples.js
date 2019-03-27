@@ -10,10 +10,6 @@ import {multipleValidOptions} from 'jest-validate';
 
 import {type UserConfigT, type LegacyDependencyUserConfigT} from './types.flow';
 
-const projectConfig = {
-  reactNativePath: '.',
-};
-
 const dependencyConfig = {
   dependency: {
     platforms: {
@@ -46,6 +42,44 @@ const dependencyConfig = {
     windows: './platform.js',
   },
   commands: ['./local-cli/runWindows/runWindows.js'],
+};
+
+const projectConfig = {
+  dependencies: {
+    'react-native-webview': {
+      root: './path/to/library',
+      platforms: {
+        ios: {
+          sourceDir: './path/to/library/ios',
+          folder: './path/to/library',
+          pbxprojPath:
+            './path/to/library/ios/CodePush.xcodeproj/project.pbxproj',
+          podfile: './path/to/podfile',
+          podspec: 'CodePush',
+          projectPath: './path/to/library/ios/CodePush.xcodeproj',
+          projectName: 'CodePush.xcodeproj',
+          libraryFolder: 'Libraries',
+          sharedLibraries: ['libz'],
+        },
+        android: {
+          sourceDir: './path/to/library/android/app',
+          folder: './path/to/library',
+          manifest: {},
+          packageImportPath: 'import com.hello.MyPackage;',
+          packageInstance: 'new MyPackage()',
+        },
+      },
+      assets: dependencyConfig.dependency.assets,
+      hooks: dependencyConfig.dependency.hooks,
+      params: dependencyConfig.dependency.params,
+    },
+  },
+  commands: dependencyConfig.commands,
+  haste: {
+    providesModuleNodeModules: ['react-native-windows'],
+    platforms: ['windows'],
+  },
+  reactNativePath: './path/to/react-native',
 };
 
 export const config: UserConfigT = {

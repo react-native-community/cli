@@ -38,7 +38,7 @@ export function readProjectConfigFromDisk(): ProjectUserConfigT {
   }
 
   return {
-    ...config,
+    ...result.value,
     reactNativePath: config.reactNativePath
       ? config.reactNativePath
       : resolveReactNativePath(),
@@ -73,7 +73,7 @@ export function readDependencyConfigFromDisk(
     throw result.error;
   }
 
-  return config;
+  return result.value;
 }
 
 /**
@@ -95,25 +95,25 @@ export function readLegacyDependencyConfigFromDisk(
     return undefined;
   }
 
-  const result = Joi.validate(config, schema.legacyDependencyConfig);
+  const {error, value} = Joi.validate(config, schema.legacyDependencyConfig);
 
-  if (result.error) {
-    throw result.error;
+  if (error) {
+    throw error;
   }
 
   return {
     dependency: {
       platforms: {
-        ios: config.ios,
-        android: config.android,
+        ios: value.ios,
+        android: value.android,
       },
-      assets: config.assets,
-      hooks: config.commands,
-      params: config.params,
+      assets: value.assets,
+      hooks: value.commands,
+      params: value.params,
     },
-    commands: [].concat(config.plugin || []),
-    platforms: config.platform
-      ? require(path.join(rootFolder, config.platform))
+    commands: [].concat(value.plugin || []),
+    platforms: value.platform
+      ? require(path.join(rootFolder, value.platform))
       : undefined,
   };
 }

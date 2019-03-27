@@ -29,9 +29,11 @@ import * as android from '../android';
  * Loads CLI configuration
  */
 function loadConfig(): ConfigT {
+  const projectRoot = process.cwd();
+
   const defaultConfig = findDependencies().reduce(
     (acc: DependenciesConfigT, dependencyName) => {
-      const root = path.join(process.cwd(), 'node_modules', dependencyName);
+      const root = path.join(projectRoot, 'node_modules', dependencyName);
 
       /**
        * Read user-defined configuration for a dependency from new and old location.
@@ -165,7 +167,7 @@ function loadConfig(): ConfigT {
    * Default configuration can be overriden by a project
    */
   return merge(
-    {...defaultConfig, root: process.cwd()},
+    {...defaultConfig, root: projectRoot},
     readProjectConfigFromDisk(),
   );
 }

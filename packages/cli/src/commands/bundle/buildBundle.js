@@ -13,14 +13,14 @@ import outputBundle from 'metro/src/shared/output/bundle';
 import path from 'path';
 import chalk from 'chalk';
 import type {CommandLineArgs} from './bundleCommandLineArgs';
-import type {ConfigT} from '../../tools/config/types.flow';
+import type {ContextT} from '../../tools/types.flow';
 import saveAssets from './saveAssets';
 import loadMetroConfig from '../../tools/loadMetroConfig';
 import logger from '../../tools/logger';
 
 async function buildBundle(
   args: CommandLineArgs,
-  ctx: ConfigT,
+  ctx: ContextT,
   output: typeof outputBundle = outputBundle,
 ) {
   const config = await loadMetroConfig(ctx, {

@@ -30,13 +30,6 @@ export type ProjectUserConfigT = {
 };
 
 /**
- * Project configuration after being processed by the loading mechanism
- */
-export type ProjectConfigT = {
-  reactNativePath: string,
-};
-
-/**
  * An array of assets defined by a library to link to a project
  */
 type AssetsT = Array<string>;
@@ -63,17 +56,13 @@ type CommandsT = Array<string>;
 
 /**
  * A map with additional platforms that ship with a dependency.
- *
- * String format is deprecated and will be removed in the future.
  */
 export type PlatformsT = {
-  [key: string]:
-    | string
-    | {
-        dependencyConfig?: Function,
-        projectConfig?: Function,
-        linkConfig?: Function,
-      },
+  [key: string]: {
+    dependencyConfig?: Function,
+    projectConfig?: Function,
+    linkConfig?: Function,
+  },
 };
 
 /**
@@ -85,43 +74,45 @@ type MetroConfigT = {
   providesModuleNodeModules: Array<string>,
 };
 
-/**
- * Configuration that ships with a dependency
- */
 export type DependencyUserConfigT = {
-  /**
-   * Key that defines settings related to native code and linking
-   */
-  dependency?: {
-    /**
-     * Additional configuration for native code on per platform basis.
-     * Useful to overwrite built-in heurstics in non-default setups
-     */
-    platforms?: {
-      android?: ?AndroidConfigParamsT,
-      ios?: ?IOSConfigParamsT,
+  dependency: {
+    platforms: {
+      android?: AndroidConfigParamsT,
+      ios?: IOSConfigParamsT,
       [key: string]: any,
     },
-    assets?: AssetsT,
-    hooks?: HooksT,
-    params?: ParamsT,
+    assets: AssetsT,
+    hooks: HooksT,
+    params: ParamsT,
   },
-  commands?: CommandsT,
-  platforms?: PlatformsT,
+  commands: CommandsT,
+  platforms: PlatformsT,
+};
+
+export type ProjectConfigT = {
+  root: string,
+  reactNativePath: string,
+  dependencies: {
+    [key: string]: {
+      platforms: {
+        android: DependencyConfigAndroidT | null,
+        ios: DependencyConfigIOST | null,
+        [key: string]: any,
+      },
+      assets: AssetsT,
+      hooks: HooksT,
+      params: ParamsT,
+    },
+  },
+  platforms: PlatformsT,
+  commands: CommandsT,
+  haste: MetroConfigT,
 };
 
 /**
  * Dependency configuration after being processed by the CLI
  */
 export type DependencyConfigT = {
-  /**
-   * Dependency location on the disk
-   */
-  root: string,
-  /**
-   * An object containing configuration for each of the dependencies,
-   * or null, if dependency does not support given platform
-   */
   platforms: {
     android: DependencyConfigAndroidT | null,
     ios: DependencyConfigIOST | null,
@@ -184,25 +175,4 @@ export type DependenciesUserConfigT = {
   haste?: MetroConfigT,
 };
 
-export type DependenciesConfigT = {
-  dependencies: {
-    [key: string]: DependencyConfigT,
-  },
-  /**
-   * An array of platforms collected by parsing dependencies
-   */
-  platforms: PlatformsT,
-  /**
-   * An array of commands collected by parsing dependencies
-   */
-  commands: CommandsT,
-  /**
-   * Extra Metro configuration to use to support additonal platforms
-   */
-  haste: MetroConfigT,
-};
-
-export type ConfigT = ProjectConfigT &
-  DependenciesConfigT & {
-    root: string,
-  };
+export type ConfigT = ProjectConfigT;

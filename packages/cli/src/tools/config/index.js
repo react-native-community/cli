@@ -1,7 +1,7 @@
 /**
  * @flow
  */
-import {get, pickBy, mapValues} from 'lodash';
+import dedent from 'dedent';
 import path from 'path';
 import merge from 'deepmerge';
 
@@ -12,18 +12,14 @@ import {
   readLegacyDependencyConfigFromDisk,
 } from './readConfigFromDisk';
 
-import {
-  type DependencyConfigT,
-  type ConfigT,
-  type PlatformsT,
-  type DependenciesConfigT,
-} from './types.flow';
+import {type ConfigT, type ProjectConfigT} from './types.flow';
 
 /**
  * Built-in platforms
  */
 import * as ios from '../ios';
 import * as android from '../android';
+import resolveReactNativePath from './resolveReactNativePath';
 
 /**
  * Loads CLI configuration
@@ -31,125 +27,55 @@ import * as android from '../android';
 function loadConfig(): ConfigT {
   const projectRoot = process.cwd();
 
-  const defaultConfig = findDependencies().reduce(
-    (acc: DependenciesConfigT, dependencyName) => {
+  const inferredProjectConfig = findDependencies().reduce(
+    (acc: ProjectConfigT, dependencyName) => {
       const root = path.join(projectRoot, 'node_modules', dependencyName);
 
-      /**
-       * Read user-defined configuration for a dependency from new and old location.
-       * We provide empty object at the end on purpose to access it easily with `get`
-       */
       const config =
-        readDependencyConfigFromDisk(root, dependencyName) ||
         readLegacyDependencyConfigFromDisk(root, dependencyName) ||
-        {};
-
-      /**
-       * Because of legacy reasons (`rnpm` configuration), platforms can be an object.
-       * This code handles this special case. In future releases, we will allow paths
-       * to files only.
-       */
-      const availablePlatforms: PlatformsT = mapValues(
-        get(config, 'platforms', {}),
-        pathOrObject =>
-          typeof pathOrObject === 'string'
-            ? require(path.join(dependencyName, pathOrObject))
-            : pathOrObject,
-      );
-
-      /**
-       * Lazily gets dependency config for a current dependency.
-       *
-       * Note: this code is outside of the dynamic getter
-       * on purpose to make Flow work.
-       */
-      const getDependencyConfig = (): DependencyConfigT => {
-        /**
-         * At the time of executing this function, `acc.platforms` will already
-         * have all the platforms that are defined by other dependencies too.
-         */
-        const dependencyPlatforms = Object.keys(acc.platforms).reduce(
-          (dependency, platform) => {
-            /**
-             * We generate a configuration for a given platform by passing
-             * some non-standard developer-defined settings too
-             */
-            const platformConfig = get(
-              config,
-              `dependency.platforms.${platform}`,
-              {},
-            );
-            // $FlowIssue: Invalid platforms are already filtered-out below
-            const detectedConfig = acc.platforms[platform].dependencyConfig(
-              root,
-              platformConfig,
-            );
-            if (detectedConfig === null) {
-              dependency[platform] = null;
-            } else {
-              dependency[platform] = {
-                ...detectedConfig,
-                ...platformConfig,
-              };
-            }
-            return dependency;
-          },
-          {
-            ios: null,
-            android: null,
-          },
-        );
-        return {
-          root,
-          platforms: dependencyPlatforms,
-          assets: get(config, 'assets', []),
-          hooks: get(config, 'hooks', {}),
-          params: get(config, 'params', []),
-        };
-      };
-
+        readDependencyConfigFromDisk(root, dependencyName);
+      console.log(config);
       return {
+        ...acc,
         dependencies: {
           ...acc.dependencies,
           // $FlowIssue: Computed getters are not yet supported.
           get [dependencyName]() {
-            return getDependencyConfig();
+            return {
+              platforms: Object.keys(acc.platforms).reduce(
+                (dependency, platform) =>
+                  acc.platforms[platform].dependencyConfig(
+                    root,
+                    config.dependency.platforms[platform],
+                  ),
+                {},
+              ),
+              assets: config.dependency.assets,
+              hooks: config.dependency.hooks,
+              params: config.dependency.params,
+            };
           },
         },
         commands: acc.commands.concat(
-          get(config, 'commands', []).map(pathToCommand =>
+          config.commands.map(pathToCommand =>
             path.join(dependencyName, pathToCommand),
           ),
         ),
-        /**
-         * Note: In this context, a `platform` is a valid target that we can
-         * link dependencies for.
-         *
-         * This is impossible when either `projectConfig` and `dependencyConfig` are
-         * not provided hence the `pickBy` check.
-         */
         platforms: {
           ...acc.platforms,
-          ...pickBy(
-            availablePlatforms,
-            (platform: PlatformsT) =>
-              typeof platform.dependencyConfig === 'function' &&
-              typeof platform.projectConfig === 'function' &&
-              typeof platform.linkConfig === 'function',
-          ),
+          ...config.platforms,
         },
         haste: {
           providesModuleNodeModules: acc.haste.providesModuleNodeModules.concat(
-            Object.keys(availablePlatforms).length > 0 ? dependencyName : [],
+            Object.keys(config.platforms).length > 0 ? dependencyName : [],
           ),
-          platforms: [
-            ...acc.haste.platforms,
-            ...Object.keys(availablePlatforms),
-          ],
+          platforms: [...acc.haste.platforms, ...Object.keys(config.platforms)],
         },
       };
     },
     ({
+      root: projectRoot,
+      reactNativePath: resolveReactNativePath(),
       dependencies: {},
       commands: [],
       platforms: {
@@ -160,16 +86,27 @@ function loadConfig(): ConfigT {
         providesModuleNodeModules: [],
         platforms: [],
       },
-    }: DependenciesConfigT),
+    }: ProjectConfigT),
   );
 
-  /**
-   * Default configuration can be overriden by a project
-   */
-  return merge(
-    {...defaultConfig, root: projectRoot},
-    readProjectConfigFromDisk(),
-  );
+  const config = merge(inferredProjectConfig, readProjectConfigFromDisk());
+
+  if (config.reactNativePath === 'not-found') {
+    throw new Error(dedent`
+      Unable to find React Native files. Make sure "react-native" module is installed
+      in your project dependencies.
+
+      If you are using React Native from a non-standard location, consider setting:
+      {
+        "react-native": {
+          "reactNativePath": "./path/to/react-native"
+        }
+      }
+      in your \`package.json\`.
+    `);
+  }
+
+  return config;
 }
 
 export default loadConfig;

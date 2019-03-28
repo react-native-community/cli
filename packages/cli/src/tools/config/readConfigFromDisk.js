@@ -55,7 +55,7 @@ export function readProjectConfigFromDisk(): ProjectUserConfigT {
 export function readDependencyConfigFromDisk(
   rootFolder: string,
   dependencyName: string,
-): ?DependencyUserConfigT {
+): DependencyUserConfigT {
   const explorer = comsmiconfig('react-native', {
     stopDir: rootFolder,
     searchPlaces,
@@ -63,16 +63,12 @@ export function readDependencyConfigFromDisk(
 
   const {config} = explorer.searchSync(rootFolder) || {config: undefined};
 
-  if (!config) {
-    return undefined;
-  }
-
   const result = Joi.validate(config, schema.dependencyUserConfig);
 
   if (result.error) {
     throw result.error;
   }
-
+  console.log(config);
   return result.value;
 }
 
@@ -95,25 +91,36 @@ export function readLegacyDependencyConfigFromDisk(
     return undefined;
   }
 
-  const {error, value} = Joi.validate(config, schema.legacyDependencyConfig);
+  const legacyValidation = Joi.validate(config, schema.legacyDependencyConfig);
 
-  if (error) {
-    throw error;
+  if (legacyValidation.error) {
+    throw legacyValidation.error;
   }
 
-  return {
+  const transformedConfig = {
     dependency: {
       platforms: {
-        ios: value.ios,
-        android: value.android,
+        ios: legacyValidation.value.ios,
+        android: legacyValidation.value.android,
       },
-      assets: value.assets,
-      hooks: value.commands,
-      params: value.params,
+      assets: legacyValidation.value.assets,
+      hooks: legacyValidation.value.commands,
+      params: legacyValidation.value.params,
     },
-    commands: [].concat(value.plugin || []),
-    platforms: value.platform
-      ? require(path.join(rootFolder, value.platform))
+    commands: [].concat(legacyValidation.value.plugin || []),
+    platforms: legacyValidation.value.platform
+      ? require(path.join(rootFolder, legacyValidation.value.platform))
       : undefined,
   };
+
+  const validation = Joi.validate(
+    transformedConfig,
+    schema.dependencyUserConfig,
+  );
+
+  if (validation.error) {
+    throw validation.error;
+  }
+
+  return validation.value;
 }

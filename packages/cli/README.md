@@ -8,7 +8,6 @@ CLI comes with a set of commands and flags you can pass to them.
 
 - [`bundle`](#bundle)
 - [`dependencies`](#dependencies)
-- [`eject`](#eject)
 - [`info`](#info)
 - [`install`](#install)
 - [`library`](#library)
@@ -28,8 +27,6 @@ _Note: This document is still under development and doesn't represent the full A
 ### `bundle`
 
 ### `dependencies`
-
-### `eject`
 
 ### `info`
 

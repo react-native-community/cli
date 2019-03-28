@@ -12,6 +12,7 @@ import {type DependencyConfigT, type ProjectConfigT} from './types.flow';
 import resolveReactNativePath from './resolveReactNativePath';
 
 import * as schema from './schema';
+import logger from '../logger';
 
 /**
  * Places to look for the new configuration
@@ -70,9 +71,9 @@ export function readDependencyConfigFromDisk(
 export function readLegacyDependencyConfigFromDisk(
   rootFolder: string,
 ): ?DependencyConfigT {
-  const config = require(path.join(rootFolder, 'package.json')).rnpm;
+  const config = require(path.join(rootFolder, 'package.json'));
 
-  if (!config) {
+  if (!config.rnpm) {
     return undefined;
   }
 
@@ -91,6 +92,12 @@ export function readLegacyDependencyConfigFromDisk(
       ? require(path.join(rootFolder, config.platform))
       : undefined,
   };
+
+  logger.warn(
+    `Package '${path.basename(
+      config.name,
+    )}' is using deprecated "rnpm" config that will stop working from next release. Consider upgrading to the new config format.`,
+  );
 
   const result = Joi.validate(transformedConfig, schema.dependencyConfig);
 

@@ -10,6 +10,7 @@ import path from 'path';
 import {type DependencyConfigT, type ProjectConfigT} from './types.flow';
 
 import resolveReactNativePath from './resolveReactNativePath';
+import {JoiError} from '../errors';
 
 import * as schema from './schema';
 import logger from '../logger';
@@ -31,7 +32,7 @@ export function readProjectConfigFromDisk(): ProjectConfigT {
   const result = Joi.validate(config, schema.projectConfig);
 
   if (result.error) {
-    throw result.error;
+    throw new JoiError(result.error);
   }
 
   return {
@@ -59,7 +60,7 @@ export function readDependencyConfigFromDisk(
   const result = Joi.validate(config, schema.dependencyConfig);
 
   if (result.error) {
-    throw result.error;
+    throw new JoiError(result.error);
   }
 
   return result.value;
@@ -102,7 +103,7 @@ export function readLegacyDependencyConfigFromDisk(
   const result = Joi.validate(transformedConfig, schema.dependencyConfig);
 
   if (result.error) {
-    throw result.error;
+    throw new JoiError(result.error);
   }
 
   return result.value;

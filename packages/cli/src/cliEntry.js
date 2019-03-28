@@ -35,7 +35,7 @@ commander.on('command:*', () => {
 const defaultOptParser = val => val;
 
 const handleError = err => {
-  logger.error(err.stack);
+  logger.error(err.message);
   process.exit(1);
 };
 

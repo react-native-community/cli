@@ -60,23 +60,24 @@ test('init --template', () => {
   );
 });
 
-test('init --template file:custom/template', () => {
+test('init --template file:/tmp/custom/template', () => {
   writeFiles(DIR, {
     'custom/template/template.config.js': `module.exports = {
       placeholderName: 'HelloWorld',
       templateDir: './template-dir',
     };`,
+    'custom/template/package.json':
+      '{ "name": "template", "version": "0.0.1" }',
     'custom/template/template-dir/package.json': '{}',
     'custom/template/template-dir/empty': '',
   });
-  const {stdout, stderr} = run(DIR, [
+
+  const {stdout} = run(DIR, [
     'init',
     '--template',
-    'file:custom/template',
+    `file://${path.resolve(DIR, 'custom', 'template')}`,
     'TestInit',
   ]);
-  console.log(stdout);
-  console.log(stderr);
-  console.log(DIR);
+
   expect(stdout).toContain('Run instructions');
 });

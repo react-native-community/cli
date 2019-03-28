@@ -49,7 +49,13 @@ test('init --template', () => {
   ]);
   expect(stdout).toContain('Initializing new project from extrenal template');
   expect(stdout).toContain('Run instructions');
+
   // make sure we don't leave garbage
   expect(fs.readdirSync(DIR)).toEqual(['TestInit']);
   expect(fs.readdirSync(path.join(DIR, 'TestInit'))).toEqual(templateFiles);
+
+  const pkgJson = require(path.join(DIR, 'TestInit', 'package.json'));
+  expect(pkgJson).toMatchSnapshot(
+    'package.json contains necessary configuration',
+  );
 });

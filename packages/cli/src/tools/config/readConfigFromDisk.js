@@ -48,13 +48,9 @@ export function readProjectConfigFromDisk(): ProjectUserConfigT {
 /**
  * Reads a dependency configuration as defined by the developer
  * inside `node_modules`.
- *
- * Returns `undefined` when no custom configuration is found
- * in the dependency root.
  */
 export function readDependencyConfigFromDisk(
   rootFolder: string,
-  dependencyName: string,
 ): DependencyUserConfigT {
   const explorer = comsmiconfig('react-native', {
     stopDir: rootFolder,
@@ -68,59 +64,43 @@ export function readDependencyConfigFromDisk(
   if (result.error) {
     throw result.error;
   }
-  console.log(config);
+
   return result.value;
 }
 
 /**
  * Reads a legacy configuaration from a `package.json` "rnpm" key.
- *
- * Prints deprecation warnings for each of the keys along the upgrade instructions.
- *
- * Returns `undefined` when no configuration is provided.
  */
 export function readLegacyDependencyConfigFromDisk(
   rootFolder: string,
-  dependencyName: string,
 ): ?DependencyUserConfigT {
-  const config = getPackageConfiguration(rootFolder);
+  const config = require(path.join(rootFolder, 'package.json')).rnpm;
 
-  // For historical reasons, `getPackageConfiguration` always returns an
-  // object, including empty when no cofinguration found.
-  if (Object.keys(config).length === 0) {
+  if (!config) {
     return undefined;
-  }
-
-  const legacyValidation = Joi.validate(config, schema.legacyDependencyConfig);
-
-  if (legacyValidation.error) {
-    throw legacyValidation.error;
   }
 
   const transformedConfig = {
     dependency: {
       platforms: {
-        ios: legacyValidation.value.ios,
-        android: legacyValidation.value.android,
+        ios: config.ios,
+        android: config.android,
       },
-      assets: legacyValidation.value.assets,
-      hooks: legacyValidation.value.commands,
-      params: legacyValidation.value.params,
+      assets: config.assets,
+      hooks: config.commands,
+      params: config.params,
     },
-    commands: [].concat(legacyValidation.value.plugin || []),
-    platforms: legacyValidation.value.platform
-      ? require(path.join(rootFolder, legacyValidation.value.platform))
+    commands: [].concat(config.plugin || []),
+    platforms: config.platform
+      ? require(path.join(rootFolder, config.platform))
       : undefined,
   };
 
-  const validation = Joi.validate(
-    transformedConfig,
-    schema.dependencyUserConfig,
-  );
+  const result = Joi.validate(transformedConfig, schema.dependencyUserConfig);
 
-  if (validation.error) {
-    throw validation.error;
+  if (result.error) {
+    throw result.error;
   }
 
-  return validation.value;
+  return result.value;
 }

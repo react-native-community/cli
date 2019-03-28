@@ -32,9 +32,9 @@ function loadConfig(): ConfigT {
       const root = path.join(projectRoot, 'node_modules', dependencyName);
 
       const config =
-        readLegacyDependencyConfigFromDisk(root, dependencyName) ||
-        readDependencyConfigFromDisk(root, dependencyName);
-      console.log(config);
+        readLegacyDependencyConfigFromDisk(root) ||
+        readDependencyConfigFromDisk(root);
+
       return {
         ...acc,
         dependencies: {

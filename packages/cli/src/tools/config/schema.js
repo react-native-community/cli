@@ -2,15 +2,12 @@
  * @flow
  */
 import t from 'joi';
-import {fromPairs} from 'lodash';
 
 const map = (key, value) =>
   t
     .object()
     .unknown(true)
     .pattern(key, value);
-
-const obj = keys => fromPairs(keys.map(key => [key, undefined]));
 
 /**
  * Schema for DependencyUserConfigT
@@ -71,32 +68,15 @@ export const dependencyUserConfig = t
   .default();
 
 /**
- * Schema for LegacyDependencyUserConfigT
- */
-export const legacyDependencyConfig = t.object({
-  plugin: t.alternatives().try(t.array().items(t.string()), t.string()),
-  platform: t.string(),
-  haste: t.object({
-    platforms: t.array().items(t.string()),
-    providesModuleNodeModules: t.array().items(t.string()),
-  }),
-  assets: t.reach(dependencyUserConfig, 'dependency.assets'),
-  commands: t.reach(dependencyUserConfig, 'dependency.hooks'),
-  android: t.reach(dependencyUserConfig, 'dependency.platforms.android'),
-  ios: t.reach(dependencyUserConfig, 'dependency.platforms.ios'),
-  params: t.reach(dependencyUserConfig, 'dependency.params'),
-});
-
-/**
  * Schema for ProjectUserConfigT
  */
-export const projectUserConfig = t.object({
-  dependencies: map(
-    t.string(),
-    t
-      .object({
-        platforms: map(t.string(), t.any())
-          .keys({
+export const projectUserConfig = t
+  .object({
+    dependencies: map(
+      t.string(),
+      t
+        .object({
+          platforms: map(t.string(), t.any()).keys({
             ios: t
               .object({
                 sourceDir: t.string(),
@@ -118,41 +98,25 @@ export const projectUserConfig = t.object({
                 packageInstance: t.string(),
               })
               .allow(null),
-          })
-          .default(),
-        assets: t
-          .array()
-          .items(t.string())
-          .default([]),
-        hooks: map(t.string(), t.string()).default([]),
-        params: t.array().items(
-          t
-            .object({
+          }),
+          assets: t.array().items(t.string()),
+          hooks: map(t.string(), t.string()),
+          params: t.array().items(
+            t.object({
               name: t.string(),
               type: t.string(),
               message: t.string(),
-            })
-            .default(),
-        ),
-      })
-      .allow(null),
-  ).default(),
-  commands: t
-    .array()
-    .items(t.string())
-    .default([]),
-  haste: t
-    .object({
-      providesModuleNodeModules: t
-        .array()
-        .items(t.string())
-        .default([]),
-      platforms: t
-        .array()
-        .items(t.string())
-        .default([]),
-    })
-    .default(),
-  reactNativePath: t.string(),
-  root: t.string(),
-});
+            }),
+          ),
+        })
+        .allow(null),
+    ),
+    commands: t.array().items(t.string()),
+    haste: t.object({
+      providesModuleNodeModules: t.array().items(t.string()),
+      platforms: t.array().items(t.string()),
+    }),
+    reactNativePath: t.string(),
+    root: t.string(),
+  })
+  .default({});

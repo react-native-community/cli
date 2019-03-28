@@ -43,13 +43,13 @@ test('init --template', () => {
     'yarn.lock',
   ];
 
-  const {stdout, stderr} = run(DIR, [
+  const {stdout} = run(DIR, [
     'init',
     '--template',
     'react-native-new-template',
     'TestInit',
   ]);
-  console.log(stderr);
+
   expect(stdout).toContain('Initializing new project from extrenal template');
   expect(stdout).toContain('Run instructions');
 

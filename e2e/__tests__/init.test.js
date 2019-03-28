@@ -28,7 +28,8 @@ test('init --template', () => {
     '.eslintrc.js',
     '.flowconfig',
     '.gitattributes',
-    '.gitignore',
+    // should be here, but it's not published yet
+    // '.gitignore',
     '.watchmanconfig',
     'App.js',
     '__tests__',
@@ -42,12 +43,13 @@ test('init --template', () => {
     'yarn.lock',
   ];
 
-  const {stdout} = run(DIR, [
+  const {stdout, stderr} = run(DIR, [
     'init',
     '--template',
     'react-native-new-template',
     'TestInit',
   ]);
+  console.log(stderr);
   expect(stdout).toContain('Initializing new project from extrenal template');
   expect(stdout).toContain('Run instructions');
 

@@ -38,11 +38,18 @@ const getRNPeerDeps = async (
   return JSON.parse(stdout);
 };
 
+const getProjectName = projectDir => {
+  const {name: appJsonName} = require(path.join(projectDir, 'app.json'));
+  const {name: pckJsonName} = require(path.join(projectDir, 'package.json'));
+
+  return appJsonName !== pckJsonName ? appJsonName : pckJsonName;
+};
+
 const getPatch = async (currentVersion, newVersion, projectDir) => {
   let patch;
 
   const rnDiffAppName = 'RnDiffApp';
-  const {name} = require(path.join(projectDir, 'package.json'));
+  const name = getProjectName(projectDir);
 
   logger.info(`Fetching diff between v${currentVersion} and v${newVersion}...`);
 

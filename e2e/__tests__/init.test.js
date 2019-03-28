@@ -59,3 +59,24 @@ test('init --template', () => {
     'package.json contains necessary configuration',
   );
 });
+
+test('init --template file:custom/template', () => {
+  writeFiles(DIR, {
+    'custom/template/template.config.js': `module.exports = {
+      placeholderName: 'HelloWorld',
+      templateDir: './template-dir',
+    };`,
+    'custom/template/template-dir/package.json': '{}',
+    'custom/template/template-dir/empty': '',
+  });
+  const {stdout, stderr} = run(DIR, [
+    'init',
+    '--template',
+    'file:custom/template',
+    'TestInit',
+  ]);
+  console.log(stdout);
+  console.log(stderr);
+  console.log(DIR);
+  expect(stdout).toContain('Run instructions');
+});

@@ -24,7 +24,7 @@
     "compression": "^1.7.1",
     "connect": "^3.6.5",
     "denodeify": "^1.2.1",
-    "envinfo": "^5.7.0",
+    "envinfo": "^7.1.0",
     "errorhandler": "^1.5.0",
     "escape-string-regexp": "^1.0.5",
     "execa": "^1.0.0",

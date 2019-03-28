@@ -12,7 +12,7 @@ import type {
   LocalCommandT,
 } from '../tools/types.flow';
 
-import {type ConfigT} from '../tools/config/types.flow';
+import {type ContextT} from '../tools/types.flow';
 
 import server from './server/server';
 import runIOS from './runIOS/runIOS';
@@ -63,7 +63,7 @@ const loadLocalCommands: Array<LocalCommandT> = [
 const loadProjectCommands = ({
   root,
   commands,
-}: ConfigT): Array<ProjectCommandT> => {
+}: ContextT): Array<ProjectCommandT> => {
   return commands.reduce((acc: Array<ProjectCommandT>, cmdPath: string) => {
     /**
      * `pathToCommand` is a path to a file where commands are defined, relative to `node_modules`
@@ -103,7 +103,7 @@ const loadProjectCommands = ({
 /**
  * Loads all the commands inside a given `root` folder
  */
-export function getCommands(ctx: ConfigT): Array<CommandT> {
+export function getCommands(ctx: ContextT): Array<CommandT> {
   return [
     ...loadLocalCommands,
     {

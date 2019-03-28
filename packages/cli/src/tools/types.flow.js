@@ -2,9 +2,9 @@
  * @flow
  */
 
-import {type ProjectConfigT} from './config/types.flow';
+import {type ProjectConfigT as ConfigT} from './config/types.flow';
 
-export type ContextT = ProjectConfigT;
+export type ContextT = ConfigT;
 
 export type LocalCommandT = {
   name: string,

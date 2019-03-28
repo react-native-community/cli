@@ -36,8 +36,8 @@
   },
   "jest": {
     "projects": [
-      "packages/*",
-      "e2e"
+      "<rootDir>/packages/*",
+      "<rootDir>/e2e"
     ]
   }
 }

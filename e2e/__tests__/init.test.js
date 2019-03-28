@@ -28,6 +28,7 @@ test('init --template', () => {
     '.eslintrc.js',
     '.flowconfig',
     '.gitattributes',
+    '.gitignore',
     '.watchmanconfig',
     'App.js',
     '__tests__',

@@ -23,7 +23,9 @@
     "babel-jest": "^24.0.0",
     "chalk": "^2.4.2",
     "eslint": "^5.10.0",
-    "flow-bin": "^0.94.0",
+    "execa": "^1.0.0",
+    "flow-bin": "^0.95.1",
+    "flow-typed": "^2.5.1",
     "glob": "^7.1.3",
     "jest": "^24.0.0",
     "lerna": "^3.10.6",
@@ -39,12 +41,16 @@
       "node": true
     },
     "rules": {
-      "prettier/prettier": [2, "fb"]
+      "prettier/prettier": [
+        2,
+        "fb"
+      ]
     }
   },
   "jest": {
     "projects": [
-      "packages/*"
+      "packages/*",
+      "e2e"
     ]
   }
 }

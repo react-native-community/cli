@@ -12,7 +12,7 @@ import {
   readLegacyDependencyConfigFromDisk,
 } from './readConfigFromDisk';
 
-import {type ConfigT, type ProjectConfigT} from './types.flow';
+import {type ProjectConfigT} from './types.flow';
 
 /**
  * Built-in platforms
@@ -24,7 +24,7 @@ import resolveReactNativePath from './resolveReactNativePath';
 /**
  * Loads CLI configuration
  */
-function loadConfig(): ConfigT {
+function loadConfig(): ProjectConfigT {
   const projectRoot = process.cwd();
 
   const inferredProjectConfig = findDependencies().reduce(
@@ -89,7 +89,10 @@ function loadConfig(): ConfigT {
     }: ProjectConfigT),
   );
 
-  const config = merge(inferredProjectConfig, readProjectConfigFromDisk());
+  const config: ProjectConfigT = merge(
+    inferredProjectConfig,
+    readProjectConfigFromDisk(),
+  );
 
   if (config.reactNativePath === 'not-found') {
     throw new Error(dedent`

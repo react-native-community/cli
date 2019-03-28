@@ -10,9 +10,9 @@ const map = (key, value) =>
     .pattern(key, value);
 
 /**
- * Schema for DependencyUserConfigT
+ * Schema for DependencyConfigT
  */
-export const dependencyUserConfig = t
+export const dependencyConfig = t
   .object({
     dependency: t
       .object({
@@ -68,9 +68,9 @@ export const dependencyUserConfig = t
   .default();
 
 /**
- * Schema for ProjectUserConfigT
+ * Schema for ProjectConfigT
  */
-export const projectUserConfig = t
+export const projectConfig = t
   .object({
     dependencies: map(
       t.string(),

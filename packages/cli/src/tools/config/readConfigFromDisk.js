@@ -7,13 +7,9 @@ import Joi from 'joi';
 import comsmiconfig from 'cosmiconfig';
 import path from 'path';
 
-import {
-  type DependencyUserConfigT,
-  type ProjectUserConfigT,
-} from './types.flow';
+import {type DependencyConfigT, type ProjectConfigT} from './types.flow';
 
 import resolveReactNativePath from './resolveReactNativePath';
-import getPackageConfiguration from '../getPackageConfiguration';
 
 import * as schema from './schema';
 
@@ -26,12 +22,12 @@ const searchPlaces = ['react-native.config.js', 'package.json'];
  * Reads a project configuration as defined by the user in the current
  * workspace.
  */
-export function readProjectConfigFromDisk(): ProjectUserConfigT {
+export function readProjectConfigFromDisk(): ProjectConfigT {
   const explorer = comsmiconfig('react-native', {searchPlaces});
 
   const {config} = explorer.searchSync() || {config: {}};
 
-  const result = Joi.validate(config, schema.projectUserConfig);
+  const result = Joi.validate(config, schema.projectConfig);
 
   if (result.error) {
     throw result.error;
@@ -51,7 +47,7 @@ export function readProjectConfigFromDisk(): ProjectUserConfigT {
  */
 export function readDependencyConfigFromDisk(
   rootFolder: string,
-): DependencyUserConfigT {
+): DependencyConfigT {
   const explorer = comsmiconfig('react-native', {
     stopDir: rootFolder,
     searchPlaces,
@@ -59,7 +55,7 @@ export function readDependencyConfigFromDisk(
 
   const {config} = explorer.searchSync(rootFolder) || {config: undefined};
 
-  const result = Joi.validate(config, schema.dependencyUserConfig);
+  const result = Joi.validate(config, schema.dependencyConfig);
 
   if (result.error) {
     throw result.error;
@@ -73,7 +69,7 @@ export function readDependencyConfigFromDisk(
  */
 export function readLegacyDependencyConfigFromDisk(
   rootFolder: string,
-): ?DependencyUserConfigT {
+): ?DependencyConfigT {
   const config = require(path.join(rootFolder, 'package.json')).rnpm;
 
   if (!config) {
@@ -96,7 +92,7 @@ export function readLegacyDependencyConfigFromDisk(
       : undefined,
   };
 
-  const result = Joi.validate(transformedConfig, schema.dependencyUserConfig);
+  const result = Joi.validate(transformedConfig, schema.dependencyConfig);
 
   if (result.error) {
     throw result.error;

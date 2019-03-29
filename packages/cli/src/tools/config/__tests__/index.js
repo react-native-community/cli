@@ -3,6 +3,8 @@ import os from 'os';
 
 import loadConfig from '../';
 
+import {cleanup, writeFiles} from '../../../../../../e2e/helpers';
+
 const root = path.resolve(os.tmpdir(), 'resolve_config_path_test');
 
 beforeEach(() => cleanup(root));
@@ -10,18 +12,14 @@ afterEach(() => cleanup(root));
 
 describe('config', () => {
   it('should have a valid structure by default', () => {
-    fs.__setMockFilesystem({
-      root: {
-        'react-native.config.js': JSON.stringify({
-          reactNativePath: '.',
-        }),
-        'package.json': JSON.stringify({
-          dependencies: {},
-          devDependencies: {},
-        }),
-      },
+    writeFiles(root, {
+      'package.json': JSON.stringify({
+        dependencies: {},
+        devDependencies: {},
+        'react-native': {reactNativePath: '.'},
+      }),
     });
-    const config = loadConfig(root);
-    console.log(config);
+    const {root: _root, ...config} = loadConfig(root);
+    expect(config).toMatchSnapshot();
   });
 });

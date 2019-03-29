@@ -25,7 +25,7 @@ const searchPlaces = ['react-native.config.js', 'package.json'];
  */
 export function readProjectConfigFromDisk(rootFolder: string): ProjectConfigT {
   const explorer = cosmiconfig('react-native', {searchPlaces});
-  console.log(searchPlaces, rootFolder);
+
   const {config} = explorer.searchSync(rootFolder) || {config: undefined};
 
   const result = Joi.validate(config, schema.projectConfig);

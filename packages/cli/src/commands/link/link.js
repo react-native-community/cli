@@ -19,7 +19,6 @@ import getProjectConfig from './getProjectConfig';
 import linkDependency from './linkDependency';
 import linkAssets from './linkAssets';
 import linkAll from './linkAll';
-import findReactNativeScripts from '../../tools/findReactNativeScripts';
 import getPlatforms, {getPlatformName} from '../../tools/getPlatforms';
 
 type FlagsType = {
@@ -58,19 +57,6 @@ function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
       'No package found. Are you sure this is a React Native project?',
     );
     return Promise.reject(err);
-  }
-  const hasProjectConfig = Object.keys(platforms).reduce(
-    (acc, key) => acc || key in project,
-    false,
-  );
-  if (!hasProjectConfig && findReactNativeScripts()) {
-    throw new Error(
-      '`react-native link [package]` can not be used in Create React Native App projects. ' +
-        'If you need to include a library that relies on custom native code, ' +
-        'you might have to eject first. ' +
-        'See https://github.com/react-community/create-react-native-app/blob/master/EJECTING.md ' +
-        'for more information.',
-    );
   }
 
   if (rawPackageName === undefined) {

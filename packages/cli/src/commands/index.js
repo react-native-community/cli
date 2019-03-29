@@ -20,7 +20,6 @@ import runAndroid from './runAndroid/runAndroid';
 import library from './library/library';
 import bundle from './bundle/bundle';
 import ramBundle from './bundle/ramBundle';
-import eject from './eject/eject';
 import link from './link/link';
 import unlink from './link/unlink';
 import install from './install/install';
@@ -42,7 +41,6 @@ const loadLocalCommands: Array<LocalCommandT> = [
   library,
   bundle,
   ramBundle,
-  eject,
   link,
   unlink,
   install,

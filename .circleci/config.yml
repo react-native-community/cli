@@ -38,7 +38,8 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/react-native-cli
-      - run: yarn test:ci
+      - run: alias yarn="yarn --mutex network"
+      - run: yarn test
       - store_artifacts:
           path: coverage
           destination: coverage

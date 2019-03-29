@@ -41,11 +41,15 @@ function loadConfig(projectRoot: string = process.cwd()): ProjectConfigT {
           get [dependencyName]() {
             return {
               platforms: Object.keys(acc.platforms).reduce(
-                (dependency, platform) =>
-                  acc.platforms[platform].dependencyConfig(
+                (dependency, platform) => {
+                  dependency[platform] = acc.platforms[
+                    platform
+                  ].dependencyConfig(
                     root,
                     config.dependency.platforms[platform],
-                  ),
+                  );
+                  return dependency;
+                },
                 {},
               ),
               assets: config.dependency.assets,

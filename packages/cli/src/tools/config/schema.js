@@ -49,7 +49,7 @@ export const dependencyConfig = t
               message: t.string(),
             }),
           )
-          .default(),
+          .default([]),
       })
       .default(),
     platforms: map(

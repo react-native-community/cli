@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`config should have a valid structure by default 1`] = `
+exports[`should have a valid structure by default 1`] = `
 Object {
   "commands": Array [],
   "dependencies": Object {},
@@ -9,17 +9,48 @@ Object {
     "providesModuleNodeModules": Array [],
   },
   "platforms": Object {
-    "android": Object {
-      "dependencyConfig": [Function],
-      "linkConfig": [Function],
-      "projectConfig": [Function],
-    },
-    "ios": Object {
-      "dependencyConfig": [Function],
-      "linkConfig": [Function],
-      "projectConfig": [Function],
-    },
+    "android": Object {},
+    "ios": Object {},
   },
   "reactNativePath": ".",
+  "root": "<<REPLACED>>",
+}
+`;
+
+exports[`should return dependencies from package.json 1`] = `
+Object {
+  "commands": Array [],
+  "dependencies": Object {
+    "react-native-test": Object {
+      "assets": Array [],
+      "hooks": Object {},
+      "params": Array [],
+      "platforms": Object {
+        "android": null,
+        "ios": Object {
+          "folder": "<<REPLACED>>/node_modules/react-native-test",
+          "libraryFolder": "Libraries",
+          "pbxprojPath": "<<REPLACED>>/node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj",
+          "plist": Array [],
+          "podfile": null,
+          "podspec": null,
+          "projectName": "HelloWorld.xcodeproj",
+          "projectPath": "<<REPLACED>>/node_modules/react-native-test/ios/HelloWorld.xcodeproj",
+          "sharedLibraries": Array [],
+          "sourceDir": "<<REPLACED>>/node_modules/react-native-test/ios",
+        },
+      },
+    },
+  },
+  "haste": Object {
+    "platforms": Array [],
+    "providesModuleNodeModules": Array [],
+  },
+  "platforms": Object {
+    "android": Object {},
+    "ios": Object {},
+  },
+  "reactNativePath": ".",
+  "root": "<<REPLACED>>",
 }
 `;

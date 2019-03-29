@@ -5,21 +5,22 @@ import loadConfig from '../';
 
 import {cleanup, writeFiles} from '../../../../../../e2e/helpers';
 
-const root = path.resolve(os.tmpdir(), 'resolve_config_path_test');
+const DIR = path.resolve(os.tmpdir(), 'resolve_config_path_test');
 
-beforeEach(() => cleanup(root));
-afterEach(() => cleanup(root));
+beforeEach(() => cleanup(DIR));
+afterEach(() => cleanup(DIR));
 
 describe('config', () => {
   it('should have a valid structure by default', () => {
-    writeFiles(root, {
+    writeFiles(DIR, {
       'package.json': JSON.stringify({
         dependencies: {},
         devDependencies: {},
         'react-native': {reactNativePath: '.'},
       }),
     });
-    const {root: _root, ...config} = loadConfig(root);
+    const {root, ...config} = loadConfig(DIR);
+    expect(root).toBe(DIR);
     expect(config).toMatchSnapshot();
   });
 });

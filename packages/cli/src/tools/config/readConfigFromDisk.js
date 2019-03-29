@@ -4,12 +4,11 @@
  * Loads and validates a project configuration
  */
 import Joi from 'joi';
-import comsmiconfig from 'cosmiconfig';
+import cosmiconfig from 'cosmiconfig';
 import path from 'path';
 
 import {type DependencyConfigT, type ProjectConfigT} from './types.flow';
 
-import resolveReactNativePath from './resolveReactNativePath';
 import {JoiError} from '../errors';
 
 import * as schema from './schema';
@@ -24,10 +23,10 @@ const searchPlaces = ['react-native.config.js', 'package.json'];
  * Reads a project configuration as defined by the user in the current
  * workspace.
  */
-export function readProjectConfigFromDisk(): ProjectConfigT {
-  const explorer = comsmiconfig('react-native', {searchPlaces});
-
-  const {config} = explorer.searchSync() || {config: {}};
+export function readProjectConfigFromDisk(rootFolder: string): ProjectConfigT {
+  const explorer = cosmiconfig('react-native', {searchPlaces});
+  console.log(searchPlaces, rootFolder);
+  const {config} = explorer.searchSync(rootFolder) || {config: undefined};
 
   const result = Joi.validate(config, schema.projectConfig);
 
@@ -35,12 +34,7 @@ export function readProjectConfigFromDisk(): ProjectConfigT {
     throw new JoiError(result.error);
   }
 
-  return {
-    ...result.value,
-    reactNativePath: config.reactNativePath
-      ? config.reactNativePath
-      : resolveReactNativePath(),
-  };
+  return result.value;
 }
 
 /**
@@ -50,7 +44,7 @@ export function readProjectConfigFromDisk(): ProjectConfigT {
 export function readDependencyConfigFromDisk(
   rootFolder: string,
 ): DependencyConfigT {
-  const explorer = comsmiconfig('react-native', {
+  const explorer = cosmiconfig('react-native', {
     stopDir: rootFolder,
     searchPlaces,
   });

@@ -24,10 +24,8 @@ import resolveReactNativePath from './resolveReactNativePath';
 /**
  * Loads CLI configuration
  */
-function loadConfig(): ProjectConfigT {
-  const projectRoot = process.cwd();
-
-  const inferredProjectConfig = findDependencies().reduce(
+function loadConfig(projectRoot: string = process.cwd()): ProjectConfigT {
+  const inferredProjectConfig = findDependencies(projectRoot).reduce(
     (acc: ProjectConfigT, dependencyName) => {
       const root = path.join(projectRoot, 'node_modules', dependencyName);
 
@@ -75,7 +73,7 @@ function loadConfig(): ProjectConfigT {
     },
     ({
       root: projectRoot,
-      reactNativePath: resolveReactNativePath(),
+      reactNativePath: resolveReactNativePath(projectRoot),
       dependencies: {},
       commands: [],
       platforms: {
@@ -91,7 +89,7 @@ function loadConfig(): ProjectConfigT {
 
   const config: ProjectConfigT = merge(
     inferredProjectConfig,
-    readProjectConfigFromDisk(),
+    readProjectConfigFromDisk(projectRoot),
   );
 
   if (config.reactNativePath === 'not-found') {

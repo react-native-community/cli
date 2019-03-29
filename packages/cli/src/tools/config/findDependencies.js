@@ -17,11 +17,11 @@ const pluginRe = new RegExp(
  * Returns an array of dependencies from project's package.json that
  * are likely to be React Native packages (see regular expression above)
  */
-export default function findDependencies(): Array<string> {
+export default function findDependencies(root: string): Array<string> {
   let pjson;
 
   try {
-    pjson = require(path.join(process.cwd(), 'package.json'));
+    pjson = require(path.join(root, 'package.json'));
   } catch (e) {
     return [];
   }

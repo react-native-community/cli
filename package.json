@@ -8,6 +8,7 @@
     "build-clean": "rm -rf ./packages/*/build",
     "watch": "node ./scripts/watch.js",
     "test": "jest",
+    "test:ci": "jest -i",
     "lint": "eslint . --cache --report-unused-disable-directives",
     "flow-check": "flow check",
     "postinstall": "yarn build-clean && yarn build",
@@ -32,11 +33,5 @@
     "micromatch": "^3.1.10",
     "mkdirp": "^0.5.1",
     "string-length": "^2.0.0"
-  },
-  "jest": {
-    "projects": [
-      "<rootDir>/packages/*",
-      "<rootDir>/e2e"
-    ]
   }
 }

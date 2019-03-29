@@ -3,6 +3,7 @@ import execa from 'execa';
 import path from 'path';
 import fs from 'fs';
 import snapshotDiff from 'snapshot-diff';
+import stripAnsi from 'strip-ansi';
 import upgrade from '../upgrade';
 import {fetch} from '../helpers';
 import logger from '../../../tools/logger';
@@ -67,7 +68,7 @@ const samplePatch = jest
 let logs = [];
 const mockPushLog = (...args) =>
   logs.push(args.map(x => (Array.isArray(x) ? x.join(' ') : x)).join(' '));
-const flushOutput = () => logs.join('\n');
+const flushOutput = () => stripAnsi(logs.join('\n'));
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -76,6 +77,13 @@ beforeEach(() => {
   // $FlowFixMe
   fs.unlinkSync = jest.fn((...args) => mockPushLog('[fs] unlink', args));
   logs = [];
+});
+
+afterEach(() => {
+  // $FlowFixMe
+  fs.writeFileSync = jest.requireMock('fs').writeFileSync;
+  // $FlowFixMe
+  fs.unlinkSync = jest.requireMock('fs').unlinkSync;
 });
 
 test('uses latest version of react-native when none passed', async () => {
@@ -177,14 +185,14 @@ test('cleans up if patching fails,', async () => {
 $ execa git apply --check tmp-upgrade-rn.patch --exclude=package.json -p2 --3way
 info Applying diff (excluding: package.json, .flowconfig)...
 $ execa git apply tmp-upgrade-rn.patch --exclude=package.json --exclude=.flowconfig -p2 --3way
-[2merror: .flowconfig: does not exist in index[22m
+error: .flowconfig: does not exist in index
 error Automatically applying diff failed
 [fs] unlink tmp-upgrade-rn.patch
 $ execa git status -s
 error Patch failed to apply for unknown reason. Please fall back to manual way of upgrading
 info You may find these resources helpful:
-• Release notes: [4m[2mhttps://github.com/facebook/react-native/releases/tag/v0.58.4[22m[24m
-• Comparison between versions: [4m[2mhttps://github.com/react-native-community/rn-diff-purge/compare/version/0.57.8..version/0.58.4[22m[24m
-• Git diff: [4m[2mhttps://github.com/react-native-community/rn-diff-purge/compare/version/0.57.8..version/0.58.4.diff[22m[24m"
+• Release notes: https://github.com/facebook/react-native/releases/tag/v0.58.4
+• Comparison between versions: https://github.com/react-native-community/rn-diff-purge/compare/version/0.57.8..version/0.58.4
+• Git diff: https://github.com/react-native-community/rn-diff-purge/compare/version/0.57.8..version/0.58.4.diff"
 `);
 });

@@ -18,6 +18,10 @@ jest.setMock('child_process', {
 
 const {makeCommand} = require('../getHooks');
 
+afterAll(() => {
+  jest.restoreAllMocks();
+});
+
 describe('makeCommand', () => {
   const command = makeCommand('echo');
 

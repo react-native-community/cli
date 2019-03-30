@@ -24,5 +24,10 @@ export default function(latestRelease: Release, currentVersion: string) {
     logger.info(`To upgrade, run ${chalk.bold('react-native upgrade')}`);
 
     cacheManager.set('lastChecked', now.toISOString());
+  } else {
+    logger.debug(
+      `Last time notified a newer version: ${now.toDateString()}, ` +
+        'skipping this time',
+    );
   }
 }

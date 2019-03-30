@@ -19,7 +19,6 @@ import init from './commands/init/initCompat';
 import assertRequiredOptions from './tools/assertRequiredOptions';
 import {logger} from '@react-native-community/cli-tools';
 import {setProjectDir} from './tools/packageManager';
-import findPlugins from './tools/findPlugins';
 import getLatestRelease from './tools/releaseChecker/getLatestRelease';
 import printNewRelease from './tools/releaseChecker/printNewRelease';
 import pkgJson from '../package.json';
@@ -171,16 +170,25 @@ async function setupAndRun() {
 
   setProjectDir(ctx.root);
 
-  // New version check must occur before `commander.parse` to ensure that
-  // the message of a new release happens before anything else.
-  const {version: currentVersion} = require(path.join(
-    ctx.root,
-    'node_modules/react-native/package.json',
-  ));
-  const latestRelease = await getLatestRelease(currentVersion);
+  try {
+    // New version check must occur before `commander.parse` to ensure that
+    // the message of a new release happens before anything else.
+    const {version: currentVersion} = require(path.join(
+      ctx.root,
+      'node_modules/react-native/package.json',
+    ));
+    const latestRelease = await getLatestRelease(currentVersion);
 
-  if (latestRelease) {
-    printNewRelease(latestRelease, currentVersion);
+    if (latestRelease) {
+      printNewRelease(latestRelease, currentVersion);
+    }
+  } catch (_ignored) {
+    // We let the flow continue as this component is not vital for the rest of
+    // the CLI.
+    logger.debug(
+      'Cannot detect current version of React Native, ' +
+        'skipping check for a newer release',
+    );
   }
 
   [...commands, ...ctx.commands].forEach(command => addCommand(command, ctx));

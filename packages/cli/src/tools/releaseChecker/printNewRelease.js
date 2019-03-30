@@ -1,23 +1,19 @@
 /**
  * @flow
  */
-import boxen from 'boxen';
 import chalk from 'chalk';
+import logger from '../logger';
 import type {Release} from './getLatestRelease';
 
 /**
  * Notifies the user that a newer version of React Native is available.
  */
 export default function(latestRelease: Release, currentVersion: string) {
-  console.log(
-    boxen(
-      'A newer release of React Native is available!\n\n' +
-        `Current:   v${currentVersion}\n` +
-        `Latest:    ${chalk.green(latestRelease.tag_name)}\n` +
-        `Changelog: ${chalk.underline(latestRelease.html_url)}\n\n` +
-        `Run ${chalk.blue('react-native upgrade')} to ` +
-        'upgrade to the latest version',
-      {padding: 1, margin: 1, borderStyle: 'round', borderColor: 'yellow'},
-    ),
+  logger.info(
+    'Your current version of React Native is out of date. ' +
+      `The latest version is ${latestRelease.tag_name}, ` +
+      `while you're on v${currentVersion}`,
   );
+  logger.info(`Changelog: ${chalk.underline(latestRelease.html_url)}`);
+  logger.info(`To upgrade, run ${chalk.bold('react-native upgrade')}`);
 }

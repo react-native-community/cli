@@ -171,6 +171,18 @@ async function setupAndRun() {
 
   setProjectDir(ctx.root);
 
+  // New version check must occur before `commander.parse` to ensure that
+  // the message of a new release happens before anything else.
+  const {version: currentVersion} = require(path.join(
+    ctx.root,
+    'node_modules/react-native/package.json',
+  ));
+  const latestRelease = await getLatestRelease(currentVersion);
+
+  if (latestRelease) {
+    printNewRelease(latestRelease, currentVersion);
+  }
+
   [...commands, ...ctx.commands].forEach(command => addCommand(command, ctx));
 
   commander.parse(process.argv);
@@ -187,16 +199,6 @@ async function setupAndRun() {
   }
 
   logger.setVerbose(commander.verbose);
-
-  const {version: currentVersion} = require(path.join(
-    ctx.root,
-    'node_modules/react-native/package.json',
-  ));
-  const latestRelease = await getLatestRelease(currentVersion);
-
-  if (latestRelease) {
-    printNewRelease(latestRelease, currentVersion);
-  }
 }
 
 export default {

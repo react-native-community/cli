@@ -5,7 +5,7 @@ import path from 'path';
 import fs from 'fs';
 import logger from '../logger';
 
-type ReleaseCacheKey = 'eTag' | 'release' | 'lastChecked';
+type ReleaseCacheKey = 'eTag' | 'lastChecked' | 'latestVersion';
 
 function loadCache(): ?Object {
   try {

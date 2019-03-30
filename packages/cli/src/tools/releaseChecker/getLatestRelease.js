@@ -7,13 +7,8 @@ import logger from '../logger';
 import cacheManager from './releaseCacheManager';
 
 export type Release = {
-  tag_name: string,
-  html_url: string,
-  draft: boolean,
-  prerelease: boolean,
-  created_at: string,
-  published_at: string,
-  body: string,
+  version: string,
+  changelogUrl: string,
 };
 
 /**
@@ -21,84 +16,91 @@ export type Release = {
  * if it exists, returns the release data.
  *
  * If the latest release is not newer or if it's a prerelease, the function
- * will return null.
+ * will return undefined.
  */
 export default (async function(currentVersion: string) {
   logger.debug('Checking for a newer version of React Native');
   try {
     logger.debug(`Current version: ${currentVersion}`);
 
-    const eTag = cacheManager.get('eTag');
-    const release: Release = cacheManager.get('release');
+    const cachedLatest: string = cacheManager.get('latestVersion');
 
-    if (release) {
-      logger.debug(
-        `Cached release version: ${semver.coerce(release.tag_name)}`,
-      );
+    if (cachedLatest) {
+      logger.debug(`Cached release version: ${cachedLatest}`);
     }
 
     logger.debug('Checking for newer releases on GitHub');
-    const response: Response = await getLatestRelease(eTag);
+    const eTag = cacheManager.get('eTag');
+    const latestVersion = await getLatestRnDiffPurgeVersion(eTag);
+    logger.debug(`Latest release: ${latestVersion}`);
 
-    let latestRelease;
     if (
-      response.statusCode === 200 &&
-      response.release &&
-      !response.release.prerelease
+      semver.compare(latestVersion, currentVersion) === 1 &&
+      !semver.prerelease(latestVersion)
     ) {
-      latestRelease = response.release;
-      logger.debug(
-        `Remote release version: ${semver.coerce(latestRelease.tag_name)}`,
-      );
-      // Update the cache.
-      cacheManager.set('eTag', response.eTag);
-      cacheManager.set('release', latestRelease);
-    } else {
-      // Response status is 304, meaning that our cached release data
-      // is the most recent release available.
-      logger.debug('Cache is up-to-date with GitHub releases');
-      latestRelease = release;
-    }
-
-    const latestVersion = semver.coerce(latestRelease.tag_name);
-    logger.debug(`Latest stable release: ${latestVersion}`);
-    if (semver.compare(latestVersion, currentVersion) === 1) {
-      return latestRelease;
-    } else {
-      return null;
+      return {
+        version: latestVersion,
+        changelogUrl: buildChangelogUrl(latestVersion),
+      };
     }
   } catch (e) {
     logger.debug(
       'Something went wrong with remote version checking, moving on',
     );
-    return null;
   }
 });
+
+function buildChangelogUrl(version: string) {
+  return `https://github.com/facebook/react-native/releases/tag/v${version}`;
+}
+
+/**
+ * Returns the most recent React Native version available to upgrade to.
+ */
+async function getLatestRnDiffPurgeVersion(eTag: ?string): Promise<string> {
+  const options = {
+    hostname: 'api.github.com',
+    path: '/repos/react-native-community/rn-diff-purge/tags',
+    // https://developer.github.com/v3/#user-agent-required
+    headers: ({'User-Agent': 'React-Native-CLI'}: Headers),
+  };
+
+  if (eTag) {
+    options.headers['If-None-Match'] = eTag;
+  }
+
+  const response = await httpsGet(options);
+
+  // Remote is newer.
+  if (response.statusCode === 200) {
+    const latestVersion = JSON.parse(response.body)[0].name.substring(8);
+
+    // Update cache only if newer release is stable.
+    if (!semver.prerelease(latestVersion)) {
+      logger.debug(`Saving ${response.eTag} to cache`);
+      cacheManager.set('eTag', response.eTag);
+      cacheManager.set('latestVersion', latestVersion);
+    }
+
+    return latestVersion;
+  }
+
+  // Cache is still valid.
+  if (response.statusCode === 304) {
+    return cacheManager.get('latestVersion');
+  }
+
+  // Should be returned only if something went wrong.
+  return '0.0.0';
+}
 
 type Headers = {
   'User-Agent': string,
   [header: string]: string,
 };
 
-type Response = {
-  eTag: string,
-  release: ?Release,
-  statusCode: number,
-};
-
-function getLatestRelease(eTag: ?string) {
-  return new Promise<Response>((resolve, reject) => {
-    const options = {
-      hostname: 'api.github.com',
-      path: '/repos/facebook/react-native/releases/latest',
-      // https://developer.github.com/v3/#user-agent-required
-      headers: ({'User-Agent': 'React-Native-CLI'}: Headers),
-    };
-
-    if (eTag) {
-      options.headers['If-None-Match'] = eTag;
-    }
-
+function httpsGet(options: any) {
+  return new Promise((resolve, reject) => {
     https
       .get(options, result => {
         let body = '';
@@ -110,8 +112,7 @@ function getLatestRelease(eTag: ?string) {
 
         result.on('end', () => {
           resolve({
-            // If status code is 304, then body will be empty.
-            release: body ? JSON.parse(body) : undefined,
+            body,
             eTag: result.headers.etag,
             statusCode: result.statusCode,
           });

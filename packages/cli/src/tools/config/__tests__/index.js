@@ -133,7 +133,7 @@ test('should read `rnpm` config from a dependency and transform it to a new form
   expect(removeString(dependencies['react-native-foo'], DIR)).toMatchSnapshot();
 });
 
-test('should expose commands from all dependencies', () => {
+test('should load commands from "react-native-foo" and "react-native-bar" packages', () => {
   writeFiles(DIR, {
     'node_modules/react-native-foo/package.json': `{
       "react-native": {
@@ -163,7 +163,7 @@ test('should expose commands from all dependencies', () => {
   expect(removeString(commands, DIR)).toMatchSnapshot();
 });
 
-test('should load an out-of-tree platform that ships with a dependency', () => {
+test('should load an out-of-tree "windows" platform that ships with a dependency', () => {
   writeFiles(DIR, {
     'node_modules/react-native-windows/platform.js': `
       module.exports = {"windows": {}};

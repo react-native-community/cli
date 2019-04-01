@@ -16,6 +16,6 @@ export default function resolveReactNativePath(root: string) {
       }),
     );
   } catch (_ignored) {
-    return 'not-found';
+    return null;
   }
 }

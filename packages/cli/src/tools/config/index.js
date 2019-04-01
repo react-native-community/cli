@@ -12,7 +12,7 @@ import {
   readLegacyDependencyConfigFromDisk,
 } from './readConfigFromDisk';
 
-import {type ProjectConfigT} from './types.flow';
+import {type ProjectConfigT, type TemporaryProjectConfigT} from './types.flow';
 
 /**
  * Built-in platforms
@@ -26,7 +26,7 @@ import resolveReactNativePath from './resolveReactNativePath';
  */
 function loadConfig(projectRoot: string = process.cwd()): ProjectConfigT {
   const inferredProjectConfig = findDependencies(projectRoot).reduce(
-    (acc: ProjectConfigT, dependencyName) => {
+    (acc: TemporaryProjectConfigT, dependencyName) => {
       const root = path.join(projectRoot, 'node_modules', dependencyName);
 
       const config =
@@ -88,15 +88,15 @@ function loadConfig(projectRoot: string = process.cwd()): ProjectConfigT {
         providesModuleNodeModules: [],
         platforms: [],
       },
-    }: ProjectConfigT),
+    }: TemporaryProjectConfigT),
   );
 
-  const config: ProjectConfigT = merge(
+  const config: TemporaryProjectConfigT = merge(
     inferredProjectConfig,
     readProjectConfigFromDisk(projectRoot),
   );
 
-  if (config.reactNativePath === 'not-found') {
+  if (config.reactNativePath === null) {
     throw new Error(dedent`
       Unable to find React Native files. Make sure "react-native" module is installed
       in your project dependencies.
@@ -111,6 +111,7 @@ function loadConfig(projectRoot: string = process.cwd()): ProjectConfigT {
     `);
   }
 
+  // $FlowIssue: `reactNativePath: null` is never null at this point
   return config;
 }
 

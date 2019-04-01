@@ -45,9 +45,8 @@ export type DependencyConfigT = {
   platforms: PlatformsT,
 };
 
-export type ProjectConfigT = {
+type _ProjectConfigT = {
   root: string,
-  reactNativePath: string,
   dependencies: {
     [key: string]: {
       platforms: {
@@ -66,4 +65,12 @@ export type ProjectConfigT = {
     platforms: Array<string>,
     providesModuleNodeModules: Array<string>,
   },
+};
+
+export type TemporaryProjectConfigT = _ProjectConfigT & {
+  reactNativePath: string | null,
+};
+
+export type ProjectConfigT = _ProjectConfigT & {
+  reactNativePath: string,
 };

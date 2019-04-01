@@ -88,6 +88,7 @@ export function readLegacyDependencyConfigFromDisk(
       : undefined,
   };
 
+  // @todo: paste a link to documentation that explains the migration steps
   logger.warn(
     `Package '${path.basename(
       name,

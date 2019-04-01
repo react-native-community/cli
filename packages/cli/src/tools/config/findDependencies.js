@@ -27,8 +27,8 @@ export default function findDependencies(root: string): Array<string> {
   }
 
   const deps = [
-    ...Object.keys(pjson.dependencies),
-    ...Object.keys(pjson.devDependencies),
+    ...Object.keys(pjson.dependencies || {}),
+    ...Object.keys(pjson.devDependencies || {}),
   ];
 
   return deps.filter(dependency => pluginRe.test(dependency));

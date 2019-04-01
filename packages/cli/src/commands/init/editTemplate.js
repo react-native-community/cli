@@ -41,6 +41,25 @@ function shouldIgnoreFile(filePath: string) {
   return filePath.match(/node_modules|yarn.lock|package-lock.json/g);
 }
 
+const UNDERSCORED_DOTFILES = [
+  'buckconfig',
+  'eslintrc.js',
+  'flowconfig',
+  'gitattributes',
+  'gitignore',
+  'watchmanconfig',
+];
+
+function processDotfiles(filePath: string) {
+  const dotfile = UNDERSCORED_DOTFILES.find(e => filePath.includes(`_${e}`));
+
+  if (dotfile === undefined) {
+    return;
+  }
+
+  renameFile(filePath, `_${dotfile}`, `.${dotfile}`);
+}
+
 export function changePlaceholderInTemplate(
   projectName: string,
   placeholderName: string,
@@ -66,5 +85,7 @@ export function changePlaceholderInTemplate(
           projectName.toLowerCase(),
         );
       }
+
+      processDotfiles(filePath);
     });
 }

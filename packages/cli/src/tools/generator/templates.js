@@ -28,9 +28,7 @@ function createProjectFromTemplate(
   template: string,
   destinationRoot: string,
 ) {
-  const templatePath = path.dirname(
-    require.resolve('react-native/template/old'),
-  );
+  const templatePath = path.dirname(require.resolve('react-native/template'));
   copyProjectTemplateAndReplace(templatePath, destPath, newProjectName);
 
   if (template === undefined) {

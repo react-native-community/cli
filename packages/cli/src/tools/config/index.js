@@ -12,7 +12,7 @@ import {
   readLegacyDependencyConfigFromDisk,
 } from './readConfigFromDisk';
 
-import {type ProjectConfigT, type TemporaryProjectConfigT} from './types.flow';
+import {type ProjectConfigT, type RawProjectConfigT} from './types.flow';
 
 /**
  * Built-in platforms
@@ -26,7 +26,7 @@ import resolveReactNativePath from './resolveReactNativePath';
  */
 function loadConfig(projectRoot: string = process.cwd()): ProjectConfigT {
   const inferredProjectConfig = findDependencies(projectRoot).reduce(
-    (acc: TemporaryProjectConfigT, dependencyName) => {
+    (acc: RawProjectConfigT, dependencyName) => {
       const root = path.join(projectRoot, 'node_modules', dependencyName);
 
       const config =
@@ -88,10 +88,10 @@ function loadConfig(projectRoot: string = process.cwd()): ProjectConfigT {
         providesModuleNodeModules: [],
         platforms: [],
       },
-    }: TemporaryProjectConfigT),
+    }: RawProjectConfigT),
   );
 
-  const config: TemporaryProjectConfigT = merge(
+  const config: RawProjectConfigT = merge(
     inferredProjectConfig,
     readProjectConfigFromDisk(projectRoot),
   );

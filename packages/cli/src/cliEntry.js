@@ -10,10 +10,10 @@
 import chalk from 'chalk';
 import childProcess from 'child_process';
 import commander from 'commander';
-import minimist from 'minimist';
 import path from 'path';
+
 import type {CommandT, ContextT} from './tools/types.flow';
-import getLegacyConfig from './tools/getLegacyConfig';
+
 import {getCommands} from './commands';
 import init from './commands/init/init';
 import assertRequiredOptions from './tools/assertRequiredOptions';
@@ -21,11 +21,10 @@ import logger from './tools/logger';
 import findPlugins from './tools/findPlugins';
 import {setProjectDir} from './tools/PackageManager';
 import pkgJson from '../package.json';
+import loadConfig from './tools/config';
 
 commander
   .option('--version', 'Print CLI version')
-  .option('--projectRoot [string]', 'Path to the root of the project')
-  .option('--reactNativePath [string]', 'Path to React Native')
   .option('--verbose', 'Increase logging verbosity');
 
 commander.on('command:*', () => {
@@ -117,15 +116,6 @@ const addCommand = (command: CommandT, ctx: ContextT) => {
       opt.default,
     ),
   );
-
-  /**
-   * We want every command (like "start", "link") to accept below options.
-   * To achieve that we append them to regular options of each command here.
-   * This way they'll be displayed in the commands --help menus.
-   */
-  cmd
-    .option('--projectRoot [string]', 'Path to the root of the project')
-    .option('--reactNativePath [string]', 'Path to React Native');
 };
 
 async function run() {
@@ -156,43 +146,11 @@ async function setupAndRun() {
     }
   }
 
-  /**
-   * At this point, commander arguments are not parsed yet because we need to
-   * add all the commands and their options. That's why we resort to using
-   * minimist for parsing some global options.
-   */
-  const options = minimist(process.argv.slice(2));
-
-  const root = options.projectRoot
-    ? path.resolve(options.projectRoot)
-    : process.cwd();
-
-  const reactNativePath = options.reactNativePath
-    ? path.resolve(options.reactNativePath)
-    : (() => {
-        try {
-          return path.dirname(
-            // $FlowIssue: Wrong `require.resolve` type definition
-            require.resolve('react-native/package.json', {
-              paths: [root],
-            }),
-          );
-        } catch (_ignored) {
-          throw new Error(
-            'Unable to find React Native files. Make sure "react-native" module is installed in your project dependencies.',
-          );
-        }
-      })();
-
-  const ctx = {
-    ...getLegacyConfig(root),
-    reactNativePath,
-    root,
-  };
+  const ctx = loadConfig();
 
   setProjectDir(ctx.root);
 
-  const commands = getCommands(ctx.root);
+  const commands = getCommands(ctx);
 
   commands.forEach(command => addCommand(command, ctx));
 

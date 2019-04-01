@@ -8,7 +8,17 @@ jest.mock('../../../tools/logger', () => ({
   log: jest.fn(),
 }));
 
-const ctx = {reactNativePath: '', root: ''};
+const ctx = {
+  root: '',
+  reactNativePath: '',
+  dependencies: {},
+  platforms: {},
+  commands: [],
+  haste: {
+    platforms: [],
+    providesModuleNodeModules: [],
+  },
+};
 
 beforeEach(() => {
   jest.resetAllMocks();

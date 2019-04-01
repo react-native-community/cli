@@ -24,6 +24,7 @@ export default function getProjectConfig(
     logger.debug(`Getting project config for ${getPlatformName(platform)}...`);
     platformConfigs[platform] = availablePlatforms[platform].projectConfig(
       ctx.root,
+      // $FlowIssue: Flow can't match platform config with its appropriate config function
       config[platform] || {},
     );
   });

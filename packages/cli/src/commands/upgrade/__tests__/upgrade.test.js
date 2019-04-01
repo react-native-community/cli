@@ -55,6 +55,13 @@ const olderVersion = '0.56.0';
 const ctx = {
   root: '/project/root',
   reactNativePath: '',
+  commands: [],
+  platforms: {},
+  dependencies: {},
+  haste: {
+    providesModuleNodeModules: [],
+    platforms: [],
+  },
 };
 const opts = {
   legacy: false,

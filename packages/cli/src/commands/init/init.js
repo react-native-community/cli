@@ -15,19 +15,21 @@ import {
 } from './template';
 import {changePlaceholderInTemplate} from './editTemplate';
 import * as PackageManager from '../../tools/PackageManager';
-import {processTemplateName} from './protocols';
+import {processTemplateName, tryTemplateShorthand} from './templateName';
 
 type Options = {|
   template?: string,
   npm?: boolean,
 |};
 
-function createFromExternalTemplate(
+async function createFromExternalTemplate(
   projectName: string,
   templateName: string,
   npm?: boolean,
 ) {
   logger.info('Initializing new project from extrenal template');
+
+  templateName = await tryTemplateShorthand(templateName);
 
   const {uri, name} = processTemplateName(templateName);
 
@@ -87,7 +89,7 @@ function createProject(projectName: string, options: Options, version: string) {
   return createFromReactNativeTemplate(projectName, version, options.npm);
 }
 
-export default function initialize(
+export default async function initialize(
   [projectName]: Array<string>,
   context: ContextT,
   options: Options,
@@ -105,7 +107,7 @@ export default function initialize(
   }
 
   try {
-    createProject(projectName, options, version);
+    await createProject(projectName, options, version);
 
     printRunInstructions(process.cwd(), projectName);
   } catch (e) {

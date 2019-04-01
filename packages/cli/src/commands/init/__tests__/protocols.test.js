@@ -1,5 +1,8 @@
 // @flow
-import {processTemplateName} from '../protocols';
+import {processTemplateName, tryTemplateShorthand} from '../templateName';
+import {fetch} from '../../../tools/fetch';
+
+jest.mock('../../../tools/fetch', () => ({fetch: jest.fn()}));
 
 const VERSION = '0.58.0';
 const RN_WITH_VERSION = 'react-native@0.58.0';
@@ -32,4 +35,22 @@ test('should get package if none protocols were handled', () => {
     uri: RN_WITH_VERSION,
     name: RN_WITH_VERSION,
   });
+});
+
+test('tryTemplateShorthand should detect a shorthand template', async () => {
+  const templateName = 'typescript';
+  (fetch: any).mockImplementation(() => {
+    return Promise.resolve(`{"name": "react-native-template-${templateName}"}`);
+  });
+  const name = await tryTemplateShorthand(templateName);
+  expect(name).toBe(`react-native-template-${templateName}`);
+});
+
+test('tryTemplateShorthand should fallback if no template is found', async () => {
+  const templateName = 'typescriptz';
+  (fetch: any).mockImplementation(() => {
+    return Promise.resolve('Not found');
+  });
+  const name = await tryTemplateShorthand(templateName);
+  expect(name).toBe(templateName);
 });

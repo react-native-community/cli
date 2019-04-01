@@ -5,7 +5,7 @@ import fs from 'fs';
 import snapshotDiff from 'snapshot-diff';
 import stripAnsi from 'strip-ansi';
 import upgrade from '../upgrade';
-import {fetch} from '../helpers';
+import {fetch} from '../../../tools/fetch';
 import logger from '../../../tools/logger';
 
 jest.mock('https');

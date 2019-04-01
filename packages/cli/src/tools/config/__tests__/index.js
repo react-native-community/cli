@@ -51,8 +51,8 @@ test('should return dependencies from package.json', () => {
       }
     }`,
   });
-  const config = loadConfig(DIR);
-  expect(removeString(config, DIR)).toMatchSnapshot();
+  const {dependencies} = loadConfig(DIR);
+  expect(removeString(dependencies, DIR)).toMatchSnapshot();
 });
 
 test('should read a config of a dependency and use it to load other settings', () => {
@@ -77,8 +77,10 @@ test('should read a config of a dependency and use it to load other settings', (
       }
     }`,
   });
-  const config = loadConfig(DIR);
-  expect(removeString(config, DIR)).toMatchSnapshot();
+  const {dependencies} = loadConfig(DIR);
+  expect(
+    removeString(dependencies['react-native-test'], DIR),
+  ).toMatchSnapshot();
 });
 
 test('should deep merge project configuration with default values', () => {
@@ -108,15 +110,63 @@ test('should deep merge project configuration with default values', () => {
   expect(removeString(config, DIR)).toMatchSnapshot();
 });
 
-test('should read `RNPM` config from a dependency and transform it to a new format', () => {
+test('should read `rnpm` config from a dependency and transform it to a new format', () => {
   writeFiles(DIR, {
-    'node_modules/react-native-windows/local-cli/index.js': `
-      module.exports = [];
-    `,
-    'node_modules/react-native-windows/local-cli/platform.js': `
-      module.exports = {
-        "windows": {}
-      };
+    'node_modules/react-native-foo/package.json': `{
+      "name": "react-native-foo",
+      "rnpm": {
+        "ios": {
+          "project": "./customLocation/customProject.xcodeproj"
+        }
+      }
+    }`,
+    'package.json': `{
+      "dependencies": {
+        "react-native-foo": "0.0.1"
+      },
+      "react-native": {
+        "reactNativePath": "."
+      }
+    }`,
+  });
+  const {dependencies} = loadConfig(DIR);
+  expect(removeString(dependencies['react-native-foo'], DIR)).toMatchSnapshot();
+});
+
+test('should expose commands from all dependencies', () => {
+  writeFiles(DIR, {
+    'node_modules/react-native-foo/package.json': `{
+      "react-native": {
+        "commands": [
+          "./command-foo.js"
+        ]
+      }
+    }`,
+    'node_modules/react-native-bar/package.json': `{
+      "react-native": {
+        "commands": [
+          "./command-bar.js"
+        ]
+      }
+    }`,
+    'package.json': `{
+      "dependencies": {
+        "react-native-foo": "0.0.1",
+        "react-native-bar": "0.0.1"
+      },
+      "react-native": {
+        "reactNativePath": "."
+      }
+    }`,
+  });
+  const {commands} = loadConfig(DIR);
+  expect(removeString(commands, DIR)).toMatchSnapshot();
+});
+
+test('should load an out-of-tree platform that ships with a dependency', () => {
+  writeFiles(DIR, {
+    'node_modules/react-native-windows/platform.js': `
+      module.exports = {"windows": {}};
     `,
     'node_modules/react-native-windows/package.json': `{
       "name": "react-native-windows",
@@ -129,8 +179,8 @@ test('should read `RNPM` config from a dependency and transform it to a new form
             "react-native-windows"
           ]
         },
-        "plugin": "./local-cli/index.js",
-        "platform": "./local-cli/platform.js"
+        "plugin": "./plugin.js",
+        "platform": "./platform.js"
       }
     }`,
     'package.json': `{
@@ -142,6 +192,6 @@ test('should read `RNPM` config from a dependency and transform it to a new form
       }
     }`,
   });
-  const config = loadConfig(DIR);
-  expect(removeString(config, DIR)).toMatchSnapshot();
+  const {haste, platforms} = loadConfig(DIR);
+  expect(removeString({haste, platforms}, DIR)).toMatchSnapshot();
 });

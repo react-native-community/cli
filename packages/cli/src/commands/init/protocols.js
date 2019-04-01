@@ -4,27 +4,22 @@ import {URL} from 'url';
 
 const FILE_PROTOCOL = /file:/;
 
-function handleFileProtocol(rawPackageName: string) {
-  const packageDir = new URL(rawPackageName).pathname;
+function handleFileProtocol(filePath: string) {
+  const uri = new URL(filePath).pathname;
 
   return {
-    packageDir,
-    packageName: require(path.join(packageDir, 'package.json')).name,
+    uri,
+    name: require(path.join(uri, 'package.json')).name,
   };
 }
 
-export function supportProtocols(
-  rawPackageName: string,
-  defaultPackage?: string,
-) {
-  if (rawPackageName.match(FILE_PROTOCOL)) {
-    return handleFileProtocol(rawPackageName);
+export function processTemplateName(templateName: string) {
+  if (templateName.match(FILE_PROTOCOL)) {
+    return handleFileProtocol(templateName);
   }
 
-  const packageName = defaultPackage || rawPackageName;
-
   return {
-    packageDir: packageName,
-    packageName,
+    uri: templateName,
+    name: templateName,
   };
 }

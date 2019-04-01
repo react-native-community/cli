@@ -1,5 +1,5 @@
 // @flow
-import {supportProtocols} from '../protocols';
+import {processTemplateName} from '../protocols';
 
 const VERSION = '0.58.0';
 const RN_WITH_VERSION = 'react-native@0.58.0';
@@ -14,22 +14,22 @@ test('should support file protocol with absolute path', () => {
     }),
     {virtual: true},
   );
-  expect(supportProtocols(`file://${ABS_RN_PATH}`)).toEqual({
-    packageDir: ABS_RN_PATH,
-    packageName: PACKAGE_NAME,
+  expect(processTemplateName(`file://${ABS_RN_PATH}`)).toEqual({
+    uri: ABS_RN_PATH,
+    name: PACKAGE_NAME,
   });
 });
 
 test('should get default package if none protocols were handled', () => {
-  expect(supportProtocols(VERSION)).toEqual({
-    packageDir: VERSION,
-    packageName: VERSION,
+  expect(processTemplateName(VERSION)).toEqual({
+    uri: VERSION,
+    name: VERSION,
   });
 });
 
 test('should get package if none protocols were handled', () => {
-  expect(supportProtocols(VERSION, RN_WITH_VERSION)).toEqual({
-    packageDir: RN_WITH_VERSION,
-    packageName: RN_WITH_VERSION,
+  expect(processTemplateName(RN_WITH_VERSION)).toEqual({
+    uri: RN_WITH_VERSION,
+    name: RN_WITH_VERSION,
   });
 });

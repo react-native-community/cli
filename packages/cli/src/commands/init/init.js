@@ -15,7 +15,7 @@ import {
 } from './template';
 import {changePlaceholderInTemplate} from './editTemplate';
 import * as PackageManager from '../../tools/PackageManager';
-import {supportProtocols} from './protocols';
+import {processTemplateName} from './protocols';
 
 type Options = {|
   template?: string,
@@ -29,15 +29,15 @@ function createFromExternalTemplate(
 ) {
   logger.info('Initializing new project from extrenal template');
 
-  const {packageDir, packageName} = supportProtocols(templateName);
+  const {uri, name} = processTemplateName(templateName);
 
-  installTemplatePackage(packageDir, npm);
-  const templateConfig = getTemplateConfig(packageName);
-  copyTemplate(packageName, templateConfig.templateDir);
+  installTemplatePackage(uri, npm);
+  const templateConfig = getTemplateConfig(name);
+  copyTemplate(name, templateConfig.templateDir);
   changePlaceholderInTemplate(projectName, templateConfig.placeholderName);
 
   if (templateConfig.postInitScript) {
-    executePostInitScript(packageName, templateConfig.postInitScript);
+    executePostInitScript(name, templateConfig.postInitScript);
   }
 
   PackageManager.installAll({preferYarn: !npm});
@@ -58,9 +58,9 @@ function createFromReactNativeTemplate(
 
   const TEMPLATE_NAME = 'react-native';
 
-  const {packageDir} = supportProtocols(version, `${TEMPLATE_NAME}@${version}`);
+  const {uri} = processTemplateName(`${TEMPLATE_NAME}@${version}`);
 
-  installTemplatePackage(packageDir, npm);
+  installTemplatePackage(uri, npm);
   const templateConfig = getTemplateConfig(TEMPLATE_NAME);
   copyTemplate(TEMPLATE_NAME, templateConfig.templateDir);
   changePlaceholderInTemplate(projectName, templateConfig.placeholderName);

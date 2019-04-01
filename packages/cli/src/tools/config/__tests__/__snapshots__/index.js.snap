@@ -38,13 +38,6 @@ Object {
 }
 `;
 
-exports[`should expose commands from all dependencies 1`] = `
-Array [
-  "react-native-foo/command-foo.js",
-  "react-native-bar/command-bar.js",
-]
-`;
-
 exports[`should have a valid structure by default 1`] = `
 Object {
   "commands": Array [],
@@ -62,7 +55,7 @@ Object {
 }
 `;
 
-exports[`should load an out-of-tree platform that ships with a dependency 1`] = `
+exports[`should load an out-of-tree "windows" platform that ships with a dependency 1`] = `
 Object {
   "haste": Object {
     "platforms": Array [
@@ -78,6 +71,13 @@ Object {
     "windows": Object {},
   },
 }
+`;
+
+exports[`should load commands from "react-native-foo" and "react-native-bar" packages 1`] = `
+Array [
+  "react-native-foo/command-foo.js",
+  "react-native-bar/command-bar.js",
+]
 `;
 
 exports[`should read \`rnpm\` config from a dependency and transform it to a new format 1`] = `

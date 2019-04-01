@@ -33,19 +33,19 @@ function linkAll(
 
   const projectAssets = getAssets(context.root);
   const dependencies = getProjectDependencies(context.root);
-  const depenendenciesConfig = dependencies.map(dependnecy =>
-    getDependencyConfig(context, platforms, dependnecy),
+  const dependenciesConfig = dependencies.map(dependency =>
+    getDependencyConfig(context, platforms, dependency),
   );
 
   const assets = dedupeAssets(
-    depenendenciesConfig.reduce(
+    dependenciesConfig.reduce(
       (acc, dependency) => acc.concat(dependency.assets),
       projectAssets,
     ),
   );
 
   const tasks = flatten(
-    depenendenciesConfig.map(config => [
+    dependenciesConfig.map(config => [
       () => promisify(config.commands.prelink || commandStub),
       () => linkDependency(platforms, project, config),
       () => promisify(config.commands.postlink || commandStub),

@@ -3,22 +3,19 @@
  */
 
 import path from 'path';
-
-import findPlugins from '../tools/findPlugins';
-
 import type {
   CommandT,
   ProjectCommandT,
   LocalCommandT,
 } from '../tools/types.flow';
 
+import {type ContextT} from '../tools/types.flow';
 import server from './server/server';
 import runIOS from './runIOS/runIOS';
 import runAndroid from './runAndroid/runAndroid';
 import library from './library/library';
 import bundle from './bundle/bundle';
 import ramBundle from './bundle/ramBundle';
-import eject from './eject/eject';
 import link from './link/link';
 import unlink from './link/unlink';
 import install from './install/install';
@@ -27,6 +24,7 @@ import upgrade from './upgrade/upgrade';
 import logAndroid from './logAndroid/logAndroid';
 import logIOS from './logIOS/logIOS';
 import info from './info/info';
+import config from './config/config';
 import init from './init';
 
 /**
@@ -40,7 +38,6 @@ const loadLocalCommands: Array<LocalCommandT> = [
   library,
   bundle,
   ramBundle,
-  eject,
   link,
   unlink,
   install,
@@ -49,6 +46,7 @@ const loadLocalCommands: Array<LocalCommandT> = [
   logAndroid,
   logIOS,
   info,
+  config,
   init,
 ];
 
@@ -58,10 +56,11 @@ const loadLocalCommands: Array<LocalCommandT> = [
  * This checks all CLI plugins for presence of 3rd party packages that define commands
  * and loads them
  */
-const loadProjectCommands = (root: string): Array<ProjectCommandT> => {
-  const plugins = findPlugins(root);
-
-  return plugins.commands.reduce((acc: Array<CommandT>, pathToCommands) => {
+const loadProjectCommands = ({
+  root,
+  commands,
+}: ContextT): Array<ProjectCommandT> => {
+  return commands.reduce((acc: Array<ProjectCommandT>, cmdPath: string) => {
     /**
      * `pathToCommand` is a path to a file where commands are defined, relative to `node_modules`
      * folder.
@@ -70,12 +69,12 @@ const loadProjectCommands = (root: string): Array<ProjectCommandT> => {
      * into consideration.
      */
     const name =
-      pathToCommands[0] === '@'
-        ? pathToCommands
+      cmdPath[0] === '@'
+        ? cmdPath
             .split(path.sep)
             .slice(0, 2)
             .join(path.sep)
-        : pathToCommands.split(path.sep)[0];
+        : cmdPath.split(path.sep)[0];
 
     const pkg = require(path.join(root, 'node_modules', name, 'package.json'));
 
@@ -84,7 +83,7 @@ const loadProjectCommands = (root: string): Array<ProjectCommandT> => {
       | Array<ProjectCommandT> = require(path.join(
       root,
       'node_modules',
-      pathToCommands,
+      cmdPath,
     ));
 
     if (Array.isArray(requiredCommands)) {
@@ -93,13 +92,13 @@ const loadProjectCommands = (root: string): Array<ProjectCommandT> => {
       );
     }
 
-    return acc.concat({...requiredCommands});
+    return acc.concat({...requiredCommands, pkg});
   }, []);
 };
 
 /**
  * Loads all the commands inside a given `root` folder
  */
-export function getCommands(root: string): Array<CommandT> {
-  return [...loadLocalCommands, ...loadProjectCommands(root)];
+export function getCommands(ctx: ContextT): Array<CommandT> {
+  return [...loadLocalCommands, ...loadProjectCommands(ctx)];
 }

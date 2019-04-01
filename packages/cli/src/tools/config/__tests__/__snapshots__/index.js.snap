@@ -1,9 +1,85 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`should deep merge default configuration with project one 1`] = `
+Object {
+  "commands": Array [],
+  "dependencies": Object {
+    "react-native-test": Object {
+      "assets": Array [],
+      "hooks": Object {},
+      "params": Array [],
+      "platforms": Object {
+        "android": null,
+        "ios": Object {
+          "folder": "<<REPLACED>>/node_modules/react-native-test",
+          "libraryFolder": "Libraries",
+          "pbxprojPath": "<<REPLACED>>/node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj",
+          "plist": Array [],
+          "podfile": null,
+          "podspec": null,
+          "projectName": "HelloWorld.xcodeproj",
+          "projectPath": "<<REPLACED>>/node_modules/react-native-test/ios/HelloWorld.xcodeproj",
+          "sharedLibraries": Array [],
+          "sourceDir": "./abc",
+        },
+      },
+    },
+  },
+  "haste": Object {
+    "platforms": Array [],
+    "providesModuleNodeModules": Array [],
+  },
+  "platforms": Object {
+    "android": Object {},
+    "ios": Object {},
+  },
+  "reactNativePath": ".",
+  "root": "<<REPLACED>>",
+}
+`;
+
 exports[`should have a valid structure by default 1`] = `
 Object {
   "commands": Array [],
   "dependencies": Object {},
+  "haste": Object {
+    "platforms": Array [],
+    "providesModuleNodeModules": Array [],
+  },
+  "platforms": Object {
+    "android": Object {},
+    "ios": Object {},
+  },
+  "reactNativePath": ".",
+  "root": "<<REPLACED>>",
+}
+`;
+
+exports[`should read a config of a dependency and use it to load other settings 1`] = `
+Object {
+  "commands": Array [],
+  "dependencies": Object {
+    "react-native-test": Object {
+      "assets": Array [],
+      "hooks": Object {},
+      "params": Array [],
+      "platforms": Object {
+        "android": null,
+        "ios": Object {
+          "folder": "<<REPLACED>>/node_modules/react-native-test",
+          "libraryFolder": "Libraries",
+          "pbxprojPath": "<<REPLACED>>/node_modules/react-native-test/customLocation/customProject.xcodeproj/project.pbxproj",
+          "plist": Array [],
+          "podfile": null,
+          "podspec": null,
+          "projectName": "customProject.xcodeproj",
+          "projectPath": "<<REPLACED>>/node_modules/react-native-test/customLocation/customProject.xcodeproj",
+          "sharedLibraries": Array [],
+          "sourceDir": "<<REPLACED>>/node_modules/react-native-test/customLocation",
+        },
+      },
+    },
+  },
   "haste": Object {
     "platforms": Array [],
     "providesModuleNodeModules": Array [],

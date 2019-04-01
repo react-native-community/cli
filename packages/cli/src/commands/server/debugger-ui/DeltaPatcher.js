@@ -119,7 +119,10 @@
     getAllModules() {
       return [].concat(
         [this._lastBundle.pre],
-        Array.from(this._lastBundle.modules.values()),
+        // Sort modules so they match the source map emitted by Metro >= 0.51.0
+        Array.from(this._lastBundle.modules.entries())
+          .sort(([id1], [id2]) => id1 - id2)
+          .map(([id, contents]) => contents),
         [this._lastBundle.post],
       );
     }

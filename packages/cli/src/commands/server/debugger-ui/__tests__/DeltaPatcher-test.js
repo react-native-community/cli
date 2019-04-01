@@ -108,4 +108,55 @@ describe('DeltaPatcher', () => {
     expect(dp.getLastNumModifiedFiles()).toBe(2);
     expect(dp.getAllModules()).toEqual(['pre2', '__d(4);', '__d(5);', 'post2']);
   });
+  
+  it('should sort modules after receiving an unsorted base bundle', () => {
+    const dp = new window.DeltaPatcher();
+    global.Date = jest.fn();
+    dp.applyDelta({
+      base: true,
+      revisionId: 'rev0',
+      pre: 'pre0',
+      post: 'post0',
+      modules: [[2, '__d(2);'], [3, '__d(3);'], [0, '__d(0);'], [1, '__d(1);']],
+    });
+    expect(dp.getLastRevisionId()).toBe('rev0');
+    expect(dp.getLastModifiedDate()).toBe(global.Date.mock.instances[0]);
+    expect(dp.getLastNumModifiedFiles()).toBe(4);
+    expect(dp.getAllModules()).toEqual([
+      'pre0',
+      '__d(0);',
+      '__d(1);',
+      '__d(2);',
+      '__d(3);',
+      'post0',
+    ]);
+  });
+
+  it('should sort modules after receiving an unsorted delta bundle', () => {
+    const dp = new window.DeltaPatcher();
+    dp.applyDelta({
+      base: true,
+      revisionId: 'rev0',
+      pre: 'pre0',
+      post: 'post0',
+      modules: [[2, '__d(2);'], [1, '__d(1);'], [0, '__d(0);']],
+    });
+    global.Date = jest.fn();
+    dp.applyDelta({
+      base: false,
+      revisionId: 'rev1',
+      modules: [[3, '__d(3);'], [1, '__d(1.1);']],
+      deleted: [0],
+    });
+    expect(dp.getLastRevisionId()).toBe('rev1');
+    expect(dp.getLastModifiedDate()).toBe(global.Date.mock.instances[0]);
+    expect(dp.getLastNumModifiedFiles()).toBe(3);
+    expect(dp.getAllModules()).toEqual([
+      'pre0',
+      '__d(1.1);',
+      '__d(2);',
+      '__d(3);',
+      'post0',
+    ]);
+  });
 });

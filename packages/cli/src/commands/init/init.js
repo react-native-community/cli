@@ -22,6 +22,18 @@ type Options = {|
   npm?: boolean,
 |};
 
+function adjustNameIfUrl(name) {
+  // We use package manager to infer the name of the template module for us.
+  // That's why we get it from temporary package.json, where the name is the
+  // first and only dependency (hence 0).
+  if (name.match(/https?:/)) {
+    name = Object.keys(
+      JSON.parse(fs.readFileSync('./package.json', 'utf8')).dependencies,
+    )[0];
+  }
+  return name;
+}
+
 async function createFromExternalTemplate(
   projectName: string,
   templateName: string,
@@ -31,9 +43,10 @@ async function createFromExternalTemplate(
 
   templateName = await tryTemplateShorthand(templateName);
 
-  const {uri, name} = processTemplateName(templateName);
+  let {uri, name} = processTemplateName(templateName);
 
   installTemplatePackage(uri, npm);
+  name = adjustNameIfUrl(name);
   const templateConfig = getTemplateConfig(name);
   copyTemplate(name, templateConfig.templateDir);
   changePlaceholderInTemplate(projectName, templateConfig.placeholderName);

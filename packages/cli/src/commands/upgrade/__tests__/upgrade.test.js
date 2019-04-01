@@ -38,8 +38,7 @@ jest.mock('../../../tools/PackageManager', () => ({
     mockPushLog('$ yarn add', ...args);
   },
 }));
-jest.mock('../helpers', () => ({
-  ...jest.requireActual('../helpers'),
+jest.mock('../../../tools/fetch', () => ({
   fetch: jest.fn(() => Promise.resolve('patch')),
 }));
 jest.mock('../../../tools/logger', () => ({

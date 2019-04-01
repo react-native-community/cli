@@ -3,7 +3,6 @@
  */
 
 import path from 'path';
-import {union} from 'lodash';
 
 const pluginRe = new RegExp(
   [

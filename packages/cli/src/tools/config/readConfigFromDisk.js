@@ -66,9 +66,9 @@ export function readDependencyConfigFromDisk(
 export function readLegacyDependencyConfigFromDisk(
   rootFolder: string,
 ): ?DependencyConfigT {
-  const config = require(path.join(rootFolder, 'package.json'));
+  const {rnpm: config, name} = require(path.join(rootFolder, 'package.json'));
 
-  if (!config.rnpm) {
+  if (!config) {
     return undefined;
   }
 
@@ -90,7 +90,7 @@ export function readLegacyDependencyConfigFromDisk(
 
   logger.warn(
     `Package '${path.basename(
-      config.name,
+      name,
     )}' is using deprecated "rnpm" config that will stop working from next release. Consider upgrading to the new config format.`,
   );
 

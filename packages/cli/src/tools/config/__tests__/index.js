@@ -107,3 +107,41 @@ test('should deep merge project configuration with default values', () => {
   const config = loadConfig(DIR);
   expect(removeString(config, DIR)).toMatchSnapshot();
 });
+
+test('should read `RNPM` config from a dependency and transform it to a new format', () => {
+  writeFiles(DIR, {
+    'node_modules/react-native-windows/local-cli/index.js': `
+      module.exports = [];
+    `,
+    'node_modules/react-native-windows/local-cli/platform.js': `
+      module.exports = {
+        "windows": {}
+      };
+    `,
+    'node_modules/react-native-windows/package.json': `{
+      "name": "react-native-windows",
+      "rnpm": {
+        "haste": {
+          "platforms": [
+            "windows"
+          ],
+          "providesModuleNodeModules": [
+            "react-native-windows"
+          ]
+        },
+        "plugin": "./local-cli/index.js",
+        "platform": "./local-cli/platform.js"
+      }
+    }`,
+    'package.json': `{
+      "dependencies": {
+        "react-native-windows": "0.0.1"
+      },
+      "react-native": {
+        "reactNativePath": "."
+      }
+    }`,
+  });
+  const config = loadConfig(DIR);
+  expect(removeString(config, DIR)).toMatchSnapshot();
+});

@@ -26,10 +26,10 @@ export default function findDependencies(root: string): Array<string> {
     return [];
   }
 
-  const deps = {
-    ...pjson.dependencies,
-    ...pjson.devDependencies,
-  };
+  const deps = [
+    ...Object.keys(pjson.dependencies),
+    ...Object.keys(pjson.devDependencies),
+  ];
 
   return deps.filter(dependency => pluginRe.test(dependency));
 }

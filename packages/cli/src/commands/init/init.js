@@ -15,7 +15,7 @@ import {
 } from './template';
 import {changePlaceholderInTemplate} from './editTemplate';
 import * as PackageManager from '../../tools/PackageManager';
-import {processTemplateName, tryTemplateShorthand} from './templateName';
+import {processTemplateName} from './templateName';
 
 type Options = {|
   template?: string,
@@ -39,11 +39,9 @@ async function createFromExternalTemplate(
   templateName: string,
   npm?: boolean,
 ) {
-  logger.info('Initializing new project from extrenal template');
+  logger.info('Initializing new project from external template');
 
-  templateName = await tryTemplateShorthand(templateName);
-
-  let {uri, name} = processTemplateName(templateName);
+  let {uri, name} = await processTemplateName(templateName);
 
   installTemplatePackage(uri, npm);
   name = adjustNameIfUrl(name);
@@ -58,7 +56,7 @@ async function createFromExternalTemplate(
   PackageManager.installAll({preferYarn: !npm});
 }
 
-function createFromReactNativeTemplate(
+async function createFromReactNativeTemplate(
   projectName: string,
   version: string,
   npm?: boolean,
@@ -73,7 +71,7 @@ function createFromReactNativeTemplate(
 
   const TEMPLATE_NAME = 'react-native';
 
-  const {uri} = processTemplateName(`${TEMPLATE_NAME}@${version}`);
+  const {uri} = await processTemplateName(`${TEMPLATE_NAME}@${version}`);
 
   installTemplatePackage(uri, npm);
   const templateConfig = getTemplateConfig(TEMPLATE_NAME);

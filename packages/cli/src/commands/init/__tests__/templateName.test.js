@@ -1,88 +1,60 @@
 // @flow
-import fs from 'fs-extra';
-import path from 'path';
-import ChildProcess from 'child_process';
-import * as PackageManger from '../../../tools/PackageManager';
-import {
-  installTemplatePackage,
-  getTemplateConfig,
-  copyTemplate,
-  executePostInitScript,
-} from '../template';
+import {processTemplateName} from '../templateName';
+import {fetch} from '../../../tools/fetch';
 
-const TEMPLATE_NAME = 'templateName';
+jest.mock('../../../tools/fetch', () => ({fetch: jest.fn()}));
 
-afterEach(() => {
-  jest.restoreAllMocks();
-});
+const VERSION = '0.58.0';
+const RN_WITH_VERSION = 'react-native@0.58.0';
+const ABS_RN_PATH = '/path/to/react-native';
+const PACKAGE_NAME = 'react-native';
 
-test('installTemplatePackage', () => {
-  jest.spyOn(PackageManger, 'install').mockImplementationOnce(() => {});
-
-  installTemplatePackage(TEMPLATE_NAME, true);
-
-  expect(PackageManger.install).toHaveBeenCalledWith([TEMPLATE_NAME], {
-    preferYarn: false,
-  });
-});
-
-test('getTemplateConfig', () => {
+test('should support file protocol with absolute path', async () => {
   jest.mock(
-    `node_modules/${TEMPLATE_NAME}/template.config`,
+    `${ABS_RN_PATH}/package.json`,
     () => ({
-      placeholderName: 'someName',
-      templateDir: 'someDir',
+      name: 'react-native',
     }),
-    {
-      virtual: true,
-    },
+    {virtual: true},
   );
-  jest.spyOn(path, 'resolve').mockImplementationOnce((...e) => e.join('/'));
-
-  expect(getTemplateConfig(TEMPLATE_NAME)).toEqual({
-    placeholderName: 'someName',
-    templateDir: 'someDir',
+  expect(await processTemplateName(`file://${ABS_RN_PATH}`)).toEqual({
+    uri: ABS_RN_PATH,
+    name: PACKAGE_NAME,
   });
-  expect(path.resolve).toHaveBeenCalledWith(
-    'node_modules',
-    TEMPLATE_NAME,
-    'template.config',
-  );
 });
 
-test('copyTemplate', () => {
-  const TEMPLATE_DIR = 'some/dir';
-  const CWD = '.';
-
-  jest.spyOn(path, 'resolve').mockImplementationOnce((...e) => e.join('/'));
-  jest.spyOn(fs, 'copySync').mockImplementationOnce(() => {});
-  jest.spyOn(process, 'cwd').mockImplementationOnce(() => CWD);
-
-  copyTemplate(TEMPLATE_NAME, TEMPLATE_DIR);
-
-  expect(path.resolve).toHaveBeenCalledWith(
-    'node_modules',
-    TEMPLATE_NAME,
-    TEMPLATE_DIR,
-  );
-  expect(fs.copySync).toHaveBeenCalledWith(expect.any(String), CWD);
+test('should get default package if none protocols were handled', async () => {
+  expect(await processTemplateName(VERSION)).toEqual({
+    uri: VERSION,
+    name: VERSION,
+  });
 });
 
-test('executePostInitScript', () => {
-  const RESOLVED_PATH = '/some/path/script.js';
-  const SCRIPT_PATH = './script.js';
+test('should support shorthand templates', async () => {
+  const templateName = 'typescript';
+  (fetch: any).mockImplementationOnce(() => {
+    return Promise.resolve(`{"name": "react-native-template-${templateName}"}`);
+  });
+  expect(await processTemplateName(templateName)).toEqual({
+    uri: `react-native-template-${templateName}`,
+    name: `react-native-template-${templateName}`,
+  });
+});
 
-  jest.spyOn(path, 'resolve').mockImplementationOnce(() => RESOLVED_PATH);
-  jest.spyOn(ChildProcess, 'execFileSync').mockImplementationOnce(() => {});
+test('should support not-found shorthand templates', async () => {
+  const templateName = 'typescriptz';
+  (fetch: any).mockImplementationOnce(() => {
+    return Promise.resolve('Not found');
+  });
+  expect(await processTemplateName(templateName)).toEqual({
+    uri: templateName,
+    name: templateName,
+  });
+});
 
-  executePostInitScript(TEMPLATE_NAME, SCRIPT_PATH);
-
-  expect(path.resolve).toHaveBeenCalledWith(
-    'node_modules',
-    TEMPLATE_NAME,
-    SCRIPT_PATH,
-  );
-  expect(ChildProcess.execFileSync).toHaveBeenCalledWith(RESOLVED_PATH, {
-    stdio: 'inherit',
+test('should get package if none protocols were handled', async () => {
+  expect(await processTemplateName(RN_WITH_VERSION)).toEqual({
+    uri: RN_WITH_VERSION,
+    name: RN_WITH_VERSION,
   });
 });

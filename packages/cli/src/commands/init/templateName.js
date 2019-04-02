@@ -4,6 +4,7 @@ import {URL} from 'url';
 import {fetch} from '../../tools/fetch';
 
 const FILE_PROTOCOL = /file:/;
+const HTTP_PROTOCOL = /https?:/;
 
 function handleFileProtocol(filePath: string) {
   const uri = new URL(filePath).pathname;
@@ -14,14 +15,16 @@ function handleFileProtocol(filePath: string) {
   };
 }
 
-export function processTemplateName(templateName: string) {
+export async function processTemplateName(templateName: string) {
   if (templateName.match(FILE_PROTOCOL)) {
     return handleFileProtocol(templateName);
   }
 
+  const name = await tryTemplateShorthand(templateName);
+
   return {
-    uri: templateName,
-    name: templateName,
+    uri: name,
+    name,
   };
 }
 
@@ -31,9 +34,12 @@ export function processTemplateName(templateName: string) {
  * To support that, we query npm registry if a package like this exists, if not
  * we return the original name without a change.
  */
-export async function tryTemplateShorthand(maybeTemplateShorthand: string) {
+async function tryTemplateShorthand(templateName: string) {
+  if (templateName.match(FILE_PROTOCOL) || templateName.match(HTTP_PROTOCOL)) {
+    return templateName;
+  }
   try {
-    const reactNativeTemplatePackage = `react-native-template-${maybeTemplateShorthand}`;
+    const reactNativeTemplatePackage = `react-native-template-${templateName}`;
     const response = await fetch(
       `https://registry.yarnpkg.com/${reactNativeTemplatePackage}/latest`,
     );
@@ -44,5 +50,5 @@ export async function tryTemplateShorthand(maybeTemplateShorthand: string) {
   } catch (e) {
     // we expect this to fail when `file://` protocol or regular module is passed
   }
-  return maybeTemplateShorthand;
+  return templateName;
 }

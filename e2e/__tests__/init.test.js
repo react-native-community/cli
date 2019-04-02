@@ -50,7 +50,7 @@ test('init --template', () => {
     'TestInit',
   ]);
 
-  expect(stdout).toContain('Initializing new project from extrenal template');
+  expect(stdout).toContain('Initializing new project from external template');
   expect(stdout).toContain('Run instructions');
 
   // make sure we don't leave garbage

@@ -1,19 +1,22 @@
 /**
  * Source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
  *
- * Similar to Object.assign(), but copies full descriptors instead of running them
+ * Similar to Object.assign(), but it doesn't execute getters. This allows us to have
+ * lazy properties on an object and still be able to merge them together
+ *
+ * @flow
  */
-export default function completeAssign(target, ...sources) {
+export default function assign(target: Object, ...sources: Object[]) {
   sources.forEach(source => {
-    let descriptors = Object.keys(source).reduce((descriptors, key) => {
-      descriptors[key] = Object.getOwnPropertyDescriptor(source, key);
-      return descriptors;
+    let descriptors = Object.keys(source).reduce((acc, key) => {
+      acc[key] = Object.getOwnPropertyDescriptor(source, key);
+      return acc;
     }, {});
     // by default, Object.assign copies enumerable Symbols too
     Object.getOwnPropertySymbols(source).forEach(sym => {
       let descriptor = Object.getOwnPropertyDescriptor(source, sym);
-      if (descriptor.enumerable) {
-        descriptors[sym] = descriptor;
+      if (descriptor && descriptor.enumerable) {
+        descriptors[sym.toString()] = descriptor;
       }
     });
     Object.defineProperties(target, descriptors);

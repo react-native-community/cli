@@ -33,6 +33,10 @@ Object {
     "android": Object {},
     "ios": Object {},
   },
+  "project": Object {
+    "android": null,
+    "ios": null,
+  },
   "reactNativePath": ".",
   "root": "<<REPLACED>>",
 }
@@ -49,6 +53,10 @@ Object {
   "platforms": Object {
     "android": Object {},
     "ios": Object {},
+  },
+  "project": Object {
+    "android": null,
+    "ios": null,
   },
   "reactNativePath": ".",
   "root": "<<REPLACED>>",

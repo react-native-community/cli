@@ -1,6 +1,7 @@
 // @flow
 import info from '../info';
 import logger from '../../../tools/logger';
+import loadConfig from '../../../tools/config';
 
 jest.mock('../../../tools/logger', () => ({
   info: jest.fn(),
@@ -8,24 +9,16 @@ jest.mock('../../../tools/logger', () => ({
   log: jest.fn(),
 }));
 
-const ctx = {
-  root: '',
-  reactNativePath: '',
-  dependencies: {},
-  platforms: {},
-  commands: [],
-  haste: {
-    platforms: [],
-    providesModuleNodeModules: [],
-  },
-};
+jest.mock('../../../tools/config');
 
 beforeEach(() => {
   jest.resetAllMocks();
 });
 
+const config = loadConfig();
+
 test('prints output without arguments', async () => {
-  await info.func([], ctx, {});
+  await info.func([], config, {});
   expect(logger.info).toHaveBeenCalledWith(
     'Fetching system and libraries information...',
   );

@@ -10,6 +10,9 @@ const PROJECT_ROOT = '/some/dir';
 beforeEach(() => {
   jest.spyOn(ChildProcess, 'execSync').mockImplementation(() => {});
 });
+afterEach(() => {
+  (ChildProcess.execSync: any).mockRestore();
+});
 
 describe('yarn', () => {
   beforeEach(() => {
@@ -99,7 +102,8 @@ it('should use npm if project is not using yarn', () => {
 });
 
 it('should use yarn if project is using yarn', () => {
-  jest.spyOn(yarn, 'isProjectUsingYarn').mockImplementation(() => false);
+  jest.spyOn(yarn, 'getYarnVersionIfAvailable').mockImplementation(() => true);
+  jest.spyOn(yarn, 'isProjectUsingYarn').mockImplementation(() => true);
 
   PackageManager.setProjectDir(PROJECT_ROOT);
   PackageManager.install(PACKAGES);

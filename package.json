@@ -8,6 +8,7 @@
     "build-clean": "rm -rf ./packages/*/build",
     "watch": "node ./scripts/watch.js",
     "test": "jest",
+    "test:ci": "jest -i",
     "lint": "eslint . --cache --report-unused-disable-directives",
     "flow-check": "flow check",
     "postinstall": "yarn build-clean && yarn build",
@@ -20,23 +21,17 @@
     "@babel/preset-env": "^7.0.0",
     "@babel/preset-flow": "^7.0.0",
     "@react-native-community/eslint-config": "^0.0.3",
-    "babel-jest": "^24.5.0",
+    "babel-jest": "^24.6.0",
     "chalk": "^2.4.2",
     "eslint": "^5.10.0",
     "execa": "^1.0.0",
     "flow-bin": "^0.95.1",
     "flow-typed": "^2.5.1",
     "glob": "^7.1.3",
-    "jest": "^24.5.0",
+    "jest": "^24.6.0",
     "lerna": "^3.13.1",
     "micromatch": "^3.1.10",
     "mkdirp": "^0.5.1",
     "string-length": "^2.0.0"
-  },
-  "jest": {
-    "projects": [
-      "packages/*",
-      "e2e"
-    ]
   }
 }

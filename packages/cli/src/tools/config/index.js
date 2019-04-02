@@ -91,7 +91,6 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
         providesModuleNodeModules: [],
         platforms: [],
       },
-      // $FlowExpectedError: This getter is safe
       get project() {
         return Object.keys(this.platforms).reduce(
           (project, platform) => {
@@ -107,7 +106,10 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
     }: RawConfigT),
   );
 
-  // @todo(grabbou): make this explicit
+  /**
+   * All config properties are deep-merged with user provided settings except for
+   * the project, which is calculated
+   */
   const config: ConfigT = merge(inferredConfig, omit(userConfig, 'project'));
 
   if (config.reactNativePath === null) {

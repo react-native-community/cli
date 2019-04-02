@@ -6,9 +6,14 @@ import path from 'path';
 
 const pluginRe = new RegExp(
   [
+    // React Native patterns
     '^react-native-',
     '^@(.*)/react-native-',
     '^@react-native(.*)/(?!rnpm-plugin-)',
+
+    // RNPM patterns to be deprecated
+    '^rnpm-plugin-',
+    '^@(.*)/rnpm-plugin-',
   ].join('|'),
 );
 

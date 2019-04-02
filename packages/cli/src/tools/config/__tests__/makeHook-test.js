@@ -1,12 +1,7 @@
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * @format
- * @emails oncall+javascript_foundation
+ * @flow
  */
+import makeHook from '../makeHook';
 
 let spawnError = false;
 
@@ -16,22 +11,20 @@ jest.setMock('child_process', {
   }),
 });
 
-const {makeCommand} = require('../getHooks');
-
-describe('makeCommand', () => {
-  const command = makeCommand('echo');
+describe('makeHook', () => {
+  const hook = makeHook('echo');
 
   it('generates a function around shell command', () => {
-    expect(typeof command).toBe('function');
+    expect(typeof hook).toBe('function');
   });
 
   it('throws an error if there is no callback provided', () => {
-    expect(command).toThrow();
+    expect(hook).toThrow();
   });
 
   it('invokes a callback after command execution', () => {
     const spy = jest.fn();
-    command(spy);
+    hook(spy);
     expect(spy.mock.calls).toHaveLength(1);
   });
 
@@ -39,7 +32,7 @@ describe('makeCommand', () => {
     spawnError = true;
     const cb = jest.fn();
     expect(() => {
-      command(cb);
+      hook(cb);
     }).toThrow();
   });
 });

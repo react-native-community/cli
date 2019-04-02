@@ -1,0 +1,166 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should deep merge project configuration with default values 1`] = `
+Object {
+  "assets": Array [],
+  "commands": Array [],
+  "dependencies": Object {
+    "react-native-test": Object {
+      "assets": Array [],
+      "hooks": Object {},
+      "name": "react-native-test",
+      "params": Array [],
+      "platforms": Object {
+        "android": null,
+        "ios": Object {
+          "folder": "<<REPLACED>>/node_modules/react-native-test",
+          "libraryFolder": "Libraries",
+          "pbxprojPath": "<<REPLACED>>/node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj",
+          "plist": Array [],
+          "podfile": null,
+          "podspec": null,
+          "projectName": "HelloWorld.xcodeproj",
+          "projectPath": "<<REPLACED>>/node_modules/react-native-test/ios/HelloWorld.xcodeproj",
+          "sharedLibraries": Array [],
+          "sourceDir": "./abc",
+        },
+      },
+    },
+  },
+  "haste": Object {
+    "platforms": Array [],
+    "providesModuleNodeModules": Array [],
+  },
+  "platforms": Object {
+    "android": Object {},
+    "ios": Object {},
+  },
+  "project": Object {
+    "android": null,
+    "ios": null,
+  },
+  "reactNativePath": ".",
+  "root": "<<REPLACED>>",
+}
+`;
+
+exports[`should have a valid structure by default 1`] = `
+Object {
+  "assets": Array [],
+  "commands": Array [],
+  "dependencies": Object {},
+  "haste": Object {
+    "platforms": Array [],
+    "providesModuleNodeModules": Array [],
+  },
+  "platforms": Object {
+    "android": Object {},
+    "ios": Object {},
+  },
+  "project": Object {
+    "android": null,
+    "ios": null,
+  },
+  "reactNativePath": ".",
+  "root": "<<REPLACED>>",
+}
+`;
+
+exports[`should load an out-of-tree "windows" platform that ships with a dependency 1`] = `
+Object {
+  "haste": Object {
+    "platforms": Array [
+      "windows",
+    ],
+    "providesModuleNodeModules": Array [
+      "react-native-windows",
+    ],
+  },
+  "platforms": Object {
+    "android": Object {},
+    "ios": Object {},
+    "windows": Object {},
+  },
+}
+`;
+
+exports[`should load commands from "react-native-foo" and "react-native-bar" packages 1`] = `
+Array [
+  "react-native-foo/command-foo.js",
+  "react-native-bar/command-bar.js",
+]
+`;
+
+exports[`should read \`rnpm\` config from a dependency and transform it to a new format 1`] = `
+Object {
+  "assets": Array [],
+  "hooks": Object {},
+  "name": "react-native-foo",
+  "params": Array [],
+  "platforms": Object {
+    "android": null,
+    "ios": Object {
+      "folder": "<<REPLACED>>/node_modules/react-native-foo",
+      "libraryFolder": "Libraries",
+      "pbxprojPath": "<<REPLACED>>/node_modules/react-native-foo/customLocation/customProject.xcodeproj/project.pbxproj",
+      "plist": Array [],
+      "podfile": null,
+      "podspec": null,
+      "projectName": "customProject.xcodeproj",
+      "projectPath": "<<REPLACED>>/node_modules/react-native-foo/customLocation/customProject.xcodeproj",
+      "sharedLibraries": Array [],
+      "sourceDir": "<<REPLACED>>/node_modules/react-native-foo/customLocation",
+    },
+  },
+}
+`;
+
+exports[`should read a config of a dependency and use it to load other settings 1`] = `
+Object {
+  "assets": Array [],
+  "hooks": Object {},
+  "name": "react-native-test",
+  "params": Array [],
+  "platforms": Object {
+    "android": null,
+    "ios": Object {
+      "folder": "<<REPLACED>>/node_modules/react-native-test",
+      "libraryFolder": "Libraries",
+      "pbxprojPath": "<<REPLACED>>/node_modules/react-native-test/customLocation/customProject.xcodeproj/project.pbxproj",
+      "plist": Array [],
+      "podfile": null,
+      "podspec": null,
+      "projectName": "customProject.xcodeproj",
+      "projectPath": "<<REPLACED>>/node_modules/react-native-test/customLocation/customProject.xcodeproj",
+      "sharedLibraries": Array [],
+      "sourceDir": "<<REPLACED>>/node_modules/react-native-test/customLocation",
+    },
+  },
+}
+`;
+
+exports[`should return dependencies from package.json 1`] = `
+Object {
+  "react-native-test": Object {
+    "assets": Array [],
+    "hooks": Object {},
+    "name": "react-native-test",
+    "params": Array [],
+    "platforms": Object {
+      "android": null,
+      "ios": Object {
+        "folder": "<<REPLACED>>/node_modules/react-native-test",
+        "libraryFolder": "Libraries",
+        "pbxprojPath": "<<REPLACED>>/node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj",
+        "plist": Array [],
+        "podfile": null,
+        "podspec": null,
+        "projectName": "HelloWorld.xcodeproj",
+        "projectPath": "<<REPLACED>>/node_modules/react-native-test/ios/HelloWorld.xcodeproj",
+        "sharedLibraries": Array [],
+        "sourceDir": "<<REPLACED>>/node_modules/react-native-test/ios",
+      },
+    },
+  },
+}
+`;

@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`init --template: package.json contains necessary configuration 1`] = `
+Object {
+  "dependencies": Object {
+    "react": "16.8.1",
+    "react-native": "0.59.0-rc.1",
+  },
+  "devDependencies": Object {
+    "@babel/core": "^7.3.3",
+    "@babel/runtime": "^7.3.1",
+    "@react-native-community/eslint-config": "^0.0.3",
+    "babel-jest": "^24.1.0",
+    "jest": "^24.1.0",
+    "metro-react-native-babel-preset": "^0.51.1",
+    "react-test-renderer": "16.8.1",
+  },
+  "jest": Object {
+    "preset": "react-native",
+  },
+  "name": "TestInit",
+  "private": true,
+  "scripts": Object {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "test": "jest",
+  },
+  "version": "0.0.1",
+}
+`;

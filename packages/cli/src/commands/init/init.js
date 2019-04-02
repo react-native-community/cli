@@ -1,100 +1,128 @@
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * @format
- */
-
-import fs from 'fs';
+// @flow
+import fs from 'fs-extra';
 import minimist from 'minimist';
-import path from 'path';
-import process from 'process';
-import printRunInstructions from '../../tools/generator/printRunInstructions';
-import {createProjectFromTemplate} from '../../tools/generator/templates';
-import * as PackageManager from '../../tools/PackageManager';
+import semver from 'semver';
+import type {ContextT} from '../../tools/types.flow';
+import {validateProjectName} from './validate';
+import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
+import printRunInstructions from './printRunInstructions';
 import logger from '../../tools/logger';
+import {
+  installTemplatePackage,
+  getTemplateConfig,
+  copyTemplate,
+  executePostInitScript,
+} from './template';
+import {changePlaceholderInTemplate} from './editTemplate';
+import * as PackageManager from '../../tools/PackageManager';
+import {processTemplateName} from './templateName';
 
-/**
- * Creates the template for a React Native project given the provided
- * parameters:
- * @param projectDir Templates will be copied here.
- * @param argsOrName Project name or full list of custom arguments
- *                   for the generator.
- * @param options Command line options passed from the react-native-cli directly.
- *                E.g. `{ version: '0.43.0', template: 'navigation' }`
- */
-function init(projectDir, argsOrName) {
-  const args = Array.isArray(argsOrName)
-    ? argsOrName // argsOrName was e.g. ['AwesomeApp', '--verbose']
-    : [argsOrName].concat(process.argv.slice(4)); // argsOrName was e.g. 'AwesomeApp'
+type Options = {|
+  template?: string,
+  npm?: boolean,
+|};
 
-  // args array is e.g. ['AwesomeApp', '--verbose', '--template', 'navigation']
-  if (!args || args.length === 0) {
-    logger.error('react-native init requires a project name.');
-    return;
+function adjustNameIfUrl(name) {
+  // We use package manager to infer the name of the template module for us.
+  // That's why we get it from temporary package.json, where the name is the
+  // first and only dependency (hence 0).
+  if (name.match(/https?:/)) {
+    name = Object.keys(
+      JSON.parse(fs.readFileSync('./package.json', 'utf8')).dependencies,
+    )[0];
+  }
+  return name;
+}
+
+async function createFromExternalTemplate(
+  projectName: string,
+  templateName: string,
+  npm?: boolean,
+) {
+  logger.info('Initializing new project from external template');
+
+  let {uri, name} = await processTemplateName(templateName);
+
+  installTemplatePackage(uri, npm);
+  name = adjustNameIfUrl(name);
+  const templateConfig = getTemplateConfig(name);
+  copyTemplate(name, templateConfig.templateDir);
+  changePlaceholderInTemplate(projectName, templateConfig.placeholderName);
+
+  if (templateConfig.postInitScript) {
+    executePostInitScript(name, templateConfig.postInitScript);
   }
 
-  const newProjectName = args[0];
-  const options = minimist(args);
-
-  logger.info(`Setting up new React Native app in ${projectDir}`);
-  generateProject(projectDir, newProjectName, options);
+  PackageManager.installAll({preferYarn: !npm});
 }
 
-/**
- * Generates a new React Native project based on the template.
- * @param Absolute path at which the project folder should be created.
- * @param options Command line arguments parsed by minimist.
- */
-function generateProject(destinationRoot, newProjectName, options) {
-  const pkgJson = require('react-native/package.json');
-  const reactVersion = pkgJson.peerDependencies.react;
+async function createFromReactNativeTemplate(
+  projectName: string,
+  version: string,
+  npm?: boolean,
+) {
+  logger.info('Initializing new project');
 
-  PackageManager.setProjectDir(destinationRoot);
-  createProjectFromTemplate(
-    destinationRoot,
-    newProjectName,
-    options.template,
-    destinationRoot,
-  );
+  if (semver.valid(version) && !semver.satisfies(version, '0.60.0')) {
+    throw new Error(
+      'Cannot use React Native CLI to initialize project with version less than 0.60.0',
+    );
+  }
 
-  logger.info('Adding required dependencies');
-  PackageManager.install([`react@${reactVersion}`]);
+  const TEMPLATE_NAME = 'react-native';
 
-  logger.info('Adding required dev dependencies');
-  PackageManager.installDev([
-    '@babel/core',
-    '@babel/runtime',
-    '@react-native-community/eslint-config',
-    'eslint',
-    'jest',
-    'babel-jest',
-    'metro-react-native-babel-preset',
-    `react-test-renderer@${reactVersion}`,
-  ]);
+  const {uri} = await processTemplateName(`${TEMPLATE_NAME}@${version}`);
 
-  addJestToPackageJson(destinationRoot);
-  printRunInstructions(destinationRoot, newProjectName);
+  installTemplatePackage(uri, npm);
+  const templateConfig = getTemplateConfig(TEMPLATE_NAME);
+  copyTemplate(TEMPLATE_NAME, templateConfig.templateDir);
+  changePlaceholderInTemplate(projectName, templateConfig.placeholderName);
+
+  if (templateConfig.postInitScript) {
+    executePostInitScript(TEMPLATE_NAME, templateConfig.postInitScript);
+  }
+
+  PackageManager.installAll({preferYarn: !npm});
 }
 
-/**
- * Add Jest-related stuff to package.json, which was created by the react-native-cli.
- */
-function addJestToPackageJson(destinationRoot) {
-  const packageJSONPath = path.join(destinationRoot, 'package.json');
-  const packageJSON = JSON.parse(fs.readFileSync(packageJSONPath));
+function createProject(projectName: string, options: Options, version: string) {
+  fs.mkdirSync(projectName);
+  process.chdir(projectName);
 
-  packageJSON.scripts.test = 'jest';
-  packageJSON.scripts.lint = 'eslint .';
-  packageJSON.jest = {
-    preset: 'react-native',
-  };
-  fs.writeFileSync(
-    packageJSONPath,
-    `${JSON.stringify(packageJSON, null, 2)}\n`,
-  );
+  if (options.template) {
+    return createFromExternalTemplate(
+      projectName,
+      options.template,
+      options.npm,
+    );
+  }
+
+  return createFromReactNativeTemplate(projectName, version, options.npm);
 }
 
-export default init;
+export default async function initialize(
+  [projectName]: Array<string>,
+  context: ContextT,
+  options: Options,
+) {
+  validateProjectName(projectName);
+
+  /**
+   * Commander is stripping `version` from options automatically.
+   * We have to use `minimist` to take that directly from `process.argv`
+   */
+  const version: string = minimist(process.argv).version || 'latest';
+
+  if (fs.existsSync(projectName)) {
+    throw new DirectoryAlreadyExistsError(projectName);
+  }
+
+  try {
+    await createProject(projectName, options, version);
+
+    printRunInstructions(process.cwd(), projectName);
+  } catch (e) {
+    logger.error(e.message);
+    fs.removeSync(projectName);
+  }
+}

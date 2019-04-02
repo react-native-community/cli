@@ -15,7 +15,7 @@ import path from 'path';
 import type {CommandT, ContextT} from './tools/types.flow';
 
 import {getCommands} from './commands';
-import init from './commands/init/init';
+import init from './commands/init/initCompat';
 import assertRequiredOptions from './tools/assertRequiredOptions';
 import logger from './tools/logger';
 import {setProjectDir} from './tools/PackageManager';
@@ -34,7 +34,18 @@ commander.on('command:*', () => {
 const defaultOptParser = val => val;
 
 const handleError = err => {
-  logger.error(err.message);
+  if (commander.verbose) {
+    logger.error(err.message);
+  } else {
+    logger.error(
+      `${err.message}. ${chalk.dim(
+        `Run CLI with ${chalk.reset('--verbose')} ${chalk.dim(
+          'flag for more details.',
+        )}`,
+      )}`,
+    );
+  }
+  logger.debug(err.stack);
   process.exit(1);
 };
 

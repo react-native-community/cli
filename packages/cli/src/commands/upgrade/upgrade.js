@@ -7,7 +7,7 @@ import execa from 'execa';
 import type {ContextT} from '../../tools/types.flow';
 import logger from '../../tools/logger';
 import * as PackageManager from '../../tools/PackageManager';
-import {fetch} from './helpers';
+import {fetch} from '../../tools/fetch';
 import legacyUpgrade from './legacyUpgrade';
 
 type FlagsT = {

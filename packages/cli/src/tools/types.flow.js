@@ -81,6 +81,18 @@ export type IOSConfigParamsT = {
   libraryFolder?: string,
 };
 
+export type AndroidProjectConfigParamsT = {
+  sourceDir?: string,
+  manifestPath?: string,
+  packageName?: string,
+  packageFolder?: string,
+  mainFilePath?: string,
+  stringsPath?: string,
+  settingsGradlePath?: string,
+  assetsPath?: string,
+  buildGradlePath?: string,
+};
+
 export type ProjectConfigIOST = {};
 
 export type DependencyConfigIOST = ProjectConfigIOST;

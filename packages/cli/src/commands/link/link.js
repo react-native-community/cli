@@ -34,28 +34,6 @@ type FlagsType = {
 function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
   let platforms = ctx.platforms;
   let project = ctx.project;
-  try {
-    logger.debug(
-      'Available platforms: ' +
-        `${Object.getOwnPropertyNames(platforms)
-          .map(platform => getPlatformName(platform))
-          .join(', ')}`,
-    );
-    if (opts.platforms) {
-      platforms = pick(platforms, opts.platforms);
-    }
-    logger.debug(
-      'Targeted platforms: ' +
-        `${Object.getOwnPropertyNames(platforms)
-          .map(platform => getPlatformName(platform))
-          .join(', ')}`,
-    );
-  } catch (err) {
-    logger.error(
-      'No package found. Are you sure this is a React Native project?',
-    );
-    return Promise.reject(err);
-  }
 
   if (rawPackageName === undefined) {
     logger.debug(

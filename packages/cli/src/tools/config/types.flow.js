@@ -4,6 +4,7 @@
 
 import type {
   AndroidConfigParamsT,
+  AndroidProjectConfigParamsT,
   IOSConfigParamsT,
   InquirerPromptT,
   DependencyConfigAndroidT,
@@ -83,7 +84,7 @@ export type RawConfigT = {|
 export type UserConfigT = {
   ...RawConfigT,
   project: {
-    android?: AndroidConfigParamsT,
+    android?: AndroidProjectConfigParamsT,
     ios?: IOSConfigParamsT,
     [key: string]: any,
   },

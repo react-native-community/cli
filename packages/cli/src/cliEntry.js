@@ -18,7 +18,6 @@ import {getCommands} from './commands';
 import init from './commands/init/init';
 import assertRequiredOptions from './tools/assertRequiredOptions';
 import logger from './tools/logger';
-import findPlugins from './tools/findPlugins';
 import {setProjectDir} from './tools/PackageManager';
 import pkgJson from '../package.json';
 import loadConfig from './tools/config';
@@ -169,6 +168,9 @@ async function setupAndRun() {
 
   logger.setVerbose(commander.verbose);
 }
+
+// @todo replace this
+const findPlugins = () => {};
 
 export default {
   run,

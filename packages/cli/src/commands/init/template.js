@@ -1,9 +1,9 @@
 // @flow
 import {execFileSync} from 'child_process';
-import fs from 'fs-extra';
 import path from 'path';
 import * as PackageManager from '../../tools/PackageManager';
 import logger from '../../tools/logger';
+import copyProjectTemplateAndReplace from '../../tools/generator/copyProjectTemplateAndReplace';
 
 export type TemplateConfig = {
   placeholderName: string,
@@ -33,7 +33,7 @@ export function copyTemplate(templateName: string, templateDir: string) {
 
   logger.debug(`Copying template from ${templatePath}`);
 
-  fs.copySync(templatePath, process.cwd());
+  copyProjectTemplateAndReplace(templatePath, process.cwd(), templateName);
 }
 
 export function executePostInitScript(

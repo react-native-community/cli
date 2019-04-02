@@ -35,6 +35,24 @@ function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
   let platforms = ctx.platforms;
   let project = ctx.project;
 
+  logger.debug(
+    'Available platforms: ' +
+      `${Object.getOwnPropertyNames(platforms)
+        .map(platform => getPlatformName(platform))
+        .join(', ')}`,
+  );
+
+  if (opts.platforms) {
+    platforms = pick(platforms, opts.platforms);
+  }
+
+  logger.debug(
+    'Targeted platforms: ' +
+      `${Object.getOwnPropertyNames(platforms)
+        .map(platform => getPlatformName(platform))
+        .join(', ')}`,
+  );
+
   if (rawPackageName === undefined) {
     logger.debug(
       'No package name provided, will attemp to link all possible packages.',

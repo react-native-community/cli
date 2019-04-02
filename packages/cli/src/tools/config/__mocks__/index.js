@@ -1,9 +1,8 @@
 /**
  * @flow
  */
-import {type ConfigT} from '../types.flow';
 
-export default function mockedLoadConfig(): ConfigT {
+export default function mockedLoadConfig() {
   return {
     root: '/project/root',
     reactNativePath: '',

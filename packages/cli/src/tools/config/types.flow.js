@@ -2,17 +2,32 @@
  * @flow
  */
 
-import type {
-  DependencyParamsAndroidT,
-  ProjectParamsAndroidT,
-  ProjectParamsIOST,
-  InquirerPromptT,
-  DependencyConfigAndroidT,
-  DependencyConfigIOST,
-  ProjectConfigAndroidT,
-  ProjectConfigIOST,
-  PlatformConfigT,
-} from '../types.flow';
+type InquirerPromptT = any;
+
+type DependencyParamsAndroidT = {
+  sourceDir?: string,
+  manifestPath?: string,
+  packageImportPath?: string,
+  packageInstance?: string,
+};
+
+type ProjectParamsAndroidT = {
+  sourceDir?: string,
+  manifestPath?: string,
+  packageName?: string,
+  packageFolder?: string,
+  mainFilePath?: string,
+  stringsPath?: string,
+  settingsGradlePath?: string,
+  assetsPath?: string,
+  buildGradlePath?: string,
+};
+
+type ProjectParamsIOST = {
+  project?: string,
+  sharedLibraries?: string[],
+  libraryFolder?: string,
+};
 
 export type ConfigT = {|
   root: string,
@@ -41,19 +56,63 @@ export type ConfigT = {|
     },
   },
   platforms: {
-    ios: PlatformConfigT<
-      ProjectConfigIOST,
-      ProjectParamsIOST,
-      DependencyConfigIOST,
-      ProjectParamsIOST,
-    >,
-    android: PlatformConfigT<
-      ProjectConfigAndroidT,
-      ProjectParamsAndroidT,
-      DependencyConfigAndroidT,
-      DependencyParamsAndroidT,
-    >,
-    [name: string]: PlatformConfigT<any, any, any, any>,
+    [name: string]: any,
+    ios: {
+      projectConfig: (string, ProjectParamsIOST) => ?ProjectConfigIOST,
+      dependencyConfig: (string, ProjectParamsIOST) => ?DependencyConfigIOST,
+      linkConfig: () => {
+        isInstalled: (
+          ProjectConfigIOST,
+          string,
+          DependencyConfigIOST,
+        ) => boolean,
+        register: (
+          string,
+          DependencyConfigIOST,
+          Object,
+          ProjectConfigIOST,
+        ) => void,
+        unregister: (
+          string,
+          DependencyConfigT,
+          ProjectConfigIOST,
+          Array<DependencyConfigT>,
+        ) => void,
+        copyAssets: (string[], ProjectConfigIOST) => void,
+        unlinkAssets: (string[], ProjectConfigIOST) => void,
+      },
+      android: {
+        projectConfig: (
+          string,
+          ProjectParamsAndroidT,
+        ) => ?ProjectConfigAndroidT,
+        dependencyConfig: (
+          string,
+          DependencyParamsAndroidT,
+        ) => ?DependencyConfigAndroidT,
+        linkConfig: () => {
+          isInstalled: (
+            ProjectConfigAndroidT,
+            string,
+            DependencyConfigIOST,
+          ) => boolean,
+          register: (
+            string,
+            DependencyConfigIOST,
+            Object,
+            ProjectConfigAndroidT,
+          ) => void,
+          unregister: (
+            string,
+            DependencyConfigT,
+            ProjectConfigAndroidT,
+            Array<DependencyConfigT>,
+          ) => void,
+          copyAssets: (string[], ProjectConfigIOST) => void,
+          unlinkAssets: (string[], ProjectConfigIOST) => void,
+        },
+      },
+    },
   },
   commands: string[],
   haste: {
@@ -85,7 +144,9 @@ export type UserDependencyConfigT = {
     params: InquirerPromptT[],
   },
   commands: string[],
-  platforms: PlatformsT,
+  platforms: {
+    [name: string]: any,
+  },
 };
 
 export type UserConfigT = {
@@ -97,3 +158,11 @@ export type UserConfigT = {
     [key: string]: any,
   },
 };
+
+type ProjectConfigIOST = {};
+
+type DependencyConfigIOST = ProjectConfigIOST;
+
+type ProjectConfigAndroidT = {};
+
+type DependencyConfigAndroidT = {};

@@ -6,7 +6,7 @@ import {uniqBy, flatMap} from 'lodash';
 import path from 'path';
 import dedent from 'dedent';
 
-import type {ContextT, PlatformsT} from '../../tools/types.flow';
+import type {ConfigT, PlatformsT} from '../../tools/config/types.flow';
 
 import promiseWaterfall from './promiseWaterfall';
 import commandStub from './commandStub';
@@ -18,7 +18,7 @@ import linkDependency from './linkDependency';
 const dedupeAssets = (assets: Array<string>): Array<string> =>
   uniqBy(assets, asset => path.basename(asset));
 
-function linkAll(config: ContextT, platforms: PlatformsT) {
+function linkAll(config: ConfigT, platforms: PlatformsT) {
   const projectAssets = config.assets;
 
   const assets = dedupeAssets(

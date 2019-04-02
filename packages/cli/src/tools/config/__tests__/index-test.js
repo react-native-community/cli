@@ -2,7 +2,7 @@
  * @flow
  */
 
-import loadConfig from '../';
+import loadConfig from '..';
 
 import {
   cleanup,

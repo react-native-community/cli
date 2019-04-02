@@ -1,6 +1,3 @@
-/**
- * @flow
- */
 import {func as link} from '../link';
 import loadConfig from '../../../tools/config';
 

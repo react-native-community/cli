@@ -4,8 +4,6 @@
 
 import findDependencies from '../findDependencies';
 
-const path = require('path');
-
 import {
   cleanup,
   writeFiles,

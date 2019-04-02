@@ -2,7 +2,7 @@
  * @flow
  */
 
-import {type ProjectConfigT as ConfigT} from './config/types.flow';
+import {type ConfigT} from './config/types.flow';
 
 export type ContextT = ConfigT;
 

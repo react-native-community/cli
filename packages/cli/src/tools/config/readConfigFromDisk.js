@@ -7,7 +7,7 @@ import Joi from 'joi';
 import cosmiconfig from 'cosmiconfig';
 import path from 'path';
 
-import {type DependencyConfigT, type ProjectConfigT} from './types.flow';
+import {type DependencyConfigT, type UserConfigT} from './types.flow';
 
 import {JoiError} from '../errors';
 
@@ -23,7 +23,7 @@ const searchPlaces = ['react-native.config.js', 'package.json'];
  * Reads a project configuration as defined by the user in the current
  * workspace.
  */
-export function readProjectConfigFromDisk(rootFolder: string): ProjectConfigT {
+export function readConfigFromDisk(rootFolder: string): UserConfigT {
   const explorer = cosmiconfig('react-native', {searchPlaces});
 
   const {config} = explorer.searchSync(rootFolder) || {config: undefined};

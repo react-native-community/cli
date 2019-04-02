@@ -8,7 +8,7 @@
  */
 
 import {pick} from 'lodash';
-import type {ContextT} from '../../tools/types.flow';
+import {type ContextT} from '../../tools/types.flow';
 
 import promiseWaterfall from './promiseWaterfall';
 import logger from '../../tools/logger';
@@ -32,10 +32,9 @@ type FlagsType = {
  *             only that package is processed.
  */
 function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
-  let platforms;
-  let project;
+  let platforms = ctx.platforms;
+  let project = ctx.project;
   try {
-    platforms = getPlatforms(ctx.root);
     logger.debug(
       'Available platforms: ' +
         `${Object.getOwnPropertyNames(platforms)
@@ -51,7 +50,6 @@ function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
           .map(platform => getPlatformName(platform))
           .join(', ')}`,
     );
-    project = getProjectConfig(ctx, platforms);
   } catch (err) {
     logger.error(
       'No package found. Are you sure this is a React Native project?',

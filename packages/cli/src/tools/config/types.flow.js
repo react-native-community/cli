@@ -8,6 +8,8 @@ import type {
   InquirerPromptT,
   DependencyConfigAndroidT,
   DependencyConfigIOST,
+  ProjectConfigAndroidT,
+  ProjectConfigIOST,
 } from '../types.flow';
 
 /**
@@ -45,13 +47,19 @@ export type DependencyConfigT = {
   platforms: PlatformsT,
 };
 
-type _ProjectConfigT = {
+export type ConfigT = {|
   root: string,
+  reactNativePath: string,
+  project: {
+    android?: ProjectConfigAndroidT,
+    ios?: ProjectConfigIOST,
+    [key: string]: any,
+  },
   dependencies: {
     [key: string]: {
       platforms: {
-        android: DependencyConfigAndroidT | null,
-        ios: DependencyConfigIOST | null,
+        android?: DependencyConfigAndroidT | null,
+        ios?: DependencyConfigIOST | null,
         [key: string]: any,
       },
       assets: string[],
@@ -65,12 +73,18 @@ type _ProjectConfigT = {
     platforms: Array<string>,
     providesModuleNodeModules: Array<string>,
   },
-};
+|};
 
-export type RawProjectConfigT = _ProjectConfigT & {
-  reactNativePath: string | null,
-};
+export type RawConfigT = {|
+  ...ConfigT,
+  reactNativePath: ?string,
+|};
 
-export type ProjectConfigT = _ProjectConfigT & {
-  reactNativePath: string,
+export type UserConfigT = {
+  ...RawConfigT,
+  project: {
+    android?: AndroidConfigParamsT,
+    ios?: IOSConfigParamsT,
+    [key: string]: any,
+  },
 };

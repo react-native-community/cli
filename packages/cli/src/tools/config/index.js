@@ -4,15 +4,16 @@
 import dedent from 'dedent';
 import path from 'path';
 import merge from 'deepmerge';
+import {omit} from 'lodash';
 
 import findDependencies from './findDependencies';
 import {
-  readProjectConfigFromDisk,
+  readConfigFromDisk,
   readDependencyConfigFromDisk,
   readLegacyDependencyConfigFromDisk,
 } from './readConfigFromDisk';
 
-import {type ProjectConfigT, type RawProjectConfigT} from './types.flow';
+import {type ConfigT, type RawConfigT} from './types.flow';
 
 /**
  * Built-in platforms
@@ -24,9 +25,11 @@ import resolveReactNativePath from './resolveReactNativePath';
 /**
  * Loads CLI configuration
  */
-function loadConfig(projectRoot: string = process.cwd()): ProjectConfigT {
-  const inferredProjectConfig = findDependencies(projectRoot).reduce(
-    (acc: RawProjectConfigT, dependencyName) => {
+function loadConfig(projectRoot: string = process.cwd()): ConfigT {
+  const userConfig = readConfigFromDisk(projectRoot);
+
+  const inferredConfig = findDependencies(projectRoot).reduce(
+    (acc: RawConfigT, dependencyName) => {
       const root = path.join(projectRoot, 'node_modules', dependencyName);
 
       const config =
@@ -88,13 +91,21 @@ function loadConfig(projectRoot: string = process.cwd()): ProjectConfigT {
         providesModuleNodeModules: [],
         platforms: [],
       },
-    }: RawProjectConfigT),
+      // $FlowExpectedError: This getter is safe
+      get project() {
+        return Object.keys(this.platforms).reduce((project, platform) => {
+          project[platform] = this.platforms[platform].projectConfig(
+            projectRoot,
+            userConfig.project,
+          );
+          return project;
+        }, {});
+      },
+    }: RawConfigT),
   );
 
-  const config: RawProjectConfigT = merge(
-    inferredProjectConfig,
-    readProjectConfigFromDisk(projectRoot),
-  );
+  // @todo(grabbou): make this explicit
+  const config: ConfigT = merge(inferredConfig, omit(userConfig, 'project'));
 
   if (config.reactNativePath === null) {
     throw new Error(dedent`
@@ -111,7 +122,6 @@ function loadConfig(projectRoot: string = process.cwd()): ProjectConfigT {
     `);
   }
 
-  // $FlowIssue: `reactNativePath: null` is never null at this point
   return config;
 }
 

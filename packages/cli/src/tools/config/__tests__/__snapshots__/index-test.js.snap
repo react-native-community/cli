@@ -2,11 +2,13 @@
 
 exports[`should deep merge project configuration with default values 1`] = `
 Object {
+  "assets": [],
   "commands": Array [],
   "dependencies": Object {
     "react-native-test": Object {
       "assets": Array [],
       "hooks": Object {},
+      "name": "react-native-test",
       "params": Array [],
       "platforms": Object {
         "android": null,
@@ -44,6 +46,7 @@ Object {
 
 exports[`should have a valid structure by default 1`] = `
 Object {
+  "assets": Array [],
   "commands": Array [],
   "dependencies": Object {},
   "haste": Object {
@@ -91,6 +94,7 @@ Array [
 exports[`should read \`rnpm\` config from a dependency and transform it to a new format 1`] = `
 Object {
   "assets": Array [],
+  "name": "react-native-foo",
   "hooks": Object {},
   "params": Array [],
   "platforms": Object {
@@ -115,6 +119,7 @@ exports[`should read a config of a dependency and use it to load other settings 
 Object {
   "assets": Array [],
   "hooks": Object {},
+  "name": "react-native-test",
   "params": Array [],
   "platforms": Object {
     "android": null,
@@ -139,6 +144,7 @@ Object {
   "react-native-test": Object {
     "assets": Array [],
     "hooks": Object {},
+    "name": "react-native-test",
     "params": Array [],
     "platforms": Object {
       "android": null,

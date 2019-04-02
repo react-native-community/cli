@@ -22,6 +22,7 @@ export type ConfigT = {|
     ios: ?ProjectConfigIOST,
     [key: string]: any,
   },
+  assets: string[],
   dependencies: {
     [key: string]: {
       name: string,
@@ -75,8 +76,8 @@ export type PlatformsT = $PropertyType<ConfigT, 'platforms'>;
 export type UserDependencyConfigT = {
   dependency: {
     platforms: {
-      android?: DependencyParamsAndroidT,
-      ios?: ProjectParamsIOST,
+      android: DependencyParamsAndroidT,
+      ios: ProjectParamsIOST,
       [key: string]: any,
     },
     assets: string[],
@@ -87,13 +88,9 @@ export type UserDependencyConfigT = {
   platforms: PlatformsT,
 };
 
-export type RawConfigT = {|
-  ...ConfigT,
-  reactNativePath: ?string,
-|};
-
 export type UserConfigT = {
-  ...RawConfigT,
+  ...$Diff<ConfigT, {haste: any, root: any, platforms: any}>,
+  reactNativePath: ?string,
   project: {
     android?: ProjectParamsAndroidT,
     ios?: ProjectParamsIOST,

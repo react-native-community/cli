@@ -1,26 +1,27 @@
 /**
  * @flow
  */
-import dedent from 'dedent';
 import path from 'path';
 import merge from 'deepmerge';
-import {omit} from 'lodash';
+import {mapValues} from 'lodash';
 
 import findDependencies from './findDependencies';
+import resolveReactNativePath from './resolveReactNativePath';
+import findAssets from './findAssets';
+import makeHook from './makeHook';
 import {
   readConfigFromDisk,
   readDependencyConfigFromDisk,
   readLegacyDependencyConfigFromDisk,
 } from './readConfigFromDisk';
 
-import {type ConfigT, type RawConfigT} from './types.flow';
+import {type ConfigT} from './types.flow';
 
 /**
  * Built-in platforms
  */
 import * as ios from '../ios';
 import * as android from '../android';
-import resolveReactNativePath from './resolveReactNativePath';
 
 /**
  * Loads CLI configuration
@@ -29,7 +30,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
   const userConfig = readConfigFromDisk(projectRoot);
 
   const inferredConfig = findDependencies(projectRoot).reduce(
-    (acc: RawConfigT, dependencyName) => {
+    (acc: ConfigT, dependencyName) => {
       const root = path.join(projectRoot, 'node_modules', dependencyName);
 
       const config =
@@ -56,8 +57,8 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
                 },
                 {},
               ),
-              assets: config.dependency.assets,
-              hooks: config.dependency.hooks,
+              assets: findAssets(root, config.dependency.assets),
+              hooks: mapValues(config.dependency.hooks, makeHook),
               params: config.dependency.params,
             };
           },
@@ -81,9 +82,11 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
     },
     ({
       root: projectRoot,
-      reactNativePath: resolveReactNativePath(projectRoot),
+      reactNativePath:
+        userConfig.reactNativePath || resolveReactNativePath(projectRoot),
       dependencies: {},
-      commands: [],
+      commands: userConfig.commands,
+      assets: findAssets(projectRoot, userConfig.assets),
       platforms: {
         ios,
         android,
@@ -97,38 +100,20 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
           (project, platform) => {
             project[platform] = this.platforms[platform].projectConfig(
               projectRoot,
-              userConfig.project,
+              userConfig.project[platform],
             );
             return project;
           },
           {ios: null, android: null},
         );
       },
-    }: RawConfigT),
+    }: ConfigT),
   );
 
-  /**
-   * All config properties are deep-merged with user provided settings except for
-   * the project, which is calculated
-   */
-  const config: ConfigT = merge(inferredConfig, omit(userConfig, 'project'));
-
-  if (config.reactNativePath === null) {
-    throw new Error(dedent`
-      Unable to find React Native files. Make sure "react-native" module is installed
-      in your project dependencies.
-
-      If you are using React Native from a non-standard location, consider setting:
-      {
-        "react-native": {
-          "reactNativePath": "./path/to/react-native"
-        }
-      }
-      in your \`package.json\`.
-    `);
-  }
-
-  return config;
+  return {
+    ...inferredConfig,
+    dependencies: merge(inferredConfig.dependencies, userConfig.dependencies),
+  };
 }
 
 export default loadConfig;

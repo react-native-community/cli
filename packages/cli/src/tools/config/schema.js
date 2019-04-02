@@ -39,7 +39,7 @@ export const dependencyConfig = t
           .array()
           .items(t.string())
           .default([]),
-        hooks: map(t.string(), t.string()).default(),
+        hooks: map(t.string(), t.string()).default({}),
         params: t
           .array()
           .items(
@@ -110,46 +110,39 @@ export const projectConfig = t
           ),
         })
         .allow(null),
-    ),
-    commands: t.array().items(t.string()),
-    haste: t.object({
-      providesModuleNodeModules: t.array().items(t.string()),
-      platforms: t.array().items(t.string()),
-    }),
+    ).default({}),
     reactNativePath: t.string(),
-    root: t.string(),
-    project: t.object({
-      platforms: map(
-        t.string(),
-        t
+    project: map(t.string(), t.any())
+      .keys({
+        ios: t
           .object({
-            ios: t
-              .object({
-                project: t.string(),
-                sharedLibraries: t.array().items(t.string()),
-                libraryFolder: t.string(),
-              })
-              .default({}),
-            android: t
-              .object({
-                sourceDir: t.string(),
-                manifestPath: t.string(),
-                packageName: t.string(),
-                packageFolder: t.string(),
-                mainFilePath: t.string(),
-                stringsPath: t.string(),
-                settingsGradlePath: t.string(),
-                assetsPath: t.string(),
-                buildGradlePath: t.string(),
-              })
-              .default({}),
+            project: t.string(),
+            sharedLibraries: t.array().items(t.string()),
+            libraryFolder: t.string(),
           })
-          .default(),
-      ).default(),
-      assets: t
-        .array()
-        .items(t.string())
-        .default([]),
-    }),
+          .default({}),
+        android: t
+          .object({
+            sourceDir: t.string(),
+            manifestPath: t.string(),
+            packageName: t.string(),
+            packageFolder: t.string(),
+            mainFilePath: t.string(),
+            stringsPath: t.string(),
+            settingsGradlePath: t.string(),
+            assetsPath: t.string(),
+            buildGradlePath: t.string(),
+          })
+          .default({}),
+      })
+      .default(),
+    assets: t
+      .array()
+      .items(t.string())
+      .default([]),
+    commands: t
+      .array()
+      .items(t.string())
+      .default([]),
   })
   .default();

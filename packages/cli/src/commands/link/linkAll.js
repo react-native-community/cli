@@ -20,11 +20,7 @@ import linkDependency from './linkDependency';
 const dedupeAssets = (assets: Array<string>): Array<string> =>
   uniqBy(assets, asset => path.basename(asset));
 
-function linkAll(
-  context: ContextT,
-  platforms: PlatformsT,
-  project: ProjectConfigT,
-) {
+function linkAll(context: ContextT, platforms: PlatformsT) {
   logger.warn(
     'Running `react-native link` without package name is deprecated and will be removed ' +
       'in next release. If you use this command to link your project assets, ' +
@@ -47,9 +43,9 @@ function linkAll(
   const tasks = flatten(
     dependenciesConfig.map(config => [
       () => promisify(config.commands.prelink || commandStub),
-      () => linkDependency(platforms, project, config),
+      () => linkDependency(platforms, context.project, config),
       () => promisify(config.commands.postlink || commandStub),
-      () => linkAssets(platforms, project, assets),
+      () => linkAssets(platforms, context.project, assets),
     ]),
   );
 

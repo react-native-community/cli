@@ -10,7 +10,7 @@ const map = (key, value) =>
     .pattern(key, value);
 
 /**
- * Schema for DependencyConfigT
+ * Schema for UserDependencyConfigT
  */
 export const dependencyConfig = t
   .object({
@@ -118,32 +118,38 @@ export const projectConfig = t
     }),
     reactNativePath: t.string(),
     root: t.string(),
-    project: map(
-      t.string(),
-      t
-        .object({
-          ios: t
-            .object({
-              project: t.string(),
-              sharedLibraries: t.array().items(t.string()),
-              libraryFolder: t.string(),
-            })
-            .default({}),
-          android: t
-            .object({
-              sourceDir: t.string(),
-              manifestPath: t.string(),
-              packageName: t.string(),
-              packageFolder: t.string(),
-              mainFilePath: t.string(),
-              stringsPath: t.string(),
-              settingsGradlePath: t.string(),
-              assetsPath: t.string(),
-              buildGradlePath: t.string(),
-            })
-            .default({}),
-        })
-        .default(),
-    ).default(),
+    project: t.object({
+      platforms: map(
+        t.string(),
+        t
+          .object({
+            ios: t
+              .object({
+                project: t.string(),
+                sharedLibraries: t.array().items(t.string()),
+                libraryFolder: t.string(),
+              })
+              .default({}),
+            android: t
+              .object({
+                sourceDir: t.string(),
+                manifestPath: t.string(),
+                packageName: t.string(),
+                packageFolder: t.string(),
+                mainFilePath: t.string(),
+                stringsPath: t.string(),
+                settingsGradlePath: t.string(),
+                assetsPath: t.string(),
+                buildGradlePath: t.string(),
+              })
+              .default({}),
+          })
+          .default(),
+      ).default(),
+      assets: t
+        .array()
+        .items(t.string())
+        .default([]),
+    }),
   })
   .default();

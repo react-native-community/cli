@@ -43,6 +43,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
           // $FlowIssue: Computed getters are not yet supported.
           get [dependencyName]() {
             return {
+              name: dependencyName,
               platforms: Object.keys(acc.platforms).reduce(
                 (dependency, platform) => {
                   dependency[platform] = acc.platforms[

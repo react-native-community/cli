@@ -7,7 +7,7 @@ import Joi from 'joi';
 import cosmiconfig from 'cosmiconfig';
 import path from 'path';
 
-import {type DependencyConfigT, type UserConfigT} from './types.flow';
+import {type UserDependencyConfigT, type UserConfigT} from './types.flow';
 
 import {JoiError} from '../errors';
 
@@ -43,7 +43,7 @@ export function readConfigFromDisk(rootFolder: string): UserConfigT {
  */
 export function readDependencyConfigFromDisk(
   rootFolder: string,
-): DependencyConfigT {
+): UserDependencyConfigT {
   const explorer = cosmiconfig('react-native', {
     stopDir: rootFolder,
     searchPlaces,
@@ -65,7 +65,7 @@ export function readDependencyConfigFromDisk(
  */
 export function readLegacyDependencyConfigFromDisk(
   rootFolder: string,
-): ?DependencyConfigT {
+): ?UserDependencyConfigT {
   const {rnpm: config, name} = require(path.join(rootFolder, 'package.json'));
 
   if (!config) {

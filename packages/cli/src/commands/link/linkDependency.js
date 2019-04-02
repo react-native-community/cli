@@ -1,10 +1,10 @@
 // @flow
 
 import type {
-  PlatformsT,
+  DependencyConfigT,
   ProjectConfigT,
-  DependenciesConfig,
-} from '../../tools/types.flow';
+  PlatformsT,
+} from '../../tools/config/types.flow';
 import logger from '../../tools/logger';
 import pollParams from './pollParams';
 import {getPlatformName} from '../../tools/getPlatforms';
@@ -12,12 +12,12 @@ import {getPlatformName} from '../../tools/getPlatforms';
 const linkDependency = async (
   platforms: PlatformsT,
   project: ProjectConfigT,
-  dependency: DependenciesConfig,
+  dependency: DependencyConfigT,
 ) => {
   const params = await pollParams(dependency.params);
 
   Object.keys(platforms || {}).forEach(platform => {
-    if (!project[platform] || !dependency.config[platform]) {
+    if (!project[platform] || !dependency.platforms[platform]) {
       return;
     }
 
@@ -33,7 +33,7 @@ const linkDependency = async (
     const isInstalled = linkConfig.isInstalled(
       project[platform],
       dependency.name,
-      dependency.config[platform],
+      dependency.platforms[platform],
     );
 
     if (isInstalled) {
@@ -51,9 +51,10 @@ const linkDependency = async (
 
     linkConfig.register(
       dependency.name,
-      dependency.config[platform] || {},
+      // $FlowExpectedError: We already checked if dependency.platforms[platform] exists
+      dependency.platforms[platform],
       params,
-      // $FlowFixMe: We check if project[platform] exists on line 42
+      // $FlowFixMe: We already checked if project[platform] exists
       project[platform],
     );
 

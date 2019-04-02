@@ -8,18 +8,18 @@
  */
 
 import {pick} from 'lodash';
+import dedent from 'dedent';
+
 import {type ContextT} from '../../tools/types.flow';
 
 import promiseWaterfall from './promiseWaterfall';
 import logger from '../../tools/logger';
-import getDependencyConfig from './getDependencyConfig';
 import commandStub from './commandStub';
 import promisify from './promisify';
-import getProjectConfig from './getProjectConfig';
+
 import linkDependency from './linkDependency';
 import linkAssets from './linkAssets';
 import linkAll from './linkAll';
-import getPlatforms, {getPlatformName} from '../../tools/getPlatforms';
 
 type FlagsType = {
   platforms?: Array<string>,
@@ -31,7 +31,11 @@ type FlagsType = {
  * @param args If optional argument [packageName] is provided,
  *             only that package is processed.
  */
-function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
+async function link(
+  [rawPackageName]: Array<string>,
+  ctx: ContextT,
+  opts: FlagsType,
+) {
   let platforms = ctx.platforms;
   let project = ctx.project;
 
@@ -43,30 +47,42 @@ function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
     logger.debug(
       'No package name provided, will attemp to link all possible packages.',
     );
-    return linkAll(ctx, platforms, project);
+    await linkAll(ctx, platforms);
+    return;
   }
-
-  logger.debug(`Package to link: ${rawPackageName}`);
 
   // Trim the version / tag out of the package name (eg. package@latest)
   const packageName = rawPackageName.replace(/^(.+?)(@.+?)$/gi, '$1');
 
-  const dependencyConfig = getDependencyConfig(ctx, platforms, packageName);
+  if (!Object.keys(ctx.dependencies).includes(packageName)) {
+    throw new Error(dedent`
+      Unknown dependency. 
+      
+      Make sure that the package you are trying to link is already installed
+      in your "node_modules" and present in your "package.json" dependencies.
+    `);
+  }
+
+  const {[packageName]: dependency} = ctx.dependencies;
+
+  logger.debug(`Package to link: ${rawPackageName}`);
 
   const tasks = [
-    () => promisify(dependencyConfig.commands.prelink || commandStub),
-    () => linkDependency(platforms, project, dependencyConfig),
-    () => promisify(dependencyConfig.commands.postlink || commandStub),
-    () => linkAssets(platforms, project, dependencyConfig.assets),
+    () => promisify(dependency.hooks.prelink || commandStub),
+    () => linkDependency(platforms, project, dependency),
+    () => promisify(dependency.hooks.postlink || commandStub),
+    () => linkAssets(platforms, project, dependency.assets),
   ];
 
-  return promiseWaterfall(tasks).catch(err => {
-    logger.error(
-      `Something went wrong while linking. Error: ${err.message} \n` +
-        'Please file an issue here: https://github.com/react-native-community/react-native-cli/issues',
-    );
-    throw err;
-  });
+  try {
+    await promiseWaterfall(tasks);
+  } catch (err) {
+    throw new Error(dedent`
+      Something went wrong while linking. Reason: ${err.message}
+
+      Please file an issue here: https://github.com/react-native-community/react-native-cli/issues
+    `);
+  }
 }
 
 export const func = link;
@@ -84,5 +100,3 @@ export default {
     },
   ],
 };
-
-// link;

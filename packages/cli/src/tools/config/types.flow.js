@@ -11,19 +11,68 @@ import type {
   DependencyConfigIOST,
   ProjectConfigAndroidT,
   ProjectConfigIOST,
-  PlatformsT,
+  PlatformConfigT,
 } from '../types.flow';
 
-/**
- * A map of hooks to run pre/post some of the CLI actions
- */
-type HooksT = {
-  [key: string]: string,
-  prelink?: string,
-  postlink?: string,
-};
+export type ConfigT = {|
+  root: string,
+  reactNativePath: string,
+  project: {
+    android: ?ProjectConfigAndroidT,
+    ios: ?ProjectConfigIOST,
+    [key: string]: any,
+  },
+  dependencies: {
+    [key: string]: {
+      name: string,
+      platforms: {
+        android?: DependencyConfigAndroidT | null,
+        ios?: DependencyConfigIOST | null,
+        [key: string]: any,
+      },
+      assets: string[],
+      hooks: {
+        [key: string]: string,
+        prelink?: string,
+        postlink?: string,
+      },
+      params: InquirerPromptT[],
+    },
+  },
+  platforms: {
+    ios: PlatformConfigT<
+      ProjectConfigIOST,
+      ProjectParamsIOST,
+      DependencyConfigIOST,
+      ProjectParamsIOST,
+    >,
+    android: PlatformConfigT<
+      ProjectConfigAndroidT,
+      ProjectParamsAndroidT,
+      DependencyConfigAndroidT,
+      DependencyParamsAndroidT,
+    >,
+    [name: string]: PlatformConfigT<any, any, any, any>,
+  },
+  commands: string[],
+  haste: {
+    platforms: Array<string>,
+    providesModuleNodeModules: Array<string>,
+  },
+|};
 
-export type DependencyConfigT = {
+export type DependencyConfigT = $PropertyType<
+  $PropertyType<ConfigT, 'dependencies'>,
+  '[key: string]',
+>;
+
+export type HooksT = $PropertyType<DependencyConfigT, 'hooks'>;
+
+export type ProjectConfigT = $PropertyType<ConfigT, 'project'>;
+
+export type PlatformsT = $PropertyType<ConfigT, 'platforms'>;
+
+export type UserDependencyConfigT = {
   dependency: {
     platforms: {
       android?: DependencyParamsAndroidT,
@@ -37,34 +86,6 @@ export type DependencyConfigT = {
   commands: string[],
   platforms: PlatformsT,
 };
-
-export type ConfigT = {|
-  root: string,
-  reactNativePath: string,
-  project: {
-    android: ?ProjectConfigAndroidT,
-    ios: ?ProjectConfigIOST,
-    [key: string]: any,
-  },
-  dependencies: {
-    [key: string]: {
-      platforms: {
-        android?: DependencyConfigAndroidT | null,
-        ios?: DependencyConfigIOST | null,
-        [key: string]: any,
-      },
-      assets: string[],
-      hooks: HooksT,
-      params: InquirerPromptT[],
-    },
-  },
-  platforms: PlatformsT,
-  commands: string[],
-  haste: {
-    platforms: Array<string>,
-    providesModuleNodeModules: Array<string>,
-  },
-|};
 
 export type RawConfigT = {|
   ...ConfigT,

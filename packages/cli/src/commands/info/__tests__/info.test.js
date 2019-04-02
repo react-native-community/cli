@@ -27,6 +27,6 @@ test('prints output without arguments', async () => {
   // TODO: move to e2e tests and adjust expectations to include npm packages
   expect(output).toContain('System:');
   expect(output).toContain('Binaries:');
-});
+}, 20000);
 
 test.todo('prints output with --packages');

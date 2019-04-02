@@ -11,6 +11,10 @@ jest.setMock('child_process', {
   }),
 });
 
+afterAll(() => {
+  jest.restoreAllMocks();
+});
+
 describe('makeHook', () => {
   const hook = makeHook('echo');
 

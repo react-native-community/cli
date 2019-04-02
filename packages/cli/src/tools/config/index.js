@@ -3,7 +3,6 @@
  */
 import path from 'path';
 import merge from 'deepmerge';
-import assign from '../completeAssign';
 import {mapValues} from 'lodash';
 
 import findDependencies from './findDependencies';
@@ -17,6 +16,8 @@ import {
 } from './readConfigFromDisk';
 
 import {type ConfigT} from './types.flow';
+
+import assign from '../assign';
 
 /**
  * Built-in platforms
@@ -114,6 +115,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
   );
 
   return assign({}, inferredConfig, {
+    // @todo rewrite `merge` to use `assign` to not run getters unless needed
     dependencies: merge(inferredConfig.dependencies, userConfig.dependencies),
   });
 }

@@ -57,7 +57,7 @@ const unlinkDependency = (
     linkConfig.unregister(
       packageName,
       // $FlowExpectedError: We check for existence on line 38
-      dependency.config[platform],
+      dependency.platforms[platform],
       // $FlowExpectedError: We check for existence on line 38
       project[platform],
       otherDependencies,
@@ -139,6 +139,7 @@ function unlink(args: Array<string>, ctx: ContextT) {
       logger.error(
         `It seems something went wrong while unlinking. Error:\n${err.message}`,
       );
+      console.log(err.stack);
       throw err;
     });
 }

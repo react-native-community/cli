@@ -12,7 +12,7 @@ import getLaunchPackageName from '../getLaunchPackageName';
 jest.mock('fs');
 jest.mock('path');
 
-describe('run-android::getLaunchPackageName', () => {
+function createMocks(useFlavor) {
   const actualFs = jest.requireActual('fs');
   const actualPath = jest.requireActual('path');
 
@@ -24,7 +24,7 @@ describe('run-android::getLaunchPackageName', () => {
             __dirname,
             '..',
             '__fixtures__',
-            'sampleBuild.gradle',
+            useFlavor ? 'sampleBuildWithFlavor.gradle' : 'sampleBuild.gradle',
           ),
           'utf8',
         );
@@ -35,19 +35,37 @@ describe('run-android::getLaunchPackageName', () => {
             __dirname,
             '..',
             '__fixtures__',
-            'sampleGeneratedDebugManifest.xml',
+            useFlavor
+              ? 'sampleGeneratedDemoDebugManifest.xml'
+              : 'sampleGeneratedDebugManifest.xml',
           ),
           'utf8',
         );
     }
   });
+}
 
-  it('returns a well formed package name for debug build type', () => {
+describe('run-android::getLaunchPackageName', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('returns a well formed package name for unflavored build type', () => {
+    createMocks(/* useFlavor: */ false);
+
     const basePackageName = 'com.mycompany.app';
-    const variant = 'debug';
 
-    // Assert
-    expect(getLaunchPackageName(variant)).toBe(`${basePackageName}.${variant}`);
+    expect(getLaunchPackageName('debug')).toBe(`${basePackageName}.debug`);
+  });
+
+  it('returns a well formed package for flavored build type', () => {
+    createMocks(/* useFlavor: */ true);
+
+    const basePackageName = 'com.mycompany.app';
+
+    expect(getLaunchPackageName('demoDebug')).toBe(
+      `${basePackageName}.demo.debug`,
+    );
   });
 
   afterAll(() => {

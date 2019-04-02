@@ -84,6 +84,61 @@ Object {
 }
 `;
 
+exports[`should load commands from "react-native-foo" and "react-native-bar" packages 1`] = `
+Array [
+  "react-native-foo/command-foo.js",
+  "react-native-bar/command-bar.js",
+]
+`;
+	
+exports[`should read \`rnpm\` config from a dependency and transform it to a new format 1`] = `
+Object {
+  "assets": Array [],
+  "hooks": Object {},
+  "name": "react-native-foo",
+  "params": Array [],
+  "platforms": Object {
+    "android": null,
+    "ios": Object {
+      "folder": "<<REPLACED>>/node_modules/react-native-foo",
+      "libraryFolder": "Libraries",
+      "pbxprojPath": "<<REPLACED>>/node_modules/react-native-foo/customLocation/customProject.xcodeproj/project.pbxproj",
+      "plist": Array [],
+      "podfile": null,
+      "podspec": null,
+      "projectName": "customProject.xcodeproj",
+      "projectPath": "<<REPLACED>>/node_modules/react-native-foo/customLocation/customProject.xcodeproj",
+      "sharedLibraries": Array [],
+      "sourceDir": "<<REPLACED>>/node_modules/react-native-foo/customLocation",
+    },
+  },
+}
+`;
+
+exports[`should read a config of a dependency and use it to load other settings 1`] = `
+Object {
+  "assets": Array [],
+  "hooks": Object {},
+  "name": "react-native-foo",
+  "params": Array [],
+  "platforms": Object {
+    "android": null,
+    "ios": Object {
+      "folder": "<<REPLACED>>/node_modules/react-native-test",
+      "libraryFolder": "Libraries",
+      "pbxprojPath": "<<REPLACED>>/node_modules/react-native-test/customLocation/customProject.xcodeproj/project.pbxproj",
+      "plist": Array [],
+      "podfile": null,
+      "podspec": null,
+      "projectName": "customProject.xcodeproj",
+      "projectPath": "<<REPLACED>>/node_modules/react-native-test/customLocation/customProject.xcodeproj",
+      "sharedLibraries": Array [],
+      "sourceDir": "<<REPLACED>>/node_modules/react-native-test/customLocation",
+    },
+  },
+}
+`;
+
 exports[`should return dependencies from package.json 1`] = `
 Object {
   "react-native-test": Object {

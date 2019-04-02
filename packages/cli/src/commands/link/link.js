@@ -16,6 +16,7 @@ import promiseWaterfall from './promiseWaterfall';
 import logger from '../../tools/logger';
 import commandStub from './commandStub';
 import promisify from './promisify';
+import getPlatformName from './getPlatformName';
 
 import linkDependency from './linkDependency';
 import linkAssets from './linkAssets';
@@ -37,7 +38,15 @@ function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
 
   if (opts.platforms) {
     platforms = pick(platforms, opts.platforms);
+    logger.debug('Skipping selected platforms');
   }
+
+  logger.debug(
+    'Available platforms: ' +
+      `${Object.keys(platforms)
+        .map(getPlatformName)
+        .join(', ')}`,
+  );
 
   if (rawPackageName === undefined) {
     logger.debug(

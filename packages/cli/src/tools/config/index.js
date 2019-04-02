@@ -93,13 +93,16 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
       },
       // $FlowExpectedError: This getter is safe
       get project() {
-        return Object.keys(this.platforms).reduce((project, platform) => {
-          project[platform] = this.platforms[platform].projectConfig(
-            projectRoot,
-            userConfig.project,
-          );
-          return project;
-        }, {});
+        return Object.keys(this.platforms).reduce(
+          (project, platform) => {
+            project[platform] = this.platforms[platform].projectConfig(
+              projectRoot,
+              userConfig.project,
+            );
+            return project;
+          },
+          {ios: null, android: null},
+        );
       },
     }: RawConfigT),
   );

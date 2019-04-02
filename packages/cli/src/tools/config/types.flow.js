@@ -3,14 +3,15 @@
  */
 
 import type {
-  AndroidConfigParamsT,
-  AndroidProjectConfigParamsT,
-  IOSConfigParamsT,
+  DependencyParamsAndroidT,
+  ProjectParamsAndroidT,
+  ProjectParamsIOST,
   InquirerPromptT,
   DependencyConfigAndroidT,
   DependencyConfigIOST,
   ProjectConfigAndroidT,
   ProjectConfigIOST,
+  PlatformsT,
 } from '../types.flow';
 
 /**
@@ -22,22 +23,11 @@ type HooksT = {
   postlink?: string,
 };
 
-/**
- * A map with additional platforms that ship with a dependency.
- */
-export type PlatformsT = {
-  [key: string]: {
-    dependencyConfig?: Function,
-    projectConfig?: Function,
-    linkConfig?: Function,
-  },
-};
-
 export type DependencyConfigT = {
   dependency: {
     platforms: {
-      android?: AndroidConfigParamsT,
-      ios?: IOSConfigParamsT,
+      android?: DependencyParamsAndroidT,
+      ios?: ProjectParamsIOST,
       [key: string]: any,
     },
     assets: string[],
@@ -52,8 +42,8 @@ export type ConfigT = {|
   root: string,
   reactNativePath: string,
   project: {
-    android?: ProjectConfigAndroidT,
-    ios?: ProjectConfigIOST,
+    android: ?ProjectConfigAndroidT,
+    ios: ?ProjectConfigIOST,
     [key: string]: any,
   },
   dependencies: {
@@ -84,8 +74,8 @@ export type RawConfigT = {|
 export type UserConfigT = {
   ...RawConfigT,
   project: {
-    android?: AndroidProjectConfigParamsT,
-    ios?: IOSConfigParamsT,
+    android?: ProjectParamsAndroidT,
+    ios?: ProjectParamsIOST,
     [key: string]: any,
   },
 };

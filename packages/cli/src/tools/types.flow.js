@@ -44,9 +44,14 @@ export type CommandT = LocalCommandT | ProjectCommandT;
 /**
  * Config of a single platform
  */
-export type PlatformConfigT<ProjectConfigT, DependencyConfigT, ParamsT> = {
-  projectConfig: (string, ParamsT) => ?ProjectConfigT,
-  dependencyConfig: (string, ParamsT) => ?DependencyConfigT,
+export type PlatformConfigT<
+  ProjectConfigT,
+  ProjectParamsT,
+  DependencyConfigT,
+  DependencyParamsT,
+> = {
+  projectConfig: (string, ProjectParamsT) => ?ProjectConfigT,
+  dependencyConfig: (string, DependencyParamsT) => ?DependencyConfigT,
   /**
    * @todo(grabbou): This should not be part of the "core". It should be
    * specific to `link` and `unlink`. Remove it from here soon.
@@ -68,20 +73,20 @@ export type PlatformConfigT<ProjectConfigT, DependencyConfigT, ParamsT> = {
   },
 };
 
-export type AndroidConfigParamsT = {
+export type DependencyParamsAndroidT = {
   sourceDir?: string,
   manifestPath?: string,
   packageImportPath?: string,
   packageInstance?: string,
 };
 
-export type IOSConfigParamsT = {
+export type ProjectParamsIOST = {
   project?: string,
   sharedLibraries?: string[],
   libraryFolder?: string,
 };
 
-export type AndroidProjectConfigParamsT = {
+export type ProjectParamsAndroidT = {
   sourceDir?: string,
   manifestPath?: string,
   packageName?: string,
@@ -136,15 +141,17 @@ export type DependenciesConfig = {
 export type PlatformsT = {
   ios: PlatformConfigT<
     ProjectConfigIOST,
+    ProjectParamsIOST,
     DependencyConfigIOST,
-    IOSConfigParamsT,
+    ProjectParamsIOST,
   >,
   android: PlatformConfigT<
     ProjectConfigAndroidT,
+    ProjectParamsAndroidT,
     DependencyConfigAndroidT,
-    AndroidConfigParamsT,
+    DependencyParamsAndroidT,
   >,
-  [name: string]: PlatformConfigT<any, any, any>,
+  [name: string]: PlatformConfigT<any, any, any, any>,
 };
 
 export type InquirerPromptT = any;
@@ -156,8 +163,8 @@ export type PackageConfigurationT = {
   assets?: string[],
   commands?: {[name: string]: string},
   params?: InquirerPromptT[],
-  android: AndroidConfigParamsT,
-  ios: IOSConfigParamsT,
+  android: DependencyParamsAndroidT,
+  ios: ProjectParamsIOST,
 
   plugin?: string | Array<string>,
   platform?: string,

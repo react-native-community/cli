@@ -90,7 +90,9 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
       },
       dependencies: {},
       commands: userConfig.commands,
-      assets: findAssets(projectRoot, userConfig.assets),
+      get assets() {
+        return findAssets(projectRoot, userConfig.assets);
+      },
       platforms: {
         ios,
         android,

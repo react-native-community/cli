@@ -31,11 +31,7 @@ type FlagsType = {
  * @param args If optional argument [packageName] is provided,
  *             only that package is processed.
  */
-async function link(
-  [rawPackageName]: Array<string>,
-  ctx: ContextT,
-  opts: FlagsType,
-) {
+function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
   let platforms = ctx.platforms;
   let project = ctx.project;
 
@@ -47,8 +43,7 @@ async function link(
     logger.debug(
       'No package name provided, will attemp to link all possible packages.',
     );
-    await linkAll(ctx, platforms);
-    return;
+    return linkAll(ctx, platforms);
   }
 
   // Trim the version / tag out of the package name (eg. package@latest)
@@ -74,15 +69,13 @@ async function link(
     () => linkAssets(platforms, project, dependency.assets),
   ];
 
-  try {
-    await promiseWaterfall(tasks);
-  } catch (err) {
+  return promiseWaterfall(tasks).catch(err => {
     throw new Error(dedent`
       Something went wrong while linking. Reason: ${err.message}
 
       Please file an issue here: https://github.com/react-native-community/react-native-cli/issues
     `);
-  }
+  });
 }
 
 export const func = link;

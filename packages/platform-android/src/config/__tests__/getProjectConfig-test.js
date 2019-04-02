@@ -86,4 +86,8 @@ describe('android::getProjectConfig', () => {
 
     expect(getProjectConfig(folder, userConfig)).toBeNull();
   });
+
+  afterAll(() => {
+    jest.clearAllMocks();
+  });
 });

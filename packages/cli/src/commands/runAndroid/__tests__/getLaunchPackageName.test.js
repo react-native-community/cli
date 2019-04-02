@@ -18,9 +18,14 @@ describe('run-android::getLaunchPackageName', () => {
 
   fs.readFileSync = jest.fn(filename => {
     switch (filename) {
-      case 'app/build.gradle':
+      case actualPath.join('app', 'build.gradle'):
         return actualFs.readFileSync(
-          actualPath.join(__dirname, '../__fixtures__/sampleBuild.gradle'),
+          actualPath.join(
+            __dirname,
+            '..',
+            '__fixtures__',
+            'sampleBuild.gradle',
+          ),
           'utf8',
         );
       // Use default case to catch generated debug manifest
@@ -28,7 +33,9 @@ describe('run-android::getLaunchPackageName', () => {
         return actualFs.readFileSync(
           actualPath.join(
             __dirname,
-            '../__fixtures__/sampleGeneratedDebugManifest.xml',
+            '..',
+            '__fixtures__',
+            'sampleGeneratedDebugManifest.xml',
           ),
           'utf8',
         );

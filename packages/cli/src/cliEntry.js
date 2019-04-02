@@ -35,7 +35,18 @@ commander.on('command:*', () => {
 const defaultOptParser = val => val;
 
 const handleError = err => {
-  logger.error(err.message);
+  if (commander.verbose) {
+    logger.error(err.message);
+  } else {
+    logger.error(
+      `${err.message}. ${chalk.dim(
+        `Run CLI with ${chalk.reset('--verbose')} ${chalk.dim(
+          'flag for more details.',
+        )}`,
+      )}`,
+    );
+  }
+  logger.debug(err.stack);
   process.exit(1);
 };
 

@@ -3,6 +3,7 @@
  */
 
 import path from 'path';
+import fs from 'fs';
 
 const pluginRe = new RegExp(
   [
@@ -25,7 +26,9 @@ export default function findDependencies(root: string): Array<string> {
   let pjson;
 
   try {
-    pjson = require(path.join(root, 'package.json'));
+    pjson = JSON.parse(
+      fs.readFileSync(path.join(root, 'package.json'), 'UTF-8'),
+    );
   } catch (e) {
     return [];
   }

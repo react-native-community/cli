@@ -3,6 +3,7 @@
  */
 import path from 'path';
 import merge from 'deepmerge';
+import assign from '../completeAssign';
 import {mapValues} from 'lodash';
 
 import findDependencies from './findDependencies';
@@ -37,8 +38,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
         readLegacyDependencyConfigFromDisk(root) ||
         readDependencyConfigFromDisk(root);
 
-      return {
-        ...acc,
+      return assign({}, acc, {
         dependencies: {
           ...acc.dependencies,
           // $FlowIssue: Computed getters are not yet supported.
@@ -78,7 +78,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
           ),
           platforms: [...acc.haste.platforms, ...Object.keys(config.platforms)],
         },
-      };
+      });
     },
     ({
       root: projectRoot,
@@ -113,10 +113,9 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
     }: ConfigT),
   );
 
-  return {
-    ...inferredConfig,
+  return assign({}, inferredConfig, {
     dependencies: merge(inferredConfig.dependencies, userConfig.dependencies),
-  };
+  });
 }
 
 export default loadConfig;

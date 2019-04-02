@@ -84,7 +84,7 @@ function unlink(args: Array<string>, ctx: ContextT) {
 
   if (!dependency) {
     throw new Error(dedent`
-      Failed to unlink ${packageName}. It appears that the project is not linked yet.
+      Failed to unlink "${packageName}". It appears that the project is not linked yet.
     `);
   }
 

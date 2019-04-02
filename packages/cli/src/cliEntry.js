@@ -169,13 +169,10 @@ async function setupAndRun() {
   logger.setVerbose(commander.verbose);
 }
 
-// @todo replace this
-const findPlugins = () => {};
-
 export default {
   run,
   init,
-  findPlugins,
+  loadConfig,
 };
 
-export {run, init, findPlugins};
+export {run, init, loadConfig};

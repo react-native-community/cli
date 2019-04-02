@@ -82,8 +82,11 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
     },
     ({
       root: projectRoot,
-      reactNativePath:
-        userConfig.reactNativePath || resolveReactNativePath(projectRoot),
+      get reactNativePath() {
+        return (
+          userConfig.reactNativePath || resolveReactNativePath(projectRoot)
+        );
+      },
       dependencies: {},
       commands: userConfig.commands,
       assets: findAssets(projectRoot, userConfig.assets),

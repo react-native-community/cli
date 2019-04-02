@@ -6,3 +6,4 @@ package-lock.json
 *.log
 build/
 .eslintcache
+!packages/cli/src/commands/init/__fixtures__/editTemplate/node_modules

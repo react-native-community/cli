@@ -5,7 +5,7 @@ import fs from 'fs';
 import snapshotDiff from 'snapshot-diff';
 import stripAnsi from 'strip-ansi';
 import upgrade from '../upgrade';
-import {fetch} from '../helpers';
+import {fetch} from '../../../tools/fetch';
 import logger from '../../../tools/logger';
 
 jest.mock('https');
@@ -38,8 +38,7 @@ jest.mock('../../../tools/PackageManager', () => ({
     mockPushLog('$ yarn add', ...args);
   },
 }));
-jest.mock('../helpers', () => ({
-  ...jest.requireActual('../helpers'),
+jest.mock('../../../tools/fetch', () => ({
   fetch: jest.fn(() => Promise.resolve('patch')),
 }));
 jest.mock('../../../tools/logger', () => ({

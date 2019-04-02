@@ -15,7 +15,7 @@ import path from 'path';
 import type {CommandT, ContextT} from './tools/types.flow';
 
 import {getCommands} from './commands';
-import init from './commands/init/init';
+import init from './commands/init/initCompat';
 import assertRequiredOptions from './tools/assertRequiredOptions';
 import logger from './tools/logger';
 import findPlugins from './tools/findPlugins';

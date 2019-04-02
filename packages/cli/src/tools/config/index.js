@@ -96,7 +96,7 @@ function loadConfig(projectRoot: string = process.cwd()): ProjectConfigT {
     readProjectConfigFromDisk(projectRoot),
   );
 
-  if (config.reactNativePath === null) {
+  if (config.reactNativePath === null && !process.argv.includes('init')) {
     throw new Error(dedent`
       Unable to find React Native files. Make sure "react-native" module is installed
       in your project dependencies.

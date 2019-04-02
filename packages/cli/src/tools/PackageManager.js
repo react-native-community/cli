@@ -50,3 +50,9 @@ export function uninstall(packageNames: Array<string>, options?: Options) {
     ? executeCommand(`yarn remove ${packageNames.join(' ')}`, options)
     : executeCommand(`npm uninstall ${packageNames.join(' ')} --save`, options);
 }
+
+export function installAll(options?: Options) {
+  return shouldUseYarn(options)
+    ? executeCommand('yarn install')
+    : executeCommand('npm install');
+}

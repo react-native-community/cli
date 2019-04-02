@@ -7,7 +7,7 @@ import type {
 } from '../../tools/config/types.flow';
 import logger from '../../tools/logger';
 import pollParams from './pollParams';
-import {getPlatformName} from '../../tools/getPlatforms';
+import getPlatformName from './getPlatformName';
 
 const linkDependency = async (
   platforms: PlatformsT,

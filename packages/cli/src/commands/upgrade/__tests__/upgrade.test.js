@@ -56,8 +56,16 @@ const ctx = {
   root: '/project/root',
   reactNativePath: '',
   commands: [],
-  platforms: {},
+  platforms: {
+    ios: {projectConfig: jest.fn(), dependencyConfig: jest.fn()},
+    android: {projectConfig: jest.fn(), dependencyConfig: jest.fn()},
+  },
+  project: {
+    ios: null,
+    android: null,
+  },
   dependencies: {},
+  assets: [],
   haste: {
     providesModuleNodeModules: [],
     platforms: [],

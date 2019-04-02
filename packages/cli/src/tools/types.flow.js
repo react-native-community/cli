@@ -56,7 +56,7 @@ export type PlatformConfigT<
    * @todo(grabbou): This should not be part of the "core". It should be
    * specific to `link` and `unlink`. Remove it from here soon.
    */
-  linkConfig: () => {
+  linkConfig?: () => {
     /**
      * @todo(grabbou): Revert the arguments order to align with the rest
      */

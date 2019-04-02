@@ -119,7 +119,7 @@ exports[`should read a config of a dependency and use it to load other settings 
 Object {
   "assets": Array [],
   "hooks": Object {},
-  "name": "react-native-foo",
+  "name": "react-native-test",
   "params": Array [],
   "platforms": Object {
     "android": null,

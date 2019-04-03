@@ -17,10 +17,13 @@ const linkDependency = async (
   const params = await pollParams(dependency.params);
 
   Object.keys(platforms || {}).forEach(platform => {
-    if (!project[platform] || !dependency.platforms[platform]) {
+    const projectConfig = project[platform];
+    const dependencyConfig = dependency.platforms[platform];
+
+    if (!projectConfig || !dependencyConfig) {
       return;
     }
-
+    const {name} = dependency;
     const linkConfig =
       platforms[platform] &&
       platforms[platform].linkConfig &&
@@ -31,32 +34,21 @@ const linkDependency = async (
     }
 
     const isInstalled = linkConfig.isInstalled(
-      project[platform],
-      dependency.name,
-      dependency.platforms[platform],
+      projectConfig,
+      name,
+      dependencyConfig,
     );
 
     if (isInstalled) {
       logger.info(
-        `${getPlatformName(platform)} module "${
-          dependency.name
-        }" is already linked`,
+        `${getPlatformName(platform)} module "${name}" is already linked`,
       );
       return;
     }
 
-    logger.info(
-      `Linking "${dependency.name}" ${getPlatformName(platform)} dependency`,
-    );
+    logger.info(`Linking "${name}" ${getPlatformName(platform)} dependency`);
 
-    linkConfig.register(
-      dependency.name,
-      // $FlowExpectedError: We already checked if dependency.platforms[platform] exists
-      dependency.platforms[platform],
-      params,
-      // $FlowFixMe: We already checked if project[platform] exists
-      project[platform],
-    );
+    linkConfig.register(name, dependencyConfig, params, projectConfig);
 
     logger.info(
       `${getPlatformName(platform)} module "${

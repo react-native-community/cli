@@ -1,5 +1,4 @@
 // @flow
-import fs from 'fs-extra';
 import path from 'path';
 import ChildProcess from 'child_process';
 import * as PackageManger from '../../../tools/PackageManager';
@@ -9,6 +8,7 @@ import {
   copyTemplate,
   executePostInitScript,
 } from '../template';
+import * as copyFiles from '../../../tools/copyFiles';
 
 const TEMPLATE_NAME = 'templateName';
 
@@ -55,7 +55,7 @@ test('copyTemplate', () => {
   const CWD = '.';
 
   jest.spyOn(path, 'resolve').mockImplementationOnce((...e) => e.join('/'));
-  jest.spyOn(fs, 'copySync').mockImplementationOnce(() => {});
+  jest.spyOn(copyFiles, 'default').mockImplementationOnce(() => {});
   jest.spyOn(process, 'cwd').mockImplementationOnce(() => CWD);
 
   copyTemplate(TEMPLATE_NAME, TEMPLATE_DIR);
@@ -65,7 +65,7 @@ test('copyTemplate', () => {
     TEMPLATE_NAME,
     TEMPLATE_DIR,
   );
-  expect(fs.copySync).toHaveBeenCalledWith(expect.any(String), CWD);
+  expect(copyFiles.default).toHaveBeenCalledWith(expect.any(String), CWD);
 });
 
 test('executePostInitScript', () => {

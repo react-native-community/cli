@@ -50,6 +50,23 @@ type ProjectParamsIOST = {
   libraryFolder?: string,
 };
 
+type PlatformConfig<ProjectParams, ProjectConfig, DependencyConfig> = {
+  projectConfig: (string, ProjectParams) => ?ProjectConfig,
+  dependencyConfig: (string, ProjectParams) => ?DependencyConfig,
+  linkConfig: () => {
+    isInstalled: (ProjectConfig, string, DependencyConfig) => boolean,
+    register: (string, DependencyConfig, Object, ProjectConfig) => void,
+    unregister: (
+      string,
+      DependencyConfig,
+      ProjectConfig,
+      Array<DependencyConfig>,
+    ) => void,
+    copyAssets: (string[], ProjectConfig) => void,
+    unlinkAssets: (string[], ProjectConfig) => void,
+  },
+};
+
 /**
  * Final configuration object
  */
@@ -91,63 +108,17 @@ export type ConfigT = {|
 
   // Map of available platforms (built-ins and dynamically loaded)
   platforms: {
-    [name: string]: any,
-    ios: {
-      projectConfig: (string, ProjectParamsIOST) => ?ProjectConfigIOST,
-      dependencyConfig: (string, ProjectParamsIOST) => ?DependencyConfigIOST,
-      linkConfig: () => {
-        isInstalled: (
-          ProjectConfigIOST,
-          string,
-          DependencyConfigIOST,
-        ) => boolean,
-        register: (
-          string,
-          DependencyConfigIOST,
-          Object,
-          ProjectConfigIOST,
-        ) => void,
-        unregister: (
-          string,
-          DependencyConfigIOST,
-          ProjectConfigIOST,
-          Array<DependencyConfigT>,
-        ) => void,
-        copyAssets: (string[], ProjectConfigIOST) => void,
-        unlinkAssets: (string[], ProjectConfigIOST) => void,
-      },
-      android: {
-        projectConfig: (
-          string,
-          ProjectParamsAndroidT,
-        ) => ?ProjectConfigAndroidT,
-        dependencyConfig: (
-          string,
-          DependencyParamsAndroidT,
-        ) => ?DependencyConfigAndroidT,
-        linkConfig: () => {
-          isInstalled: (
-            ProjectConfigAndroidT,
-            string,
-            DependencyConfigAndroidT,
-          ) => boolean,
-          register: (
-            string,
-            DependencyConfigAndroidT,
-            Object,
-            ProjectConfigAndroidT,
-          ) => void,
-          unregister: (
-            string,
-            DependencyConfigAndroidT,
-            ProjectConfigAndroidT,
-            Array<DependencyConfigT>,
-          ) => void,
-          copyAssets: (string[], ProjectConfigAndroidT) => void,
-          unlinkAssets: (string[], ProjectConfigAndroidT) => void,
-        },
-      },
-    },
+    [name: string]: PlatformConfig<Object, Object, Object>,
+    ios: PlatformConfig<
+      ProjectParamsIOST,
+      ProjectConfigIOST,
+      DependencyConfigIOST,
+    >,
+    android: PlatformConfig<
+      ProjectParamsAndroidT,
+      ProjectConfigAndroidT,
+      DependencyConfigAndroidT,
+    >,
   },
 
   // An array of commands that are present in 3rd party packages

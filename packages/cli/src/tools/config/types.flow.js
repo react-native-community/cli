@@ -109,7 +109,7 @@ export type ConfigT = {|
         ) => void,
         unregister: (
           string,
-          DependencyConfigT,
+          DependencyConfigIOST,
           ProjectConfigIOST,
           Array<DependencyConfigT>,
         ) => void,
@@ -139,7 +139,7 @@ export type ConfigT = {|
           ) => void,
           unregister: (
             string,
-            DependencyConfigT,
+            DependencyConfigAndroidT,
             ProjectConfigAndroidT,
             Array<DependencyConfigT>,
           ) => void,

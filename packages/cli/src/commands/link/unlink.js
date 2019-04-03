@@ -24,7 +24,9 @@ const unlinkDependency = (
   otherDependencies,
 ) => {
   Object.keys(platforms || {}).forEach(platform => {
-    if (!project[platform] || !dependency.platforms[platform]) {
+    const projectConfig = project[platform];
+    const dependencyConfig = dependency.platforms[platform];
+    if (!projectConfig || !dependencyConfig) {
       return;
     }
 
@@ -38,9 +40,9 @@ const unlinkDependency = (
     }
 
     const isInstalled = linkConfig.isInstalled(
-      project[platform],
+      projectConfig,
       packageName,
-      dependency.platforms[platform],
+      dependencyConfig,
     );
 
     if (!isInstalled) {
@@ -56,10 +58,8 @@ const unlinkDependency = (
 
     linkConfig.unregister(
       packageName,
-      // $FlowExpectedError: We check for existence on line 38
-      dependency.platforms[platform],
-      // $FlowExpectedError: We check for existence on line 38
-      project[platform],
+      dependencyConfig,
+      projectConfig,
       otherDependencies,
     );
 

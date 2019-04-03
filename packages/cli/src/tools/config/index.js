@@ -25,13 +25,15 @@ import assign from '../assign';
 import * as ios from '../ios';
 import * as android from '../android';
 
+const arrayMerge = (destinationArray, sourceArray, options) => sourceArray;
+
 /**
  * Loads CLI configuration
  */
 function loadConfig(projectRoot: string = process.cwd()): ConfigT {
   const userConfig = readConfigFromDisk(projectRoot);
 
-  const inferredConfig = findDependencies(projectRoot).reduce(
+  return findDependencies(projectRoot).reduce(
     (acc: ConfigT, dependencyName) => {
       const root = path.join(projectRoot, 'node_modules', dependencyName);
 
@@ -44,24 +46,30 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
           ...acc.dependencies,
           // $FlowIssue: Computed getters are not yet supported.
           get [dependencyName]() {
-            return {
-              name: dependencyName,
-              platforms: Object.keys(acc.platforms).reduce(
-                (dependency, platform) => {
-                  dependency[platform] = acc.platforms[
-                    platform
-                  ].dependencyConfig(
-                    root,
-                    config.dependency.platforms[platform] || {},
-                  );
-                  return dependency;
-                },
-                {},
-              ),
-              assets: findAssets(root, config.dependency.assets),
-              hooks: mapValues(config.dependency.hooks, makeHook),
-              params: config.dependency.params,
-            };
+            return merge(
+              {
+                name: dependencyName,
+                platforms: Object.keys(acc.platforms).reduce(
+                  (dependency, platform) => {
+                    dependency[platform] = acc.platforms[
+                      platform
+                    ].dependencyConfig(
+                      root,
+                      config.dependency.platforms[platform] || {},
+                    );
+                    return dependency;
+                  },
+                  {},
+                ),
+                assets: findAssets(root, config.dependency.assets),
+                hooks: mapValues(config.dependency.hooks, makeHook),
+                params: config.dependency.params,
+              },
+              userConfig.dependencies[dependencyName],
+              {
+                arrayMerge,
+              },
+            );
           },
         },
         commands: acc.commands.concat(
@@ -115,11 +123,6 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
       },
     }: ConfigT),
   );
-
-  return assign({}, inferredConfig, {
-    // @todo rewrite `merge` to use `assign` to not run getters unless needed
-    dependencies: merge(inferredConfig.dependencies, userConfig.dependencies),
-  });
 }
 
 export default loadConfig;

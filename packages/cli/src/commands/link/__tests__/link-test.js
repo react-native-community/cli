@@ -175,7 +175,7 @@ describe('link', () => {
       },
     };
 
-    link(['react-native-blur', {}], config, {}).then(() => {
+    link(['react-native-blur'], config, {}).then(() => {
       expect(registerNativeModule.mock.calls).toHaveLength(0);
       done();
     });

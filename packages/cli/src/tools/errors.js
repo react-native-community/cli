@@ -4,6 +4,27 @@
 import chalk from 'chalk';
 import dedent from 'dedent';
 
+/**
+ * CLIError
+ *
+ * Features:
+ * - uses original stack trace when error object is passed
+ * - makes an inline string to match current styling inside CLI
+ */
+export class CLIError extends Error {
+  constructor(msg: string, error?: Error) {
+    super(msg.replace(/(\r\n|\n|\r)/gm, ' '));
+    if (error) {
+      this.stack = error.stack
+        .split('\n')
+        .slice(0, 2)
+        .join('\n');
+    } else {
+      Error.captureStackTrace(this, CLIError);
+    }
+  }
+}
+
 export class ProcessError extends Error {
   constructor(msg: string, processError: string) {
     super(`${chalk.red(msg)}\n\n${chalk.gray(processError)}`);

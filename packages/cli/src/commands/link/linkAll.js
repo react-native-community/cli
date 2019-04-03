@@ -4,9 +4,9 @@
 
 import {uniqBy, flatMap} from 'lodash';
 import path from 'path';
-import dedent from 'dedent';
 
 import type {ConfigT, PlatformsT} from '../../tools/config/types.flow';
+import {CLIError} from '../../tools/errors';
 
 import promiseWaterfall from './promiseWaterfall';
 import commandStub from './commandStub';
@@ -43,11 +43,10 @@ function linkAll(config: ConfigT, platforms: PlatformsT) {
   ]);
 
   return promiseWaterfall(tasks).catch(err => {
-    throw new Error(dedent`
-      Something went wrong while linking. Reason: ${err.message}
-
-      Please file an issue here: https://github.com/react-native-community/react-native-cli/issues
-    `);
+    throw new CLIError(
+      `Something went wrong while linking. Reason: ${err.message}`,
+      err,
+    );
   });
 }
 

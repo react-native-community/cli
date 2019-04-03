@@ -12,6 +12,8 @@ import dedent from 'dedent';
 
 import {type ContextT} from '../../tools/types.flow';
 
+import {CLIError} from '../../tools/errors';
+
 import promiseWaterfall from './promiseWaterfall';
 import logger from '../../tools/logger';
 import commandStub from './commandStub';
@@ -59,11 +61,9 @@ function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
   const packageName = rawPackageName.replace(/^(.+?)(@.+?)$/gi, '$1');
 
   if (!Object.keys(ctx.dependencies).includes(packageName)) {
-    throw new Error(dedent`
-      Unknown dependency. 
-      
-      Make sure that the package you are trying to link is already installed
-      in your "node_modules" and present in your "package.json" dependencies.
+    throw new CLIError(dedent`
+      Unknown dependency. Make sure that the package you are trying to link is
+      already installed in your "node_modules" and present in your "package.json" dependencies.
     `);
   }
 
@@ -79,11 +79,10 @@ function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
   ];
 
   return promiseWaterfall(tasks).catch(err => {
-    throw new Error(dedent`
-      Something went wrong while linking. Reason: ${err.message}
-
-      Please file an issue here: https://github.com/react-native-community/react-native-cli/issues
-    `);
+    throw new CLIError(
+      `Something went wrong while linking. Reason: ${err.message}`,
+      err,
+    );
   });
 }
 

@@ -25,6 +25,10 @@ import assign from '../assign';
 import * as ios from '../ios';
 import * as android from '../android';
 
+/**
+ * `deepmerge` concatenates arrays by default instead of overwriting them.
+ * We define custom merging function for arrays to change that behaviour
+ */
 const arrayMerge = (destinationArray, sourceArray, options) => sourceArray;
 
 /**

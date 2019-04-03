@@ -87,7 +87,9 @@ test('should merge project configuration with default values', () => {
   writeFiles(DIR, {
     'node_modules/react-native-test/package.json': `{
       "react-native": {
-        "assets": ["foo", "baz"]
+        "dependency": {
+          "assets": ["foo", "baz"]
+        }
       }
     }`,
     'node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj':

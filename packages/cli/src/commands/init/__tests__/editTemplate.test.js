@@ -4,6 +4,7 @@ import path from 'path';
 import fs from 'fs-extra';
 import snapshotDiff from 'snapshot-diff';
 import walk from '../../../tools/walk';
+import copyFiles from '../../../tools/copyFiles';
 import {changePlaceholderInTemplate} from '../editTemplate';
 
 const FIXTURE_DIR = path.resolve(
@@ -21,7 +22,7 @@ function createTestEnv() {
   const testPath = path.resolve(tmpDir, TEST_DIR);
 
   fs.mkdirSync(testPath);
-  fs.copySync(FIXTURE_DIR, testPath);
+  copyFiles(FIXTURE_DIR, testPath);
 
   return testPath;
 }

@@ -117,18 +117,18 @@ function unlink(args: Array<string>, ctx: ContextT) {
       }
 
       Object.keys(ctx.platforms || {}).forEach(platform => {
+        const projectConfig = ctx.project[platform];
         const linkConfig =
           ctx.platforms[platform] &&
           ctx.platforms[platform].linkConfig &&
           ctx.platforms[platform].linkConfig();
-        if (!linkConfig || !linkConfig.unlinkAssets || !ctx.project[platform]) {
+        if (!linkConfig || !linkConfig.unlinkAssets || !projectConfig) {
           return;
         }
 
         logger.info(`Unlinking assets from ${platform} project`);
 
-        // $FlowFixMe: We check for platorm existence above
-        linkConfig.unlinkAssets(assets, ctx.project[platform]);
+        linkConfig.unlinkAssets(assets, projectConfig);
       });
 
       logger.info(

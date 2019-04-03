@@ -474,7 +474,8 @@ export default {
       description:
         'Path relative to project root where the Xcode project ' +
         '(.xcodeproj) lives.',
-      default: 'ios',
+      default: ({project: {ios}}: ContextT) =>
+        ios ? ios.sourceDir : undefined,
     },
     {
       command: '--device [string]',

@@ -217,7 +217,9 @@ export type UserConfigT = {
 
 // The following types are used in untyped-parts of the codebase, so I am leaving them
 // until we actually need them.
-type ProjectConfigIOST = {};
+type ProjectConfigIOST = {
+  sourceDir: string,
+};
 type DependencyConfigIOST = ProjectConfigIOST;
 type ProjectConfigAndroidT = {};
 type DependencyConfigAndroidT = {};

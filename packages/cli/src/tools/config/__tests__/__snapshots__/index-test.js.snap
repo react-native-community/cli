@@ -6,7 +6,9 @@ Object {
   "commands": Array [],
   "dependencies": Object {
     "react-native-test": Object {
-      "assets": ["foo"],
+      "assets": Array [
+        "foo",
+      ],
       "hooks": Object {},
       "name": "react-native-test",
       "params": Array [],

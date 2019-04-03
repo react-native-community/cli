@@ -472,7 +472,7 @@ export default {
     {
       command: '--project-path [string]',
       description:
-        'Path relative to project root where the Xcode project ' +
+        'Relative or absolute path to project root where the Xcode project ' +
         '(.xcodeproj) lives.',
       default: ({project: {ios}}: ContextT) =>
         ios ? ios.sourceDir : undefined,

@@ -45,7 +45,27 @@ test('legacy init through react-native-cli', () => {
   expect(fs.readdirSync(path.join(DIR, 'TestApp'))).toEqual(templateFiles);
 
   const pkgJson = require(path.join(DIR, 'TestApp', 'package.json'));
-  expect(pkgJson).toMatchSnapshot(
-    'package.json contains necessary configuration',
-  );
+  expect(pkgJson).toMatchObject({
+    dependencies: {
+      react: expect.any(String),
+      'react-native': expect.any(String),
+    },
+    devDependencies: {
+      '@babel/core': expect.any(String),
+      '@babel/runtime': expect.any(String),
+      'babel-jest': expect.any(String),
+      jest: expect.any(String),
+      'metro-react-native-babel-preset': expect.any(String),
+      'react-test-renderer': expect.any(String),
+    },
+    jest: {
+      preset: 'react-native',
+    },
+    name: 'TestApp',
+    private: true,
+    scripts: {
+      start: 'node node_modules/react-native/local-cli/cli.js start',
+      test: 'jest',
+    },
+  });
 });

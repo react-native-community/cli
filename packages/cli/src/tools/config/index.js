@@ -52,7 +52,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
                     platform
                   ].dependencyConfig(
                     root,
-                    config.dependency.platforms[platform],
+                    config.dependency.platforms[platform] || {},
                   );
                   return dependency;
                 },
@@ -106,7 +106,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
           (project, platform) => {
             project[platform] = this.platforms[platform].projectConfig(
               projectRoot,
-              userConfig.project[platform],
+              userConfig.project[platform] || {},
             );
             return project;
           },

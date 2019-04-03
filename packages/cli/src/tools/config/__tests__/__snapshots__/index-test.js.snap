@@ -1,12 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`should deep merge project configuration with default values 1`] = `
+exports[`should merge project configuration with default values 1`] = `
 Object {
   "assets": Array [],
   "commands": Array [],
   "dependencies": Object {
     "react-native-test": Object {
-      "assets": Array [],
+      "assets": ["foo"],
       "hooks": Object {},
       "name": "react-native-test",
       "params": Array [],
@@ -90,7 +90,7 @@ Array [
   "react-native-bar/command-bar.js",
 ]
 `;
-	
+
 exports[`should read \`rnpm\` config from a dependency and transform it to a new format 1`] = `
 Object {
   "assets": Array [],

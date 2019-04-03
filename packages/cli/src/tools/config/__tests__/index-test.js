@@ -83,9 +83,13 @@ test('should read a config of a dependency and use it to load other settings', (
   ).toMatchSnapshot();
 });
 
-test('should deep merge project configuration with default values', () => {
+test('should merge project configuration with default values', () => {
   writeFiles(DIR, {
-    'node_modules/react-native-test/package.json': '{}',
+    'node_modules/react-native-test/package.json': `{
+      "react-native": {
+        "assets": ["foo", "baz"]
+      }
+    }`,
     'node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj':
       '',
     'package.json': `{
@@ -100,7 +104,8 @@ test('should deep merge project configuration with default values', () => {
               "ios": {
                 "sourceDir": "./abc"
               }
-            }
+            },
+            "assets": ["foo"]
           }
         }
       }

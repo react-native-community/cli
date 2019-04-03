@@ -2,7 +2,7 @@
  * @flow
  */
 import path from 'path';
-import merge from 'deepmerge';
+import deepmerge from 'deepmerge';
 import {mapValues} from 'lodash';
 
 import findDependencies from './findDependencies';
@@ -29,7 +29,10 @@ import * as android from '../android';
  * `deepmerge` concatenates arrays by default instead of overwriting them.
  * We define custom merging function for arrays to change that behaviour
  */
-const arrayMerge = (destinationArray, sourceArray, options) => sourceArray;
+const merge = (...objs: Object[]) =>
+  deepmerge(...objs, {
+    arrayMerge: (destinationArray, sourceArray, options) => sourceArray,
+  });
 
 /**
  * Loads CLI configuration
@@ -69,10 +72,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
                 hooks: mapValues(config.dependency.hooks, makeHook),
                 params: config.dependency.params,
               },
-              userConfig.dependencies[dependencyName],
-              {
-                arrayMerge,
-              },
+              userConfig.dependencies[dependencyName] || {},
             );
           },
         },

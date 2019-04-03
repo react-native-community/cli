@@ -15,7 +15,11 @@ export type LocalCommandT = {
     command: string,
     description?: string,
     parse?: (val: string) => any,
-    default?: string | boolean | number,
+    default?:
+      | string
+      | boolean
+      | number
+      | ((config: ConfigT) => ?(string | boolean | number)),
   }>,
   examples?: Array<{
     desc: string,

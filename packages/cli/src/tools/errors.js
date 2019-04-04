@@ -32,39 +32,63 @@ export class ProcessError extends Error {
   }
 }
 
-type JoiErrorT = {
-  details: Array<{
-    message: string,
-    path: string[],
-    type: string,
-    context: {
-      key: string,
-      label: string,
-      value: Object,
-    },
-  }>,
+type JoiErrorDetails<K, T> = {
+  message: string,
+  path: string[],
+  type: K,
+  context: T,
 };
 
-export class JoiError extends Error {
+type JoiErrorT = {
+  details: Array<
+    | JoiErrorDetails<
+        'object.allowUnknown' | 'object.base' | 'string.base',
+        {
+          key: string,
+          label: string,
+          value: Object,
+        },
+      >
+    | JoiErrorDetails<
+        'object.oxor',
+        {
+          key: string,
+          label: string,
+          peers: string[],
+        },
+      >,
+  >,
+};
+
+export class JoiError extends CLIError {
   constructor(joiError: JoiErrorT) {
     super(
       joiError.details
         .map(error => {
           const name = error.path.join('.');
-          const value = JSON.stringify(error.context.value);
           switch (error.type) {
-            case 'object.allowUnknown':
+            case 'object.allowUnknown': {
+              const value = JSON.stringify(error.context.value);
               return dedent`
                 Unknown option ${name} with value "${value}" was found.
                 This is either a typing error or a user mistake. Fixing it will remove this message.
               `;
+            }
             case 'object.base':
-            case 'string.base':
+            case 'string.base': {
               const expectedType = error.type.replace('.base', '');
               const actualType = typeof error.context.value;
               return dedent`
                 Option ${name} must be a ${expectedType}, instead got ${actualType}
               `;
+            }
+            case 'object.oxor': {
+              const value = JSON.stringify(error.context.peers);
+              return dedent`
+                Only one of the following options ${value} can be present at a time
+                for a ${error.context.label}
+              `;
+            }
             default:
               return error.message;
           }

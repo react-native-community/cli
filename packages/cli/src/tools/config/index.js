@@ -48,7 +48,9 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
         readLegacyDependencyConfigFromDisk(root) ||
         readDependencyConfigFromDisk(root);
 
-      const hasOutOfTreePlatform = Object.keys(config.platforms).length > 0;
+      const hasOutOfTreePlatform =
+        Object.keys(config.platforms).length > 0 ||
+        dependencyName === 'react-native';
 
       return {
         ...acc,

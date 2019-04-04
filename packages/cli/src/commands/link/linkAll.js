@@ -28,12 +28,15 @@ function linkAll(config: ConfigT, platforms: PlatformsT) {
     ),
   );
 
-  const tasks = flatMap(config.dependencies, dependency => [
-    () => promisify(dependency.hooks.prelink || commandStub),
-    () => linkDependency(config.platforms, config.project, dependency),
-    () => promisify(dependency.hooks.postlink || commandStub),
+  const tasks = flatMap(
+    config.dependencies,
+    dependency => [
+      () => promisify(dependency.hooks.prelink || commandStub),
+      () => linkDependency(config.platforms, config.project, dependency),
+      () => promisify(dependency.hooks.postlink || commandStub),
+    ],
     () => linkAssets(platforms, config.project, assets),
-  ]);
+  );
 
   return promiseWaterfall(tasks).catch(err => {
     throw new CLIError(

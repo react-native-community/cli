@@ -5,6 +5,7 @@ import path from 'path';
 import {createDirectory} from 'jest-util';
 import rimraf from 'rimraf';
 import execa from 'execa';
+import chalk from 'chalk';
 import {Writable} from 'readable-stream';
 
 const CLI_PATH = path.resolve(__dirname, '../packages/cli/build/bin.js');
@@ -13,12 +14,15 @@ type RunOptions = {
   nodeOptions?: string,
   nodePath?: string,
   timeout?: number, // kill the process after X milliseconds
+  expectedFailure?: boolean,
 };
 
 export function run(
   dir: string,
   args?: Array<string>,
-  options: RunOptions = {},
+  options: RunOptions = {
+    expectedFailure: false,
+  },
 ) {
   return spawnCli(dir, args, options);
 }
@@ -28,7 +32,9 @@ export async function runUntil(
   dir: string,
   args: Array<string> | void,
   text: string,
-  options: RunOptions = {},
+  options: RunOptions = {
+    expectedFailure: false,
+  },
 ) {
   const spawnPromise = spawnCliAsync(dir, args, {timeout: 30000, ...options});
 
@@ -109,7 +115,11 @@ export const getTempDirectory = (name: string) =>
 function spawnCli(dir: string, args?: Array<string>, options: RunOptions = {}) {
   const {spawnArgs, spawnOptions} = getCliArguments({dir, args, options});
 
-  return execa.sync(process.execPath, spawnArgs, spawnOptions);
+  const result = execa.sync(process.execPath, spawnArgs, spawnOptions);
+
+  handleTestCliFailure(options, result, dir, args);
+
+  return result;
 }
 
 function spawnCliAsync(
@@ -119,7 +129,12 @@ function spawnCliAsync(
 ) {
   const {spawnArgs, spawnOptions} = getCliArguments({dir, args, options});
 
-  return execa(process.execPath, spawnArgs, spawnOptions);
+  try {
+    return execa(process.execPath, spawnArgs, spawnOptions);
+  } catch (result) {
+    handleTestCliFailure(options, result, dir, args);
+    return result;
+  }
 }
 
 function getCliArguments({dir, args, options}) {
@@ -146,4 +161,16 @@ function getCliArguments({dir, args, options}) {
     timeout: options.timeout || 0,
   };
   return {spawnArgs, spawnOptions};
+}
+
+function handleTestCliFailure(options, result, dir, args) {
+  if (!options.expectedFailure && result.code !== 0) {
+    console.log(`Running CLI failed for unexpected reason. Here's more info:
+
+${chalk.bold('dir:')}    ${dir}
+${chalk.bold('args:')}   ${(args || []).join(' ')}
+${chalk.bold('stderr:')} ${result.stderr}
+${chalk.bold('stdout:')} ${result.stdout}
+${chalk.bold('code:')}   ${result.code}`);
+  }
 }

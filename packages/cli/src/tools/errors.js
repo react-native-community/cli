@@ -41,22 +41,14 @@ type JoiErrorDetails<K, T> = {
 
 type JoiErrorT = {
   details: Array<
-    | JoiErrorDetails<
-        'object.allowUnknown' | 'object.base' | 'string.base',
-        {
-          key: string,
-          label: string,
-          value: Object,
-        },
-      >
-    | JoiErrorDetails<
-        'object.oxor',
-        {
-          key: string,
-          label: string,
-          peers: string[],
-        },
-      >,
+    JoiErrorDetails<
+      'object.allowUnknown' | 'object.base' | 'string.base',
+      {
+        key: string,
+        label: string,
+        value: Object,
+      },
+    >,
   >,
 };
 
@@ -80,13 +72,6 @@ export class JoiError extends CLIError {
               const actualType = typeof error.context.value;
               return dedent`
                 Option ${name} must be a ${expectedType}, instead got ${actualType}
-              `;
-            }
-            case 'object.oxor': {
-              const value = JSON.stringify(error.context.peers);
-              return dedent`
-                Only one of the following options ${value} can be present at a time
-                for a ${error.context.label}
               `;
             }
             default:

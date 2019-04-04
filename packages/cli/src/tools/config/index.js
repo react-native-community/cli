@@ -48,7 +48,8 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
         readLegacyDependencyConfigFromDisk(root) ||
         readDependencyConfigFromDisk(root);
 
-      const hasOutOfTreePlatform =
+      // @todo: Make React Native integrate with CLI just like other platforms
+      const isPlatform =
         Object.keys(config.platforms).length > 0 ||
         dependencyName === 'react-native';
 
@@ -63,7 +64,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
                 platforms: Object.keys(finalConfig.platforms).reduce(
                   (dependency, platform) => {
                     // Linking platforms is not supported
-                    dependency[platform] = hasOutOfTreePlatform
+                    dependency[platform] = isPlatform
                       ? null
                       : finalConfig.platforms[platform].dependencyConfig(
                           root,
@@ -92,7 +93,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
         },
         haste: {
           providesModuleNodeModules: acc.haste.providesModuleNodeModules.concat(
-            hasOutOfTreePlatform ? dependencyName : [],
+            isPlatform ? dependencyName : [],
           ),
           platforms: [...acc.haste.platforms, ...Object.keys(config.platforms)],
         },

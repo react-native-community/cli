@@ -65,8 +65,6 @@ export const dependencyConfig = t
       .items(t.string())
       .default([]),
   })
-  .oxor('platforms', 'dependency')
-  .label('dependency config')
   .default();
 
 /**

@@ -202,3 +202,19 @@ test('should load an out-of-tree "windows" platform that ships with a dependency
   const {haste, platforms} = loadConfig(DIR);
   expect(removeString({haste, platforms}, DIR)).toMatchSnapshot();
 });
+
+test('should automatically put "react-native" into haste config', () => {
+  writeFiles(DIR, {
+    'node_modules/react-native/package.json': '{}',
+    'package.json': `{
+      "dependencies": {
+        "react-native": "0.0.1"
+      },
+      "react-native": {
+        "reactNativePath": "."
+      }
+    }`,
+  });
+  const {haste} = loadConfig(DIR);
+  expect(haste).toMatchSnapshot();
+});

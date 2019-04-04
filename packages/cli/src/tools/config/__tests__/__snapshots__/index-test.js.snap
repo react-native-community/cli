@@ -166,3 +166,12 @@ Object {
   },
 }
 `;
+
+exports[`should automatically put "react-native" into haste config 1`] = `
+Object {
+  "platforms": Array [],
+  "providesModuleNodeModules": Array [
+    "react-native",
+  ],
+}
+`;

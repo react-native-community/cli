@@ -22,7 +22,9 @@ export default function unregisterNativeModule(
   const isIosInstalled = isInstalledIOS(projectConfig, dependencyConfig);
   const isPodInstalled = isInstalledPods(projectConfig, dependencyConfig);
   if (isIosInstalled) {
-    const iOSDependencies = compact(otherDependencies.map(d => d.config.ios));
+    const iOSDependencies = compact(
+      otherDependencies.map(d => d.platforms.ios),
+    );
     unregisterDependencyIOS(dependencyConfig, projectConfig, iOSDependencies);
   } else if (isPodInstalled) {
     unregisterDependencyPods(dependencyConfig, projectConfig);

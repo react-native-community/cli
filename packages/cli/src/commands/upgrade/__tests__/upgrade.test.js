@@ -7,6 +7,7 @@ import stripAnsi from 'strip-ansi';
 import upgrade from '../upgrade';
 import {fetch} from '../../../tools/fetch';
 import logger from '../../../tools/logger';
+import loadConfig from '../../../tools/config';
 
 jest.mock('https');
 jest.mock('fs');
@@ -52,17 +53,11 @@ jest.mock('../../../tools/logger', () => ({
 const currentVersion = '0.57.8';
 const newVersion = '0.58.4';
 const olderVersion = '0.56.0';
-const ctx = {
-  root: '/project/root',
-  reactNativePath: '',
-  commands: [],
-  platforms: {},
-  dependencies: {},
-  haste: {
-    providesModuleNodeModules: [],
-    platforms: [],
-  },
-};
+
+jest.mock('../../../tools/config');
+
+const ctx = loadConfig();
+
 const opts = {
   legacy: false,
 };

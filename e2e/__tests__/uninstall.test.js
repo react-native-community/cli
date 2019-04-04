@@ -38,7 +38,7 @@ test('uninstall fails when package is not installed', () => {
   });
   const {stderr, code} = run(DIR, ['uninstall', pkg]);
 
-  expect(stderr).toContain(`Project "${pkg}" is not a react-native library`);
+  expect(stderr).toContain(`Failed to unlink "${pkg}".`);
   expect(code).toBe(1);
 });
 

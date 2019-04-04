@@ -2,7 +2,7 @@
  * @flow
  */
 
-import loadConfig from '../';
+import loadConfig from '..';
 
 import {
   cleanup,
@@ -39,11 +39,13 @@ test('should have a valid structure by default', () => {
 
 test('should return dependencies from package.json', () => {
   writeFiles(DIR, {
+    'node_modules/react-native/package.json': '{}',
     'node_modules/react-native-test/package.json': '{}',
     'node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj':
       '',
     'package.json': `{
       "dependencies": {
+        "react-native": "0.0.1",
         "react-native-test": "0.0.1"
       },
       "react-native": {
@@ -57,6 +59,7 @@ test('should return dependencies from package.json', () => {
 
 test('should read a config of a dependency and use it to load other settings', () => {
   writeFiles(DIR, {
+    'node_modules/react-native/package.json': '{}',
     'node_modules/react-native-test/package.json': `{
       "react-native": {
         "dependency": {
@@ -70,6 +73,7 @@ test('should read a config of a dependency and use it to load other settings', (
     }`,
     'package.json': `{
       "dependencies": {
+        "react-native": "0.0.1",
         "react-native-test": "0.0.1"
       },
       "react-native": {
@@ -83,13 +87,21 @@ test('should read a config of a dependency and use it to load other settings', (
   ).toMatchSnapshot();
 });
 
-test('should deep merge project configuration with default values', () => {
+test('should merge project configuration with default values', () => {
   writeFiles(DIR, {
-    'node_modules/react-native-test/package.json': '{}',
+    'node_modules/react-native/package.json': '{}',
+    'node_modules/react-native-test/package.json': `{
+      "react-native": {
+        "dependency": {
+          "assets": ["foo", "baz"]
+        }
+      }
+    }`,
     'node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj':
       '',
     'package.json': `{
       "dependencies": {
+        "react-native": "0.0.1",
         "react-native-test": "0.0.1"
       },
       "react-native": {
@@ -100,7 +112,8 @@ test('should deep merge project configuration with default values', () => {
               "ios": {
                 "sourceDir": "./abc"
               }
-            }
+            },
+            "assets": ["foo"]
           }
         }
       }
@@ -112,6 +125,7 @@ test('should deep merge project configuration with default values', () => {
 
 test('should read `rnpm` config from a dependency and transform it to a new format', () => {
   writeFiles(DIR, {
+    'node_modules/react-native/package.json': '{}',
     'node_modules/react-native-foo/package.json': `{
       "name": "react-native-foo",
       "rnpm": {
@@ -122,6 +136,7 @@ test('should read `rnpm` config from a dependency and transform it to a new form
     }`,
     'package.json': `{
       "dependencies": {
+        "react-native": "0.0.1",
         "react-native-foo": "0.0.1"
       },
       "react-native": {
@@ -194,4 +209,20 @@ test('should load an out-of-tree "windows" platform that ships with a dependency
   });
   const {haste, platforms} = loadConfig(DIR);
   expect(removeString({haste, platforms}, DIR)).toMatchSnapshot();
+});
+
+test('should automatically put "react-native" into haste config', () => {
+  writeFiles(DIR, {
+    'node_modules/react-native/package.json': '{}',
+    'package.json': `{
+      "dependencies": {
+        "react-native": "0.0.1"
+      },
+      "react-native": {
+        "reactNativePath": "."
+      }
+    }`,
+  });
+  const {haste} = loadConfig(DIR);
+  expect(haste).toMatchSnapshot();
 });

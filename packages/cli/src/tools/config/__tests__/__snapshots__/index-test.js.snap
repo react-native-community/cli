@@ -1,12 +1,26 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`should deep merge project configuration with default values 1`] = `
+exports[`should merge project configuration with default values 1`] = `
 Object {
+  "assets": Array [],
   "commands": Array [],
   "dependencies": Object {
-    "react-native-test": Object {
+    "react-native": Object {
       "assets": Array [],
       "hooks": Object {},
+      "name": "react-native",
+      "params": Array [],
+      "platforms": Object {
+        "android": null,
+        "ios": null,
+      },
+    },
+    "react-native-test": Object {
+      "assets": Array [
+        "foo",
+      ],
+      "hooks": Object {},
+      "name": "react-native-test",
       "params": Array [],
       "platforms": Object {
         "android": null,
@@ -26,12 +40,21 @@ Object {
     },
   },
   "haste": Object {
-    "platforms": Array [],
-    "providesModuleNodeModules": Array [],
+    "platforms": Array [
+      "ios",
+      "android",
+    ],
+    "providesModuleNodeModules": Array [
+      "react-native",
+    ],
   },
   "platforms": Object {
     "android": Object {},
     "ios": Object {},
+  },
+  "project": Object {
+    "android": null,
+    "ios": null,
   },
   "reactNativePath": ".",
   "root": "<<REPLACED>>",
@@ -40,16 +63,15 @@ Object {
 
 exports[`should have a valid structure by default 1`] = `
 Object {
+  "assets": Array [],
   "commands": Array [],
   "dependencies": Object {},
   "haste": Object {
     "platforms": Array [],
     "providesModuleNodeModules": Array [],
   },
-  "platforms": Object {
-    "android": Object {},
-    "ios": Object {},
-  },
+  "platforms": Object {},
+  "project": Object {},
   "reactNativePath": ".",
   "root": "<<REPLACED>>",
 }
@@ -66,8 +88,6 @@ Object {
     ],
   },
   "platforms": Object {
-    "android": Object {},
-    "ios": Object {},
     "windows": Object {},
   },
 }
@@ -84,6 +104,7 @@ exports[`should read \`rnpm\` config from a dependency and transform it to a new
 Object {
   "assets": Array [],
   "hooks": Object {},
+  "name": "react-native-foo",
   "params": Array [],
   "platforms": Object {
     "android": null,
@@ -107,6 +128,7 @@ exports[`should read a config of a dependency and use it to load other settings 
 Object {
   "assets": Array [],
   "hooks": Object {},
+  "name": "react-native-test",
   "params": Array [],
   "platforms": Object {
     "android": null,
@@ -128,9 +150,20 @@ Object {
 
 exports[`should return dependencies from package.json 1`] = `
 Object {
+  "react-native": Object {
+    "assets": Array [],
+    "hooks": Object {},
+    "name": "react-native",
+    "params": Array [],
+    "platforms": Object {
+      "android": null,
+      "ios": null,
+    },
+  },
   "react-native-test": Object {
     "assets": Array [],
     "hooks": Object {},
+    "name": "react-native-test",
     "params": Array [],
     "platforms": Object {
       "android": null,
@@ -148,5 +181,17 @@ Object {
       },
     },
   },
+}
+`;
+
+exports[`should automatically put "react-native" into haste config 1`] = `
+Object {
+  "platforms": Array [
+    "ios",
+    "android",
+  ],
+  "providesModuleNodeModules": Array [
+    "react-native",
+  ],
 }
 `;

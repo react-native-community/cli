@@ -3,9 +3,8 @@
  */
 
 import {spawn} from 'child_process';
-import getPackageConfiguration from './getPackageConfiguration';
 
-export function makeCommand(command: string) {
+export default function makeCommand(command: string) {
   return (cb: Function) => {
     if (!cb) {
       throw new Error(
@@ -29,16 +28,4 @@ export function makeCommand(command: string) {
       cb();
     });
   };
-}
-
-export default function getHooks(root: string) {
-  const commands = getPackageConfiguration(root).commands || {};
-
-  const acc = {};
-
-  Object.keys(commands).forEach(command => {
-    acc[command] = makeCommand(commands[command]);
-  });
-
-  return acc;
 }

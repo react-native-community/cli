@@ -43,6 +43,7 @@ module.ignore_non_literal_requires=true
 all=warn
 unnecessary-optional-chain=off
 dynamic-export=off
+unsafe-getters-setters=off
 
 # There is an ESLint rule for this
 unclear-type=off

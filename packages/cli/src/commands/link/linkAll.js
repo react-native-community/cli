@@ -15,8 +15,6 @@ import promisify from './promisify';
 import linkAssets from './linkAssets';
 import linkDependency from './linkDependency';
 
-const excludedDependencies = ['react-native'];
-
 const dedupeAssets = (assets: Array<string>): Array<string> =>
   uniqBy(assets, asset => path.basename(asset));
 
@@ -30,18 +28,12 @@ function linkAll(config: ConfigT, platforms: PlatformsT) {
     ),
   );
 
-  const tasks = flatMap(config.dependencies, dependency => {
-    if (excludedDependencies.includes(dependency.name)) {
-      return [];
-    } else {
-      return [
-        () => promisify(dependency.hooks.prelink || commandStub),
-        () => linkDependency(config.platforms, config.project, dependency),
-        () => promisify(dependency.hooks.postlink || commandStub),
-        () => linkAssets(platforms, config.project, assets),
-      ];
-    }
-  });
+  const tasks = flatMap(config.dependencies, dependency => [
+    () => promisify(dependency.hooks.prelink || commandStub),
+    () => linkDependency(config.platforms, config.project, dependency),
+    () => promisify(dependency.hooks.postlink || commandStub),
+    () => linkAssets(platforms, config.project, assets),
+  ]);
 
   return promiseWaterfall(tasks).catch(err => {
     throw new CLIError(

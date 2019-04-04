@@ -40,7 +40,7 @@ const merge = (...objs: Object[]) =>
 function loadConfig(projectRoot: string = process.cwd()): ConfigT {
   const userConfig = readConfigFromDisk(projectRoot);
 
-  return findDependencies(projectRoot).reduce(
+  const finalConfig = findDependencies(projectRoot).reduce(
     (acc: ConfigT, dependencyName) => {
       const root = path.join(projectRoot, 'node_modules', dependencyName);
 
@@ -48,22 +48,24 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
         readLegacyDependencyConfigFromDisk(root) ||
         readDependencyConfigFromDisk(root);
 
-      return assign({}, acc, {
-        dependencies: {
-          ...acc.dependencies,
-          // $FlowIssue: Computed getters are not yet supported.
+      const hasOutOfTreePlatform = Object.keys(config.platforms).length > 0;
+
+      return {
+        ...acc,
+        dependencies: assign(acc.dependencies, {
           get [dependencyName]() {
             return merge(
               {
                 name: dependencyName,
-                platforms: Object.keys(acc.platforms).reduce(
+                platforms: Object.keys(finalConfig.platforms).reduce(
                   (dependency, platform) => {
-                    dependency[platform] = acc.platforms[
-                      platform
-                    ].dependencyConfig(
-                      root,
-                      config.dependency.platforms[platform] || {},
-                    );
+                    // Linking platforms is not supported
+                    dependency[platform] = hasOutOfTreePlatform
+                      ? null
+                      : finalConfig.platforms[platform].dependencyConfig(
+                          root,
+                          config.dependency.platforms[platform] || {},
+                        );
                     return dependency;
                   },
                   {},
@@ -75,7 +77,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
               userConfig.dependencies[dependencyName] || {},
             );
           },
-        },
+        }),
         commands: acc.commands.concat(
           config.commands.map(pathToCommand =>
             path.join(dependencyName, pathToCommand),
@@ -87,11 +89,11 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
         },
         haste: {
           providesModuleNodeModules: acc.haste.providesModuleNodeModules.concat(
-            Object.keys(config.platforms).length > 0 ? dependencyName : [],
+            hasOutOfTreePlatform > 0 ? dependencyName : [],
           ),
           platforms: [...acc.haste.platforms, ...Object.keys(config.platforms)],
         },
-      });
+      };
     },
     ({
       root: projectRoot,
@@ -127,6 +129,8 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
       },
     }: ConfigT),
   );
+
+  return finalConfig;
 }
 
 export default loadConfig;

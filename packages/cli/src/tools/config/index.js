@@ -53,6 +53,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
       return {
         ...acc,
         dependencies: assign(acc.dependencies, {
+          // $FlowExpectedError: Dynamic getters are not supported
           get [dependencyName]() {
             return merge(
               {
@@ -89,7 +90,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
         },
         haste: {
           providesModuleNodeModules: acc.haste.providesModuleNodeModules.concat(
-            hasOutOfTreePlatform > 0 ? dependencyName : [],
+            hasOutOfTreePlatform ? dependencyName : [],
           ),
           platforms: [...acc.haste.platforms, ...Object.keys(config.platforms)],
         },

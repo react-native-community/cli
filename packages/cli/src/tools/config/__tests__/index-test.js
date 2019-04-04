@@ -57,6 +57,7 @@ test('should return dependencies from package.json', () => {
 
 test('should read a config of a dependency and use it to load other settings', () => {
   writeFiles(DIR, {
+    'node_modules/react-native/package.json': '{}',
     'node_modules/react-native-test/package.json': `{
       "react-native": {
         "dependency": {
@@ -70,6 +71,7 @@ test('should read a config of a dependency and use it to load other settings', (
     }`,
     'package.json': `{
       "dependencies": {
+        "react-native": "0.0.1",
         "react-native-test": "0.0.1"
       },
       "react-native": {
@@ -85,6 +87,7 @@ test('should read a config of a dependency and use it to load other settings', (
 
 test('should merge project configuration with default values', () => {
   writeFiles(DIR, {
+    'node_modules/react-native/package.json': '{}',
     'node_modules/react-native-test/package.json': `{
       "react-native": {
         "dependency": {
@@ -96,6 +99,7 @@ test('should merge project configuration with default values', () => {
       '',
     'package.json': `{
       "dependencies": {
+        "react-native": "0.0.1",
         "react-native-test": "0.0.1"
       },
       "react-native": {
@@ -119,6 +123,7 @@ test('should merge project configuration with default values', () => {
 
 test('should read `rnpm` config from a dependency and transform it to a new format', () => {
   writeFiles(DIR, {
+    'node_modules/react-native/package.json': '{}',
     'node_modules/react-native-foo/package.json': `{
       "name": "react-native-foo",
       "rnpm": {
@@ -129,6 +134,7 @@ test('should read `rnpm` config from a dependency and transform it to a new form
     }`,
     'package.json': `{
       "dependencies": {
+        "react-native": "0.0.1",
         "react-native-foo": "0.0.1"
       },
       "react-native": {

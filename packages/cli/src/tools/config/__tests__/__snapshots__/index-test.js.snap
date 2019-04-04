@@ -55,14 +55,8 @@ Object {
     "platforms": Array [],
     "providesModuleNodeModules": Array [],
   },
-  "platforms": Object {
-    "android": Object {},
-    "ios": Object {},
-  },
-  "project": Object {
-    "android": null,
-    "ios": null,
-  },
+  "platforms": Object {},
+  "project": Object {},
   "reactNativePath": ".",
   "root": "<<REPLACED>>",
 }
@@ -169,7 +163,10 @@ Object {
 
 exports[`should automatically put "react-native" into haste config 1`] = `
 Object {
-  "platforms": Array [],
+  "platforms": Array [
+    "ios",
+    "android"
+  ],
   "providesModuleNodeModules": Array [
     "react-native",
   ],

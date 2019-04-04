@@ -38,7 +38,7 @@ const handleError = err => {
     logger.error(err.message);
   } else {
     // Some error messages (esp. custom ones) might have `.` at the end already.
-    const message = err.message.replace(/.$/, '');
+    const message = err.message.replace(/\.$/, '');
     logger.error(
       `${message}. ${chalk.dim(
         `Run CLI with ${chalk.reset('--verbose')} ${chalk.dim(

@@ -20,7 +20,7 @@ import runOnAllDevices from './runOnAllDevices';
 import tryRunAdbReverse from './tryRunAdbReverse';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
 import getAdbPath from './getAdbPath';
-import logger from '../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 
 // Verifies this is an Android project
 function checkAndroid(root) {

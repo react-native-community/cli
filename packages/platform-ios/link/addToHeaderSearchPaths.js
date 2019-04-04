@@ -7,16 +7,10 @@
  * @format
  */
 
-import fs from 'fs';
+import mapHeaderSearchPaths from './mapHeaderSearchPaths';
 import {logger} from '@react-native-community/cli-tools';
 
-export default function revokePatch(file, patch) {
-  if (file) {
-    logger.debug(`Patching ${file}`);
-  }
-
-  fs.writeFileSync(
-    file,
-    fs.readFileSync(file, 'utf8').replace(patch.patch, ''),
-  );
+export default function addToHeaderSearchPaths(project, path) {
+  logger.debug(`Adding ${path} to header search paths`);
+  mapHeaderSearchPaths(project, searchPaths => searchPaths.concat(path));
 }

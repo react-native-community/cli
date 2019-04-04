@@ -17,13 +17,10 @@ import type {CommandT, ContextT} from './tools/types.flow';
 import {getCommands} from './commands';
 import init from './commands/init/initCompat';
 import assertRequiredOptions from './tools/assertRequiredOptions';
-import logger from './tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 import {setProjectDir} from './tools/packageManager';
 import pkgJson from '../package.json';
 import loadConfig from './tools/config';
-
-import * as android from '../../platform-android';
-import * as ios from '../../platform-ios';
 
 commander
   .option('--version', 'Print CLI version')
@@ -189,8 +186,6 @@ export default {
   run,
   init,
   loadConfig,
-  ios,
-  android,
 };
 
-export {run, init, loadConfig, ios, android};
+export {run, init, loadConfig};

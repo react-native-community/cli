@@ -10,7 +10,7 @@
 import {flatMap, values, difference} from 'lodash';
 import type {ContextT} from '../../tools/types.flow';
 import dedent from 'dedent';
-import logger from '../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 import promiseWaterfall from './promiseWaterfall';
 import commandStub from './commandStub';
 import promisify from './promisify';

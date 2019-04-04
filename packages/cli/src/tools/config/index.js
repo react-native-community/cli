@@ -22,7 +22,8 @@ import assign from '../assign';
 /**
  * Built-in platforms
  */
-import {ios, android} from '../../..';
+import * as ios from '@react-native-community/cli-platform-ios';
+import * as android from '@react-native-community/cli-platform-android';
 
 /**
  * `deepmerge` concatenates arrays by default instead of overwriting them.

@@ -10,15 +10,8 @@
 import fs from 'fs';
 import {logger} from '@react-native-community/cli-tools';
 
-export default function applyPatch(file, patch) {
-  if (file) {
-    logger.debug(`Patching ${file}`);
-  }
-
-  fs.writeFileSync(
-    file,
-    fs
-      .readFileSync(file, 'utf8')
-      .replace(patch.pattern, match => `${match}${patch.patch}`),
-  );
+export default function savePodFile(podfilePath, podLines) {
+  const newPodfile = podLines.join('\n');
+  logger.debug(`Writing changes to ${podfilePath}`);
+  fs.writeFileSync(podfilePath, newPodfile);
 }

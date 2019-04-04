@@ -3,7 +3,7 @@
 import {isEmpty} from 'lodash';
 import type {PlatformsT, ProjectConfigT} from '../../tools/config/types.flow';
 
-import logger from '../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 
 const linkAssets = (
   platforms: PlatformsT,

@@ -6,7 +6,7 @@ import type {ContextT} from '../../tools/types.flow';
 import {validateProjectName} from './validate';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
 import printRunInstructions from './printRunInstructions';
-import logger from '../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 import {
   installTemplatePackage,
   getTemplateConfig,

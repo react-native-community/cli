@@ -8,7 +8,7 @@
  */
 
 import type {ContextT} from '../../tools/types.flow';
-import logger from '../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 import * as PackageManager from '../../tools/packageManager';
 import link from '../link/unlink';
 

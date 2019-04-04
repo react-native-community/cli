@@ -1,1 +1,1 @@
-export {logger} from '@react-native-community/cli-tools';
+export {logger as default} from '@react-native-community/cli-tools';

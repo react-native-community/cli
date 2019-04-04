@@ -11,9 +11,6 @@ import path from 'path';
 import findProject from './findProject';
 import findPodfilePath from './findPodfilePath';
 import findPodspecName from './findPodspecName';
-import linkConfigIos from '../../commands/link/ios';
-
-export const linkConfig = linkConfigIos;
 
 /**
  * For libraries specified without an extension, add '.tbd' for those that

@@ -30,19 +30,3 @@ test('returns plugins from both dependencies and dev dependencies', () => {
   });
   expect(findDependencies(DIR)).toHaveLength(2);
 });
-
-test('returns plugins in scoped modules', () => {
-  writeFiles(DIR, {
-    'package.json': `
-      {
-        "dependencies": {
-          "@org/rnpm-plugin-test": "*",
-          "@org/react-native-test": "*",
-          "@react-native/test": "*",
-          "@react-native-org/test": "*"
-        }
-      }
-    `,
-  });
-  expect(findDependencies(DIR)).toHaveLength(4);
-});

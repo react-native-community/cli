@@ -79,9 +79,9 @@ export type ConfigT = {|
 
   // Object that contains configuration for a project (null, when platform not available)
   project: {
-    android: ?ProjectConfigAndroidT,
-    ios: ?ProjectConfigIOST,
-    [key: string]: any,
+    android?: ?ProjectConfigAndroidT,
+    ios?: ?ProjectConfigIOST,
+    [key: string]: ?Object,
   },
 
   // An array of assets as defined by the user
@@ -109,12 +109,12 @@ export type ConfigT = {|
   // Map of available platforms (built-ins and dynamically loaded)
   platforms: {
     [name: string]: PlatformConfig<Object, Object, Object>,
-    ios: PlatformConfig<
+    ios?: PlatformConfig<
       ProjectParamsIOST,
       ProjectConfigIOST,
       DependencyConfigIOST,
     >,
-    android: PlatformConfig<
+    android?: PlatformConfig<
       ProjectParamsAndroidT,
       ProjectConfigAndroidT,
       DependencyConfigAndroidT,

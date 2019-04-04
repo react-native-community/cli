@@ -48,14 +48,15 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
         readLegacyDependencyConfigFromDisk(root) ||
         readDependencyConfigFromDisk(root);
 
-      // @todo: Make React Native integrate with CLI just like other platforms
-      const isPlatform =
-        Object.keys(config.platforms).length > 0 ||
-        dependencyName === 'react-native';
+      // @todo: Move this to React Native in the future
+      if (dependencyName === 'react-native') {
+        config.platforms = {ios, android};
+      }
 
-      return {
-        ...acc,
-        dependencies: assign(acc.dependencies, {
+      const isPlatform = Object.keys(config.platforms).length > 0;
+
+      return assign({}, acc, {
+        dependencies: assign({}, acc.dependencies, {
           // $FlowExpectedError: Dynamic getters are not supported
           get [dependencyName]() {
             return merge(
@@ -97,7 +98,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
           ),
           platforms: [...acc.haste.platforms, ...Object.keys(config.platforms)],
         },
-      };
+      });
     },
     ({
       root: projectRoot,
@@ -111,25 +112,20 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
       get assets() {
         return findAssets(projectRoot, userConfig.assets);
       },
-      platforms: {
-        ios,
-        android,
-      },
+      platforms: {},
       haste: {
         providesModuleNodeModules: [],
         platforms: [],
       },
       get project() {
-        return Object.keys(this.platforms).reduce(
-          (project, platform) => {
-            project[platform] = this.platforms[platform].projectConfig(
-              projectRoot,
-              userConfig.project[platform] || {},
-            );
-            return project;
-          },
-          {ios: null, android: null},
-        );
+        const project = {};
+        for (const platform in finalConfig.platforms) {
+          project[platform] = finalConfig.platforms[platform].projectConfig(
+            projectRoot,
+            userConfig.project[platform] || {},
+          );
+        }
+        return project;
       },
     }: ConfigT),
   );

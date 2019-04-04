@@ -18,7 +18,7 @@ import linkDependency from './linkDependency';
 const dedupeAssets = (assets: Array<string>): Array<string> =>
   uniqBy(assets, asset => path.basename(asset));
 
-function linkAll(config: ConfigT, platforms: PlatformsT) {
+function linkAll(config: ConfigT) {
   const projectAssets = config.assets;
 
   const assets = dedupeAssets(
@@ -35,7 +35,7 @@ function linkAll(config: ConfigT, platforms: PlatformsT) {
       () => linkDependency(config.platforms, config.project, dependency),
       () => promisify(dependency.hooks.postlink || commandStub),
     ],
-    () => linkAssets(platforms, config.project, assets),
+    () => linkAssets(config.platforms, config.project, assets),
   );
 
   return promiseWaterfall(tasks).catch(err => {

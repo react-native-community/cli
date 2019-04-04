@@ -54,7 +54,7 @@ function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
     logger.debug(
       'No package name provided, will attemp to link all possible packages.',
     );
-    return linkAll(ctx, platforms);
+    return linkAll(ctx);
   }
 
   // Trim the version / tag out of the package name (eg. package@latest)

@@ -42,10 +42,10 @@ Object {
   "haste": Object {
     "platforms": Array [
       "ios",
-      "android"
+      "android",
     ],
     "providesModuleNodeModules": Array [
-      "react-native"
+      "react-native",
     ],
   },
   "platforms": Object {
@@ -150,6 +150,16 @@ Object {
 
 exports[`should return dependencies from package.json 1`] = `
 Object {
+  "react-native": Object {
+    "assets": Array [],
+    "hooks": Object {},
+    "name": "react-native",
+    "params": Array [],
+    "platforms": Object {
+      "android": null,
+      "ios": null,
+    },
+  },
   "react-native-test": Object {
     "assets": Array [],
     "hooks": Object {},

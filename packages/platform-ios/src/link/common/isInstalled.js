@@ -8,7 +8,7 @@
  */
 
 import isInstalledIOS from '../isInstalled';
-import isInstalledPods from '../../pods/isInstalled';
+import isInstalledPods from '../../link-pods/isInstalled';
 
 export default function isInstalled(projectConfig, name, dependencyConfig) {
   return (

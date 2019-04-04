@@ -10,12 +10,10 @@ import fs from 'fs';
 import path from 'path';
 import xcode from 'xcode';
 import {difference} from 'lodash';
-import log from '../../../tools/logger';
 
-import groupFilesByType from '../groupFilesByType';
 import getPlist from './getPlist';
 import writePlist from './writePlist';
-import logger from '../../../tools/logger';
+import {logger, groupFilesByType} from '@react-native-community/cli-tools';
 
 /**
  * Unlinks assets from iOS project. Removes references for fonts from `Info.plist`
@@ -27,14 +25,14 @@ export default function unlinkAssetsIOS(files, projectConfig) {
   const plist = getPlist(project, projectConfig.sourceDir);
 
   if (!plist) {
-    log.error(
+    logger.error(
       'Could not locate "Info.plist" file. Check if your project has "INFOPLIST_FILE" set properly',
     );
     return;
   }
 
   if (!project.pbxGroupByName('Resources')) {
-    log.error(
+    logger.error(
       'Group "Resources" does not exist in your Xcode project. There is nothing to unlink.',
     );
     return;

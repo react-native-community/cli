@@ -9,9 +9,9 @@
 
 import {compact} from 'lodash';
 import isInstalledIOS from '../isInstalled';
-import isInstalledPods from '../../pods/isInstalled';
+import isInstalledPods from '../../link-pods/isInstalled';
 import unregisterDependencyIOS from '../unregisterNativeModule';
-import unregisterDependencyPods from '../../pods/unregisterNativeModule';
+import unregisterDependencyPods from '../../link-pods/unregisterNativeModule';
 
 export default function unregisterNativeModule(
   name,

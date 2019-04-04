@@ -9,7 +9,7 @@
 
 import fs from 'fs';
 import removePodEntry from './removePodEntry';
-import logger from '../../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 
 /**
  * Unregister native module IOS with CocoaPods

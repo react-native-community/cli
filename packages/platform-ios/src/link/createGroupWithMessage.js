@@ -7,7 +7,7 @@
  * @format
  */
 
-import log from '../../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 import createGroup from './createGroup';
 import getGroup from './getGroup';
 
@@ -23,7 +23,7 @@ export default function createGroupWithMessage(project, path) {
   if (!group) {
     group = createGroup(project, path);
 
-    log.warn(
+    logger.warn(
       `Group '${path}' does not exist in your Xcode project. We have created it automatically for you.`,
     );
   }

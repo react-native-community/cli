@@ -8,8 +8,8 @@
  * @emails oncall+javascript_foundation
  */
 
-import findPodTargetLine from '../../pods/findPodTargetLine';
-import readPodfile from '../../pods/readPodfile';
+import findPodTargetLine from '../../link-pods/findPodTargetLine';
+import readPodfile from '../../link-pods/readPodfile';
 
 const path = require('path');
 

@@ -8,8 +8,8 @@
  * @emails oncall+javascript_foundation
  */
 
-import removePodEntry from '../../pods/removePodEntry';
-import readPodfile from '../../pods/readPodfile';
+import removePodEntry from '../../link-pods/removePodEntry';
+import readPodfile from '../../link-pods/readPodfile';
 
 const path = require('path');
 

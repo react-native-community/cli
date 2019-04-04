@@ -8,7 +8,7 @@
  */
 
 import registerDependencyIOS from '../registerNativeModule';
-import registerDependencyPods from '../../pods/registerNativeModule';
+import registerDependencyPods from '../../link-pods/registerNativeModule';
 
 export default function registerNativeModule(
   name,

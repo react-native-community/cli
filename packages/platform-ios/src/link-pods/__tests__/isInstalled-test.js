@@ -8,7 +8,7 @@
  * @emails oncall+javascript_foundation
  */
 
-import isInstalled from '../../pods/isInstalled';
+import isInstalled from '../../link-pods/isInstalled';
 
 const path = require('path');
 

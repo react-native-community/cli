@@ -9,8 +9,7 @@
 
 import fs from 'fs-extra';
 import path from 'path';
-import groupFilesByType from '../groupFilesByType';
-import logger from '../../../tools/logger';
+import {logger, groupFilesByType} from '@react-native-community/cli-tools';
 
 /**
  * Copies each file from an array of assets provided to targetPath directory

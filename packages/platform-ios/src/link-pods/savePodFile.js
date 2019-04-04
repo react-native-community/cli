@@ -8,7 +8,7 @@
  */
 
 import fs from 'fs';
-import logger from '../../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 
 export default function savePodFile(podfilePath, podLines) {
   const newPodfile = podLines.join('\n');

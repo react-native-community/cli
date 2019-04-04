@@ -20,7 +20,7 @@ import createGroupWithMessage from './createGroupWithMessage';
 import addFileToProject from './addFileToProject';
 import addProjectToLibraries from './addProjectToLibraries';
 import addSharedLibraries from './addSharedLibraries';
-import logger from '../../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 
 /**
  * Register native module IOS adds given dependency to project by adding

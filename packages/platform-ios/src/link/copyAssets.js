@@ -10,11 +10,10 @@
 import fs from 'fs';
 import path from 'path';
 import xcode from 'xcode';
-import groupFilesByType from '../groupFilesByType';
 import createGroupWithMessage from './createGroupWithMessage';
 import getPlist from './getPlist';
 import writePlist from './writePlist';
-import logger from '../../../tools/logger';
+import {logger, groupFilesByType} from '@react-native-community/cli-tools';
 
 /**
  * This function works in a similar manner to its Android version,

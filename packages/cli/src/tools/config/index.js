@@ -22,8 +22,7 @@ import assign from '../assign';
 /**
  * Built-in platforms
  */
-import * as ios from '../ios';
-import * as android from '../android';
+import {ios, android} from '../../..';
 
 /**
  * `deepmerge` concatenates arrays by default instead of overwriting them.

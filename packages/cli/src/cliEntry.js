@@ -22,6 +22,9 @@ import {setProjectDir} from './tools/packageManager';
 import pkgJson from '../package.json';
 import loadConfig from './tools/config';
 
+import * as android from '../../platform-android';
+import * as ios from '../../platform-ios';
+
 commander
   .option('--version', 'Print CLI version')
   .option('--verbose', 'Increase logging verbosity');
@@ -186,6 +189,8 @@ export default {
   run,
   init,
   loadConfig,
+  ios,
+  android,
 };
 
-export {run, init, loadConfig};
+export {run, init, loadConfig, ios, android};

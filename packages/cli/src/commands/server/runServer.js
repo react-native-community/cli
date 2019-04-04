@@ -62,7 +62,14 @@ async function runServer(argv: Array<string>, ctx: ContextT, args: Args) {
     watchFolders: metroConfig.watchFolders,
   });
 
-  middlewareManager.getConnectInstance().use(morgan('combined'));
+  middlewareManager.getConnectInstance().use(
+    morgan(
+      'combined',
+      !args.verbose && {
+        skip: (req, res) => res.statusCode < 400,
+      },
+    ),
+  );
 
   metroConfig.watchFolders.forEach(
     middlewareManager.serveStatic.bind(middlewareManager),

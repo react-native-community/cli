@@ -39,11 +39,13 @@ test('should have a valid structure by default', () => {
 
 test('should return dependencies from package.json', () => {
   writeFiles(DIR, {
+    'node_modules/react-native/package.json': '{}',
     'node_modules/react-native-test/package.json': '{}',
     'node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj':
       '',
     'package.json': `{
       "dependencies": {
+        "react-native": "0.0.1",
         "react-native-test": "0.0.1"
       },
       "react-native": {

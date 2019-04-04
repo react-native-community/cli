@@ -5,6 +5,16 @@ Object {
   "assets": Array [],
   "commands": Array [],
   "dependencies": Object {
+    "react-native": Object {
+      "assets": Array [],
+      "hooks": Object {},
+      "name": "react-native",
+      "params": Array [],
+      "platforms": Object {
+        "android": null,
+        "ios": null,
+      },
+    },
     "react-native-test": Object {
       "assets": Array [
         "foo",
@@ -30,8 +40,13 @@ Object {
     },
   },
   "haste": Object {
-    "platforms": Array [],
-    "providesModuleNodeModules": Array [],
+    "platforms": Array [
+      "ios",
+      "android"
+    ],
+    "providesModuleNodeModules": Array [
+      "react-native"
+    ],
   },
   "platforms": Object {
     "android": Object {},
@@ -73,8 +88,6 @@ Object {
     ],
   },
   "platforms": Object {
-    "android": Object {},
-    "ios": Object {},
     "windows": Object {},
   },
 }
@@ -165,7 +178,7 @@ exports[`should automatically put "react-native" into haste config 1`] = `
 Object {
   "platforms": Array [
     "ios",
-    "android"
+    "android",
   ],
   "providesModuleNodeModules": Array [
     "react-native",

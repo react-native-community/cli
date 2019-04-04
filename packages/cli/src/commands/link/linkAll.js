@@ -15,7 +15,7 @@ import promisify from './promisify';
 import linkAssets from './linkAssets';
 import linkDependency from './linkDependency';
 
-const blacklist = ['react-native'];
+const excludedDependencies = ['react-native'];
 
 const dedupeAssets = (assets: Array<string>): Array<string> =>
   uniqBy(assets, asset => path.basename(asset));
@@ -31,7 +31,7 @@ function linkAll(config: ConfigT, platforms: PlatformsT) {
   );
 
   const tasks = flatMap(config.dependencies, dependency => {
-    if (blacklist.includes(dependency.name)) {
+    if (excludedDependencies.includes(dependency.name)) {
       return [];
     } else {
       return [

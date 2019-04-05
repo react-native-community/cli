@@ -12,6 +12,7 @@ import {type UserDependencyConfigT, type UserConfigT} from './types.flow';
 import {JoiError} from '../errors';
 
 import * as schema from './schema';
+
 import {logger} from '@react-native-community/cli-tools';
 
 /**
@@ -61,6 +62,26 @@ export function readDependencyConfigFromDisk(
 }
 
 /**
+ * Returns an array of commands that are defined in the project.
+ */
+const loadProjectCommand = ({
+  root,
+  commands,
+}: ContextT): Array<ProjectCommandT> => {
+  return commands.reduce((acc: Array<ProjectCommandT>, cmdPath: string) => {
+    const requiredCommands:
+      | ProjectCommandT
+      | Array<ProjectCommandT> = require(path.join(
+      root,
+      'node_modules',
+      cmdPath,
+    ));
+
+    return acc.concat(requiredCommands);
+  }, []);
+};
+
+/**
  * Reads a legacy configuaration from a `package.json` "rnpm" key.
  */
 export function readLegacyDependencyConfigFromDisk(
@@ -82,7 +103,9 @@ export function readLegacyDependencyConfigFromDisk(
       hooks: config.commands,
       params: config.params,
     },
-    commands: [].concat(config.plugin || []),
+    commands: []
+      .concat(config.plugin || [])
+      .map(p => loadProjectCommand(rootFolder, p)),
     platforms: config.platform
       ? require(path.join(rootFolder, config.platform))
       : undefined,

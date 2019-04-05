@@ -6,7 +6,7 @@ import {type ConfigT} from './config/types.flow';
 
 export type ContextT = ConfigT;
 
-export type LocalCommandT = {
+export type CommandT = {
   name: string,
   description?: string,
   usage?: string,
@@ -22,21 +22,3 @@ export type LocalCommandT = {
     cmd: string,
   }>,
 };
-
-type Package = {
-  version: string,
-  name: string,
-};
-
-/**
- * User can define command either as an object (RequiredCommandT) or
- * as an array of commands (Array<RequiredCommandT>).
- */
-export type ProjectCommandT = LocalCommandT & {
-  pkg: Package,
-};
-
-/**
- * Main type. Can be either local or a project command.
- */
-export type CommandT = LocalCommandT | ProjectCommandT;

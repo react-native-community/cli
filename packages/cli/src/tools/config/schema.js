@@ -62,7 +62,7 @@ export const dependencyConfig = t
     ).default(),
     commands: t
       .array()
-      .items(t.string())
+      .items(t.object())
       .default([]),
   })
   .default();
@@ -142,7 +142,7 @@ export const projectConfig = t
       .default([]),
     commands: t
       .array()
-      .items(t.string())
+      .items(t.object())
       .default([]),
   })
   .default();

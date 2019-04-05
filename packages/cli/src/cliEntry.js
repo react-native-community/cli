@@ -14,7 +14,7 @@ import path from 'path';
 
 import type {CommandT, ContextT} from './tools/types.flow';
 
-import {getCommands} from './commands';
+import * as commands from './commands';
 import init from './commands/init/initCompat';
 import assertRequiredOptions from './tools/assertRequiredOptions';
 import {logger} from '@react-native-community/cli-tools';
@@ -162,9 +162,7 @@ async function setupAndRun() {
 
   setProjectDir(ctx.root);
 
-  const commands = getCommands(ctx);
-
-  commands.forEach(command => addCommand(command, ctx));
+  [...commands, ...ctx.commands].forEach(command => addCommand(command, ctx));
 
   commander.parse(process.argv);
 

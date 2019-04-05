@@ -8,15 +8,12 @@
  * @emails oncall+javascript_foundation
  */
 
-import isInstalled from '../../android/isInstalled';
+import isInstalled from '../isInstalled';
 
 const path = require('path');
 
 const projectConfig = {
-  buildGradlePath: path.join(
-    __dirname,
-    '../../__fixtures__/android/patchedBuild.gradle',
-  ),
+  buildGradlePath: path.join(__dirname, '../__fixtures__/patchedBuild.gradle'),
 };
 
 describe('android::isInstalled', () => {

@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import applyParams from '../../android/patches/applyParams';
+import applyParams from '../applyParams';
 
 describe('applyParams', () => {
   it('apply params to the string', () => {

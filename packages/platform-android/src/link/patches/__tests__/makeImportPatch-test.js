@@ -8,7 +8,7 @@
  * @emails oncall+javascript_foundation
  */
 
-import makeImportPatch from '../../android/patches/makeImportPatch';
+import makeImportPatch from '../makeImportPatch';
 
 const packageImportPath = 'import some.example.project';
 

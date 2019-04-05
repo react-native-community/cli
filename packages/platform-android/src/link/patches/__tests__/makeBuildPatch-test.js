@@ -8,20 +8,17 @@
  * @emails oncall+javascript_foundation
  */
 
-import makeBuildPatch from '../../android/patches/makeBuildPatch';
-import normalizeProjectName from '../../android/patches/normalizeProjectName';
+import makeBuildPatch from '../makeBuildPatch';
+import normalizeProjectName from '../normalizeProjectName';
 import path from 'path';
-
-const projectConfig = {
-  buildGradlePath: path.join(
-    __dirname,
-    '../../__fixtures__/android/patchedBuild.gradle',
-  ),
-};
 
 const name = 'test';
 const scopedName = '@scoped/test';
 const normalizedScopedName = normalizeProjectName('@scoped/test');
+const buildGradlePath = path.join(
+  __dirname,
+  '../../__fixtures__/patchedBuild.gradle',
+);
 
 describe('makeBuildPatch', () => {
   it('should build a patch function', () => {
@@ -51,7 +48,7 @@ describe('makeBuildPatch', () => {
   ])(
     'properly detects the patch string of project %p in build.gradle',
     (project, projectPatchString) => {
-      expect(makeBuildPatch(project, projectConfig.buildGradlePath).patch).toBe(
+      expect(makeBuildPatch(project, buildGradlePath).patch).toBe(
         projectPatchString,
       );
     },

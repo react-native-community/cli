@@ -8,7 +8,7 @@
  * @emails oncall+javascript_foundation
  */
 
-import makeStringsPatch from '../../android/patches/makeStringsPatch';
+import makeStringsPatch from '../makeStringsPatch';
 
 describe('makeStringsPatch', () => {
   it('should export a patch with <string> element', () => {

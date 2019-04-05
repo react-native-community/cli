@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import makePackagePatch from '../../android/patches/makePackagePatch';
-import applyParams from '../../android/patches/applyParams';
+import makePackagePatch from '../makePackagePatch';
+import applyParams from '../applyParams';
 
 const packageInstance = "new SomeLibrary(${foo}, ${bar}, 'something')";
 const name = 'some-library';

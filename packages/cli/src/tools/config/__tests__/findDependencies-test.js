@@ -8,7 +8,7 @@ import {
   cleanup,
   writeFiles,
   getTempDirectory,
-} from '../../../../../../e2e/helpers';
+} from '../../../../../../jest/helpers';
 
 beforeEach(() => {
   cleanup(DIR);

@@ -42,12 +42,14 @@ jest.mock('../../../tools/packageManager', () => ({
 jest.mock('../../../tools/fetch', () => ({
   fetch: jest.fn(() => Promise.resolve('patch')),
 }));
-jest.mock('../../../tools/logger', () => ({
-  info: jest.fn((...args) => mockPushLog('info', args)),
-  error: jest.fn((...args) => mockPushLog('error', args)),
-  warn: jest.fn((...args) => mockPushLog('warn', args)),
-  success: jest.fn((...args) => mockPushLog('success', args)),
-  log: jest.fn((...args) => mockPushLog(args)),
+jest.mock('@react-native-community/cli-tools', () => ({
+  logger: {
+    info: jest.fn((...args) => mockPushLog('info', args)),
+    error: jest.fn((...args) => mockPushLog('error', args)),
+    warn: jest.fn((...args) => mockPushLog('warn', args)),
+    success: jest.fn((...args) => mockPushLog('success', args)),
+    log: jest.fn((...args) => mockPushLog(args)),
+  },
 }));
 
 const currentVersion = '0.57.8';
@@ -90,28 +92,28 @@ afterEach(() => {
 test('uses latest version of react-native when none passed', async () => {
   await upgrade.func([], ctx, opts);
   expect(execa).toBeCalledWith('npm', ['info', 'react-native', 'version']);
-});
+}, 60000);
 
 test('errors when invalid version passed', async () => {
   await upgrade.func(['next'], ctx, opts);
   expect(logger.error).toBeCalledWith(
     'Provided version "next" is not allowed. Please pass a valid semver version',
   );
-});
+}, 60000);
 
 test('errors when older version passed', async () => {
   await upgrade.func([olderVersion], ctx, opts);
   expect(logger.error).toBeCalledWith(
     `Trying to upgrade from newer version "${currentVersion}" to older "${olderVersion}"`,
   );
-});
+}, 60000);
 
 test('warns when dependency upgrade version is in semver range', async () => {
   await upgrade.func([currentVersion], ctx, opts);
   expect(logger.warn).toBeCalledWith(
     `Specified version "${currentVersion}" is already installed in node_modules and it satisfies "^0.57.8" semver range. No need to upgrade`,
   );
-});
+}, 60000);
 
 test('fetches empty patch and installs deps', async () => {
   (fetch: any).mockImplementation(() => Promise.resolve(''));
@@ -127,7 +129,7 @@ $ execa git add yarn.lock
 $ execa git add package-lock.json
 success Upgraded React Native to v0.58.4 🎉. Now you can review and commit the changes"
 `);
-});
+}, 60000);
 
 test('fetches regular patch, adds remote, applies patch, installs deps, removes remote,', async () => {
   (fetch: any).mockImplementation(() => Promise.resolve(samplePatch));
@@ -155,7 +157,7 @@ success Upgraded React Native to v0.58.4 🎉. Now you can review and commit the
       contextLines: 1,
     }),
   ).toMatchSnapshot('RnDiffApp is replaced with app name (TestApp)');
-});
+}, 60000);
 test('cleans up if patching fails,', async () => {
   (fetch: any).mockImplementation(() => Promise.resolve(samplePatch));
   (execa: any).mockImplementation((command, args) => {
@@ -196,4 +198,4 @@ info You may find these resources helpful:
 • Comparison between versions: https://github.com/react-native-community/rn-diff-purge/compare/version/0.57.8..version/0.58.4
 • Git diff: https://github.com/react-native-community/rn-diff-purge/compare/version/0.57.8..version/0.58.4.diff"
 `);
-});
+}, 60000);

@@ -8,7 +8,7 @@
  */
 
 import {spawnSync, execFileSync} from 'child_process';
-import logger from '../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 import adb from './adb';
 import tryRunAdbReverse from './tryRunAdbReverse';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';

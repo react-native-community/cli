@@ -15,7 +15,7 @@ import {type ContextT} from '../../tools/types.flow';
 import {CLIError} from '../../tools/errors';
 
 import promiseWaterfall from './promiseWaterfall';
-import logger from '../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 import commandStub from './commandStub';
 import promisify from './promisify';
 import getPlatformName from './getPlatformName';

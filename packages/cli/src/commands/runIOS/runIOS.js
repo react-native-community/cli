@@ -16,7 +16,7 @@ import findXcodeProject from './findXcodeProject';
 import parseIOSDevicesList from './parseIOSDevicesList';
 import findMatchingSimulator from './findMatchingSimulator';
 import {ProcessError} from '../../tools/errors';
-import logger from '../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 
 type FlagsT = {
   simulator: string,

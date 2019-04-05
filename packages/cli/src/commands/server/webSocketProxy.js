@@ -8,7 +8,7 @@
  */
 
 import ws from 'ws';
-import logger from '../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 
 function attachToServer(server, path) {
   const WebSocketServer = ws.Server;

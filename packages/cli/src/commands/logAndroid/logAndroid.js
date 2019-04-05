@@ -6,7 +6,7 @@
  */
 
 import execa from 'execa';
-import logger from '../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 
 async function logAndroid() {
   logger.info('Starting logkitty');

@@ -8,10 +8,11 @@
     "build-clean": "rm -rf ./packages/*/build",
     "watch": "node ./scripts/watch.js",
     "test": "jest",
-    "test:ci": "jest -i",
+    "test:ci:unit": "jest packages --ci --coverage",
+    "test:ci:e2e": "jest e2e --ci -i",
     "lint": "eslint . --cache --report-unused-disable-directives",
     "flow-check": "flow check",
-    "postinstall": "yarn build-clean && yarn build",
+    "postinstall": "yarn build",
     "publish": "yarn build-clean && yarn build && lerna publish"
   },
   "dependencies": {

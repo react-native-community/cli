@@ -12,7 +12,7 @@ import {type UserDependencyConfigT, type UserConfigT} from './types.flow';
 import {JoiError} from '../errors';
 
 import * as schema from './schema';
-import logger from '../logger';
+import {logger} from '@react-native-community/cli-tools';
 
 /**
  * Places to look for the new configuration

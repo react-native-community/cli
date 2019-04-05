@@ -1,21 +1,15 @@
 // @flow
-import Util from 'util';
+jest.mock('execa', () => jest.fn());
+import execa from 'execa';
 import * as yarn from '../yarn';
+import * as PackageManager from '../packageManager';
 
 const PACKAGES = ['react', 'react-native'];
 const EXEC_OPTS = {stdio: 'inherit'};
 const PROJECT_ROOT = '/some/dir';
 
-let PackageManager;
-const executeMock = jest.fn();
-
-beforeEach(() => {
-  jest.spyOn(Util, 'promisify').mockImplementation(() => executeMock);
-  PackageManager = require('../packageManager');
-});
 afterEach(() => {
-  (Util.promisify: any).mockRestore();
-  executeMock.mockRestore();
+  jest.resetAllMocks();
 });
 
 describe('yarn', () => {
@@ -28,8 +22,9 @@ describe('yarn', () => {
   it('should install', () => {
     PackageManager.install(PACKAGES, {preferYarn: true});
 
-    expect(executeMock).toHaveBeenCalledWith(
-      'yarn add react react-native',
+    expect(execa).toHaveBeenCalledWith(
+      'yarn',
+      ['add', 'react', 'react-native'],
       EXEC_OPTS,
     );
   });
@@ -37,8 +32,9 @@ describe('yarn', () => {
   it('should installDev', () => {
     PackageManager.installDev(PACKAGES, {preferYarn: true});
 
-    expect(executeMock).toHaveBeenCalledWith(
-      'yarn add -D react react-native',
+    expect(execa).toHaveBeenCalledWith(
+      'yarn',
+      ['add', '-D', 'react', 'react-native'],
       EXEC_OPTS,
     );
   });
@@ -46,8 +42,9 @@ describe('yarn', () => {
   it('should uninstall', () => {
     PackageManager.uninstall(PACKAGES, {preferYarn: true});
 
-    expect(executeMock).toHaveBeenCalledWith(
-      'yarn remove react react-native',
+    expect(execa).toHaveBeenCalledWith(
+      'yarn',
+      ['remove', 'react', 'react-native'],
       EXEC_OPTS,
     );
   });
@@ -57,8 +54,9 @@ describe('npm', () => {
   it('should install', () => {
     PackageManager.install(PACKAGES, {preferYarn: false});
 
-    expect(executeMock).toHaveBeenCalledWith(
-      'npm install react react-native --save --save-exact',
+    expect(execa).toHaveBeenCalledWith(
+      'npm',
+      ['install', 'react', 'react-native', '--save', '--save-exact'],
       EXEC_OPTS,
     );
   });
@@ -66,8 +64,9 @@ describe('npm', () => {
   it('should installDev', () => {
     PackageManager.installDev(PACKAGES, {preferYarn: false});
 
-    expect(executeMock).toHaveBeenCalledWith(
-      'npm install react react-native --save-dev --save-exact',
+    expect(execa).toHaveBeenCalledWith(
+      'npm',
+      ['install', 'react', 'react-native', '--save-dev', '--save-exact'],
       EXEC_OPTS,
     );
   });
@@ -75,8 +74,9 @@ describe('npm', () => {
   it('should uninstall', () => {
     PackageManager.uninstall(PACKAGES, {preferYarn: false});
 
-    expect(executeMock).toHaveBeenCalledWith(
-      'npm uninstall react react-native --save',
+    expect(execa).toHaveBeenCalledWith(
+      'npm',
+      ['uninstall', 'react', 'react-native', '--save'],
       EXEC_OPTS,
     );
   });
@@ -86,8 +86,9 @@ it('should use npm if yarn is not available', () => {
   jest.spyOn(yarn, 'getYarnVersionIfAvailable').mockImplementation(() => false);
   PackageManager.install(PACKAGES, {preferYarn: true});
 
-  expect(executeMock).toHaveBeenCalledWith(
-    'npm install react react-native --save --save-exact',
+  expect(execa).toHaveBeenCalledWith(
+    'npm',
+    ['install', 'react', 'react-native', '--save', '--save-exact'],
     EXEC_OPTS,
   );
 });
@@ -98,8 +99,9 @@ it('should use npm if project is not using yarn', () => {
   PackageManager.setProjectDir(PROJECT_ROOT);
   PackageManager.install(PACKAGES);
 
-  expect(executeMock).toHaveBeenCalledWith(
-    'npm install react react-native --save --save-exact',
+  expect(execa).toHaveBeenCalledWith(
+    'npm',
+    ['install', 'react', 'react-native', '--save', '--save-exact'],
     EXEC_OPTS,
   );
   expect(yarn.isProjectUsingYarn).toHaveBeenCalledWith(PROJECT_ROOT);
@@ -112,8 +114,9 @@ it('should use yarn if project is using yarn', () => {
   PackageManager.setProjectDir(PROJECT_ROOT);
   PackageManager.install(PACKAGES);
 
-  expect(executeMock).toHaveBeenCalledWith(
-    'yarn add react react-native',
+  expect(execa).toHaveBeenCalledWith(
+    'yarn',
+    ['add', 'react', 'react-native'],
     EXEC_OPTS,
   );
   expect(yarn.isProjectUsingYarn).toHaveBeenCalledWith(PROJECT_ROOT);

@@ -1,7 +1,6 @@
 // @flow
 
-import {execFile} from 'child_process';
-import {promisify} from 'util';
+import execa from 'execa';
 import path from 'path';
 import * as PackageManager from '../../tools/packageManager';
 import logger from '../../tools/logger';
@@ -49,5 +48,5 @@ export function executePostInitScript(
 
   logger.debug(`Executing post init script located ${scriptPath}`);
 
-  return promisify(execFile)(scriptPath, {stdio: 'inherit'});
+  return execa(scriptPath, {stdio: 'inherit'});
 }

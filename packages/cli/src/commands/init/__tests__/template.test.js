@@ -1,6 +1,7 @@
 // @flow
+jest.mock('execa', () => jest.fn());
+import execa from 'execa';
 import path from 'path';
-import Util from 'util';
 import * as PackageManger from '../../../tools/packageManager';
 import {
   installTemplatePackage,
@@ -14,7 +15,6 @@ const TEMPLATE_NAME = 'templateName';
 
 afterEach(() => {
   jest.restoreAllMocks();
-  jest.resetModules();
 });
 
 test('installTemplatePackage', async () => {
@@ -74,9 +74,6 @@ test('executePostInitScript', async () => {
   const RESOLVED_PATH = '/some/path/script.js';
   const SCRIPT_PATH = './script.js';
 
-  const mockExec = jest.fn();
-
-  jest.spyOn(Util, 'promisify').mockImplementationOnce(() => mockExec);
   jest.spyOn(path, 'resolve').mockImplementationOnce(() => RESOLVED_PATH);
 
   await executePostInitScript(TEMPLATE_NAME, SCRIPT_PATH);
@@ -86,7 +83,7 @@ test('executePostInitScript', async () => {
     TEMPLATE_NAME,
     SCRIPT_PATH,
   );
-  expect(mockExec).toHaveBeenCalledWith(RESOLVED_PATH, {
+  expect(execa).toHaveBeenCalledWith(RESOLVED_PATH, {
     stdio: 'inherit',
   });
 });

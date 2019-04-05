@@ -34,7 +34,7 @@ jest.mock(
   () => ({name: 'TestApp', dependencies: {'react-native': '^0.57.8'}}),
   {virtual: true},
 );
-jest.mock('../../../tools/PackageManager', () => ({
+jest.mock('../../../tools/packageManager', () => ({
   install: args => {
     mockPushLog('$ yarn add', ...args);
   },

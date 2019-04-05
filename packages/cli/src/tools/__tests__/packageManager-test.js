@@ -1,17 +1,16 @@
 // @flow
-import ChildProcess from 'child_process';
-import * as PackageManager from '../PackageManager';
+jest.mock('execa', () => jest.fn());
+import execa from 'execa';
 import * as yarn from '../yarn';
+import logger from '../logger';
+import * as PackageManager from '../packageManager';
 
 const PACKAGES = ['react', 'react-native'];
 const EXEC_OPTS = {stdio: 'inherit'};
 const PROJECT_ROOT = '/some/dir';
 
-beforeEach(() => {
-  jest.spyOn(ChildProcess, 'execSync').mockImplementation(() => {});
-});
 afterEach(() => {
-  (ChildProcess.execSync: any).mockRestore();
+  jest.resetAllMocks();
 });
 
 describe('yarn', () => {
@@ -19,22 +18,22 @@ describe('yarn', () => {
     jest
       .spyOn(yarn, 'getYarnVersionIfAvailable')
       .mockImplementation(() => true);
+
+    jest.spyOn(logger, 'isVerbose').mockImplementation(() => false);
   });
 
   it('should install', () => {
     PackageManager.install(PACKAGES, {preferYarn: true});
 
-    expect(ChildProcess.execSync).toHaveBeenCalledWith(
-      'yarn add react react-native',
-      EXEC_OPTS,
-    );
+    expect(execa).toHaveBeenCalledWith('yarn', ['add', ...PACKAGES], EXEC_OPTS);
   });
 
   it('should installDev', () => {
     PackageManager.installDev(PACKAGES, {preferYarn: true});
 
-    expect(ChildProcess.execSync).toHaveBeenCalledWith(
-      'yarn add -D react react-native',
+    expect(execa).toHaveBeenCalledWith(
+      'yarn',
+      ['add', '-D', ...PACKAGES],
       EXEC_OPTS,
     );
   });
@@ -42,8 +41,9 @@ describe('yarn', () => {
   it('should uninstall', () => {
     PackageManager.uninstall(PACKAGES, {preferYarn: true});
 
-    expect(ChildProcess.execSync).toHaveBeenCalledWith(
-      'yarn remove react react-native',
+    expect(execa).toHaveBeenCalledWith(
+      'yarn',
+      ['remove', ...PACKAGES],
       EXEC_OPTS,
     );
   });
@@ -53,8 +53,9 @@ describe('npm', () => {
   it('should install', () => {
     PackageManager.install(PACKAGES, {preferYarn: false});
 
-    expect(ChildProcess.execSync).toHaveBeenCalledWith(
-      'npm install react react-native --save --save-exact',
+    expect(execa).toHaveBeenCalledWith(
+      'npm',
+      ['install', ...PACKAGES, '--save', '--save-exact'],
       EXEC_OPTS,
     );
   });
@@ -62,8 +63,9 @@ describe('npm', () => {
   it('should installDev', () => {
     PackageManager.installDev(PACKAGES, {preferYarn: false});
 
-    expect(ChildProcess.execSync).toHaveBeenCalledWith(
-      'npm install react react-native --save-dev --save-exact',
+    expect(execa).toHaveBeenCalledWith(
+      'npm',
+      ['install', ...PACKAGES, '--save-dev', '--save-exact'],
       EXEC_OPTS,
     );
   });
@@ -71,8 +73,9 @@ describe('npm', () => {
   it('should uninstall', () => {
     PackageManager.uninstall(PACKAGES, {preferYarn: false});
 
-    expect(ChildProcess.execSync).toHaveBeenCalledWith(
-      'npm uninstall react react-native --save',
+    expect(execa).toHaveBeenCalledWith(
+      'npm',
+      ['uninstall', ...PACKAGES, '--save'],
       EXEC_OPTS,
     );
   });
@@ -82,8 +85,9 @@ it('should use npm if yarn is not available', () => {
   jest.spyOn(yarn, 'getYarnVersionIfAvailable').mockImplementation(() => false);
   PackageManager.install(PACKAGES, {preferYarn: true});
 
-  expect(ChildProcess.execSync).toHaveBeenCalledWith(
-    'npm install react react-native --save --save-exact',
+  expect(execa).toHaveBeenCalledWith(
+    'npm',
+    ['install', ...PACKAGES, '--save', '--save-exact'],
     EXEC_OPTS,
   );
 });
@@ -94,8 +98,9 @@ it('should use npm if project is not using yarn', () => {
   PackageManager.setProjectDir(PROJECT_ROOT);
   PackageManager.install(PACKAGES);
 
-  expect(ChildProcess.execSync).toHaveBeenCalledWith(
-    'npm install react react-native --save --save-exact',
+  expect(execa).toHaveBeenCalledWith(
+    'npm',
+    ['install', ...PACKAGES, '--save', '--save-exact'],
     EXEC_OPTS,
   );
   expect(yarn.isProjectUsingYarn).toHaveBeenCalledWith(PROJECT_ROOT);
@@ -108,9 +113,23 @@ it('should use yarn if project is using yarn', () => {
   PackageManager.setProjectDir(PROJECT_ROOT);
   PackageManager.install(PACKAGES);
 
-  expect(ChildProcess.execSync).toHaveBeenCalledWith(
-    'yarn add react react-native',
-    EXEC_OPTS,
-  );
+  expect(execa).toHaveBeenCalledWith('yarn', ['add', ...PACKAGES], EXEC_OPTS);
   expect(yarn.isProjectUsingYarn).toHaveBeenCalledWith(PROJECT_ROOT);
 });
+
+test.each([[false, 'pipe'], [true, 'inherit']])(
+  'when verbose is set to %s should use "%s" stdio',
+  (isVerbose: boolean, stdioType: string) => {
+    jest
+      .spyOn(yarn, 'getYarnVersionIfAvailable')
+      .mockImplementation(() => true);
+    jest.spyOn(yarn, 'isProjectUsingYarn').mockImplementation(() => true);
+    jest.spyOn(logger, 'isVerbose').mockImplementation(() => isVerbose);
+
+    PackageManager.install(PACKAGES, {silent: true});
+
+    expect(execa).toHaveBeenCalledWith('yarn', ['add', ...PACKAGES], {
+      stdio: stdioType,
+    });
+  },
+);

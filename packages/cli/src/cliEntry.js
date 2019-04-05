@@ -18,7 +18,7 @@ import {getCommands} from './commands';
 import init from './commands/init/initCompat';
 import assertRequiredOptions from './tools/assertRequiredOptions';
 import logger from './tools/logger';
-import {setProjectDir} from './tools/PackageManager';
+import {setProjectDir} from './tools/packageManager';
 import pkgJson from '../package.json';
 import loadConfig from './tools/config';
 

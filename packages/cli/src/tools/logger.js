@@ -40,6 +40,8 @@ const setVerbose = (level: boolean) => {
   verbose = level;
 };
 
+const isVerbose = () => verbose;
+
 export default {
   success,
   info,
@@ -48,4 +50,5 @@ export default {
   debug,
   log,
   setVerbose,
+  isVerbose,
 };

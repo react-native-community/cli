@@ -14,8 +14,10 @@ import {
   executePostInitScript,
 } from './template';
 import {changePlaceholderInTemplate} from './editTemplate';
-import * as PackageManager from '../../tools/PackageManager';
+import * as PackageManager from '../../tools/packageManager';
 import {processTemplateName} from './templateName';
+import banner from './banner';
+import {getLoader} from '../../tools/loader';
 
 type Options = {|
   template?: string,
@@ -39,21 +41,46 @@ async function createFromExternalTemplate(
   templateName: string,
   npm?: boolean,
 ) {
-  logger.info('Initializing new project from external template');
+  logger.debug('Initializing new project from external template');
+  logger.log(banner);
 
-  let {uri, name} = await processTemplateName(templateName);
+  const Loader = getLoader();
 
-  installTemplatePackage(uri, npm);
-  name = adjustNameIfUrl(name);
-  const templateConfig = getTemplateConfig(name);
-  copyTemplate(name, templateConfig.templateDir);
-  changePlaceholderInTemplate(projectName, templateConfig.placeholderName);
+  const loader = new Loader({text: 'Downloading template'});
+  loader.start();
 
-  if (templateConfig.postInitScript) {
-    executePostInitScript(name, templateConfig.postInitScript);
+  try {
+    let {uri, name} = await processTemplateName(templateName);
+
+    await installTemplatePackage(uri, npm);
+    loader.succeed();
+    loader.start('Copying template');
+
+    name = adjustNameIfUrl(name);
+    const templateConfig = getTemplateConfig(name);
+    copyTemplate(name, templateConfig.templateDir);
+
+    loader.succeed();
+    loader.start('Preparing template');
+
+    changePlaceholderInTemplate(projectName, templateConfig.placeholderName);
+
+    loader.succeed();
+    const {postInitScript} = templateConfig;
+    if (postInitScript) {
+      // Leaving trailing space because there may be stdout from the script
+      loader.start('Executing post init script ');
+      await executePostInitScript(name, postInitScript);
+      loader.succeed();
+    }
+
+    loader.start('Installing all required dependencies');
+    await PackageManager.installAll({preferYarn: !npm, silent: true});
+    loader.succeed();
+  } catch (e) {
+    loader.fail();
+    throw new Error(e);
   }
-
-  PackageManager.installAll({preferYarn: !npm});
 }
 
 async function createFromReactNativeTemplate(
@@ -61,28 +88,52 @@ async function createFromReactNativeTemplate(
   version: string,
   npm?: boolean,
 ) {
-  logger.info('Initializing new project');
+  logger.debug('Initializing new project');
+  logger.log(banner);
 
-  if (semver.valid(version) && !semver.satisfies(version, '0.60.0')) {
-    throw new Error(
-      'Cannot use React Native CLI to initialize project with version less than 0.60.0',
-    );
+  const Loader = getLoader();
+  const loader = new Loader({text: 'Downloading template'});
+  loader.start();
+
+  try {
+    if (semver.valid(version) && !semver.gte(version, '0.60.0')) {
+      throw new Error(
+        'Cannot use React Native CLI to initialize project with version less than 0.60.0',
+      );
+    }
+
+    const TEMPLATE_NAME = 'react-native';
+
+    const {uri} = await processTemplateName(`${TEMPLATE_NAME}@${version}`);
+
+    await installTemplatePackage(uri, npm);
+
+    loader.succeed();
+    loader.start('Copying template');
+
+    const templateConfig = getTemplateConfig(TEMPLATE_NAME);
+    copyTemplate(TEMPLATE_NAME, templateConfig.templateDir);
+
+    loader.succeed();
+    loader.start('Processing template');
+
+    changePlaceholderInTemplate(projectName, templateConfig.placeholderName);
+
+    loader.succeed();
+    const {postInitScript} = templateConfig;
+    if (postInitScript) {
+      loader.start('Executing post init script');
+      await executePostInitScript(TEMPLATE_NAME, postInitScript);
+      loader.succeed();
+    }
+
+    loader.start('Installing all required dependencies');
+    await PackageManager.installAll({preferYarn: !npm, silent: true});
+    loader.succeed();
+  } catch (e) {
+    loader.fail();
+    throw new Error(e);
   }
-
-  const TEMPLATE_NAME = 'react-native';
-
-  const {uri} = await processTemplateName(`${TEMPLATE_NAME}@${version}`);
-
-  installTemplatePackage(uri, npm);
-  const templateConfig = getTemplateConfig(TEMPLATE_NAME);
-  copyTemplate(TEMPLATE_NAME, templateConfig.templateDir);
-  changePlaceholderInTemplate(projectName, templateConfig.placeholderName);
-
-  if (templateConfig.postInitScript) {
-    executePostInitScript(TEMPLATE_NAME, templateConfig.postInitScript);
-  }
-
-  PackageManager.installAll({preferYarn: !npm});
 }
 
 function createProject(projectName: string, options: Options, version: string) {

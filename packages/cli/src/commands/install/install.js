@@ -9,7 +9,7 @@
 
 import type {ContextT} from '../../tools/types.flow';
 import logger from '../../tools/logger';
-import * as PackageManager from '../../tools/PackageManager';
+import * as PackageManager from '../../tools/packageManager';
 import link from '../link/link';
 import loadConfig from '../../tools/config';
 
@@ -17,7 +17,7 @@ async function install(args: Array<string>, ctx: ContextT) {
   const name = args[0];
 
   logger.info(`Installing "${name}"...`);
-  PackageManager.install([name]);
+  await PackageManager.install([name]);
 
   // Reload configuration to see newly installed dependency
   const newConfig = loadConfig();

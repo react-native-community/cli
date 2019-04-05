@@ -2,75 +2,193 @@
  * @flow
  */
 
-import type {
-  AndroidConfigParamsT,
-  IOSConfigParamsT,
-  InquirerPromptT,
-  DependencyConfigAndroidT,
-  DependencyConfigIOST,
-} from '../types.flow';
+/**
+ * Opaque type that describes the Inquirer question format. Not typed, since we just
+ * pass it directly to Inquirer. Validation is done with Joi in `schema.js`
+ */
+type InquirerPromptT = any;
 
 /**
- * A map of hooks to run pre/post some of the CLI actions
+ * Settings that a library author can define in the configuration bundled with
+ * dependency for Android
+ *
+ * See UserDependencyConfigT for details
  */
-type HooksT = {
-  [key: string]: string,
-  prelink?: string,
-  postlink?: string,
+type DependencyParamsAndroidT = {
+  sourceDir?: string,
+  manifestPath?: string,
+  packageImportPath?: string,
+  packageInstance?: string,
 };
 
 /**
- * A map with additional platforms that ship with a dependency.
+ * Settings that user can define in the project configuration for Android
+ *
+ * See UserConfigT for details
  */
-export type PlatformsT = {
-  [key: string]: {
-    dependencyConfig?: Function,
-    projectConfig?: Function,
-    linkConfig?: Function,
+type ProjectParamsAndroidT = {
+  sourceDir?: string,
+  manifestPath?: string,
+  packageName?: string,
+  packageFolder?: string,
+  mainFilePath?: string,
+  stringsPath?: string,
+  settingsGradlePath?: string,
+  assetsPath?: string,
+  buildGradlePath?: string,
+};
+
+/**
+ * Settings that user can define in the project configuration for iOS.
+ * Same for dependency - we share the type.
+ *
+ * See UserDependencyConfigT and UserConfigT for details
+ */
+type ProjectParamsIOST = {
+  project?: string,
+  sharedLibraries?: string[],
+  libraryFolder?: string,
+};
+
+type PlatformConfig<ProjectParams, ProjectConfig, DependencyConfig> = {
+  projectConfig: (string, ProjectParams) => ?ProjectConfig,
+  dependencyConfig: (string, ProjectParams) => ?DependencyConfig,
+  linkConfig: () => {
+    isInstalled: (ProjectConfig, string, DependencyConfig) => boolean,
+    register: (string, DependencyConfig, Object, ProjectConfig) => void,
+    unregister: (
+      string,
+      DependencyConfig,
+      ProjectConfig,
+      Array<DependencyConfig>,
+    ) => void,
+    copyAssets: (string[], ProjectConfig) => void,
+    unlinkAssets: (string[], ProjectConfig) => void,
   },
 };
 
-export type DependencyConfigT = {
+/**
+ * Final configuration object
+ */
+export type ConfigT = {|
+  // Root where the configuration has been resolved from
+  root: string,
+
+  // Path to React Native source
+  reactNativePath: string,
+
+  // Object that contains configuration for a project (null, when platform not available)
+  project: {
+    android?: ?ProjectConfigAndroidT,
+    ios?: ?ProjectConfigIOST,
+    [key: string]: ?Object,
+  },
+
+  // An array of assets as defined by the user
+  assets: string[],
+
+  // Map of the dependencies that are present in the project
+  dependencies: {
+    [key: string]: {
+      name: string,
+      platforms: {
+        android?: DependencyConfigAndroidT | null,
+        ios?: DependencyConfigIOST | null,
+        [key: string]: any,
+      },
+      assets: string[],
+      hooks: {
+        [key: string]: string,
+        prelink?: string,
+        postlink?: string,
+      },
+      params: InquirerPromptT[],
+    },
+  },
+
+  // Map of available platforms (built-ins and dynamically loaded)
+  platforms: {
+    [name: string]: PlatformConfig<Object, Object, Object>,
+    ios?: PlatformConfig<
+      ProjectParamsIOST,
+      ProjectConfigIOST,
+      DependencyConfigIOST,
+    >,
+    android?: PlatformConfig<
+      ProjectParamsAndroidT,
+      ProjectConfigAndroidT,
+      DependencyConfigAndroidT,
+    >,
+  },
+
+  // An array of commands that are present in 3rd party packages
+  commands: string[],
+
+  // Haste configuration resolved based on available plugins
+  haste: {
+    platforms: Array<string>,
+    providesModuleNodeModules: Array<string>,
+  },
+|};
+
+/**
+ * Aliases
+ */
+export type DependencyConfigT = $PropertyType<
+  $PropertyType<ConfigT, 'dependencies'>,
+  '[key: string]',
+>;
+export type HooksT = $PropertyType<DependencyConfigT, 'hooks'>;
+export type ProjectConfigT = $PropertyType<ConfigT, 'project'>;
+export type PlatformsT = $PropertyType<ConfigT, 'platforms'>;
+
+/**
+ * Config defined by a developer for a library
+ */
+export type UserDependencyConfigT = {
+  // Additional dependency settings
   dependency: {
     platforms: {
-      android?: AndroidConfigParamsT,
-      ios?: IOSConfigParamsT,
+      android: DependencyParamsAndroidT,
+      ios: ProjectParamsIOST,
       [key: string]: any,
     },
     assets: string[],
     hooks: HooksT,
     params: InquirerPromptT[],
   },
-  commands: string[],
-  platforms: PlatformsT,
-};
 
-type _ProjectConfigT = {
-  root: string,
-  dependencies: {
-    [key: string]: {
-      platforms: {
-        android: DependencyConfigAndroidT | null,
-        ios: DependencyConfigIOST | null,
-        [key: string]: any,
-      },
-      assets: string[],
-      hooks: HooksT,
-      params: InquirerPromptT[],
-    },
-  },
-  platforms: PlatformsT,
+  // An array of commands that ship with the dependency
   commands: string[],
-  haste: {
-    platforms: Array<string>,
-    providesModuleNodeModules: Array<string>,
+
+  // An array of extra platforms to load
+  platforms: {
+    [name: string]: any,
   },
 };
 
-export type RawProjectConfigT = _ProjectConfigT & {
-  reactNativePath: string | null,
+/**
+ * Config defined by a developer for the project
+ */
+export type UserConfigT = {
+  /**
+   * Shares some structure with ConfigT, except that haste, root, platforms
+   * are calculated and can't be defined
+   */
+  ...$Diff<ConfigT, {haste: any, root: any, platforms: any}>,
+  reactNativePath: ?string,
+
+  // Additional project settings
+  project: {
+    android?: ProjectParamsAndroidT,
+    ios?: ProjectParamsIOST,
+    [key: string]: any,
+  },
 };
 
-export type ProjectConfigT = _ProjectConfigT & {
-  reactNativePath: string,
-};
+// The following types are used in untyped-parts of the codebase, so I am leaving them
+// until we actually need them.
+type ProjectConfigIOST = {};
+type DependencyConfigIOST = ProjectConfigIOST;
+type ProjectConfigAndroidT = {};
+type DependencyConfigAndroidT = {};

@@ -4,7 +4,6 @@
 
 import glob from 'glob';
 import path from 'path';
-import getPackageConfiguration from './getPackageConfiguration';
 
 const findAssetsInFolder = folder =>
   glob.sync(path.join(folder, '**'), {nodir: true});
@@ -15,7 +14,7 @@ const findAssetsInFolder = folder =>
  *
  * It returns an array of absolute paths to files found.
  */
-export function findAssets(folder: string, assets?: string[]) {
+export default function findAssets(folder: string, assets: string[]) {
   return (assets || [])
     .map(asset => path.join(folder, asset))
     .reduce(
@@ -23,12 +22,4 @@ export function findAssets(folder: string, assets?: string[]) {
         (acc.concat(findAssetsInFolder(assetPath)): Array<string>),
       [],
     );
-}
-
-/**
- * Returns a project configuration in a given folder
- */
-export default function getAssets(root: string) {
-  const config = getPackageConfiguration(root);
-  return findAssets(root, config.assets);
 }

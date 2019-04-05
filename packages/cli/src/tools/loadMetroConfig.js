@@ -35,11 +35,8 @@ export const getDefaultConfig = (ctx: ContextT) => {
     resolver: {
       resolverMainFields: ['react-native', 'browser', 'main'],
       blacklistRE: getBlacklistRE(),
-      platforms: ['ios', 'android', 'native', ...ctx.haste.platforms],
-      providesModuleNodeModules: [
-        'react-native',
-        ...ctx.haste.providesModuleNodeModules,
-      ],
+      platforms: [...ctx.haste.platforms, 'native'],
+      providesModuleNodeModules: ctx.haste.providesModuleNodeModules,
       hasteImplModulePath: path.join(ctx.reactNativePath, 'jest/hasteImpl'),
     },
     serializer: {

@@ -3,24 +3,18 @@
  */
 
 import path from 'path';
-
-const pluginRe = new RegExp(
-  [
-    '^react-native-',
-    '^@(.*)/react-native-',
-    '^@react-native(.*)/(?!rnpm-plugin-)',
-  ].join('|'),
-);
+import fs from 'fs';
 
 /**
- * Returns an array of dependencies from project's package.json that
- * are likely to be React Native packages (see regular expression above)
+ * Returns an array of dependencies from project's package.json
  */
 export default function findDependencies(root: string): Array<string> {
   let pjson;
 
   try {
-    pjson = require(path.join(root, 'package.json'));
+    pjson = JSON.parse(
+      fs.readFileSync(path.join(root, 'package.json'), 'UTF-8'),
+    );
   } catch (e) {
     return [];
   }
@@ -30,5 +24,5 @@ export default function findDependencies(root: string): Array<string> {
     ...Object.keys(pjson.devDependencies || {}),
   ];
 
-  return deps.filter(dependency => pluginRe.test(dependency));
+  return deps;
 }

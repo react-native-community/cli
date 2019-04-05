@@ -18,7 +18,6 @@ import {getCommands} from './commands';
 import init from './commands/init/initCompat';
 import assertRequiredOptions from './tools/assertRequiredOptions';
 import logger from './tools/logger';
-import findPlugins from './tools/findPlugins';
 import {setProjectDir} from './tools/packageManager';
 import pkgJson from '../package.json';
 import loadConfig from './tools/config';
@@ -38,15 +37,17 @@ const handleError = err => {
   if (commander.verbose) {
     logger.error(err.message);
   } else {
+    // Some error messages (esp. custom ones) might have `.` at the end already.
+    const message = err.message.replace(/\.$/, '');
     logger.error(
-      `${err.message}. ${chalk.dim(
+      `${message}. ${chalk.dim(
         `Run CLI with ${chalk.reset('--verbose')} ${chalk.dim(
           'flag for more details.',
         )}`,
       )}`,
     );
   }
-  logger.debug(err.stack);
+  logger.debug(chalk.dim(err.stack));
   process.exit(1);
 };
 
@@ -184,7 +185,7 @@ async function setupAndRun() {
 export default {
   run,
   init,
-  findPlugins,
+  loadConfig,
 };
 
-export {run, init, findPlugins};
+export {run, init, loadConfig};

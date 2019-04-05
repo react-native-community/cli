@@ -150,9 +150,9 @@ function createProject(projectName: string, options: Options, version: string) {
   return createFromReactNativeTemplate(projectName, version, options.npm);
 }
 
-export default async function initialize(
+export default (async function initialize(
   [projectName]: Array<string>,
-  context: ContextT,
+  _context: ContextT,
   options: Options,
 ) {
   validateProjectName(projectName);
@@ -175,4 +175,4 @@ export default async function initialize(
     logger.error(e.message);
     fs.removeSync(projectName);
   }
-}
+});

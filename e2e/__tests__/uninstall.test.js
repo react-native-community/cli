@@ -24,7 +24,7 @@ test('uninstall fails when package is not defined', () => {
       "dependencies": {}
     }`,
   });
-  const {stderr, code} = run(DIR, ['uninstall']);
+  const {stderr, code} = run(DIR, ['uninstall'], {expectedFailure: true});
 
   expect(stderr).toContain('missing required argument');
   expect(code).toBe(1);
@@ -36,9 +36,9 @@ test('uninstall fails when package is not installed', () => {
       "dependencies": {}
     }`,
   });
-  const {stderr, code} = run(DIR, ['uninstall', pkg]);
+  const {stderr, code} = run(DIR, ['uninstall', pkg], {expectedFailure: true});
 
-  expect(stderr).toContain(`Project "${pkg}" is not a react-native library`);
+  expect(stderr).toContain(`Failed to unlink "${pkg}".`);
   expect(code).toBe(1);
 });
 

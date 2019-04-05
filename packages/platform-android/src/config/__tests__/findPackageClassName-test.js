@@ -8,8 +8,8 @@
  * @emails oncall+javascript_foundation
  */
 
-import mocks from '../../__fixtures__/android';
-import findPackageClassName from '../../android/findPackageClassName';
+import mocks from '../__fixtures__/android';
+import findPackageClassName from '../findPackageClassName';
 
 jest.mock('path');
 jest.mock('fs');

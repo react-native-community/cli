@@ -8,8 +8,8 @@
  * @emails oncall+javascript_foundation
  */
 
-import findManifest from '../../android/findManifest';
-import mocks from '../../__fixtures__/android';
+import findManifest from '../findManifest';
+import mocks from '../__fixtures__/android';
 
 jest.mock('path');
 jest.mock('fs');

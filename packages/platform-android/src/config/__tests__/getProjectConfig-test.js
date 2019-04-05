@@ -8,14 +8,14 @@
  * @emails oncall+javascript_foundation
  */
 
-import mocks from '../../__fixtures__/android';
+import mocks from '../__fixtures__/android';
 
 jest.mock('path');
 jest.mock('fs');
 
 const fs = require('fs');
 
-const getProjectConfig = require('../../android').projectConfig;
+const getProjectConfig = require('../').projectConfig;
 
 describe('android::getProjectConfig', () => {
   beforeAll(() => {

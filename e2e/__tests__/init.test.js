@@ -84,17 +84,3 @@ test('init --template file:/tmp/custom/template', () => {
 
   expect(stdout).toContain('Run instructions');
 });
-
-test('init --verbose', () => {
-  const {stdout} = run(DIR, [
-    'init',
-    '--template',
-    'react-native-new-template',
-    'TestInit',
-    '--verbose',
-  ]);
-
-  expect(stdout).toContain('Initializing new project');
-  expect(stdout).toContain('No lockfile found');
-  expect(stdout).toContain('Run instructions');
-});

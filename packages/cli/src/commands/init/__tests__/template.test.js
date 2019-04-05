@@ -15,6 +15,7 @@ const TEMPLATE_NAME = 'templateName';
 
 afterEach(() => {
   jest.restoreAllMocks();
+  jest.clearAllMocks();
 });
 
 test('installTemplatePackage', async () => {

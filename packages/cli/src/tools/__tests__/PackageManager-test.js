@@ -2,6 +2,7 @@
 jest.mock('execa', () => jest.fn());
 import execa from 'execa';
 import * as yarn from '../yarn';
+import logger from '../logger';
 import * as PackageManager from '../packageManager';
 
 const PACKAGES = ['react', 'react-native'];
@@ -17,16 +18,14 @@ describe('yarn', () => {
     jest
       .spyOn(yarn, 'getYarnVersionIfAvailable')
       .mockImplementation(() => true);
+
+    jest.spyOn(logger, 'isVerbose').mockImplementation(() => false);
   });
 
   it('should install', () => {
     PackageManager.install(PACKAGES, {preferYarn: true});
 
-    expect(execa).toHaveBeenCalledWith(
-      'yarn',
-      ['add', 'react', 'react-native'],
-      EXEC_OPTS,
-    );
+    expect(execa).toHaveBeenCalledWith('yarn', ['add', ...PACKAGES], EXEC_OPTS);
   });
 
   it('should installDev', () => {
@@ -34,7 +33,7 @@ describe('yarn', () => {
 
     expect(execa).toHaveBeenCalledWith(
       'yarn',
-      ['add', '-D', 'react', 'react-native'],
+      ['add', '-D', ...PACKAGES],
       EXEC_OPTS,
     );
   });
@@ -44,7 +43,7 @@ describe('yarn', () => {
 
     expect(execa).toHaveBeenCalledWith(
       'yarn',
-      ['remove', 'react', 'react-native'],
+      ['remove', ...PACKAGES],
       EXEC_OPTS,
     );
   });
@@ -56,7 +55,7 @@ describe('npm', () => {
 
     expect(execa).toHaveBeenCalledWith(
       'npm',
-      ['install', 'react', 'react-native', '--save', '--save-exact'],
+      ['install', ...PACKAGES, '--save', '--save-exact'],
       EXEC_OPTS,
     );
   });
@@ -66,7 +65,7 @@ describe('npm', () => {
 
     expect(execa).toHaveBeenCalledWith(
       'npm',
-      ['install', 'react', 'react-native', '--save-dev', '--save-exact'],
+      ['install', ...PACKAGES, '--save-dev', '--save-exact'],
       EXEC_OPTS,
     );
   });
@@ -76,7 +75,7 @@ describe('npm', () => {
 
     expect(execa).toHaveBeenCalledWith(
       'npm',
-      ['uninstall', 'react', 'react-native', '--save'],
+      ['uninstall', ...PACKAGES, '--save'],
       EXEC_OPTS,
     );
   });
@@ -88,7 +87,7 @@ it('should use npm if yarn is not available', () => {
 
   expect(execa).toHaveBeenCalledWith(
     'npm',
-    ['install', 'react', 'react-native', '--save', '--save-exact'],
+    ['install', ...PACKAGES, '--save', '--save-exact'],
     EXEC_OPTS,
   );
 });
@@ -101,7 +100,7 @@ it('should use npm if project is not using yarn', () => {
 
   expect(execa).toHaveBeenCalledWith(
     'npm',
-    ['install', 'react', 'react-native', '--save', '--save-exact'],
+    ['install', ...PACKAGES, '--save', '--save-exact'],
     EXEC_OPTS,
   );
   expect(yarn.isProjectUsingYarn).toHaveBeenCalledWith(PROJECT_ROOT);
@@ -114,10 +113,30 @@ it('should use yarn if project is using yarn', () => {
   PackageManager.setProjectDir(PROJECT_ROOT);
   PackageManager.install(PACKAGES);
 
-  expect(execa).toHaveBeenCalledWith(
-    'yarn',
-    ['add', 'react', 'react-native'],
-    EXEC_OPTS,
-  );
+  expect(execa).toHaveBeenCalledWith('yarn', ['add', ...PACKAGES], EXEC_OPTS);
   expect(yarn.isProjectUsingYarn).toHaveBeenCalledWith(PROJECT_ROOT);
+});
+
+it('should install in silent mode', () => {
+  jest.spyOn(yarn, 'getYarnVersionIfAvailable').mockImplementation(() => true);
+  jest.spyOn(yarn, 'isProjectUsingYarn').mockImplementation(() => true);
+  jest.spyOn(logger, 'isVerbose').mockImplementation(() => false);
+
+  PackageManager.install(PACKAGES, {silent: true});
+
+  expect(execa).toHaveBeenCalledWith('yarn', ['add', ...PACKAGES], {
+    stdio: 'pipe',
+  });
+});
+
+it('should ignore silent when in verbose mode', () => {
+  jest.spyOn(yarn, 'getYarnVersionIfAvailable').mockImplementation(() => true);
+  jest.spyOn(yarn, 'isProjectUsingYarn').mockImplementation(() => true);
+  jest.spyOn(logger, 'isVerbose').mockImplementation(() => true);
+
+  PackageManager.install(PACKAGES, {silent: true});
+
+  expect(execa).toHaveBeenCalledWith('yarn', ['add', ...PACKAGES], {
+    stdio: 'inherit',
+  });
 });

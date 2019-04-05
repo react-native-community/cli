@@ -1,5 +1,6 @@
 // @flow
 import execa from 'execa';
+import logger from './logger';
 import {getYarnVersionIfAvailable, isProjectUsingYarn} from './yarn';
 
 type Options = {|
@@ -15,7 +16,8 @@ function executeCommand(
   options?: Options,
 ) {
   return execa(command, args, {
-    stdio: options && options.silent ? 'pipe' : 'inherit',
+    stdio:
+      options && options.silent && !logger.isVerbose() ? 'pipe' : 'inherit',
   });
 }
 

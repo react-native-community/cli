@@ -4,6 +4,7 @@ import logger from './logger';
 
 class OraMock {
   succeed() {}
+  fail() {}
   start() {}
 }
 

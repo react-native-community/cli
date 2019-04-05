@@ -117,26 +117,19 @@ it('should use yarn if project is using yarn', () => {
   expect(yarn.isProjectUsingYarn).toHaveBeenCalledWith(PROJECT_ROOT);
 });
 
-it('should install in silent mode', () => {
-  jest.spyOn(yarn, 'getYarnVersionIfAvailable').mockImplementation(() => true);
-  jest.spyOn(yarn, 'isProjectUsingYarn').mockImplementation(() => true);
-  jest.spyOn(logger, 'isVerbose').mockImplementation(() => false);
+test.each([[false, 'pipe'], [true, 'inherit']])(
+  'when verbose is set to %s should use "%s" stdio',
+  (isVerbose: boolean, stdioType: string) => {
+    jest
+      .spyOn(yarn, 'getYarnVersionIfAvailable')
+      .mockImplementation(() => true);
+    jest.spyOn(yarn, 'isProjectUsingYarn').mockImplementation(() => true);
+    jest.spyOn(logger, 'isVerbose').mockImplementation(() => isVerbose);
 
-  PackageManager.install(PACKAGES, {silent: true});
+    PackageManager.install(PACKAGES, {silent: true});
 
-  expect(execa).toHaveBeenCalledWith('yarn', ['add', ...PACKAGES], {
-    stdio: 'pipe',
-  });
-});
-
-it('should ignore silent when in verbose mode', () => {
-  jest.spyOn(yarn, 'getYarnVersionIfAvailable').mockImplementation(() => true);
-  jest.spyOn(yarn, 'isProjectUsingYarn').mockImplementation(() => true);
-  jest.spyOn(logger, 'isVerbose').mockImplementation(() => true);
-
-  PackageManager.install(PACKAGES, {silent: true});
-
-  expect(execa).toHaveBeenCalledWith('yarn', ['add', ...PACKAGES], {
-    stdio: 'inherit',
-  });
-});
+    expect(execa).toHaveBeenCalledWith('yarn', ['add', ...PACKAGES], {
+      stdio: stdioType,
+    });
+  },
+);

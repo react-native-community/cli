@@ -14,11 +14,11 @@ afterEach(() => {
 });
 
 test('init --template fails without package name', () => {
-  const {stderr} = run(DIR, [
-    'init',
-    '--template',
-    'react-native-new-template',
-  ]);
+  const {stderr} = run(
+    DIR,
+    ['init', '--template', 'react-native-new-template'],
+    {expectedFailure: true},
+  );
   expect(stderr).toContain('missing required argument');
 });
 

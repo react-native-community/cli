@@ -8,16 +8,16 @@
  * @emails oncall+javascript_foundation
  */
 
-import findPodTargetLine from '../../link-pods/findPodTargetLine';
-import readPodfile from '../../link-pods/readPodfile';
+import findPodTargetLine from '../findPodTargetLine';
+import readPodfile from '../readPodfile';
 
 const path = require('path');
 
-const PODFILES_PATH = path.join(__dirname, '../../__fixtures__/pods');
+const PODFILES_PATH = path.join(__dirname, '../__fixtures__');
 
 describe('pods::findPodTargetLine', () => {
   it('returns null if file is not Podfile', () => {
-    const podfile = readPodfile(path.join(PODFILES_PATH, '../Info.plist'));
+    const podfile = readPodfile(path.join(PODFILES_PATH, 'Info.plist'));
     expect(findPodTargetLine(podfile, 'name')).toBeNull();
   });
 

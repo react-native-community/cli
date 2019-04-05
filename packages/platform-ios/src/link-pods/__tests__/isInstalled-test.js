@@ -8,11 +8,11 @@
  * @emails oncall+javascript_foundation
  */
 
-import isInstalled from '../../link-pods/isInstalled';
+import isInstalled from '../isInstalled';
 
 const path = require('path');
 
-const PODFILES_PATH = path.join(__dirname, '../../__fixtures__/pods');
+const PODFILES_PATH = path.join(__dirname, '../__fixtures__/');
 
 describe('pods::isInstalled', () => {
   it('returns false if pod is missing', () => {

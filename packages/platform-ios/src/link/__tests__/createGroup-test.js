@@ -8,15 +8,15 @@
  * @emails oncall+javascript_foundation
  */
 
-import createGroup from '../../ios/createGroup';
-import getGroup from '../../ios/getGroup';
+import createGroup from '../createGroup';
+import getGroup from '../getGroup';
 
 const xcode = require('xcode');
 const path = require('path');
 const {last} = require('lodash');
 
 const project = xcode.project(
-  path.join(__dirname, '../../__fixtures__/project.pbxproj'),
+  path.join(__dirname, '../__fixtures__/project.pbxproj'),
 );
 
 describe('ios::createGroup', () => {

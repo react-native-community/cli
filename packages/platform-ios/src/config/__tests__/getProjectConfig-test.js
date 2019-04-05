@@ -8,14 +8,14 @@
  * @emails oncall+javascript_foundation
  */
 
-import projects from '../../__fixtures__/projects';
+import * as projects from '../__fixtures__/projects';
 
 jest.mock('path');
 jest.mock('fs');
 
 const fs = require('fs');
 
-const getProjectConfig = require('../../ios').projectConfig;
+const getProjectConfig = require('../').projectConfig;
 
 describe('ios::getProjectConfig', () => {
   const userConfig = {};

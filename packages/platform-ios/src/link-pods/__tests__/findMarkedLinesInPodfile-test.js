@@ -8,17 +8,17 @@
  * @emails oncall+javascript_foundation
  */
 
-import readPodfile from '../../link-pods/readPodfile';
-import findMarkedLinesInPodfile from '../../link-pods/findMarkedLinesInPodfile';
+import readPodfile from '../readPodfile';
+import findMarkedLinesInPodfile from '../findMarkedLinesInPodfile';
 
 const path = require('path');
 
-const PODFILES_PATH = path.join(__dirname, '../../__fixtures__/pods');
+const PODFILES_PATH = path.join(__dirname, '../__fixtures__');
 const LINE_AFTER_TARGET_IN_TEST_PODFILE = 4;
 
 describe('pods::findMarkedLinesInPodfile', () => {
   it('returns empty array if file is not Podfile', () => {
-    const podfile = readPodfile(path.join(PODFILES_PATH, '../Info.plist'));
+    const podfile = readPodfile(path.join(PODFILES_PATH, 'Info.plist'));
     expect(findMarkedLinesInPodfile(podfile)).toEqual([]);
   });
 

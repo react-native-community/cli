@@ -8,17 +8,17 @@
  * @emails oncall+javascript_foundation
  */
 
-import findLineToAddPod from '../../link-pods/findLineToAddPod';
-import readPodfile from '../../link-pods/readPodfile';
+import findLineToAddPod from '../findLineToAddPod';
+import readPodfile from '../readPodfile';
 
 const path = require('path');
 
-const PODFILES_PATH = path.join(__dirname, '../../__fixtures__/pods');
+const PODFILES_PATH = path.join(__dirname, '../__fixtures__/');
 const LINE_AFTER_TARGET_IN_TEST_PODFILE = 4;
-
+console.log(PODFILES_PATH);
 describe('pods::findLineToAddPod', () => {
   it('returns null if file is not Podfile', () => {
-    const podfile = readPodfile(path.join(PODFILES_PATH, '../Info.plist'));
+    const podfile = readPodfile(path.join(PODFILES_PATH, 'Info.plist'));
     expect(
       findLineToAddPod(podfile, LINE_AFTER_TARGET_IN_TEST_PODFILE),
     ).toBeNull();

@@ -8,12 +8,12 @@
  * @emails oncall+javascript_foundation
  */
 
-import removePodEntry from '../../link-pods/removePodEntry';
-import readPodfile from '../../link-pods/readPodfile';
+import removePodEntry from '../removePodEntry';
+import readPodfile from '../readPodfile';
 
 const path = require('path');
 
-const PODFILES_PATH = path.join(__dirname, '../../__fixtures__/pods');
+const PODFILES_PATH = path.join(__dirname, '../__fixtures__/');
 
 describe('pods::removePodEntry', () => {
   it('should remove one line from Podfile with TestPod', () => {

@@ -8,9 +8,8 @@
  * @emails oncall+javascript_foundation
  */
 
-import findPodspecName from '../../ios/findPodspecName';
-import projects from '../../__fixtures__/projects';
-import ios from '../../__fixtures__/ios';
+import findPodspecName from '../findPodspecName';
+import * as projects from '../__fixtures__/projects';
 
 jest.mock('path');
 jest.mock('fs');
@@ -24,7 +23,7 @@ describe('ios::findPodspecName', () => {
   });
 
   it('returns podspec name if only one exists', () => {
-    fs.__setMockFilesystem(ios.pod);
+    fs.__setMockFilesystem(projects.withPods.ios);
     expect(findPodspecName('/')).toBe('TestPod');
   });
 

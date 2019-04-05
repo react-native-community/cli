@@ -8,9 +8,8 @@
  * @emails oncall+javascript_foundation
  */
 
-import findProject from '../../ios/findProject';
-import projects from '../../__fixtures__/projects';
-import ios from '../../__fixtures__/ios';
+import findProject from '../findProject';
+import * as projects from '../__fixtures__/projects';
 
 jest.mock('path');
 jest.mock('fs');
@@ -26,11 +25,6 @@ describe('ios::findProject', () => {
   it('returns null if there are no projects', () => {
     fs.__setMockFilesystem({testDir: projects});
     expect(findProject('/')).toBeNull();
-  });
-
-  it('returns ios project regardless of its name', () => {
-    fs.__setMockFilesystem({ios: ios.validTestName});
-    expect(findProject('/')).not.toBeNull();
   });
 
   it('ignores node_modules', () => {

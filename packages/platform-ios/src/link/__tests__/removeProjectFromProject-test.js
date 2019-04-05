@@ -8,17 +8,17 @@
  * @emails oncall+javascript_foundation
  */
 
-import addFileToProject from '../../ios/addFileToProject';
-import removeProjectFromProject from '../../ios/removeProjectFromProject';
+import addFileToProject from '../addFileToProject';
+import removeProjectFromProject from '../removeProjectFromProject';
 
 const xcode = require('xcode');
 const pbxFile = require('xcode/lib/pbxFile');
 const path = require('path');
 
 const project = xcode.project(
-  path.join(__dirname, '../../__fixtures__/project.pbxproj'),
+  path.join(__dirname, '../__fixtures__/project.pbxproj'),
 );
-const filePath = '../../__fixtures__/linearGradient.pbxproj';
+const filePath = '../__fixtures__/linearGradient.pbxproj';
 
 describe('ios::addFileToProject', () => {
   beforeEach(() => {

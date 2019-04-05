@@ -8,7 +8,7 @@
  * @emails oncall+javascript_foundation
  */
 
-import addProjectToLibraries from '../../ios/addProjectToLibraries';
+import addProjectToLibraries from '../addProjectToLibraries';
 
 const xcode = require('xcode');
 const path = require('path');
@@ -16,7 +16,7 @@ const PbxFile = require('xcode/lib/pbxFile');
 const {last} = require('lodash');
 
 const project = xcode.project(
-  path.join(__dirname, '../../__fixtures__/project.pbxproj'),
+  path.join(__dirname, '../__fixtures__/project.pbxproj'),
 );
 
 describe('ios::addProjectToLibraries', () => {

@@ -1,25 +1,15 @@
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * @format
- * @emails oncall+javascript_foundation
- */
-
-import findPodfilePath from '../../ios/findPodfilePath';
-import projects from '../../__fixtures__/projects';
-import ios from '../../__fixtures__/ios';
+import findPodfilePath from '../findPodfilePath';
+import * as projects from '../__fixtures__/projects';
 
 jest.mock('path');
 jest.mock('fs');
 
 const fs = require('fs');
 
+console.log(fs.__setMockFilesystem);
 describe('ios::findPodfilePath', () => {
   it('returns null if there is no Podfile', () => {
-    fs.__setMockFilesystem(ios.valid);
+    fs.__setMockFilesystem(projects.withoutPods);
     expect(findPodfilePath('')).toBeNull();
   });
 

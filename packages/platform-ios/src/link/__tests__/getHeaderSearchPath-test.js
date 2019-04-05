@@ -8,7 +8,7 @@
  * @emails oncall+javascript_foundation
  */
 
-import getHeaderSearchPath from '../../ios/getHeaderSearchPath';
+import getHeaderSearchPath from '../getHeaderSearchPath';
 
 const path = require('path');
 

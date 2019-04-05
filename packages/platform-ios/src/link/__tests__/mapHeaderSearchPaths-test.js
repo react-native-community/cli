@@ -8,13 +8,13 @@
  * @emails oncall+javascript_foundation
  */
 
-import mapHeaderSearchPaths from '../../ios/mapHeaderSearchPaths';
+import mapHeaderSearchPaths from '../mapHeaderSearchPaths';
 
 const xcode = require('xcode');
 const path = require('path');
 
 const project = xcode.project(
-  path.join(__dirname, '../../__fixtures__/project.pbxproj'),
+  path.join(__dirname, '../__fixtures__/project.pbxproj'),
 );
 
 describe('ios::mapHeaderSearchPaths', () => {

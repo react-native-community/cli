@@ -1,4 +1,9 @@
 module.exports = {
   testEnvironment: 'node',
-  projects: ['<rootDir>/packages/*', '<rootDir>/e2e'],
+  projects: [
+    {
+      displayName: '<rootDir>/packages/*',
+    },
+    {displayName: '<rootDir>/e2e', testMatch: ['<rootDir>/e2e/**/*.test.js']},
+  ],
 };

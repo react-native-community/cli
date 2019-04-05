@@ -6,7 +6,7 @@ import semver from 'semver';
 import execa from 'execa';
 import type {ContextT} from '../../tools/types.flow';
 import logger from '../../tools/logger';
-import * as PackageManager from '../../tools/PackageManager';
+import * as PackageManager from '../../tools/packageManager';
 import {fetch} from '../../tools/fetch';
 import legacyUpgrade from './legacyUpgrade';
 
@@ -115,7 +115,7 @@ const installDeps = async (newVersion, projectDir) => {
     `react-native@${newVersion}`,
     ...Object.keys(peerDeps).map(module => `${module}@${peerDeps[module]}`),
   ];
-  PackageManager.install(deps, {
+  await PackageManager.install(deps, {
     silent: true,
   });
   await execa('git', ['add', 'package.json']);

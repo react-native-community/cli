@@ -1,7 +1,7 @@
 // @flow
 import path from 'path';
-import ChildProcess from 'child_process';
-import * as PackageManger from '../../../tools/PackageManager';
+import Util from 'util';
+import * as PackageManger from '../../../tools/packageManager';
 import {
   installTemplatePackage,
   getTemplateConfig,
@@ -14,15 +14,17 @@ const TEMPLATE_NAME = 'templateName';
 
 afterEach(() => {
   jest.restoreAllMocks();
+  jest.resetModules();
 });
 
-test('installTemplatePackage', () => {
+test('installTemplatePackage', async () => {
   jest.spyOn(PackageManger, 'install').mockImplementationOnce(() => {});
 
-  installTemplatePackage(TEMPLATE_NAME, true);
+  await installTemplatePackage(TEMPLATE_NAME, true);
 
   expect(PackageManger.install).toHaveBeenCalledWith([TEMPLATE_NAME], {
     preferYarn: false,
+    silent: true,
   });
 });
 
@@ -68,21 +70,23 @@ test('copyTemplate', () => {
   expect(copyFiles.default).toHaveBeenCalledWith(expect.any(String), CWD);
 });
 
-test('executePostInitScript', () => {
+test('executePostInitScript', async () => {
   const RESOLVED_PATH = '/some/path/script.js';
   const SCRIPT_PATH = './script.js';
 
-  jest.spyOn(path, 'resolve').mockImplementationOnce(() => RESOLVED_PATH);
-  jest.spyOn(ChildProcess, 'execFileSync').mockImplementationOnce(() => {});
+  const mockExec = jest.fn();
 
-  executePostInitScript(TEMPLATE_NAME, SCRIPT_PATH);
+  jest.spyOn(Util, 'promisify').mockImplementationOnce(() => mockExec);
+  jest.spyOn(path, 'resolve').mockImplementationOnce(() => RESOLVED_PATH);
+
+  await executePostInitScript(TEMPLATE_NAME, SCRIPT_PATH);
 
   expect(path.resolve).toHaveBeenCalledWith(
     'node_modules',
     TEMPLATE_NAME,
     SCRIPT_PATH,
   );
-  expect(ChildProcess.execFileSync).toHaveBeenCalledWith(RESOLVED_PATH, {
+  expect(mockExec).toHaveBeenCalledWith(RESOLVED_PATH, {
     stdio: 'inherit',
   });
 });

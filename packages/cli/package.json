@@ -48,6 +48,7 @@
     "node-fetch": "^2.2.0",
     "node-notifier": "^5.2.1",
     "opn": "^3.0.2",
+    "ora": "^3.4.0",
     "plist": "^3.0.0",
     "semver": "^5.0.3",
     "serve-static": "^1.13.1",

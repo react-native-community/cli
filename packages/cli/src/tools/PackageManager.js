@@ -1,5 +1,6 @@
 // @flow
-import {execSync} from 'child_process';
+import {exec} from 'child_process';
+import {promisify} from 'util';
 import {getYarnVersionIfAvailable, isProjectUsingYarn} from './yarn';
 
 type Options = {|
@@ -7,10 +8,12 @@ type Options = {|
   silent?: boolean,
 |};
 
+const execute = promisify(exec);
+
 let projectDir;
 
 function executeCommand(command: string, options?: Options) {
-  return execSync(command, {
+  return execute(command, {
     stdio: options && options.silent ? 'pipe' : 'inherit',
   });
 }

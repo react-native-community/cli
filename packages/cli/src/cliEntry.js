@@ -12,9 +12,9 @@ import childProcess from 'child_process';
 import commander from 'commander';
 import path from 'path';
 
-import type {CommandT, ContextT} from './tools/types.flow';
+import type {CommandT, ConfigT} from './tools/config/types.flow';
 
-import * as commands from './commands';
+import commands from './commands';
 import init from './commands/init/initCompat';
 import assertRequiredOptions from './tools/assertRequiredOptions';
 import {logger} from '@react-native-community/cli-tools';
@@ -95,7 +95,7 @@ function printUnknownCommand(cmdName) {
   }
 }
 
-const addCommand = (command: CommandT, ctx: ContextT) => {
+const addCommand = (command: CommandT, ctx: ConfigT) => {
   const options = command.options || [];
 
   const cmd = commander

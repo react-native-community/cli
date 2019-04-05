@@ -5,7 +5,7 @@ export type CommandT = {
   name: string,
   description?: string,
   usage?: string,
-  func: (argv: Array<string>, ctx: ContextT, args: Object) => ?Promise<void>,
+  func: (argv: Array<string>, ctx: ConfigT, args: Object) => ?Promise<void>,
   options?: Array<{
     command: string,
     description?: string,

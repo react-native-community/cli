@@ -7,7 +7,11 @@ import Joi from 'joi';
 import cosmiconfig from 'cosmiconfig';
 import path from 'path';
 
-import {type UserDependencyConfigT, type UserConfigT} from './types.flow';
+import {
+  type UserDependencyConfigT,
+  type UserConfigT,
+  type CommandT,
+} from './types.flow';
 
 import {JoiError} from '../errors';
 
@@ -64,21 +68,12 @@ export function readDependencyConfigFromDisk(
 /**
  * Returns an array of commands that are defined in the project.
  */
-const loadProjectCommand = ({
-  root,
-  commands,
-}: ContextT): Array<ProjectCommandT> => {
-  return commands.reduce((acc: Array<ProjectCommandT>, cmdPath: string) => {
-    const requiredCommands:
-      | ProjectCommandT
-      | Array<ProjectCommandT> = require(path.join(
-      root,
-      'node_modules',
-      cmdPath,
-    ));
-
-    return acc.concat(requiredCommands);
-  }, []);
+const loadProjectCommand = (root, commands): Array<CommandT> => {
+  return commands.reduce(
+    (acc: Array<CommandT>, cmdPath: string) =>
+      acc.concat(require(path.join(root, 'node_modules', cmdPath))),
+    [],
+  );
 };
 
 /**

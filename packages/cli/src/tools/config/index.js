@@ -83,11 +83,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
             );
           },
         }),
-        commands: acc.commands.concat(
-          config.commands.map(pathToCommand =>
-            path.join(dependencyName, pathToCommand),
-          ),
-        ),
+        commands: [...acc.commands, ...config.commands],
         platforms: {
           ...acc.platforms,
           ...config.platforms,

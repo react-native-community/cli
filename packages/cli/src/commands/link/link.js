@@ -10,7 +10,7 @@
 import {pick} from 'lodash';
 import dedent from 'dedent';
 
-import {type ContextT} from '../../tools/types.flow';
+import {type ConfigT} from '../../tools/config/types.flow';
 
 import {CLIError} from '../../tools/errors';
 
@@ -34,7 +34,7 @@ type FlagsType = {
  * @param args If optional argument [packageName] is provided,
  *             only that package is processed.
  */
-function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
+function link([rawPackageName]: Array<string>, ctx: ConfigT, opts: FlagsType) {
   let platforms = ctx.platforms;
   let project = ctx.project;
 

@@ -13,7 +13,7 @@ import fs from 'fs';
 import isString from 'lodash/isString';
 
 import isPackagerRunning from '../../tools/isPackagerRunning';
-import type {ContextT} from '../../tools/types.flow';
+import type {ConfigT} from '../../tools/config/types.flow';
 
 import adb from './adb';
 import runOnAllDevices from './runOnAllDevices';
@@ -30,7 +30,7 @@ function checkAndroid(root) {
 /**
  * Starts the app on a connected Android emulator or device.
  */
-function runAndroid(argv: Array<string>, ctx: ContextT, args: Object) {
+function runAndroid(argv: Array<string>, ctx: ConfigT, args: Object) {
   if (!checkAndroid(args.root)) {
     logger.error(
       'Android project not found. Are you sure this is a React Native project?',

@@ -66,10 +66,10 @@ async function createFromExternalTemplate(
     changePlaceholderInTemplate(projectName, templateConfig.placeholderName);
 
     loader.succeed();
-    if (templateConfig.postInitScript) {
+    const {postInitScript} = templateConfig;
+    if (postInitScript) {
       loader.start('Executing post init script');
-      // $FlowFixMe
-      await executePostInitScript(name, templateConfig.postInitScript);
+      await executePostInitScript(name, postInitScript);
       loader.succeed();
     }
 
@@ -121,7 +121,7 @@ async function createFromReactNativeTemplate(
     loader.succeed();
     if (templateConfig.postInitScript) {
       loader.start('Executing post init script');
-      // $FlowFixMe
+
       await executePostInitScript(TEMPLATE_NAME, templateConfig.postInitScript);
       loader.succeed();
     }

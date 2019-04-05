@@ -8,7 +8,6 @@
  * @emails oncall+javascript_foundation
  */
 
-import dependencies from '../../__fixtures__/dependencies';
 import findAssets from '../findAssets';
 
 jest.mock('path');
@@ -18,7 +17,17 @@ const fs = require('fs');
 
 describe('findAssets', () => {
   beforeEach(() => {
-    fs.__setMockFilesystem({testDir: dependencies.withAssets});
+    fs.__setMockFilesystem({
+      testDir: {
+        fonts: {
+          'A.ttf': '',
+          'B.ttf': '',
+        },
+        images: {
+          'C.jpg': '',
+        },
+      },
+    });
   });
 
   it('returns an array of all files in given folders', () => {

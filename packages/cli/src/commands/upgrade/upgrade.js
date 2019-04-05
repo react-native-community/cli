@@ -5,7 +5,7 @@ import chalk from 'chalk';
 import semver from 'semver';
 import execa from 'execa';
 import type {ContextT} from '../../tools/types.flow';
-import logger from '../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 import * as PackageManager from '../../tools/packageManager';
 import {fetch} from '../../tools/fetch';
 import legacyUpgrade from './legacyUpgrade';

@@ -12,7 +12,7 @@ import path from 'path';
 import copyAndReplace from '../copyAndReplace';
 import promptInitializer from './promptSync';
 import walk from '../walk';
-import logger from '../logger';
+import {logger} from '@react-native-community/cli-tools';
 
 const prompt = promptInitializer();
 

@@ -12,7 +12,7 @@ import {execSync} from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import copyProjectTemplateAndReplace from './copyProjectTemplateAndReplace';
-import logger from '../logger';
+import {logger} from '@react-native-community/cli-tools';
 import * as PackageManager from '../packageManager';
 
 /**

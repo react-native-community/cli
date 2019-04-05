@@ -16,7 +16,7 @@ import type {CommandLineArgs} from './bundleCommandLineArgs';
 import type {ContextT} from '../../tools/types.flow';
 import saveAssets from './saveAssets';
 import loadMetroConfig from '../../tools/loadMetroConfig';
-import logger from '../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 
 async function buildBundle(
   args: CommandLineArgs,

@@ -10,7 +10,7 @@
 
 import path from 'path';
 import chalk from 'chalk';
-import logger from '../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 
 function printRunInstructions(projectDir: string, projectName: string) {
   const absoluteProjectDir = path.resolve(projectDir);

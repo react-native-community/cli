@@ -7,7 +7,7 @@
  * @format
  */
 import launchChrome from '../launchChrome';
-import logger from '../../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 import {exec} from 'child_process';
 
 function launchChromeDevTools(port, args = '') {

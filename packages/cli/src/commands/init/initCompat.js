@@ -14,7 +14,7 @@ import process from 'process';
 import printRunInstructions from './printRunInstructions';
 import {createProjectFromTemplate} from '../../tools/generator/templates';
 import * as PackageManager from '../../tools/packageManager';
-import logger from '../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 
 /**
  * Creates the template for a React Native project given the provided

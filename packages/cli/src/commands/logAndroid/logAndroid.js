@@ -6,7 +6,7 @@
  */
 
 import {spawnSync} from 'child_process';
-import logger from '../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 
 /**
  * Starts adb logcat

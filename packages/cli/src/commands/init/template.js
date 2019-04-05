@@ -3,7 +3,7 @@
 import execa from 'execa';
 import path from 'path';
 import * as PackageManager from '../../tools/packageManager';
-import logger from '../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 import copyFiles from '../../tools/copyFiles';
 
 export type TemplateConfig = {

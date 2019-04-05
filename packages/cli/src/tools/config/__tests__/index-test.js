@@ -8,7 +8,7 @@ import {
   cleanup,
   writeFiles,
   getTempDirectory,
-} from '../../../../../../e2e/helpers';
+} from '../../../../../../jest/helpers';
 
 const DIR = getTempDirectory('resolve_config_path_test');
 

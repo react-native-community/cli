@@ -12,4 +12,4 @@ function getLoader(): typeof Ora {
   return logger.isVerbose() ? OraMock : Ora;
 }
 
-export default getLoader;
+export {getLoader};

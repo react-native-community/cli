@@ -17,7 +17,7 @@ import {changePlaceholderInTemplate} from './editTemplate';
 import * as PackageManager from '../../tools/packageManager';
 import {processTemplateName} from './templateName';
 import banner from './banner';
-import getLoader from '../../tools/loader';
+import {getLoader} from '../../tools/loader';
 
 type Options = {|
   template?: string,

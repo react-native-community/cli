@@ -6,7 +6,6 @@ jest.mock('fs');
 
 const fs = require('fs');
 
-console.log(fs.__setMockFilesystem);
 describe('ios::findPodfilePath', () => {
   it('returns null if there is no Podfile', () => {
     fs.__setMockFilesystem(projects.withoutPods);

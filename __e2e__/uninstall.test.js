@@ -1,5 +1,5 @@
 // @flow
-import {run, getTempDirectory, cleanup, writeFiles} from '../helpers';
+import {run, getTempDirectory, cleanup, writeFiles} from '../jest/helpers';
 
 const DIR = getTempDirectory('command-uninstall-test');
 const pkg = 'react-native-config';

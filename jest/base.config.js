@@ -1,4 +1,7 @@
+/**
+ * @flow
+ */
 module.exports = {
+  rootDir: '../../',
   testEnvironment: 'node',
-  setupFiles: ['./testSetup.js'],
 };

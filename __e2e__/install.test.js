@@ -1,6 +1,6 @@
 // @flow
 import path from 'path';
-import {run, getTempDirectory, cleanup, writeFiles} from '../helpers';
+import {run, getTempDirectory, cleanup, writeFiles} from '../jest/helpers';
 
 const DIR = getTempDirectory('command-install-test');
 const pkg = 'react-native-config';

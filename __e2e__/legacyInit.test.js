@@ -2,7 +2,7 @@
 import fs from 'fs';
 import path from 'path';
 import execa from 'execa';
-import {getTempDirectory, cleanup, writeFiles} from '../helpers';
+import {getTempDirectory, cleanup, writeFiles} from '../jest/helpers';
 
 const DIR = getTempDirectory('command-legacy-init');
 

@@ -137,6 +137,7 @@ const applyPatch = async (
   tmpPatchFile: string,
 ) => {
   let filesToExclude = ['package.json'];
+  // $FlowFixMe ThenableChildProcess is incompatible with Promise
   const {stdout: relativePathFromRoot} = await execa('git', [
     'rev-parse',
     '--show-prefix',

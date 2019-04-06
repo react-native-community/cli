@@ -7,7 +7,7 @@
     "prebuild": "yarn build:ts",
     "build": "node ./scripts/build.js",
     "build:ts": "node ./scripts/buildTs.js",
-    "build-clean": "rm -rf ./packages/*/build",
+    "build-clean": "rm -rf ./packages/*/build ./packages/*/tsconfig.tsbuildinfo",
     "watch": "node ./scripts/watch.js",
     "test": "jest",
     "test:ci:unit": "jest packages --ci --coverage",

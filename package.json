@@ -4,6 +4,7 @@
     "packages/*"
   ],
   "scripts": {
+    "prebuild": "yarn build:ts",
     "build": "node ./scripts/build.js",
     "build:ts": "node ./scripts/buildTs.js",
     "build-clean": "rm -rf ./packages/*/build",

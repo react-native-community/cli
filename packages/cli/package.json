@@ -19,8 +19,8 @@
     "testEnvironment": "node"
   },
   "dependencies": {
-    "@react-native-community/cli-platform-ios": "2.0.0-alpha.3",
     "@react-native-community/cli-platform-android": "2.0.0-alpha.3",
+    "@react-native-community/cli-platform-ios": "2.0.0-alpha.3",
     "@react-native-community/cli-tools": "2.0.0-alpha.3",
     "chalk": "^1.1.1",
     "commander": "^2.19.0",

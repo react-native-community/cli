@@ -1,5 +1,15 @@
 module.exports = {
   babelrcRoots: ['packages/*'],
+  overrides: [
+    {
+      presets: ['@babel/preset-flow'],
+      test: '**/*.js',
+    },
+    {
+      presets: ['@babel/preset-typescript'],
+      test: '**/*.ts',
+    },
+  ],
   presets: [
     [
       require.resolve('@babel/preset-env'),
@@ -8,7 +18,6 @@ module.exports = {
         useBuiltIns: 'entry',
       },
     ],
-    require.resolve('@babel/preset-flow'),
   ],
   plugins: [
     require.resolve('@babel/plugin-transform-strict-mode'),

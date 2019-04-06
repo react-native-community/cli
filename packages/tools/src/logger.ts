@@ -1,6 +1,3 @@
-/**
- * @flow
- */
 import chalk from 'chalk';
 
 const SEPARATOR = ', ';

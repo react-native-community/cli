@@ -5,6 +5,7 @@
   ],
   "scripts": {
     "build": "node ./scripts/build.js",
+    "build:ts": "node ./scripts/buildTs.js",
     "build-clean": "rm -rf ./packages/*/build",
     "watch": "node ./scripts/watch.js",
     "test": "jest",
@@ -34,5 +35,11 @@
     "micromatch": "^3.1.10",
     "mkdirp": "^0.5.1",
     "string-length": "^2.0.0"
+  },
+  "devDependencies": {
+    "@babel/preset-typescript": "^7.3.3",
+    "@types/jest": "^24.0.11",
+    "@types/node": "^11.13.0",
+    "typescript": "^3.4.2"
   }
 }

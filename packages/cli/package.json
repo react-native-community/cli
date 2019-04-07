@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/cli",
-  "version": "2.0.0-alpha.3",
+  "version": "2.0.0-alpha.4",
   "description": "React Native CLI",
   "license": "MIT",
   "main": "build/index.js",
@@ -19,9 +19,9 @@
     "testEnvironment": "node"
   },
   "dependencies": {
-    "@react-native-community/cli-platform-android": "2.0.0-alpha.3",
-    "@react-native-community/cli-platform-ios": "2.0.0-alpha.3",
-    "@react-native-community/cli-tools": "2.0.0-alpha.3",
+    "@react-native-community/cli-platform-android": "^2.0.0-alpha.4",
+    "@react-native-community/cli-platform-ios": "^2.0.0-alpha.4",
+    "@react-native-community/cli-tools": "^2.0.0-alpha.4",
     "chalk": "^1.1.1",
     "commander": "^2.19.0",
     "compression": "^1.7.1",

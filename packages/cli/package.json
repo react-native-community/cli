@@ -39,7 +39,7 @@
     "inquirer": "^3.0.6",
     "joi": "^14.3.1",
     "lodash": "^4.17.5",
-    "logkitty": "^0.3.1",
+    "logkitty": "^0.3.2",
     "metro": "^0.53.1",
     "metro-config": "^0.53.1",
     "metro-core": "^0.53.1",

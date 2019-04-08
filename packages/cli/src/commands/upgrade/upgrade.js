@@ -11,7 +11,7 @@ import {fetch} from '../../tools/fetch';
 import legacyUpgrade from './legacyUpgrade';
 
 type FlagsT = {
-  legacy: boolean,
+  legacy: boolean | void,
 };
 
 const rnDiffPurgeUrl =
@@ -38,11 +38,8 @@ const getRNPeerDeps = async (
   return JSON.parse(stdout);
 };
 
-const getPatch = async (currentVersion, newVersion, projectDir) => {
+const getPatch = async (currentVersion, newVersion, projectDir, config) => {
   let patch;
-
-  const rnDiffAppName = 'RnDiffApp';
-  const {name} = require(path.join(projectDir, 'package.json'));
 
   logger.info(`Fetching diff between v${currentVersion} and v${newVersion}...`);
 
@@ -60,9 +57,32 @@ const getPatch = async (currentVersion, newVersion, projectDir) => {
     return null;
   }
 
-  return patch
-    .replace(new RegExp(rnDiffAppName, 'g'), name)
-    .replace(new RegExp(rnDiffAppName.toLowerCase(), 'g'), name.toLowerCase());
+  let patchWithRenamedProjects = patch;
+
+  // rn-diff-purge only supports iOS and Android platforms
+  if (config.project.ios) {
+    patchWithRenamedProjects = patchWithRenamedProjects.replace(
+      new RegExp('RnDiffApp', 'g'),
+      // $FlowFixMe - poor typings of ProjectConfigIOST
+      config.project.ios.projectName.replace('.xcodeproj', ''),
+    );
+  }
+
+  if (config.project.android) {
+    patchWithRenamedProjects = patchWithRenamedProjects
+      .replace(
+        new RegExp('com\\.rndiffapp', 'g'),
+        // $FlowFixMe - poor typings of ProjectConfigAndroidT
+        config.project.android.packageName,
+      )
+      .replace(
+        new RegExp('com\\.rndiffapp'.split('.').join('/'), 'g'),
+        // $FlowFixMe - poor typings of ProjectConfigAndroidT
+        config.project.android.packageName.split('.').join('/'),
+      );
+  }
+
+  return patchWithRenamedProjects;
 };
 
 const getVersionToUpgradeTo = async (argv, currentVersion, projectDir) => {
@@ -214,7 +234,7 @@ async function upgrade(argv: Array<string>, ctx: ConfigT, args: FlagsT) {
     return;
   }
 
-  const patch = await getPatch(currentVersion, newVersion, projectDir);
+  const patch = await getPatch(currentVersion, newVersion, projectDir, ctx);
 
   if (patch === null) {
     return;
@@ -293,7 +313,7 @@ const upgradeCommand = {
   func: upgrade,
   options: [
     {
-      command: '--legacy',
+      command: '--legacy [boolean]',
       description:
         "Legacy implementation. Upgrade your app's template files to the latest version; run this after " +
         'updating the react-native version in your package.json and running npm install',

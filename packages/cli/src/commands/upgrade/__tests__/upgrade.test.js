@@ -172,7 +172,24 @@ success Upgraded React Native to v0.58.4 🎉. Now you can review and commit the
 
 test('fetches regular patch, adds remote, applies patch, installs deps, removes remote,', async () => {
   (fetch: any).mockImplementation(() => Promise.resolve(samplePatch));
-  await upgrade.func([newVersion], ctx, opts);
+  await upgrade.func(
+    [newVersion],
+    {
+      ...ctx,
+      project: {
+        ...ctx.project,
+        ios: {
+          ...ctx.project.ios,
+          projectName: 'TestApp.xcodeproj',
+        },
+        android: {
+          ...ctx.project.android,
+          packageName: 'com.testapp',
+        },
+      },
+    },
+    opts,
+  );
   expect(flushOutput()).toMatchInlineSnapshot(`
 "info Fetching diff between v0.57.8 and v0.58.4...
 [fs] write tmp-upgrade-rn.patch
@@ -196,7 +213,9 @@ success Upgraded React Native to v0.58.4 🎉. Now you can review and commit the
     snapshotDiff(samplePatch, fs.writeFileSync.mock.calls[0][1], {
       contextLines: 1,
     }),
-  ).toMatchSnapshot('RnDiffApp is replaced with app name (TestApp)');
+  ).toMatchSnapshot(
+    'RnDiffApp is replaced with app name (TestApp and com.testapp)',
+  );
 }, 60000);
 test('fetches regular patch, adds remote, applies patch, installs deps, removes remote when updated from nested directory', async () => {
   (fetch: any).mockImplementation(() => Promise.resolve(samplePatch));
@@ -267,4 +286,32 @@ info You may find these resources helpful:
 • Comparison between versions: https://github.com/react-native-community/rn-diff-purge/compare/version/0.57.8..version/0.58.4
 • Git diff: https://github.com/react-native-community/rn-diff-purge/compare/version/0.57.8..version/0.58.4.diff"
 `);
+}, 60000);
+test('works with --name-ios and --name-android', async () => {
+  (fetch: any).mockImplementation(() => Promise.resolve(samplePatch));
+  await upgrade.func(
+    [newVersion],
+    {
+      ...ctx,
+      project: {
+        ...ctx.project,
+        ios: {
+          ...ctx.project.ios,
+          projectName: 'CustomIos.xcodeproj',
+        },
+        android: {
+          ...ctx.project.android,
+          packageName: 'co.uk.customandroid.app',
+        },
+      },
+    },
+    opts,
+  );
+  expect(
+    snapshotDiff(samplePatch, fs.writeFileSync.mock.calls[0][1], {
+      contextLines: 1,
+    }),
+  ).toMatchSnapshot(
+    'RnDiffApp is replaced with app name (CustomIos and co.uk.customandroid.app)',
+  );
 }, 60000);

@@ -5,19 +5,31 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import execa from 'execa';
+import {
+  logkitty,
+  makeTagsFilter,
+  formatEntry,
+  formatError,
+  Priority,
+} from 'logkitty';
 import {logger} from '@react-native-community/cli-tools';
 
 async function logAndroid() {
   logger.info('Starting logkitty');
 
-  await execa(
-    'logkitty',
-    ['custom', '*:S', 'ReactNative:V', 'ReactNativeJS:V'],
-    {
-      stdio: 'inherit',
-    },
-  );
+  const emitter = logkitty({
+    platform: 'android',
+    minPriority: Priority.VERBOSE,
+    filter: makeTagsFilter('ReactNative', 'ReactNativeJS'),
+  });
+
+  emitter.on('entry', (entry: Entry) => {
+    logger.log(formatEntry(entry));
+  });
+
+  emitter.on('error', (error: Error) => {
+    logger.log(formatError(error));
+  });
 }
 
 export default {

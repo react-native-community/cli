@@ -37,4 +37,4 @@ export default ([
   info,
   config,
   init,
-]: CommandT);
+]: CommandT[]);

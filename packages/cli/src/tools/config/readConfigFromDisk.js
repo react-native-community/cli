@@ -67,13 +67,18 @@ export function readDependencyConfigFromDisk(
 
 /**
  * Returns an array of commands that are defined in the project.
+ *
+ * `config.project` can be either an array of paths or a single string.
+ * Each of the files can export a commands (object) or an array of commands
  */
-const loadProjectCommand = (root, commands): Array<CommandT> => {
-  return commands.reduce(
-    (acc: Array<CommandT>, cmdPath: string) =>
-      acc.concat(require(path.join(root, 'node_modules', cmdPath))),
-    [],
-  );
+const loadProjectCommands = (
+  root,
+  commands: Array<string> | string,
+): Array<CommandT> => {
+  return [].concat(commands).reduce((acc: Array<CommandT>, cmdPath: string) => {
+    const cmds: Array<CommandT> | CommandT = require(path.join(root, cmdPath));
+    return acc.concat(cmds);
+  }, []);
 };
 
 /**
@@ -98,9 +103,7 @@ export function readLegacyDependencyConfigFromDisk(
       hooks: config.commands,
       params: config.params,
     },
-    commands: []
-      .concat(config.plugin || [])
-      .map(p => loadProjectCommand(rootFolder, p)),
+    commands: loadProjectCommands(rootFolder, config.plugin),
     platforms: config.platform
       ? require(path.join(rootFolder, config.platform))
       : undefined,

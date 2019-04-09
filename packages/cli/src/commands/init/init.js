@@ -2,7 +2,7 @@
 import fs from 'fs-extra';
 import minimist from 'minimist';
 import semver from 'semver';
-import type {ContextT} from '../../tools/types.flow';
+import type {ConfigT} from '../../tools/config/types.flow';
 import {validateProjectName} from './validate';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
 import printRunInstructions from './printRunInstructions';
@@ -153,7 +153,7 @@ function createProject(projectName: string, options: Options, version: string) {
 
 export default (async function initialize(
   [projectName]: Array<string>,
-  _context: ContextT,
+  _context: ConfigT,
   options: Options,
 ) {
   validateProjectName(projectName);

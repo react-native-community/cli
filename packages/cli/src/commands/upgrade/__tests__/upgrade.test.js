@@ -12,18 +12,7 @@ import loadConfig from '../../../tools/config';
 jest.mock('https');
 jest.mock('fs');
 jest.mock('path');
-jest.mock('execa', () => {
-  const module = jest.fn((command, args) => {
-    mockPushLog('$', 'execa', command, args);
-    if (command === 'npm' && args[3] === '--json') {
-      return Promise.resolve({
-        stdout: '{"react": "16.6.3"}',
-      });
-    }
-    return Promise.resolve({stdout: ''});
-  });
-  return module;
-});
+jest.mock('execa');
 jest.mock(
   '/project/root/node_modules/react-native/package.json',
   () => ({name: 'react-native', version: '0.57.8'}),
@@ -34,6 +23,20 @@ jest.mock(
   () => ({name: 'TestApp', dependencies: {'react-native': '^0.57.8'}}),
   {virtual: true},
 );
+jest.mock(
+  '/project/root/NestedApp/node_modules/react-native/package.json',
+  () => ({name: 'react-native', version: '0.57.8'}),
+  {virtual: true},
+);
+jest.mock(
+  '/project/root/NestedApp/package.json',
+  () => ({
+    name: 'TestAppNested',
+    dependencies: {'react-native': '^0.57.8'},
+  }),
+  {virtual: true},
+);
+jest.mock('../../../tools/config');
 jest.mock('../../../tools/packageManager', () => ({
   install: args => {
     mockPushLog('$ yarn add', ...args);
@@ -52,14 +55,32 @@ jest.mock('@react-native-community/cli-tools', () => ({
   },
 }));
 
+const mockExecaDefault = (command, args) => {
+  mockPushLog('$', 'execa', command, args);
+  if (command === 'npm' && args[3] === '--json') {
+    return Promise.resolve({stdout: '{"react": "16.6.3"}'});
+  }
+  if (command === 'git' && args[0] === 'rev-parse') {
+    return Promise.resolve({stdout: ''});
+  }
+  return Promise.resolve({stdout: ''});
+};
+
+const mockExecaNested = (command, args) => {
+  mockPushLog('$', 'execa', command, args);
+  if (command === 'npm' && args[3] === '--json') {
+    return Promise.resolve({stdout: '{"react": "16.6.3"}'});
+  }
+  if (command === 'git' && args[0] === 'rev-parse') {
+    return Promise.resolve({stdout: 'NestedApp/'});
+  }
+  return Promise.resolve({stdout: ''});
+};
+
 const currentVersion = '0.57.8';
 const newVersion = '0.58.4';
 const olderVersion = '0.56.0';
-
-jest.mock('../../../tools/config');
-
 const ctx = loadConfig();
-
 const opts = {
   legacy: false,
 };
@@ -75,11 +96,13 @@ const flushOutput = () => stripAnsi(logs.join('\n'));
 
 beforeEach(() => {
   jest.clearAllMocks();
+  jest.restoreAllMocks();
   // $FlowFixMe
   fs.writeFileSync = jest.fn(filename => mockPushLog('[fs] write', filename));
   // $FlowFixMe
   fs.unlinkSync = jest.fn((...args) => mockPushLog('[fs] unlink', args));
   logs = [];
+  (execa: any).mockImplementation(mockExecaDefault);
 });
 
 afterEach(() => {
@@ -93,6 +116,22 @@ test('uses latest version of react-native when none passed', async () => {
   await upgrade.func([], ctx, opts);
   expect(execa).toBeCalledWith('npm', ['info', 'react-native', 'version']);
 }, 60000);
+
+test('applies patch in current working directory when nested', async () => {
+  (fetch: any).mockImplementation(() => Promise.resolve(samplePatch));
+  (execa: any).mockImplementation(mockExecaNested);
+  const config = {...ctx, root: '/project/root/NestedApp'};
+  await upgrade.func([newVersion], config, opts);
+
+  expect(execa).toBeCalledWith('git', [
+    'apply',
+    'tmp-upgrade-rn.patch',
+    '--exclude=NestedApp/package.json',
+    '-p2',
+    '--3way',
+    '--directory=NestedApp/',
+  ]);
+});
 
 test('errors when invalid version passed', async () => {
   await upgrade.func(['next'], ctx, opts);
@@ -137,9 +176,10 @@ test('fetches regular patch, adds remote, applies patch, installs deps, removes 
   expect(flushOutput()).toMatchInlineSnapshot(`
 "info Fetching diff between v0.57.8 and v0.58.4...
 [fs] write tmp-upgrade-rn.patch
-$ execa git apply --check tmp-upgrade-rn.patch --exclude=package.json -p2 --3way
+$ execa git rev-parse --show-prefix
+$ execa git apply --check tmp-upgrade-rn.patch --exclude=package.json -p2 --3way --directory=
 info Applying diff...
-$ execa git apply tmp-upgrade-rn.patch --exclude=package.json -p2 --3way
+$ execa git apply tmp-upgrade-rn.patch --exclude=package.json -p2 --3way --directory=
 [fs] unlink tmp-upgrade-rn.patch
 $ execa git status -s
 info Installing \\"react-native@0.58.4\\" and its peer dependencies...
@@ -158,6 +198,31 @@ success Upgraded React Native to v0.58.4 🎉. Now you can review and commit the
     }),
   ).toMatchSnapshot('RnDiffApp is replaced with app name (TestApp)');
 }, 60000);
+test('fetches regular patch, adds remote, applies patch, installs deps, removes remote when updated from nested directory', async () => {
+  (fetch: any).mockImplementation(() => Promise.resolve(samplePatch));
+  (execa: any).mockImplementation(mockExecaNested);
+  const config = {...ctx, root: '/project/root/NestedApp'};
+  await upgrade.func([newVersion], config, opts);
+  expect(flushOutput()).toMatchInlineSnapshot(`
+"info Fetching diff between v0.57.8 and v0.58.4...
+[fs] write tmp-upgrade-rn.patch
+$ execa git rev-parse --show-prefix
+$ execa git apply --check tmp-upgrade-rn.patch --exclude=NestedApp/package.json -p2 --3way --directory=NestedApp/
+info Applying diff...
+$ execa git apply tmp-upgrade-rn.patch --exclude=NestedApp/package.json -p2 --3way --directory=NestedApp/
+[fs] unlink tmp-upgrade-rn.patch
+$ execa git status -s
+info Installing \\"react-native@0.58.4\\" and its peer dependencies...
+$ execa npm info react-native@0.58.4 peerDependencies --json
+$ yarn add react-native@0.58.4 react@16.6.3
+$ execa git add package.json
+$ execa git add yarn.lock
+$ execa git add package-lock.json
+info Running \\"git status\\" to check what changed...
+$ execa git status
+success Upgraded React Native to v0.58.4 🎉. Now you can review and commit the changes"
+`);
+}, 60000);
 test('cleans up if patching fails,', async () => {
   (fetch: any).mockImplementation(() => Promise.resolve(samplePatch));
   (execa: any).mockImplementation((command, args) => {
@@ -173,6 +238,9 @@ test('cleans up if patching fails,', async () => {
         stderr: 'error: .flowconfig: does not exist in index\n',
       });
     }
+    if (command === 'git' && args[0] === 'rev-parse') {
+      return Promise.resolve({stdout: ''});
+    }
     return Promise.resolve({stdout: ''});
   });
   try {
@@ -185,9 +253,10 @@ test('cleans up if patching fails,', async () => {
   expect(flushOutput()).toMatchInlineSnapshot(`
 "info Fetching diff between v0.57.8 and v0.58.4...
 [fs] write tmp-upgrade-rn.patch
-$ execa git apply --check tmp-upgrade-rn.patch --exclude=package.json -p2 --3way
+$ execa git rev-parse --show-prefix
+$ execa git apply --check tmp-upgrade-rn.patch --exclude=package.json -p2 --3way --directory=
 info Applying diff (excluding: package.json, .flowconfig)...
-$ execa git apply tmp-upgrade-rn.patch --exclude=package.json --exclude=.flowconfig -p2 --3way
+$ execa git apply tmp-upgrade-rn.patch --exclude=package.json --exclude=.flowconfig -p2 --3way --directory=
 error: .flowconfig: does not exist in index
 error Automatically applying diff failed
 [fs] unlink tmp-upgrade-rn.patch

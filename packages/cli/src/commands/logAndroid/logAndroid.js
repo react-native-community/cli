@@ -5,26 +5,31 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import {spawnSync} from 'child_process';
+import {
+  logkitty,
+  makeTagsFilter,
+  formatEntry,
+  formatError,
+  Priority,
+} from 'logkitty';
 import {logger} from '@react-native-community/cli-tools';
 
-/**
- * Starts adb logcat
- */
 async function logAndroid() {
-  const adbPath = process.env.ANDROID_HOME
-    ? `${process.env.ANDROID_HOME}/platform-tools/adb`
-    : 'adb';
+  logger.info('Starting logkitty');
 
-  const adbArgs = ['logcat', '*:S', 'ReactNative:V', 'ReactNativeJS:V'];
+  const emitter = logkitty({
+    platform: 'android',
+    minPriority: Priority.VERBOSE,
+    filter: makeTagsFilter('ReactNative', 'ReactNativeJS'),
+  });
 
-  logger.info(`Starting the logger (${adbPath} ${adbArgs.join(' ')})...`);
+  emitter.on('entry', entry => {
+    logger.log(formatEntry(entry));
+  });
 
-  const log = spawnSync(adbPath, adbArgs, {stdio: 'inherit'});
-
-  if (log.error !== null) {
-    throw log.error;
-  }
+  emitter.on('error', error => {
+    logger.log(formatError(error));
+  });
 }
 
 export default {

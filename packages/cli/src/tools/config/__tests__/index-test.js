@@ -47,9 +47,6 @@ test('should return dependencies from package.json', () => {
       "dependencies": {
         "react-native": "0.0.1",
         "react-native-test": "0.0.1"
-      },
-      "react-native": {
-        "reactNativePath": "."
       }
     }`,
   });
@@ -75,9 +72,6 @@ test('should read a config of a dependency and use it to load other settings', (
       "dependencies": {
         "react-native": "0.0.1",
         "react-native-test": "0.0.1"
-      },
-      "react-native": {
-        "reactNativePath": "."
       }
     }`,
   });
@@ -138,9 +132,6 @@ test('should read `rnpm` config from a dependency and transform it to a new form
       "dependencies": {
         "react-native": "0.0.1",
         "react-native-foo": "0.0.1"
-      },
-      "react-native": {
-        "reactNativePath": "."
       }
     }`,
   });
@@ -150,27 +141,28 @@ test('should read `rnpm` config from a dependency and transform it to a new form
 
 test('should load commands from "react-native-foo" and "react-native-bar" packages', () => {
   writeFiles(DIR, {
-    'node_modules/react-native-foo/package.json': `{
-      "react-native": {
-        "commands": [
-          "./command-foo.js"
-        ]
-      }
+    'node_modules/react-native-foo/package.json': '{}',
+    'node_modules/react-native-foo/react-native.config.js': `module.exports = {
+      commands: [
+        {
+          name: 'foo-command',
+          func: () => console.log('foo')
+        }
+      ]
     }`,
-    'node_modules/react-native-bar/package.json': `{
-      "react-native": {
-        "commands": [
-          "./command-bar.js"
-        ]
-      }
+    'node_modules/react-native-bar/package.json': '{}',
+    'node_modules/react-native-bar/react-native.config.js': `module.exports = {
+      commands: [
+        {
+          name: 'bar-command',
+          func: () => console.log('foo')
+        }
+      ]
     }`,
     'package.json': `{
       "dependencies": {
         "react-native-foo": "0.0.1",
         "react-native-bar": "0.0.1"
-      },
-      "react-native": {
-        "reactNativePath": "."
       }
     }`,
   });
@@ -182,6 +174,9 @@ test('should load an out-of-tree "windows" platform that ships with a dependency
   writeFiles(DIR, {
     'node_modules/react-native-windows/platform.js': `
       module.exports = {"windows": {}};
+    `,
+    'node_modules/react-native-windows/plugin.js': `
+      module.exports = [];
     `,
     'node_modules/react-native-windows/package.json': `{
       "name": "react-native-windows",
@@ -201,9 +196,6 @@ test('should load an out-of-tree "windows" platform that ships with a dependency
     'package.json': `{
       "dependencies": {
         "react-native-windows": "0.0.1"
-      },
-      "react-native": {
-        "reactNativePath": "."
       }
     }`,
   });
@@ -217,9 +209,6 @@ test('should automatically put "react-native" into haste config', () => {
     'package.json': `{
       "dependencies": {
         "react-native": "0.0.1"
-      },
-      "react-native": {
-        "reactNativePath": "."
       }
     }`,
   });

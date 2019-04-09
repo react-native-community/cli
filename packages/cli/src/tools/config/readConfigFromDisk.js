@@ -73,12 +73,17 @@ export function readDependencyConfigFromDisk(
  */
 const loadProjectCommands = (
   root,
-  commands: Array<string> | string,
+  commands: ?(Array<string> | string),
 ): Array<CommandT> => {
-  return [].concat(commands).reduce((acc: Array<CommandT>, cmdPath: string) => {
-    const cmds: Array<CommandT> | CommandT = require(path.join(root, cmdPath));
-    return acc.concat(cmds);
-  }, []);
+  return []
+    .concat(commands || [])
+    .reduce((acc: Array<CommandT>, cmdPath: string) => {
+      const cmds: Array<CommandT> | CommandT = require(path.join(
+        root,
+        cmdPath,
+      ));
+      return acc.concat(cmds);
+    }, []);
 };
 
 /**

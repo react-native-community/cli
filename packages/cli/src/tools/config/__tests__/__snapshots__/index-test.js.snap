@@ -23,7 +23,7 @@ Object {
   },
   "platforms": Object {},
   "project": Object {},
-  "reactNativePath": ".",
+  "reactNativePath": "<<REPLACED>>",
   "root": "<<REPLACED>>",
 }
 `;
@@ -113,7 +113,7 @@ Object {
     "android": null,
     "ios": null,
   },
-  "reactNativePath": ".",
+  "reactNativePath": "<<REPLACED>>",
   "root": "<<REPLACED>>",
 }
 `;

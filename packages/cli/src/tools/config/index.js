@@ -99,9 +99,9 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
     ({
       root: projectRoot,
       get reactNativePath() {
-        return (
-          userConfig.reactNativePath || resolveReactNativePath(projectRoot)
-        );
+        return userConfig.reactNativePath
+          ? path.resolve(projectRoot, userConfig.reactNativePath)
+          : resolveReactNativePath(projectRoot);
       },
       dependencies: {},
       commands: userConfig.commands,

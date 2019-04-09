@@ -10,6 +10,30 @@ const map = (key, value) =>
     .pattern(key, value);
 
 /**
+ * Schema for CommandT
+ */
+const command = t.object({
+  name: t.string().required(),
+  description: t.string(),
+  usage: t.string(),
+  func: t.func().required(),
+  options: t.array().items(
+    t.object({
+      command: t.string().required(),
+      description: t.string(),
+      parse: t.func(),
+      default: t.alternatives().try([t.bool(), t.number(), t.string()]),
+    }),
+  ),
+  examples: t.array().items(
+    t.object({
+      desc: t.string().required(),
+      cmd: t.string().required(),
+    }),
+  ),
+});
+
+/**
  * Schema for UserDependencyConfigT
  */
 export const dependencyConfig = t
@@ -62,7 +86,7 @@ export const dependencyConfig = t
     ).default(),
     commands: t
       .array()
-      .items(t.object())
+      .items(command)
       .default([]),
   })
   .default();
@@ -142,7 +166,7 @@ export const projectConfig = t
       .default([]),
     commands: t
       .array()
-      .items(t.object())
+      .items(command)
       .default([]),
   })
   .default();

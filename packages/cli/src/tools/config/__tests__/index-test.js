@@ -155,7 +155,7 @@ test('should load commands from "react-native-foo" and "react-native-bar" packag
       commands: [
         {
           name: 'bar-command',
-          func: () => console.log('foo')
+          func: () => console.log('bar')
         }
       ]
     }`,

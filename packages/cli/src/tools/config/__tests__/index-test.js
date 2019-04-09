@@ -167,7 +167,7 @@ test('should load commands from "react-native-foo" and "react-native-bar" packag
     }`,
   });
   const {commands} = loadConfig(DIR);
-  expect(removeString(commands, DIR)).toMatchSnapshot();
+  expect(commands).toMatchSnapshot();
 });
 
 test('should load an out-of-tree "windows" platform that ships with a dependency', () => {

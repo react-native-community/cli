@@ -47,9 +47,11 @@ Object {
 exports[`should load commands from "react-native-foo" and "react-native-bar" packages 1`] = `
 Array [
   Object {
+    "func": [Function],
     "name": "foo-command",
   },
   Object {
+    "func": [Function],
     "name": "bar-command",
   },
 ]

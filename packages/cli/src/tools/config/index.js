@@ -125,7 +125,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
       },
     }: ConfigT),
   );
-  console.log(finalConfig.commands);
+
   return finalConfig;
 }
 

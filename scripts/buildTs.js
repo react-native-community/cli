@@ -21,7 +21,6 @@ const packagesWithTs = packages.filter(p =>
 );
 
 const args = [
-  '--max-old-space-size=4096',
   path.resolve(
     require.resolve('typescript/package.json'),
     '..',

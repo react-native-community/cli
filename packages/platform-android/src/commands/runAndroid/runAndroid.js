@@ -10,7 +10,6 @@
 import path from 'path';
 import {spawnSync, spawn, execFileSync} from 'child_process';
 import fs from 'fs';
-import isString from 'lodash/isString';
 
 import type {ConfigT} from '../../../../cli/src/tools/config/types.flow';
 
@@ -87,7 +86,7 @@ function buildAndRun(args) {
 
   const adbPath = getAdbPath();
   if (args.deviceId) {
-    if (isString(args.deviceId)) {
+    if (typeof args.deviceId === 'string') {
       return runOnSpecificDevice(
         args,
         cmd,

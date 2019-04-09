@@ -5,7 +5,7 @@ import type {
   ProjectConfigT,
   PlatformsT,
 } from '../../tools/config/types.flow';
-import logger from '../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 import pollParams from './pollParams';
 import getPlatformName from './getPlatformName';
 

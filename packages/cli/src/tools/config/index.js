@@ -22,8 +22,8 @@ import assign from '../assign';
 /**
  * Built-in platforms
  */
-import * as ios from '../ios';
-import * as android from '../android';
+import * as ios from '@react-native-community/cli-platform-ios';
+import * as android from '@react-native-community/cli-platform-android';
 
 /**
  * `deepmerge` concatenates arrays by default instead of overwriting them.
@@ -83,11 +83,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
             );
           },
         }),
-        commands: acc.commands.concat(
-          config.commands.map(pathToCommand =>
-            path.join(dependencyName, pathToCommand),
-          ),
-        ),
+        commands: [...acc.commands, ...config.commands],
         platforms: {
           ...acc.platforms,
           ...config.platforms,
@@ -103,9 +99,9 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
     ({
       root: projectRoot,
       get reactNativePath() {
-        return (
-          userConfig.reactNativePath || resolveReactNativePath(projectRoot)
-        );
+        return userConfig.reactNativePath
+          ? path.resolve(projectRoot, userConfig.reactNativePath)
+          : resolveReactNativePath(projectRoot);
       },
       dependencies: {},
       commands: userConfig.commands,

@@ -13,8 +13,8 @@ import path from 'path';
 import process from 'process';
 import printRunInstructions from './printRunInstructions';
 import {createProjectFromTemplate} from '../../tools/generator/templates';
-import * as PackageManager from '../../tools/PackageManager';
-import logger from '../../tools/logger';
+import * as PackageManager from '../../tools/packageManager';
+import {logger} from '@react-native-community/cli-tools';
 
 /**
  * Creates the template for a React Native project given the provided
@@ -25,7 +25,7 @@ import logger from '../../tools/logger';
  * @param options Command line options passed from the react-native-cli directly.
  *                E.g. `{ version: '0.43.0', template: 'navigation' }`
  */
-function initCompat(projectDir, argsOrName) {
+async function initCompat(projectDir, argsOrName) {
   const args = Array.isArray(argsOrName)
     ? argsOrName // argsOrName was e.g. ['AwesomeApp', '--verbose']
     : [argsOrName].concat(process.argv.slice(4)); // argsOrName was e.g. 'AwesomeApp'
@@ -40,7 +40,7 @@ function initCompat(projectDir, argsOrName) {
   const options = minimist(args);
 
   logger.info(`Setting up new React Native app in ${projectDir}`);
-  generateProject(projectDir, newProjectName, options);
+  await generateProject(projectDir, newProjectName, options);
 }
 
 /**
@@ -48,12 +48,12 @@ function initCompat(projectDir, argsOrName) {
  * @param Absolute path at which the project folder should be created.
  * @param options Command line arguments parsed by minimist.
  */
-function generateProject(destinationRoot, newProjectName, options) {
+async function generateProject(destinationRoot, newProjectName, options) {
   const pkgJson = require('react-native/package.json');
   const reactVersion = pkgJson.peerDependencies.react;
 
-  PackageManager.setProjectDir(destinationRoot);
-  createProjectFromTemplate(
+  await PackageManager.setProjectDir(destinationRoot);
+  await createProjectFromTemplate(
     destinationRoot,
     newProjectName,
     options.template,
@@ -61,10 +61,10 @@ function generateProject(destinationRoot, newProjectName, options) {
   );
 
   logger.info('Adding required dependencies');
-  PackageManager.install([`react@${reactVersion}`]);
+  await PackageManager.install([`react@${reactVersion}`]);
 
   logger.info('Adding required dev dependencies');
-  PackageManager.installDev([
+  await PackageManager.installDev([
     '@babel/core',
     '@babel/runtime',
     '@react-native-community/eslint-config',

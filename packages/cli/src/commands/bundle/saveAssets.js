@@ -14,7 +14,7 @@ import fs from 'fs';
 import filterPlatformAssetScales from './filterPlatformAssetScales';
 import getAssetDestPathAndroid from './getAssetDestPathAndroid';
 import getAssetDestPathIOS from './getAssetDestPathIOS';
-import logger from '../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 
 function saveAssets(assets, platform, assetsDest) {
   if (!assetsDest) {

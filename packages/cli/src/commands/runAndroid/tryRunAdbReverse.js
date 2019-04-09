@@ -8,7 +8,7 @@
  */
 
 import {execFileSync} from 'child_process';
-import logger from '../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 import getAdbPath from './getAdbPath';
 
 // Runs ADB reverse tcp:8081 tcp:8081 to allow loading the jsbundle from the packager

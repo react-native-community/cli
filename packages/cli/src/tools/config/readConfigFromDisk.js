@@ -7,12 +7,17 @@ import Joi from 'joi';
 import cosmiconfig from 'cosmiconfig';
 import path from 'path';
 
-import {type UserDependencyConfigT, type UserConfigT} from './types.flow';
+import {
+  type UserDependencyConfigT,
+  type UserConfigT,
+  type CommandT,
+} from './types.flow';
 
 import {JoiError} from '../errors';
 
 import * as schema from './schema';
-import logger from '../logger';
+
+import {logger} from '@react-native-community/cli-tools';
 
 /**
  * Places to look for the new configuration
@@ -61,6 +66,27 @@ export function readDependencyConfigFromDisk(
 }
 
 /**
+ * Returns an array of commands that are defined in the project.
+ *
+ * `config.project` can be either an array of paths or a single string.
+ * Each of the files can export a commands (object) or an array of commands
+ */
+const loadProjectCommands = (
+  root,
+  commands: ?(Array<string> | string),
+): Array<CommandT> => {
+  return []
+    .concat(commands || [])
+    .reduce((acc: Array<CommandT>, cmdPath: string) => {
+      const cmds: Array<CommandT> | CommandT = require(path.join(
+        root,
+        cmdPath,
+      ));
+      return acc.concat(cmds);
+    }, []);
+};
+
+/**
  * Reads a legacy configuaration from a `package.json` "rnpm" key.
  */
 export function readLegacyDependencyConfigFromDisk(
@@ -82,7 +108,7 @@ export function readLegacyDependencyConfigFromDisk(
       hooks: config.commands,
       params: config.params,
     },
-    commands: [].concat(config.plugin || []),
+    commands: loadProjectCommands(rootFolder, config.plugin),
     platforms: config.platform
       ? require(path.join(rootFolder, config.platform))
       : undefined,

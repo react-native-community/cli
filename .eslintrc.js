@@ -13,7 +13,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['**/__mocks__/**', '**/__fixtures__/**', 'testSetup.js'],
+      files: ['**/__mocks__/**', '**/__fixtures__/**', '**/__e2e__/**', 'jest/**'],
       env: {
         jest: true,
       },

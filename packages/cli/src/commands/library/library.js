@@ -12,7 +12,7 @@ import path from 'path';
 import copyAndReplace from '../../tools/copyAndReplace';
 import isValidPackageName from '../../tools/isValidPackageName';
 import walk from '../../tools/walk';
-import logger from '../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 
 /**
  * Creates a new native library with the given name

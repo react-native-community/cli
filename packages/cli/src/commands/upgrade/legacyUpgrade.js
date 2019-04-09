@@ -11,15 +11,15 @@
 import fs from 'fs';
 import path from 'path';
 import semver from 'semver';
-import type {ContextT} from '../../tools/types.flow';
-import logger from '../../tools/logger';
+import type {ConfigT} from '../../tools/config/types.flow';
+import {logger} from '@react-native-community/cli-tools';
 import copyProjectTemplateAndReplace from '../../tools/generator/copyProjectTemplateAndReplace';
 
 /**
  * Migrate application to a new version of React Native.
  * See http://facebook.github.io/react-native/docs/upgrading.html
  */
-function validateAndUpgrade(argv: Array<string>, ctx: ContextT) {
+function validateAndUpgrade(argv: Array<string>, ctx: ConfigT) {
   const projectDir = ctx.root;
 
   const packageJSON = JSON.parse(

@@ -1,8 +1,9 @@
 // @flow
-import {execFileSync} from 'child_process';
+
+import execa from 'execa';
 import path from 'path';
-import * as PackageManager from '../../tools/PackageManager';
-import logger from '../../tools/logger';
+import * as PackageManager from '../../tools/packageManager';
+import {logger} from '@react-native-community/cli-tools';
 import copyFiles from '../../tools/copyFiles';
 
 export type TemplateConfig = {
@@ -13,7 +14,10 @@ export type TemplateConfig = {
 
 export function installTemplatePackage(templateName: string, npm?: boolean) {
   logger.debug(`Installing template from ${templateName}`);
-  PackageManager.install([templateName], {preferYarn: !npm});
+  return PackageManager.install([templateName], {
+    preferYarn: !npm,
+    silent: true,
+  });
 }
 
 export function getTemplateConfig(templateName: string): TemplateConfig {
@@ -44,5 +48,5 @@ export function executePostInitScript(
 
   logger.debug(`Executing post init script located ${scriptPath}`);
 
-  execFileSync(scriptPath, {stdio: 'inherit'});
+  return execa(scriptPath, {stdio: 'inherit'});
 }

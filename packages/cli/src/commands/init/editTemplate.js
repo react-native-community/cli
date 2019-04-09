@@ -2,7 +2,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 import walk from '../../tools/walk';
-import logger from '../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 
 function replaceNameInUTF8File(
   filePath: string,

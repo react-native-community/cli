@@ -4,9 +4,9 @@ import fs from 'fs';
 import chalk from 'chalk';
 import semver from 'semver';
 import execa from 'execa';
-import type {ContextT} from '../../tools/types.flow';
-import logger from '../../tools/logger';
-import * as PackageManager from '../../tools/PackageManager';
+import type {ConfigT} from '../../tools/config/types.flow';
+import {logger} from '@react-native-community/cli-tools';
+import * as PackageManager from '../../tools/packageManager';
 import {fetch} from '../../tools/fetch';
 import legacyUpgrade from './legacyUpgrade';
 
@@ -115,7 +115,7 @@ const installDeps = async (newVersion, projectDir) => {
     `react-native@${newVersion}`,
     ...Object.keys(peerDeps).map(module => `${module}@${peerDeps[module]}`),
   ];
-  PackageManager.install(deps, {
+  await PackageManager.install(deps, {
     silent: true,
   });
   await execa('git', ['add', 'package.json']);
@@ -137,9 +137,16 @@ const applyPatch = async (
   tmpPatchFile: string,
 ) => {
   let filesToExclude = ['package.json'];
+  // $FlowFixMe ThenableChildProcess is incompatible with Promise
+  const {stdout: relativePathFromRoot} = await execa('git', [
+    'rev-parse',
+    '--show-prefix',
+  ]);
   try {
     try {
-      const excludes = filesToExclude.map(e => `--exclude=${e}`);
+      const excludes = filesToExclude.map(
+        e => `--exclude=${path.join(relativePathFromRoot, e)}`,
+      );
       await execa('git', [
         'apply',
         '--check',
@@ -147,6 +154,7 @@ const applyPatch = async (
         ...excludes,
         '-p2',
         '--3way',
+        `--directory=${relativePathFromRoot}`,
       ]);
       logger.info('Applying diff...');
     } catch (error) {
@@ -160,8 +168,17 @@ const applyPatch = async (
 
       logger.info(`Applying diff (excluding: ${filesToExclude.join(', ')})...`);
     } finally {
-      const excludes = filesToExclude.map(e => `--exclude=${e}`);
-      await execa('git', ['apply', tmpPatchFile, ...excludes, '-p2', '--3way']);
+      const excludes = filesToExclude.map(
+        e => `--exclude=${path.join(relativePathFromRoot, e)}`,
+      );
+      await execa('git', [
+        'apply',
+        tmpPatchFile,
+        ...excludes,
+        '-p2',
+        '--3way',
+        `--directory=${relativePathFromRoot}`,
+      ]);
     }
   } catch (error) {
     if (error.stderr) {
@@ -176,7 +193,7 @@ const applyPatch = async (
 /**
  * Upgrade application to a new version of React Native.
  */
-async function upgrade(argv: Array<string>, ctx: ContextT, args: FlagsT) {
+async function upgrade(argv: Array<string>, ctx: ConfigT, args: FlagsT) {
   if (args.legacy) {
     return legacyUpgrade.func(argv, ctx);
   }

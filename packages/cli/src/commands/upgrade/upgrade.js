@@ -4,7 +4,7 @@ import fs from 'fs';
 import chalk from 'chalk';
 import semver from 'semver';
 import execa from 'execa';
-import type {ContextT} from '../../tools/types.flow';
+import type {ConfigT} from '../../tools/config/types.flow';
 import {logger} from '@react-native-community/cli-tools';
 import * as PackageManager from '../../tools/packageManager';
 import {fetch} from '../../tools/fetch';
@@ -193,7 +193,7 @@ const applyPatch = async (
 /**
  * Upgrade application to a new version of React Native.
  */
-async function upgrade(argv: Array<string>, ctx: ContextT, args: FlagsT) {
+async function upgrade(argv: Array<string>, ctx: ConfigT, args: FlagsT) {
   if (args.legacy) {
     return legacyUpgrade.func(argv, ctx);
   }

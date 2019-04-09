@@ -13,7 +13,7 @@ import {Terminal} from 'metro-core';
 
 import morgan from 'morgan';
 import path from 'path';
-import type {ContextT} from '../../tools/types.flow';
+import type {ConfigT} from '../../tools/config/types.flow';
 import messageSocket from './messageSocket';
 import webSocketProxy from './webSocketProxy';
 import MiddlewareManager from './middleware/MiddlewareManager';
@@ -40,7 +40,7 @@ export type Args = {|
   config?: string,
 |};
 
-async function runServer(argv: Array<string>, ctx: ContextT, args: Args) {
+async function runServer(argv: Array<string>, ctx: ConfigT, args: Args) {
   const terminal = new Terminal(process.stdout);
   const ReporterImpl = getReporterImpl(args.customLogReporterPath || null);
   const reporter = new ReporterImpl(terminal);

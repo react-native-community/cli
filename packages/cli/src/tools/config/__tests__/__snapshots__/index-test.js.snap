@@ -1,5 +1,62 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`should automatically put "react-native" into haste config 1`] = `
+Object {
+  "platforms": Array [
+    "ios",
+    "android",
+  ],
+  "providesModuleNodeModules": Array [
+    "react-native",
+  ],
+}
+`;
+
+exports[`should have a valid structure by default 1`] = `
+Object {
+  "assets": Array [],
+  "commands": Array [],
+  "dependencies": Object {},
+  "haste": Object {
+    "platforms": Array [],
+    "providesModuleNodeModules": Array [],
+  },
+  "platforms": Object {},
+  "project": Object {},
+  "reactNativePath": ".",
+  "root": "<<REPLACED>>",
+}
+`;
+
+exports[`should load an out-of-tree "windows" platform that ships with a dependency 1`] = `
+Object {
+  "haste": Object {
+    "platforms": Array [
+      "windows",
+    ],
+    "providesModuleNodeModules": Array [
+      "react-native-windows",
+    ],
+  },
+  "platforms": Object {
+    "windows": Object {},
+  },
+}
+`;
+
+exports[`should load commands from "react-native-foo" and "react-native-bar" packages 1`] = `
+Array [
+  Object {
+    "func": [Function],
+    "name": "foo-command",
+  },
+  Object {
+    "func": [Function],
+    "name": "bar-command",
+  },
+]
+`;
+
 exports[`should merge project configuration with default values 1`] = `
 Object {
   "assets": Array [],
@@ -59,45 +116,6 @@ Object {
   "reactNativePath": ".",
   "root": "<<REPLACED>>",
 }
-`;
-
-exports[`should have a valid structure by default 1`] = `
-Object {
-  "assets": Array [],
-  "commands": Array [],
-  "dependencies": Object {},
-  "haste": Object {
-    "platforms": Array [],
-    "providesModuleNodeModules": Array [],
-  },
-  "platforms": Object {},
-  "project": Object {},
-  "reactNativePath": ".",
-  "root": "<<REPLACED>>",
-}
-`;
-
-exports[`should load an out-of-tree "windows" platform that ships with a dependency 1`] = `
-Object {
-  "haste": Object {
-    "platforms": Array [
-      "windows",
-    ],
-    "providesModuleNodeModules": Array [
-      "react-native-windows",
-    ],
-  },
-  "platforms": Object {
-    "windows": Object {},
-  },
-}
-`;
-
-exports[`should load commands from "react-native-foo" and "react-native-bar" packages 1`] = `
-Array [
-  "react-native-foo/command-foo.js",
-  "react-native-bar/command-bar.js",
-]
 `;
 
 exports[`should read \`rnpm\` config from a dependency and transform it to a new format 1`] = `
@@ -181,17 +199,5 @@ Object {
       },
     },
   },
-}
-`;
-
-exports[`should automatically put "react-native" into haste config 1`] = `
-Object {
-  "platforms": Array [
-    "ios",
-    "android",
-  ],
-  "providesModuleNodeModules": Array [
-    "react-native",
-  ],
 }
 `;

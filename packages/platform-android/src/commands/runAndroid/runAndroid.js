@@ -12,11 +12,11 @@ import {spawnSync, spawn, execFileSync} from 'child_process';
 import fs from 'fs';
 import isString from 'lodash/isString';
 
-import isPackagerRunning from '../../tools/isPackagerRunning';
-import type {ContextT} from '../../tools/types.flow';
+import type {ContextT} from '../../../../cli/src/tools/types.flow';
 
 import adb from './adb';
 import runOnAllDevices from './runOnAllDevices';
+import isPackagerRunning from './isPackagerRunning';
 import tryRunAdbReverse from './tryRunAdbReverse';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
 import getAdbPath from './getAdbPath';

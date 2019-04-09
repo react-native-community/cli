@@ -9,13 +9,13 @@
  */
 
 import child_process from 'child_process';
+import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
-import type {ContextT} from '../../tools/types.flow';
+import type {ContextT} from '../../../../cli/src/tools/types.flow';
 import findXcodeProject from './findXcodeProject';
 import parseIOSDevicesList from './parseIOSDevicesList';
 import findMatchingSimulator from './findMatchingSimulator';
-import {ProcessError} from '../../tools/errors';
 import {logger} from '@react-native-community/cli-tools';
 
 type FlagsT = {
@@ -311,15 +311,18 @@ function buildProject(
       }
       if (code !== 0) {
         reject(
-          new ProcessError(
-            [
-              'Failed to build iOS project.',
-              `We ran "xcodebuild" command but it exited with error code ${code}.`,
-              `To debug build logs further, consider building your app with Xcode.app, by opening ${
-                xcodeProject.name
-              }`,
-            ].join(' '),
-            errorOutput,
+          new Error(
+            chalk.red(
+              [
+                'Failed to build iOS project.',
+                `We ran "xcodebuild" command but it exited with error code ${code}.`,
+                `To debug build logs further, consider building your app with Xcode.app, by opening ${
+                  xcodeProject.name
+                }`,
+              ].join(' '),
+            ) +
+              '\n\n' +
+              chalk.gray(errorOutput),
           ),
         );
         return;

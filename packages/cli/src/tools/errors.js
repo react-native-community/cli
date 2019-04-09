@@ -25,13 +25,6 @@ export class CLIError extends Error {
   }
 }
 
-export class ProcessError extends Error {
-  constructor(msg: string, processError: string) {
-    super(`${chalk.red(msg)}\n\n${chalk.gray(processError)}`);
-    Error.captureStackTrace(this, ProcessError);
-  }
-}
-
 type JoiErrorDetails<K, T> = {
   message: string,
   path: string[],

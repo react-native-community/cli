@@ -19,6 +19,7 @@ import webSocketProxy from './webSocketProxy';
 import MiddlewareManager from './middleware/MiddlewareManager';
 
 import loadMetroConfig from '../../tools/loadMetroConfig';
+import logger from '../../../../tools/src/logger';
 
 export type Args = {|
   assetExts?: string[],
@@ -65,7 +66,7 @@ async function runServer(argv: Array<string>, ctx: ConfigT, args: Args) {
   middlewareManager.getConnectInstance().use(
     morgan(
       'combined',
-      !args.verbose && {
+      !logger.isVerbose() && {
         skip: (req, res) => res.statusCode < 400,
       },
     ),

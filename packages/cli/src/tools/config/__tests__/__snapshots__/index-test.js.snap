@@ -83,6 +83,15 @@ Object {
 }
 `;
 
+exports[`should not add default React Native config when one present 1`] = `
+Array [
+  Object {
+    "func": [Function],
+    "name": "test",
+  },
+]
+`;
+
 exports[`should read \`rnpm\` config from a dependency and transform it to a new format 1`] = `
 Object {
   "assets": Array [],

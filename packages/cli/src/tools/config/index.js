@@ -38,10 +38,18 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
         readLegacyDependencyConfigFromDisk(root) ||
         readDependencyConfigFromDisk(root);
 
-      // @todo: Move this to React Native in the future
+      /**
+       * This workaround is neccessary for development only before
+       * first 0.60.0-rc.0 gets released and we can switch to it
+       * while testing.
+       */
       if (dependencyName === 'react-native') {
-        config.platforms = {ios, android};
-        config.commands = [...ios.commands, ...android.commands];
+        if (Object.keys(config.platforms).length === 0) {
+          config.platforms = {ios, android};
+        }
+        if (config.commands.length === 0) {
+          config.commands = [...ios.commands, ...android.commands];
+        }
       }
 
       const isPlatform = Object.keys(config.platforms).length > 0;

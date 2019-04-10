@@ -113,8 +113,10 @@ test('should merge project configuration with default values', () => {
       }
     }`,
   });
-  const config = loadConfig(DIR);
-  expect(removeString(config, DIR)).toMatchSnapshot();
+  const {dependencies} = loadConfig(DIR);
+  expect(removeString(dependencies, DIR)).toMatchSnapshot(
+    'snapshoting `dependencies` property of the project config',
+  );
 });
 
 test('should read `rnpm` config from a dependency and transform it to a new format', () => {

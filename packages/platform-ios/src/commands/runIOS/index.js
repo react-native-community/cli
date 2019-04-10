@@ -9,7 +9,6 @@
  */
 
 import child_process from 'child_process';
-import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
 

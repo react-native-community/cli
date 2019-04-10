@@ -217,3 +217,22 @@ test('should automatically put "react-native" into haste config', () => {
   const {haste} = loadConfig(DIR);
   expect(haste).toMatchSnapshot();
 });
+
+test('should not add default React Native config when one present', () => {
+  writeFiles(DIR, {
+    'node_modules/react-native/package.json': '{}',
+    'node_modules/react-native/react-native.config.js': `module.exports = {
+      commands: [{
+        name: 'test',
+        func: () => {},
+      }]
+    }`,
+    'package.json': `{
+      "dependencies": {
+        "react-native": "0.0.1"
+      }
+    }`,
+  });
+  const {commands} = loadConfig(DIR);
+  expect(commands).toMatchSnapshot();
+});

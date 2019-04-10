@@ -114,8 +114,8 @@ test('should merge project configuration with default values', () => {
     }`,
   });
   const {dependencies} = loadConfig(DIR);
-  expect(removeString(dependencies, DIR)).toMatchSnapshot(
-    'snapshoting `dependencies` property of the project config',
+  expect(removeString(dependencies['react-native-test'], DIR)).toMatchSnapshot(
+    'snapshoting `react-native-test` config',
   );
 });
 

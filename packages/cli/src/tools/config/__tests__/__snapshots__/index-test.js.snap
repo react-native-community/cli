@@ -57,39 +57,27 @@ Array [
 ]
 `;
 
-exports[`should merge project configuration with default values: snapshoting \`dependencies\` property of the project config 1`] = `
+exports[`should merge project configuration with default values: snapshoting \`react-native-test\` config 1`] = `
 Object {
-  "react-native": Object {
-    "assets": Array [],
-    "hooks": Object {},
-    "name": "react-native",
-    "params": Array [],
-    "platforms": Object {
-      "android": null,
-      "ios": null,
-    },
-  },
-  "react-native-test": Object {
-    "assets": Array [
-      "foo",
-    ],
-    "hooks": Object {},
-    "name": "react-native-test",
-    "params": Array [],
-    "platforms": Object {
-      "android": null,
-      "ios": Object {
-        "folder": "<<REPLACED>>/node_modules/react-native-test",
-        "libraryFolder": "Libraries",
-        "pbxprojPath": "<<REPLACED>>/node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj",
-        "plist": Array [],
-        "podfile": null,
-        "podspec": null,
-        "projectName": "HelloWorld.xcodeproj",
-        "projectPath": "<<REPLACED>>/node_modules/react-native-test/ios/HelloWorld.xcodeproj",
-        "sharedLibraries": Array [],
-        "sourceDir": "./abc",
-      },
+  "assets": Array [
+    "foo",
+  ],
+  "hooks": Object {},
+  "name": "react-native-test",
+  "params": Array [],
+  "platforms": Object {
+    "android": null,
+    "ios": Object {
+      "folder": "<<REPLACED>>/node_modules/react-native-test",
+      "libraryFolder": "Libraries",
+      "pbxprojPath": "<<REPLACED>>/node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj",
+      "plist": Array [],
+      "podfile": null,
+      "podspec": null,
+      "projectName": "HelloWorld.xcodeproj",
+      "projectPath": "<<REPLACED>>/node_modules/react-native-test/ios/HelloWorld.xcodeproj",
+      "sharedLibraries": Array [],
+      "sourceDir": "./abc",
     },
   },
 }

@@ -135,12 +135,10 @@ function unlink(args: Array<string>, ctx: ConfigT) {
       );
     })
     .catch(err => {
-      logger.error(
-        `It seems something went wrong while unlinking. CLIError:\n${
-          err.message
-        }`,
+      throw new CLIError(
+        `Something went wrong while unlinking. Reason ${err.message}`,
+        err,
       );
-      throw err;
     });
 }
 

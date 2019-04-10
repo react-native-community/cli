@@ -4,7 +4,6 @@
   "main": "build/index.js",
   "dependencies": {
     "chalk": "^1.1.1",
-    "dedent": "^0.7.0",
     "lodash": "^4.17.5",
     "mime": "^1.3.4"
   }

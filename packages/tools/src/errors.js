@@ -1,7 +1,6 @@
 /**
  * @flow
  */
-import dedent from 'dedent';
 
 /**
  * CLIError
@@ -11,13 +10,16 @@ import dedent from 'dedent';
  * - makes an inline string to match current styling inside CLI
  */
 export class CLIError extends Error {
-  constructor(msg: string, error?: Error) {
-    super(dedent(msg).replace(/(\r\n|\n|\r)/gm, ' '));
-    if (error) {
-      this.stack = error.stack
-        .split('\n')
-        .slice(0, 2)
-        .join('\n');
+  constructor(msg: string, originError?: Error | message) {
+    super(msg.replace(/(\s{2,})/gm, ' ').trim());
+    if (originError) {
+      this.stack =
+        typeof originError === 'string'
+          ? originError
+          : originError.stack
+              .split('\n')
+              .slice(0, 2)
+              .join('\n');
     } else {
       Error.captureStackTrace(this, CLIError);
     }

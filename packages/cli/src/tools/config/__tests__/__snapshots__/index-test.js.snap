@@ -175,3 +175,5 @@ Object {
   },
 }
 `;
+
+exports[`should skip packages that have invalid configuration 1`] = `Object {}`;

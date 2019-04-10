@@ -8,18 +8,15 @@
  */
 
 import Metro from 'metro';
-
 import {Terminal} from 'metro-core';
-
 import morgan from 'morgan';
 import path from 'path';
+import {logger} from '@react-native-community/cli-tools';
 import type {ConfigT} from '../../tools/config/types.flow';
 import messageSocket from './messageSocket';
 import webSocketProxy from './webSocketProxy';
 import MiddlewareManager from './middleware/MiddlewareManager';
-
 import loadMetroConfig from '../../tools/loadMetroConfig';
-import logger from '../../../../tools/src/logger';
 
 export type Args = {|
   assetExts?: string[],

@@ -38,7 +38,7 @@ const getRNPeerDeps = async (
   return JSON.parse(stdout);
 };
 
-const getPatch = async (currentVersion, newVersion, projectDir, config) => {
+const getPatch = async (currentVersion, newVersion, config) => {
   let patch;
 
   logger.info(`Fetching diff between v${currentVersion} and v${newVersion}...`);
@@ -59,28 +59,34 @@ const getPatch = async (currentVersion, newVersion, projectDir, config) => {
 
   let patchWithRenamedProjects = patch;
 
-  // rn-diff-purge only supports iOS and Android platforms
-  if (config.project.ios) {
-    patchWithRenamedProjects = patchWithRenamedProjects.replace(
-      new RegExp('RnDiffApp', 'g'),
-      // $FlowFixMe - poor typings of ProjectConfigIOST
-      config.project.ios.projectName.replace('.xcodeproj', ''),
-    );
-  }
-
-  if (config.project.android) {
-    patchWithRenamedProjects = patchWithRenamedProjects
-      .replace(
-        new RegExp('com\\.rndiffapp', 'g'),
-        // $FlowFixMe - poor typings of ProjectConfigAndroidT
-        config.project.android.packageName,
-      )
-      .replace(
-        new RegExp('com\\.rndiffapp'.split('.').join('/'), 'g'),
-        // $FlowFixMe - poor typings of ProjectConfigAndroidT
-        config.project.android.packageName.split('.').join('/'),
+  Object.keys(config.project).forEach(platform => {
+    if (!config.project[platform]) {
+      return;
+    }
+    if (platform === 'ios') {
+      patchWithRenamedProjects = patchWithRenamedProjects.replace(
+        new RegExp('RnDiffApp', 'g'),
+        // $FlowFixMe - poor typings of ProjectConfigIOST
+        config.project[platform].projectName.replace('.xcodeproj', ''),
       );
-  }
+    } else if (platform === 'android') {
+      patchWithRenamedProjects = patchWithRenamedProjects
+        .replace(
+          new RegExp('com\\.rndiffapp', 'g'),
+          // $FlowFixMe - poor typings of ProjectConfigAndroidT
+          config.project[platform].packageName,
+        )
+        .replace(
+          new RegExp('com\\.rndiffapp'.split('.').join('/'), 'g'),
+          // $FlowFixMe - poor typings of ProjectConfigAndroidT
+          config.project[platform].packageName.split('.').join('/'),
+        );
+    } else {
+      logger.warn(
+        `Unsupported platform: "${platform}". \`upgrade\` only supports iOS and Android.`,
+      );
+    }
+  });
 
   return patchWithRenamedProjects;
 };
@@ -234,7 +240,7 @@ async function upgrade(argv: Array<string>, ctx: ConfigT, args: FlagsT) {
     return;
   }
 
-  const patch = await getPatch(currentVersion, newVersion, projectDir, ctx);
+  const patch = await getPatch(currentVersion, newVersion, ctx);
 
   if (patch === null) {
     return;

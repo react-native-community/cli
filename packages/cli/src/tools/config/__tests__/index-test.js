@@ -10,6 +10,8 @@ import {
   getTempDirectory,
 } from '../../../../../../jest/helpers';
 
+import {logger} from '@react-native-community/cli-tools';
+
 const DIR = getTempDirectory('resolve_config_path_test');
 
 // Removes string from all key/values within an object
@@ -249,6 +251,8 @@ test('should skip packages that have invalid configuration', () => {
       }
     }`,
   });
+  const spy = jest.spyOn(logger, 'warn');
   const {dependencies} = loadConfig(DIR);
-  expect(dependencies).toMatchSnapshot();
+  expect(dependencies).toMatchSnapshot('dependencies config');
+  expect(spy.mock.calls[0][0]).toMatchSnapshot('logged warning');
 });

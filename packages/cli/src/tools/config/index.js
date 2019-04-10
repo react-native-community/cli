@@ -57,7 +57,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
       /**
        * This workaround is neccessary for development only before
        * first 0.60.0-rc.0 gets released and we can switch to it
-       * while
+       * while testing
        */
       if (dependencyName === 'react-native') {
         if (Object.keys(config.platforms).length === 0) {

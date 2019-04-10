@@ -6,7 +6,7 @@
  *
  */
 
-import { groupBy } from 'lodash';
+import {groupBy} from 'lodash';
 import mime from 'mime';
 
 /**

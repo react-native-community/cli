@@ -12,7 +12,7 @@
     "test": "jest",
     "test:ci:unit": "jest packages --ci --coverage",
     "test:ci:e2e": "jest e2e --ci -i",
-    "lint": "eslint . --cache --report-unused-disable-directives",
+    "lint": "eslint --ext .js,.ts,.tsx . --cache --report-unused-disable-directives",
     "flow-check": "flow check",
     "postinstall": "yarn build",
     "publish": "yarn build-clean && yarn build && lerna publish"
@@ -23,7 +23,7 @@
     "@babel/plugin-transform-strict-mode": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
     "@babel/preset-flow": "^7.0.0",
-    "@react-native-community/eslint-config": "^0.0.3",
+    "@react-native-community/eslint-config": "^0.0.4",
     "babel-jest": "^24.6.0",
     "chalk": "^2.4.2",
     "eslint": "^5.10.0",

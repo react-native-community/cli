@@ -5,6 +5,8 @@
   "dependencies": {
     "@react-native-community/cli-tools": "^2.0.0-alpha.5",
     "node-fetch": "^2.2.0",
-    "logkitty": "^0.4.0"
+    "logkitty": "^0.4.0",
+    "slash": "^2.0.0",
+    "xmldoc": "^0.4.0"
   }
 }

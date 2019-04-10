@@ -5,7 +5,7 @@
 import {uniqBy, flatMap} from 'lodash';
 import path from 'path';
 
-import type {ConfigT, PlatformsT} from '../../tools/config/types.flow';
+import type {ConfigT} from '../../tools/config/types.flow';
 
 import promiseWaterfall from './promiseWaterfall';
 import commandStub from './commandStub';

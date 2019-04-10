@@ -1,29 +1,7 @@
 /**
  * @flow
  */
-import chalk from 'chalk';
-import dedent from 'dedent';
-
-/**
- * CLIError
- *
- * Features:
- * - uses original stack trace when error object is passed
- * - makes an inline string to match current styling inside CLI
- */
-export class CLIError extends Error {
-  constructor(msg: string, error?: Error) {
-    super(msg.replace(/(\r\n|\n|\r)/gm, ' '));
-    if (error) {
-      this.stack = error.stack
-        .split('\n')
-        .slice(0, 2)
-        .join('\n');
-    } else {
-      Error.captureStackTrace(this, CLIError);
-    }
-  }
-}
+import {CLIError} from '@react-native-community/cli-tools';
 
 type JoiErrorDetails<K, T> = {
   message: string,
@@ -54,7 +32,7 @@ export class JoiError extends CLIError {
           switch (error.type) {
             case 'object.allowUnknown': {
               const value = JSON.stringify(error.context.value);
-              return dedent`
+              return `
                 Unknown option ${name} with value "${value}" was found.
                 This is either a typing error or a user mistake. Fixing it will remove this message.
               `;
@@ -63,7 +41,7 @@ export class JoiError extends CLIError {
             case 'string.base': {
               const expectedType = error.type.replace('.base', '');
               const actualType = typeof error.context.value;
-              return dedent`
+              return `
                 Option ${name} must be a ${expectedType}, instead got ${actualType}
               `;
             }

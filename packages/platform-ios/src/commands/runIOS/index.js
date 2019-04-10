@@ -18,7 +18,7 @@ import type {ConfigT} from '../../../../cli/src/tools/config/types.flow';
 import findXcodeProject from './findXcodeProject';
 import parseIOSDevicesList from './parseIOSDevicesList';
 import findMatchingSimulator from './findMatchingSimulator';
-import {logger} from '@react-native-community/cli-tools';
+import {logger, CLIError} from '@react-native-community/cli-tools';
 
 type FlagsT = {
   simulator: string,
@@ -34,7 +34,7 @@ type FlagsT = {
 
 function runIOS(_: Array<string>, ctx: ConfigT, args: FlagsT) {
   if (!fs.existsSync(args.projectPath)) {
-    throw new Error(
+    throw new CLIError(
       'iOS project folder not found. Are you sure this is a React Native project?',
     );
   }
@@ -43,7 +43,7 @@ function runIOS(_: Array<string>, ctx: ConfigT, args: FlagsT) {
 
   const xcodeProject = findXcodeProject(fs.readdirSync('.'));
   if (!xcodeProject) {
-    throw new Error(
+    throw new CLIError(
       `Could not find Xcode project files in "${args.projectPath}" folder`,
     );
   }
@@ -137,12 +137,12 @@ async function runOnSimulator(xcodeProject, args, scheme) {
       ),
     );
   } catch (e) {
-    throw new Error('Could not parse the simulator list output');
+    throw new CLIError('Could not parse the simulator list output');
   }
 
   const selectedSimulator = findMatchingSimulator(simulators, args.simulator);
   if (!selectedSimulator) {
-    throw new Error(`Could not find ${args.simulator} simulator`);
+    throw new CLIError(`Could not find ${args.simulator} simulator`);
   }
 
   /**
@@ -313,19 +313,15 @@ function buildProject(
       }
       if (code !== 0) {
         reject(
-          new Error(
-            chalk.red(
-              [
-                'Failed to build iOS project.',
-                `We ran "xcodebuild" command but it exited with error code ${code}.`,
-                `To debug build logs further, consider building your app with Xcode.app, by opening ${
-                  xcodeProject.name
-                }`,
-              ].join(' '),
-            ) +
-              '\n\n' +
-              chalk.gray(errorOutput),
-          ),
+          new CLIError(`
+            Failed to build iOS project.
+
+            We ran "xcodebuild" command but it exited with error code ${code}. To debug build
+            logs further, consider building your app with Xcode.app, by opening
+            ${xcodeProject.name}
+
+            ${chalk.gray(errorOutput)}
+          `),
         );
         return;
       }

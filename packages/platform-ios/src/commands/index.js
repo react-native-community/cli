@@ -1,7 +1,7 @@
 /**
  * @flow
  */
-import logIOS from './logIOS/logIOS';
-import runIOS from './runIOS/runIOS';
+import logIOS from './logIOS';
+import runIOS from './runIOS';
 
 export default [logIOS, runIOS];

@@ -2,7 +2,6 @@
  * @flow
  */
 import path from 'path';
-import deepmerge from 'deepmerge';
 import {mapValues} from 'lodash';
 
 import findDependencies from './findDependencies';
@@ -18,21 +17,12 @@ import {
 import {type ConfigT} from './types.flow';
 
 import assign from '../assign';
-
+import merge from '../merge';
 /**
  * Built-in platforms
  */
 import * as ios from '@react-native-community/cli-platform-ios';
 import * as android from '@react-native-community/cli-platform-android';
-
-/**
- * `deepmerge` concatenates arrays by default instead of overwriting them.
- * We define custom merging function for arrays to change that behaviour
- */
-const merge = (...objs: Object[]) =>
-  deepmerge(...objs, {
-    arrayMerge: (destinationArray, sourceArray, options) => sourceArray,
-  });
 
 /**
  * Loads CLI configuration

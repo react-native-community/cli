@@ -84,6 +84,7 @@ export function projectConfig(folder, userConfig = {}) {
     settingsGradlePath,
     assetsPath,
     mainFilePath,
+    packageName,
   };
 }
 

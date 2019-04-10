@@ -10,13 +10,12 @@
 import path from 'path';
 import {spawnSync, spawn, execFileSync} from 'child_process';
 import fs from 'fs';
-import isString from 'lodash/isString';
 
-import isPackagerRunning from '../../tools/isPackagerRunning';
-import type {ConfigT} from '../../tools/config/types.flow';
+import type {ConfigT} from '../../../../cli/src/tools/config/types.flow';
 
 import adb from './adb';
 import runOnAllDevices from './runOnAllDevices';
+import isPackagerRunning from './isPackagerRunning';
 import tryRunAdbReverse from './tryRunAdbReverse';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
 import getAdbPath from './getAdbPath';
@@ -87,7 +86,7 @@ function buildAndRun(args) {
 
   const adbPath = getAdbPath();
   if (args.deviceId) {
-    if (isString(args.deviceId)) {
+    if (typeof args.deviceId === 'string') {
       return runOnSpecificDevice(
         args,
         cmd,

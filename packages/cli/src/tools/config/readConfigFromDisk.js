@@ -13,7 +13,7 @@ import {
   type CommandT,
 } from './types.flow';
 
-import {JoiError} from '../errors';
+import {JoiError} from './errors';
 
 import * as schema from './schema';
 

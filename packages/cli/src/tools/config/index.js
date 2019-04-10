@@ -41,6 +41,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
       // @todo: Move this to React Native in the future
       if (dependencyName === 'react-native') {
         config.platforms = {ios, android};
+        config.commands = [...ios.commands, ...android.commands];
       }
 
       const isPlatform = Object.keys(config.platforms).length > 0;

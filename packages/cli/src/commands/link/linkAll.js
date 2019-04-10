@@ -5,8 +5,7 @@
 import {uniqBy, flatMap} from 'lodash';
 import path from 'path';
 
-import type {ConfigT, PlatformsT} from '../../tools/config/types.flow';
-import {CLIError} from '../../tools/errors';
+import type {ConfigT} from '../../tools/config/types.flow';
 
 import promiseWaterfall from './promiseWaterfall';
 import commandStub from './commandStub';
@@ -14,6 +13,8 @@ import promisify from './promisify';
 
 import linkAssets from './linkAssets';
 import linkDependency from './linkDependency';
+
+import {CLIError} from '@react-native-community/cli-tools';
 
 const dedupeAssets = (assets: Array<string>): Array<string> =>
   uniqBy(assets, asset => path.basename(asset));

@@ -24,6 +24,7 @@ async function buildBundle(
   output: typeof outputBundle = outputBundle,
 ) {
   const config = await loadMetroConfig(ctx, {
+    maxWorkers: args.maxWorkers,
     resetCache: args.resetCache,
     config: args.config,
   });

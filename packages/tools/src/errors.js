@@ -10,7 +10,7 @@
  * - makes an inline string to match current styling inside CLI
  */
 export class CLIError extends Error {
-  constructor(msg: string, originError?: Error | message) {
+  constructor(msg: string, originError?: Error | string) {
     super(msg.replace(/(\s{2,})/gm, ' ').trim());
     if (originError) {
       this.stack =

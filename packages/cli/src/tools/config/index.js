@@ -3,6 +3,7 @@
  */
 import path from 'path';
 import {mapValues} from 'lodash';
+import chalk from 'chalk';
 
 import findDependencies from './findDependencies';
 import resolveReactNativePath from './resolveReactNativePath';
@@ -23,6 +24,7 @@ import merge from '../merge';
  */
 import * as ios from '@react-native-community/cli-platform-ios';
 import * as android from '@react-native-community/cli-platform-android';
+import {logger, inlineString} from '@react-native-community/cli-tools';
 
 /**
  * Loads CLI configuration
@@ -34,9 +36,23 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
     (acc: ConfigT, dependencyName) => {
       const root = path.join(projectRoot, 'node_modules', dependencyName);
 
-      const config =
-        readLegacyDependencyConfigFromDisk(root) ||
-        readDependencyConfigFromDisk(root);
+      let config;
+      try {
+        config =
+          readLegacyDependencyConfigFromDisk(root) ||
+          readDependencyConfigFromDisk(root);
+      } catch (error) {
+        logger.warn(
+          inlineString(`
+            Package ${chalk.bold(
+              dependencyName,
+            )} has been ignored because it contains invalid configuration.
+
+            Reason: ${chalk.dim(error.message)}
+          `),
+        );
+        return acc;
+      }
 
       /**
        * This workaround is neccessary for development only before

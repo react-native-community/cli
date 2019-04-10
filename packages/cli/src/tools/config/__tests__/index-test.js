@@ -10,6 +10,8 @@ import {
   getTempDirectory,
 } from '../../../../../../jest/helpers';
 
+import {logger} from '@react-native-community/cli-tools';
+
 const DIR = getTempDirectory('resolve_config_path_test');
 
 // Removes string from all key/values within an object
@@ -235,4 +237,22 @@ test('should not add default React Native config when one present', () => {
   });
   const {commands} = loadConfig(DIR);
   expect(commands).toMatchSnapshot();
+});
+
+test('should skip packages that have invalid configuration', () => {
+  writeFiles(DIR, {
+    'node_modules/react-native/package.json': '{}',
+    'node_modules/react-native/react-native.config.js': `module.exports = {
+      invalidProperty: 5
+    }`,
+    'package.json': `{
+      "dependencies": {
+        "react-native": "0.0.1"
+      }
+    }`,
+  });
+  const spy = jest.spyOn(logger, 'warn');
+  const {dependencies} = loadConfig(DIR);
+  expect(dependencies).toMatchSnapshot('dependencies config');
+  expect(spy.mock.calls[0][0]).toMatchSnapshot('logged warning');
 });

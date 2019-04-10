@@ -11,7 +11,7 @@
  */
 export class CLIError extends Error {
   constructor(msg: string, originError?: Error | string) {
-    super(msg.replace(/(\s{2,})/gm, ' ').trim());
+    super(inlineString(msg));
     if (originError) {
       this.stack =
         typeof originError === 'string'
@@ -25,3 +25,6 @@ export class CLIError extends Error {
     }
   }
 }
+
+export const inlineString = (str: string) =>
+  str.replace(/(\s{2,})/gm, ' ').trim();

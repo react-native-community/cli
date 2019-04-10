@@ -6,6 +6,7 @@
 import Joi from 'joi';
 import cosmiconfig from 'cosmiconfig';
 import path from 'path';
+import chalk from 'chalk';
 
 import {
   type UserDependencyConfigT,
@@ -116,9 +117,9 @@ export function readLegacyDependencyConfigFromDisk(
 
   // @todo: paste a link to documentation that explains the migration steps
   logger.warn(
-    `Package '${path.basename(
-      name,
-    )}' is using deprecated "rnpm" config that will stop working from next release. Consider upgrading to the new config format.`,
+    `Package ${chalk.bold(
+      path.basename(name),
+    )} is using deprecated "rnpm" config that will stop working from next release. Consider upgrading to the new config format.`,
   );
 
   const result = Joi.validate(transformedConfig, schema.dependencyConfig);

@@ -26,4 +26,5 @@ export class CLIError extends Error {
   }
 }
 
-export const inlineString = str => str.replace(/(\s{2,})/gm, ' ').trim();
+export const inlineString = (str: string) =>
+  str.replace(/(\s{2,})/gm, ' ').trim();

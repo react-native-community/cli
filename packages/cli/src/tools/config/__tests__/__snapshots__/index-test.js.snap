@@ -176,6 +176,6 @@ Object {
 }
 `;
 
-exports[`should skip packages that have invalid configuration 1`] = `Object {}`;
+exports[`should skip packages that have invalid configuration: dependencies config 1`] = `Object {}`;
 
-exports[`should skip packages that have invalid configuration 2`] = `"Package [1mreact-native[22m has been ignored because it contains invalid configuration. Reason: [2mUnknown option invalidProperty with value \\"5\\" was found. This is either a typing error or a user mistake. Fixing it will remove this message.[22m"`;
+exports[`should skip packages that have invalid configuration: logged warning 1`] = `"Package [1mreact-native[22m has been ignored because it contains invalid configuration. Reason: [2mUnknown option invalidProperty with value \\"5\\" was found. This is either a typing error or a user mistake. Fixing it will remove this message.[22m"`;

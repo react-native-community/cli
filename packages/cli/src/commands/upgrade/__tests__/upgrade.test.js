@@ -8,6 +8,7 @@ import upgrade from '../upgrade';
 import {fetch} from '../../../tools/fetch';
 import logger from '../../../tools/logger';
 import loadConfig from '../../../tools/config';
+import merge from '../../../tools/merge';
 
 jest.mock('https');
 jest.mock('fs');
@@ -174,20 +175,12 @@ test('fetches regular patch, adds remote, applies patch, installs deps, removes 
   (fetch: any).mockImplementation(() => Promise.resolve(samplePatch));
   await upgrade.func(
     [newVersion],
-    {
-      ...ctx,
+    merge(ctx, {
       project: {
-        ...ctx.project,
-        ios: {
-          ...ctx.project.ios,
-          projectName: 'TestApp.xcodeproj',
-        },
-        android: {
-          ...ctx.project.android,
-          packageName: 'com.testapp',
-        },
+        ios: {projectName: 'TestApp.xcodeproj'},
+        android: {packageName: 'com.testapp'},
       },
-    },
+    }),
     opts,
   );
   expect(flushOutput()).toMatchInlineSnapshot(`
@@ -291,20 +284,12 @@ test('works with --name-ios and --name-android', async () => {
   (fetch: any).mockImplementation(() => Promise.resolve(samplePatch));
   await upgrade.func(
     [newVersion],
-    {
-      ...ctx,
+    merge(ctx, {
       project: {
-        ...ctx.project,
-        ios: {
-          ...ctx.project.ios,
-          projectName: 'CustomIos.xcodeproj',
-        },
-        android: {
-          ...ctx.project.android,
-          packageName: 'co.uk.customandroid.app',
-        },
+        ios: {projectName: 'CustomIos.xcodeproj'},
+        android: {packageName: 'co.uk.customandroid.app'},
       },
-    },
+    }),
     opts,
   );
   expect(

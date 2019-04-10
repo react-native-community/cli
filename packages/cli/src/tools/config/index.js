@@ -2,7 +2,6 @@
  * @flow
  */
 import path from 'path';
-import deepmerge from 'deepmerge';
 import {mapValues} from 'lodash';
 
 import findDependencies from './findDependencies';
@@ -18,21 +17,12 @@ import {
 import {type ConfigT} from './types.flow';
 
 import assign from '../assign';
-
+import merge from '../merge';
 /**
  * Built-in platforms
  */
 import * as ios from '@react-native-community/cli-platform-ios';
 import * as android from '@react-native-community/cli-platform-android';
-
-/**
- * `deepmerge` concatenates arrays by default instead of overwriting them.
- * We define custom merging function for arrays to change that behaviour
- */
-const merge = (...objs: Object[]) =>
-  deepmerge(...objs, {
-    arrayMerge: (destinationArray, sourceArray, options) => sourceArray,
-  });
 
 /**
  * Loads CLI configuration
@@ -51,6 +41,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
       // @todo: Move this to React Native in the future
       if (dependencyName === 'react-native') {
         config.platforms = {ios, android};
+        config.commands = [...ios.commands, ...android.commands];
       }
 
       const isPlatform = Object.keys(config.platforms).length > 0;
@@ -83,11 +74,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
             );
           },
         }),
-        commands: acc.commands.concat(
-          config.commands.map(pathToCommand =>
-            path.join(dependencyName, pathToCommand),
-          ),
-        ),
+        commands: [...acc.commands, ...config.commands],
         platforms: {
           ...acc.platforms,
           ...config.platforms,
@@ -103,9 +90,9 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
     ({
       root: projectRoot,
       get reactNativePath() {
-        return (
-          userConfig.reactNativePath || resolveReactNativePath(projectRoot)
-        );
+        return userConfig.reactNativePath
+          ? path.resolve(projectRoot, userConfig.reactNativePath)
+          : resolveReactNativePath(projectRoot);
       },
       dependencies: {},
       commands: userConfig.commands,

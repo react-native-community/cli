@@ -7,12 +7,12 @@
  * @flow
  */
 
-import type {ContextT} from '../../tools/types.flow';
+import type {ConfigT} from '../../tools/config/types.flow';
 import {logger} from '@react-native-community/cli-tools';
 import * as PackageManager from '../../tools/packageManager';
 import link from '../link/unlink';
 
-async function uninstall(args: Array<string>, ctx: ContextT) {
+async function uninstall(args: Array<string>, ctx: ConfigT) {
   const name = args[0];
 
   logger.info(`Unlinking "${name}"...`);

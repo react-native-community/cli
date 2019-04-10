@@ -8,14 +8,11 @@
  */
 
 import {pick} from 'lodash';
-import dedent from 'dedent';
 
-import {type ContextT} from '../../tools/types.flow';
-
-import {CLIError} from '../../tools/errors';
+import {type ConfigT} from '../../tools/config/types.flow';
 
 import promiseWaterfall from './promiseWaterfall';
-import {logger} from '@react-native-community/cli-tools';
+import {logger, CLIError} from '@react-native-community/cli-tools';
 import commandStub from './commandStub';
 import promisify from './promisify';
 import getPlatformName from './getPlatformName';
@@ -34,7 +31,7 @@ type FlagsType = {
  * @param args If optional argument [packageName] is provided,
  *             only that package is processed.
  */
-function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
+function link([rawPackageName]: Array<string>, ctx: ConfigT, opts: FlagsType) {
   let platforms = ctx.platforms;
   let project = ctx.project;
 
@@ -61,7 +58,7 @@ function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
   const packageName = rawPackageName.replace(/^(.+?)(@.+?)$/gi, '$1');
 
   if (!Object.keys(ctx.dependencies).includes(packageName)) {
-    throw new CLIError(dedent`
+    throw new CLIError(`
       Unknown dependency. Make sure that the package you are trying to link is
       already installed in your "node_modules" and present in your "package.json" dependencies.
     `);

@@ -1,63 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`should merge project configuration with default values 1`] = `
+exports[`should automatically put "react-native" into haste config 1`] = `
 Object {
-  "assets": Array [],
-  "commands": Array [],
-  "dependencies": Object {
-    "react-native": Object {
-      "assets": Array [],
-      "hooks": Object {},
-      "name": "react-native",
-      "params": Array [],
-      "platforms": Object {
-        "android": null,
-        "ios": null,
-      },
-    },
-    "react-native-test": Object {
-      "assets": Array [
-        "foo",
-      ],
-      "hooks": Object {},
-      "name": "react-native-test",
-      "params": Array [],
-      "platforms": Object {
-        "android": null,
-        "ios": Object {
-          "folder": "<<REPLACED>>/node_modules/react-native-test",
-          "libraryFolder": "Libraries",
-          "pbxprojPath": "<<REPLACED>>/node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj",
-          "plist": Array [],
-          "podfile": null,
-          "podspec": null,
-          "projectName": "HelloWorld.xcodeproj",
-          "projectPath": "<<REPLACED>>/node_modules/react-native-test/ios/HelloWorld.xcodeproj",
-          "sharedLibraries": Array [],
-          "sourceDir": "./abc",
-        },
-      },
-    },
-  },
-  "haste": Object {
-    "platforms": Array [
-      "ios",
-      "android",
-    ],
-    "providesModuleNodeModules": Array [
-      "react-native",
-    ],
-  },
-  "platforms": Object {
-    "android": Object {},
-    "ios": Object {},
-  },
-  "project": Object {
-    "android": null,
-    "ios": null,
-  },
-  "reactNativePath": ".",
-  "root": "<<REPLACED>>",
+  "platforms": Array [
+    "ios",
+    "android",
+  ],
+  "providesModuleNodeModules": Array [
+    "react-native",
+  ],
 }
 `;
 
@@ -72,7 +23,7 @@ Object {
   },
   "platforms": Object {},
   "project": Object {},
-  "reactNativePath": ".",
+  "reactNativePath": "<<REPLACED>>",
   "root": "<<REPLACED>>",
 }
 `;
@@ -95,9 +46,41 @@ Object {
 
 exports[`should load commands from "react-native-foo" and "react-native-bar" packages 1`] = `
 Array [
-  "react-native-foo/command-foo.js",
-  "react-native-bar/command-bar.js",
+  Object {
+    "func": [Function],
+    "name": "foo-command",
+  },
+  Object {
+    "func": [Function],
+    "name": "bar-command",
+  },
 ]
+`;
+
+exports[`should merge project configuration with default values: snapshoting \`react-native-test\` config 1`] = `
+Object {
+  "assets": Array [
+    "foo",
+  ],
+  "hooks": Object {},
+  "name": "react-native-test",
+  "params": Array [],
+  "platforms": Object {
+    "android": null,
+    "ios": Object {
+      "folder": "<<REPLACED>>/node_modules/react-native-test",
+      "libraryFolder": "Libraries",
+      "pbxprojPath": "<<REPLACED>>/node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj",
+      "plist": Array [],
+      "podfile": null,
+      "podspec": null,
+      "projectName": "HelloWorld.xcodeproj",
+      "projectPath": "<<REPLACED>>/node_modules/react-native-test/ios/HelloWorld.xcodeproj",
+      "sharedLibraries": Array [],
+      "sourceDir": "./abc",
+    },
+  },
+}
 `;
 
 exports[`should read \`rnpm\` config from a dependency and transform it to a new format 1`] = `
@@ -181,17 +164,5 @@ Object {
       },
     },
   },
-}
-`;
-
-exports[`should automatically put "react-native" into haste config 1`] = `
-Object {
-  "platforms": Array [
-    "ios",
-    "android",
-  ],
-  "providesModuleNodeModules": Array [
-    "react-native",
-  ],
 }
 `;

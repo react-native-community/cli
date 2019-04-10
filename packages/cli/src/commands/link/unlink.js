@@ -8,9 +8,8 @@
  */
 
 import {flatMap, values, difference} from 'lodash';
-import type {ContextT} from '../../tools/types.flow';
-import dedent from 'dedent';
-import {logger} from '@react-native-community/cli-tools';
+import type {ConfigT} from '../../tools/config/types.flow';
+import {logger, CLIError} from '@react-native-community/cli-tools';
 import promiseWaterfall from './promiseWaterfall';
 import commandStub from './commandStub';
 import promisify from './promisify';
@@ -77,13 +76,13 @@ const unlinkDependency = (
  * If optional argument [packageName] is provided, it's the only one
  * that's checked
  */
-function unlink(args: Array<string>, ctx: ContextT) {
+function unlink(args: Array<string>, ctx: ConfigT) {
   const packageName = args[0];
 
   const {[packageName]: dependency, ...otherDependencies} = ctx.dependencies;
 
   if (!dependency) {
-    throw new Error(dedent`
+    throw new CLIError(`
       Failed to unlink "${packageName}". It appears that the project is not linked yet.
     `);
   }
@@ -136,10 +135,10 @@ function unlink(args: Array<string>, ctx: ContextT) {
       );
     })
     .catch(err => {
-      logger.error(
-        `It seems something went wrong while unlinking. Error:\n${err.message}`,
+      throw new CLIError(
+        `Something went wrong while unlinking. Reason ${err.message}`,
+        err,
       );
-      throw err;
     });
 }
 

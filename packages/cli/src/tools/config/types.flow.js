@@ -1,6 +1,22 @@
 /**
  * @flow
  */
+export type CommandT = {
+  name: string,
+  description?: string,
+  usage?: string,
+  func: (argv: Array<string>, ctx: ConfigT, args: Object) => ?Promise<void>,
+  options?: Array<{
+    command: string,
+    description?: string,
+    parse?: (val: string) => any,
+    default?: string | boolean | number,
+  }>,
+  examples?: Array<{
+    desc: string,
+    cmd: string,
+  }>,
+};
 
 /**
  * Opaque type that describes the Inquirer question format. Not typed, since we just
@@ -36,6 +52,7 @@ type ProjectParamsAndroidT = {
   settingsGradlePath?: string,
   assetsPath?: string,
   buildGradlePath?: string,
+  packageName?: string,
 };
 
 /**
@@ -122,7 +139,7 @@ export type ConfigT = {|
   },
 
   // An array of commands that are present in 3rd party packages
-  commands: string[],
+  commands: CommandT[],
 
   // Haste configuration resolved based on available plugins
   haste: {
@@ -159,7 +176,7 @@ export type UserDependencyConfigT = {
   },
 
   // An array of commands that ship with the dependency
-  commands: string[],
+  commands: CommandT[],
 
   // An array of extra platforms to load
   platforms: {

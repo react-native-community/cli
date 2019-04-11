@@ -228,7 +228,7 @@ function installAndLaunchOnDevice(
 
 function startServerInNewWindow(
   port,
-  terminal = process.env.REACT_TERMINAL,
+  terminal = process.env.TERM_PROGRAM || process.env.REACT_TERMINAL,
   reactNativePath,
 ) {
   /**

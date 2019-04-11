@@ -55,8 +55,8 @@ describe('link', () => {
   });
 
   it('should register native module when android/ios projects are present', done => {
-    const prelink = jest.fn().mockImplementation(cb => cb());
-    const postlink = jest.fn().mockImplementation(cb => cb());
+    const prelink = jest.fn();
+    const postlink = jest.fn();
     const registerNativeModule = jest.fn();
 
     const config = {

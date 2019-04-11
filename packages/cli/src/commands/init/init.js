@@ -2,7 +2,7 @@
 import fs from 'fs-extra';
 import minimist from 'minimist';
 import semver from 'semver';
-import type {ConfigT} from '../../tools/config/types.flow';
+import type {ConfigT} from '../../../../../types/config';
 import {validateProjectName} from './validate';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
 import printRunInstructions from './printRunInstructions';

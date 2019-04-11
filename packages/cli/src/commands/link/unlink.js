@@ -8,11 +8,8 @@
  */
 
 import {flatMap, values, difference} from 'lodash';
-import type {ConfigT} from '../../tools/config/types.flow';
 import {logger, CLIError} from '@react-native-community/cli-tools';
-import promiseWaterfall from './promiseWaterfall';
-import commandStub from './commandStub';
-import promisify from './promisify';
+import type {ConfigT} from '../../../../../types/config';
 import getPlatformName from './getPlatformName';
 
 const unlinkDependency = (
@@ -39,8 +36,10 @@ const unlinkDependency = (
     }
 
     const isInstalled = linkConfig.isInstalled(
+      // $FlowFixMe
       projectConfig,
       packageName,
+      // $FlowFixMe
       dependencyConfig,
     );
 
@@ -57,7 +56,9 @@ const unlinkDependency = (
 
     linkConfig.unregister(
       packageName,
+      // $FlowFixMe
       dependencyConfig,
+      // $FlowFixMe
       projectConfig,
       otherDependencies,
     );
@@ -76,7 +77,7 @@ const unlinkDependency = (
  * If optional argument [packageName] is provided, it's the only one
  * that's checked
  */
-function unlink(args: Array<string>, ctx: ConfigT) {
+async function unlink(args: Array<string>, ctx: ConfigT) {
   const packageName = args[0];
 
   const {[packageName]: dependency, ...otherDependencies} = ctx.dependencies;
@@ -88,58 +89,56 @@ function unlink(args: Array<string>, ctx: ConfigT) {
   }
 
   const dependencies = values(otherDependencies);
+  try {
+    if (dependency.hooks.preulink) {
+      await dependency.hooks.preulink();
+    }
+    unlinkDependency(
+      ctx.platforms,
+      ctx.project,
+      dependency,
+      packageName,
+      dependencies,
+    );
+    if (dependency.hooks.postunlink) {
+      await dependency.hooks.postunlink();
+    }
+  } catch (error) {
+    throw new CLIError(
+      `Something went wrong while unlinking. Reason ${error.message}`,
+      error,
+    );
+  }
 
-  const tasks = [
-    () => promisify(dependency.hooks.preulink || commandStub),
-    () =>
-      unlinkDependency(
-        ctx.platforms,
-        ctx.project,
-        dependency,
-        packageName,
-        dependencies,
-      ),
-    () => promisify(dependency.hooks.postunlink || commandStub),
-  ];
+  // @todo move all these to above try/catch
+  // @todo it is possible we could be unlinking some project assets in case of duplicate
+  const assets = difference(
+    dependency.assets,
+    flatMap(dependencies, d => d.assets),
+  );
 
-  return promiseWaterfall(tasks)
-    .then(() => {
-      // @todo move all these to `tasks` array
-      // @todo it is possible we could be unlinking some project assets in case of duplicate
-      const assets = difference(
-        dependency.assets,
-        flatMap(dependencies, d => d.assets),
-      );
+  if (assets.length === 0) {
+    return;
+  }
 
-      if (assets.length === 0) {
-        return;
-      }
+  Object.keys(ctx.platforms || {}).forEach(platform => {
+    const projectConfig = ctx.project[platform];
+    const linkConfig =
+      ctx.platforms[platform] &&
+      ctx.platforms[platform].linkConfig &&
+      ctx.platforms[platform].linkConfig();
+    if (!linkConfig || !linkConfig.unlinkAssets || !projectConfig) {
+      return;
+    }
 
-      Object.keys(ctx.platforms || {}).forEach(platform => {
-        const projectConfig = ctx.project[platform];
-        const linkConfig =
-          ctx.platforms[platform] &&
-          ctx.platforms[platform].linkConfig &&
-          ctx.platforms[platform].linkConfig();
-        if (!linkConfig || !linkConfig.unlinkAssets || !projectConfig) {
-          return;
-        }
+    logger.info(`Unlinking assets from ${platform} project`);
+    // $FlowFixMe
+    linkConfig.unlinkAssets(assets, projectConfig);
+  });
 
-        logger.info(`Unlinking assets from ${platform} project`);
-
-        linkConfig.unlinkAssets(assets, projectConfig);
-      });
-
-      logger.info(
-        `${packageName} assets has been successfully unlinked from your project`,
-      );
-    })
-    .catch(err => {
-      throw new CLIError(
-        `Something went wrong while unlinking. Reason ${err.message}`,
-        err,
-      );
-    });
+  logger.info(
+    `${packageName} assets has been successfully unlinked from your project`,
+  );
 }
 
 export default {

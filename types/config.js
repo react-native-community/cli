@@ -65,6 +65,7 @@ type ProjectParamsIOST = {
   project?: string,
   sharedLibraries?: string[],
   libraryFolder?: string,
+  plist: any[],
 };
 
 type PlatformConfig<ProjectParams, ProjectConfig, DependencyConfig> = {
@@ -96,7 +97,7 @@ export type ConfigT = {|
 
   // Object that contains configuration for a project (null, when platform not available)
   project: {
-    android?: ?ProjectConfigAndroidT,
+    android?: ProjectConfigAndroidT,
     ios?: ?ProjectConfigIOST,
     [key: string]: ?Object,
   },
@@ -115,9 +116,9 @@ export type ConfigT = {|
       },
       assets: string[],
       hooks: {
-        [key: string]: string,
-        prelink?: string,
-        postlink?: string,
+        [key: string]: () => void,
+        prelink?: () => void,
+        postlink?: () => void,
       },
       params: InquirerPromptT[],
     },
@@ -205,7 +206,48 @@ export type UserConfigT = {
 
 // The following types are used in untyped-parts of the codebase, so I am leaving them
 // until we actually need them.
-type ProjectConfigIOST = {};
+type ProjectConfigIOST = {
+  sourceDir: string,
+  folder: string,
+  pbxprojPath: string,
+  podfile: null,
+  podspec: null,
+  projectPath: string,
+  projectName: string,
+  libraryFolder: string,
+  sharedLibraries: Array<any>,
+  plist: Array<any>,
+};
 type DependencyConfigIOST = ProjectConfigIOST;
-type ProjectConfigAndroidT = {};
-type DependencyConfigAndroidT = {};
+type ProjectConfigAndroidT = {
+  sourceDir: string,
+  isFlat: boolean,
+  folder: string,
+  stringsPath: string,
+  manifestPath: string,
+  buildGradlePath: string,
+  settingsGradlePath: string,
+  assetsPath: string,
+  mainFilePath: string,
+  packageName: string,
+};
+type DependencyConfigAndroidT = {
+  sourceDir: string,
+  folder: string,
+  manifest: Manifest,
+  packageImportPath: string,
+  packageInstance: string,
+};
+
+type Manifest = {
+  name: string,
+  attr: {
+    [key: string]: string,
+    package: string,
+  },
+  val: string,
+  isValCdata: boolean,
+  children: Array<Manifest>,
+  firstChild: Manifest,
+  lastChild: Manifest,
+};

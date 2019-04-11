@@ -9,7 +9,7 @@
 
 import envinfo from 'envinfo';
 import {logger} from '@react-native-community/cli-tools';
-import type {ConfigT} from '../../tools/config/types.flow';
+import type {ConfigT} from '../../../../../types/config';
 
 const info = async function getInfo(
   argv: Array<string>,

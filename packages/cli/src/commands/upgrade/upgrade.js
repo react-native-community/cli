@@ -4,7 +4,7 @@ import fs from 'fs';
 import chalk from 'chalk';
 import semver from 'semver';
 import execa from 'execa';
-import type {ConfigT} from '../../tools/config/types.flow';
+import type {ConfigT} from '../../../../../types/config';
 import {logger} from '@react-native-community/cli-tools';
 import * as PackageManager from '../../tools/packageManager';
 import {fetch} from '../../tools/fetch';

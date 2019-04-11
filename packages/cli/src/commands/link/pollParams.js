@@ -5,12 +5,13 @@
  * LICENSE file in the root directory of this source tree.
  *
  * @format
+ * @flow
  */
 
 import inquirer from 'inquirer';
 
-export default questions =>
-  new Promise((resolve, reject) => {
+export default (questions: any) =>
+  new Promise<any>((resolve, reject) => {
     if (!questions) {
       resolve({});
       return;

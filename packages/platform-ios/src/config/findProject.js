@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  * @format
+ * @flow
  */
 
 import glob from 'glob';
@@ -38,7 +39,7 @@ const GLOB_EXCLUDE_PATTERN = ['**/@(Pods|node_modules)/**'];
  *
  * Note: `./ios/*.xcodeproj` are returned regardless of the name
  */
-export default function findProject(folder) {
+export default function findProject(folder: string): string | null {
   const projects = glob
     .sync(GLOB_PATTERN, {
       cwd: folder,

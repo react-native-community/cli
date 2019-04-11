@@ -11,7 +11,7 @@ import path from 'path';
 import {spawnSync, spawn, execFileSync} from 'child_process';
 import fs from 'fs';
 
-import type {ConfigT} from '../../../../cli/src/tools/config/types.flow';
+import type {ConfigT} from '../../../../../types/config';
 
 import adb from './adb';
 import runOnAllDevices from './runOnAllDevices';

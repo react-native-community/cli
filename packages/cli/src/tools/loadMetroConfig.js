@@ -5,7 +5,7 @@
 import path from 'path';
 import {createBlacklist} from 'metro';
 import {loadConfig} from 'metro-config';
-import {type ConfigT} from './config/types.flow';
+import {type ConfigT} from '../../../../types/config';
 import findSymlinkedModules from './findSymlinkedModules';
 
 const resolveSymlinksForRoots = roots =>

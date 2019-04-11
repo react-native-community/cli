@@ -13,7 +13,7 @@ import outputBundle from 'metro/src/shared/output/bundle';
 import path from 'path';
 import chalk from 'chalk';
 import type {CommandLineArgs} from './bundleCommandLineArgs';
-import type {ConfigT} from '../../tools/config/types.flow';
+import type {ConfigT} from '../../../../../types/config';
 import saveAssets from './saveAssets';
 import loadMetroConfig from '../../tools/loadMetroConfig';
 import {logger} from '@react-native-community/cli-tools';

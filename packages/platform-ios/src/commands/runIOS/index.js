@@ -12,7 +12,7 @@ import child_process from 'child_process';
 import fs from 'fs';
 import path from 'path';
 
-import type {ConfigT} from '../../../../cli/src/tools/config/types.flow';
+import type {ConfigT} from '../../../../../types/config';
 
 import findXcodeProject from './findXcodeProject';
 import parseIOSDevicesList from './parseIOSDevicesList';

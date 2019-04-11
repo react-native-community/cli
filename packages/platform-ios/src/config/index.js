@@ -5,19 +5,21 @@
  * LICENSE file in the root directory of this source tree.
  *
  * @format
+ * @flow
  */
 
 import path from 'path';
 import findProject from './findProject';
 import findPodfilePath from './findPodfilePath';
 import findPodspecName from './findPodspecName';
+import type {UserConfigT} from '../../../../types/config';
 
 /**
  * For libraries specified without an extension, add '.tbd' for those that
  * start with 'lib' and '.framework' to the rest.
  */
 const mapSharedLibaries = libraries =>
-  libraries.map(name => {
+  libraries.map<string>(name => {
     if (path.extname(name)) {
       return name;
     }
@@ -28,7 +30,13 @@ const mapSharedLibaries = libraries =>
  * Returns project config by analyzing given folder and applying some user defaults
  * when constructing final object
  */
-export function projectConfig(folder, userConfig) {
+export function projectConfig(
+  folder: string,
+  userConfig: $PropertyType<$PropertyType<UserConfigT, 'project'>, 'ios'>,
+) {
+  if (!userConfig) {
+    return;
+  }
   const project = userConfig.project || findProject(folder);
 
   /**

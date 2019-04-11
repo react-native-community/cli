@@ -1,7 +1,7 @@
 /**
- * @flow
- *
  * iOS platform files
+ *
+ * @flow
  */
 
 export {default as linkConfig} from './link';

@@ -8,15 +8,9 @@
  */
 
 import {pick} from 'lodash';
-
-import {type ConfigT} from '../../tools/config/types.flow';
-
-import promiseWaterfall from './promiseWaterfall';
 import {logger, CLIError} from '@react-native-community/cli-tools';
-import commandStub from './commandStub';
-import promisify from './promisify';
+import {type ConfigT} from '../../../../../types/config';
 import getPlatformName from './getPlatformName';
-
 import linkDependency from './linkDependency';
 import linkAssets from './linkAssets';
 import linkAll from './linkAll';
@@ -31,7 +25,11 @@ type FlagsType = {
  * @param args If optional argument [packageName] is provided,
  *             only that package is processed.
  */
-function link([rawPackageName]: Array<string>, ctx: ConfigT, opts: FlagsType) {
+async function link(
+  [rawPackageName]: Array<string>,
+  ctx: ConfigT,
+  opts: FlagsType,
+) {
   let platforms = ctx.platforms;
   let project = ctx.project;
 
@@ -68,19 +66,21 @@ function link([rawPackageName]: Array<string>, ctx: ConfigT, opts: FlagsType) {
 
   logger.debug(`Package to link: ${rawPackageName}`);
 
-  const tasks = [
-    () => promisify(dependency.hooks.prelink || commandStub),
-    () => linkDependency(platforms, project, dependency),
-    () => promisify(dependency.hooks.postlink || commandStub),
-    () => linkAssets(platforms, project, dependency.assets),
-  ];
-
-  return promiseWaterfall(tasks).catch(err => {
+  try {
+    if (dependency.hooks.prelink) {
+      await dependency.hooks.prelink();
+    }
+    await linkDependency(platforms, project, dependency);
+    if (dependency.hooks.postlink) {
+      await dependency.hooks.postlink();
+    }
+    await linkAssets(platforms, project, dependency.assets);
+  } catch (error) {
     throw new CLIError(
-      `Something went wrong while linking. Reason: ${err.message}`,
-      err,
+      `Something went wrong while linking. Reason: ${error.message}`,
+      error,
     );
-  });
+  }
 }
 
 export const func = link;

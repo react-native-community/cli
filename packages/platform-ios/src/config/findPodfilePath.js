@@ -5,12 +5,13 @@
  * LICENSE file in the root directory of this source tree.
  *
  * @format
+ * @flow
  */
 
 import fs from 'fs';
 import path from 'path';
 
-export default function findPodfilePath(projectFolder) {
+export default function findPodfilePath(projectFolder: string) {
   const podFilePath = path.join(projectFolder, '..', 'Podfile');
   const podFileExists = fs.existsSync(podFilePath);
 

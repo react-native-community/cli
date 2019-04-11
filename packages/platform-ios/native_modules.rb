@@ -20,9 +20,9 @@ def use_native_modules!(packages = nil)
   found_pods = []
 
   packages.each do |package_name, package|
-    next unless package["ios"]
+    next unless package_config = package["platforms"]["ios"]
 
-    podspec_path = File.join(package["root"], "#{package["ios"]["podspec"]}.podspec")
+    podspec_path = File.join(package["root"], "#{package_config["podspec"]}.podspec")
     spec = Pod::Specification.from_file(podspec_path)
 
     # We want to do a look up inside the current CocoaPods target
@@ -40,9 +40,9 @@ def use_native_modules!(packages = nil)
 
     pod spec.name, :path => package["root"]
 
-    if package["ios"]["scriptPhases"]
+    if package_config["scriptPhases"]
       # Can be either an object, or an array of objects
-      Array(package["ios"]["scriptPhases"]).each do |phase|
+      Array(package_config["scriptPhases"]).each do |phase|
         # see https://www.rubydoc.info/gems/cocoapods-core/Pod/Podfile/DSL#script_phase-instance_method
         # for the full object keys
 
@@ -66,7 +66,7 @@ def use_native_modules!(packages = nil)
 
   if found_pods.size > 0
     pods = found_pods.map { |p| p.name }.sort.to_sentence
-    Pod::UI.puts "Detected native module #{"pod".pluralize(found_pods.size)} for #{pods}"
+    Pod::UI.puts "Detected React Native module #{"pod".pluralize(found_pods.size)} for #{pods}"
   end
 end
 
@@ -108,16 +108,20 @@ if $0 == __FILE__
 
       @ios_package = ios_package = {
         "root" => "/Users/grabbou/Repositories/WebViewDemoApp/node_modules/react",
-        "ios" => {
-          "podspec" => "React",
+        "platforms" => {
+          "ios" => {
+            "podspec" => "React",
+          },
+          "android" => nil,
         },
-        "android" => nil,
       }
       @android_package = {
         "root" => "/Users/grabbou/Repositories/WebViewDemoApp/node_modules/react-native-google-play-game-services",
-        "ios" => nil,
-        "android" => {
-          # This is where normally more config would be
+        "platforms" => {
+          "ios" => nil,
+          "android" => {
+            # This is where normally more config would be
+          },
         }
       }
       @config = { "ios-dep" => @ios_package, "android-dep" => @android_package }
@@ -137,7 +141,7 @@ if $0 == __FILE__
       end
 
       Pod::Specification.singleton_class.send(:define_method, :from_file) do |podspec_path|
-        podspec_path.must_equal File.join(ios_package["root"], "#{ios_package["ios"]["podspec"]}.podspec")
+        podspec_path.must_equal File.join(ios_package["root"], "#{ios_package["platforms"]["ios"]["podspec"]}.podspec")
         spec
       end
 
@@ -198,7 +202,7 @@ if $0 == __FILE__
 
     describe "concerning script_phases" do
       it "uses the options directly" do
-        @config["ios-dep"]["ios"]["scriptPhases"] = [@script_phase]
+        @config["ios-dep"]["platforms"]["ios"]["scriptPhases"] = [@script_phase]
         @podfile.use_native_modules(@config)
         @added_scripts.must_equal [{
           "script" => "123",
@@ -211,7 +215,7 @@ if $0 == __FILE__
       it "reads a script file relative to the package root" do
         @script_phase.delete("script")
         @script_phase["path"] = "./some_shell_script.sh"
-        @config["ios-dep"]["ios"]["scriptPhases"] = [@script_phase]
+        @config["ios-dep"]["platforms"]["ios"]["scriptPhases"] = [@script_phase]
 
         file_read_mock = MiniTest::Mock.new
         file_read_mock.expect(:call, "contents from file", [File.join(@ios_package["root"], "some_shell_script.sh")])

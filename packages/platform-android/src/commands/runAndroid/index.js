@@ -15,7 +15,7 @@ import type {ConfigT} from '../../../../cli/src/tools/config/types.flow';
 
 import adb from './adb';
 import runOnAllDevices from './runOnAllDevices';
-import isPackagerRunning from './isPackagerRunning';
+import {isPackagerRunning} from '@react-native-community/cli-tools';
 import tryRunAdbReverse from './tryRunAdbReverse';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
 import getAdbPath from './getAdbPath';

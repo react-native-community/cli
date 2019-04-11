@@ -8,16 +8,14 @@
  */
 
 import Metro from 'metro';
-
 import {Terminal} from 'metro-core';
-
 import morgan from 'morgan';
 import path from 'path';
+import logger from '../../tools/logger';
 import type {ContextT} from '../../tools/types.flow';
 import messageSocket from './messageSocket';
 import webSocketProxy from './webSocketProxy';
 import MiddlewareManager from './middleware/MiddlewareManager';
-
 import loadMetroConfig from '../../tools/loadMetroConfig';
 
 export type Args = {|
@@ -62,7 +60,14 @@ async function runServer(argv: Array<string>, ctx: ContextT, args: Args) {
     watchFolders: metroConfig.watchFolders,
   });
 
-  middlewareManager.getConnectInstance().use(morgan('combined'));
+  middlewareManager.getConnectInstance().use(
+    morgan(
+      'combined',
+      !logger.isVerbose() && {
+        skip: (req, res) => res.statusCode < 400,
+      },
+    ),
+  );
 
   metroConfig.watchFolders.forEach(
     middlewareManager.serveStatic.bind(middlewareManager),

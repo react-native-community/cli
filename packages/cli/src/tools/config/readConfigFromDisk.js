@@ -88,7 +88,7 @@ const loadProjectCommands = (
 };
 
 /**
- * Reads a legacy configuaration from a `package.json` "rnpm" key.
+ * Reads a legacy configuration from a `package.json` "rnpm" key.
  */
 export function readLegacyDependencyConfigFromDisk(
   rootFolder: string,

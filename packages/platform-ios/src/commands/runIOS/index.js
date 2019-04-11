@@ -14,6 +14,7 @@ import path from 'path';
 
 import type {ConfigT} from '../../../../cli/src/tools/config/types.flow';
 
+import {isPackagerRunning} from '@react-native-community/cli-tools';
 import findXcodeProject from './findXcodeProject';
 import parseIOSDevicesList from './parseIOSDevicesList';
 import findMatchingSimulator from './findMatchingSimulator';
@@ -77,6 +78,7 @@ function runIOS(_: Array<string>, ctx: ConfigT, args: FlagsT) {
         args.packager,
         args.verbose,
         args.port,
+        ctx,
       );
     }
     if (devices && devices.length > 0) {
@@ -88,10 +90,10 @@ Choose one of the following:${printFoundDevices(devices)}`);
     }
   } else if (args.udid) {
     // $FlowIssue: args.udid is defined in this context
-    return runOnDeviceByUdid(args, scheme, xcodeProject, devices);
+    return runOnDeviceByUdid(args, scheme, xcodeProject, devices, ctx);
   }
 
-  return runOnSimulator(xcodeProject, args, scheme);
+  return runOnSimulator(xcodeProject, args, scheme, ctx);
 }
 
 function runOnDeviceByUdid(
@@ -99,6 +101,7 @@ function runOnDeviceByUdid(
   scheme,
   xcodeProject,
   devices,
+  ctx,
 ) {
   const selectedDevice = matchingDeviceByUdid(devices, args.udid);
 
@@ -111,6 +114,8 @@ function runOnDeviceByUdid(
       args.packager,
       args.verbose,
       args.port,
+      args.terminal,
+      ctx,
     );
     return;
   }
@@ -124,7 +129,46 @@ Choose one of the following:\n${printFoundDevices(devices)}`);
   }
 }
 
-async function runOnSimulator(xcodeProject, args, scheme) {
+async function runPackager({packager: shouldLaunchPackager, ...args}, ctx) {
+  if (!shouldLaunchPackager) {
+    return;
+  }
+
+  const terminal =
+    args.terminal || process.env.TERM_PROGRAM || process.env.REACT_TERMINAL;
+  const packagerStatus = await isPackagerRunning(args.port);
+
+  if (packagerStatus === 'running') {
+    return logger.info('JS server already running.');
+  }
+
+  if (packagerStatus === 'unrecognized') {
+    return logger.warn('JS server not recognized, continuing with build...');
+  }
+
+  const launchPackagerScript = path.join(
+    ctx.reactNativePath,
+    'scripts/launchPackager.command',
+  );
+  const scriptsDir = path.dirname(launchPackagerScript);
+  const packagerEnvFile = path.join(scriptsDir, '.packager.env');
+
+  /**
+   * Ensure we overwrite file by passing the `w` flag
+   */
+  fs.writeFileSync(packagerEnvFile, `export RCT_METRO_PORT=${args.port}`, {
+    encoding: 'utf8',
+    flag: 'w',
+  });
+
+  return child_process.spawnSync(
+    'open',
+    ['-a', terminal, launchPackagerScript],
+    {cwd: scriptsDir},
+  );
+}
+
+async function runOnSimulator(xcodeProject, args, scheme, ctx) {
   let simulators;
   try {
     simulators = JSON.parse(
@@ -171,6 +215,8 @@ async function runOnSimulator(xcodeProject, args, scheme) {
     bootSimulator(selectedSimulator);
   }
 
+  await runPackager(args, ctx);
+
   const appName = await buildProject(
     xcodeProject,
     selectedSimulator.udid,
@@ -213,6 +259,7 @@ async function runOnSimulator(xcodeProject, args, scheme) {
   );
 }
 
+// TODO: work on this one
 async function runOnDevice(
   selectedDevice,
   scheme,
@@ -221,6 +268,8 @@ async function runOnDevice(
   launchPackager,
   verbose,
   port,
+  terminal,
+  ctx,
 ) {
   const appName = await buildProject(
     xcodeProject,
@@ -232,6 +281,8 @@ async function runOnDevice(
     port,
   );
 
+  await runPackager({terminal, launchPackager}, ctx);
+
   const iosDeployInstallArgs = [
     '--bundle',
     getBuildPath(configuration, appName, true, scheme),
@@ -240,7 +291,7 @@ async function runOnDevice(
     '--justlaunch',
   ];
 
-  logger.info(`installing and launching your app on ${selectedDevice.name}...`);
+  logger.info(`Installing and launching your app on ${selectedDevice.name}...`);
 
   const iosDeployOutput = child_process.spawnSync(
     'ios-deploy',

@@ -499,5 +499,11 @@ export default {
       default: process.env.RCT_METRO_PORT || 8081,
       parse: (val: string) => Number(val),
     },
+    {
+      command: '--terminal [string]',
+      description:
+        'Launches the Metro Bundler in a new window using the specified terminal path.',
+      default: undefined,
+    },
   ],
 };

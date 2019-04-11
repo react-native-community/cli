@@ -10,7 +10,7 @@
     "test": "jest && yarn test:cocoapods-native-modules",
     "test:ci:unit": "jest packages --ci --coverage",
     "test:ci:e2e": "jest e2e --ci -i",
-    "test:cocoapods-native-modules": "ruby packages/cli/native_modules.rb",
+    "test:cocoapods-native-modules": "ruby packages/platform-ios/native_modules.rb",
     "lint": "eslint . --cache --report-unused-disable-directives",
     "flow-check": "flow check",
     "postinstall": "yarn build",

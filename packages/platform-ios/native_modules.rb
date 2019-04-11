@@ -1,6 +1,6 @@
 def use_native_modules!(packages = nil)
   if (!packages)
-    cli_bin = File.expand_path("../build/index.js", __FILE__)
+    cli_bin = Pod::Executable.execute_command("node", ["-e", "console.log(require.resolve('@react-native-community/cli/build/index.js'))"], true).strip
     output = Pod::Executable.execute_command("node", [cli_bin, "config"], true)
     config = JSON.parse(output)
     packages = config["dependencies"]

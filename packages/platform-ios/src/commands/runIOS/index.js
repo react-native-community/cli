@@ -14,7 +14,6 @@ import path from 'path';
 
 import type {ConfigT} from '../../../../cli/src/tools/config/types.flow';
 
-import {isPackagerRunning} from '@react-native-community/cli-tools';
 import findXcodeProject from './findXcodeProject';
 import parseIOSDevicesList from './parseIOSDevicesList';
 import findMatchingSimulator from './findMatchingSimulator';
@@ -30,6 +29,7 @@ type FlagsT = {
   packager: boolean,
   verbose: boolean,
   port: number,
+  terminal: string | typeof undefined,
 };
 
 function runIOS(_: Array<string>, ctx: ConfigT, args: FlagsT) {
@@ -78,7 +78,7 @@ function runIOS(_: Array<string>, ctx: ConfigT, args: FlagsT) {
         args.packager,
         args.verbose,
         args.port,
-        ctx,
+        args.terminal,
       );
     }
     if (devices && devices.length > 0) {
@@ -90,10 +90,10 @@ Choose one of the following:${printFoundDevices(devices)}`);
     }
   } else if (args.udid) {
     // $FlowIssue: args.udid is defined in this context
-    return runOnDeviceByUdid(args, scheme, xcodeProject, devices, ctx);
+    return runOnDeviceByUdid(args, scheme, xcodeProject, devices);
   }
 
-  return runOnSimulator(xcodeProject, args, scheme, ctx);
+  return runOnSimulator(xcodeProject, args, scheme);
 }
 
 function runOnDeviceByUdid(
@@ -101,7 +101,6 @@ function runOnDeviceByUdid(
   scheme,
   xcodeProject,
   devices,
-  ctx,
 ) {
   const selectedDevice = matchingDeviceByUdid(devices, args.udid);
 
@@ -115,7 +114,6 @@ function runOnDeviceByUdid(
       args.verbose,
       args.port,
       args.terminal,
-      ctx,
     );
     return;
   }
@@ -129,46 +127,7 @@ Choose one of the following:\n${printFoundDevices(devices)}`);
   }
 }
 
-async function runPackager({packager: shouldLaunchPackager, ...args}, ctx) {
-  if (!shouldLaunchPackager) {
-    return;
-  }
-
-  const terminal =
-    args.terminal || process.env.TERM_PROGRAM || process.env.REACT_TERMINAL;
-  const packagerStatus = await isPackagerRunning(args.port);
-
-  if (packagerStatus === 'running') {
-    return logger.info('JS server already running.');
-  }
-
-  if (packagerStatus === 'unrecognized') {
-    return logger.warn('JS server not recognized, continuing with build...');
-  }
-
-  const launchPackagerScript = path.join(
-    ctx.reactNativePath,
-    'scripts/launchPackager.command',
-  );
-  const scriptsDir = path.dirname(launchPackagerScript);
-  const packagerEnvFile = path.join(scriptsDir, '.packager.env');
-
-  /**
-   * Ensure we overwrite file by passing the `w` flag
-   */
-  fs.writeFileSync(packagerEnvFile, `export RCT_METRO_PORT=${args.port}`, {
-    encoding: 'utf8',
-    flag: 'w',
-  });
-
-  return child_process.spawnSync(
-    'open',
-    ['-a', terminal, launchPackagerScript],
-    {cwd: scriptsDir},
-  );
-}
-
-async function runOnSimulator(xcodeProject, args, scheme, ctx) {
+async function runOnSimulator(xcodeProject, args, scheme) {
   let simulators;
   try {
     simulators = JSON.parse(
@@ -215,8 +174,6 @@ async function runOnSimulator(xcodeProject, args, scheme, ctx) {
     bootSimulator(selectedSimulator);
   }
 
-  await runPackager(args, ctx);
-
   const appName = await buildProject(
     xcodeProject,
     selectedSimulator.udid,
@@ -225,6 +182,7 @@ async function runOnSimulator(xcodeProject, args, scheme, ctx) {
     args.packager,
     args.verbose,
     args.port,
+    args.terminal,
   );
 
   const appPath = getBuildPath(args.configuration, appName, false, scheme);
@@ -259,7 +217,6 @@ async function runOnSimulator(xcodeProject, args, scheme, ctx) {
   );
 }
 
-// TODO: work on this one
 async function runOnDevice(
   selectedDevice,
   scheme,
@@ -269,7 +226,6 @@ async function runOnDevice(
   verbose,
   port,
   terminal,
-  ctx,
 ) {
   const appName = await buildProject(
     xcodeProject,
@@ -279,9 +235,8 @@ async function runOnDevice(
     launchPackager,
     verbose,
     port,
+    terminal,
   );
-
-  await runPackager({terminal, launchPackager}, ctx);
 
   const iosDeployInstallArgs = [
     '--bundle',
@@ -316,6 +271,7 @@ function buildProject(
   launchPackager = false,
   verbose,
   port,
+  terminal = process.env.REACT_TERMINAL || process.env.TERM_PROGRAM,
 ) {
   return new Promise((resolve, reject) => {
     const xcodebuildArgs = [
@@ -342,7 +298,7 @@ function buildProject(
     const buildProcess = child_process.spawn(
       'xcodebuild',
       xcodebuildArgs,
-      getProcessOptions(launchPackager, port),
+      getProcessOptions(launchPackager, port, terminal),
     );
     let buildOutput = '';
     let errorOutput = '';
@@ -469,15 +425,17 @@ function printFoundDevices(devices) {
   return output;
 }
 
-function getProcessOptions(launchPackager, port) {
+function getProcessOptions(launchPackager, port, terminal) {
+  const env = {...process.env, RCT_TERMINAL: terminal};
+
   if (launchPackager) {
     return {
-      env: {...process.env, RCT_METRO_PORT: port},
+      env: {...env, RCT_METRO_PORT: port},
     };
   }
 
   return {
-    env: {...process.env, RCT_NO_LAUNCH_PACKAGER: true},
+    env: {...env, RCT_NO_LAUNCH_PACKAGER: true},
   };
 }
 

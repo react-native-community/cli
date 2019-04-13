@@ -22,7 +22,7 @@ export type CommandT = {
  * Opaque type that describes the Inquirer question format. Not typed, since we just
  * pass it directly to Inquirer. Validation is done with Joi in `schema.js`
  */
-type InquirerPromptT = any;
+export type InquirerPromptT = any;
 
 /**
  * Settings that a library author can define in the configuration bundled with

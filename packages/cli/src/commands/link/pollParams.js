@@ -9,8 +9,9 @@
  */
 
 import inquirer from 'inquirer';
+import type {InquirerPromptT} from 'types';
 
-export default (questions: any) =>
+export default (questions: InquirerPromptT) =>
   new Promise<any>((resolve, reject) => {
     if (!questions) {
       resolve({});

@@ -12,7 +12,7 @@ import {Terminal} from 'metro-core';
 import morgan from 'morgan';
 import path from 'path';
 import {logger} from '@react-native-community/cli-tools';
-import type {ConfigT} from '../../../../../types/config';
+import type {ConfigT} from 'types';
 import messageSocket from './messageSocket';
 import webSocketProxy from './webSocketProxy';
 import MiddlewareManager from './middleware/MiddlewareManager';

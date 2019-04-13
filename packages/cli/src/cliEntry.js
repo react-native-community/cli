@@ -12,7 +12,7 @@ import childProcess from 'child_process';
 import commander from 'commander';
 import path from 'path';
 
-import type {CommandT, ConfigT} from '../../../types/config';
+import type {CommandT, ConfigT} from 'types';
 
 import commands from './commands';
 import init from './commands/init/initCompat';

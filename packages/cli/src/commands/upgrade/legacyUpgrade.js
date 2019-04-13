@@ -11,7 +11,7 @@
 import fs from 'fs';
 import path from 'path';
 import semver from 'semver';
-import type {ConfigT} from '../../../../../types/config';
+import type {ConfigT} from 'types';
 import {logger} from '@react-native-community/cli-tools';
 import copyProjectTemplateAndReplace from '../../tools/generator/copyProjectTemplateAndReplace';
 

@@ -9,7 +9,7 @@
 
 import {flatMap, values, difference} from 'lodash';
 import {logger, CLIError} from '@react-native-community/cli-tools';
-import type {ConfigT} from '../../../../../types/config';
+import type {ConfigT} from 'types';
 import getPlatformName from './getPlatformName';
 
 const unlinkDependency = (

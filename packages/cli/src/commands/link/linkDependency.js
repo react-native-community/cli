@@ -1,10 +1,6 @@
 // @flow
 
-import type {
-  DependencyConfigT,
-  ProjectConfigT,
-  PlatformsT,
-} from '../../../../../types/config';
+import type {DependencyConfigT, ProjectConfigT, PlatformsT} from 'types';
 import {logger} from '@react-native-community/cli-tools';
 import pollParams from './pollParams';
 import getPlatformName from './getPlatformName';

@@ -5,7 +5,7 @@
 import {uniqBy} from 'lodash';
 import path from 'path';
 
-import type {ConfigT} from '../../../../../types/config';
+import type {ConfigT} from 'types';
 
 import linkAssets from './linkAssets';
 import linkDependency from './linkDependency';

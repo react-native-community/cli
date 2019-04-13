@@ -12,7 +12,7 @@ import path from 'path';
 import findProject from './findProject';
 import findPodfilePath from './findPodfilePath';
 import findPodspecName from './findPodspecName';
-import type {UserConfigT} from '../../../../types/config';
+import type {UserConfigT} from 'types';
 
 /**
  * For libraries specified without an extension, add '.tbd' for those that

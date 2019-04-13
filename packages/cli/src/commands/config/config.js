@@ -1,7 +1,7 @@
 /**
  * @flow
  */
-import {type ConfigT} from '../../../../../types/config';
+import {type ConfigT} from 'types';
 export default {
   name: 'config',
   description: 'Print CLI configuration',

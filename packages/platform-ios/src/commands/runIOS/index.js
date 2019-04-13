@@ -12,7 +12,7 @@ import child_process from 'child_process';
 import fs from 'fs';
 import path from 'path';
 
-import type {ConfigT} from '../../../../../types/config';
+import type {ConfigT} from 'types';
 
 import findXcodeProject from './findXcodeProject';
 import parseIOSDevicesList from './parseIOSDevicesList';

@@ -1,7 +1,7 @@
 // @flow
 
 import {isEmpty} from 'lodash';
-import type {PlatformsT, ProjectConfigT} from '../../../../../types/config';
+import type {PlatformsT, ProjectConfigT} from 'types';
 
 import {logger} from '@react-native-community/cli-tools';
 

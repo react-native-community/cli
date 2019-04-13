@@ -7,6 +7,10 @@
   "bin": {
     "react-native": "build/bin.js"
   },
+  "files": [
+    "build",
+    "setup_env.sh"
+  ],
   "engineStrict": true,
   "engines": {
     "node": ">=8.3"

@@ -6,5 +6,8 @@
     "@react-native-community/cli-tools": "^2.0.0-alpha.6",
     "chalk": "^1.1.1",
     "xcode": "^2.0.0"
-  }
+  },
+  "files": [
+    "build"
+  ]
 }

@@ -37,6 +37,13 @@ jobs:
       - attach_workspace:
           at: ~/react-native-cli
       - run: yarn flow-check
+  cocoa-pods:
+    <<: *defaults
+    docker:
+      - image: circleci/ruby:2.4-node
+      - attach_workspace:
+          at: ~/react-native-cli
+      - run: yarn test:ci:cocoapods
   unit-tests:
     <<: *defaults
     steps:
@@ -68,5 +75,8 @@ workflows:
           requires:
             - install-dependencies
       - e2e-tests:
+          requires:
+            - install-dependencies
+      - cocoa-pods:
           requires:
             - install-dependencies

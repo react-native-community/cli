@@ -54,6 +54,12 @@ async function runServer(argv: Array<string>, ctx: ConfigT, args: Args) {
     reporter,
   });
 
+  if (args.assetPlugins) {
+    metroConfig.transformer.assetPlugins = args.assetPlugins.map(plugin =>
+      require.resolve(plugin),
+    );
+  }
+
   const middlewareManager = new MiddlewareManager({
     host: args.host,
     port: metroConfig.server.port,

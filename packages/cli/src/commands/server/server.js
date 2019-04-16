@@ -31,6 +31,12 @@ export default {
       parse: (val: string) => val.split(','),
     },
     {
+      command: '--assetPlugins [list]',
+      description:
+        'Specify any additional asset plugins to be used by the packager by full filepath',
+      parse: (val: string) => val.split(','),
+    },
+    {
       command: '--assetExts [list]',
       description:
         'Specify any additional asset extensions to be used by the packager',

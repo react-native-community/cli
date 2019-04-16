@@ -6,11 +6,13 @@
  *
  * @format
  */
-
+import chalk from 'chalk';
 import readPodfile from './readPodfile';
 import findPodTargetLine from './findPodTargetLine';
 import findLineToAddPod from './findLineToAddPod';
-import findMarkedLinesInPodfile from './findMarkedLinesInPodfile';
+import findMarkedLinesInPodfile, {
+  MARKER_TEXT,
+} from './findMarkedLinesInPodfile';
 import addPodEntry from './addPodEntry';
 import savePodFile from './savePodFile';
 
@@ -31,5 +33,16 @@ function getLinesToAddEntry(podLines, {projectName}) {
     return linesToAddPodWithMarker;
   }
   const firstTargetLined = findPodTargetLine(podLines, projectName);
+  if (firstTargetLined === null) {
+    throw new Error(`We couldn't find a target to add a CocoaPods dependency.
+Make sure that you have a "${chalk.dim(
+      `target '${projectName.replace('.xcodeproj', '')}' do`,
+    )}" line in your Podfile.
+
+Alternatively, include "${chalk.dim(
+      MARKER_TEXT,
+    )}" in a Podfile where we should add
+linked dependencies.`);
+  }
   return findLineToAddPod(podLines, firstTargetLined);
 }

@@ -15,7 +15,7 @@ export default function findLineToAddPod(podLines, firstTargetLine) {
   // match function definition, like: post_install do |installer| (some Podfiles have function defined inside main target
   const functionDefinition = /^\s*[a-z_]+\s+do(\s+\|[a-z]+\|)?/g;
 
-  for (let i = firstTargetLine, len = podLines.length; i < len; i++) {
+  for (let i = firstTargetLine; i < podLines.length - 1; i++) {
     const matchNextConstruct =
       podLines[i].match(nextTarget) || podLines[i].match(functionDefinition);
     const matchEnd = podLines[i].match(endOfCurrentTarget);

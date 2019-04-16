@@ -41,6 +41,7 @@ jobs:
     <<: *defaults
     docker:
       - image: circleci/ruby:2.4-node
+    steps:
       - attach_workspace:
           at: ~/react-native-cli
       - run: yarn test:ci:cocoapods

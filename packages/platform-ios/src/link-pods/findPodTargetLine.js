@@ -8,7 +8,6 @@
  */
 
 export default function findPodTargetLine(podLines, projectName) {
-  console.log(projectName);
   const targetName = projectName.replace('.xcodeproj', '');
   // match first target definition in file: target 'target_name' do
   const targetRegex = new RegExp(`target ('|")${targetName}('|") do`, 'g');

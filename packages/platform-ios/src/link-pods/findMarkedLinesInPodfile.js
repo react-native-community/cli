@@ -7,7 +7,7 @@
  * @format
  */
 
-const MARKER_TEXT = '# Add new pods below this line';
+export const MARKER_TEXT = '# Add new pods below this line';
 
 export default function findMarkedLinesInPodfile(podLines) {
   const result = [];

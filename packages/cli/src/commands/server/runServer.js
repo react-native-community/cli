@@ -20,6 +20,7 @@ import loadMetroConfig from '../../tools/loadMetroConfig';
 
 export type Args = {|
   assetExts?: string[],
+  assetPlugins?: string[],
   cert?: string,
   customLogReporterPath?: string,
   host?: string,

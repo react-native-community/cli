@@ -20,6 +20,7 @@ import loadMetroConfig from '../../tools/loadMetroConfig';
 
 export type Args = {|
   assetExts?: string[],
+  assetPlugins?: string[],
   cert?: string,
   customLogReporterPath?: string,
   host?: string,
@@ -53,6 +54,12 @@ async function runServer(argv: Array<string>, ctx: ContextT, args: Args) {
     sourceExts: args.sourceExts,
     reporter,
   });
+
+  if (args.assetPlugins) {
+    metroConfig.transformer.assetPlugins = args.assetPlugins.map(plugin =>
+      require.resolve(plugin),
+    );
+  }
 
   const middlewareManager = new MiddlewareManager({
     host: args.host,

@@ -1,7 +1,7 @@
 /**
  * @flow
  */
-import {type CommandT} from '../tools/config/types.flow';
+import {type CommandT} from 'types';
 
 import server from './server/server';
 import library from './library/library';

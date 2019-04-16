@@ -12,7 +12,7 @@ import {
   type UserDependencyConfigT,
   type UserConfigT,
   type CommandT,
-} from './types.flow';
+} from 'types';
 
 import {JoiError} from './errors';
 

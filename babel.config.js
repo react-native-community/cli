@@ -13,5 +13,13 @@ module.exports = {
   plugins: [
     require.resolve('@babel/plugin-transform-strict-mode'),
     [require.resolve('@babel/plugin-transform-modules-commonjs'), {lazy: true}],
+    [
+      require.resolve('babel-plugin-module-resolver', {
+        root: ['.'],
+        alias: {
+          types: './types',
+        },
+      }),
+    ],
   ],
 };

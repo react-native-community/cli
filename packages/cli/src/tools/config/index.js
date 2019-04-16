@@ -15,7 +15,7 @@ import {
   readLegacyDependencyConfigFromDisk,
 } from './readConfigFromDisk';
 
-import {type ConfigT} from './types.flow';
+import {type ConfigT} from 'types';
 
 import assign from '../assign';
 import merge from '../merge';

@@ -40,13 +40,13 @@ function getLinesToAddEntry(podLines, {projectName}) {
       inlineString(`
         We couldn't find a target to add a CocoaPods dependency.
         
-        Make sure that you have a ${chalk.dim(
+        Make sure that you have a "${chalk.dim(
           `target '${projectName.replace('.xcodeproj', '')}' do`,
-        )} line in your Podfile.
+        )}" line in your Podfile.
         
-        Alternatively, include ${chalk.dim(
+        Alternatively, include "${chalk.dim(
           MARKER_TEXT,
-        )} in a Podfile where we should add
+        )}" in a Podfile where we should add
         linked dependencies.
     `),
     );

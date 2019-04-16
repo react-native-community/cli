@@ -79,7 +79,7 @@ function printHelpInformation(examples, pkg) {
     output = output.concat([chalk.bold('\nExample usage:'), formattedUsage]);
   }
 
-  return output.concat('').join('\n');
+  return output.join('\n').concat('\n');
 }
 
 function printUnknownCommand(cmdName) {

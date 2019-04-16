@@ -195,8 +195,8 @@ if $0 == __FILE__
       @podfile.use_native_modules({ "pkg-1" => @ios_package })
       @podfile.use_native_modules({ "pkg-1" => @ios_package, "pkg-2" => @ios_package })
       @printed_messages.must_equal [
-        "Detected native module pod for ios-dep",
-        "Detected native module pods for ios-dep, and ios-dep"
+        "Detected React Native module pod for ios-dep",
+        "Detected React Native module pods for ios-dep, and ios-dep"
       ]
     end
 

@@ -33,7 +33,7 @@ type FlagsT = {
   packager: boolean,
   verbose: boolean,
   port: number,
-  terminal: string | typeof undefined,
+  terminal: ?string,
 };
 
 function runIOS(_: Array<string>, ctx: ConfigT, args: FlagsT) {

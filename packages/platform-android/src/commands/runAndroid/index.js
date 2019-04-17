@@ -120,7 +120,10 @@ function runOnSpecificDevice(
   const devices = adb.getDevices(adbPath);
   if (devices && devices.length > 0) {
     if (devices.indexOf(args.deviceId) !== -1) {
-      buildApk(gradlew);
+      if (!buildApk(gradlew)) {
+        return;
+      }
+
       installAndLaunchOnDevice(
         args,
         args.deviceId,
@@ -149,9 +152,13 @@ function buildApk(gradlew) {
     execFileSync(gradlew, ['build', '-x', 'lint'], {
       stdio: [process.stdin, process.stdout, process.stderr],
     });
+
+    return true;
   } catch (e) {
     logger.error('Could not build the app, read the error above for details.');
   }
+
+  return false;
 }
 
 function tryInstallAppOnDevice(args, adbPath, device) {

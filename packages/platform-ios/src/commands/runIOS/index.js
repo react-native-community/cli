@@ -71,20 +71,19 @@ function runIOS(_: Array<string>, ctx: ConfigT, args: FlagsT) {
     }),
   );
 
-  if (args.device || args.udid) {
-    const selectedDevice = args.device
-      ? matchingDevice(devices, args.device)
-      : matchingDeviceByUdid(devices, args.udid);
+  const device = ((args.device: any): string);
+  const udid = ((args.udid: any): string);
+  if (device || udid) {
+    const selectedDevice = device
+      ? matchingDevice(devices, device)
+      : matchingDeviceByUdid(devices, udid);
 
     if (selectedDevice) {
       return runOnDevice(selectedDevice, scheme, xcodeProject, args);
     }
 
     if (devices && devices.length > 0) {
-      const device = ((args.device: any): string);
-      const udid = ((args.udid: any): string);
-
-      const message = args.device
+      const message = device
         ? `Could not find device with the name: "${device}". Choose one of the following:\n${printFoundDevices(
             devices,
           )}`

@@ -1,6 +1,7 @@
 const common = {testEnvironment: 'node'};
 
 module.exports = {
+  testRunner: 'jest-circus/runner',
   projects: [
     {
       ...common,

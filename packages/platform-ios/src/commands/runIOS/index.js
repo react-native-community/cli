@@ -28,7 +28,7 @@ type FlagsT = {
   configuration: string,
   scheme: ?string,
   projectPath: string,
-  device: ?string,
+  device: ?(string | true),
   udid: ?string,
   packager: boolean,
   verbose: boolean,
@@ -71,48 +71,34 @@ function runIOS(_: Array<string>, ctx: ConfigT, args: FlagsT) {
     }),
   );
 
-  if (!args.device) {
-    if (args.udid) {
-      // $FlowIssue: args.udid is defined in this context
-      return runOnDeviceByUdid(scheme, xcodeProject, devices, args);
+  if (args.device || args.udid) {
+    const selectedDevice = args.device
+      ? matchingDevice(devices, args.device)
+      : matchingDeviceByUdid(devices, args.udid);
+
+    if (selectedDevice) {
+      return runOnDevice(selectedDevice, scheme, xcodeProject, args);
     }
 
-    return runOnSimulator(xcodeProject, scheme, args);
+    if (devices && devices.length > 0) {
+      const device = ((args.device: any): string);
+      const udid = ((args.udid: any): string);
+
+      const message = args.device
+        ? `Could not find device with the name: "${device}". Choose one of the following:\n${printFoundDevices(
+            devices,
+          )}`
+        : `Could not find device with the udid: "${udid}". Choose one of the following:\n${printFoundDevices(
+            devices,
+          )}`;
+
+      return logger.error(message);
+    }
+
+    return logger.error('No iOS devices connected.');
   }
 
-  const selectedDevice = matchingDevice(devices, args.device);
-  if (selectedDevice) {
-    return runOnDevice(selectedDevice, scheme, xcodeProject, args);
-  }
-
-  if (devices && devices.length > 0) {
-    // $FlowIssue: args.device is defined in this context
-    return logger.error(`Could not find device with the name: "${args.device}".
-Choose one of the following:${printFoundDevices(devices)}`);
-  }
-
-  return logger.error('No iOS devices connected.');
-}
-
-function runOnDeviceByUdid(
-  scheme,
-  xcodeProject,
-  devices,
-  args: FlagsT & {udid: string},
-) {
-  const selectedDevice = matchingDeviceByUdid(devices, args.udid);
-
-  if (selectedDevice) {
-    return runOnDevice(selectedDevice, scheme, xcodeProject, args);
-  }
-
-  if (devices && devices.length > 0) {
-    // $FlowIssue: args.udid is defined in this context
-    logger.error(`Could not find device with the udid: "${args.udid}".
-Choose one of the following:\n${printFoundDevices(devices)}`);
-  } else {
-    logger.error('No iOS devices connected.');
-  }
+  return runOnSimulator(xcodeProject, scheme, args);
 }
 
 async function runOnSimulator(xcodeProject, scheme, args: FlagsT) {

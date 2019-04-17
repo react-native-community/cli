@@ -167,9 +167,9 @@ function tryInstallAppOnDevice(args, adbPath, device) {
     );
 
     const pathToApk = `${buildDirectory}/${apkFile}`;
-    const adbArgs = ['-s', device, 'install', pathToApk];
+    const adbArgs = ['-s', device, 'install', '-rd', pathToApk];
     logger.info(
-      `Installing the app on the device (cd android && adb -s ${device} install ${pathToApk}`,
+      `Installing the app on the device (cd android && adb -s ${device} install -rd ${pathToApk}`,
     );
     execFileSync(adbPath, adbArgs, {
       stdio: [process.stdin, process.stdout, process.stderr],

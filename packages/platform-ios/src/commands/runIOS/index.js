@@ -17,7 +17,11 @@ import type {ConfigT} from '../../../../cli/src/tools/config/types.flow';
 import findXcodeProject from './findXcodeProject';
 import parseIOSDevicesList from './parseIOSDevicesList';
 import findMatchingSimulator from './findMatchingSimulator';
-import {logger, CLIError} from '@react-native-community/cli-tools';
+import {
+  logger,
+  CLIError,
+  getDefaultUserTerminal,
+} from '@react-native-community/cli-tools';
 
 type FlagsT = {
   simulator: string,
@@ -271,7 +275,7 @@ function buildProject(
   launchPackager = false,
   verbose,
   port,
-  terminal = process.env.REACT_TERMINAL || process.env.TERM_PROGRAM,
+  terminal,
 ) {
   return new Promise((resolve, reject) => {
     const xcodebuildArgs = [
@@ -512,7 +516,7 @@ export default {
       command: '--terminal [string]',
       description:
         'Launches the Metro Bundler in a new window using the specified terminal path.',
-      default: undefined,
+      default: getDefaultUserTerminal(),
     },
   ],
 };

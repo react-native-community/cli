@@ -71,55 +71,39 @@ function runIOS(_: Array<string>, ctx: ConfigT, args: FlagsT) {
     }),
   );
 
-  if (args.device) {
-    const selectedDevice = matchingDevice(devices, args.device);
-    if (selectedDevice) {
-      return runOnDevice(
-        selectedDevice,
-        scheme,
-        xcodeProject,
-        args.configuration,
-        args.packager,
-        args.verbose,
-        args.port,
-        args.terminal,
-      );
+  if (!args.device) {
+    if (args.udid) {
+      // $FlowIssue: args.udid is defined in this context
+      return runOnDeviceByUdid(scheme, xcodeProject, devices, args);
     }
-    if (devices && devices.length > 0) {
-      // $FlowIssue: args.device is defined in this context
-      logger.error(`Could not find device with the name: "${args.device}".
-Choose one of the following:${printFoundDevices(devices)}`);
-    } else {
-      logger.error('No iOS devices connected.');
-    }
-  } else if (args.udid) {
-    // $FlowIssue: args.udid is defined in this context
-    return runOnDeviceByUdid(args, scheme, xcodeProject, devices);
+
+    return runOnSimulator(xcodeProject, scheme, args);
   }
 
-  return runOnSimulator(xcodeProject, args, scheme);
+  const selectedDevice = matchingDevice(devices, args.device);
+  if (selectedDevice) {
+    return runOnDevice(selectedDevice, scheme, xcodeProject, args);
+  }
+
+  if (devices && devices.length > 0) {
+    // $FlowIssue: args.device is defined in this context
+    return logger.error(`Could not find device with the name: "${args.device}".
+Choose one of the following:${printFoundDevices(devices)}`);
+  }
+
+  return logger.error('No iOS devices connected.');
 }
 
 function runOnDeviceByUdid(
-  args: FlagsT & {udid: string},
   scheme,
   xcodeProject,
   devices,
+  args: FlagsT & {udid: string},
 ) {
   const selectedDevice = matchingDeviceByUdid(devices, args.udid);
 
   if (selectedDevice) {
-    runOnDevice(
-      selectedDevice,
-      scheme,
-      xcodeProject,
-      args.configuration,
-      args.packager,
-      args.verbose,
-      args.port,
-      args.terminal,
-    );
-    return;
+    return runOnDevice(selectedDevice, scheme, xcodeProject, args);
   }
 
   if (devices && devices.length > 0) {
@@ -131,7 +115,7 @@ Choose one of the following:\n${printFoundDevices(devices)}`);
   }
 }
 
-async function runOnSimulator(xcodeProject, args, scheme) {
+async function runOnSimulator(xcodeProject, scheme, args: FlagsT) {
   let simulators;
   try {
     simulators = JSON.parse(
@@ -182,11 +166,7 @@ async function runOnSimulator(xcodeProject, args, scheme) {
     xcodeProject,
     selectedSimulator.udid,
     scheme,
-    args.configuration,
-    args.packager,
-    args.verbose,
-    args.port,
-    args.terminal,
+    args,
   );
 
   const appPath = getBuildPath(args.configuration, appName, false, scheme);
@@ -221,30 +201,17 @@ async function runOnSimulator(xcodeProject, args, scheme) {
   );
 }
 
-async function runOnDevice(
-  selectedDevice,
-  scheme,
-  xcodeProject,
-  configuration,
-  launchPackager,
-  verbose,
-  port,
-  terminal,
-) {
+async function runOnDevice(selectedDevice, scheme, xcodeProject, args: FlagsT) {
   const appName = await buildProject(
     xcodeProject,
     selectedDevice.udid,
     scheme,
-    configuration,
-    launchPackager,
-    verbose,
-    port,
-    terminal,
+    args,
   );
 
   const iosDeployInstallArgs = [
     '--bundle',
-    getBuildPath(configuration, appName, true, scheme),
+    getBuildPath(args.configuration, appName, true, scheme),
     '--id',
     selectedDevice.udid,
     '--justlaunch',
@@ -267,22 +234,13 @@ async function runOnDevice(
   }
 }
 
-function buildProject(
-  xcodeProject,
-  udid,
-  scheme,
-  configuration,
-  launchPackager = false,
-  verbose,
-  port,
-  terminal,
-) {
+function buildProject(xcodeProject, udid, scheme, args: FlagsT) {
   return new Promise((resolve, reject) => {
     const xcodebuildArgs = [
       xcodeProject.isWorkspace ? '-workspace' : '-project',
       xcodeProject.name,
       '-configuration',
-      configuration,
+      args.configuration,
       '-scheme',
       scheme,
       '-destination',
@@ -292,7 +250,7 @@ function buildProject(
     ];
     logger.info(`Building using "xcodebuild ${xcodebuildArgs.join(' ')}"`);
     let xcpretty;
-    if (!verbose) {
+    if (!args.verbose) {
       xcpretty =
         xcprettyAvailable() &&
         child_process.spawn('xcpretty', [], {
@@ -302,7 +260,7 @@ function buildProject(
     const buildProcess = child_process.spawn(
       'xcodebuild',
       xcodebuildArgs,
-      getProcessOptions(launchPackager, port, terminal),
+      getProcessOptions(args),
     );
     let buildOutput = '';
     let errorOutput = '';
@@ -429,8 +387,8 @@ function printFoundDevices(devices) {
   return output;
 }
 
-function getProcessOptions(launchPackager, port, terminal) {
-  if (launchPackager) {
+function getProcessOptions({packager, terminal, port}) {
+  if (packager) {
     return {
       env: {...process.env, RCT_TERMINAL: terminal, RCT_METRO_PORT: port},
     };

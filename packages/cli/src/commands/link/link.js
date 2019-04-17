@@ -49,7 +49,7 @@ function link([rawPackageName]: Array<string>, ctx: ConfigT, opts: FlagsType) {
 
   if (rawPackageName === undefined) {
     logger.debug(
-      'No package name provided, will attemp to link all possible packages.',
+      'No package name provided, will attempt to link all possible packages.',
     );
     return linkAll(ctx);
   }

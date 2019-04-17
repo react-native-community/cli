@@ -11,9 +11,8 @@
 import child_process from 'child_process';
 import fs from 'fs';
 import path from 'path';
-
+import chalk from 'chalk';
 import type {ConfigT} from 'types';
-
 import findXcodeProject from './findXcodeProject';
 import parseIOSDevicesList from './parseIOSDevicesList';
 import findMatchingSimulator from './findMatchingSimulator';
@@ -64,6 +63,12 @@ function runIOS(_: Array<string>, ctx: ConfigT, args: FlagsT) {
     }`,
   );
 
+  const {device, udid} = args;
+
+  if (!device && !udid) {
+    return runOnSimulator(xcodeProject, scheme, args);
+  }
+
   const devices = parseIOSDevicesList(
     // $FlowExpectedError https://github.com/facebook/flow/issues/5675
     child_process.execFileSync('xcrun', ['instruments', '-s'], {
@@ -71,33 +76,31 @@ function runIOS(_: Array<string>, ctx: ConfigT, args: FlagsT) {
     }),
   );
 
-  const device = ((args.device: any): string);
-  const udid = ((args.udid: any): string);
-  if (device || udid) {
-    const selectedDevice = device
-      ? matchingDevice(devices, device)
-      : matchingDeviceByUdid(devices, udid);
-
-    if (selectedDevice) {
-      return runOnDevice(selectedDevice, scheme, xcodeProject, args);
-    }
-
-    if (devices && devices.length > 0) {
-      const message = device
-        ? `Could not find device with the name: "${device}". Choose one of the following:\n${printFoundDevices(
-            devices,
-          )}`
-        : `Could not find device with the udid: "${udid}". Choose one of the following:\n${printFoundDevices(
-            devices,
-          )}`;
-
-      return logger.error(message);
-    }
-
+  if (devices.length === 0) {
     return logger.error('No iOS devices connected.');
   }
 
-  return runOnSimulator(xcodeProject, scheme, args);
+  const selectedDevice = matchingDevice(devices, device, udid);
+
+  if (selectedDevice) {
+    return runOnDevice(selectedDevice, scheme, xcodeProject, args);
+  }
+
+  if (device) {
+    return logger.error(
+      `Could not find a device named: "${chalk.bold(
+        device,
+      )}". ${printFoundDevices(devices)}`,
+    );
+  }
+
+  if (udid) {
+    return logger.error(
+      `Could not find a device with udid: "${chalk.bold(
+        udid,
+      )}". ${printFoundDevices(devices)}`,
+    );
+  }
 }
 
 async function runOnSimulator(xcodeProject, scheme, args: FlagsT) {
@@ -331,33 +334,26 @@ function xcprettyAvailable() {
   return true;
 }
 
-function matchingDevice(devices, deviceName) {
+function matchingDevice(devices, deviceName, udid) {
+  if (udid) {
+    return matchingDeviceByUdid(devices, udid);
+  }
   if (deviceName === true && devices.length === 1) {
     logger.info(
-      `Using first available device ${
-        devices[0].name
-      } due to lack of name supplied.`,
+      `Using first available device named "${chalk.bold(
+        devices[0].name,
+      )}" due to lack of name supplied.`,
     );
     return devices[0];
   }
-  for (let i = devices.length - 1; i >= 0; i--) {
-    if (
-      devices[i].name === deviceName ||
-      formattedDeviceName(devices[i]) === deviceName
-    ) {
-      return devices[i];
-    }
-  }
-  return null;
+  return devices.find(
+    device =>
+      device.name === deviceName || formattedDeviceName(device) === deviceName,
+  );
 }
 
 function matchingDeviceByUdid(devices, udid) {
-  for (let i = devices.length - 1; i >= 0; i--) {
-    if (devices[i].udid === udid) {
-      return devices[i];
-    }
-  }
-  return null;
+  return devices.find(device => device.udid === udid);
 }
 
 function formattedDeviceName(simulator) {
@@ -365,11 +361,10 @@ function formattedDeviceName(simulator) {
 }
 
 function printFoundDevices(devices) {
-  let output = '';
-  for (let i = devices.length - 1; i >= 0; i--) {
-    output += `${devices[i].name} Udid: ${devices[i].udid}\n`;
-  }
-  return output;
+  return [
+    'Available devices:',
+    ...devices.map(device => `  - ${device.name} (${device.udid})`),
+  ].join('\n');
 }
 
 function getProcessOptions({packager, terminal, port}) {

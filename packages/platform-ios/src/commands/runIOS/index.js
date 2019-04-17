@@ -430,16 +430,14 @@ function printFoundDevices(devices) {
 }
 
 function getProcessOptions(launchPackager, port, terminal) {
-  const env = {...process.env, RCT_TERMINAL: terminal};
-
   if (launchPackager) {
     return {
-      env: {...env, RCT_METRO_PORT: port},
+      env: {...process.env, RCT_TERMINAL: terminal, RCT_METRO_PORT: port},
     };
   }
 
   return {
-    env: {...env, RCT_NO_LAUNCH_PACKAGER: true},
+    env: {...process.env, RCT_TERMINAL: terminal, RCT_NO_LAUNCH_PACKAGER: true},
   };
 }
 

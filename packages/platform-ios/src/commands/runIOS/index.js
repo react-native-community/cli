@@ -17,18 +17,23 @@ import type {ConfigT} from 'types';
 import findXcodeProject from './findXcodeProject';
 import parseIOSDevicesList from './parseIOSDevicesList';
 import findMatchingSimulator from './findMatchingSimulator';
-import {logger, CLIError} from '@react-native-community/cli-tools';
+import {
+  logger,
+  CLIError,
+  getDefaultUserTerminal,
+} from '@react-native-community/cli-tools';
 
 type FlagsT = {
   simulator: string,
   configuration: string,
   scheme: ?string,
   projectPath: string,
-  device: ?string,
+  device: ?(string | true),
   udid: ?string,
   packager: boolean,
   verbose: boolean,
   port: number,
+  terminal: ?string,
 };
 
 function runIOS(_: Array<string>, ctx: ConfigT, args: FlagsT) {
@@ -66,65 +71,36 @@ function runIOS(_: Array<string>, ctx: ConfigT, args: FlagsT) {
     }),
   );
 
-  if (args.device) {
-    const selectedDevice = matchingDevice(devices, args.device);
+  const device = ((args.device: any): string);
+  const udid = ((args.udid: any): string);
+  if (device || udid) {
+    const selectedDevice = device
+      ? matchingDevice(devices, device)
+      : matchingDeviceByUdid(devices, udid);
+
     if (selectedDevice) {
-      return runOnDevice(
-        selectedDevice,
-        scheme,
-        xcodeProject,
-        args.configuration,
-        args.packager,
-        args.verbose,
-        args.port,
-      );
+      return runOnDevice(selectedDevice, scheme, xcodeProject, args);
     }
+
     if (devices && devices.length > 0) {
-      // $FlowIssue: args.device is defined in this context
-      logger.error(`Could not find device with the name: "${args.device}".
-Choose one of the following:${printFoundDevices(devices)}`);
-    } else {
-      logger.error('No iOS devices connected.');
+      const message = device
+        ? `Could not find device with the name: "${device}". Choose one of the following:\n${printFoundDevices(
+            devices,
+          )}`
+        : `Could not find device with the udid: "${udid}". Choose one of the following:\n${printFoundDevices(
+            devices,
+          )}`;
+
+      return logger.error(message);
     }
-  } else if (args.udid) {
-    // $FlowIssue: args.udid is defined in this context
-    return runOnDeviceByUdid(args, scheme, xcodeProject, devices);
+
+    return logger.error('No iOS devices connected.');
   }
 
-  return runOnSimulator(xcodeProject, args, scheme);
+  return runOnSimulator(xcodeProject, scheme, args);
 }
 
-function runOnDeviceByUdid(
-  args: FlagsT & {udid: string},
-  scheme,
-  xcodeProject,
-  devices,
-) {
-  const selectedDevice = matchingDeviceByUdid(devices, args.udid);
-
-  if (selectedDevice) {
-    runOnDevice(
-      selectedDevice,
-      scheme,
-      xcodeProject,
-      args.configuration,
-      args.packager,
-      args.verbose,
-      args.port,
-    );
-    return;
-  }
-
-  if (devices && devices.length > 0) {
-    // $FlowIssue: args.udid is defined in this context
-    logger.error(`Could not find device with the udid: "${args.udid}".
-Choose one of the following:\n${printFoundDevices(devices)}`);
-  } else {
-    logger.error('No iOS devices connected.');
-  }
-}
-
-async function runOnSimulator(xcodeProject, args, scheme) {
+async function runOnSimulator(xcodeProject, scheme, args: FlagsT) {
   let simulators;
   try {
     simulators = JSON.parse(
@@ -175,10 +151,7 @@ async function runOnSimulator(xcodeProject, args, scheme) {
     xcodeProject,
     selectedSimulator.udid,
     scheme,
-    args.configuration,
-    args.packager,
-    args.verbose,
-    args.port,
+    args,
   );
 
   const appPath = getBuildPath(args.configuration, appName, false, scheme);
@@ -213,34 +186,23 @@ async function runOnSimulator(xcodeProject, args, scheme) {
   );
 }
 
-async function runOnDevice(
-  selectedDevice,
-  scheme,
-  xcodeProject,
-  configuration,
-  launchPackager,
-  verbose,
-  port,
-) {
+async function runOnDevice(selectedDevice, scheme, xcodeProject, args: FlagsT) {
   const appName = await buildProject(
     xcodeProject,
     selectedDevice.udid,
     scheme,
-    configuration,
-    launchPackager,
-    verbose,
-    port,
+    args,
   );
 
   const iosDeployInstallArgs = [
     '--bundle',
-    getBuildPath(configuration, appName, true, scheme),
+    getBuildPath(args.configuration, appName, true, scheme),
     '--id',
     selectedDevice.udid,
     '--justlaunch',
   ];
 
-  logger.info(`installing and launching your app on ${selectedDevice.name}...`);
+  logger.info(`Installing and launching your app on ${selectedDevice.name}...`);
 
   const iosDeployOutput = child_process.spawnSync(
     'ios-deploy',
@@ -257,21 +219,13 @@ async function runOnDevice(
   }
 }
 
-function buildProject(
-  xcodeProject,
-  udid,
-  scheme,
-  configuration,
-  launchPackager = false,
-  verbose,
-  port,
-) {
+function buildProject(xcodeProject, udid, scheme, args: FlagsT) {
   return new Promise((resolve, reject) => {
     const xcodebuildArgs = [
       xcodeProject.isWorkspace ? '-workspace' : '-project',
       xcodeProject.name,
       '-configuration',
-      configuration,
+      args.configuration,
       '-scheme',
       scheme,
       '-destination',
@@ -281,7 +235,7 @@ function buildProject(
     ];
     logger.info(`Building using "xcodebuild ${xcodebuildArgs.join(' ')}"`);
     let xcpretty;
-    if (!verbose) {
+    if (!args.verbose) {
       xcpretty =
         xcprettyAvailable() &&
         child_process.spawn('xcpretty', [], {
@@ -291,7 +245,7 @@ function buildProject(
     const buildProcess = child_process.spawn(
       'xcodebuild',
       xcodebuildArgs,
-      getProcessOptions(launchPackager, port),
+      getProcessOptions(args),
     );
     let buildOutput = '';
     let errorOutput = '';
@@ -418,15 +372,15 @@ function printFoundDevices(devices) {
   return output;
 }
 
-function getProcessOptions(launchPackager, port) {
-  if (launchPackager) {
+function getProcessOptions({packager, terminal, port}) {
+  if (packager) {
     return {
-      env: {...process.env, RCT_METRO_PORT: port},
+      env: {...process.env, RCT_TERMINAL: terminal, RCT_METRO_PORT: port},
     };
   }
 
   return {
-    env: {...process.env, RCT_NO_LAUNCH_PACKAGER: true},
+    env: {...process.env, RCT_TERMINAL: terminal, RCT_NO_LAUNCH_PACKAGER: true},
   };
 }
 
@@ -498,6 +452,12 @@ export default {
       command: '--port [number]',
       default: process.env.RCT_METRO_PORT || 8081,
       parse: (val: string) => Number(val),
+    },
+    {
+      command: '--terminal [string]',
+      description:
+        'Launches the Metro Bundler in a new window using the specified terminal path.',
+      default: getDefaultUserTerminal(),
     },
   ],
 };

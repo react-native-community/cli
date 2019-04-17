@@ -15,11 +15,14 @@ import type {ConfigT} from 'types';
 
 import adb from './adb';
 import runOnAllDevices from './runOnAllDevices';
-import isPackagerRunning from './isPackagerRunning';
 import tryRunAdbReverse from './tryRunAdbReverse';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
 import getAdbPath from './getAdbPath';
-import {logger} from '@react-native-community/cli-tools';
+import {
+  isPackagerRunning,
+  logger,
+  getDefaultUserTerminal,
+} from '@react-native-community/cli-tools';
 
 // Verifies this is an Android project
 function checkAndroid(root) {
@@ -226,11 +229,7 @@ function installAndLaunchOnDevice(
   );
 }
 
-function startServerInNewWindow(
-  port,
-  terminal = process.env.REACT_TERMINAL,
-  reactNativePath,
-) {
+function startServerInNewWindow(port, terminal, reactNativePath) {
   /**
    * Set up OS-specific filenames and commands
    */
@@ -359,7 +358,7 @@ export default {
       command: '--terminal [string]',
       description:
         'Launches the Metro Bundler in a new window using the specified terminal path.',
-      default: '',
+      default: getDefaultUserTerminal(),
     },
   ],
 };

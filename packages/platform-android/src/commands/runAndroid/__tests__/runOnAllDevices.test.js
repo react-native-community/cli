@@ -6,8 +6,8 @@
  *
  */
 
-import fs from 'fs';
 import runOnAllDevices from '../runOnAllDevices';
+import {createBuildGradleMocks} from './testHelpers';
 
 jest.mock('child_process', () => ({
   execFileSync: jest.fn(),
@@ -21,37 +21,7 @@ describe('--appFolder', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    jest.mock('fs');
-    jest.mock('path');
-
-    const actualFs = jest.requireActual('fs');
-    const actualPath = jest.requireActual('path');
-
-    fs.readFileSync = jest.fn(filename => {
-      switch (filename) {
-        case actualPath.join('app', 'build.gradle'):
-          return actualFs.readFileSync(
-            actualPath.join(
-              __dirname,
-              '..',
-              '__fixtures__',
-              'sampleBuild.gradle',
-            ),
-            'utf8',
-          );
-        // Use default case to catch generated debug manifest
-        default:
-          return actualFs.readFileSync(
-            actualPath.join(
-              __dirname,
-              '..',
-              '__fixtures__',
-              'sampleGeneratedDebugManifest.xml',
-            ),
-            'utf8',
-          );
-      }
-    });
+    createBuildGradleMocks(false);
   });
 
   it('uses installDebug as default if no arguments', () => {

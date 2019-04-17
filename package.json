@@ -8,7 +8,7 @@
     "build-clean": "rm -rf ./packages/*/build",
     "watch": "node ./scripts/watch.js",
     "test": "jest",
-    "test:ci:unit": "jest packages --ci --coverage",
+    "test:ci:unit": "jest packages --ci --coverage -w 4",
     "test:ci:e2e": "jest e2e --ci -i",
     "test:ci:cocoapods": "ruby packages/platform-ios/native_modules.rb",
     "lint": "eslint . --cache --report-unused-disable-directives",

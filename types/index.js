@@ -198,7 +198,7 @@ export type UserConfigT = {
    * Shares some structure with ConfigT, except that haste, root, platforms
    * are calculated and can't be defined
    */
-  ...$Diff<ConfigT, {haste: any, root: any, platforms: any}>,
+  ...$Diff<ConfigT, {haste: any, root: any}>,
   reactNativePath: ?string,
 
   // Additional project settings

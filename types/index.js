@@ -10,7 +10,11 @@ export type CommandT = {
     command: string,
     description?: string,
     parse?: (val: string) => any,
-    default?: string | boolean | number,
+    default?:
+      | string
+      | boolean
+      | number
+      | ((ctx: ConfigT) => string | boolean | number),
   }>,
   examples?: Array<{
     desc: string,

@@ -125,7 +125,7 @@ const addCommand = (command: CommandT, ctx: ConfigT) => {
       opt.command,
       opt.description,
       opt.parse || defaultOptParser,
-      opt.default,
+      typeof opt.default === 'function' ? opt.default(ctx) : opt.default,
     ),
   );
 };

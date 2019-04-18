@@ -85,12 +85,13 @@ export const dependencyConfig = t
         projectConfig: t.func(),
         linkConfig: t.func(),
       }),
-    ).default(),
+    ).default({}),
     commands: t
       .array()
       .items(command)
       .default([]),
   })
+  .unknown(true)
   .default();
 
 /**
@@ -170,5 +171,14 @@ export const projectConfig = t
       .array()
       .items(command)
       .default([]),
+    platforms: map(
+      t.string(),
+      t.object({
+        dependencyConfig: t.func(),
+        projectConfig: t.func(),
+        linkConfig: t.func(),
+      }),
+    ).default({}),
   })
+  .unknown(true)
   .default();

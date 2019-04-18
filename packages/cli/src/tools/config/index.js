@@ -124,7 +124,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
       get assets() {
         return findAssets(projectRoot, userConfig.assets);
       },
-      platforms: {},
+      platforms: userConfig.platforms,
       haste: {
         providesModuleNodeModules: [],
         platforms: [],

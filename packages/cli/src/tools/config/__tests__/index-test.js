@@ -251,7 +251,9 @@ test('should skip packages that have invalid configuration', () => {
   writeFiles(DIR, {
     'node_modules/react-native/package.json': '{}',
     'node_modules/react-native/react-native.config.js': `module.exports = {
-      invalidProperty: 5
+      dependency: {
+        invalidProperty: 5
+      }
     }`,
     'package.json': `{
       "dependencies": {

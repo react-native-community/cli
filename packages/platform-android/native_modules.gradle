@@ -54,7 +54,8 @@ class ReactNativeModules {
   private ArrayList<HashMap<String, String>> reactNativeModules
 
   private static String LOG_PREFIX = ":ReactNative:"
-  private static String REACT_NATIVE_CONFIG_CMD = "react-native config"
+  private static String REACT_NATIVE_CLI_BIN = "node_modules${File.separator}@react-native-community${File.separator}cli${File.separator}build${File.separator}index.js"
+  private static String REACT_NATIVE_CONFIG_CMD = "node ${REACT_NATIVE_CLI_BIN} config"
 
   ReactNativeModules(Logger logger) {
     this.logger = logger
@@ -145,7 +146,9 @@ class ReactNativeModules {
 
     if (packages.size() > 0) {
       packageImports = "import ${applicationId}.BuildConfig;\n\n"
-      packageImports = packageImports + packages.collect { "// ${it.name}\n${it.packageImportPath}" }.join(';\n')
+      packageImports = packageImports + packages.collect {
+        "// ${it.name}\n${it.packageImportPath}"
+      }.join(';\n')
       packageClassInstances = ",\n      " + packages.collect { it.packageInstance }.join(',')
     }
 
@@ -173,13 +176,11 @@ class ReactNativeModules {
 
     try {
       cmdProcess = Runtime.getRuntime().exec(REACT_NATIVE_CONFIG_CMD, null, getReactNativeProjectRoot())
-    } catch(Exception exception) {
-      if (exception.message.contains("No such file or directory")) {
-        this.logger.warn("${LOG_PREFIX}Skipping automatic imports of native modules. (NO_GLOBAL_CLI)")
-        return reactNativeModules
-      }
-
-      throw exception
+      cmdProcess.waitFor()
+    } catch (Exception exception) {
+      this.logger.warn("${LOG_PREFIX}${exception.message}")
+      this.logger.warn("${LOG_PREFIX}Automatic import of native modules failed. (UNKNOWN)")
+      return reactNativeModules
     }
 
     def reactNativeConfigOutput = cmdProcess.in.text

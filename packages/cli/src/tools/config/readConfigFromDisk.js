@@ -6,13 +6,19 @@
 import Joi from 'joi';
 import cosmiconfig from 'cosmiconfig';
 import path from 'path';
+import chalk from 'chalk';
 
-import {type DependencyConfigT, type ProjectConfigT} from './types.flow';
+import {
+  type UserDependencyConfigT,
+  type UserConfigT,
+  type CommandT,
+} from 'types';
 
-import {JoiError} from '../errors';
+import {JoiError} from './errors';
 
 import * as schema from './schema';
-import logger from '../logger';
+
+import {logger} from '@react-native-community/cli-tools';
 
 /**
  * Places to look for the new configuration
@@ -23,7 +29,7 @@ const searchPlaces = ['react-native.config.js', 'package.json'];
  * Reads a project configuration as defined by the user in the current
  * workspace.
  */
-export function readProjectConfigFromDisk(rootFolder: string): ProjectConfigT {
+export function readConfigFromDisk(rootFolder: string): UserConfigT {
   const explorer = cosmiconfig('react-native', {searchPlaces});
 
   const {config} = explorer.searchSync(rootFolder) || {config: undefined};
@@ -43,7 +49,7 @@ export function readProjectConfigFromDisk(rootFolder: string): ProjectConfigT {
  */
 export function readDependencyConfigFromDisk(
   rootFolder: string,
-): DependencyConfigT {
+): UserDependencyConfigT {
   const explorer = cosmiconfig('react-native', {
     stopDir: rootFolder,
     searchPlaces,
@@ -61,14 +67,35 @@ export function readDependencyConfigFromDisk(
 }
 
 /**
- * Reads a legacy configuaration from a `package.json` "rnpm" key.
+ * Returns an array of commands that are defined in the project.
+ *
+ * `config.project` can be either an array of paths or a single string.
+ * Each of the files can export a commands (object) or an array of commands
+ */
+const loadProjectCommands = (
+  root,
+  commands: ?(Array<string> | string),
+): Array<CommandT> => {
+  return []
+    .concat(commands || [])
+    .reduce((acc: Array<CommandT>, cmdPath: string) => {
+      const cmds: Array<CommandT> | CommandT = require(path.join(
+        root,
+        cmdPath,
+      ));
+      return acc.concat(cmds);
+    }, []);
+};
+
+/**
+ * Reads a legacy configuration from a `package.json` "rnpm" key.
  */
 export function readLegacyDependencyConfigFromDisk(
   rootFolder: string,
-): ?DependencyConfigT {
-  const config = require(path.join(rootFolder, 'package.json'));
+): ?UserDependencyConfigT {
+  const {rnpm: config, name} = require(path.join(rootFolder, 'package.json'));
 
-  if (!config.rnpm) {
+  if (!config) {
     return undefined;
   }
 
@@ -82,16 +109,17 @@ export function readLegacyDependencyConfigFromDisk(
       hooks: config.commands,
       params: config.params,
     },
-    commands: [].concat(config.plugin || []),
+    commands: loadProjectCommands(rootFolder, config.plugin),
     platforms: config.platform
       ? require(path.join(rootFolder, config.platform))
       : undefined,
   };
 
+  // @todo: paste a link to documentation that explains the migration steps
   logger.warn(
-    `Package '${path.basename(
-      config.name,
-    )}' is using deprecated "rnpm" config that will stop working from next release. Consider upgrading to the new config format.`,
+    `Package ${chalk.bold(
+      path.basename(name),
+    )} is using deprecated "rnpm" config that will stop working from next release. Consider upgrading to the new config format.`,
   );
 
   const result = Joi.validate(transformedConfig, schema.dependencyConfig);

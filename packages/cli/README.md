@@ -17,7 +17,7 @@ CLI comes with a set of commands and flags you can pass to them.
 - [`ram-bundle`](#ram-bundle)
 - [`run-android`](#run-android)
 - [`run-ios`](#run-ios)
-- [`server`](#server)
+- [`start`](#start)
 - [`uninstall`](#uninstall)
 - [`unlink`](#unlink)
 - [`upgrade`](#upgrade)
@@ -43,6 +43,20 @@ Installs single package from npm and then links native dependencies. If `install
 ### `library`
 
 ### `link`
+
+Usage:
+
+```sh
+react-native link [packageName]
+```
+
+Link native dependency or all native dependencies if no `packageName` passed.
+
+#### Options
+
+#### `--platforms [list]`
+
+Pass comma-separated list of platforms to scope `link` to.
 
 ### `log-android`
 
@@ -112,7 +126,85 @@ Runs packager on specified port
 
 Default: `process.env.RCT_METRO_PORT || 8081`
 
-### `server`
+### `start`
+
+Usage:
+
+```
+react-native start [option]
+```
+
+Starts the server that communicates with connected devices
+
+#### Options
+
+#### `--port [number]`
+
+Specify port to listen on
+
+#### `--watchFolders [list]`
+
+Specify any additional folders to be added to the watch list
+
+#### `--assetExts [list]`
+
+Specify any additional asset extensions to be used by the packager
+
+#### `--sourceExts [list]`
+
+Specify any additional source extensions to be used by the packager
+
+#### `--platforms [list]`
+
+Specify any additional platforms to be used by the packager
+
+#### `--providesModuleNodeModules [list]`
+
+Specify any npm packages that import dependencies with providesModule
+
+#### `--max-workers [number]`
+
+Specifies the maximum number of workers the worker-pool will spawn for transforming files. This defaults to the number of the cores available on your machine
+
+#### `--skipflow`
+
+Disable flow checks
+
+#### `--nonPersistent`
+
+Disable file watcher
+
+#### `--transformer [string]`
+
+Specify a custom transformer to be used
+
+#### `--reset-cache, --resetCache`
+
+Removes cached files
+
+#### `--custom-log-reporter-path, --customLogReporterPath [string]`
+
+Path to a JavaScript file that exports a log reporter as a replacement for TerminalReporter
+
+#### `--verbose`
+
+Enables logging
+
+#### `--https`
+
+Enables https connections to the server
+
+#### `--key [path]`
+
+Path to custom SSL key
+
+#### `--cert [path]`
+
+Path to custom SSL cert
+
+#### `--config [string]`
+
+Path to the CLI configuration file
 
 ### `uninstall`
 
@@ -126,4 +218,24 @@ Unlinks single package native dependencies and then uninstalls it from `package.
 
 ### `unlink`
 
+Usage:
+
+```
+react-native unlink <packageName>
+```
+
+Unlink native dependency linked with the `link` command.
+
 ### `upgrade`
+
+Usage:
+
+```sh
+react-native upgrade [npm-version]
+```
+
+Upgrade your app's template files to the specified or latest npm version using [rn-diff-purge](https://github.com/react-native-community/rn-diff-purge) project. Only valid semver versions are allowed.
+
+Using this command is a recommended way of upgrading relatively simple React Native apps with not too many native libraries linked. The more iOS and Android build files are modified, the higher chance for a conflicts. The command will guide you on how to continue upgrade process manually in case of failure.
+
+_Note: If you'd like to upgrade using this method from React Native version lower than 0.59.0, you may use a standalone version of this CLI: `npx @react-native-community/cli upgrade`._

@@ -5,7 +5,7 @@
 import path from 'path';
 import {createBlacklist} from 'metro';
 import {loadConfig} from 'metro-config';
-import {type ContextT} from './types.flow';
+import {type ConfigT} from 'types';
 import findSymlinkedModules from './findSymlinkedModules';
 
 const resolveSymlinksForRoots = roots =>
@@ -30,16 +30,13 @@ const getBlacklistRE = () => createBlacklist([/.*\/__fixtures__\/.*/]);
  * @todo(grabbou): As a separate PR, haste.platforms should be added before "native".
  * Otherwise, a.native.js will not load on Windows or other platforms
  */
-export const getDefaultConfig = (ctx: ContextT) => {
+export const getDefaultConfig = (ctx: ConfigT) => {
   return {
     resolver: {
       resolverMainFields: ['react-native', 'browser', 'main'],
       blacklistRE: getBlacklistRE(),
-      platforms: ['ios', 'android', 'native', ...ctx.haste.platforms],
-      providesModuleNodeModules: [
-        'react-native',
-        ...ctx.haste.providesModuleNodeModules,
-      ],
+      platforms: [...ctx.haste.platforms, 'native'],
+      providesModuleNodeModules: ctx.haste.providesModuleNodeModules,
       hasteImplModulePath: path.join(ctx.reactNativePath, 'jest/hasteImpl'),
     },
     serializer: {
@@ -83,7 +80,7 @@ export type ConfigOptionsT = {|
  *
  * This allows the CLI to always overwrite the file settings.
  */
-export default function load(ctx: ContextT, options?: ConfigOptionsT) {
+export default function load(ctx: ConfigT, options?: ConfigOptionsT) {
   const defaultConfig = getDefaultConfig(ctx);
 
   return loadConfig({cwd: ctx.root, ...options}, defaultConfig);

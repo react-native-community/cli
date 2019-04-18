@@ -8,7 +8,7 @@
  */
 
 import copyToClipBoard from '../copyToClipBoard';
-import logger from '../../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 
 /**
  * Handle the request from JS to copy contents onto host system clipboard.

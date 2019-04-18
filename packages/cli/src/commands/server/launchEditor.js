@@ -12,7 +12,7 @@ import fs from 'fs';
 import path from 'path';
 import {execSync, spawn} from 'child_process';
 import shellQuote from 'shell-quote';
-import logger from '../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 
 function isTerminalEditor(editor) {
   switch (editor) {

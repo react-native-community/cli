@@ -1,31 +1,26 @@
 // @flow
 import info from '../info';
-import logger from '../../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
+import loadConfig from '../../../tools/config';
 
-jest.mock('../../../tools/logger', () => ({
-  info: jest.fn(),
-  error: jest.fn(),
-  log: jest.fn(),
+jest.mock('@react-native-community/cli-tools', () => ({
+  logger: {
+    info: jest.fn(),
+    error: jest.fn(),
+    log: jest.fn(),
+  },
 }));
 
-const ctx = {
-  root: '',
-  reactNativePath: '',
-  dependencies: {},
-  platforms: {},
-  commands: [],
-  haste: {
-    platforms: [],
-    providesModuleNodeModules: [],
-  },
-};
+jest.mock('../../../tools/config');
 
 beforeEach(() => {
   jest.resetAllMocks();
 });
 
+const config = loadConfig();
+
 test('prints output without arguments', async () => {
-  await info.func([], ctx, {});
+  await info.func([], config, {});
   expect(logger.info).toHaveBeenCalledWith(
     'Fetching system and libraries information...',
   );
@@ -34,6 +29,6 @@ test('prints output without arguments', async () => {
   // TODO: move to e2e tests and adjust expectations to include npm packages
   expect(output).toContain('System:');
   expect(output).toContain('Binaries:');
-});
+}, 20000);
 
 test.todo('prints output with --packages');

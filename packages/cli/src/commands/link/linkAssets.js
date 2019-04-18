@@ -1,9 +1,9 @@
 // @flow
 
 import {isEmpty} from 'lodash';
-import type {PlatformsT, ProjectConfigT} from '../../tools/types.flow';
+import type {PlatformsT, ProjectConfigT} from 'types';
 
-import logger from '../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 
 const linkAssets = (
   platforms: PlatformsT,

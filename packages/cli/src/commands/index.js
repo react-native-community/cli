@@ -1,22 +1,9 @@
 /**
  * @flow
  */
-
-import path from 'path';
-
-import logger from '../tools/logger';
-
-import type {
-  CommandT,
-  ProjectCommandT,
-  LocalCommandT,
-} from '../tools/types.flow';
-
-import {type ContextT} from '../tools/types.flow';
+import {type CommandT} from 'types';
 
 import server from './server/server';
-import runIOS from './runIOS/runIOS';
-import runAndroid from './runAndroid/runAndroid';
 import library from './library/library';
 import bundle from './bundle/bundle';
 import ramBundle from './bundle/ramBundle';
@@ -25,19 +12,12 @@ import unlink from './link/unlink';
 import install from './install/install';
 import uninstall from './install/uninstall';
 import upgrade from './upgrade/upgrade';
-import logAndroid from './logAndroid/logAndroid';
-import logIOS from './logIOS/logIOS';
 import info from './info/info';
 import config from './config/config';
+import init from './init';
 
-/**
- * List of built-in commands
- */
-
-const loadLocalCommands: Array<LocalCommandT> = [
+export default ([
   server,
-  runIOS,
-  runAndroid,
   library,
   bundle,
   ramBundle,
@@ -46,75 +26,7 @@ const loadLocalCommands: Array<LocalCommandT> = [
   install,
   uninstall,
   upgrade,
-  logAndroid,
-  logIOS,
   info,
   config,
-];
-
-/**
- * Returns an array of commands that are defined in the project.
- *
- * This checks all CLI plugins for presence of 3rd party packages that define commands
- * and loads them
- */
-const loadProjectCommands = ({
-  root,
-  commands,
-}: ContextT): Array<ProjectCommandT> => {
-  return commands.reduce((acc: Array<ProjectCommandT>, cmdPath: string) => {
-    /**
-     * `pathToCommand` is a path to a file where commands are defined, relative to `node_modules`
-     * folder.
-     *
-     * Following code gets the name of the package name out of the path, taking scope
-     * into consideration.
-     */
-    const name =
-      cmdPath[0] === '@'
-        ? cmdPath
-            .split(path.sep)
-            .slice(0, 2)
-            .join(path.sep)
-        : cmdPath.split(path.sep)[0];
-
-    const pkg = require(path.join(root, 'node_modules', name, 'package.json'));
-
-    const requiredCommands:
-      | ProjectCommandT
-      | Array<ProjectCommandT> = require(path.join(
-      root,
-      'node_modules',
-      cmdPath,
-    ));
-
-    if (Array.isArray(requiredCommands)) {
-      return acc.concat(
-        requiredCommands.map(requiredCommand => ({...requiredCommand, pkg})),
-      );
-    }
-
-    return acc.concat({...requiredCommands, pkg});
-  }, []);
-};
-
-/**
- * Loads all the commands inside a given `root` folder
- */
-export function getCommands(ctx: ContextT): Array<CommandT> {
-  return [
-    ...loadLocalCommands,
-    {
-      name: 'init',
-      func: () => {
-        logger.warn(
-          [
-            'Looks like a React Native project already exists in the current',
-            'folder. Run this command from a different folder or remove node_modules/react-native',
-          ].join('\n'),
-        );
-      },
-    },
-    ...loadProjectCommands(ctx),
-  ];
-}
+  init,
+]: CommandT[]);

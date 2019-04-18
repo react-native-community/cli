@@ -9,6 +9,7 @@
  * @flow
  */
 
+// eslint-disable-next-line import/default
 import cliEntry from '.';
 
 cliEntry.run();

@@ -10,7 +10,7 @@
 
 import opn from 'opn';
 import {execSync} from 'child_process';
-import logger from '../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 
 function commandExistsUnixSync(commandName) {
   try {

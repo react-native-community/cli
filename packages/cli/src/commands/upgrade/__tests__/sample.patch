@@ -1,51 +1,33 @@
-diff --git a/RnDiffApp/android/build.gradle b/RnDiffApp/android/build.gradle
-index 85d8f2f8..a1e80854 100644
---- a/RnDiffApp/android/build.gradle
-+++ b/RnDiffApp/android/build.gradle
-@@ -9,8 +9,8 @@ buildscript {
-         supportLibVersion = "27.1.1"
-     }
-     repositories {
--        jcenter()
-         google()
-+        jcenter()
-     }
-     dependencies {
-         classpath 'com.android.tools.build:gradle:3.1.4'
-@@ -23,12 +23,12 @@ buildscript {
- allprojects {
-     repositories {
-         mavenLocal()
-+        google()
-         jcenter()
-         maven {
-             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
-             url "$rootDir/../node_modules/react-native/android"
-         }
--        google()
-     }
- }
+diff --git a/RnDiffApp/android/app/src/main/AndroidManifest.xml b/RnDiffApp/android/app/src/main/AndroidManifest.xml
+index bc3a9310..f3e0d155 100644
+--- a/RnDiffApp/android/app/src/main/AndroidManifest.xml
++++ b/RnDiffApp/android/app/src/main/AndroidManifest.xml
+@@ -1,8 +1,7 @@
+ <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+-    package="com.rndiffapp">
++  package="com.rndiffapp">
 
-diff --git a/RnDiffApp/package.json b/RnDiffApp/package.json
-index 4e617645..c82829bd 100644
---- a/RnDiffApp/package.json
-+++ b/RnDiffApp/package.json
-@@ -7,14 +7,14 @@
-     "test": "jest"
-   },
-   "dependencies": {
--    "react": "16.5.0",
--    "react-native": "0.57.0"
-+    "react": "16.6.1",
-+    "react-native": "0.57.7"
-   },
-   "devDependencies": {
-     "babel-jest": "23.6.0",
-     "jest": "23.6.0",
--    "metro-react-native-babel-preset": "0.47.1",
--    "react-test-renderer": "16.5.0"
-+    "metro-react-native-babel-preset": "0.49.2",
-+    "react-test-renderer": "16.6.1"
-   },
-   "jest": {
-     "preset": "react-native"
+     <uses-permission android:name="android.permission.INTERNET" />
+-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+
+     <application
+       android:name=".MainApplication"
+diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.h b/RnDiffApp/ios/RnDiffApp/AppDelegate.h
+index 4b5644f2..2726d5e1 100644
+--- a/RnDiffApp/ios/RnDiffApp/AppDelegate.h
++++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.h
+@@ -5,9 +5,10 @@
+  * LICENSE file in the root directory of this source tree.
+  */
+
++#import <React/RCTBridgeDelegate.h>
+ #import <UIKit/UIKit.h>
+
+-@interface AppDelegate : UIResponder <UIApplicationDelegate>
++@interface AppDelegate : UIResponder <UIApplicationDelegate, RCTBridgeDelegate>
+
+ @property (nonatomic, strong) UIWindow *window;
+diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
+index bc3a9310..f3e0d155 100644
+--- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
++++ b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java

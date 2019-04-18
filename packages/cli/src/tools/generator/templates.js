@@ -12,8 +12,8 @@ import {execSync} from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import copyProjectTemplateAndReplace from './copyProjectTemplateAndReplace';
-import logger from '../logger';
-import * as PackageManager from '../PackageManager';
+import {logger} from '@react-native-community/cli-tools';
+import * as PackageManager from '../packageManager';
 
 /**
  * @param destPath Create the new project at this path.
@@ -22,7 +22,7 @@ import * as PackageManager from '../PackageManager';
  * @param yarnVersion Version of yarn available on the system, or null if
  *                    yarn is not available. For example '0.18.1'.
  */
-function createProjectFromTemplate(
+async function createProjectFromTemplate(
   destPath: string,
   newProjectName: string,
   template: string,
@@ -44,7 +44,12 @@ function createProjectFromTemplate(
   // This way we don't have to duplicate the native files in every template.
   // If we duplicated them we'd make RN larger and risk that people would
   // forget to maintain all the copies so they would go out of sync.
-  createFromRemoteTemplate(template, destPath, newProjectName, destinationRoot);
+  await createFromRemoteTemplate(
+    template,
+    destPath,
+    newProjectName,
+    destinationRoot,
+  );
 }
 
 /**
@@ -52,7 +57,7 @@ function createProjectFromTemplate(
  * - 'demo' -> Fetch the package react-native-template-demo from npm
  * - git://..., http://..., file://... or any other URL supported by npm
  */
-function createFromRemoteTemplate(
+async function createFromRemoteTemplate(
   template: string,
   destPath: string,
   newProjectName: string,
@@ -73,7 +78,7 @@ function createFromRemoteTemplate(
   // Check if the template exists
   logger.info(`Fetching template ${installPackage}...`);
   try {
-    PackageManager.install([installPackage]);
+    await PackageManager.install([installPackage]);
     const templatePath = path.resolve('node_modules', templateName);
     copyProjectTemplateAndReplace(templatePath, destPath, newProjectName, {
       // Every template contains a dummy package.json file included
@@ -86,12 +91,12 @@ function createFromRemoteTemplate(
         'devDependencies.json',
       ],
     });
-    installTemplateDependencies(templatePath, destinationRoot);
-    installTemplateDevDependencies(templatePath, destinationRoot);
+    await installTemplateDependencies(templatePath, destinationRoot);
+    await installTemplateDevDependencies(templatePath, destinationRoot);
   } finally {
     // Clean up the temp files
     try {
-      PackageManager.uninstall([templateName]);
+      await PackageManager.uninstall([templateName]);
     } catch (err) {
       // Not critical but we still want people to know and report
       // if this the clean up fails.
@@ -103,7 +108,7 @@ function createFromRemoteTemplate(
   }
 }
 
-function installTemplateDependencies(templatePath, destinationRoot) {
+async function installTemplateDependencies(templatePath, destinationRoot) {
   // dependencies.json is a special file that lists additional dependencies
   // that are required by this template
   const dependenciesJsonPath = path.resolve(templatePath, 'dependencies.json');
@@ -124,12 +129,12 @@ function installTemplateDependencies(templatePath, destinationRoot) {
   const dependenciesToInstall = Object.keys(dependencies).map(
     depName => `${depName}@${dependencies[depName]}`,
   );
-  PackageManager.install(dependenciesToInstall);
+  await PackageManager.install(dependenciesToInstall);
   logger.info("Linking native dependencies into the project's build files...");
   execSync('react-native link', {stdio: 'inherit'});
 }
 
-function installTemplateDevDependencies(templatePath, destinationRoot) {
+async function installTemplateDevDependencies(templatePath, destinationRoot) {
   // devDependencies.json is a special file that lists additional develop dependencies
   // that are required by this template
   const devDependenciesJsonPath = path.resolve(
@@ -154,7 +159,7 @@ function installTemplateDevDependencies(templatePath, destinationRoot) {
   const dependenciesToInstall = Object.keys(dependencies).map(
     depName => `${depName}@${dependencies[depName]}`,
   );
-  PackageManager.installDev(dependenciesToInstall);
+  await PackageManager.installDev(dependenciesToInstall);
 }
 
 export {createProjectFromTemplate};

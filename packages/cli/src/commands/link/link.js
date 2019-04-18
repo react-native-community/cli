@@ -8,18 +8,12 @@
  */
 
 import {pick} from 'lodash';
-import type {ContextT} from '../../tools/types.flow';
-
-import promiseWaterfall from './promiseWaterfall';
-import logger from '../../tools/logger';
-import getDependencyConfig from './getDependencyConfig';
-import commandStub from './commandStub';
-import promisify from './promisify';
-import getProjectConfig from './getProjectConfig';
+import {logger, CLIError} from '@react-native-community/cli-tools';
+import {type ConfigT} from 'types';
+import getPlatformName from './getPlatformName';
 import linkDependency from './linkDependency';
 import linkAssets from './linkAssets';
 import linkAll from './linkAll';
-import getPlatforms, {getPlatformName} from '../../tools/getPlatforms';
 
 type FlagsType = {
   platforms?: Array<string>,
@@ -31,62 +25,62 @@ type FlagsType = {
  * @param args If optional argument [packageName] is provided,
  *             only that package is processed.
  */
-function link([rawPackageName]: Array<string>, ctx: ContextT, opts: FlagsType) {
-  let platforms;
-  let project;
-  try {
-    platforms = getPlatforms(ctx.root);
-    logger.debug(
-      'Available platforms: ' +
-        `${Object.getOwnPropertyNames(platforms)
-          .map(platform => getPlatformName(platform))
-          .join(', ')}`,
-    );
-    if (opts.platforms) {
-      platforms = pick(platforms, opts.platforms);
-    }
-    logger.debug(
-      'Targeted platforms: ' +
-        `${Object.getOwnPropertyNames(platforms)
-          .map(platform => getPlatformName(platform))
-          .join(', ')}`,
-    );
-    project = getProjectConfig(ctx, platforms);
-  } catch (err) {
-    logger.error(
-      'No package found. Are you sure this is a React Native project?',
-    );
-    return Promise.reject(err);
+async function link(
+  [rawPackageName]: Array<string>,
+  ctx: ConfigT,
+  opts: FlagsType,
+) {
+  let platforms = ctx.platforms;
+  let project = ctx.project;
+
+  if (opts.platforms) {
+    platforms = pick(platforms, opts.platforms);
+    logger.debug('Skipping selected platforms');
   }
+
+  logger.debug(
+    'Available platforms: ' +
+      `${Object.keys(platforms)
+        .map(getPlatformName)
+        .join(', ')}`,
+  );
 
   if (rawPackageName === undefined) {
     logger.debug(
-      'No package name provided, will attemp to link all possible packages.',
+      'No package name provided, will attempt to link all possible packages.',
     );
-    return linkAll(ctx, platforms, project);
+    return linkAll(ctx);
   }
-
-  logger.debug(`Package to link: ${rawPackageName}`);
 
   // Trim the version / tag out of the package name (eg. package@latest)
   const packageName = rawPackageName.replace(/^(.+?)(@.+?)$/gi, '$1');
 
-  const dependencyConfig = getDependencyConfig(ctx, platforms, packageName);
+  if (!Object.keys(ctx.dependencies).includes(packageName)) {
+    throw new CLIError(`
+      Unknown dependency. Make sure that the package you are trying to link is
+      already installed in your "node_modules" and present in your "package.json" dependencies.
+    `);
+  }
 
-  const tasks = [
-    () => promisify(dependencyConfig.commands.prelink || commandStub),
-    () => linkDependency(platforms, project, dependencyConfig),
-    () => promisify(dependencyConfig.commands.postlink || commandStub),
-    () => linkAssets(platforms, project, dependencyConfig.assets),
-  ];
+  const {[packageName]: dependency} = ctx.dependencies;
 
-  return promiseWaterfall(tasks).catch(err => {
-    logger.error(
-      `Something went wrong while linking. Error: ${err.message} \n` +
-        'Please file an issue here: https://github.com/react-native-community/react-native-cli/issues',
+  logger.debug(`Package to link: ${rawPackageName}`);
+
+  try {
+    if (dependency.hooks.prelink) {
+      await dependency.hooks.prelink();
+    }
+    await linkDependency(platforms, project, dependency);
+    if (dependency.hooks.postlink) {
+      await dependency.hooks.postlink();
+    }
+    await linkAssets(platforms, project, dependency.assets);
+  } catch (error) {
+    throw new CLIError(
+      `Something went wrong while linking. Reason: ${error.message}`,
+      error,
     );
-    throw err;
-  });
+  }
 }
 
 export const func = link;
@@ -104,5 +98,3 @@ export default {
     },
   ],
 };
-
-// link;

@@ -14,43 +14,70 @@ jobs:
           at: ~/react-native-cli
       - restore_cache:
           keys:
-            - dependencies-{{ checksum "package.json" }}
-            - dependencies-
-      - run: yarn install
+            - v2-dependencies-{{ checksum "package.json" }}
+            - v2-dependencies-
+      - run: yarn --frozen-lockfile
       - save_cache:
-          key: dependencies-{{ checksum "package.json" }}
+          key: v2-dependencies-{{ checksum "package.json" }}
           paths:
             - node_modules
       - persist_to_workspace:
           root: .
           paths:
             - .
-  lint-and-flow:
+  lint:
     <<: *defaults
     steps:
       - attach_workspace:
           at: ~/react-native-cli
-      - run: |
-          yarn lint
-          yarn flow-check
-  tests:
+      - run: yarn lint
+  typecheck:
     <<: *defaults
     steps:
       - attach_workspace:
           at: ~/react-native-cli
-      - run: yarn test
+      - run: yarn flow-check
+  cocoa-pods:
+    <<: *defaults
+    docker:
+      - image: circleci/ruby:2.4-node
+    steps:
+      - attach_workspace:
+          at: ~/react-native-cli
+      - run: yarn test:ci:cocoapods
+  unit-tests:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/react-native-cli
+      - run: yarn test:ci:unit
       - store_artifacts:
           path: coverage
           destination: coverage
+  e2e-tests:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/react-native-cli
+      - run: yarn test:ci:e2e
 
 workflows:
   version: 2
   build-and-test:
     jobs:
       - install-dependencies
-      - lint-and-flow:
+      - lint:
           requires:
             - install-dependencies
-      - tests:
+      - typecheck:
+          requires:
+            - install-dependencies
+      - unit-tests:
+          requires:
+            - install-dependencies
+      - e2e-tests:
+          requires:
+            - install-dependencies
+      - cocoa-pods:
           requires:
             - install-dependencies

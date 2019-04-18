@@ -10,7 +10,31 @@ const map = (key, value) =>
     .pattern(key, value);
 
 /**
- * Schema for DependencyConfigT
+ * Schema for CommandT
+ */
+const command = t.object({
+  name: t.string().required(),
+  description: t.string(),
+  usage: t.string(),
+  func: t.func().required(),
+  options: t.array().items(
+    t.object({
+      command: t.string().required(),
+      description: t.string(),
+      parse: t.func(),
+      default: t.alternatives().try([t.bool(), t.number(), t.string()]),
+    }),
+  ),
+  examples: t.array().items(
+    t.object({
+      desc: t.string().required(),
+      cmd: t.string().required(),
+    }),
+  ),
+});
+
+/**
+ * Schema for UserDependencyConfigT
  */
 export const dependencyConfig = t
   .object({
@@ -39,7 +63,7 @@ export const dependencyConfig = t
           .array()
           .items(t.string())
           .default([]),
-        hooks: map(t.string(), t.string()).default(),
+        hooks: map(t.string(), t.string()).default({}),
         params: t
           .array()
           .items(
@@ -49,7 +73,7 @@ export const dependencyConfig = t
               message: t.string(),
             }),
           )
-          .default(),
+          .default([]),
       })
       .default(),
     platforms: map(
@@ -62,7 +86,7 @@ export const dependencyConfig = t
     ).default(),
     commands: t
       .array()
-      .items(t.string())
+      .items(command)
       .default([]),
   })
   .default();
@@ -110,13 +134,39 @@ export const projectConfig = t
           ),
         })
         .allow(null),
-    ),
-    commands: t.array().items(t.string()),
-    haste: t.object({
-      providesModuleNodeModules: t.array().items(t.string()),
-      platforms: t.array().items(t.string()),
-    }),
+    ).default({}),
     reactNativePath: t.string(),
-    root: t.string(),
+    project: map(t.string(), t.any())
+      .keys({
+        ios: t
+          .object({
+            project: t.string(),
+            sharedLibraries: t.array().items(t.string()),
+            libraryFolder: t.string(),
+          })
+          .default({}),
+        android: t
+          .object({
+            sourceDir: t.string(),
+            manifestPath: t.string(),
+            packageName: t.string(),
+            packageFolder: t.string(),
+            mainFilePath: t.string(),
+            stringsPath: t.string(),
+            settingsGradlePath: t.string(),
+            assetsPath: t.string(),
+            buildGradlePath: t.string(),
+          })
+          .default({}),
+      })
+      .default(),
+    assets: t
+      .array()
+      .items(t.string())
+      .default([]),
+    commands: t
+      .array()
+      .items(command)
+      .default([]),
   })
-  .default({});
+  .default();

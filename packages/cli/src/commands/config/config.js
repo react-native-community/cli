@@ -1,16 +1,11 @@
 /**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * @format
+ * @flow
  */
+import {type ConfigT} from 'types';
 export default {
   name: 'config',
   description: 'Print CLI configuration',
-  func: async (_, ctx) => {
-    const a = JSON.stringify(ctx, null, 2);
-    console.log(a);
+  func: async (argv: string[], ctx: ConfigT) => {
+    console.log(JSON.stringify(ctx, null, 2));
   },
 };

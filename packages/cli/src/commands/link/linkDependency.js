@@ -1,26 +1,25 @@
 // @flow
 
-import type {
-  PlatformsT,
-  ProjectConfigT,
-  DependenciesConfig,
-} from '../../tools/types.flow';
-import logger from '../../tools/logger';
+import type {DependencyConfigT, ProjectConfigT, PlatformsT} from 'types';
+import {logger} from '@react-native-community/cli-tools';
 import pollParams from './pollParams';
-import {getPlatformName} from '../../tools/getPlatforms';
+import getPlatformName from './getPlatformName';
 
 const linkDependency = async (
   platforms: PlatformsT,
   project: ProjectConfigT,
-  dependency: DependenciesConfig,
+  dependency: DependencyConfigT,
 ) => {
   const params = await pollParams(dependency.params);
 
   Object.keys(platforms || {}).forEach(platform => {
-    if (!project[platform] || !dependency.config[platform]) {
+    const projectConfig = project[platform];
+    const dependencyConfig = dependency.platforms[platform];
+
+    if (!projectConfig || !dependencyConfig) {
       return;
     }
-
+    const {name} = dependency;
     const linkConfig =
       platforms[platform] &&
       platforms[platform].linkConfig &&
@@ -31,31 +30,23 @@ const linkDependency = async (
     }
 
     const isInstalled = linkConfig.isInstalled(
-      project[platform],
-      dependency.name,
-      dependency.config[platform],
+      // $FlowFixMe
+      projectConfig,
+      name,
+      // $FlowFixMe
+      dependencyConfig,
     );
 
     if (isInstalled) {
       logger.info(
-        `${getPlatformName(platform)} module "${
-          dependency.name
-        }" is already linked`,
+        `${getPlatformName(platform)} module "${name}" is already linked`,
       );
       return;
     }
 
-    logger.info(
-      `Linking "${dependency.name}" ${getPlatformName(platform)} dependency`,
-    );
-
-    linkConfig.register(
-      dependency.name,
-      dependency.config[platform] || {},
-      params,
-      // $FlowFixMe: We check if project[platform] exists on line 42
-      project[platform],
-    );
+    logger.info(`Linking "${name}" ${getPlatformName(platform)} dependency`);
+    // $FlowFixMe
+    linkConfig.register(name, dependencyConfig, params, projectConfig);
 
     logger.info(
       `${getPlatformName(platform)} module "${

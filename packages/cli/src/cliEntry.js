@@ -12,14 +12,13 @@ import childProcess from 'child_process';
 import commander from 'commander';
 import path from 'path';
 
-import type {CommandT, ContextT} from './tools/types.flow';
+import type {CommandT, ConfigT} from 'types';
 
-import {getCommands} from './commands';
-import init from './commands/init/init';
+import commands from './commands';
+import init from './commands/init/initCompat';
 import assertRequiredOptions from './tools/assertRequiredOptions';
-import logger from './tools/logger';
-import findPlugins from './tools/findPlugins';
-import {setProjectDir} from './tools/PackageManager';
+import {logger} from '@react-native-community/cli-tools';
+import {setProjectDir} from './tools/packageManager';
 import pkgJson from '../package.json';
 import loadConfig from './tools/config';
 
@@ -35,7 +34,20 @@ commander.on('command:*', () => {
 const defaultOptParser = val => val;
 
 const handleError = err => {
-  logger.error(err.message);
+  if (commander.verbose) {
+    logger.error(err.message);
+  } else {
+    // Some error messages (esp. custom ones) might have `.` at the end already.
+    const message = err.message.replace(/\.$/, '');
+    logger.error(
+      `${message}. ${chalk.dim(
+        `Run CLI with ${chalk.reset('--verbose')} ${chalk.dim(
+          'flag for more details.',
+        )}`,
+      )}`,
+    );
+  }
+  logger.debug(chalk.dim(err.stack));
   process.exit(1);
 };
 
@@ -67,7 +79,7 @@ function printHelpInformation(examples, pkg) {
     output = output.concat([chalk.bold('\nExample usage:'), formattedUsage]);
   }
 
-  return output.join('\n');
+  return output.join('\n').concat('\n');
 }
 
 function printUnknownCommand(cmdName) {
@@ -83,7 +95,7 @@ function printUnknownCommand(cmdName) {
   }
 }
 
-const addCommand = (command: CommandT, ctx: ContextT) => {
+const addCommand = (command: CommandT, ctx: ConfigT) => {
   const options = command.options || [];
 
   const cmd = commander
@@ -150,9 +162,7 @@ async function setupAndRun() {
 
   setProjectDir(ctx.root);
 
-  const commands = getCommands(ctx);
-
-  commands.forEach(command => addCommand(command, ctx));
+  [...commands, ...ctx.commands].forEach(command => addCommand(command, ctx));
 
   commander.parse(process.argv);
 
@@ -173,7 +183,7 @@ async function setupAndRun() {
 export default {
   run,
   init,
-  findPlugins,
+  loadConfig,
 };
 
-export {run, init, findPlugins};
+export {run, init, loadConfig};

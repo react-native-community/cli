@@ -13,17 +13,18 @@ import outputBundle from 'metro/src/shared/output/bundle';
 import path from 'path';
 import chalk from 'chalk';
 import type {CommandLineArgs} from './bundleCommandLineArgs';
-import type {ContextT} from '../../tools/types.flow';
+import type {ConfigT} from 'types';
 import saveAssets from './saveAssets';
 import loadMetroConfig from '../../tools/loadMetroConfig';
-import logger from '../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 
 async function buildBundle(
   args: CommandLineArgs,
-  ctx: ContextT,
+  ctx: ConfigT,
   output: typeof outputBundle = outputBundle,
 ) {
   const config = await loadMetroConfig(ctx, {
+    maxWorkers: args.maxWorkers,
     resetCache: args.resetCache,
     config: args.config,
   });

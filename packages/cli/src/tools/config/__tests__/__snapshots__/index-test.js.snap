@@ -1,0 +1,186 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should automatically put "react-native" into haste config 1`] = `
+Object {
+  "platforms": Array [
+    "ios",
+    "android",
+  ],
+  "providesModuleNodeModules": Array [
+    "react-native",
+  ],
+}
+`;
+
+exports[`should have a valid structure by default 1`] = `
+Object {
+  "assets": Array [],
+  "commands": Array [],
+  "dependencies": Object {},
+  "haste": Object {
+    "platforms": Array [],
+    "providesModuleNodeModules": Array [],
+  },
+  "platforms": Object {},
+  "project": Object {},
+  "reactNativePath": "<<REPLACED>>",
+  "root": "<<REPLACED>>",
+}
+`;
+
+exports[`should load an out-of-tree "windows" platform that ships with a dependency 1`] = `
+Object {
+  "haste": Object {
+    "platforms": Array [
+      "windows",
+    ],
+    "providesModuleNodeModules": Array [
+      "react-native-windows",
+    ],
+  },
+  "platforms": Object {
+    "windows": Object {},
+  },
+}
+`;
+
+exports[`should load commands from "react-native-foo" and "react-native-bar" packages 1`] = `
+Array [
+  Object {
+    "func": [Function],
+    "name": "foo-command",
+  },
+  Object {
+    "func": [Function],
+    "name": "bar-command",
+  },
+]
+`;
+
+exports[`should merge project configuration with default values: snapshoting \`react-native-test\` config 1`] = `
+Object {
+  "assets": Array [
+    "foo",
+  ],
+  "hooks": Object {},
+  "name": "react-native-test",
+  "params": Array [],
+  "platforms": Object {
+    "android": null,
+    "ios": Object {
+      "folder": "<<REPLACED>>/node_modules/react-native-test",
+      "libraryFolder": "Libraries",
+      "pbxprojPath": "<<REPLACED>>/node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj",
+      "plist": Array [],
+      "podfile": null,
+      "podspec": null,
+      "projectName": "HelloWorld.xcodeproj",
+      "projectPath": "<<REPLACED>>/node_modules/react-native-test/ios/HelloWorld.xcodeproj",
+      "sharedLibraries": Array [],
+      "sourceDir": "./abc",
+    },
+  },
+  "root": "<<REPLACED>>/node_modules/react-native-test",
+}
+`;
+
+exports[`should not add default React Native config when one present 1`] = `
+Array [
+  Object {
+    "func": [Function],
+    "name": "test",
+  },
+]
+`;
+
+exports[`should read \`rnpm\` config from a dependency and transform it to a new format 1`] = `
+Object {
+  "assets": Array [],
+  "hooks": Object {},
+  "name": "react-native-foo",
+  "params": Array [],
+  "platforms": Object {
+    "android": null,
+    "ios": Object {
+      "folder": "<<REPLACED>>/node_modules/react-native-foo",
+      "libraryFolder": "Libraries",
+      "pbxprojPath": "<<REPLACED>>/node_modules/react-native-foo/customLocation/customProject.xcodeproj/project.pbxproj",
+      "plist": Array [],
+      "podfile": null,
+      "podspec": null,
+      "projectName": "customProject.xcodeproj",
+      "projectPath": "<<REPLACED>>/node_modules/react-native-foo/customLocation/customProject.xcodeproj",
+      "sharedLibraries": Array [],
+      "sourceDir": "<<REPLACED>>/node_modules/react-native-foo/customLocation",
+    },
+  },
+  "root": "<<REPLACED>>/node_modules/react-native-foo",
+}
+`;
+
+exports[`should read a config of a dependency and use it to load other settings 1`] = `
+Object {
+  "assets": Array [],
+  "hooks": Object {},
+  "name": "react-native-test",
+  "params": Array [],
+  "platforms": Object {
+    "android": null,
+    "ios": Object {
+      "folder": "<<REPLACED>>/node_modules/react-native-test",
+      "libraryFolder": "Libraries",
+      "pbxprojPath": "<<REPLACED>>/node_modules/react-native-test/customLocation/customProject.xcodeproj/project.pbxproj",
+      "plist": Array [],
+      "podfile": null,
+      "podspec": "ReactNativeTest",
+      "projectName": "customProject.xcodeproj",
+      "projectPath": "<<REPLACED>>/node_modules/react-native-test/customLocation/customProject.xcodeproj",
+      "sharedLibraries": Array [],
+      "sourceDir": "<<REPLACED>>/node_modules/react-native-test/customLocation",
+    },
+  },
+  "root": "<<REPLACED>>/node_modules/react-native-test",
+}
+`;
+
+exports[`should return dependencies from package.json 1`] = `
+Object {
+  "react-native": Object {
+    "assets": Array [],
+    "hooks": Object {},
+    "name": "react-native",
+    "params": Array [],
+    "platforms": Object {
+      "android": null,
+      "ios": null,
+    },
+    "root": "<<REPLACED>>/node_modules/react-native",
+  },
+  "react-native-test": Object {
+    "assets": Array [],
+    "hooks": Object {},
+    "name": "react-native-test",
+    "params": Array [],
+    "platforms": Object {
+      "android": null,
+      "ios": Object {
+        "folder": "<<REPLACED>>/node_modules/react-native-test",
+        "libraryFolder": "Libraries",
+        "pbxprojPath": "<<REPLACED>>/node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj",
+        "plist": Array [],
+        "podfile": null,
+        "podspec": null,
+        "projectName": "HelloWorld.xcodeproj",
+        "projectPath": "<<REPLACED>>/node_modules/react-native-test/ios/HelloWorld.xcodeproj",
+        "sharedLibraries": Array [],
+        "sourceDir": "<<REPLACED>>/node_modules/react-native-test/ios",
+      },
+    },
+    "root": "<<REPLACED>>/node_modules/react-native-test",
+  },
+}
+`;
+
+exports[`should skip packages that have invalid configuration: dependencies config 1`] = `Object {}`;
+
+exports[`should skip packages that have invalid configuration: logged warning 1`] = `"Package [1mreact-native[22m has been ignored because it contains invalid configuration. Reason: [2mUnknown option invalidProperty with value \\"5\\" was found. This is either a typing error or a user mistake. Fixing it will remove this message.[22m"`;

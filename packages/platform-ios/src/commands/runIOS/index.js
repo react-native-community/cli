@@ -190,6 +190,18 @@ async function runOnSimulator(xcodeProject, scheme, args: FlagsT) {
 }
 
 async function runOnDevice(selectedDevice, scheme, xcodeProject, args: FlagsT) {
+  const isIOSDeployInstalled = child_process.spawnSync(
+    'ios-deploy',
+    ['--version'],
+    {encoding: 'utf8'},
+  );
+
+  if (isIOSDeployInstalled.error) {
+    return logger.error(
+      '** INSTALLATION FAILED **\nMake sure you have ios-deploy installed globally.\n(e.g "npm install -g ios-deploy")',
+    );
+  }
+
   const appName = await buildProject(
     xcodeProject,
     selectedDevice.udid,
@@ -214,12 +226,12 @@ async function runOnDevice(selectedDevice, scheme, xcodeProject, args: FlagsT) {
   );
 
   if (iosDeployOutput.error) {
-    logger.error(
-      '** INSTALLATION FAILED **\nMake sure you have ios-deploy installed globally.\n(e.g "npm install -g ios-deploy")',
+    return logger.error(
+      '** INSTALLATION FAILED **\nThere was an internal error with ios-deploy.',
     );
-  } else {
-    logger.info('** INSTALLATION SUCCEEDED **');
   }
+
+  return logger.info('** INSTALLATION SUCCEEDED **');
 }
 
 function buildProject(xcodeProject, udid, scheme, args: FlagsT) {

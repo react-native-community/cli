@@ -127,7 +127,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
       platforms: userConfig.platforms,
       haste: {
         providesModuleNodeModules: [],
-        platforms: [],
+        platforms: Object.keys(userConfig.platforms),
       },
       get project() {
         const project = {};

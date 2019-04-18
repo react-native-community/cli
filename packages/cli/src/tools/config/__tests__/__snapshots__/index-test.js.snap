@@ -93,7 +93,7 @@ Array [
 ]
 `;
 
-exports[`should read \`rnpm\` config from a dependency and transform it to a new format 1`] = `
+exports[`should read \`rnpm\` config from a dependency and transform it to a new format: foo config 1`] = `
 Object {
   "assets": Array [],
   "hooks": Object {},
@@ -115,6 +115,20 @@ Object {
     },
   },
   "root": "<<REPLACED>>/node_modules/react-native-foo",
+}
+`;
+
+exports[`should read \`rnpm\` config from a dependency and transform it to a new format: haste config 1`] = `
+Object {
+  "platforms": Array [
+    "ios",
+    "android",
+    "dummy",
+  ],
+  "providesModuleNodeModules": Array [
+    "react-native",
+    "react-native-dummy",
+  ],
 }
 `;
 

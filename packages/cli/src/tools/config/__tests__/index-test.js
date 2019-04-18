@@ -130,6 +130,10 @@ test('should read `rnpm` config from a dependency and transform it to a new form
       "rnpm": {
         "ios": {
           "project": "./customLocation/customProject.xcodeproj"
+        },
+        "haste": {
+          "platforms": ["dummy"],
+          "providesModuleNodeModules": ["react-native-dummy"]
         }
       }
     }`,
@@ -140,8 +144,11 @@ test('should read `rnpm` config from a dependency and transform it to a new form
       }
     }`,
   });
-  const {dependencies} = loadConfig(DIR);
-  expect(removeString(dependencies['react-native-foo'], DIR)).toMatchSnapshot();
+  const {dependencies, haste} = loadConfig(DIR);
+  expect(removeString(dependencies['react-native-foo'], DIR)).toMatchSnapshot(
+    'foo config',
+  );
+  expect(haste).toMatchSnapshot('haste config');
 });
 
 test('should load commands from "react-native-foo" and "react-native-bar" packages', () => {

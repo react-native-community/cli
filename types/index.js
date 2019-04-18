@@ -188,6 +188,12 @@ export type UserDependencyConfigT = {
   platforms: {
     [name: string]: any,
   },
+
+  // Haste config defined by legacy `rnpm`
+  haste?: {
+    platforms: string[],
+    providesModuleNodeModules: string[],
+  },
 };
 
 /**

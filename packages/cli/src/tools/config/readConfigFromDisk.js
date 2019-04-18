@@ -34,9 +34,7 @@ export function readConfigFromDisk(rootFolder: string): UserConfigT {
 
   const {config} = explorer.searchSync(rootFolder) || {config: undefined};
 
-  const result = Joi.validate(config, schema.projectConfig, {
-    stripUnknown: true,
-  });
+  const result = Joi.validate(config, schema.projectConfig);
 
   if (result.error) {
     throw new JoiError(result.error);
@@ -59,9 +57,7 @@ export function readDependencyConfigFromDisk(
 
   const {config} = explorer.searchSync(rootFolder) || {config: undefined};
 
-  const result = Joi.validate(config, schema.dependencyConfig, {
-    stripUnknown: true,
-  });
+  const result = Joi.validate(config, schema.dependencyConfig);
 
   if (result.error) {
     throw new JoiError(result.error);

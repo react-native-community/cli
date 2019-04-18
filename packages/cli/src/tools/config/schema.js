@@ -91,6 +91,7 @@ export const dependencyConfig = t
       .items(command)
       .default([]),
   })
+  .unknown(true)
   .default();
 
 /**
@@ -179,4 +180,5 @@ export const projectConfig = t
       }),
     ).default({}),
   })
+  .unknown(true)
   .default();

@@ -171,15 +171,19 @@ export type PlatformsT = $PropertyType<ConfigT, 'platforms'>;
 export type UserDependencyConfigT = {
   // Additional dependency settings
   dependency: {
-    platforms: {
-      android: DependencyParamsAndroidT,
-      ios: ProjectParamsIOST,
-      [key: string]: any,
-    },
-    assets: string[],
-    hooks: HooksT,
-    params: InquirerPromptT[],
+    android: DependencyParamsAndroidT,
+    ios: ProjectParamsIOST,
+    [key: string]: any,
   },
+
+  // An array of assets
+  assets: string[],
+
+  // Hooks
+  hooks: HooksT,
+
+  // Params that dependency wants to ask during linking
+  params: InquirerPromptT[],
 
   // An array of commands that ship with the dependency
   commands: CommandT[],

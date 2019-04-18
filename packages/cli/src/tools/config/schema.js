@@ -40,42 +40,23 @@ const command = t.object({
  */
 export const dependencyConfig = t
   .object({
-    dependency: t
-      .object({
-        platforms: map(t.string(), t.any())
-          .keys({
-            ios: t
-              .object({
-                project: t.string(),
-                sharedLibraries: t.array().items(t.string()),
-                libraryFolder: t.string(),
-              })
-              .default({}),
-            android: t
-              .object({
-                sourceDir: t.string(),
-                manifestPath: t.string(),
-                packageImportPath: t.string(),
-                packageInstance: t.string(),
-              })
-              .default({}),
+    dependency: map(t.string(), t.any())
+      .keys({
+        ios: t
+          .object({
+            project: t.string(),
+            sharedLibraries: t.array().items(t.string()),
+            libraryFolder: t.string(),
           })
-          .default(),
-        assets: t
-          .array()
-          .items(t.string())
-          .default([]),
-        hooks: map(t.string(), t.string()).default({}),
-        params: t
-          .array()
-          .items(
-            t.object({
-              name: t.string(),
-              type: t.string(),
-              message: t.string(),
-            }),
-          )
-          .default([]),
+          .default({}),
+        android: t
+          .object({
+            sourceDir: t.string(),
+            manifestPath: t.string(),
+            packageImportPath: t.string(),
+            packageInstance: t.string(),
+          })
+          .default({}),
       })
       .default(),
     platforms: map(
@@ -89,6 +70,21 @@ export const dependencyConfig = t
     commands: t
       .array()
       .items(command)
+      .default([]),
+    assets: t
+      .array()
+      .items(t.string())
+      .default([]),
+    hooks: map(t.string(), t.string()).default({}),
+    params: t
+      .array()
+      .items(
+        t.object({
+          name: t.string(),
+          type: t.string(),
+          message: t.string(),
+        }),
+      )
       .default([]),
   })
   .default();
@@ -165,10 +161,6 @@ export const projectConfig = t
     assets: t
       .array()
       .items(t.string())
-      .default([]),
-    commands: t
-      .array()
-      .items(command)
       .default([]),
   })
   .default();

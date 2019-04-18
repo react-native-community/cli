@@ -28,19 +28,25 @@ import {logger, inlineString} from '@react-native-community/cli-tools';
 
 /**
  * Loads CLI configuration
+ *
+ * @todo Support monorepos and do not use `path.join` but `require.resolve` instead
  */
 function loadConfig(projectRoot: string = process.cwd()): ConfigT {
-  const userConfig = readConfigFromDisk(projectRoot);
+  const userProjectConfig = readConfigFromDisk(projectRoot);
+  const userDependencyConfig = readDependencyConfigFromDisk(projectRoot);
+  const {name: projectName} = require(path.join(projectRoot, 'package.json'));
 
-  const finalConfig = findDependencies(projectRoot).reduce(
-    (acc: ConfigT, dependencyName) => {
+  const dependenies = findDependencies(projectRoot).reduce(
+    (acc, dependencyName) => {
       const root = path.join(projectRoot, 'node_modules', dependencyName);
-
-      let config;
       try {
-        config =
-          readLegacyDependencyConfigFromDisk(root) ||
-          readDependencyConfigFromDisk(root);
+        return acc.concat({
+          root,
+          config:
+            readLegacyDependencyConfigFromDisk(root) ||
+            readDependencyConfigFromDisk(root),
+          name: dependencyName,
+        });
       } catch (error) {
         logger.warn(
           inlineString(`
@@ -53,13 +59,18 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
         );
         return acc;
       }
+    },
+    [{config: userDependencyConfig, root: projectRoot, name: projectName}],
+  );
 
+  const finalConfig = dependenies.reduce(
+    (acc: ConfigT, {root, config, name}) => {
       /**
        * This workaround is necessary for development only before
        * first 0.60.0-rc.0 gets released and we can switch to it
        * while testing.
        */
-      if (dependencyName === 'react-native') {
+      if (name === 'react-native') {
         if (Object.keys(config.platforms).length === 0) {
           config.platforms = {ios, android};
         }
@@ -72,12 +83,12 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
 
       return assign({}, acc, {
         dependencies: assign({}, acc.dependencies, {
-          // $FlowExpectedError: Dynamic getters are not supported
-          get [dependencyName]() {
+          // $FlowIssue: Computed getters are not supported
+          get [name]() {
             return merge(
               {
                 root,
-                name: dependencyName,
+                name,
                 platforms: Object.keys(finalConfig.platforms).reduce(
                   (dependency, platform) => {
                     // Linking platforms is not supported
@@ -85,17 +96,17 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
                       ? null
                       : finalConfig.platforms[platform].dependencyConfig(
                           root,
-                          config.dependency.platforms[platform] || {},
+                          config.dependency[platform] || {},
                         );
                     return dependency;
                   },
                   {},
                 ),
-                assets: findAssets(root, config.dependency.assets),
-                hooks: mapValues(config.dependency.hooks, makeHook),
-                params: config.dependency.params,
+                assets: findAssets(root, config.assets),
+                hooks: mapValues(config.hooks, makeHook),
+                params: config.params,
               },
-              userConfig.dependencies[dependencyName] || {},
+              userProjectConfig.dependencies[name] || {},
             );
           },
         }),
@@ -106,7 +117,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
         },
         haste: {
           providesModuleNodeModules: acc.haste.providesModuleNodeModules.concat(
-            isPlatform ? dependencyName : [],
+            isPlatform ? name : [],
           ),
           platforms: [...acc.haste.platforms, ...Object.keys(config.platforms)],
         },
@@ -114,30 +125,30 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
     },
     ({
       root: projectRoot,
-      get reactNativePath() {
-        return userConfig.reactNativePath
-          ? path.resolve(projectRoot, userConfig.reactNativePath)
-          : resolveReactNativePath(projectRoot);
-      },
       dependencies: {},
-      commands: userConfig.commands,
-      get assets() {
-        return findAssets(projectRoot, userConfig.assets);
-      },
+      commands: [],
       platforms: {},
       haste: {
         providesModuleNodeModules: [],
         platforms: [],
+      },
+      get reactNativePath() {
+        return userProjectConfig.reactNativePath
+          ? path.resolve(projectRoot, userProjectConfig.reactNativePath)
+          : resolveReactNativePath(projectRoot);
       },
       get project() {
         const project = {};
         for (const platform in finalConfig.platforms) {
           project[platform] = finalConfig.platforms[platform].projectConfig(
             projectRoot,
-            userConfig.project[platform] || {},
+            userProjectConfig.project[platform] || {},
           );
         }
         return project;
+      },
+      get assets() {
+        return findAssets(projectRoot, userProjectConfig.assets);
       },
     }: ConfigT),
   );

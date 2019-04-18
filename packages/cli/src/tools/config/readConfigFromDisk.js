@@ -20,21 +20,18 @@ import * as schema from './schema';
 
 import {logger} from '@react-native-community/cli-tools';
 
-/**
- * Places to look for the new configuration
- */
-const searchPlaces = ['react-native.config.js', 'package.json'];
+const CONFIG_NAME = 'react-native.config.js';
 
 /**
  * Reads a project configuration as defined by the user in the current
  * workspace.
  */
 export function readConfigFromDisk(rootFolder: string): UserConfigT {
-  const explorer = cosmiconfig('react-native', {searchPlaces});
+  const config = require(path.join(rootFolder, CONFIG_NAME));
 
-  const {config} = explorer.searchSync(rootFolder) || {config: undefined};
-
-  const result = Joi.validate(config, schema.projectConfig);
+  const result = Joi.validate(config, schema.projectConfig, {
+    stripUnknown: true,
+  });
 
   if (result.error) {
     throw new JoiError(result.error);
@@ -50,14 +47,11 @@ export function readConfigFromDisk(rootFolder: string): UserConfigT {
 export function readDependencyConfigFromDisk(
   rootFolder: string,
 ): UserDependencyConfigT {
-  const explorer = cosmiconfig('react-native', {
-    stopDir: rootFolder,
-    searchPlaces,
+  const config = require(path.join(rootFolder, CONFIG_NAME));
+
+  const result = Joi.validate(config, schema.dependencyConfig, {
+    stripUnknown: true,
   });
-
-  const {config} = explorer.searchSync(rootFolder) || {config: undefined};
-
-  const result = Joi.validate(config, schema.dependencyConfig);
 
   if (result.error) {
     throw new JoiError(result.error);

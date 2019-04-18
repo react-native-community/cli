@@ -22,6 +22,7 @@ import {
   isPackagerRunning,
   logger,
   getDefaultUserTerminal,
+  CLIError,
 } from '@react-native-community/cli-tools';
 
 // Verifies this is an Android project
@@ -149,8 +150,11 @@ function buildApk(gradlew) {
     execFileSync(gradlew, ['build', '-x', 'lint'], {
       stdio: [process.stdin, process.stdout, process.stderr],
     });
-  } catch (e) {
-    logger.error('Could not build the app, read the error above for details.');
+  } catch (error) {
+    throw new CLIError(
+      'Could not build the app, read the error above for details',
+      error,
+    );
   }
 }
 

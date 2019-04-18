@@ -28,6 +28,7 @@ export default function getDependencyConfig(
     Object.keys(availablePlatforms).forEach(platform => {
       platformConfigs[platform] = availablePlatforms[platform].dependencyConfig(
         folder,
+        // $FlowIssue: Flow can't match platform config with its appropriate config function
         config[platform] || {},
       );
     });

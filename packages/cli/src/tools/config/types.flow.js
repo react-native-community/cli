@@ -1,22 +1,22 @@
 /**
  * @flow
  */
-export type DependencyConfig = {
-  ios: ?DependencyConfigIOS,
-  android: ?DependencyConfigAndroid,
-};
 
-export type InputDependencyConfigIOS = {
-  podspec?: string,
-};
+import type {
+  AndroidConfigParamsT,
+  IOSConfigParamsT,
+  InquirerPromptT,
+  DependencyConfigAndroidT,
+  DependencyConfigIOST,
+} from '../types.flow';
 
-export type DependencyConfigIOS = {
-  podspec: string,
-};
-
-export type InputDependencyConfigAndroid = {
-  packageImportPath?: string,
-  packageInstance?: string,
+/**
+ * A map of hooks to run pre/post some of the CLI actions
+ */
+type HooksT = {
+  [key: string]: string,
+  prelink?: string,
+  postlink?: string,
 };
 
 export type DependencyConfigAndroid = {
@@ -24,28 +24,51 @@ export type DependencyConfigAndroid = {
   packageInstance: string,
   sourceDir: string | null,
 };
-
-export type PlatformConfig<T, K> = {
-  getDependencyConfig: (string, T) => ?K,
-};
-
-export type Platforms = {
-  [key: string]: PlatformConfig<*>,
-  ios: PlatformConfig<InputDependencyConfigIOS, DependencyConfigIOS>,
-  android: PlatformConfig<
-    InputDependencyConfigAndroid,
-    DependencyConfigAndroid,
-  >,
-};
-
-export type ProjectConfig = {
-  root: string,
-  reactNativePath: string,
-  dependencies: {
-    [key: string]: DependencyConfig,
+/**
+ * A map with additional platforms that ship with a dependency.
+ */
+export type PlatformsT = {
+  [key: string]: {
+    dependencyConfig?: Function,
+    projectConfig?: Function,
+    linkConfig?: Function,
   },
 };
 
-export type Options = {
-  root: ?string,
+export type DependencyConfigT = {
+  dependency: {
+    platforms: {
+      android?: AndroidConfigParamsT,
+      ios?: IOSConfigParamsT,
+      [key: string]: any,
+    },
+    assets: string[],
+    hooks: HooksT,
+    params: InquirerPromptT[],
+  },
+  commands: string[],
+  platforms: PlatformsT,
+};
+
+export type ProjectConfigT = {
+  root: string,
+  reactNativePath: string,
+  dependencies: {
+    [key: string]: {
+      platforms: {
+        android: DependencyConfigAndroidT | null,
+        ios: DependencyConfigIOST | null,
+        [key: string]: any,
+      },
+      assets: string[],
+      hooks: HooksT,
+      params: InquirerPromptT[],
+    },
+  },
+  platforms: PlatformsT,
+  commands: string[],
+  haste: {
+    platforms: Array<string>,
+    providesModuleNodeModules: Array<string>,
+  },
 };

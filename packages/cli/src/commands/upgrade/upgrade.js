@@ -19,6 +19,7 @@ const rnDiffPurgeUrl =
 
 const getLatestRNVersion = async (): Promise<string> => {
   logger.info('No version passed. Fetching latest...');
+  // $FlowFixMe - this is public API
   const {stdout} = await execa('npm', ['info', 'react-native', 'version']);
   return stdout;
 };
@@ -26,6 +27,7 @@ const getLatestRNVersion = async (): Promise<string> => {
 const getRNPeerDeps = async (
   version: string,
 ): Promise<{[key: string]: string}> => {
+  // $FlowFixMe - this is public API
   const {stdout} = await execa('npm', [
     'info',
     `react-native@${version}`,

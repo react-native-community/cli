@@ -8,7 +8,6 @@ CLI comes with a set of commands and flags you can pass to them.
 
 - [`bundle`](#bundle)
 - [`dependencies`](#dependencies)
-- [`eject`](#eject)
 - [`info`](#info)
 - [`install`](#install)
 - [`library`](#library)
@@ -25,7 +24,41 @@ CLI comes with a set of commands and flags you can pass to them.
 
 _Note: This document is still under development and doesn't represent the full API area._
 
+### `bundle`
+
+### `dependencies`
+
+### `info`
+
+### `install`
+
+Usage:
+
+```sh
+react-native install <packageName>
+```
+
+Installs single package from npm and then links native dependencies. If `install` detects `yarn.lock` in your project, it will use Yarn as package manager. Otherwise `npm` will be used.
+
+### `library`
+
+### `link`
+
+### `log-android`
+
+### `log-ios`
+
+### `ram-bundle`
+
+### `run-android`
+
 ### `run-ios`
+
+Usage:
+
+```sh
+react-native run-ios [options]
+```
 
 Builds your app and starts it on iOS simulator.
 
@@ -78,3 +111,19 @@ Do not use `xcpretty` even if installed.
 Runs packager on specified port
 
 Default: `process.env.RCT_METRO_PORT || 8081`
+
+### `server`
+
+### `uninstall`
+
+Usage:
+
+```sh
+react-native uninstall <packageName>
+```
+
+Unlinks single package native dependencies and then uninstalls it from `package.json`. If `uninstall` detects `yarn.lock` in your project, it will use Yarn as package manager. Otherwise `npm` will be used.
+
+### `unlink`
+
+### `upgrade`

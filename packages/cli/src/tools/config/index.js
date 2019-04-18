@@ -1,153 +1,113 @@
 /**
  * @flow
  */
-import comsmiconfig from 'cosmiconfig';
+import dedent from 'dedent';
 import path from 'path';
 import merge from 'deepmerge';
-import {get} from 'lodash';
 
-import getProjectDependencies from '../../commands/link/getProjectDependencies';
-import * as dependency from './dependency';
+import findDependencies from './findDependencies';
+import {
+  readProjectConfigFromDisk,
+  readDependencyConfigFromDisk,
+  readLegacyDependencyConfigFromDisk,
+} from './readConfigFromDisk';
 
-const explorer = comsmiconfig('react-native');
-
-type DependencyConfig = {
-  ios: ?DependencyConfigIOS,
-  android: ?DependencyConfigAndroid,
-};
-
-type DependencyConfigIOS = {
-  podspec?: string,
-};
-
-type DetectedDependencyConfigIOS = {
-  podspec: string,
-};
-
-type DependencyConfigAndroid = {
-  packageImportPath?: string,
-  packageInstance?: string,
-};
-
-type DetectedDependencyConfigAndroid = {
-  packageImportPath: string,
-  packageInstance: string,
-};
-
-type PlatformConfig<T, K> = {
-  getDependencyConfig: (string, T) => ?K,
-};
-
-type Platforms = {
-  [key: string]: PlatformConfig<*>,
-  ios: PlatformConfig<DependencyConfigIOS, DetectedDependencyConfigIOS>,
-  android: PlatformConfig<
-    DependencyConfigAndroid,
-    DetectedDependencyConfigAndroid,
-  >,
-};
-
-type ProjectConfig = {
-  root: string,
-  reactNativePath: string,
-  dependencies: {
-    [key: string]: DependencyConfig,
-  },
-};
-
-type Options = {
-  root: ?string,
-};
+import {type ProjectConfigT} from './types.flow';
 
 /**
- * Default options
+ * Built-in platforms
  */
-const DEFAULT_OPTIONS: Options = {
-  root: process.cwd(),
-};
+import * as ios from '../ios';
+import * as android from '../android';
+import resolveReactNativePath from './resolveReactNativePath';
 
-function readConfigFromDisk(root: string) {
-  const {config} = explorer.searchSync(root) || {config: {}};
-  return config;
-}
+/**
+ * Loads CLI configuration
+ */
+function loadConfig(projectRoot: string = process.cwd()): ProjectConfigT {
+  const inferredProjectConfig = findDependencies(projectRoot).reduce(
+    (acc: ProjectConfigT, dependencyName) => {
+      const root = path.join(projectRoot, 'node_modules', dependencyName);
 
-function getDefaultConfig(config: ProjectConfig, root: string) {
-  const platforms: Platforms = {
-    ios: {
-      getDependencyConfig: dependency.ios,
+      const config =
+        readLegacyDependencyConfigFromDisk(root) ||
+        readDependencyConfigFromDisk(root);
+
+      return {
+        ...acc,
+        dependencies: {
+          ...acc.dependencies,
+          // $FlowIssue: Computed getters are not yet supported.
+          get [dependencyName]() {
+            return {
+              platforms: Object.keys(acc.platforms).reduce(
+                (dependency, platform) =>
+                  acc.platforms[platform].dependencyConfig(
+                    root,
+                    config.dependency.platforms[platform],
+                  ),
+                {},
+              ),
+              assets: config.dependency.assets,
+              hooks: config.dependency.hooks,
+              params: config.dependency.params,
+            };
+          },
+        },
+        commands: acc.commands.concat(
+          config.commands.map(pathToCommand =>
+            path.join(dependencyName, pathToCommand),
+          ),
+        ),
+        platforms: {
+          ...acc.platforms,
+          ...config.platforms,
+        },
+        haste: {
+          providesModuleNodeModules: acc.haste.providesModuleNodeModules.concat(
+            Object.keys(config.platforms).length > 0 ? dependencyName : [],
+          ),
+          platforms: [...acc.haste.platforms, ...Object.keys(config.platforms)],
+        },
+      };
     },
-    android: {
-      getDependencyConfig: dependency.android,
-    },
-    ...config.platforms,
-  };
-
-  const dependencies = getProjectDependencies(root).reduce((deps, dep) => {
-    const folder = path.join(root, 'node_modules', dep);
-    const dependencyConfig = readConfigFromDisk(folder);
-
-    deps[dep] = Object.keys(platforms).reduce(
-      (acc, platform) => {
-        const dependencyPlatformConfig = get(
-          dependencyConfig,
-          `dependency.${platform}`,
-          {},
-        );
-        if (dependencyPlatformConfig === null) {
-          return acc;
-        }
-        const detectedConfig = platforms[platform].getDependencyConfig(
-          folder,
-          dependencyPlatformConfig,
-        );
-        if (detectedConfig === null) {
-          return acc;
-        }
-        acc[platform] = {
-          ...detectedConfig,
-          ...dependencyPlatformConfig,
-        };
-        return acc;
+    ({
+      root: projectRoot,
+      reactNativePath: resolveReactNativePath(projectRoot),
+      dependencies: {},
+      commands: [],
+      platforms: {
+        ios,
+        android,
       },
-      {
-        ios: null,
-        android: null,
+      haste: {
+        providesModuleNodeModules: [],
+        platforms: [],
       },
-    );
-    return deps;
-  }, {});
-
-  return merge(
-    {
-      dependencies,
-    },
-    config,
+    }: ProjectConfigT),
   );
-}
 
-async function loadConfig(opts: Options = DEFAULT_OPTIONS): ProjectConfig {
-  const config = readConfigFromDisk(opts.root);
+  const config: ProjectConfigT = merge(
+    inferredProjectConfig,
+    readProjectConfigFromDisk(projectRoot),
+  );
 
-  return {
-    ...getDefaultConfig(config, opts.root),
-    root: opts.root,
-    reactNativePath: config.reactNativePath
-      ? path.resolve(config.reactNativePath)
-      : (() => {
-          try {
-            return path.dirname(
-              // $FlowIssue: Wrong `require.resolve` type definition
-              require.resolve('react-native/package.json', {
-                paths: [opts.root],
-              }),
-            );
-          } catch (_ignored) {
-            throw new Error(
-              'Unable to find React Native files. Make sure "react-native" module is installed in your project dependencies.',
-            );
-          }
-        })(),
-  };
+  if (config.reactNativePath === 'not-found') {
+    throw new Error(dedent`
+      Unable to find React Native files. Make sure "react-native" module is installed
+      in your project dependencies.
+
+      If you are using React Native from a non-standard location, consider setting:
+      {
+        "react-native": {
+          "reactNativePath": "./path/to/react-native"
+        }
+      }
+      in your \`package.json\`.
+    `);
+  }
+
+  return config;
 }
 
 export default loadConfig;

@@ -127,6 +127,7 @@ function translateFilePath(filePath) {
     .replace('_gitignore', '.gitignore')
     .replace('_gitattributes', '.gitattributes')
     .replace('_babelrc', '.babelrc')
+    .replace('_eslintrc.js', '.eslintrc.js')
     .replace('_flowconfig', '.flowconfig')
     .replace('_buckconfig', '.buckconfig')
     .replace('_watchmanconfig', '.watchmanconfig');

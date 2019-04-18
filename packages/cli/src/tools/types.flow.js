@@ -2,10 +2,9 @@
  * @flow
  */
 
-export type ContextT = {
-  root: string,
-  reactNativePath: string,
-};
+import {type ProjectConfigT as ConfigT} from './config/types.flow';
+
+export type ContextT = ConfigT;
 
 export type LocalCommandT = {
   name: string,
@@ -69,13 +68,18 @@ export type PlatformConfigT<ProjectConfigT, DependencyConfigT, ParamsT> = {
   },
 };
 
-/**
- * The following types will be useful when we type `link` itself. For now,
- * they can be treated as aliases.
- */
-export type AndroidConfigParamsT = {};
+export type AndroidConfigParamsT = {
+  sourceDir?: string,
+  manifestPath?: string,
+  packageImportPath?: string,
+  packageInstance?: string,
+};
 
-export type IOSConfigParamsT = {};
+export type IOSConfigParamsT = {
+  project?: string,
+  sharedLibraries?: string[],
+  libraryFolder?: string,
+};
 
 export type ProjectConfigIOST = {};
 
@@ -142,4 +146,11 @@ export type PackageConfigurationT = {
   params?: InquirerPromptT[],
   android: AndroidConfigParamsT,
   ios: IOSConfigParamsT,
+
+  plugin?: string | Array<string>,
+  platform?: string,
+  haste?: {
+    platforms?: Array<string>,
+    providesModuleNodeModules?: Array<string>,
+  },
 };

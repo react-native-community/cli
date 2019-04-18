@@ -11,7 +11,9 @@ import chalk from 'chalk';
 import childProcess from 'child_process';
 import commander from 'commander';
 import path from 'path';
+
 import type {CommandT, ContextT} from './tools/types.flow';
+
 import {getCommands} from './commands';
 import init from './commands/init/init';
 import assertRequiredOptions from './tools/assertRequiredOptions';
@@ -19,6 +21,7 @@ import logger from './tools/logger';
 import findPlugins from './tools/findPlugins';
 import {setProjectDir} from './tools/PackageManager';
 import pkgJson from '../package.json';
+import loadConfig from './tools/config';
 
 commander
   .option('--version', 'Print CLI version')
@@ -80,22 +83,22 @@ function printUnknownCommand(cmdName) {
   }
 }
 
-const addCommand = (command: CommandT) => {
+const addCommand = (command: CommandT, ctx: ContextT) => {
   const options = command.options || [];
 
   const cmd = commander
     .command(command.name)
     .description(command.description)
-    .action(async function handleAction(...args) {
+    .action(function handleAction(...args) {
       const passedOptions = this.opts();
       const argv: Array<string> = Array.from(args).slice(0, -1);
 
-      try {
-        assertRequiredOptions(options, passedOptions);
-        return command.func(argv, passedOptions);
-      } catch (e) {
-        handleError(e);
-      }
+      Promise.resolve()
+        .then(() => {
+          assertRequiredOptions(options, passedOptions);
+          return command.func(argv, ctx, passedOptions);
+        })
+        .catch(handleError);
     });
 
   cmd.helpInformation = printHelpInformation.bind(
@@ -143,13 +146,13 @@ async function setupAndRun() {
     }
   }
 
-  // @todo: Let's use process.cwd directly where possible
-  const root = process.cwd();
+  const ctx = loadConfig();
 
-  // @todo this shouldn't be called here
-  setProjectDir(root);
+  setProjectDir(ctx.root);
 
-  getCommands(root).forEach(command => addCommand(command));
+  const commands = getCommands(ctx);
+
+  commands.forEach(command => addCommand(command, ctx));
 
   commander.parse(process.argv);
 

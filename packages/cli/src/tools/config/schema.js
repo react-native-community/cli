@@ -24,7 +24,7 @@ const command = t.object({
       parse: t.func(),
       default: t
         .alternatives()
-        .try([t.bool(), t.number(), t.string(), t.func()]),
+        .try([t.bool(), t.number(), t.string().allow(''), t.func()]),
     }),
   ),
   examples: t.array().items(

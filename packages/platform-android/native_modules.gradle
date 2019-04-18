@@ -95,7 +95,7 @@ class ReactNativeModules {
     reactNativeModules.forEach { reactNativeModule ->
       def name = reactNativeModule["name"]
       project.dependencies {
-        // TODO(salakar): other dependency scope methods such as `api`
+        // TODO(salakar): are other dependency scope methods such as `api` required?
         implementation project(path: ":${name}")
       }
     }
@@ -187,7 +187,8 @@ class ReactNativeModules {
     def dependencies = json["dependencies"]
 
     dependencies.each { name, value ->
-      def androidConfig = value["android"]
+      def platformsConfig = value["platforms"];
+      def androidConfig = platformsConfig["android"]
 
       if (androidConfig != null && androidConfig["sourceDir"] != null) {
         this.logger.info("${LOG_PREFIX}Automatically adding native module '${name}'")

@@ -8,6 +8,7 @@
     "xcode": "^2.0.0"
   },
   "files": [
-    "build"
+    "build",
+    "native_modules.rb"
   ]
 }

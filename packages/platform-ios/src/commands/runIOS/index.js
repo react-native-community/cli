@@ -197,9 +197,10 @@ async function runOnDevice(selectedDevice, scheme, xcodeProject, args: FlagsT) {
   );
 
   if (isIOSDeployInstalled.error) {
-    return logger.error(
-      '** INSTALLATION FAILED **\nMake sure you have ios-deploy installed globally.\n(e.g "npm install -g ios-deploy")',
-    );
+    throw new Error(`Failed to install the app on the device because we couldn't execute the "ios-deploy" command.
+      Please install it by running "${chalk.bold(
+        'npm install -g ios-deploy',
+      )}" and try again.`);
   }
 
   const appName = await buildProject(
@@ -226,12 +227,11 @@ async function runOnDevice(selectedDevice, scheme, xcodeProject, args: FlagsT) {
   );
 
   if (iosDeployOutput.error) {
-    return logger.error(
-      '** INSTALLATION FAILED **\nThere was an internal error with ios-deploy.',
-    );
+    throw new Error(`Failed to install the app on the device. We've encountered an error in "ios-deploy" command.
+      Here are more details: ${isIOSDeployInstalled.error.message}`);
   }
 
-  return logger.info('** INSTALLATION SUCCEEDED **');
+  return logger.info('App installed on device.');
 }
 
 function buildProject(xcodeProject, udid, scheme, args: FlagsT) {

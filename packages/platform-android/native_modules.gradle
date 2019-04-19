@@ -232,8 +232,10 @@ ext.applyNativeModulesAppBuildGradle = { Project project ->
     applicationId = [variant.mergedFlavor.applicationId, variant.buildType.applicationIdSuffix].findAll().join()
   }
 
-  task generatePackageList << {
-    autoModules.generatePackagesFile(generatedSrcDir, generatedFileName, generatedFileContentsTemplate, applicationId)
+  task generatePackageList {
+    doLast {
+      autoModules.generatePackagesFile(generatedSrcDir, generatedFileName, generatedFileContentsTemplate, applicationId)
+    }
   }
 
   preBuild.dependsOn generatePackageList

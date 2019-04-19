@@ -10,6 +10,7 @@
     "xmldoc": "^0.4.0"
   },
   "files": [
-    "build"
+    "build",
+    "native_modules.gradle"
   ]
 }

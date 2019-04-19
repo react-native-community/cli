@@ -1,4 +1,6 @@
 // @flow
+import os from 'os';
+import path from 'path';
 import fs from 'fs-extra';
 import minimist from 'minimist';
 import semver from 'semver';
@@ -49,16 +51,18 @@ async function createFromExternalTemplate(
   const loader = new Loader({text: 'Downloading template'});
   loader.start();
 
+  const templateSourceDir = fs.mkdtempSync(
+    path.join(os.tmpdir(), 'rncli-init-template-'),
+  );
   try {
     let {uri, name} = await processTemplateName(templateName);
-
-    await installTemplatePackage(uri, npm);
+    await installTemplatePackage(uri, templateSourceDir, npm);
     loader.succeed();
     loader.start('Copying template');
 
     name = adjustNameIfUrl(name);
-    const templateConfig = getTemplateConfig(name);
-    copyTemplate(name, templateConfig.templateDir);
+    const templateConfig = getTemplateConfig(name, templateSourceDir);
+    copyTemplate(name, templateConfig.templateDir, templateSourceDir);
 
     loader.succeed();
     loader.start('Preparing template');
@@ -70,7 +74,7 @@ async function createFromExternalTemplate(
     if (postInitScript) {
       // Leaving trailing space because there may be stdout from the script
       loader.start('Executing post init script ');
-      await executePostInitScript(name, postInitScript);
+      await executePostInitScript(name, postInitScript, templateSourceDir);
       loader.succeed();
     }
 
@@ -80,6 +84,8 @@ async function createFromExternalTemplate(
   } catch (e) {
     loader.fail();
     throw new Error(e);
+  } finally {
+    fs.removeSync(templateSourceDir);
   }
 }
 
@@ -94,7 +100,9 @@ async function createFromReactNativeTemplate(
   const Loader = getLoader();
   const loader = new Loader({text: 'Downloading template'});
   loader.start();
-
+  const templateSourceDir = fs.mkdtempSync(
+    path.join(os.tmpdir(), 'rncli-init-template-'),
+  );
   try {
     if (semver.valid(version) && !semver.gte(version, '0.60.0')) {
       throw new Error(
@@ -106,13 +114,13 @@ async function createFromReactNativeTemplate(
 
     const {uri} = await processTemplateName(`${TEMPLATE_NAME}@${version}`);
 
-    await installTemplatePackage(uri, npm);
+    await installTemplatePackage(uri, templateSourceDir, npm);
 
     loader.succeed();
     loader.start('Copying template');
 
-    const templateConfig = getTemplateConfig(TEMPLATE_NAME);
-    copyTemplate(TEMPLATE_NAME, templateConfig.templateDir);
+    const templateConfig = getTemplateConfig(TEMPLATE_NAME, templateSourceDir);
+    copyTemplate(TEMPLATE_NAME, templateConfig.templateDir, templateSourceDir);
 
     loader.succeed();
     loader.start('Processing template');
@@ -123,7 +131,11 @@ async function createFromReactNativeTemplate(
     const {postInitScript} = templateConfig;
     if (postInitScript) {
       loader.start('Executing post init script');
-      await executePostInitScript(TEMPLATE_NAME, postInitScript);
+      await executePostInitScript(
+        TEMPLATE_NAME,
+        postInitScript,
+        templateSourceDir,
+      );
       loader.succeed();
     }
 
@@ -133,6 +145,8 @@ async function createFromReactNativeTemplate(
   } catch (e) {
     loader.fail();
     throw new Error(e);
+  } finally {
+    fs.removeSync(templateSourceDir);
   }
 }
 

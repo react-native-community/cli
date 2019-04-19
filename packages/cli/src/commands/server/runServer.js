@@ -19,7 +19,6 @@ import MiddlewareManager from './middleware/MiddlewareManager';
 import loadMetroConfig from '../../tools/loadMetroConfig';
 
 export type Args = {|
-  assetExts?: string[],
   assetPlugins?: string[],
   cert?: string,
   customLogReporterPath?: string,
@@ -27,10 +26,8 @@ export type Args = {|
   https?: boolean,
   maxWorkers?: number,
   key?: string,
-  nonPersistent?: boolean,
   platforms?: string[],
   port?: number,
-  providesModuleNodeModules?: string[],
   resetCache?: boolean,
   sourceExts?: string[],
   transformer?: string,

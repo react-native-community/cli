@@ -191,16 +191,17 @@ async function runOnSimulator(xcodeProject, scheme, args: FlagsT) {
 
 async function runOnDevice(selectedDevice, scheme, xcodeProject, args: FlagsT) {
   const isIOSDeployInstalled = child_process.spawnSync(
-    'ios-deploy',
+    'ioxs-deploy',
     ['--version'],
     {encoding: 'utf8'},
   );
 
   if (isIOSDeployInstalled.error) {
-    throw new Error(`Failed to install the app on the device because we couldn't execute the "ios-deploy" command.
-      Please install it by running "${chalk.bold(
+    throw new CLIError(
+      `Failed to install the app on the device because we couldn't execute the "ios-deploy" command. Please install it by running "${chalk.bold(
         'npm install -g ios-deploy',
-      )}" and try again.`);
+      )}" and try again.`,
+    );
   }
 
   const appName = await buildProject(
@@ -227,11 +228,14 @@ async function runOnDevice(selectedDevice, scheme, xcodeProject, args: FlagsT) {
   );
 
   if (iosDeployOutput.error) {
-    throw new Error(`Failed to install the app on the device. We've encountered an error in "ios-deploy" command.
-      Here are more details: ${isIOSDeployInstalled.error.message}`);
+    throw new CLIError(
+      `Failed to install the app on the device. We've encountered an error in "ios-deploy" command: ${
+        iosDeployOutput.error.message
+      }`,
+    );
   }
 
-  return logger.info('App installed on device.');
+  return logger.success('Installed the app on the device.');
 }
 
 function buildProject(xcodeProject, udid, scheme, args: FlagsT) {

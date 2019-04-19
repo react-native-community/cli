@@ -109,6 +109,7 @@ export function readLegacyDependencyConfigFromDisk(
       hooks: config.commands,
       params: config.params,
     },
+    haste: config.haste,
     commands: loadProjectCommands(rootFolder, config.plugin),
     platforms: config.platform
       ? require(path.join(rootFolder, config.platform))

@@ -10,7 +10,11 @@ export type CommandT = {
     command: string,
     description?: string,
     parse?: (val: string) => any,
-    default?: string | boolean | number,
+    default?:
+      | string
+      | boolean
+      | number
+      | ((ctx: ConfigT) => string | boolean | number),
   }>,
   examples?: Array<{
     desc: string,
@@ -184,6 +188,12 @@ export type UserDependencyConfigT = {
   platforms: {
     [name: string]: any,
   },
+
+  // Haste config defined by legacy `rnpm`
+  haste?: {
+    platforms: string[],
+    providesModuleNodeModules: string[],
+  },
 };
 
 /**
@@ -191,10 +201,10 @@ export type UserDependencyConfigT = {
  */
 export type UserConfigT = {
   /**
-   * Shares some structure with ConfigT, except that haste, root, platforms
+   * Shares some structure with ConfigT, except that haste and root
    * are calculated and can't be defined
    */
-  ...$Diff<ConfigT, {haste: any, root: any, platforms: any}>,
+  ...$Diff<ConfigT, {haste: any, root: any}>,
   reactNativePath: ?string,
 
   // Additional project settings

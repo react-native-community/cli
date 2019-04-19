@@ -22,7 +22,9 @@ const command = t.object({
       command: t.string().required(),
       description: t.string(),
       parse: t.func(),
-      default: t.alternatives().try([t.bool(), t.number(), t.string()]),
+      default: t
+        .alternatives()
+        .try([t.bool(), t.number(), t.string().allow(''), t.func()]),
     }),
   ),
   examples: t.array().items(
@@ -83,12 +85,13 @@ export const dependencyConfig = t
         projectConfig: t.func(),
         linkConfig: t.func(),
       }),
-    ).default(),
+    ).default({}),
     commands: t
       .array()
       .items(command)
       .default([]),
   })
+  .unknown(true)
   .default();
 
 /**
@@ -168,5 +171,14 @@ export const projectConfig = t
       .array()
       .items(command)
       .default([]),
+    platforms: map(
+      t.string(),
+      t.object({
+        dependencyConfig: t.func(),
+        projectConfig: t.func(),
+        linkConfig: t.func(),
+      }),
+    ).default({}),
   })
+  .unknown(true)
   .default();

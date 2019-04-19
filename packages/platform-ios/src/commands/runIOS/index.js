@@ -464,7 +464,7 @@ export default {
       command: '--terminal [string]',
       description:
         'Launches the Metro Bundler in a new window using the specified terminal path.',
-      default: getDefaultUserTerminal(),
+      default: getDefaultUserTerminal,
     },
   ],
 };

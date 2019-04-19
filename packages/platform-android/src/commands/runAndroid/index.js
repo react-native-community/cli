@@ -173,9 +173,9 @@ function tryInstallAppOnDevice(args, adbPath, device) {
     );
 
     const pathToApk = `${buildDirectory}/${apkFile}`;
-    const adbArgs = ['-s', device, 'install', '-rd', pathToApk];
+    const adbArgs = ['-s', device, 'install', '-r', '-d', pathToApk];
     logger.info(
-      `Installing the app on the device (cd android && adb -s ${device} install -rd ${pathToApk}`,
+      `Installing the app on the device (cd android && adb -s ${device} install -r -d ${pathToApk}`,
     );
     execFileSync(adbPath, adbArgs, {
       stdio: [process.stdin, process.stdout, process.stderr],
@@ -362,7 +362,7 @@ export default {
       command: '--terminal [string]',
       description:
         'Launches the Metro Bundler in a new window using the specified terminal path.',
-      default: getDefaultUserTerminal(),
+      default: getDefaultUserTerminal,
     },
   ],
 };

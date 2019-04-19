@@ -191,7 +191,7 @@ async function runOnSimulator(xcodeProject, scheme, args: FlagsT) {
 
 async function runOnDevice(selectedDevice, scheme, xcodeProject, args: FlagsT) {
   const isIOSDeployInstalled = child_process.spawnSync(
-    'ioxs-deploy',
+    'ios-deploy',
     ['--version'],
     {encoding: 'utf8'},
   );

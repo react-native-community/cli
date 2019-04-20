@@ -23,7 +23,7 @@ import {logger} from '@react-native-community/cli-tools';
 /**
  * Places to look for the new configuration
  */
-const searchPlaces = ['react-native.config.js', 'package.json'];
+const searchPlaces = ['react-native.config.js'];
 
 /**
  * Reads a project configuration as defined by the user in the current

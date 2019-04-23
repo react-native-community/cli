@@ -115,5 +115,102 @@ Performs platform-specific steps in order to copy assets of a library to a proje
 
 Performs platform-specific steps in order to unlink assets of a library from a project.
 
+## Migrating from `rnpm` configuration
 
+The changes are mostly cosmetic so the migration should be pretty straight-forward. 
 
+### Changing the configuration for a platform
+
+A `platform` property would need to be renamed to `platforms`. `haste` is no longer supported - we are able to infer that automatically.
+
+For example:
+
+```json
+{
+  "rnpm": {
+    "haste": {
+      "platforms": [
+        "windows"
+      ],
+      "providesModuleNodeModules": [
+        "react-native-windows"
+      ]
+    },
+    "platform": "./local-cli/platform.js"
+  }
+}
+```
+
+to `react-native.config.js`
+
+```js
+module.exports = {
+  platforms: {
+    windows: require('./local-cli/platform.js').windows,
+  }
+};
+```
+
+> The above configuration is taken from `react-native-windows` and adds support for `windows` platform.
+
+### Changing platform configuration for a dependency
+
+Platform keys are now under `dependency.platforms`. 
+
+For example:
+
+```json
+{
+  "rnpm": {
+    "ios": {
+      "project": "PathToCustomProject.xcodeproj"
+    }
+  }
+}
+```
+
+to `react-native.config.js`
+
+```js
+module.exports = {
+  dependency: {
+    platforms: {
+      ios: {
+        project: 'PathToCustomProject.xcodeproj'
+      }
+    }
+  }
+}
+```
+
+> The above is a configuration of a dependency that explicitly sets a path to `.xcodeproj`.
+
+### Changing platform configuration for a project
+
+Platform keys are now under `project.platforms`. 
+
+For example:
+
+```json
+{
+  "rnpm": {
+    "ios": {
+      "project": "PathToCustomProject.xcodeproj"
+    }
+  }
+}
+```
+
+to `react-native.config.js`
+
+```js
+module.exports = {
+  project: {
+    ios: {
+      project: 'PathToCustomProject.xcodeproj'
+    }
+  }
+}
+```
+
+> The above is a configuration of a project that explicitly sets its main `.xcodeproj` project.

@@ -14,7 +14,8 @@ type FlagsT = {
   legacy: boolean | void,
 };
 
-const rnDiffPurgeUrl = 'https://github.com/react-native-community/rn-diff-purge';
+const rnDiffPurgeUrl =
+  'https://github.com/react-native-community/rn-diff-purge';
 const rnDiffPurgeRawDiffsUrl =
   'https://raw.githubusercontent.com/react-native-community/rn-diff-purge/diffs/diffs';
 

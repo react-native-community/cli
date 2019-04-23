@@ -9,7 +9,7 @@ React Native CLI can be configured by creating a `react-native.config.js` at the
 Check the documentation for:
 - [project](./project.md)
 - [dependency](./dependency.md)
-- [platform](./platforms.md)
+- [platforms](./platforms.md)
 - [plugin](./plugins.md)
 
 to learn more about different types of configuration and features available.

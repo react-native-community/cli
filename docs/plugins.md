@@ -53,7 +53,7 @@ type Command = {
 
 #### `name`
 
-Name that will be used in order to run the command. 
+A name that will be used in order to run the command. 
 
 Note: If you want your command to accept additional arguments, make sure to include them in the name.
 

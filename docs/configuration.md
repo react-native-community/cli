@@ -10,6 +10,6 @@ Check the documentation for:
 - [project](./project.md)
 - [dependency](./dependency.md)
 - [platforms](./platforms.md)
-- [plugin](./plugins.md)
+- [plugins](./plugins.md)
 
 to learn more about different types of configuration and features available.

@@ -7,8 +7,8 @@ React Native CLI has a configuration mechanism that allows changing its behavior
 React Native CLI can be configured by creating a `react-native.config.js` at the root of the project. Depending on a type of a package, this file can have a different set properties.
 
 Check the documentation for:
-- [project](./project.md)
-- [dependency](./dependency.md)
+- [projects](./projects.md)
+- [dependencies](./dependencies.md)
 - [platforms](./platforms.md)
 - [plugins](./plugins.md)
 

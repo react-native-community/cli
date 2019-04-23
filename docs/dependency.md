@@ -49,16 +49,16 @@ type DependencyConfigT = {
 
 A map of specific settings that can be set per platform. The exact shape is always defined by the package that provides given platform. 
 
-The following settings are available on iOS:
+In most cases, as a library author, you should not need to define any of these.
+
+The following settings are available on iOS and Android:
+
 ```ts
 type DependencyParamsIOST = {
   project?: string,
   sharedLibraries?: string[],
-  libraryFolder?: string
 };
-```
-and on Android:
-```ts
+
 type DependencyParamsAndroidT = {
   sourceDir?: string,
   manifestPath?: string,
@@ -67,9 +67,31 @@ type DependencyParamsAndroidT = {
 };
 ```
 
-For settings applicable on other platforms, please consult their respective documentation.
+#### platforms.ios.project
 
-In most cases, as a library author, you should not need to define any of these.
+Custom path to `.xcodeproj`
+
+#### platforms.ios.sharedLibraries
+
+An array of shared iOS libraries to link with the dependency. E.g. `libc++`. This is mostly a requirement of the native code that a dependency ships with.
+
+#### platforms.android.sourceDir
+
+Path to a folder with source files.
+
+#### platforms.android.manifestPath
+
+Path to a custom `AndroidManifest.xml`
+
+#### platforms.android.packageImportPath
+
+Custom package import. For example: `import com.acme.AwesomePackage;`.
+
+#### platforms.android.packageInstance
+
+Custom syntax to instantiate a package. By default, it's a `new AwesomePackage()`. It can be useful when your package requires additional arguments while initializing. 
+
+For settings applicable on other platforms, please consult their respective documentation.
 
 ### assets
 

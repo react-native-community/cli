@@ -25,27 +25,6 @@ This means that all libraries need to ship a Podspec in the root of their folder
 
 The implementation ensures that a library is imported only once, so if you need to have a custom `pod` directive then including it above the function `use_native_modules!`.
 
-Script Phases
-A project which wants to add an Xcode script phase to a user's app can use the custom support in iOS auto-linking via custom settings in either the project's `package.json` under `"react-native"` or via a `react-native.config.js` file in the root.
-
-The options for the build phase are passed more-or-less directly to the `Podfile` via `build_phase`. Here's an example of adding the settings in your `package.json`:
-
-```json
-{
-  "react-native":
-   "ios":
-     "scriptPhases": {
-        "name": "My Dep pre-parser",
-        "path": "relative/path/to/script.sh",
-        "execution_position": "after_compile"
-      }
-    }
-  }
-}
-```
-
-`"path"` is an extra option provided to simplify storing the scripts in your repo, it sets `"script"` for you. You can see all available options [here](https://www.rubydoc.info/gems/cocoapods-core/Pod/Podfile/DSL#script_phase-instance_method).
-
 See implementation of [native_modules.rb](https://github.com/react-native-community/cli/blob/master/packages/platform-ios/native_modules.rb).
 
 ## Platform Android

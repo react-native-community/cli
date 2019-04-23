@@ -111,6 +111,8 @@ These are the only ones supported by CLI at the moment. Depending on the package
 
 The changes are mostly cosmetic so the migration should be pretty straight-forward.
 
+> Note: We read `rnpm` configuration to remain backwards-compatible. Dependency maintainers should update their configuration in the nearest future. 
+
 ### Changing the configuration
 
 Properties were renamed. Look at the following example for the differences.
@@ -128,7 +130,7 @@ Properties were renamed. Look at the following example for the differences.
 }
 ```
 
-to `react-native.config.js`
+to a `react-native.config.js`
 
 ```js
 module.exports = {

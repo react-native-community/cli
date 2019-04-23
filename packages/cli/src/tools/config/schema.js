@@ -27,7 +27,7 @@ const command = t.object({
           .alternatives()
           .try([t.bool(), t.number(), t.string().allow(''), t.func()]),
       })
-      .rename('command', 'name'),
+      .rename('command', 'name', {ignoreUndefined: true}),
   ),
   examples: t.array().items(
     t.object({

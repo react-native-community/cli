@@ -49,7 +49,7 @@ type Command = {
 };
 ```
 
-> Note: `ConfigT` is described in [`configuration` section](./configuration.md)
+> Note: `ConfigT` is described in [`configuration`](./configuration.md) section
 
 #### `name`
 
@@ -77,7 +77,7 @@ Name of the option.
 
 For example, a `--reset-cache` option will result in a `resetCache: true` or `resetCache: false` present in the `options` object - passed to a command function as a last argument.
 
-Just like with a command, your option can require a value (e.g. `--port <port>`) or accept an optional one (e.g. `--host [host]`). In this case, you may find `default` value useful (see below).
+Just like with a [command name](#name), your option can require a value (e.g. `--port <port>`) or accept an optional one (e.g. `--host [host]`). In this case, you may find [`default`](#optionsdefault) value useful.
 
 ##### `options.description`
 

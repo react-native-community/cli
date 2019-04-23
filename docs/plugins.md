@@ -56,7 +56,7 @@ type Command = {
 
 #### `name`
 
-Name that will be used in order to run the command. 
+A name that will be used in order to run the command. 
 
 Note: If you want your command to accept additional arguments, make sure to include them in the name.
 
@@ -110,7 +110,7 @@ A command with arguments and options (if applicable) that can be run in order to
 
 ## Migrating from `rnpm` configuration
 
-The changes are non-breaking hence the migration should be straight-forward. 
+The changes are mostly cosmetic so the migration should be pretty straight-forward. 
 
 ### Changing the configuration
 

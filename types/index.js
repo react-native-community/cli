@@ -4,10 +4,11 @@
 export type CommandT = {
   name: string,
   description?: string,
-  usage?: string,
   func: (argv: Array<string>, ctx: ConfigT, args: Object) => ?Promise<void>,
   options?: Array<{
-    command: string,
+    // @todo: deprecate `command` in favour of `name`
+    name: string,
+    name?: string,
     description?: string,
     parse?: (val: string) => any,
     default?:

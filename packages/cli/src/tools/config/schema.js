@@ -19,7 +19,7 @@ const command = t.object({
   func: t.func().required(),
   options: t.array().items(
     t.object({
-      command: t.string().required(),
+      name: t.string().required(),
       description: t.string(),
       parse: t.func(),
       default: t

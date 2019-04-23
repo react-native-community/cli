@@ -7,15 +7,15 @@ export default {
   description: 'initialize new React Native project',
   options: [
     {
-      command: '--version [string]',
+      name: '--version [string]',
       description: 'Version of RN',
     },
     {
-      command: '--template [string]',
+      name: '--template [string]',
       description: 'Custom template',
     },
     {
-      command: '--npm',
+      name: '--npm',
       description: 'Force use of npm during initialization',
     },
   ],

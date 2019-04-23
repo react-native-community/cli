@@ -64,7 +64,7 @@ function printHelpInformation(examples, pkg) {
     : [];
 
   let output = [
-    chalk.bold(`react-native ${cmdName} ${this.usage()}`),
+    chalk.bold(`react-native ${cmdName}`),
     this._description ? `\n${this._description}\n` : '',
     ...sourceInformation,
     `${chalk.bold('Options:')}`,
@@ -122,7 +122,7 @@ const addCommand = (command: CommandT, ctx: ConfigT) => {
 
   options.forEach(opt =>
     cmd.option(
-      opt.command,
+      opt.name || opt.command,
       opt.description,
       opt.parse || defaultOptParser,
       typeof opt.default === 'function' ? opt.default(ctx) : opt.default,

@@ -91,7 +91,7 @@ export default {
   name: 'link [packageName]',
   options: [
     {
-      command: '--platforms [list]',
+      name: '--platforms [list]',
       description:
         'If you want to link dependencies only for specific platforms',
       parse: (val: string) => val.toLowerCase().split(','),

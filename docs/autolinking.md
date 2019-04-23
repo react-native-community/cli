@@ -3,12 +3,14 @@
 Autolinking is a mechanism built into CLI that allows adding a dependency with native components for React Native to be as simple as:
 
 ```sh
-yarn add react-native-firebase
+yarn add react-native-webview
 ```
+
+> Autolinking is a replacement for [`react-native link`](./linking.md) that brings new features (such as ability to easily integrate native dependencies on iOS) and fixes some of the long-standing issues.
 
 ## How does it work
 
-React Native CLI provides a [`config`](./commands.md#config) command which grabs all of the configuration for React Native packages installed in the project (by scanning dependenecies in `package.json`) and outputs it in JSON format.
+React Native CLI provides a [`config`](./commands.md#config) command which grabs all of the configuration for React Native packages installed in the project (by scanning dependencies in `package.json`) and outputs it in JSON format.
 
 This information is then used by the projects advertised as platforms (with `react-native` being a default project supporting both iOS and Android platforms) that implement their autolinking behavior.
 

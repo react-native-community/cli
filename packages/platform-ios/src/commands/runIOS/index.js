@@ -420,52 +420,52 @@ export default {
   ],
   options: [
     {
-      command: '--simulator [string]',
+      name: '--simulator [string]',
       description:
         'Explicitly set simulator to use. Optionally include iOS version between' +
         'parenthesis at the end to match an exact version: "iPhone 6 (10.0)"',
       default: 'iPhone X',
     },
     {
-      command: '--configuration [string]',
+      name: '--configuration [string]',
       description: 'Explicitly set the scheme configuration to use',
       default: 'Debug',
     },
     {
-      command: '--scheme [string]',
+      name: '--scheme [string]',
       description: 'Explicitly set Xcode scheme to use',
     },
     {
-      command: '--project-path [string]',
+      name: '--project-path [string]',
       description:
         'Path relative to project root where the Xcode project ' +
         '(.xcodeproj) lives.',
       default: 'ios',
     },
     {
-      command: '--device [string]',
+      name: '--device [string]',
       description:
         'Explicitly set device to use by name.  The value is not required if you have a single device connected.',
     },
     {
-      command: '--udid [string]',
+      name: '--udid [string]',
       description: 'Explicitly set device to use by udid',
     },
     {
-      command: '--no-packager',
+      name: '--no-packager',
       description: 'Do not launch packager while building',
     },
     {
-      command: '--verbose',
+      name: '--verbose',
       description: 'Do not use xcpretty even if installed',
     },
     {
-      command: '--port [number]',
+      name: '--port [number]',
       default: process.env.RCT_METRO_PORT || 8081,
       parse: (val: string) => Number(val),
     },
     {
-      command: '--terminal [string]',
+      name: '--terminal [string]',
       description:
         'Launches the Metro Bundler in a new window using the specified terminal path.',
       default: getDefaultUserTerminal,

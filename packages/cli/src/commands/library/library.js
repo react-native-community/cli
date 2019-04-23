@@ -70,7 +70,7 @@ export default {
   description: 'generates a native library bridge',
   options: [
     {
-      command: '--name <string>',
+      name: '--name <string>',
       description: 'name of the library to generate',
       default: null,
     },

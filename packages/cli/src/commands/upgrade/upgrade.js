@@ -319,7 +319,7 @@ const upgradeCommand = {
   func: upgrade,
   options: [
     {
-      command: '--legacy [boolean]',
+      name: '--legacy [boolean]',
       description:
         "Legacy implementation. Upgrade your app's template files to the latest version; run this after " +
         'updating the react-native version in your package.json and running npm install',

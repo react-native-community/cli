@@ -18,14 +18,16 @@ const command = t.object({
   usage: t.string(),
   func: t.func().required(),
   options: t.array().items(
-    t.object({
-      command: t.string().required(),
-      description: t.string(),
-      parse: t.func(),
-      default: t
-        .alternatives()
-        .try([t.bool(), t.number(), t.string().allow(''), t.func()]),
-    }),
+    t
+      .object({
+        name: t.string().required(),
+        description: t.string(),
+        parse: t.func(),
+        default: t
+          .alternatives()
+          .try([t.bool(), t.number(), t.string().allow(''), t.func()]),
+      })
+      .rename('command', 'name'),
   ),
   examples: t.array().items(
     t.object({

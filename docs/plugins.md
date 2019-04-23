@@ -64,6 +64,10 @@ type OptionT = {
 
 Name of the option.
 
+For example, a `--reset-cache` option will result in a `resetCache: true` or `resetCache: false` present in the `options` object - passed to a command function as a last argument.
+
+Just like with a command, your option can require a value (e.g. `--port <port>`) or accept an optional one (e.g. `--host [host]`). In this case, you may find `default` value useful (see below).
+
 ##### `description?: string`
 
 Optional description of your option. When provided, will be used to output a better help information.

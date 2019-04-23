@@ -122,7 +122,7 @@ const addCommand = (command: CommandT, ctx: ConfigT) => {
 
   options.forEach(opt =>
     cmd.option(
-      opt.name || opt.command,
+      opt.command || opt.name,
       opt.description,
       opt.parse || defaultOptParser,
       typeof opt.default === 'function' ? opt.default(ctx) : opt.default,

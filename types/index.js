@@ -7,8 +7,8 @@ export type CommandT = {
   func: (argv: Array<string>, ctx: ConfigT, args: Object) => ?Promise<void>,
   options?: Array<{
     // @todo: deprecate `command` in favour of `name` when we remove support for `rnpm` config
-    command: string,
-    name?: string,
+    command?: string,
+    name: string,
     description?: string,
     parse?: (val: string) => any,
     default?:

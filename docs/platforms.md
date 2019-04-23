@@ -153,7 +153,7 @@ module.exports = {
 
 > The above configuration is taken from `react-native-windows` and adds support for `windows` platform.
 
-### Changing platform configuration for a dependency
+### Changing platform configuration for a [`dependency`](./dependency.md)
 
 Platform keys are now under `dependency.platforms`. 
 
@@ -185,7 +185,7 @@ module.exports = {
 
 > The above is a configuration of a dependency that explicitly sets a path to `.xcodeproj`.
 
-### Changing platform configuration for a project
+### Changing platform configuration for a [`project`](./project.md)
 
 Platform keys are now under `project.platforms`. 
 

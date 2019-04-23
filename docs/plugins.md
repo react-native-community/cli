@@ -134,31 +134,18 @@ provided that `./path-to-commands.js` returns an array of commands.
 
 ### Renaming command options
 
-If your command accepts options, rename `command` to `name`.
+If your command accepts options, rename `command` property of each of them to `name`.
 
-For example,
-```js
-module.exports = {
-  name: 'foo',
-  func: () => console.log('My work'),
-  options: [
-    {
-      command: '--reset-cache, --resetCache',
-      description: 'Removes cached files',
-    }
-  ]
-}
-```
-should be changed to:
-```js
-module.exports = {
-  name: 'foo',
-  func: () => console.log('My work'),
-  options: [
-    {
-      name: '--reset-cache, --resetCache',
-      description: 'Removes cached files',
-    }
-  ]
-}
+```diff
+ module.exports = {
+   name: 'foo',
+   func: () => console.log('My work'),
+   options: [
+     {
+-      command: '--reset-cache, --resetCache',
++      name: '--reset-cache, --resetCache',
+       description: 'Removes cached files',
+     }
+   ]
+ }
 ```

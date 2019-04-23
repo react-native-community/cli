@@ -17,7 +17,7 @@ npx react-native init ProjectName
 #### Installing `react-native` and invoking `init` command:
 
 ```sh
-yarn add react-native && react-native init ProjectName
+yarn init && yarn add react-native && yarn react-native init ProjectName
 ```
 
 #### Initializing project with custom version of `react-native`:

@@ -57,7 +57,7 @@ type PlatformConfig<ProjectParams, ProjectConfig, DependencyConfig> = {
 
 ### projectConfig
 
-Returns a project configuration for a given platform. This is later used inside `linkConfig` to perform linking and unlinking.
+Returns a project configuration for a given platform or `null`, when no project found. This is later used inside `linkConfig` to perform linking and unlinking.
 
 First argument is a root folder where the project is located. 
 
@@ -71,6 +71,36 @@ module.exports = {
 ```
 
 > Note: You may find this useful in order to alter the default behavior of your function. For example, on iOS, we find an `.xcodeproj` by globbing the project files and taking the first match. There's a possibility we pick the wrong one in case the project has multiple `.xcodeproj` files. In order to support this use-case, we have allowed users to define an exact path to an iOS project in order to overwrite our `glob` mechanism.
+
+On Android and iOS, this function returns:
+
+```ts
+type ProjectConfigIOST = {
+  sourceDir: string,
+  folder: string,
+  pbxprojPath: string,
+  podfile: null,
+  podspec: null,
+  projectPath: string,
+  projectName: string,
+  libraryFolder: string,
+  sharedLibraries: Array<any>,
+  plist: Array<any>,
+};
+
+type ProjectConfigAndroidT = {
+  sourceDir: string,
+  isFlat: boolean,
+  folder: string,
+  stringsPath: string,
+  manifestPath: string,
+  buildGradlePath: string,
+  settingsGradlePath: string,
+  assetsPath: string,
+  mainFilePath: string,
+  packageName: string,
+};
+```
 
 We suggest performing all side-effects inside this function (such as resolving paths to native files) and making `linkConfig` functions pure, operating on provided data.
 
@@ -87,6 +117,20 @@ module.exports = {
     [yourPlatformKey]: {}
   }
 }
+```
+
+On Android and iOS, this function returns:
+
+```ts
+type DependencyConfigIOST = ProjectConfigIOST;
+
+type DependencyConfigAndroidT = {
+  sourceDir: string,
+  folder: string,
+  manifest: Manifest,
+  packageImportPath: string,
+  packageInstance: string,
+};
 ```
 
 ### linkConfig
@@ -153,7 +197,7 @@ module.exports = {
 
 > The above configuration is taken from `react-native-windows` and adds support for `windows` platform.
 
-### Changing platform configuration for a dependency
+### Changing platform configuration for a [`dependency`](./dependencies.md)
 
 Platform keys are now under `dependency.platforms`. 
 
@@ -185,7 +229,7 @@ module.exports = {
 
 > The above is a configuration of a dependency that explicitly sets a path to `.xcodeproj`.
 
-### Changing platform configuration for a project
+### Changing platform configuration for a [`project`](./projects.md)
 
 Platform keys are now under `project.platforms`. 
 

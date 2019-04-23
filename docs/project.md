@@ -1,6 +1,6 @@
 # Project
 
-A project is a an app that contains React code and has a dependency on `react-native`.
+A project is an app that contains React code and has a dependency on `react-native`.
 
 Projects can provide additional properties to alter the CLI behavior, such as custom location of React Native files (this is useful when running RNTester from source) or a non-standard location of a project (useful when working in a brownfield app).
 

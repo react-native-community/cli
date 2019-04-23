@@ -69,14 +69,6 @@ export default {
       parse: (workers: string) => Number(workers),
     },
     {
-      command: '--skipflow',
-      description: 'Disable flow checks',
-    },
-    {
-      command: '--nonPersistent',
-      description: 'Disable file watcher',
-    },
-    {
       command: '--transformer [string]',
       description: 'Specify a custom transformer to be used',
     },

@@ -159,16 +159,16 @@ test('fetches empty patch and installs deps', async () => {
   (fetch: any).mockImplementation(() => Promise.resolve(''));
   await upgrade.func([newVersion], ctx, opts);
   expect(flushOutput()).toMatchInlineSnapshot(`
-"info Fetching diff between v0.57.8 and v0.58.4...
-info Diff has no changes to apply, proceeding further
-info Installing \\"react-native@0.58.4\\" and its peer dependencies...
-$ execa npm info react-native@0.58.4 peerDependencies --json
-$ yarn add react-native@0.58.4 react@16.6.3
-$ execa git add package.json
-$ execa git add yarn.lock
-$ execa git add package-lock.json
-success Upgraded React Native to v0.58.4 🎉. Now you can review and commit the changes"
-`);
+    "info Fetching diff between v0.57.8 and v0.58.4...
+    info Diff has no changes to apply, proceeding further
+    info Installing \\"react-native@0.58.4\\" and its peer dependencies...
+    $ execa npm info react-native@0.58.4 peerDependencies --json
+    $ yarn add react-native@0.58.4 react@16.6.3
+    $ execa git add package.json
+    $ execa git add yarn.lock
+    $ execa git add package-lock.json
+    success Upgraded React Native to v0.58.4 🎉. Now you can review and commit the changes"
+  `);
 }, 60000);
 
 test('fetches regular patch, adds remote, applies patch, installs deps, removes remote,', async () => {
@@ -184,24 +184,24 @@ test('fetches regular patch, adds remote, applies patch, installs deps, removes 
     opts,
   );
   expect(flushOutput()).toMatchInlineSnapshot(`
-"info Fetching diff between v0.57.8 and v0.58.4...
-[fs] write tmp-upgrade-rn.patch
-$ execa git rev-parse --show-prefix
-$ execa git apply --check tmp-upgrade-rn.patch --exclude=package.json -p2 --3way --directory=
-info Applying diff...
-$ execa git apply tmp-upgrade-rn.patch --exclude=package.json -p2 --3way --directory=
-[fs] unlink tmp-upgrade-rn.patch
-$ execa git status -s
-info Installing \\"react-native@0.58.4\\" and its peer dependencies...
-$ execa npm info react-native@0.58.4 peerDependencies --json
-$ yarn add react-native@0.58.4 react@16.6.3
-$ execa git add package.json
-$ execa git add yarn.lock
-$ execa git add package-lock.json
-info Running \\"git status\\" to check what changed...
-$ execa git status
-success Upgraded React Native to v0.58.4 🎉. Now you can review and commit the changes"
-`);
+    "info Fetching diff between v0.57.8 and v0.58.4...
+    [fs] write tmp-upgrade-rn.patch
+    $ execa git rev-parse --show-prefix
+    $ execa git apply --check tmp-upgrade-rn.patch --exclude=package.json -p2 --3way --directory=
+    info Applying diff...
+    $ execa git apply tmp-upgrade-rn.patch --exclude=package.json -p2 --3way --directory=
+    [fs] unlink tmp-upgrade-rn.patch
+    $ execa git status -s
+    info Installing \\"react-native@0.58.4\\" and its peer dependencies...
+    $ execa npm info react-native@0.58.4 peerDependencies --json
+    $ yarn add react-native@0.58.4 react@16.6.3
+    $ execa git add package.json
+    $ execa git add yarn.lock
+    $ execa git add package-lock.json
+    info Running \\"git status\\" to check what changed...
+    $ execa git status
+    success Upgraded React Native to v0.58.4 🎉. Now you can review and commit the changes"
+  `);
   expect(
     snapshotDiff(samplePatch, fs.writeFileSync.mock.calls[0][1], {
       contextLines: 1,
@@ -216,24 +216,24 @@ test('fetches regular patch, adds remote, applies patch, installs deps, removes 
   const config = {...ctx, root: '/project/root/NestedApp'};
   await upgrade.func([newVersion], config, opts);
   expect(flushOutput()).toMatchInlineSnapshot(`
-"info Fetching diff between v0.57.8 and v0.58.4...
-[fs] write tmp-upgrade-rn.patch
-$ execa git rev-parse --show-prefix
-$ execa git apply --check tmp-upgrade-rn.patch --exclude=NestedApp/package.json -p2 --3way --directory=NestedApp/
-info Applying diff...
-$ execa git apply tmp-upgrade-rn.patch --exclude=NestedApp/package.json -p2 --3way --directory=NestedApp/
-[fs] unlink tmp-upgrade-rn.patch
-$ execa git status -s
-info Installing \\"react-native@0.58.4\\" and its peer dependencies...
-$ execa npm info react-native@0.58.4 peerDependencies --json
-$ yarn add react-native@0.58.4 react@16.6.3
-$ execa git add package.json
-$ execa git add yarn.lock
-$ execa git add package-lock.json
-info Running \\"git status\\" to check what changed...
-$ execa git status
-success Upgraded React Native to v0.58.4 🎉. Now you can review and commit the changes"
-`);
+    "info Fetching diff between v0.57.8 and v0.58.4...
+    [fs] write tmp-upgrade-rn.patch
+    $ execa git rev-parse --show-prefix
+    $ execa git apply --check tmp-upgrade-rn.patch --exclude=NestedApp/package.json -p2 --3way --directory=NestedApp/
+    info Applying diff...
+    $ execa git apply tmp-upgrade-rn.patch --exclude=NestedApp/package.json -p2 --3way --directory=NestedApp/
+    [fs] unlink tmp-upgrade-rn.patch
+    $ execa git status -s
+    info Installing \\"react-native@0.58.4\\" and its peer dependencies...
+    $ execa npm info react-native@0.58.4 peerDependencies --json
+    $ yarn add react-native@0.58.4 react@16.6.3
+    $ execa git add package.json
+    $ execa git add yarn.lock
+    $ execa git add package-lock.json
+    info Running \\"git status\\" to check what changed...
+    $ execa git status
+    success Upgraded React Native to v0.58.4 🎉. Now you can review and commit the changes"
+  `);
 }, 60000);
 test('cleans up if patching fails,', async () => {
   (fetch: any).mockImplementation(() => Promise.resolve(samplePatch));
@@ -263,22 +263,22 @@ test('cleans up if patching fails,', async () => {
     );
   }
   expect(flushOutput()).toMatchInlineSnapshot(`
-"info Fetching diff between v0.57.8 and v0.58.4...
-[fs] write tmp-upgrade-rn.patch
-$ execa git rev-parse --show-prefix
-$ execa git apply --check tmp-upgrade-rn.patch --exclude=package.json -p2 --3way --directory=
-info Applying diff (excluding: package.json, .flowconfig)...
-$ execa git apply tmp-upgrade-rn.patch --exclude=package.json --exclude=.flowconfig -p2 --3way --directory=
-error: .flowconfig: does not exist in index
-error Automatically applying diff failed
-[fs] unlink tmp-upgrade-rn.patch
-$ execa git status -s
-error Patch failed to apply for unknown reason. Please fall back to manual way of upgrading
-info You may find these resources helpful:
-• Release notes: https://github.com/facebook/react-native/releases/tag/v0.58.4
-• Comparison between versions: https://github.com/react-native-community/rn-diff-purge/compare/version/0.57.8..version/0.58.4
-• Git diff: https://github.com/react-native-community/rn-diff-purge/compare/version/0.57.8..version/0.58.4.diff"
-`);
+    "info Fetching diff between v0.57.8 and v0.58.4...
+    [fs] write tmp-upgrade-rn.patch
+    $ execa git rev-parse --show-prefix
+    $ execa git apply --check tmp-upgrade-rn.patch --exclude=package.json -p2 --3way --directory=
+    info Applying diff (excluding: package.json, .flowconfig)...
+    $ execa git apply tmp-upgrade-rn.patch --exclude=package.json --exclude=.flowconfig -p2 --3way --directory=
+    error: .flowconfig: does not exist in index
+    error Automatically applying diff failed
+    [fs] unlink tmp-upgrade-rn.patch
+    $ execa git status -s
+    error Patch failed to apply for unknown reason. Please fall back to manual way of upgrading
+    info You may find these resources helpful:
+    • Release notes: https://github.com/facebook/react-native/releases/tag/v0.58.4
+    • Comparison between versions: https://github.com/react-native-community/rn-diff-purge/compare/release/0.57.8..release/0.58.4
+    • Git diff: https://raw.githubusercontent.com/react-native-community/rn-diff-purge/diffs/diffs/0.57.8..0.58.4.diff"
+  `);
 }, 60000);
 test('works with --name-ios and --name-android', async () => {
   (fetch: any).mockImplementation(() => Promise.resolve(samplePatch));

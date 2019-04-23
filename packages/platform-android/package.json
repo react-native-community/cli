@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/cli-platform-android",
-  "version": "2.0.0-alpha.14",
+  "version": "2.0.0-alpha.15",
   "main": "build/index.js",
   "dependencies": {
     "@react-native-community/cli-tools": "^2.0.0-alpha.14",

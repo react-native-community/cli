@@ -20,6 +20,8 @@ const command = t.object({
   options: t.array().items(
     t.object({
       name: t.string().required(),
+      // @todo: would be nice to automatically deprecate properties here
+      command: t.string(),
       description: t.string(),
       parse: t.func(),
       default: t

@@ -123,46 +123,7 @@ react-native init <projectName> [options]
 
 Initialize new React Native project.
 
-#### Options
-
-#### `--version [string]`
-
-Uses a valid semver version of React Native as a template.
-
-#### `--template [string]`
-
-Uses a custom template. Accepts either an npm package name or an absolute path to local directory.
-
-Example:
-
-```sh
-react-native init MyApp --template react-native-custom-template
-react-native init MyApp --template file:///Users/name/template-path
-```
-
-A template is any directory or npm package that contains a `template.config.js` file in the root with following of the following type:
-
-```ts
-type Template = {
-  // Placeholder used to rename and replace in files
-  // package.json, index.json, android/, ios/
-  placeholderName: string;
-  // Directory with template
-  templateDir: string;
-  // Path to script, which will be executed after init
-  postInitScript?: string;
-};
-```
-
-Example `template.config.js`:
-
-```js
-module.exports = {
-  placeholderName: "ProjectName",
-  templateDir: "./template",
-  postInitScript: "./script.js",
-};
-```
+You can find out more use cases in [init docs](./init.md).
 
 #### `--npm`
 

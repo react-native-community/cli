@@ -4,7 +4,7 @@ There are couple of ways to initialize new React Native projects.
 
 ### For `react-native@0.60.0` or greater
 
-Using `npx` utility:
+#### Using `npx` utility:
 
 ```sh
 npx react-native init ProjectName
@@ -14,13 +14,13 @@ npx react-native init ProjectName
 
 > Note: for Yarn users, `yarn dlx` command similar to `npx` will be featured in Yarn 2.0: https://github.com/yarnpkg/berry/pull/40 so we’ll be able to use it in a similar fashion.
 
-Installing `react-native` and invoking `init` command:
+#### Installing `react-native` and invoking `init` command:
 
 ```sh
 yarn add react-native && react-native init ProjectName
 ```
 
-Initializing project with custom version of `react-native`:
+#### Initializing project with custom version of `react-native`:
 
 ```sh
 # This will use the latest init command but will install react-native@VERSION and use its template
@@ -30,8 +30,9 @@ npx react-native init ProjectName --version ${VERSION}
 npx react-native@${VERSION} init ProjectName
 ```
 
-Initializing project with custom template. In following examples `TEMPLATE_NAME` can be either:
+#### Initializing project with custom template.
 
+In following examples `TEMPLATE_NAME` can be either:
 - Full package name, eg. `react-native-template-typescript`.
 - Shorthand name of template, eg. `typescript`.
 - Absolute path to directory containing template, eg. `file:///Users/username/project/some-template`.

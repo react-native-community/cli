@@ -14,8 +14,9 @@ type FlagsT = {
   legacy: boolean | void,
 };
 
-const rnDiffPurgeUrl =
-  'https://github.com/react-native-community/rn-diff-purge';
+const rnDiffPurgeUrl = 'https://github.com/react-native-community/rn-diff-purge';
+const rnDiffPurgeRawDiffsUrl =
+  'https://raw.githubusercontent.com/react-native-community/rn-diff-purge/diffs/diffs';
 
 const getLatestRNVersion = async (): Promise<string> => {
   logger.info('No version passed. Fetching latest...');
@@ -45,7 +46,7 @@ const getPatch = async (currentVersion, newVersion, config) => {
 
   try {
     patch = await fetch(
-      `${rnDiffPurgeUrl}/compare/version/${currentVersion}...version/${newVersion}.diff`,
+      `${rnDiffPurgeRawDiffsUrl}/${currentVersion}..${newVersion}.diff`,
     );
   } catch (error) {
     logger.error(
@@ -297,10 +298,10 @@ async function upgrade(argv: Array<string>, ctx: ConfigT, args: FlagsT) {
         `https://github.com/facebook/react-native/releases/tag/v${newVersion}`,
       )}
 • Comparison between versions: ${chalk.underline.dim(
-        `${rnDiffPurgeUrl}/compare/version/${currentVersion}..version/${newVersion}`,
+        `${rnDiffPurgeUrl}/compare/release/${currentVersion}..release/${newVersion}`,
       )}
 • Git diff: ${chalk.underline.dim(
-        `${rnDiffPurgeUrl}/compare/version/${currentVersion}..version/${newVersion}.diff`,
+        `${rnDiffPurgeRawDiffsUrl}/${currentVersion}..${newVersion}.diff`,
       )}`);
 
       throw new Error(

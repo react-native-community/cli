@@ -70,6 +70,8 @@ module.exports = {
 }
 ```
 
+> Note: You may find this useful in order to alter the default behavior of your function. For example, on iOS, we find an `.xcodeproj` by globbing the project files and taking the first match. There's a possibility we pick the wrong one in case the project has multiple `.xcodeproj` files. In order to support this use-case, we have allowed users to define an exact path to an iOS project in order to overwrite our `glob` mechanism.
+
 On Android and iOS, this function returns:
 
 ```ts
@@ -99,8 +101,6 @@ type ProjectConfigAndroidT = {
   packageName: string,
 };
 ```
-
-> Note: You may find this useful in order to alter the default behavior of your function. For example, on iOS, we find an `.xcodeproj` by globbing the project files and taking the first match. There's a possibility we pick the wrong one in case the project has multiple `.xcodeproj` files. In order to support this use-case, we have allowed users to define an exact path to an iOS project in order to overwrite our `glob` mechanism.
 
 We suggest performing all side-effects inside this function (such as resolving paths to native files) and making `linkConfig` functions pure, operating on provided data.
 

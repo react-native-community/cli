@@ -21,13 +21,16 @@ module.exports = {
 };
 ```
 
+> Above is an example of a plugin that exports a command named `foo-command` that can be executed with `react-native foo-command` and logs "It worked" and exits. 
+
+
 At the startup, React Native CLI reads configuration from all dependencies listed in `package.json` and reduces them into a single configuration. 
 
 At the end, an array of commands concatenated from all plugins is passed on to the CLI to be loaded after built-in commands.
 
 ## Command interface
 
-```js
+```ts
 type Command = {
   name: string,
   description?: string,

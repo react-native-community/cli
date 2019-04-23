@@ -71,7 +71,7 @@ All errors are handled by the built-in logger. Prefer throwing instead of implem
 
 An array of options that your command accepts.
 
-##### `name`
+##### `options.name`
 
 Name of the option.
 
@@ -79,31 +79,29 @@ For example, a `--reset-cache` option will result in a `resetCache: true` or `re
 
 Just like with a command, your option can require a value (e.g. `--port <port>`) or accept an optional one (e.g. `--host [host]`). In this case, you may find `default` value useful (see below).
 
-##### `description`
+##### `options.description`
 
 Optional description of your option. When provided, will be used to output a better help information.
 
-##### `parse`
+##### `options.parse`
 
 Parsing function that can be used to transform a raw (string) option as passed by the user into a format expected by your function.
 
-##### `default`
+##### `options.default`
 
 Default value for the option when not provided. Can be either a primitive value or a function, that receives a configuration and returns a primitive.
 
 Useful when you want to use project settings as default value for your option.
 
-#### `usage`
-
 #### `examples`
 
 An array of example usage of the command to be printed to the user.
 
-##### `desc`
+##### `examples.desc`
 
 String that describes this particular usage.
 
-##### `cmd`
+##### `examples.cmd`
 
 A command with arguments and options (if applicable) that can be run in order to achieve the desired goal.
 

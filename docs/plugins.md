@@ -107,7 +107,7 @@ A command with arguments and options (if applicable) that can be run in order to
 
 ## Migrating from `rnpm` configuration
 
-The changes are non-breaking hence the migration should be straight-forward. 
+The changes are mostly cosmetic so the migration should be pretty straight-forward. 
 
 ### Changing the configuration
 

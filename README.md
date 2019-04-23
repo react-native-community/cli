@@ -18,6 +18,7 @@ This CLI is intended to be used with a certain version of React Native. You'll f
 ## Documentation
 
 - [commands](./docs/commands.md)
+- [init](./docs/init.md)
 - [autolinking](./docs/autolinking.md)
 - [plugins](./docs/plugins.md)
 
@@ -48,7 +49,9 @@ npx react-native init MyApp
 
 You'll need to install a global module [`react-native-cli`](./packages/global-cli) and follow instructions there.
 
-We strongly encourage you to **only use global `react-native-cli` for bootstrapping new projects**. Use local version for everything else.
+> We strongly encourage you to **only use global `react-native-cli` for bootstrapping new projects**. Use local version for everything else.
+
+You can find out more about init command from the [documentation](./docs/init.md)
 
 ## Usage in an existing React Native project
 

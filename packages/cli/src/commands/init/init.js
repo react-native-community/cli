@@ -106,7 +106,7 @@ async function createFromReactNativeTemplate(
   try {
     if (semver.valid(version) && !semver.gte(version, '0.60.0')) {
       throw new Error(
-        'Cannot use React Native CLI to initialize project with version less than 0.60.0',
+        'Cannot use React Native CLI to initialize project with version lower than 0.60.0',
       );
     }
 

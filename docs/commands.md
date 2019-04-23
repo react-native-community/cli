@@ -121,7 +121,7 @@ Usage:
 react-native init <projectName> [options]
 ```
 
-Initialize new React Native project.
+Initialize new React Native project. You can find out more use cases in [init docs](./init.md).
 
 #### Options
 

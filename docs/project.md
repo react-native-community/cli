@@ -26,7 +26,7 @@ You can check all available options below.
 ## Project interface
 
 ```ts
-type UserConfigT = {
+type ProjectConfigT = {
   reactNativePath: ?string,
   project: {
     android?: ProjectParamsAndroidT,

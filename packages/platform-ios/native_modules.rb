@@ -1,7 +1,23 @@
+# This is a function which is used inside your Podfile.
+# It uses `react-native config` to grab a list of dependencies, and pulls out.all of the ones
+# which declare themselves to be iOS dependencies (via having a Podspec) and automatically
+# imports those into your current target.
+#
 def use_native_modules!(packages = nil)
   if (!packages)
+    # Resolve the CLI's main index file
     cli_bin = Pod::Executable.execute_command("node", ["-e", "console.log(require.resolve('@react-native-community/cli/build/index.js'))"], true).strip
-    output = Pod::Executable.execute_command("node", [cli_bin, "config"], true)
+    # Use the path from ^ to get the root of the node modules
+    root = cli_bin.split("node_modules/@react-native-community/cli/build/index.js").first
+
+    throw "Auto-linking could not figure out the root folder of your package" unless root
+
+    output = ""
+    # Make sure `react-native config` is ran from your project root
+    Dir.chdir(root) do
+      output = Pod::Executable.execute_command("node", [cli_bin, "config"], true)
+    end
+
     json = []
     output.each_line do |line|
       case line
@@ -71,7 +87,7 @@ def use_native_modules!(packages = nil)
 end
 
 # You can run the tests for this file by running:
-# $ ruby use_native_modules.rb
+# $ ruby packages/platform-ios/native_modules.rb
 if $0 == __FILE__
   require "minitest/spec"
   require "minitest/autorun"

@@ -54,7 +54,9 @@ const getPatch = async (currentVersion, newVersion, config) => {
       `Failed to fetch diff for react-native@${newVersion}. Maybe it's not released yet?`,
     );
     logger.info(
-      'For available releases to diff see: https://github.com/react-native-community/rn-diff-purge#version-changes',
+      `For available releases to diff see: ${chalk.underline.dim(
+        'https://github.com/react-native-community/rn-diff-purge#diff-table-full-table-here',
+      )}`,
     );
     return null;
   }

@@ -65,7 +65,6 @@ function copyAndReplace(
     }
   } else {
     // Text file
-    const srcPermissions = fs.statSync(srcPath).mode;
     let content = fs.readFileSync(srcPath, 'utf8');
     Object.keys(replacements).forEach(regex => {
       content = content.replace(new RegExp(regex, 'g'), replacements[regex]);
@@ -93,7 +92,6 @@ function copyAndReplace(
     if (shouldOverwrite === 'overwrite') {
       fs.writeFileSync(destPath, content, {
         encoding: 'utf8',
-        mode: srcPermissions,
       });
     }
   }

@@ -29,6 +29,8 @@ The implementation ensures that a library is imported only once, so if you need 
 
 See implementation of [native_modules.rb](https://github.com/react-native-community/cli/blob/master/packages/platform-ios/native_modules.rb).
 
+_Notes_: Auto-linking assumes your Podfile is in a sub-folder from your `package.json` - if this is not the case, use the first parameter to tell the linker where to find the `package.json` e.g. `use_native_modules!("../../")`.
+
 ## Platform Android
 
 1. At build time, before the build script is run, a first gradle plugin (`settings.gradle`) is ran that takes the package metadata from `react-native config` to dynamically include Android library projects into the build.

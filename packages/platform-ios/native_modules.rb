@@ -1,7 +1,18 @@
-def use_native_modules!(packages = nil)
+# This is a function which is used inside your Podfile.
+# It uses `react-native config` to grab a list of dependencies, and pulls out.all of the ones
+# which declare themselves to be iOS dependencies (via having a Podspec) and automatically
+# imports those into your current target.
+#
+def use_native_modules!(root = "..", packages = nil)
   if (!packages)
+    # Resolve the CLI's main index file
     cli_bin = Pod::Executable.execute_command("node", ["-e", "console.log(require.resolve('@react-native-community/cli/build/index.js'))"], true).strip
-    output = Pod::Executable.execute_command("node", [cli_bin, "config"], true)
+    output = ""
+    # Make sure `react-native config` is ran from your project root
+    Dir.chdir(root) do
+      output = Pod::Executable.execute_command("node", [cli_bin, "config"], true)
+    end
+
     json = []
     output.each_line do |line|
       case line
@@ -71,7 +82,7 @@ def use_native_modules!(packages = nil)
 end
 
 # You can run the tests for this file by running:
-# $ ruby use_native_modules.rb
+# $ ruby packages/platform-ios/native_modules.rb
 if $0 == __FILE__
   require "minitest/spec"
   require "minitest/autorun"
@@ -136,8 +147,8 @@ if $0 == __FILE__
 
       spec.singleton_class.send(:define_method, :name) { "ios-dep" }
 
-      podfile.singleton_class.send(:define_method, :use_native_modules) do |config|
-        use_native_modules!(config)
+      podfile.singleton_class.send(:define_method, :use_native_modules) do |path, config|
+        use_native_modules!('..', config)
       end
 
       Pod::Specification.singleton_class.send(:define_method, :from_file) do |podspec_path|
@@ -167,7 +178,7 @@ if $0 == __FILE__
     end
 
     it "activates iOS pods" do
-      @podfile.use_native_modules(@config)
+      @podfile.use_native_modules('..', @config)
       @activated_pods.must_equal [{
         name: "ios-dep",
         options: { path: @ios_package["root"] }
@@ -178,7 +189,7 @@ if $0 == __FILE__
       activated_pod = Object.new
       activated_pod.singleton_class.send(:define_method, :name) { "ios-dep" }
       @current_target_definition_dependencies << activated_pod
-      @podfile.use_native_modules(@config)
+      @podfile.use_native_modules('..', @config)
       @activated_pods.must_equal []
     end
 
@@ -186,14 +197,14 @@ if $0 == __FILE__
       activated_pod = Object.new
       activated_pod.singleton_class.send(:define_method, :name) { "ios-dep/foo/bar" }
       @current_target_definition_dependencies << activated_pod
-      @podfile.use_native_modules(@config)
+      @podfile.use_native_modules('..', @config)
       @activated_pods.must_equal []
     end
 
     it "prints out the native module pods that were found" do
-      @podfile.use_native_modules({})
-      @podfile.use_native_modules({ "pkg-1" => @ios_package })
-      @podfile.use_native_modules({ "pkg-1" => @ios_package, "pkg-2" => @ios_package })
+      @podfile.use_native_modules('..', {})
+      @podfile.use_native_modules('..', { "pkg-1" => @ios_package })
+      @podfile.use_native_modules('..', { "pkg-1" => @ios_package, "pkg-2" => @ios_package })
       @printed_messages.must_equal [
         "Detected React Native module pod for ios-dep",
         "Detected React Native module pods for ios-dep, and ios-dep"
@@ -203,7 +214,7 @@ if $0 == __FILE__
     describe "concerning script_phases" do
       it "uses the options directly" do
         @config["ios-dep"]["platforms"]["ios"]["scriptPhases"] = [@script_phase]
-        @podfile.use_native_modules(@config)
+        @podfile.use_native_modules('..', @config)
         @added_scripts.must_equal [{
           "script" => "123",
           "name" => "My Name",
@@ -221,7 +232,7 @@ if $0 == __FILE__
         file_read_mock.expect(:call, "contents from file", [File.join(@ios_package["root"], "some_shell_script.sh")])
 
         File.stub(:read, file_read_mock) do
-          @podfile.use_native_modules(@config)
+          @podfile.use_native_modules('..', @config)
         end
 
         @added_scripts.must_equal [{

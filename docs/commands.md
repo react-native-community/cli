@@ -7,7 +7,6 @@ React Native CLI comes with following commands:
 - [`init`](#init)
 - [`info`](#info)
 - [`install`](#install)
-- [`library`](#library)
 - [`link`](#link)
 - [`log-android`](#log-android)
 - [`log-ios`](#log-ios)
@@ -187,20 +186,6 @@ react-native install <packageName>
 ```
 
 Installs single package from npm and then links native dependencies. If `install` detects `yarn.lock` in your project, it will use Yarn as package manager. Otherwise `npm` will be used.
-
-### `library`
-
-Usage:
-
-```sh
-react-native library <options>
-```
-
-Generates a native library bridge.
-
-#### `--name <string>`
-
-Name of the library to generate.
 
 ### `link`
 

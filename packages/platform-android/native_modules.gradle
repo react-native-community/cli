@@ -1,0 +1,253 @@
+import groovy.json.JsonSlurper
+import org.gradle.initialization.DefaultSettings
+
+def generatedFileName = "PackageList.java"
+def generatedFileContentsTemplate = """
+package com.facebook.react;
+
+import android.app.Application;
+import android.content.Context;
+import android.content.res.Resources;
+
+import com.facebook.react.ReactPackage;
+import com.facebook.react.shell.MainReactPackage;
+import java.util.Arrays;
+import java.util.List;
+
+{{ packageImports }}
+
+public class PackageList {
+  private ReactNativeHost reactNativeHost;
+  public PackageList(ReactNativeHost reactNativeHost) {
+    this.reactNativeHost = reactNativeHost;
+  }
+
+  private ReactNativeHost getReactNativeHost() {
+    return this.reactNativeHost;
+  }
+
+  private Resources getResources() {
+    return this.getApplication().getResources();
+  }
+
+  private Application getApplication() {
+    return this.reactNativeHost.getApplication();
+  }
+
+  private Context getApplicationContext() {
+    return this.getApplication().getApplicationContext();
+  }
+
+  public List<ReactPackage> getPackages() {
+    return Arrays.<ReactPackage>asList(
+      new MainReactPackage(){{ packageClassInstances }}
+    );
+  }
+}
+"""
+
+class ReactNativeModules {
+  private Logger logger
+  private Project project
+  private DefaultSettings defaultSettings
+  private ExtraPropertiesExtension extension
+  private ArrayList<HashMap<String, String>> reactNativeModules
+
+  private static String LOG_PREFIX = ":ReactNative:"
+  private static String REACT_NATIVE_CLI_BIN = "node_modules${File.separator}@react-native-community${File.separator}cli${File.separator}build${File.separator}index.js"
+  private static String REACT_NATIVE_CONFIG_CMD = "node ${REACT_NATIVE_CLI_BIN} config"
+
+  ReactNativeModules(Logger logger) {
+    this.logger = logger
+  }
+
+  void applySettingsGradle(DefaultSettings defaultSettings, ExtraPropertiesExtension extraPropertiesExtension) {
+    this.defaultSettings = defaultSettings
+    this.extension = extraPropertiesExtension
+    this.reactNativeModules = this.getReactNativeConfig()
+
+    addReactNativeModuleProjects()
+  }
+
+  void applyBuildGradle(Project project, ExtraPropertiesExtension extraPropertiesExtension) {
+    this.project = project
+    this.extension = extraPropertiesExtension
+    this.reactNativeModules = this.getReactNativeConfig()
+
+    addReactNativeModuleDependencies()
+  }
+
+  /**
+   * Include the react native modules android projects and specify their project directory
+   */
+  void addReactNativeModuleProjects() {
+    reactNativeModules.forEach { reactNativeModule ->
+      String nameCleansed = reactNativeModule["nameCleansed"]
+      String androidSourceDir = reactNativeModule["androidSourceDir"]
+      defaultSettings.include(":${nameCleansed}")
+      defaultSettings.project(":${nameCleansed}").projectDir = new File("${androidSourceDir}")
+    }
+  }
+
+  /**
+   * Adds the react native modules as dependencies to the users `app` project
+   */
+  void addReactNativeModuleDependencies() {
+    reactNativeModules.forEach { reactNativeModule ->
+      def nameCleansed = reactNativeModule["nameCleansed"]
+      project.dependencies {
+        // TODO(salakar): are other dependency scope methods such as `api` required?
+        implementation project(path: ":${nameCleansed}")
+      }
+    }
+  }
+
+  /**
+   * This returns the users project root (e.g. where the node_modules dir is located).
+   *
+   * This defaults to up one directory from the root android directory unless the user has defined
+   * a `ext.reactNativeProjectRoot` extension property
+   *
+   * @return
+   */
+  File getReactNativeProjectRoot() {
+    if (this.extension.has("reactNativeProjectRoot")) {
+      File rnRoot = File(this.extension.get("reactNativeProjectRoot"))
+      // allow custom React Native project roots for non-standard directory structures
+      this.logger.debug("${LOG_PREFIX}Using custom React Native project root path '${rnRoot.toString()}'")
+      return rnRoot
+    }
+
+    File androidRoot
+
+    if (this.project) {
+      androidRoot = this.project.rootProject.projectDir
+    } else {
+      androidRoot = this.defaultSettings.rootProject.projectDir
+    }
+
+    this.logger.debug("${LOG_PREFIX}Using default React Native project root path '${androidRoot.parentFile.toString()}'")
+    return androidRoot.parentFile
+  }
+
+  /**
+   * Code-gen a java file with all the detected ReactNativePackage instances automatically added
+   *
+   * @param outputDir
+   * @param generatedFileName
+   * @param generatedFileContentsTemplate
+   * @param applicationId
+   */
+  void generatePackagesFile(File outputDir, String generatedFileName, String generatedFileContentsTemplate, String applicationId) {
+    ArrayList<HashMap<String, String>>[] packages = this.reactNativeModules
+
+    String packageImports = ""
+    String packageClassInstances = ""
+
+    if (packages.size() > 0) {
+      packageImports = "import ${applicationId}.BuildConfig;\n\n"
+      packageImports = packageImports + packages.collect {
+        "// ${it.name}\n${it.packageImportPath}"
+      }.join(';\n')
+      packageClassInstances = ",\n      " + packages.collect { it.packageInstance }.join(',')
+    }
+
+    String generatedFileContents = generatedFileContentsTemplate
+      .replace("{{ packageImports }}", packageImports)
+      .replace("{{ packageClassInstances }}", packageClassInstances)
+
+    outputDir.mkdirs()
+    final FileTreeBuilder treeBuilder = new FileTreeBuilder(outputDir)
+    treeBuilder.file(generatedFileName).newWriter().withWriter { w ->
+      w << generatedFileContents
+    }
+  }
+
+  /**
+   * Runs a process to call the React Native CLI Config command and parses the output
+   *
+   * @return ArrayList < HashMap < String , String > >
+   */
+  ArrayList<HashMap<String, String>> getReactNativeConfig() {
+    if (this.reactNativeModules != null) return this.reactNativeModules
+    ArrayList<HashMap<String, String>> reactNativeModules = new ArrayList<HashMap<String, String>>()
+
+    def cmdProcess
+
+    try {
+      cmdProcess = Runtime.getRuntime().exec(REACT_NATIVE_CONFIG_CMD, null, getReactNativeProjectRoot())
+      cmdProcess.waitFor()
+    } catch (Exception exception) {
+      this.logger.warn("${LOG_PREFIX}${exception.message}")
+      this.logger.warn("${LOG_PREFIX}Automatic import of native modules failed. (UNKNOWN)")
+      return reactNativeModules
+    }
+
+    def reactNativeConfigOutput = cmdProcess.in.text
+    def json = new JsonSlurper().parseText(reactNativeConfigOutput)
+    def dependencies = json["dependencies"]
+
+    dependencies.each { name, value ->
+      def platformsConfig = value["platforms"];
+      def androidConfig = platformsConfig["android"]
+
+      if (androidConfig != null && androidConfig["sourceDir"] != null) {
+        this.logger.info("${LOG_PREFIX}Automatically adding native module '${name}'")
+
+        HashMap reactNativeModuleConfig = new HashMap<String, String>()
+        reactNativeModuleConfig.put("name", name)
+        reactNativeModuleConfig.put("nameCleansed", name.replaceAll('/', '_'))
+        reactNativeModuleConfig.put("androidSourceDir", androidConfig["sourceDir"])
+        reactNativeModuleConfig.put("packageInstance", androidConfig["packageInstance"])
+        reactNativeModuleConfig.put("packageImportPath", androidConfig["packageImportPath"])
+        this.logger.trace("${LOG_PREFIX}'${name}': ${reactNativeModuleConfig.toMapString()}")
+
+        reactNativeModules.add(reactNativeModuleConfig)
+      } else {
+        this.logger.info("${LOG_PREFIX}Skipping native module '${name}'")
+      }
+    }
+
+    return reactNativeModules
+  }
+}
+
+/** -----------------------
+ *    Exported Extensions
+ * ------------------------ */
+
+def autoModules = new ReactNativeModules(logger)
+
+ext.applyNativeModulesSettingsGradle = { DefaultSettings defaultSettings ->
+  autoModules.applySettingsGradle(defaultSettings, ext)
+}
+
+ext.applyNativeModulesAppBuildGradle = { Project project ->
+  autoModules.applyBuildGradle(project, ext)
+
+  def applicationId
+  def generatedSrcDir = new File(buildDir, "generated/rncli/src/main/java/com/facebook/react")
+
+  // TODO(salakar): not sure if this is the best way of getting the package name (used to import BuildConfig)
+  project.android.applicationVariants.all { variant ->
+    applicationId = [variant.mergedFlavor.applicationId, variant.buildType.applicationIdSuffix].findAll().join()
+  }
+
+  task generatePackageList {
+    doLast {
+      autoModules.generatePackagesFile(generatedSrcDir, generatedFileName, generatedFileContentsTemplate, applicationId)
+    }
+  }
+
+  preBuild.dependsOn generatePackageList
+
+  android {
+    sourceSets {
+      main {
+        java {
+          srcDirs += generatedSrcDir
+        }
+      }
+    }
+  }
+}

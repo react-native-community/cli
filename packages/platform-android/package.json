@@ -1,15 +1,16 @@
 {
   "name": "@react-native-community/cli-platform-android",
-  "version": "2.0.0-alpha.6",
+  "version": "2.0.0-alpha.17",
   "main": "build/index.js",
   "dependencies": {
-    "@react-native-community/cli-tools": "^2.0.0-alpha.6",
+    "@react-native-community/cli-tools": "^2.0.0-alpha.17",
     "logkitty": "^0.4.0",
     "node-fetch": "^2.2.0",
     "slash": "^2.0.0",
     "xmldoc": "^0.4.0"
   },
   "files": [
-    "build"
+    "build",
+    "native_modules.gradle"
   ]
 }

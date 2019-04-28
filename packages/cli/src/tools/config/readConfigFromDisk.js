@@ -23,7 +23,7 @@ import {logger} from '@react-native-community/cli-tools';
 /**
  * Places to look for the new configuration
  */
-const searchPlaces = ['react-native.config.js', 'package.json'];
+const searchPlaces = ['react-native.config.js'];
 
 /**
  * Reads a project configuration as defined by the user in the current
@@ -109,6 +109,7 @@ export function readLegacyDependencyConfigFromDisk(
       hooks: config.commands,
       params: config.params,
     },
+    haste: config.haste,
     commands: loadProjectCommands(rootFolder, config.plugin),
     platforms: config.platform
       ? require(path.join(rootFolder, config.platform))

@@ -24,7 +24,7 @@ export default {
     'builds javascript as a "Random Access Module" bundle for offline use',
   func: ramBundle,
   options: bundleCommandLineArgs.concat({
-    command: '--indexed-ram-bundle',
+    name: '--indexed-ram-bundle',
     description:
       'Force the "Indexed RAM" bundle file format, even when building for android',
     default: false,

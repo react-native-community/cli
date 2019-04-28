@@ -34,6 +34,6 @@ async function logAndroid() {
 
 export default {
   name: 'log-android',
-  description: 'starts adb logcat',
+  description: 'starts logkitty',
   func: logAndroid,
 };

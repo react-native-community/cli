@@ -15,12 +15,16 @@ import type {ConfigT} from 'types';
 
 import adb from './adb';
 import runOnAllDevices from './runOnAllDevices';
-import isPackagerRunning from './isPackagerRunning';
 import tryRunAdbReverse from './tryRunAdbReverse';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
 import getAdbPath from './getAdbPath';
 import getLaunchPackageName from './getLaunchPackageName';
-import {logger} from '@react-native-community/cli-tools';
+import {
+  isPackagerRunning,
+  logger,
+  getDefaultUserTerminal,
+  CLIError,
+} from '@react-native-community/cli-tools';
 
 // Verifies this is an Android project
 function checkAndroid(root) {
@@ -106,8 +110,11 @@ function buildApk(gradlew) {
     execFileSync(gradlew, ['build', '-x', 'lint'], {
       stdio: [process.stdin, process.stdout, process.stderr],
     });
-  } catch (e) {
-    logger.error('Could not build the app, read the error above for details.');
+  } catch (error) {
+    throw new CLIError(
+      'Could not build the app, read the error above for details',
+      error,
+    );
   }
 }
 
@@ -126,9 +133,9 @@ function tryInstallAppOnDevice(args, adbPath, device) {
     );
 
     const pathToApk = `${buildDirectory}/${apkFile}`;
-    const adbArgs = ['-s', device, 'install', '-rd', pathToApk];
+    const adbArgs = ['-s', device, 'install', '-r', '-d', pathToApk];
     logger.info(
-      `Installing the app on the device (cd android && adb -s ${device} install -rd ${pathToApk}`,
+      `Installing the app on the device (cd android && adb -s ${device} install -r -d ${pathToApk}`,
     );
     execFileSync(adbPath, adbArgs, {
       stdio: [process.stdin, process.stdout, process.stderr],
@@ -180,11 +187,7 @@ function installAndLaunchOnDevice(args, selectedDevice, packageName, adbPath) {
   );
 }
 
-function startServerInNewWindow(
-  port,
-  terminal = process.env.REACT_TERMINAL,
-  reactNativePath,
-) {
+function startServerInNewWindow(port, terminal, reactNativePath) {
   /**
    * Set up OS-specific filenames and commands
    */
@@ -257,63 +260,63 @@ export default {
   func: runAndroid,
   options: [
     {
-      command: '--install-debug',
+      name: '--install-debug',
     },
     {
-      command: '--root [string]',
+      name: '--root [string]',
       description:
         'Override the root directory for the android build (which contains the android directory)',
       default: '',
     },
     {
-      command: '--flavor [string]',
+      name: '--flavor [string]',
       description: '--flavor has been deprecated. Use --variant instead',
     },
     {
-      command: '--variant [string]',
+      name: '--variant [string]',
       default: 'debug',
     },
     {
-      command: '--appFolder [string]',
+      name: '--appFolder [string]',
       description:
         'Specify a different application folder name for the android source. If not, we assume is "app"',
       default: 'app',
     },
     {
-      command: '--appId [string]',
+      name: '--appId [string]',
       description: 'Specify an applicationId to launch after build.',
       default: '',
     },
     {
-      command: '--appIdSuffix [string]',
+      name: '--appIdSuffix [string]',
       description: 'Specify an applicationIdSuffix to launch after build.',
       default: '',
     },
     {
-      command: '--main-activity [string]',
+      name: '--main-activity [string]',
       description: 'Name of the activity to start',
       default: 'MainActivity',
     },
     {
-      command: '--deviceId [string]',
+      name: '--deviceId [string]',
       description:
         'builds your app and starts it on a specific device/simulator with the ' +
         'given device id (listed by running "adb devices" on the command line).',
     },
     {
-      command: '--no-packager',
+      name: '--no-packager',
       description: 'Do not launch packager while building',
     },
     {
-      command: '--port [number]',
+      name: '--port [number]',
       default: process.env.RCT_METRO_PORT || 8081,
       parse: (val: string) => Number(val),
     },
     {
-      command: '--terminal [string]',
+      name: '--terminal [string]',
       description:
         'Launches the Metro Bundler in a new window using the specified terminal path.',
-      default: '',
+      default: getDefaultUserTerminal,
     },
   ],
 };

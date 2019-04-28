@@ -70,6 +70,17 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
 
       const isPlatform = Object.keys(config.platforms).length > 0;
 
+      /**
+       * Legacy `rnpm` config required `haste` to be defined. With new config,
+       * we do it automatically.
+       *
+       * Remove this once `rnpm` config is deprecated.
+       */
+      const haste = config.haste || {
+        providesModuleNodeModules: isPlatform ? [dependencyName] : [],
+        platforms: Object.keys(config.platforms),
+      };
+
       return assign({}, acc, {
         dependencies: assign({}, acc.dependencies, {
           // $FlowExpectedError: Dynamic getters are not supported
@@ -105,10 +116,11 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
           ...config.platforms,
         },
         haste: {
-          providesModuleNodeModules: acc.haste.providesModuleNodeModules.concat(
-            isPlatform ? dependencyName : [],
-          ),
-          platforms: [...acc.haste.platforms, ...Object.keys(config.platforms)],
+          providesModuleNodeModules: [
+            ...acc.haste.providesModuleNodeModules,
+            ...haste.providesModuleNodeModules,
+          ],
+          platforms: [...acc.haste.platforms, ...haste.platforms],
         },
       });
     },
@@ -124,10 +136,10 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
       get assets() {
         return findAssets(projectRoot, userConfig.assets);
       },
-      platforms: {},
+      platforms: userConfig.platforms,
       haste: {
         providesModuleNodeModules: [],
-        platforms: [],
+        platforms: Object.keys(userConfig.platforms),
       },
       get project() {
         const project = {};

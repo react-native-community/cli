@@ -93,7 +93,7 @@ Array [
 ]
 `;
 
-exports[`should read \`rnpm\` config from a dependency and transform it to a new format 1`] = `
+exports[`should read \`rnpm\` config from a dependency and transform it to a new format: foo config 1`] = `
 Object {
   "assets": Array [],
   "hooks": Object {},
@@ -115,6 +115,20 @@ Object {
     },
   },
   "root": "<<REPLACED>>/node_modules/react-native-foo",
+}
+`;
+
+exports[`should read \`rnpm\` config from a dependency and transform it to a new format: haste config 1`] = `
+Object {
+  "platforms": Array [
+    "ios",
+    "android",
+    "dummy",
+  ],
+  "providesModuleNodeModules": Array [
+    "react-native",
+    "react-native-dummy",
+  ],
 }
 `;
 
@@ -183,4 +197,4 @@ Object {
 
 exports[`should skip packages that have invalid configuration: dependencies config 1`] = `Object {}`;
 
-exports[`should skip packages that have invalid configuration: logged warning 1`] = `"Package [1mreact-native[22m has been ignored because it contains invalid configuration. Reason: [2mUnknown option invalidProperty with value \\"5\\" was found. This is either a typing error or a user mistake. Fixing it will remove this message.[22m"`;
+exports[`should skip packages that have invalid configuration: logged warning 1`] = `"Package [1mreact-native[22m has been ignored because it contains invalid configuration. Reason: [2mUnknown option dependency.invalidProperty with value \\"5\\" was found. This is either a typing error or a user mistake. Fixing it will remove this message.[22m"`;

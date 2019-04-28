@@ -8,10 +8,7 @@
  */
 
 import fs from 'fs';
-import path from 'path';
-
-// Binary files, don't process these (avoid decoding as utf8)
-const binaryExtensions = ['.png', '.jar', '.keystore'];
+import {isBinarySync} from 'istextorbinary';
 
 /**
  * Copy a file to given destination, replacing parts of its contents.
@@ -39,8 +36,7 @@ function copyAndReplace(
     return;
   }
 
-  const extension = path.extname(srcPath);
-  if (binaryExtensions.indexOf(extension) !== -1) {
+  if (isBinarySync(srcPath)) {
     // Binary file
     let shouldOverwrite = 'overwrite';
     if (contentChangedCallback) {

@@ -1,5 +1,4 @@
 // @flow
-
 import execa from 'execa';
 import path from 'path';
 import * as PackageManager from '../../tools/packageManager';
@@ -12,16 +11,25 @@ export type TemplateConfig = {
   postInitScript?: string,
 };
 
-export function installTemplatePackage(templateName: string, npm?: boolean) {
+export function installTemplatePackage(
+  templateName: string,
+  cwd: string,
+  npm?: boolean,
+) {
   logger.debug(`Installing template from ${templateName}`);
   return PackageManager.install([templateName], {
     preferYarn: !npm,
     silent: true,
+    cwd,
   });
 }
 
-export function getTemplateConfig(templateName: string): TemplateConfig {
+export function getTemplateConfig(
+  templateName: string,
+  templateSourceDir: string,
+): TemplateConfig {
   const configFilePath = path.resolve(
+    templateSourceDir,
     'node_modules',
     templateName,
     'template.config',
@@ -32,8 +40,17 @@ export function getTemplateConfig(templateName: string): TemplateConfig {
   return require(configFilePath);
 }
 
-export function copyTemplate(templateName: string, templateDir: string) {
-  const templatePath = path.resolve('node_modules', templateName, templateDir);
+export function copyTemplate(
+  templateName: string,
+  templateDir: string,
+  templateSourceDir: string,
+) {
+  const templatePath = path.resolve(
+    templateSourceDir,
+    'node_modules',
+    templateName,
+    templateDir,
+  );
 
   logger.debug(`Copying template from ${templatePath}`);
 
@@ -43,8 +60,14 @@ export function copyTemplate(templateName: string, templateDir: string) {
 export function executePostInitScript(
   templateName: string,
   postInitScript: string,
+  templateSourceDir: string,
 ) {
-  const scriptPath = path.resolve('node_modules', templateName, postInitScript);
+  const scriptPath = path.resolve(
+    templateSourceDir,
+    'node_modules',
+    templateName,
+    postInitScript,
+  );
 
   logger.debug(`Executing post init script located ${scriptPath}`);
 

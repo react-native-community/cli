@@ -14,11 +14,16 @@ import walk from './walk';
 /**
  * Copy files (binary included) recursively.
  */
-function copyFiles(srcPath: string, destPath: string) {
-  walk(srcPath).forEach(absoluteSrcFilePath => {
-    const relativeFilePath = path.relative(srcPath, absoluteSrcFilePath);
-    copyFile(absoluteSrcFilePath, path.resolve(destPath, relativeFilePath));
-  });
+async function copyFiles(srcPath: string, destPath: string) {
+  return Promise.all(
+    walk(srcPath).map(async absoluteSrcFilePath => {
+      const relativeFilePath = path.relative(srcPath, absoluteSrcFilePath);
+      await copyFile(
+        absoluteSrcFilePath,
+        path.resolve(destPath, relativeFilePath),
+      );
+    }),
+  );
 }
 
 /**
@@ -33,10 +38,13 @@ function copyFile(srcPath: string, destPath: string) {
     return;
   }
 
-  copyBinaryFile(srcPath, destPath, err => {
-    if (err) {
-      throw err;
-    }
+  return new Promise((resolve, reject) => {
+    copyBinaryFile(srcPath, destPath, err => {
+      if (err) {
+        reject(err);
+      }
+      resolve(destPath);
+    });
   });
 }
 
@@ -47,17 +55,15 @@ function copyBinaryFile(srcPath, destPath, cb) {
   let cbCalled = false;
   const {mode} = fs.statSync(srcPath);
   const readStream = fs.createReadStream(srcPath);
+  const writeStream = fs.createWriteStream(destPath);
   readStream.on('error', err => {
     done(err);
   });
-  const writeStream = fs.createWriteStream(destPath);
   writeStream.on('error', err => {
     done(err);
   });
-  writeStream.on('close', () => {
+  readStream.on('close', () => {
     done();
-  });
-  writeStream.on('ready', () => {
     fs.chmodSync(destPath, mode);
   });
   readStream.pipe(writeStream);

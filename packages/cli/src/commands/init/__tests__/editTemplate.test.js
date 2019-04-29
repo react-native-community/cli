@@ -16,20 +16,28 @@ const FIXTURE_DIR = path.resolve(
 const PLACEHOLDER_NAME = 'PlaceholderName';
 const PROJECT_NAME = 'ProjectName';
 
-function createTestEnv() {
+async function createTestEnv() {
   const TEST_DIR = `rncli-should-edit-template-${Date.now()}`;
   const tmpDir = os.tmpdir();
   const testPath = path.resolve(tmpDir, TEST_DIR);
 
   fs.mkdirSync(testPath);
-  copyFiles(FIXTURE_DIR, testPath);
+  await copyFiles(FIXTURE_DIR, testPath);
 
   return testPath;
 }
 
-test('should edit template', () => {
-  const testPath = createTestEnv();
+let testPath;
 
+beforeEach(async () => {
+  testPath = await createTestEnv();
+});
+
+afterEach(() => {
+  fs.removeSync(testPath);
+});
+
+test('should edit template', () => {
   jest.spyOn(process, 'cwd').mockImplementation(() => testPath);
 
   changePlaceholderInTemplate(PROJECT_NAME, PLACEHOLDER_NAME);
@@ -74,6 +82,4 @@ test('should edit template', () => {
   expect(
     snapshotDiff(fixtureTree, transformedTree, {contextLines: 1}),
   ).toMatchSnapshot();
-
-  fs.removeSync(testPath);
 });

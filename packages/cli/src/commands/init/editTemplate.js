@@ -1,5 +1,5 @@
 // @flow
-import fs from 'fs-extra';
+import fs from 'fs';
 import path from 'path';
 import walk from '../../tools/walk';
 import {logger} from '@react-native-community/cli-tools';
@@ -30,7 +30,7 @@ function renameFile(filePath: string, oldName: string, newName: string) {
 
   logger.debug(`Renaming ${filePath} -> file:${newFileName}`);
 
-  fs.moveSync(filePath, newFileName);
+  fs.renameSync(filePath, newFileName);
 }
 
 function shouldRenameFile(filePath: string, nameToReplace: string) {

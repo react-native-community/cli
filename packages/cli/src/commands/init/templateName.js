@@ -21,7 +21,9 @@ function handleTarball(filePath: string) {
   const nameWithVersion = path.parse(path.basename(filePath)).name;
   const tarballVersionMatch = nameWithVersion.match(VERSION_POSTFIX);
   if (!tarballVersionMatch) {
-    throw new Error('tarball regex failed');
+    throw new Error(
+      `Failed to retrieve tarball name. We expect the tarball to include package name and version, e.g.: "template-name-1.2.3-rc.0.tgz", but received: "${nameWithVersion}".`,
+    );
   }
 
   return {

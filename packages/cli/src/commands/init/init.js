@@ -26,13 +26,14 @@ type Options = {|
   npm?: boolean,
 |};
 
-function adjustNameIfUrl(name) {
+function adjustNameIfUrl(name, cwd) {
   // We use package manager to infer the name of the template module for us.
   // That's why we get it from temporary package.json, where the name is the
   // first and only dependency (hence 0).
   if (name.match(/https?:/)) {
     name = Object.keys(
-      JSON.parse(fs.readFileSync('./package.json', 'utf8')).dependencies,
+      JSON.parse(fs.readFileSync(path.join(cwd, './package.json'), 'utf8'))
+        .dependencies,
     )[0];
   }
   return name;
@@ -60,7 +61,7 @@ async function createFromExternalTemplate(
     loader.succeed();
     loader.start('Copying template');
 
-    name = adjustNameIfUrl(name);
+    name = adjustNameIfUrl(name, templateSourceDir);
     const templateConfig = getTemplateConfig(name, templateSourceDir);
     copyTemplate(name, templateConfig.templateDir, templateSourceDir);
 

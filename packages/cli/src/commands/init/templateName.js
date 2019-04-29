@@ -5,6 +5,8 @@ import {fetch} from '../../tools/fetch';
 
 const FILE_PROTOCOL = /file:/;
 const HTTP_PROTOCOL = /https?:/;
+const TARBALL = /\.tgz$/;
+const VERSION_POSTFIX = /(.*)(-\d+\.\d+\.\d+)/;
 
 function handleFileProtocol(filePath: string) {
   const uri = new URL(filePath).pathname;
@@ -15,7 +17,23 @@ function handleFileProtocol(filePath: string) {
   };
 }
 
+function handleTarball(filePath: string) {
+  const nameWithVersion = path.parse(path.basename(filePath)).name;
+  const tarballVersionMatch = nameWithVersion.match(VERSION_POSTFIX);
+  if (!tarballVersionMatch) {
+    throw new Error('tarball regex failed');
+  }
+
+  return {
+    uri: filePath,
+    name: tarballVersionMatch[1],
+  };
+}
+
 export async function processTemplateName(templateName: string) {
+  if (templateName.match(TARBALL)) {
+    return handleTarball(templateName);
+  }
   if (templateName.match(FILE_PROTOCOL)) {
     return handleFileProtocol(templateName);
   }

@@ -10,16 +10,17 @@ function replaceNameInUTF8File(
   templateName: string,
 ) {
   logger.debug(`Replacing in ${filePath}`);
-
-  const content = fs
-    .readFileSync(filePath, 'utf8')
+  const fileContent = fs.readFileSync(filePath, 'utf8');
+  const replacedFileContent = fileContent
     .replace(new RegExp(templateName, 'g'), projectName)
     .replace(
       new RegExp(templateName.toLowerCase(), 'g'),
       projectName.toLowerCase(),
     );
 
-  fs.writeFileSync(filePath, content, 'utf8');
+  if (fileContent !== replacedFileContent) {
+    fs.writeFileSync(filePath, replacedFileContent, 'utf8');
+  }
 }
 
 function renameFile(filePath: string, oldName: string, newName: string) {

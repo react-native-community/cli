@@ -63,7 +63,7 @@ async function createFromExternalTemplate(
 
     name = adjustNameIfUrl(name, templateSourceDir);
     const templateConfig = getTemplateConfig(name, templateSourceDir);
-    copyTemplate(name, templateConfig.templateDir, templateSourceDir);
+    await copyTemplate(name, templateConfig.templateDir, templateSourceDir);
 
     loader.succeed();
     loader.start('Preparing template');
@@ -121,7 +121,11 @@ async function createFromReactNativeTemplate(
     loader.start('Copying template');
 
     const templateConfig = getTemplateConfig(TEMPLATE_NAME, templateSourceDir);
-    copyTemplate(TEMPLATE_NAME, templateConfig.templateDir, templateSourceDir);
+    await copyTemplate(
+      TEMPLATE_NAME,
+      templateConfig.templateDir,
+      templateSourceDir,
+    );
 
     loader.succeed();
     loader.start('Processing template');

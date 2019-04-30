@@ -56,7 +56,7 @@ test('getTemplateConfig', () => {
   );
 });
 
-test('copyTemplate', () => {
+test('copyTemplate', async () => {
   const TEMPLATE_DIR = 'some/dir';
   const CWD = '.';
 
@@ -64,7 +64,7 @@ test('copyTemplate', () => {
   jest.spyOn(copyFiles, 'default').mockImplementationOnce(() => {});
   jest.spyOn(process, 'cwd').mockImplementationOnce(() => CWD);
 
-  copyTemplate(TEMPLATE_NAME, TEMPLATE_DIR, TEMPLATE_SOURCE_DIR);
+  await copyTemplate(TEMPLATE_NAME, TEMPLATE_DIR, TEMPLATE_SOURCE_DIR);
 
   expect(path.resolve).toHaveBeenCalledWith(
     TEMPLATE_SOURCE_DIR,

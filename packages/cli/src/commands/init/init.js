@@ -28,6 +28,16 @@ type Options = {|
   npm?: boolean,
 |};
 
+function getProjectPath({
+  projectName,
+  customProjectPath = '',
+}: {
+  projectName: string,
+  customProjectPath: ?string,
+}) {
+  return path.join(customProjectPath, projectName);
+}
+
 function adjustNameIfUrl(name, cwd) {
   // We use package manager to infer the name of the template module for us.
   // That's why we get it from temporary package.json, where the name is the
@@ -127,9 +137,14 @@ async function installDependencies({
   loader.succeed();
 }
 
-function createProject(projectName: string, options: Options, version: string) {
-  fs.mkdirSync(projectName);
-  process.chdir(projectName);
+function createProject(
+  projectPath: string,
+  projectName: string,
+  options: Options,
+  version: string,
+) {
+  fs.mkdirSync(projectPath);
+  process.chdir(projectPath);
 
   if (options.template) {
     return createFromTemplate({
@@ -148,7 +163,7 @@ function createProject(projectName: string, options: Options, version: string) {
 }
 
 export default (async function initialize(
-  [projectName]: Array<string>,
+  [projectName, customProjectPath]: Array<string>,
   _context: ConfigT,
   options: Options,
 ) {
@@ -160,12 +175,14 @@ export default (async function initialize(
    */
   const version: string = minimist(process.argv).version || 'latest';
 
-  if (fs.existsSync(projectName)) {
+  const projectPath = getProjectPath({projectName, customProjectPath});
+
+  if (fs.existsSync(projectPath)) {
     throw new DirectoryAlreadyExistsError(projectName);
   }
 
   try {
-    await createProject(projectName, options, version);
+    await createProject(projectPath, projectName, options, version);
 
     printRunInstructions(process.cwd(), projectName);
   } catch (e) {

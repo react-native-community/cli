@@ -3,7 +3,7 @@ import init from './init';
 
 export default {
   func: init,
-  name: 'init <packageName>',
+  name: 'init <projectName> [projectPath]',
   description: 'initialize new React Native project',
   options: [
     {

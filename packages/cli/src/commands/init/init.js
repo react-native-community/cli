@@ -143,7 +143,7 @@ function createProject(
   options: Options,
   version: string,
 ) {
-  fs.mkdirSync(projectPath);
+  fs.mkdirSync(projectPath, {recursive: true});
   process.chdir(projectPath);
 
   if (options.template) {

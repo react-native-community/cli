@@ -87,26 +87,35 @@ test('init --template file:/tmp/custom/template', () => {
 
 test('init --template with custom project path', () => {
   const projectName = 'TestInit';
-  const customProjectPath = './random/path';
+  const customProjectPath = getTempDirectory('command-init-custom-path');
+
+  // Create directory
+  writeFiles(customProjectPath, {});
 
   run(DIR, [
     'init',
     '--template',
     'react-native-new-template',
-    'TestInit',
+    projectName,
     customProjectPath,
   ]);
 
-  const projectPath = path.join(DIR, customProjectPath);
-
   // make sure we don't leave garbage
-  expect(fs.readdirSync(projectPath)).toEqual(['TestInit']);
-  expect(fs.readdirSync(path.join(projectPath, projectName))).toEqual(
+  expect(fs.readdirSync(customProjectPath)).toEqual([projectName]);
+  expect(fs.readdirSync(path.join(customProjectPath, projectName))).toEqual(
     templateFiles,
   );
 
-  const pkgJson = require(path.join(projectPath, 'TestInit', 'package.json'));
+  const pkgJson = require(path.join(
+    customProjectPath,
+    projectName,
+    'package.json',
+  ));
+
   expect(pkgJson).toMatchSnapshot(
     'package.json contains necessary configuration',
   );
+
+  // Remove custom project path
+  cleanup(customProjectPath);
 });

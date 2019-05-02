@@ -143,8 +143,14 @@ function createProject(
   options: Options,
   version: string,
 ) {
-  fs.mkdirSync(projectPath, {recursive: true});
-  process.chdir(projectPath);
+  try {
+    fs.mkdirSync(projectPath, {recursive: true});
+    process.chdir(projectPath);
+  } catch (err) {
+    throw new Error(
+      'Cannot initialize new project because custom project directory does not exist.',
+    );
+  }
 
   if (options.template) {
     return createFromTemplate({

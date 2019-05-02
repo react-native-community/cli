@@ -33,7 +33,7 @@ function getProjectPath({
   customProjectPath = '',
 }: {
   projectName: string,
-  customProjectPath: ?string,
+  customProjectPath: string,
 }) {
   return path.join(customProjectPath, projectName);
 }

@@ -38,7 +38,9 @@ function getAdbPath() {
     ? `C:/Users/${
         require('os').userInfo().username
       }/AppData/Local/Android/Sdk/platform-tools/adb`
-    : `/Users/${require('os').userInfo().username}/Library/Android/sdk`;
+    : `/Users/${
+        require('os').userInfo().username
+      }/Library/Android/sdk/platform-tools/adb`;
 }
 
 var _default = getAdbPath;

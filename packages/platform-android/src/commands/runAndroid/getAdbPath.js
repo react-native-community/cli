@@ -14,12 +14,31 @@ exports.default = void 0;
  *
  * @flow
  */
+function getOS() {
+  var platform = window.navigator.platform,
+    macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'],
+    windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'],
+    os = null;
+
+  if (macosPlatforms.indexOf(platform) !== -1) {
+    os = 'Mac OS';
+  } else if (windowsPlatforms.indexOf(platform) !== -1) {
+    os = 'Windows';
+  } else if (!os && /Linux/.test(platform)) {
+    os = 'Linux';
+  }
+
+  return os;
+}
+
 function getAdbPath() {
   return process.env.ANDROID_HOME
     ? `${process.env.ANDROID_HOME}/platform-tools/adb`
-    : `C:/Users/${
+    : getOS() === 'Windows'
+    ? `C:/Users/${
         require('os').userInfo().username
-      }/AppData/Local/Android/Sdk/platform-tools/adb`;
+      }/AppData/Local/Android/Sdk/platform-tools/adb`
+    : '/Development/android-sdk/';
 }
 
 var _default = getAdbPath;

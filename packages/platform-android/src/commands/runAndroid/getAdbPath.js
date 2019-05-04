@@ -1,8 +1,9 @@
-"use strict";
+'use strict';
 
-Object.defineProperty(exports, "__esModule", {
+Object.defineProperty(exports, '__esModule', {
   value: true,
 });
+// eslint-disable-next-line no-void
 exports.default = void 0;
 
 /**
@@ -17,7 +18,7 @@ function getAdbPath() {
   return process.env.ANDROID_HOME
     ? `${process.env.ANDROID_HOME}/platform-tools/adb`
     : `C:/Users/${
-        require("os").userInfo().username
+        require('os').userInfo().username
       }/AppData/Local/Android/Sdk/platform-tools/adb`;
 }
 

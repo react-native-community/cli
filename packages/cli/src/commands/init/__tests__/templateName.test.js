@@ -4,13 +4,10 @@ import {fetch} from '../../../tools/fetch';
 
 jest.mock('../../../tools/fetch', () => ({fetch: jest.fn()}));
 
-const VERSION = '0.58.0';
-const RN_WITH_VERSION = 'react-native@0.58.0';
+const RN_NPM_PACKAGE = 'react-native';
 const ABS_RN_PATH = '/path/to/react-native';
-const ABS_RN_TARBALL_PATH = '/path/to/react-native/react-native-1.2.3-rc.0.tgz';
-const PACKAGE_NAME = 'react-native';
 
-test('should support file protocol with absolute path', async () => {
+test('supports file protocol with absolute path', async () => {
   jest.mock(
     `${ABS_RN_PATH}/package.json`,
     () => ({
@@ -20,18 +17,11 @@ test('should support file protocol with absolute path', async () => {
   );
   expect(await processTemplateName(`file://${ABS_RN_PATH}`)).toEqual({
     uri: ABS_RN_PATH,
-    name: PACKAGE_NAME,
+    name: RN_NPM_PACKAGE,
   });
 });
 
-test('should get default package if none protocols were handled', async () => {
-  expect(await processTemplateName(VERSION)).toEqual({
-    uri: VERSION,
-    name: VERSION,
-  });
-});
-
-test('should support shorthand templates', async () => {
+test('supports shorthand templates', async () => {
   const templateName = 'typescript';
   (fetch: any).mockImplementationOnce(() => {
     return Promise.resolve(`{"name": "react-native-template-${templateName}"}`);
@@ -42,7 +32,7 @@ test('should support shorthand templates', async () => {
   });
 });
 
-test('should support not-found shorthand templates', async () => {
+test('supports not-found shorthand templates', async () => {
   const templateName = 'typescriptz';
   (fetch: any).mockImplementationOnce(() => {
     return Promise.resolve('Not found');
@@ -53,14 +43,24 @@ test('should support not-found shorthand templates', async () => {
   });
 });
 
-test('should get package if none protocols were handled', async () => {
-  expect(await processTemplateName(RN_WITH_VERSION)).toEqual({
-    uri: RN_WITH_VERSION,
-    name: RN_WITH_VERSION,
+test('supports npm packages as template names', async () => {
+  expect(await processTemplateName(RN_NPM_PACKAGE)).toEqual({
+    uri: RN_NPM_PACKAGE,
+    name: RN_NPM_PACKAGE,
   });
 });
 
-test('should support path to tgz archives', async () => {
+test('supports versioned npm packages as template names', async () => {
+  const RN_WITH_VERSION = 'react-native@0.58.0';
+  expect(await processTemplateName(RN_WITH_VERSION)).toEqual({
+    uri: RN_WITH_VERSION,
+    name: RN_NPM_PACKAGE,
+  });
+});
+
+test('supports path to tgz archives', async () => {
+  const ABS_RN_TARBALL_PATH =
+    '/path/to/react-native/react-native-1.2.3-rc.0.tgz';
   expect(await processTemplateName(`file://${ABS_RN_TARBALL_PATH}`)).toEqual({
     uri: `file://${ABS_RN_TARBALL_PATH}`,
     name: 'react-native',

@@ -7,6 +7,7 @@ const FILE_PROTOCOL = /file:/;
 const HTTP_PROTOCOL = /https?:/;
 const TARBALL = /\.tgz$/;
 const VERSION_POSTFIX = /(.*)(-\d+\.\d+\.\d+)/;
+const VERSIONED_PACKAGE = /(.*)(@)(\d+\.\d+\.\d+.*)/;
 
 function handleFileProtocol(filePath: string) {
   const uri = new URL(filePath).pathname;
@@ -32,12 +33,28 @@ function handleTarball(filePath: string) {
   };
 }
 
+function handleVersionedPackage(versionedPackage: string) {
+  const versionedPackageMatch = versionedPackage.match(VERSIONED_PACKAGE);
+  if (!versionedPackageMatch) {
+    throw new Error(
+      `Failed to retrieve package name. We expect the package to include name and version, e.g.: "template-name@1.2.3-rc.0", but received: "${versionedPackage}".`,
+    );
+  }
+  return {
+    uri: versionedPackage,
+    name: versionedPackageMatch[1],
+  };
+}
+
 export async function processTemplateName(templateName: string) {
   if (templateName.match(TARBALL)) {
     return handleTarball(templateName);
   }
   if (templateName.match(FILE_PROTOCOL)) {
     return handleFileProtocol(templateName);
+  }
+  if (templateName.match(VERSIONED_PACKAGE)) {
+    return handleVersionedPackage(templateName);
   }
 
   const name = await tryTemplateShorthand(templateName);

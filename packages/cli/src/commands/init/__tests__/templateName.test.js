@@ -50,13 +50,18 @@ test('supports npm packages as template names', async () => {
   });
 });
 
-test('supports versioned npm packages as template names', async () => {
-  const RN_WITH_VERSION = 'react-native@0.58.0';
-  expect(await processTemplateName(RN_WITH_VERSION)).toEqual({
-    uri: RN_WITH_VERSION,
-    name: RN_NPM_PACKAGE,
-  });
-});
+test.each`
+  templateName             | uri                      | name
+  ${'react-native@0.58.0'} | ${'react-native@0.58.0'} | ${'react-native'}
+  ${'some-name@latest'}    | ${'some-name@latest'}    | ${'some-name'}
+  ${'@scoped/name@0.58.0'} | ${'@scoped/name@0.58.0'} | ${'@scoped/name'}
+  ${'@scoped/name@tag'}    | ${'@scoped/name@tag'}    | ${'@scoped/name'}
+`(
+  'supports versioned npm package "$templateName" as template name',
+  async ({templateName, uri, name}) => {
+    expect(await processTemplateName(templateName)).toEqual({uri, name});
+  },
+);
 
 test('supports path to tgz archives', async () => {
   const ABS_RN_TARBALL_PATH =

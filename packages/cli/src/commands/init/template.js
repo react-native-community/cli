@@ -40,7 +40,7 @@ export function getTemplateConfig(
   return require(configFilePath);
 }
 
-export function copyTemplate(
+export async function copyTemplate(
   templateName: string,
   templateDir: string,
   templateSourceDir: string,
@@ -54,7 +54,7 @@ export function copyTemplate(
 
   logger.debug(`Copying template from ${templatePath}`);
 
-  copyFiles(templatePath, process.cwd());
+  await copyFiles(templatePath, process.cwd());
 }
 
 export function executePostInitScript(

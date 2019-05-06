@@ -130,13 +130,20 @@ Uses a valid semver version of React Native as a template.
 
 #### `--template [string]`
 
-Uses a custom template. Accepts either an npm package name or an absolute path to local directory.
+Uses a custom template. Accepts following template sources:
+
+- an npm package name
+- a shorthand name for packages prefixed with `react-native-template-`
+- an absolute path to a local directory
+- an absolute path to a tarball created using `npm pack`
 
 Example:
 
 ```sh
 react-native init MyApp --template react-native-custom-template
+react-native init MyApp --template typescript
 react-native init MyApp --template file:///Users/name/template-path
+react-native init MyApp --template file:///Users/name/template-name-1.0.0.tgz
 ```
 
 A template is any directory or npm package that contains a `template.config.js` file in the root with following of the following type:

@@ -77,7 +77,7 @@ You can also add npm scripts to call it with whichever package manager you use:
 
 ## Maintainers
 
-- Mike Pierzchała ([**@thymikee**](https://github.com/thymikee)) - [Callstack](https://callstack.com)
+- Michał Pierzchała ([**@thymikee**](https://github.com/thymikee)) - [Callstack](https://callstack.com)
 - Mike Grabowski ([**@grabbou**](https://github.com/grabbou)) - [Callstack](https://callstack.com)
 - Kacper Wiszczuk ([**@esemesek**](https://github.com/esemesek)) - [Callstack](https://callstack.com)
 

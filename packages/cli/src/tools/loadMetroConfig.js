@@ -88,6 +88,8 @@ export type ConfigOptionsT = {|
  */
 export default function load(ctx: ContextT, options?: ConfigOptionsT) {
   const defaultConfig = getDefaultConfig(ctx);
-
-  return loadConfig({cwd: ctx.root, ...options}, defaultConfig);
+  return loadConfig(
+    {cwd: ctx.root, ...options},
+    {...defaultConfig, reporter: options && options.reporter},
+  );
 }

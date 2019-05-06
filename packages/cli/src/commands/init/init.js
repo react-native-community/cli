@@ -54,18 +54,18 @@ async function createFromTemplate({
   logger.log(banner);
   const Loader = getLoader();
   const loader = new Loader({text: 'Downloading template'});
-
-  loader.start();
-
   const templateSourceDir = fs.mkdtempSync(
     path.join(os.tmpdir(), 'rncli-init-template-'),
   );
-  if (version && semver.valid(version) && !semver.gte(version, '0.60.0-rc.0')) {
+
+  if (version && !semver.gte(version, '0.60.0-rc.0')) {
     throw new Error(
-      'Cannot use React Native CLI to initialize project with version lower than 0.60.0',
+      'Cannot use React Native CLI to initialize project with version lower than 0.60.0.',
     );
   }
+
   try {
+    loader.start();
     let {uri, name} = await processTemplateName(
       version ? `${templateName}@${version}` : templateName,
     );

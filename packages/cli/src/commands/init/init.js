@@ -39,25 +39,39 @@ function adjustNameIfUrl(name, cwd) {
   return name;
 }
 
-async function createFromExternalTemplate(
+async function createFromTemplate({
+  projectName,
+  templateName,
+  version,
+  npm,
+}: {
   projectName: string,
   templateName: string,
+  version?: string,
   npm?: boolean,
-) {
-  logger.debug('Initializing new project from external template');
+}) {
+  logger.debug('Initializing new project');
   logger.log(banner);
-
   const Loader = getLoader();
-
   const loader = new Loader({text: 'Downloading template'});
-  loader.start();
-
   const templateSourceDir = fs.mkdtempSync(
     path.join(os.tmpdir(), 'rncli-init-template-'),
   );
+
+  if (version && semver.valid(version) && !semver.gte(version, '0.60.0-rc.0')) {
+    throw new Error(
+      'Cannot use React Native CLI to initialize project with version lower than 0.60.0.',
+    );
+  }
+
   try {
-    let {uri, name} = await processTemplateName(templateName);
+    loader.start();
+    let {uri, name} = await processTemplateName(
+      version ? `${templateName}@${version}` : templateName,
+    );
+
     await installTemplatePackage(uri, templateSourceDir, npm);
+
     loader.succeed();
     loader.start('Copying template');
 
@@ -66,7 +80,7 @@ async function createFromExternalTemplate(
     await copyTemplate(name, templateConfig.templateDir, templateSourceDir);
 
     loader.succeed();
-    loader.start('Preparing template');
+    loader.start('Processing template');
 
     changePlaceholderInTemplate(projectName, templateConfig.placeholderName);
 
@@ -90,84 +104,24 @@ async function createFromExternalTemplate(
   }
 }
 
-async function createFromReactNativeTemplate(
-  projectName: string,
-  version: string,
-  npm?: boolean,
-) {
-  logger.debug('Initializing new project');
-  logger.log(banner);
-
-  const Loader = getLoader();
-  const loader = new Loader({text: 'Downloading template'});
-  loader.start();
-  const templateSourceDir = fs.mkdtempSync(
-    path.join(os.tmpdir(), 'rncli-init-template-'),
-  );
-  try {
-    if (semver.valid(version) && !semver.gte(version, '0.60.0')) {
-      throw new Error(
-        'Cannot use React Native CLI to initialize project with version lower than 0.60.0',
-      );
-    }
-
-    const TEMPLATE_NAME = 'react-native';
-
-    const {uri} = await processTemplateName(`${TEMPLATE_NAME}@${version}`);
-
-    await installTemplatePackage(uri, templateSourceDir, npm);
-
-    loader.succeed();
-    loader.start('Copying template');
-
-    const templateConfig = getTemplateConfig(TEMPLATE_NAME, templateSourceDir);
-    await copyTemplate(
-      TEMPLATE_NAME,
-      templateConfig.templateDir,
-      templateSourceDir,
-    );
-
-    loader.succeed();
-    loader.start('Processing template');
-
-    changePlaceholderInTemplate(projectName, templateConfig.placeholderName);
-
-    loader.succeed();
-    const {postInitScript} = templateConfig;
-    if (postInitScript) {
-      loader.start('Executing post init script');
-      await executePostInitScript(
-        TEMPLATE_NAME,
-        postInitScript,
-        templateSourceDir,
-      );
-      loader.succeed();
-    }
-
-    loader.start('Installing all required dependencies');
-    await PackageManager.installAll({preferYarn: !npm, silent: true});
-    loader.succeed();
-  } catch (e) {
-    loader.fail();
-    throw new Error(e);
-  } finally {
-    fs.removeSync(templateSourceDir);
-  }
-}
-
 function createProject(projectName: string, options: Options, version: string) {
   fs.mkdirSync(projectName);
   process.chdir(projectName);
 
   if (options.template) {
-    return createFromExternalTemplate(
+    return createFromTemplate({
       projectName,
-      options.template,
-      options.npm,
-    );
+      templateName: options.template,
+      npm: options.npm,
+    });
   }
 
-  return createFromReactNativeTemplate(projectName, version, options.npm);
+  return createFromTemplate({
+    projectName,
+    templateName: 'react-native',
+    version,
+    npm: options.npm,
+  });
 }
 
 export default (async function initialize(

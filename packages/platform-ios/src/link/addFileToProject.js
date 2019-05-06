@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  * @format
+ * @flow
  */
 
 import PbxFile from 'xcode/lib/pbxFile';
@@ -14,7 +15,7 @@ import PbxFile from 'xcode/lib/pbxFile';
  * from path provided, adds it to the project
  * and returns newly created instance of a file
  */
-export default function addFileToProject(project, filePath) {
+export default function addFileToProject(project: any, filePath: string) {
   const file = new PbxFile(filePath);
   file.uuid = project.generateUuid();
   file.fileRef = project.generateUuid();

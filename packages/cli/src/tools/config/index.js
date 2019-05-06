@@ -3,6 +3,7 @@
  */
 import path from 'path';
 import {mapValues} from 'lodash';
+import chalk from 'chalk';
 
 import findDependencies from './findDependencies';
 import resolveReactNativePath from './resolveReactNativePath';
@@ -14,7 +15,7 @@ import {
   readLegacyDependencyConfigFromDisk,
 } from './readConfigFromDisk';
 
-import {type ConfigT} from './types.flow';
+import {type ConfigT} from 'types';
 
 import assign from '../assign';
 import merge from '../merge';
@@ -23,6 +24,7 @@ import merge from '../merge';
  */
 import * as ios from '@react-native-community/cli-platform-ios';
 import * as android from '@react-native-community/cli-platform-android';
+import {logger, inlineString} from '@react-native-community/cli-tools';
 
 /**
  * Loads CLI configuration
@@ -34,17 +36,50 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
     (acc: ConfigT, dependencyName) => {
       const root = path.join(projectRoot, 'node_modules', dependencyName);
 
-      const config =
-        readLegacyDependencyConfigFromDisk(root) ||
-        readDependencyConfigFromDisk(root);
+      let config;
+      try {
+        config =
+          readLegacyDependencyConfigFromDisk(root) ||
+          readDependencyConfigFromDisk(root);
+      } catch (error) {
+        logger.warn(
+          inlineString(`
+            Package ${chalk.bold(
+              dependencyName,
+            )} has been ignored because it contains invalid configuration.
 
-      // @todo: Move this to React Native in the future
+            Reason: ${chalk.dim(error.message)}
+          `),
+        );
+        return acc;
+      }
+
+      /**
+       * This workaround is necessary for development only before
+       * first 0.60.0-rc.0 gets released and we can switch to it
+       * while testing.
+       */
       if (dependencyName === 'react-native') {
-        config.platforms = {ios, android};
-        config.commands = [...ios.commands, ...android.commands];
+        if (Object.keys(config.platforms).length === 0) {
+          config.platforms = {ios, android};
+        }
+        if (config.commands.length === 0) {
+          config.commands = [...ios.commands, ...android.commands];
+        }
       }
 
       const isPlatform = Object.keys(config.platforms).length > 0;
+
+      /**
+       * Legacy `rnpm` config required `haste` to be defined. With new config,
+       * we do it automatically.
+       *
+       * Remove this once `rnpm` config is deprecated.
+       */
+      const haste = config.haste || {
+        providesModuleNodeModules: isPlatform ? [dependencyName] : [],
+        platforms: Object.keys(config.platforms),
+      };
 
       return assign({}, acc, {
         dependencies: assign({}, acc.dependencies, {
@@ -52,6 +87,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
           get [dependencyName]() {
             return merge(
               {
+                root,
                 name: dependencyName,
                 platforms: Object.keys(finalConfig.platforms).reduce(
                   (dependency, platform) => {
@@ -80,10 +116,11 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
           ...config.platforms,
         },
         haste: {
-          providesModuleNodeModules: acc.haste.providesModuleNodeModules.concat(
-            isPlatform ? dependencyName : [],
-          ),
-          platforms: [...acc.haste.platforms, ...Object.keys(config.platforms)],
+          providesModuleNodeModules: [
+            ...acc.haste.providesModuleNodeModules,
+            ...haste.providesModuleNodeModules,
+          ],
+          platforms: [...acc.haste.platforms, ...haste.platforms],
         },
       });
     },
@@ -99,10 +136,10 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
       get assets() {
         return findAssets(projectRoot, userConfig.assets);
       },
-      platforms: {},
+      platforms: userConfig.platforms,
       haste: {
         providesModuleNodeModules: [],
-        platforms: [],
+        platforms: Object.keys(userConfig.platforms),
       },
       get project() {
         const project = {};

@@ -6,6 +6,7 @@ import {getYarnVersionIfAvailable, isProjectUsingYarn} from './yarn';
 type Options = {|
   preferYarn?: boolean,
   silent?: boolean,
+  cwd?: string,
 |};
 
 let projectDir;
@@ -18,6 +19,7 @@ function executeCommand(
   return execa(command, args, {
     stdio:
       options && options.silent && !logger.isVerbose() ? 'pipe' : 'inherit',
+    cwd: options && options.cwd,
   });
 }
 

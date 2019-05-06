@@ -10,6 +10,8 @@ import {
   getTempDirectory,
 } from '../../../../../../jest/helpers';
 
+import {logger} from '@react-native-community/cli-tools';
+
 const DIR = getTempDirectory('resolve_config_path_test');
 
 // Removes string from all key/values within an object
@@ -21,16 +23,15 @@ const removeString = (config, str) =>
 beforeEach(() => {
   cleanup(DIR);
   jest.resetModules();
+  jest.clearAllMocks();
 });
 
 afterEach(() => cleanup(DIR));
 
 test('should have a valid structure by default', () => {
   writeFiles(DIR, {
-    'package.json': `{
-      "react-native": {
-        "reactNativePath": "."
-      }
+    'react-native.config.js': `module.exports = {
+      reactNativePath: "."
     }`,
   });
   const config = loadConfig(DIR);
@@ -57,13 +58,13 @@ test('should return dependencies from package.json', () => {
 test('should read a config of a dependency and use it to load other settings', () => {
   writeFiles(DIR, {
     'node_modules/react-native/package.json': '{}',
-    'node_modules/react-native-test/package.json': `{
-      "react-native": {
-        "dependency": {
-          "platforms": {
-            "ios": {
-              "project": "./customLocation/customProject.xcodeproj"
-            }
+    'node_modules/react-native-test/package.json': '{}',
+    'node_modules/react-native-test/ReactNativeTest.podspec': '',
+    'node_modules/react-native-test/react-native.config.js': `module.exports = {
+      dependency: {
+        platforms: {
+          ios: {
+            project: "./customLocation/customProject.xcodeproj"
           }
         }
       }
@@ -84,11 +85,10 @@ test('should read a config of a dependency and use it to load other settings', (
 test('should merge project configuration with default values', () => {
   writeFiles(DIR, {
     'node_modules/react-native/package.json': '{}',
-    'node_modules/react-native-test/package.json': `{
-      "react-native": {
-        "dependency": {
-          "assets": ["foo", "baz"]
-        }
+    'node_modules/react-native-test/package.json': '{}',
+    'node_modules/react-native-test/react-native.config.js': `module.exports = {
+      dependency: {
+        assets: ["foo", "baz"]
       }
     }`,
     'node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj':
@@ -97,18 +97,18 @@ test('should merge project configuration with default values', () => {
       "dependencies": {
         "react-native": "0.0.1",
         "react-native-test": "0.0.1"
-      },
-      "react-native": {
-        "reactNativePath": ".",
-        "dependencies": {
-          "react-native-test": {
-            "platforms": {
-              "ios": {
-                "sourceDir": "./abc"
-              }
-            },
-            "assets": ["foo"]
-          }
+      }
+    }`,
+    'react-native.config.js': `module.exports = {
+      reactNativePath: ".",
+      dependencies: {
+        "react-native-test": {
+          platforms: {
+            ios: {
+              sourceDir: "./abc"
+            }
+          },
+          assets: ["foo"]
         }
       }
     }`,
@@ -127,6 +127,10 @@ test('should read `rnpm` config from a dependency and transform it to a new form
       "rnpm": {
         "ios": {
           "project": "./customLocation/customProject.xcodeproj"
+        },
+        "haste": {
+          "platforms": ["dummy"],
+          "providesModuleNodeModules": ["react-native-dummy"]
         }
       }
     }`,
@@ -137,8 +141,11 @@ test('should read `rnpm` config from a dependency and transform it to a new form
       }
     }`,
   });
-  const {dependencies} = loadConfig(DIR);
-  expect(removeString(dependencies['react-native-foo'], DIR)).toMatchSnapshot();
+  const {dependencies, haste} = loadConfig(DIR);
+  expect(removeString(dependencies['react-native-foo'], DIR)).toMatchSnapshot(
+    'foo config',
+  );
+  expect(haste).toMatchSnapshot('haste config');
 });
 
 test('should load commands from "react-native-foo" and "react-native-bar" packages', () => {
@@ -216,4 +223,63 @@ test('should automatically put "react-native" into haste config', () => {
   });
   const {haste} = loadConfig(DIR);
   expect(haste).toMatchSnapshot();
+});
+
+test('should not add default React Native config when one present', () => {
+  writeFiles(DIR, {
+    'node_modules/react-native/package.json': '{}',
+    'node_modules/react-native/react-native.config.js': `module.exports = {
+      commands: [{
+        name: 'test',
+        func: () => {},
+      }]
+    }`,
+    'package.json': `{
+      "dependencies": {
+        "react-native": "0.0.1"
+      }
+    }`,
+  });
+  const {commands} = loadConfig(DIR);
+  expect(commands).toMatchSnapshot();
+});
+
+// @todo: figure out why this test is so flaky
+test.skip('should skip packages that have invalid configuration', () => {
+  writeFiles(DIR, {
+    'node_modules/react-native/package.json': '{}',
+    'node_modules/react-native/react-native.config.js': `module.exports = {
+      dependency: {
+        invalidProperty: 5
+      }
+    }`,
+    'package.json': `{
+      "dependencies": {
+        "react-native": "0.0.1"
+      }
+    }`,
+  });
+  const spy = jest.spyOn(logger, 'warn');
+  const {dependencies} = loadConfig(DIR);
+  expect(dependencies).toMatchSnapshot('dependencies config');
+  expect(spy.mock.calls[0][0]).toMatchSnapshot('logged warning');
+});
+
+test('does not use restricted "react-native" key to resolve config from package.json', () => {
+  jest.resetModules();
+
+  writeFiles(DIR, {
+    'node_modules/react-native-netinfo/package.json': `{
+      "react-native": "src/index.js"
+    }`,
+    'package.json': `{
+      "dependencies": {
+        "react-native-netinfo": "0.0.1"
+      }
+    }`,
+  });
+  const spy = jest.spyOn(logger, 'warn');
+  const {dependencies} = loadConfig(DIR);
+  expect(dependencies).toHaveProperty('react-native-netinfo');
+  expect(spy).not.toHaveBeenCalled();
 });

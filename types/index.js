@@ -4,13 +4,16 @@
 export type CommandT = {
   name: string,
   description?: string,
-  usage?: string,
   func: (argv: Array<string>, ctx: ConfigT, args: Object) => ?Promise<void>,
   options?: Array<{
-    command: string,
+    name: string,
     description?: string,
     parse?: (val: string) => any,
-    default?: string | boolean | number,
+    default?:
+      | string
+      | boolean
+      | number
+      | ((ctx: ConfigT) => string | boolean | number),
   }>,
   examples?: Array<{
     desc: string,
@@ -22,7 +25,7 @@ export type CommandT = {
  * Opaque type that describes the Inquirer question format. Not typed, since we just
  * pass it directly to Inquirer. Validation is done with Joi in `schema.js`
  */
-type InquirerPromptT = any;
+export type InquirerPromptT = any;
 
 /**
  * Settings that a library author can define in the configuration bundled with
@@ -65,6 +68,7 @@ type ProjectParamsIOST = {
   project?: string,
   sharedLibraries?: string[],
   libraryFolder?: string,
+  plist: any[],
 };
 
 type PlatformConfig<ProjectParams, ProjectConfig, DependencyConfig> = {
@@ -96,7 +100,7 @@ export type ConfigT = {|
 
   // Object that contains configuration for a project (null, when platform not available)
   project: {
-    android?: ?ProjectConfigAndroidT,
+    android?: ProjectConfigAndroidT,
     ios?: ?ProjectConfigIOST,
     [key: string]: ?Object,
   },
@@ -108,6 +112,7 @@ export type ConfigT = {|
   dependencies: {
     [key: string]: {
       name: string,
+      root: string,
       platforms: {
         android?: DependencyConfigAndroidT | null,
         ios?: DependencyConfigIOST | null,
@@ -115,9 +120,9 @@ export type ConfigT = {|
       },
       assets: string[],
       hooks: {
-        [key: string]: string,
-        prelink?: string,
-        postlink?: string,
+        [key: string]: () => void,
+        prelink?: () => void,
+        postlink?: () => void,
       },
       params: InquirerPromptT[],
     },
@@ -182,6 +187,12 @@ export type UserDependencyConfigT = {
   platforms: {
     [name: string]: any,
   },
+
+  // Haste config defined by legacy `rnpm`
+  haste?: {
+    platforms: string[],
+    providesModuleNodeModules: string[],
+  },
 };
 
 /**
@@ -189,10 +200,10 @@ export type UserDependencyConfigT = {
  */
 export type UserConfigT = {
   /**
-   * Shares some structure with ConfigT, except that haste, root, platforms
+   * Shares some structure with ConfigT, except that haste and root
    * are calculated and can't be defined
    */
-  ...$Diff<ConfigT, {haste: any, root: any, platforms: any}>,
+  ...$Diff<ConfigT, {haste: any, root: any}>,
   reactNativePath: ?string,
 
   // Additional project settings
@@ -205,7 +216,48 @@ export type UserConfigT = {
 
 // The following types are used in untyped-parts of the codebase, so I am leaving them
 // until we actually need them.
-type ProjectConfigIOST = {};
+type ProjectConfigIOST = {
+  sourceDir: string,
+  folder: string,
+  pbxprojPath: string,
+  podfile: null,
+  podspec: null,
+  projectPath: string,
+  projectName: string,
+  libraryFolder: string,
+  sharedLibraries: Array<any>,
+  plist: Array<any>,
+};
 type DependencyConfigIOST = ProjectConfigIOST;
-type ProjectConfigAndroidT = {};
-type DependencyConfigAndroidT = {};
+type ProjectConfigAndroidT = {
+  sourceDir: string,
+  isFlat: boolean,
+  folder: string,
+  stringsPath: string,
+  manifestPath: string,
+  buildGradlePath: string,
+  settingsGradlePath: string,
+  assetsPath: string,
+  mainFilePath: string,
+  packageName: string,
+};
+type DependencyConfigAndroidT = {
+  sourceDir: string,
+  folder: string,
+  manifest: Manifest,
+  packageImportPath: string,
+  packageInstance: string,
+};
+
+type Manifest = {
+  name: string,
+  attr: {
+    [key: string]: string,
+    package: string,
+  },
+  val: string,
+  isValCdata: boolean,
+  children: Array<Manifest>,
+  firstChild: Manifest,
+  lastChild: Manifest,
+};

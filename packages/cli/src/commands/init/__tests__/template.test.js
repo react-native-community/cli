@@ -12,6 +12,7 @@ import {
 import * as copyFiles from '../../../tools/copyFiles';
 
 const TEMPLATE_NAME = 'templateName';
+const TEMPLATE_SOURCE_DIR = '/tmp/rncli-init-template-123456';
 
 afterEach(() => {
   jest.restoreAllMocks();
@@ -21,17 +22,18 @@ afterEach(() => {
 test('installTemplatePackage', async () => {
   jest.spyOn(PackageManger, 'install').mockImplementationOnce(() => {});
 
-  await installTemplatePackage(TEMPLATE_NAME, true);
+  await installTemplatePackage(TEMPLATE_NAME, TEMPLATE_SOURCE_DIR, true);
 
   expect(PackageManger.install).toHaveBeenCalledWith([TEMPLATE_NAME], {
     preferYarn: false,
     silent: true,
+    cwd: TEMPLATE_SOURCE_DIR,
   });
 });
 
 test('getTemplateConfig', () => {
   jest.mock(
-    `node_modules/${TEMPLATE_NAME}/template.config`,
+    `${TEMPLATE_SOURCE_DIR}/node_modules/${TEMPLATE_NAME}/template.config`,
     () => ({
       placeholderName: 'someName',
       templateDir: 'someDir',
@@ -42,18 +44,19 @@ test('getTemplateConfig', () => {
   );
   jest.spyOn(path, 'resolve').mockImplementationOnce((...e) => e.join('/'));
 
-  expect(getTemplateConfig(TEMPLATE_NAME)).toEqual({
+  expect(getTemplateConfig(TEMPLATE_NAME, TEMPLATE_SOURCE_DIR)).toEqual({
     placeholderName: 'someName',
     templateDir: 'someDir',
   });
   expect(path.resolve).toHaveBeenCalledWith(
+    TEMPLATE_SOURCE_DIR,
     'node_modules',
     TEMPLATE_NAME,
     'template.config',
   );
 });
 
-test('copyTemplate', () => {
+test('copyTemplate', async () => {
   const TEMPLATE_DIR = 'some/dir';
   const CWD = '.';
 
@@ -61,9 +64,10 @@ test('copyTemplate', () => {
   jest.spyOn(copyFiles, 'default').mockImplementationOnce(() => {});
   jest.spyOn(process, 'cwd').mockImplementationOnce(() => CWD);
 
-  copyTemplate(TEMPLATE_NAME, TEMPLATE_DIR);
+  await copyTemplate(TEMPLATE_NAME, TEMPLATE_DIR, TEMPLATE_SOURCE_DIR);
 
   expect(path.resolve).toHaveBeenCalledWith(
+    TEMPLATE_SOURCE_DIR,
     'node_modules',
     TEMPLATE_NAME,
     TEMPLATE_DIR,
@@ -77,9 +81,10 @@ test('executePostInitScript', async () => {
 
   jest.spyOn(path, 'resolve').mockImplementationOnce(() => RESOLVED_PATH);
 
-  await executePostInitScript(TEMPLATE_NAME, SCRIPT_PATH);
+  await executePostInitScript(TEMPLATE_NAME, SCRIPT_PATH, TEMPLATE_SOURCE_DIR);
 
   expect(path.resolve).toHaveBeenCalledWith(
+    TEMPLATE_SOURCE_DIR,
     'node_modules',
     TEMPLATE_NAME,
     SCRIPT_PATH,

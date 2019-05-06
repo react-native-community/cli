@@ -1,10 +1,9 @@
 /**
  * @flow
  */
-import {type CommandT} from '../tools/config/types.flow';
+import {type CommandT} from 'types';
 
 import server from './server/server';
-import library from './library/library';
 import bundle from './bundle/bundle';
 import ramBundle from './bundle/ramBundle';
 import link from './link/link';
@@ -18,7 +17,6 @@ import init from './init';
 
 export default ([
   server,
-  library,
   bundle,
   ramBundle,
   link,

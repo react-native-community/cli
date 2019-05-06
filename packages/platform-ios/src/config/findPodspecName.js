@@ -5,12 +5,13 @@
  * LICENSE file in the root directory of this source tree.
  *
  * @format
+ * @flow
  */
 
 import glob from 'glob';
 import path from 'path';
 
-export default function findPodspecName(folder) {
+export default function findPodspecName(folder: string): string | null {
   const podspecs = glob.sync('*.podspec', {cwd: folder});
   let podspecFile = null;
   if (podspecs.length === 0) {

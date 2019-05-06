@@ -7,22 +7,75 @@
  * @flow
  */
 
+import fs from 'fs';
 import path from 'path';
-import copyAndReplace from './copyAndReplace';
 import walk from './walk';
 
 /**
  * Copy files (binary included) recursively.
  */
-function copyFiles(srcPath: string, destPath: string) {
-  walk(srcPath).forEach(absoluteSrcFilePath => {
-    const relativeFilePath = path.relative(srcPath, absoluteSrcFilePath);
-    copyAndReplace(
-      absoluteSrcFilePath,
-      path.resolve(destPath, relativeFilePath),
-      {}, // no replacements
-    );
+async function copyFiles(srcPath: string, destPath: string) {
+  return Promise.all(
+    walk(srcPath).map(async absoluteSrcFilePath => {
+      const relativeFilePath = path.relative(srcPath, absoluteSrcFilePath);
+      await copyFile(
+        absoluteSrcFilePath,
+        path.resolve(destPath, relativeFilePath),
+      );
+    }),
+  );
+}
+
+/**
+ * Copy a file to given destination.
+ */
+function copyFile(srcPath: string, destPath: string) {
+  if (fs.lstatSync(srcPath).isDirectory()) {
+    if (!fs.existsSync(destPath)) {
+      fs.mkdirSync(destPath);
+    }
+    // Not recursive
+    return;
+  }
+
+  return new Promise((resolve, reject) => {
+    copyBinaryFile(srcPath, destPath, err => {
+      if (err) {
+        reject(err);
+      }
+      resolve(destPath);
+    });
   });
+}
+
+/**
+ * Same as 'cp' on Unix. Don't do any replacements.
+ */
+function copyBinaryFile(srcPath, destPath, cb) {
+  let cbCalled = false;
+  // const {mode} = fs.statSync(srcPath);
+  const readStream = fs.createReadStream(srcPath);
+  const writeStream = fs.createWriteStream(destPath);
+  readStream.on('error', err => {
+    done(err);
+  });
+  writeStream.on('error', err => {
+    done(err);
+  });
+  readStream.on('close', () => {
+    done();
+    // We may revisit setting mode to original later, however this fn is used
+    // before "replace placeholder in template" step, which expects files to be
+    // writable.
+    // fs.chmodSync(destPath, mode);
+  });
+  readStream.pipe(writeStream);
+  function done(err) {
+    if (!cbCalled) {
+      cb(err);
+      cbCalled = true;
+    }
+  }
 }
 
 export default copyFiles;

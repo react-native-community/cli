@@ -80,10 +80,20 @@ Object {
       "sourceDir": "./abc",
     },
   },
+  "root": "<<REPLACED>>/node_modules/react-native-test",
 }
 `;
 
-exports[`should read \`rnpm\` config from a dependency and transform it to a new format 1`] = `
+exports[`should not add default React Native config when one present 1`] = `
+Array [
+  Object {
+    "func": [Function],
+    "name": "test",
+  },
+]
+`;
+
+exports[`should read \`rnpm\` config from a dependency and transform it to a new format: foo config 1`] = `
 Object {
   "assets": Array [],
   "hooks": Object {},
@@ -104,6 +114,21 @@ Object {
       "sourceDir": "<<REPLACED>>/node_modules/react-native-foo/customLocation",
     },
   },
+  "root": "<<REPLACED>>/node_modules/react-native-foo",
+}
+`;
+
+exports[`should read \`rnpm\` config from a dependency and transform it to a new format: haste config 1`] = `
+Object {
+  "platforms": Array [
+    "ios",
+    "android",
+    "dummy",
+  ],
+  "providesModuleNodeModules": Array [
+    "react-native",
+    "react-native-dummy",
+  ],
 }
 `;
 
@@ -121,13 +146,14 @@ Object {
       "pbxprojPath": "<<REPLACED>>/node_modules/react-native-test/customLocation/customProject.xcodeproj/project.pbxproj",
       "plist": Array [],
       "podfile": null,
-      "podspec": null,
+      "podspec": "ReactNativeTest",
       "projectName": "customProject.xcodeproj",
       "projectPath": "<<REPLACED>>/node_modules/react-native-test/customLocation/customProject.xcodeproj",
       "sharedLibraries": Array [],
       "sourceDir": "<<REPLACED>>/node_modules/react-native-test/customLocation",
     },
   },
+  "root": "<<REPLACED>>/node_modules/react-native-test",
 }
 `;
 
@@ -142,6 +168,7 @@ Object {
       "android": null,
       "ios": null,
     },
+    "root": "<<REPLACED>>/node_modules/react-native",
   },
   "react-native-test": Object {
     "assets": Array [],
@@ -163,6 +190,7 @@ Object {
         "sourceDir": "<<REPLACED>>/node_modules/react-native-test/ios",
       },
     },
+    "root": "<<REPLACED>>/node_modules/react-native-test",
   },
 }
 `;

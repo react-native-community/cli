@@ -1,14 +1,19 @@
 {
   "name": "@react-native-community/cli-tools",
-  "version": "2.0.0-alpha.5",
+  "version": "2.0.0-alpha.17",
   "main": "build/index.js",
   "dependencies": {
     "chalk": "^1.1.1",
     "lodash": "^4.17.5",
-    "mime": "^2.4.1"
+    "mime": "^2.4.1",
+    "node-fetch": "^2.5.0"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.123",
-    "@types/mime": "^2.0.1"
-  }
+    "@types/mime": "^2.0.1",
+    "@types/node-fetch": "^2.3.3"
+  },
+  "files": [
+    "build"
+  ]
 }

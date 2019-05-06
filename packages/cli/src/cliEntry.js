@@ -12,7 +12,7 @@ import childProcess from 'child_process';
 import commander from 'commander';
 import path from 'path';
 
-import type {CommandT, ConfigT} from './tools/config/types.flow';
+import type {CommandT, ConfigT} from 'types';
 
 import commands from './commands';
 import init from './commands/init/initCompat';
@@ -64,7 +64,7 @@ function printHelpInformation(examples, pkg) {
     : [];
 
   let output = [
-    chalk.bold(`react-native ${cmdName} ${this.usage()}`),
+    chalk.bold(`react-native ${cmdName}`),
     this._description ? `\n${this._description}\n` : '',
     ...sourceInformation,
     `${chalk.bold('Options:')}`,
@@ -79,7 +79,7 @@ function printHelpInformation(examples, pkg) {
     output = output.concat([chalk.bold('\nExample usage:'), formattedUsage]);
   }
 
-  return output.join('\n');
+  return output.join('\n').concat('\n');
 }
 
 function printUnknownCommand(cmdName) {
@@ -122,10 +122,10 @@ const addCommand = (command: CommandT, ctx: ConfigT) => {
 
   options.forEach(opt =>
     cmd.option(
-      opt.command,
+      opt.name,
       opt.description,
       opt.parse || defaultOptParser,
-      opt.default,
+      typeof opt.default === 'function' ? opt.default(ctx) : opt.default,
     ),
   );
 };

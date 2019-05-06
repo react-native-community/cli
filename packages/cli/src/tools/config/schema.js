@@ -18,12 +18,16 @@ const command = t.object({
   usage: t.string(),
   func: t.func().required(),
   options: t.array().items(
-    t.object({
-      command: t.string().required(),
-      description: t.string(),
-      parse: t.func(),
-      default: t.alternatives().try([t.bool(), t.number(), t.string()]),
-    }),
+    t
+      .object({
+        name: t.string().required(),
+        description: t.string(),
+        parse: t.func(),
+        default: t
+          .alternatives()
+          .try([t.bool(), t.number(), t.string().allow(''), t.func()]),
+      })
+      .rename('command', 'name', {ignoreUndefined: true}),
   ),
   examples: t.array().items(
     t.object({
@@ -83,12 +87,13 @@ export const dependencyConfig = t
         projectConfig: t.func(),
         linkConfig: t.func(),
       }),
-    ).default(),
+    ).default({}),
     commands: t
       .array()
       .items(command)
       .default([]),
   })
+  .unknown(true)
   .default();
 
 /**
@@ -168,5 +173,14 @@ export const projectConfig = t
       .array()
       .items(command)
       .default([]),
+    platforms: map(
+      t.string(),
+      t.object({
+        dependencyConfig: t.func(),
+        projectConfig: t.func(),
+        linkConfig: t.func(),
+      }),
+    ).default({}),
   })
+  .unknown(true)
   .default();

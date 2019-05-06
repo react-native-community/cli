@@ -7,6 +7,7 @@ jest.mock('../../../tools/fetch', () => ({fetch: jest.fn()}));
 const VERSION = '0.58.0';
 const RN_WITH_VERSION = 'react-native@0.58.0';
 const ABS_RN_PATH = '/path/to/react-native';
+const ABS_RN_TARBALL_PATH = '/path/to/react-native/react-native-1.2.3-rc.0.tgz';
 const PACKAGE_NAME = 'react-native';
 
 test('should support file protocol with absolute path', async () => {
@@ -56,5 +57,12 @@ test('should get package if none protocols were handled', async () => {
   expect(await processTemplateName(RN_WITH_VERSION)).toEqual({
     uri: RN_WITH_VERSION,
     name: RN_WITH_VERSION,
+  });
+});
+
+test('should support path to tgz archives', async () => {
+  expect(await processTemplateName(`file://${ABS_RN_TARBALL_PATH}`)).toEqual({
+    uri: `file://${ABS_RN_TARBALL_PATH}`,
+    name: 'react-native',
   });
 });

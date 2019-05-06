@@ -6,12 +6,13 @@
 import Joi from 'joi';
 import cosmiconfig from 'cosmiconfig';
 import path from 'path';
+import chalk from 'chalk';
 
 import {
   type UserDependencyConfigT,
   type UserConfigT,
   type CommandT,
-} from './types.flow';
+} from 'types';
 
 import {JoiError} from './errors';
 
@@ -22,7 +23,7 @@ import {logger} from '@react-native-community/cli-tools';
 /**
  * Places to look for the new configuration
  */
-const searchPlaces = ['react-native.config.js', 'package.json'];
+const searchPlaces = ['react-native.config.js'];
 
 /**
  * Reads a project configuration as defined by the user in the current
@@ -87,7 +88,7 @@ const loadProjectCommands = (
 };
 
 /**
- * Reads a legacy configuaration from a `package.json` "rnpm" key.
+ * Reads a legacy configuration from a `package.json` "rnpm" key.
  */
 export function readLegacyDependencyConfigFromDisk(
   rootFolder: string,
@@ -108,6 +109,7 @@ export function readLegacyDependencyConfigFromDisk(
       hooks: config.commands,
       params: config.params,
     },
+    haste: config.haste,
     commands: loadProjectCommands(rootFolder, config.plugin),
     platforms: config.platform
       ? require(path.join(rootFolder, config.platform))
@@ -116,9 +118,9 @@ export function readLegacyDependencyConfigFromDisk(
 
   // @todo: paste a link to documentation that explains the migration steps
   logger.warn(
-    `Package '${path.basename(
-      name,
-    )}' is using deprecated "rnpm" config that will stop working from next release. Consider upgrading to the new config format.`,
+    `Package ${chalk.bold(
+      path.basename(name),
+    )} is using deprecated "rnpm" config that will stop working from next release. Consider upgrading to the new config format.`,
   );
 
   const result = Joi.validate(transformedConfig, schema.dependencyConfig);

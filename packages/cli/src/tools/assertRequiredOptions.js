@@ -15,7 +15,7 @@ import {camelCase} from 'lodash';
 // https://github.com/tj/commander.js/issues/230
 export default function assertRequiredOptions(options, passedOptions) {
   options.forEach(opt => {
-    const option = new Option(opt.command);
+    const option = new Option(opt.name);
 
     if (!option.required) {
       return;

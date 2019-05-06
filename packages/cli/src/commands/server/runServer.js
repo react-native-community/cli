@@ -8,30 +8,26 @@
  */
 
 import Metro from 'metro';
-
 import {Terminal} from 'metro-core';
-
 import morgan from 'morgan';
 import path from 'path';
-import type {ConfigT} from '../../tools/config/types.flow';
+import {logger} from '@react-native-community/cli-tools';
+import type {ConfigT} from 'types';
 import messageSocket from './messageSocket';
 import webSocketProxy from './webSocketProxy';
 import MiddlewareManager from './middleware/MiddlewareManager';
-
 import loadMetroConfig from '../../tools/loadMetroConfig';
 
 export type Args = {|
-  assetExts?: string[],
+  assetPlugins?: string[],
   cert?: string,
   customLogReporterPath?: string,
   host?: string,
   https?: boolean,
   maxWorkers?: number,
   key?: string,
-  nonPersistent?: boolean,
   platforms?: string[],
   port?: number,
-  providesModuleNodeModules?: string[],
   resetCache?: boolean,
   sourceExts?: string[],
   transformer?: string,
@@ -56,13 +52,26 @@ async function runServer(argv: Array<string>, ctx: ConfigT, args: Args) {
     reporter,
   });
 
+  if (args.assetPlugins) {
+    metroConfig.transformer.assetPlugins = args.assetPlugins.map(plugin =>
+      require.resolve(plugin),
+    );
+  }
+
   const middlewareManager = new MiddlewareManager({
     host: args.host,
     port: metroConfig.server.port,
     watchFolders: metroConfig.watchFolders,
   });
 
-  middlewareManager.getConnectInstance().use(morgan('combined'));
+  middlewareManager.getConnectInstance().use(
+    morgan(
+      'combined',
+      !logger.isVerbose() && {
+        skip: (req, res) => res.statusCode < 400,
+      },
+    ),
+  );
 
   metroConfig.watchFolders.forEach(
     middlewareManager.serveStatic.bind(middlewareManager),

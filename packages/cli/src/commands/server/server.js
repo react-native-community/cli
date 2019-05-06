@@ -17,45 +17,51 @@ export default {
   description: 'starts the webserver',
   options: [
     {
-      command: '--port [number]',
+      name: '--port [number]',
       parse: (val: string) => Number(val),
     },
     {
-      command: '--host [string]',
+      name: '--host [string]',
       default: '',
     },
     {
-      command: '--watchFolders [list]',
+      name: '--watchFolders [list]',
       description:
         'Specify any additional folders to be added to the watch list',
       parse: (val: string) => val.split(','),
     },
     {
-      command: '--assetExts [list]',
+      name: '--assetPlugins [list]',
+      description:
+        'Specify any additional asset plugins to be used by the packager by full filepath',
+      parse: (val: string) => val.split(','),
+    },
+    {
+      name: '--assetExts [list]',
       description:
         'Specify any additional asset extensions to be used by the packager',
       parse: (val: string) => val.split(','),
     },
     {
-      command: '--sourceExts [list]',
+      name: '--sourceExts [list]',
       description:
         'Specify any additional source extensions to be used by the packager',
       parse: (val: string) => val.split(','),
     },
     {
-      command: '--platforms [list]',
+      name: '--platforms [list]',
       description:
         'Specify any additional platforms to be used by the packager',
       parse: (val: string) => val.split(','),
     },
     {
-      command: '--providesModuleNodeModules [list]',
+      name: '--providesModuleNodeModules [list]',
       description:
         'Specify any npm packages that import dependencies with providesModule',
       parse: (val: string) => val.split(','),
     },
     {
-      command: '--max-workers [number]',
+      name: '--max-workers [number]',
       description:
         'Specifies the maximum number of workers the worker-pool ' +
         'will spawn for transforming files. This defaults to the number of the ' +
@@ -63,44 +69,36 @@ export default {
       parse: (workers: string) => Number(workers),
     },
     {
-      command: '--skipflow',
-      description: 'Disable flow checks',
-    },
-    {
-      command: '--nonPersistent',
-      description: 'Disable file watcher',
-    },
-    {
-      command: '--transformer [string]',
+      name: '--transformer [string]',
       description: 'Specify a custom transformer to be used',
     },
     {
-      command: '--reset-cache, --resetCache',
+      name: '--reset-cache, --resetCache',
       description: 'Removes cached files',
     },
     {
-      command: '--custom-log-reporter-path, --customLogReporterPath [string]',
+      name: '--custom-log-reporter-path, --customLogReporterPath [string]',
       description:
         'Path to a JavaScript file that exports a log reporter as a replacement for TerminalReporter',
     },
     {
-      command: '--verbose',
+      name: '--verbose',
       description: 'Enables logging',
     },
     {
-      command: '--https',
+      name: '--https',
       description: 'Enables https connections to the server',
     },
     {
-      command: '--key [path]',
+      name: '--key [path]',
       description: 'Path to custom SSL key',
     },
     {
-      command: '--cert [path]',
+      name: '--cert [path]',
       description: 'Path to custom SSL cert',
     },
     {
-      command: '--config [string]',
+      name: '--config [string]',
       description: 'Path to the CLI configuration file',
       parse: (val: string) => path.resolve(val),
     },

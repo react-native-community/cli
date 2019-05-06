@@ -1,10 +1,6 @@
 // @flow
 
-import type {
-  DependencyConfigT,
-  ProjectConfigT,
-  PlatformsT,
-} from '../../tools/config/types.flow';
+import type {DependencyConfigT, ProjectConfigT, PlatformsT} from 'types';
 import {logger} from '@react-native-community/cli-tools';
 import pollParams from './pollParams';
 import getPlatformName from './getPlatformName';
@@ -34,8 +30,10 @@ const linkDependency = async (
     }
 
     const isInstalled = linkConfig.isInstalled(
+      // $FlowFixMe
       projectConfig,
       name,
+      // $FlowFixMe
       dependencyConfig,
     );
 
@@ -47,7 +45,7 @@ const linkDependency = async (
     }
 
     logger.info(`Linking "${name}" ${getPlatformName(platform)} dependency`);
-
+    // $FlowFixMe
     linkConfig.register(name, dependencyConfig, params, projectConfig);
 
     logger.info(

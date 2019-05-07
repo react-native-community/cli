@@ -164,7 +164,15 @@ async function installDependencies({
     silent: true,
   });
 
-  await installPods(loader);
+  try {
+    await installPods(loader);
+
+    process.chdir('..');
+  } catch (err) {
+    process.chdir('..');
+
+    throw err;
+  }
 
   loader.succeed();
 }

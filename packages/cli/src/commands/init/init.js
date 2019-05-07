@@ -2,8 +2,10 @@
 import os from 'os';
 import path from 'path';
 import fs from 'fs-extra';
+import Ora from 'ora';
 import minimist from 'minimist';
 import semver from 'semver';
+import inquirer from 'inquirer';
 import type {ConfigT} from 'types';
 import {validateProjectName} from './validate';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
@@ -80,13 +82,71 @@ async function createFromExternalTemplate(
     }
 
     loader.start('Installing all required dependencies');
-    await PackageManager.installAll({preferYarn: !npm, silent: true});
-    loader.succeed();
+    await installDependencies({npm, loader});
   } catch (e) {
     loader.fail();
     throw new Error(e);
   } finally {
     fs.removeSync(templateSourceDir);
+  }
+}
+
+async function installDependencies({
+  npm,
+  loader,
+}: {
+  npm?: boolean,
+  loader: typeof Ora,
+}) {
+  const {error} = await PackageManager.installAll({
+    preferYarn: !npm,
+    silent: true,
+  });
+  loader.succeed();
+
+  // TODO: if this is different than debian just return
+  if (!error) {
+    return;
+  }
+
+  if (error === PackageManager.ERRORS.failedToRunPodInstall) {
+    return logger.warn(
+      'Failed to run "pod install", please try to run it manually.',
+    );
+  }
+
+  if (error === PackageManager.ERRORS.noCocoaPods) {
+    const {shouldInstallCocoaPods} = await inquirer.prompt([
+      {
+        type: 'confirm',
+        name: 'shouldInstallCocoaPods',
+        message: 'CocoaPods is not installed, Do you want to install it?',
+      },
+    ]);
+
+    if (shouldInstallCocoaPods) {
+      try {
+        await PackageManager.installCocoaPods();
+      } catch (err) {
+        throw new Error(
+          'Error occurred while trying to install CocoaPods, please install it manually.',
+        );
+      }
+
+      try {
+        loader.start('Installing pods');
+        await PackageManager.installPods({silent: true});
+        return loader.succeed();
+      } catch (err) {
+        return logger.warn(
+          'Failed to run "pod install", please try to run it manually.',
+        );
+      }
+    }
+
+    return logger.warn(
+      'Please install CocoaPods and run "pod install" to install all dependencies.',
+    );
   }
 }
 
@@ -145,8 +205,7 @@ async function createFromReactNativeTemplate(
     }
 
     loader.start('Installing all required dependencies');
-    await PackageManager.installAll({preferYarn: !npm, silent: true});
-    loader.succeed();
+    await installDependencies({npm, loader});
   } catch (e) {
     loader.fail();
     throw new Error(e);

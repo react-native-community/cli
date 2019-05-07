@@ -46,7 +46,7 @@ export type FlagsT = {|
 /**
  * Starts the app on a connected Android emulator or device.
  */
-function runAndroid(argv: Array<string>, ctx: ConfigT, args: FlagsT) {
+function runAndroid(argv: Array<string>, config: ConfigT, args: FlagsT) {
   if (!checkAndroid(args.root)) {
     logger.error(
       'Android project not found. Are you sure this is a React Native project?',
@@ -55,7 +55,7 @@ function runAndroid(argv: Array<string>, ctx: ConfigT, args: FlagsT) {
   }
 
   if (!args.packager) {
-    return buildAndRun(args);
+    return buildAndRun(args, config);
   }
 
   return isPackagerRunning(args.port).then(result => {
@@ -66,9 +66,9 @@ function runAndroid(argv: Array<string>, ctx: ConfigT, args: FlagsT) {
     } else {
       // result == 'not_running'
       logger.info('Starting JS server...');
-      startServerInNewWindow(args.port, args.terminal, ctx.reactNativePath);
+      startServerInNewWindow(args.port, args.terminal, config.reactNativePath);
     }
-    return buildAndRun(args);
+    return buildAndRun(args, config);
   });
 }
 
@@ -84,7 +84,7 @@ function getPackageNameWithSuffix(appId, appIdSuffix, packageName) {
 }
 
 // Builds the app and runs it on a connected emulator / device.
-function buildAndRun(args) {
+function buildAndRun(args, config) {
   process.chdir(path.join(args.root, 'android'));
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
 
@@ -117,6 +117,7 @@ function buildAndRun(args) {
       packageNameWithSuffix,
       packageName,
       adbPath,
+      config,
     );
   }
 }
@@ -142,7 +143,7 @@ function runOnSpecificDevice(
       );
     } else {
       logger.error(
-        `Could not find device with the id: "${deviceId}". Choose one of the following:`,
+        `Could not find device with the id: "${deviceId}". Please choose one of the following:`,
         ...devices,
       );
     }
@@ -153,17 +154,15 @@ function runOnSpecificDevice(
 
 function buildApk(gradlew) {
   try {
-    logger.info('Building the app...');
-
     // using '-x lint' in order to ignore linting errors while building the apk
-    execFileSync(gradlew, ['build', '-x', 'lint'], {
+    const gradleArgs = ['build', '-x', 'lint'];
+    logger.info('Building the app...');
+    logger.debug(`Running command "${gradlew} ${gradleArgs.join(' ')}"`);
+    execFileSync(gradlew, gradleArgs, {
       stdio: [process.stdin, process.stdout, process.stderr],
     });
   } catch (error) {
-    throw new CLIError(
-      'Could not build the app, read the error above for details',
-      error,
-    );
+    throw new CLIError(`Failed to build the app: ${error.message}`, error);
   }
 }
 
@@ -183,17 +182,15 @@ function tryInstallAppOnDevice(args, adbPath, device) {
 
     const pathToApk = `${buildDirectory}/${apkFile}`;
     const adbArgs = ['-s', device, 'install', '-r', '-d', pathToApk];
-    logger.info(
-      `Installing the app on the device (cd android && adb -s ${device} install -r -d ${pathToApk}`,
+    logger.info(`Installing the app on the device "${device}"...`);
+    logger.debug(
+      `Running command "cd android && adb -s ${device} install -r -d ${pathToApk}"`,
     );
-    execFileSync(adbPath, adbArgs, {
-      stdio: [process.stdin, process.stdout, process.stderr],
-    });
-  } catch (e) {
-    logger.error(
-      `${
-        e.message
-      }\nCould not install the app on the device, read the error above for details.`,
+    execFileSync(adbPath, adbArgs, {stdio: 'inherit'});
+  } catch (error) {
+    throw new CLIError(
+      `Failed to install the app on the device: ${error.message}`,
+      error,
     );
   }
 }

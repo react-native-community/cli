@@ -16,7 +16,7 @@ import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
 import type {FlagsT} from '.';
 import type {ConfigT} from 'types';
 
-function getCommand(appFolder, command) {
+function getTaskName(appFolder, command) {
   return appFolder ? `${appFolder}:${command}` : command;
 }
 
@@ -24,7 +24,7 @@ function toPascalCase(value: string) {
   return value[0].toUpperCase() + value.slice(1);
 }
 
-async function runOnAllDevices(
+function runOnAllDevices(
   args: FlagsT,
   cmd: string,
   packageNameWithSuffix: string,
@@ -34,7 +34,9 @@ async function runOnAllDevices(
 ) {
   try {
     const gradleArgs = [
-      getCommand(args.appFolder, 'install' + toPascalCase(args.variant)),
+      args.task
+        ? getTaskName(args.appFolder, args.task)
+        : getTaskName(args.appFolder, 'install' + toPascalCase(args.variant)),
     ];
 
     logger.info('Installing the app...');

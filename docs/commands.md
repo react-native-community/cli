@@ -300,13 +300,17 @@ Do not launch packager while building.
 
 #### `--port [number]`
 
-> default: process.env.RCT_METRO_PORT || 8081,
+> default: process.env.RCT_METRO_PORT || 8081
 
 #### `--terminal [string]`
 
 > default: process.env.REACT_TERMINAL || process.env.TERM_PROGRAM
 
 Launches the Metro Bundler in a new window using the specified terminal path.
+
+#### `--task [string]`
+
+Run custom Gradle task instead of default "installDebug" where "debug" is default variant.
 
 ### `run-ios`
 

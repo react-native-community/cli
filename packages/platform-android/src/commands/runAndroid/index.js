@@ -31,6 +31,7 @@ function checkAndroid(root) {
 }
 
 export type FlagsT = {|
+  task?: string,
   root: string,
   variant: string,
   appFolder: string,
@@ -362,6 +363,11 @@ export default {
       description:
         'Launches the Metro Bundler in a new window using the specified terminal path.',
       default: getDefaultUserTerminal,
+    },
+    {
+      name: '--task [string]',
+      description:
+        'Run custom Gradle task instead of default "installDebug" where "debug" is default variant',
     },
   ],
 };

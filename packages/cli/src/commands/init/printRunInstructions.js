@@ -18,7 +18,7 @@ function printRunInstructions(projectDir: string, projectName: string) {
     projectDir,
     'ios',
     projectName,
-  )}.xcodeproj`;
+  )}.xcworkspace`;
   const relativeXcodeProjectPath = path.relative(
     process.cwd(),
     xcodeProjectPath,

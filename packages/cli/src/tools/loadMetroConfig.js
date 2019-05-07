@@ -82,8 +82,9 @@ export type ConfigOptionsT = {|
  */
 export default function load(ctx: ConfigT, options?: ConfigOptionsT) {
   const defaultConfig = getDefaultConfig(ctx);
-  return loadConfig(
-    {cwd: ctx.root, ...options},
-    {...defaultConfig, reporter: options && options.reporter},
-  );
+  if (options && options.reporter) {
+    // $FlowFixMe
+    defaultConfig.reporter = options.reporter;
+  }
+  return loadConfig({cwd: ctx.root, ...options}, defaultConfig);
 }

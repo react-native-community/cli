@@ -158,11 +158,9 @@ function buildApk(gradlew) {
     const gradleArgs = ['build', '-x', 'lint'];
     logger.info('Building the app...');
     logger.debug(`Running command "${gradlew} ${gradleArgs.join(' ')}"`);
-    execFileSync(gradlew, gradleArgs, {
-      stdio: [process.stdin, process.stdout, process.stderr],
-    });
+    execFileSync(gradlew, gradleArgs, {stdio: 'inherit'});
   } catch (error) {
-    throw new CLIError(`Failed to build the app: ${error.message}`, error);
+    throw new CLIError('Failed to build the app.', error);
   }
 }
 
@@ -188,10 +186,7 @@ function tryInstallAppOnDevice(args, adbPath, device) {
     );
     execFileSync(adbPath, adbArgs, {stdio: 'inherit'});
   } catch (error) {
-    throw new CLIError(
-      `Failed to install the app on the device: ${error.message}`,
-      error,
-    );
+    throw new CLIError('Failed to install the app on the device.', error);
   }
 }
 

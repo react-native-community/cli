@@ -30,7 +30,7 @@ const getBlacklistRE = () => createBlacklist([/.*\/__fixtures__\/.*/]);
  * @todo(grabbou): As a separate PR, haste.platforms should be added before "native".
  * Otherwise, a.native.js will not load on Windows or other platforms
  */
-export const getDefaultConfig = (ctx: ConfigT) => {
+export const getDefaultConfig = (ctx: ConfigT, options?: ConfigOptionsT) => {
   return {
     resolver: {
       resolverMainFields: ['react-native', 'browser', 'main'],
@@ -61,6 +61,7 @@ export const getDefaultConfig = (ctx: ConfigT) => {
       ),
     },
     watchFolders: getWatchFolders(),
+    ...(options && options.reporter ? {reporter: options.reporter} : {}),
   };
 };
 
@@ -81,10 +82,6 @@ export type ConfigOptionsT = {|
  * This allows the CLI to always overwrite the file settings.
  */
 export default function load(ctx: ConfigT, options?: ConfigOptionsT) {
-  const defaultConfig = getDefaultConfig(ctx);
-  if (options && options.reporter) {
-    // $FlowFixMe
-    defaultConfig.reporter = options.reporter;
-  }
+  const defaultConfig = getDefaultConfig(ctx, options);
   return loadConfig({cwd: ctx.root, ...options}, defaultConfig);
 }

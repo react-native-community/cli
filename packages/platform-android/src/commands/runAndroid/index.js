@@ -56,7 +56,7 @@ function runAndroid(argv: Array<string>, config: ConfigT, args: FlagsT) {
   }
 
   if (!args.packager) {
-    return buildAndRun(args, config);
+    return buildAndRun(args);
   }
 
   return isPackagerRunning(args.port).then(result => {
@@ -69,7 +69,7 @@ function runAndroid(argv: Array<string>, config: ConfigT, args: FlagsT) {
       logger.info('Starting JS server...');
       startServerInNewWindow(args.port, args.terminal, config.reactNativePath);
     }
-    return buildAndRun(args, config);
+    return buildAndRun(args);
   });
 }
 
@@ -85,7 +85,7 @@ function getPackageNameWithSuffix(appId, appIdSuffix, packageName) {
 }
 
 // Builds the app and runs it on a connected emulator / device.
-function buildAndRun(args, config) {
+function buildAndRun(args) {
   process.chdir(path.join(args.root, 'android'));
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
 
@@ -118,7 +118,6 @@ function buildAndRun(args, config) {
       packageNameWithSuffix,
       packageName,
       adbPath,
-      config,
     );
   }
 }

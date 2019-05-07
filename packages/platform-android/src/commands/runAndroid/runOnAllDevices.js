@@ -14,7 +14,6 @@ import adb from './adb';
 import tryRunAdbReverse from './tryRunAdbReverse';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
 import type {FlagsT} from '.';
-import type {ConfigT} from 'types';
 
 function getTaskName(appFolder, command) {
   return appFolder ? `${appFolder}:${command}` : command;
@@ -30,7 +29,6 @@ function runOnAllDevices(
   packageNameWithSuffix: string,
   packageName: string,
   adbPath: string,
-  config: ConfigT,
 ) {
   try {
     const gradleArgs = [

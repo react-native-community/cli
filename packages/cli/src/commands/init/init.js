@@ -74,7 +74,7 @@ async function createFromExternalTemplate(
     const {postInitScript} = templateConfig;
     if (postInitScript) {
       // Leaving trailing space because there may be stdout from the script
-      loader.start('Executing post init script ');
+      loader.start('Executing post init script');
       await executePostInitScript(name, postInitScript, templateSourceDir);
       loader.succeed();
     }

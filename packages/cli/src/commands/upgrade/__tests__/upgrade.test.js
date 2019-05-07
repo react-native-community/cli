@@ -170,12 +170,10 @@ success Upgraded React Native to v0.58.4 🎉. Now you can review and commit the
 `);
 });
 
-test(
-  'fetches regular patch, adds remote, applies patch, installs deps, removes remote,',
-  async () => {
-    (fetch: any).mockImplementation(() => Promise.resolve(samplePatch));
-    await upgrade.func([newVersion], ctx, opts);
-    expect(flushOutput()).toMatchInlineSnapshot(`
+test('fetches regular patch, adds remote, applies patch, installs deps, removes remote,', async () => {
+  (fetch: any).mockImplementation(() => Promise.resolve(samplePatch));
+  await upgrade.func([newVersion], ctx, opts);
+  expect(flushOutput()).toMatchInlineSnapshot(`
 "info Fetching diff between v0.57.8 and v0.58.4...
 [fs] write tmp-upgrade-rn.patch
 $ execa git rev-parse --show-prefix
@@ -194,22 +192,18 @@ info Running \\"git status\\" to check what changed...
 $ execa git status
 success Upgraded React Native to v0.58.4 🎉. Now you can review and commit the changes"
 `);
-    expect(
-      snapshotDiff(samplePatch, fs.writeFileSync.mock.calls[0][1], {
-        contextLines: 1,
-      }),
-    ).toMatchSnapshot('RnDiffApp is replaced with app name (TestApp)');
-  },
-  60000,
-);
-test(
-  'fetches regular patch, adds remote, applies patch, installs deps, removes remote when updated from nested directory',
-  async () => {
-    (fetch: any).mockImplementation(() => Promise.resolve(samplePatch));
-    (execa: any).mockImplementation(mockExecaNested);
-    const config = {...ctx, root: '/project/root/NestedApp'};
-    await upgrade.func([newVersion], config, opts);
-    expect(flushOutput()).toMatchInlineSnapshot(`
+  expect(
+    snapshotDiff(samplePatch, fs.writeFileSync.mock.calls[0][1], {
+      contextLines: 1,
+    }),
+  ).toMatchSnapshot('RnDiffApp is replaced with app name (TestApp)');
+}, 60000);
+test('fetches regular patch, adds remote, applies patch, installs deps, removes remote when updated from nested directory', async () => {
+  (fetch: any).mockImplementation(() => Promise.resolve(samplePatch));
+  (execa: any).mockImplementation(mockExecaNested);
+  const config = {...ctx, root: '/project/root/NestedApp'};
+  await upgrade.func([newVersion], config, opts);
+  expect(flushOutput()).toMatchInlineSnapshot(`
 "info Fetching diff between v0.57.8 and v0.58.4...
 [fs] write tmp-upgrade-rn.patch
 $ execa git rev-parse --show-prefix
@@ -228,9 +222,7 @@ info Running \\"git status\\" to check what changed...
 $ execa git status
 success Upgraded React Native to v0.58.4 🎉. Now you can review and commit the changes"
 `);
-  },
-  60000,
-);
+}, 60000);
 test('cleans up if patching fails,', async () => {
   (fetch: any).mockImplementation(() => Promise.resolve(samplePatch));
   (execa: any).mockImplementation((command, args) => {

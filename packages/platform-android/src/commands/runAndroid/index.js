@@ -30,10 +30,23 @@ function checkAndroid(root) {
   return fs.existsSync(path.join(root, 'android/gradlew'));
 }
 
+export type FlagsT = {|
+  root: string,
+  variant: string,
+  appFolder: string,
+  appId: string,
+  appIdSuffix: string,
+  mainActivity: string,
+  deviceId?: string,
+  packager: boolean,
+  port: number,
+  terminal: string,
+|};
+
 /**
  * Starts the app on a connected Android emulator or device.
  */
-function runAndroid(argv: Array<string>, ctx: ConfigT, args: Object) {
+function runAndroid(argv: Array<string>, ctx: ConfigT, args: FlagsT) {
   if (!checkAndroid(args.root)) {
     logger.error(
       'Android project not found. Are you sure this is a React Native project?',
@@ -90,16 +103,13 @@ function buildAndRun(args) {
 
   const adbPath = getAdbPath();
   if (args.deviceId) {
-    if (typeof args.deviceId === 'string') {
-      return runOnSpecificDevice(
-        args,
-        cmd,
-        packageNameWithSuffix,
-        packageName,
-        adbPath,
-      );
-    }
-    logger.error('Argument missing for parameter --deviceId');
+    return runOnSpecificDevice(
+      args,
+      cmd,
+      packageNameWithSuffix,
+      packageName,
+      adbPath,
+    );
   } else {
     return runOnAllDevices(
       args,
@@ -119,21 +129,20 @@ function runOnSpecificDevice(
   adbPath,
 ) {
   const devices = adb.getDevices(adbPath);
-  if (devices && devices.length > 0) {
-    if (devices.indexOf(args.deviceId) !== -1) {
+  const {deviceId} = args;
+  if (devices.length > 0 && deviceId) {
+    if (devices.indexOf(deviceId) !== -1) {
       buildApk(gradlew);
       installAndLaunchOnDevice(
         args,
-        args.deviceId,
+        deviceId,
         packageNameWithSuffix,
         packageName,
         adbPath,
       );
     } else {
       logger.error(
-        `Could not find device with the id: "${
-          args.deviceId
-        }". Choose one of the following:`,
+        `Could not find device with the id: "${deviceId}". Choose one of the following:`,
         ...devices,
       );
     }
@@ -306,17 +315,10 @@ export default {
   func: runAndroid,
   options: [
     {
-      name: '--install-debug',
-    },
-    {
       name: '--root [string]',
       description:
         'Override the root directory for the android build (which contains the android directory)',
       default: '',
-    },
-    {
-      name: '--flavor [string]',
-      description: '--flavor has been deprecated. Use --variant instead',
     },
     {
       name: '--variant [string]',

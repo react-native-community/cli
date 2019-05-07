@@ -12,7 +12,7 @@ import {logger} from '@react-native-community/cli-tools';
 import getAdbPath from './getAdbPath';
 
 // Runs ADB reverse tcp:8081 tcp:8081 to allow loading the jsbundle from the packager
-function tryRunAdbReverse(packagerPort: number | string, device: string) {
+function tryRunAdbReverse(packagerPort: number | string, device?: string) {
   try {
     const adbPath = getAdbPath();
     const adbArgs = ['reverse', `tcp:${packagerPort}`, `tcp:${packagerPort}`];
@@ -22,13 +22,16 @@ function tryRunAdbReverse(packagerPort: number | string, device: string) {
       adbArgs.unshift('-s', device);
     }
 
-    logger.info(`Running ${adbPath} ${adbArgs.join(' ')}`);
+    logger.info('Connecting to the development server...');
+    logger.debug(`Running command "${adbPath} ${adbArgs.join(' ')}"`);
 
-    execFileSync(adbPath, adbArgs, {
-      stdio: [process.stdin, process.stdout, process.stderr],
-    });
+    execFileSync(adbPath, adbArgs, {stdio: 'inherit'});
   } catch (e) {
-    logger.info(`Could not run adb reverse: ${e.message}`);
+    logger.warn(
+      `Failed to connect to development server using "adb reverse": ${
+        e.message
+      }`,
+    );
   }
 }
 

@@ -262,8 +262,6 @@ Builds your app and starts it on a connected Android emulator or device.
 
 #### Options
 
-#### `--install-debug`
-
 #### `--root [string]`
 
 Override the root directory for the Android build (which contains the android directory)'.

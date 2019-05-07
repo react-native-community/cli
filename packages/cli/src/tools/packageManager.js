@@ -1,6 +1,5 @@
 // @flow
 import execa from 'execa';
-import commandExists from 'command-exists';
 import logger from './logger';
 import {getYarnVersionIfAvailable, isProjectUsingYarn} from './yarn';
 
@@ -17,7 +16,7 @@ export const ERRORS = {
   failedToRunPodInstall: 'failedToRunPodInstall',
 };
 
-export function executeCommand(
+function executeCommand(
   command: string,
   args: Array<string>,
   options?: Options,
@@ -67,34 +66,8 @@ export function uninstall(packageNames: Array<string>, options?: Options) {
     : executeCommand('npm', ['uninstall', ...packageNames, '--save'], options);
 }
 
-export function installCocoaPods() {
-  return executeCommand('sudo', ['gem', 'install', 'cocoapods'], {
-    silent: false,
-  });
-}
-
-export async function installPods(options?: Options) {
-  try {
-    await commandExists('pod');
-  } catch (err) {
-    return {error: ERRORS.noCocoaPods};
-  }
-
-  process.chdir('ios');
-
-  try {
-    return await executeCommand('pod', ['install'], options);
-  } catch (err) {
-    return {error: ERRORS.failedToRunPodInstall};
-  }
-}
-
-export async function installAll(options?: Options) {
-  shouldUseYarn(options)
-    ? await executeCommand('yarn', ['install'], options)
-    : await executeCommand('npm', ['install'], options);
-
-  // TODO: only do this on macOS
-
-  return installPods(options);
+export function installAll(options?: Options) {
+  return shouldUseYarn(options)
+    ? executeCommand('yarn', ['install'], options)
+    : executeCommand('npm', ['install'], options);
 }

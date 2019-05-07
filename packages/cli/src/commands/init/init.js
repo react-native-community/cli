@@ -2,10 +2,12 @@
 import os from 'os';
 import path from 'path';
 import fs from 'fs-extra';
+import execa from 'execa';
 import Ora from 'ora';
 import minimist from 'minimist';
 import semver from 'semver';
 import inquirer from 'inquirer';
+import commandExists from 'command-exists';
 import type {ConfigT} from 'types';
 import {validateProjectName} from './validate';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
@@ -22,6 +24,7 @@ import * as PackageManager from '../../tools/packageManager';
 import {processTemplateName} from './templateName';
 import banner from './banner';
 import {getLoader} from '../../tools/loader';
+import {CLIError} from '@react-native-community/cli-tools/build/errors';
 
 type Options = {|
   template?: string,
@@ -81,7 +84,6 @@ async function createFromExternalTemplate(
       loader.succeed();
     }
 
-    loader.start('Installing all required dependencies');
     await installDependencies({npm, loader});
   } catch (e) {
     loader.fail();
@@ -91,31 +93,20 @@ async function createFromExternalTemplate(
   }
 }
 
-async function installDependencies({
-  npm,
-  loader,
-}: {
-  npm?: boolean,
-  loader: typeof Ora,
-}) {
-  const {error} = await PackageManager.installAll({
-    preferYarn: !npm,
-    silent: true,
-  });
-  loader.succeed();
+async function installPods(loader: typeof Ora) {
+  process.chdir('ios');
 
-  // TODO: if this is different than debian just return
-  if (!error) {
+  const hasPods = await fs.pathExists('Podfile');
+
+  if (!hasPods) {
     return;
   }
 
-  if (error === PackageManager.ERRORS.failedToRunPodInstall) {
-    return logger.warn(
-      'Failed to run "pod install", please try to run it manually.',
-    );
-  }
+  try {
+    await commandExists('pod');
+  } catch (err) {
+    loader.succeed();
 
-  if (error === PackageManager.ERRORS.noCocoaPods) {
     const {shouldInstallCocoaPods} = await inquirer.prompt([
       {
         type: 'confirm',
@@ -126,28 +117,57 @@ async function installDependencies({
 
     if (shouldInstallCocoaPods) {
       try {
-        await PackageManager.installCocoaPods();
+        await execa('sudo', ['gem', 'install', 'cocoapods'], {
+          stdio: 'pipe',
+        });
       } catch (err) {
         throw new Error(
           'Error occurred while trying to install CocoaPods, please install it manually.',
+          err,
         );
       }
 
       try {
         loader.start('Installing pods');
-        await PackageManager.installPods({silent: true});
-        return loader.succeed();
       } catch (err) {
-        return logger.warn(
+        console.log(err);
+        throw new CLIError(
           'Failed to run "pod install", please try to run it manually.',
+          err,
         );
       }
     }
+  }
 
-    return logger.warn(
-      'Please install CocoaPods and run "pod install" to install all dependencies.',
+  try {
+    await execa('pod', ['install'], {
+      stdio: 'pipe',
+    });
+  } catch (err) {
+    throw new CLIError(
+      'Failed to run "pod install", please try to run it manually.',
+      err,
     );
   }
+}
+
+async function installDependencies({
+  npm,
+  loader,
+}: {
+  npm?: boolean,
+  loader: typeof Ora,
+}) {
+  loader.start('Installing all required dependencies');
+
+  await PackageManager.installAll({
+    preferYarn: !npm,
+    silent: true,
+  });
+
+  await installPods(loader);
+
+  loader.succeed();
 }
 
 async function createFromReactNativeTemplate(
@@ -204,7 +224,6 @@ async function createFromReactNativeTemplate(
       loader.succeed();
     }
 
-    loader.start('Installing all required dependencies');
     await installDependencies({npm, loader});
   } catch (e) {
     loader.fail();

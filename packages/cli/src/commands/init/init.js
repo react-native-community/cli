@@ -121,7 +121,7 @@ async function installPods(loader: typeof Ora) {
           stdio: 'pipe',
         });
       } catch (err) {
-        throw new Error(
+        throw new CLIError(
           'Error occurred while trying to install CocoaPods, please install it manually.',
           err,
         );

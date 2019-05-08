@@ -4,7 +4,7 @@
 
 const path = require('path');
 
-export default function resolveNodeModule(
+export default function resolveNodeModuleDir(
   root: string,
   packageName: string,
 ): string {

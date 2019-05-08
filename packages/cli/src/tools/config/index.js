@@ -19,7 +19,7 @@ import {type ConfigT} from 'types';
 
 import assign from '../assign';
 import merge from '../merge';
-import resolveNodeModule from './resolveNodeModule';
+import resolveNodeModuleDir from './resolveNodeModuleDir';
 /**
  * Built-in platforms
  */
@@ -38,7 +38,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
       let root;
       let config;
       try {
-        root = resolveNodeModule(projectRoot, dependencyName);
+        root = resolveNodeModuleDir(projectRoot, dependencyName);
         config =
           readLegacyDependencyConfigFromDisk(root) ||
           readDependencyConfigFromDisk(root);

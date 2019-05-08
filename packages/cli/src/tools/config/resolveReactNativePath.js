@@ -3,7 +3,7 @@
  */
 import {CLIError} from '@react-native-community/cli-tools';
 
-import resolveNodeModule from './resolveNodeModule';
+import resolveNodeModuleDir from './resolveNodeModuleDir';
 
 /**
  * Finds path to React Native inside `node_modules` or throws
@@ -11,7 +11,7 @@ import resolveNodeModule from './resolveNodeModule';
  */
 export default function resolveReactNativePath(root: string) {
   try {
-    return resolveNodeModule(root, 'react-native');
+    return resolveNodeModuleDir(root, 'react-native');
   } catch (_ignored) {
     throw new CLIError(`
       Unable to find React Native files. Make sure "react-native" module is installed

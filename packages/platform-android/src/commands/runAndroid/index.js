@@ -314,6 +314,7 @@ export default {
     },
     {
       name: '--variant [string]',
+      description: "Specify your app's build variant",
       default: 'debug',
     },
     {
@@ -360,8 +361,7 @@ export default {
     },
     {
       name: '--task [string]',
-      description:
-        'Run custom Gradle task instead of default "installDebug" where "debug" is default variant',
+      description: 'Run custom Gradle task. By default it\'s "installDebug"',
     },
   ],
 };

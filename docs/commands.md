@@ -270,6 +270,8 @@ Override the root directory for the Android build (which contains the android di
 
 > default: 'debug'
 
+Specify your app's build variant.
+
 #### `--appFolder [string]`
 
 > default: 'app'
@@ -310,7 +312,9 @@ Launches the Metro Bundler in a new window using the specified terminal path.
 
 #### `--task [string]`
 
-Run custom Gradle task instead of default "installDebug" where "debug" is default variant.
+> default: 'installDebug'
+
+Run custom Gradle task.
 
 ### `run-ios`
 

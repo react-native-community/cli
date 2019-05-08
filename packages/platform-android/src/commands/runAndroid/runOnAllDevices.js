@@ -31,11 +31,8 @@ function runOnAllDevices(
   adbPath: string,
 ) {
   try {
-    const gradleArgs = [
-      args.task
-        ? getTaskName(args.appFolder, args.task)
-        : getTaskName(args.appFolder, 'install' + toPascalCase(args.variant)),
-    ];
+    const task = args.task || 'install' + toPascalCase(args.variant);
+    const gradleArgs = [getTaskName(args.appFolder, task)];
 
     logger.info('Installing the app...');
     logger.debug(

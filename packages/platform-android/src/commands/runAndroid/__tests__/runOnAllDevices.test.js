@@ -21,7 +21,7 @@ describe('--appFolder', () => {
     jest.clearAllMocks();
   });
 
-  it('uses installDebug as default if no arguments', () => {
+  it('uses task "install[Variant]" as default task', () => {
     runOnAllDevices({
       variant: 'debug',
     });

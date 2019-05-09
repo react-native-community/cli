@@ -11,11 +11,6 @@ type Options = {|
 
 let projectDir;
 
-export const ERRORS = {
-  noCocoaPods: 'noCocoaPods',
-  failedToRunPodInstall: 'failedToRunPodInstall',
-};
-
 function executeCommand(
   command: string,
   args: Array<string>,

@@ -127,14 +127,7 @@ async function installPods(loader: typeof Ora) {
         );
       }
 
-      try {
-        loader.start('Installing pods');
-      } catch (err) {
-        throw new CLIError(
-          'Failed to run "pod install", please try to run it manually.',
-          err,
-        );
-      }
+      loader.start('Installing pods');
     }
   }
 

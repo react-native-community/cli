@@ -117,14 +117,22 @@ async function installPods(loader: typeof Ora) {
 
     if (shouldInstallCocoaPods) {
       try {
-        await execa('sudo', ['gem', 'install', 'cocoapods'], {
+        // First attempt to install `cocoapods`
+        await execa('gem', ['install', 'cocoapods'], {
           stdio: 'pipe',
         });
       } catch (err) {
-        throw new CLIError(
-          'Error occurred while trying to install CocoaPods, please install it manually.',
-          err,
-        );
+        try {
+          // If that doesn't work then try with sudo
+          await execa('sudo', ['gem', 'install', 'cocoapods'], {
+            stdio: 'pipe',
+          });
+        } catch (err) {
+          throw new CLIError(
+            'Error occurred while trying to install CocoaPods, please run this command again.',
+            err,
+          );
+        }
       }
 
       loader.start('Installing pods');

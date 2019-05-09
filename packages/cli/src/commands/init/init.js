@@ -165,14 +165,10 @@ async function installDependencies({
     silent: true,
   });
 
-  try {
+  if (process.platform === 'darwin') {
     await installPods(loader);
 
     process.chdir('..');
-  } catch (err) {
-    process.chdir('..');
-
-    throw err;
   }
 
   loader.succeed();

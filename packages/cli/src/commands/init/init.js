@@ -111,7 +111,7 @@ async function installPods(loader: typeof Ora) {
       {
         type: 'confirm',
         name: 'shouldInstallCocoaPods',
-        message: 'CocoaPods is not installed, Do you want to install it?',
+        message: 'CocoaPods is not installed, do you want to install it?',
       },
     ]);
 

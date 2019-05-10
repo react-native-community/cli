@@ -8,10 +8,10 @@
  */
 
 import {spawnSync} from 'child_process';
-import {logger} from '@react-native-community/cli-tools';
+import {logger, CLIError} from '@react-native-community/cli-tools';
 
 function tryLaunchAppOnDevice(
-  device: string,
+  device?: string,
   packageNameWithSuffix: string,
   packageName: string,
   adbPath: string,
@@ -19,20 +19,22 @@ function tryLaunchAppOnDevice(
 ) {
   try {
     const adbArgs = [
-      '-s',
-      device,
       'shell',
       'am',
       'start',
       '-n',
       `${packageNameWithSuffix}/${packageName}.${mainActivity}`,
     ];
-    logger.info(
-      `Starting the app on ${device} (${adbPath} ${adbArgs.join(' ')})...`,
-    );
+    if (device) {
+      adbArgs.unshift('-s', device);
+      logger.info(`Starting the app on "${device}"...`);
+    } else {
+      logger.info('Starting the app...');
+    }
+    logger.debug(`Running command "${adbPath} ${adbArgs.join(' ')}"`);
     spawnSync(adbPath, adbArgs, {stdio: 'inherit'});
-  } catch (e) {
-    logger.error('adb invocation failed. Do you have adb in your PATH?');
+  } catch (error) {
+    throw new CLIError('Failed to start the app.', error);
   }
 }
 

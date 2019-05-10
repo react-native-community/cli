@@ -70,7 +70,6 @@ function getAvailableCPUs(adbPath: string, device: string): Array<string> {
 }
 
 export default {
-  parseDevicesResult,
   getDevices,
   getAvailableCPUs,
 };

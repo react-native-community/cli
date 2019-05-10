@@ -53,7 +53,7 @@ function copyFile(srcPath: string, destPath: string) {
  */
 function copyBinaryFile(srcPath, destPath, cb) {
   let cbCalled = false;
-  // const {mode} = fs.statSync(srcPath);
+  const {mode} = fs.statSync(srcPath);
   const readStream = fs.createReadStream(srcPath);
   const writeStream = fs.createWriteStream(destPath);
   readStream.on('error', err => {
@@ -64,10 +64,7 @@ function copyBinaryFile(srcPath, destPath, cb) {
   });
   readStream.on('close', () => {
     done();
-    // We may revisit setting mode to original later, however this fn is used
-    // before "replace placeholder in template" step, which expects files to be
-    // writable.
-    // fs.chmodSync(destPath, mode);
+    fs.chmodSync(destPath, mode);
   });
   readStream.pipe(writeStream);
   function done(err) {

@@ -262,8 +262,6 @@ Builds your app and starts it on a connected Android emulator or device.
 
 #### Options
 
-#### `--install-debug`
-
 #### `--root [string]`
 
 Override the root directory for the Android build (which contains the android directory)'.
@@ -271,6 +269,8 @@ Override the root directory for the Android build (which contains the android di
 #### `--variant [string]`
 
 > default: 'debug'
+
+Specify your app's build variant.
 
 #### `--appFolder [string]`
 
@@ -302,13 +302,20 @@ Do not launch packager while building.
 
 #### `--port [number]`
 
-> default: process.env.RCT_METRO_PORT || 8081,
+> default: process.env.RCT_METRO_PORT || 8081
 
 #### `--terminal [string]`
 
 > default: process.env.REACT_TERMINAL || process.env.TERM_PROGRAM
 
 Launches the Metro Bundler in a new window using the specified terminal path.
+
+#### `--tasks [list]`
+
+> default: 'installDebug'
+
+Run custom gradle tasks. If this argument is provided, then `--variant` option is ignored.
+Example: `yarn react-native run-android --tasks clean,installDebug`.
 
 ### `run-ios`
 

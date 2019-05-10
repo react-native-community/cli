@@ -12,6 +12,8 @@ import {
 
 import {logger} from '@react-native-community/cli-tools';
 
+jest.mock('../resolveNodeModuleDir');
+
 const DIR = getTempDirectory('resolve_config_path_test');
 
 // Removes string from all key/values within an object

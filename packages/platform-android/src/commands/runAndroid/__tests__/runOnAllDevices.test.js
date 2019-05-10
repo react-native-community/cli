@@ -51,7 +51,7 @@ describe('--appFolder', () => {
 
   it('uses only task argument', () => {
     runOnAllDevices({
-      task: ['someTask'],
+      tasks: ['someTask'],
       variant: 'debug',
     });
 
@@ -61,7 +61,7 @@ describe('--appFolder', () => {
   it('uses appFolder and custom task argument', () => {
     runOnAllDevices({
       appFolder: 'anotherApp',
-      task: ['someTask'],
+      tasks: ['someTask'],
       variant: 'debug',
     });
 
@@ -71,7 +71,7 @@ describe('--appFolder', () => {
   it('uses multiple tasks', () => {
     runOnAllDevices({
       appFolder: 'app',
-      task: ['clean', 'someTask'],
+      tasks: ['clean', 'someTask'],
     });
 
     expect(execFileSync.mock.calls[0][1]).toContain(

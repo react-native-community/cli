@@ -310,7 +310,7 @@ Do not launch packager while building.
 
 Launches the Metro Bundler in a new window using the specified terminal path.
 
-#### `--task [list]`
+#### `--tasks [list]`
 
 > default: 'installDebug'
 

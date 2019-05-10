@@ -15,7 +15,7 @@ import tryRunAdbReverse from './tryRunAdbReverse';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
 import type {FlagsT} from '.';
 
-function getTaskName(
+function getTaskNames(
   appFolder: string,
   commands: Array<string>,
 ): Array<string> {
@@ -37,7 +37,7 @@ function runOnAllDevices(
 ) {
   try {
     const task = args.task || ['install' + toPascalCase(args.variant)];
-    const gradleArgs = getTaskName(args.appFolder, task);
+    const gradleArgs = getTaskNames(args.appFolder, task);
 
     logger.info('Installing the app...');
     logger.debug(

@@ -31,7 +31,7 @@ function checkAndroid(root) {
 }
 
 export type FlagsT = {|
-  task?: string,
+  task?: Array<string>,
   root: string,
   variant: string,
   appFolder: string,
@@ -360,8 +360,9 @@ export default {
       default: getDefaultUserTerminal,
     },
     {
-      name: '--task [string]',
+      name: '--task [list]',
       description: 'Run custom Gradle task. By default it\'s "installDebug"',
+      parse: (val: string) => val.split(','),
     },
   ],
 };

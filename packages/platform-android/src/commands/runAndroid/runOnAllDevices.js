@@ -15,8 +15,13 @@ import tryRunAdbReverse from './tryRunAdbReverse';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
 import type {FlagsT} from '.';
 
-function getTaskName(appFolder, command) {
-  return appFolder ? `${appFolder}:${command}` : command;
+function getTaskName(
+  appFolder: string,
+  commands: Array<string>,
+): Array<string> {
+  return appFolder
+    ? commands.map(command => `${appFolder}:${command}`)
+    : commands;
 }
 
 function toPascalCase(value: string) {
@@ -31,8 +36,8 @@ function runOnAllDevices(
   adbPath: string,
 ) {
   try {
-    const task = args.task || 'install' + toPascalCase(args.variant);
-    const gradleArgs = [getTaskName(args.appFolder, task)];
+    const task = args.task || ['install' + toPascalCase(args.variant)];
+    const gradleArgs = getTaskName(args.appFolder, task);
 
     logger.info('Installing the app...');
     logger.debug(

@@ -310,11 +310,12 @@ Do not launch packager while building.
 
 Launches the Metro Bundler in a new window using the specified terminal path.
 
-#### `--task [string]`
+#### `--task [list]`
 
 > default: 'installDebug'
 
-Run custom Gradle task.
+Run custom gradle tasks. If this argument is provided, then `--variant` option is ignored.
+Example: `yarn react-native run-android --tasks clean,installDebug`.
 
 ### `run-ios`
 

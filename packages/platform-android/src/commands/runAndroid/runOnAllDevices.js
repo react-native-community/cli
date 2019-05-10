@@ -67,7 +67,7 @@ function createInstallError(error) {
 
   // Pass the error message from the command to stdout because we pipe it to
   // parent process so it's not visible
-  console.log(stderr);
+  logger.log(stderr);
 
   // Handle some common failures and make the errors more helpful
   if (stderr.includes('No connected devices')) {

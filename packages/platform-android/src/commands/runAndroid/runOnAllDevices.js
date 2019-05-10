@@ -7,103 +7,87 @@
  * @flow
  */
 
-import {spawnSync, execFileSync} from 'child_process';
-import {logger} from '@react-native-community/cli-tools';
+import chalk from 'chalk';
+import {execFileSync} from 'child_process';
+import {logger, CLIError} from '@react-native-community/cli-tools';
 import adb from './adb';
 import tryRunAdbReverse from './tryRunAdbReverse';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
+import type {FlagsT} from '.';
 
-function getCommand(appFolder, command) {
-  return appFolder ? `${appFolder}:${command}` : command;
+function getTaskNames(
+  appFolder: string,
+  commands: Array<string>,
+): Array<string> {
+  return appFolder
+    ? commands.map(command => `${appFolder}:${command}`)
+    : commands;
+}
+
+function toPascalCase(value: string) {
+  return value[0].toUpperCase() + value.slice(1);
 }
 
 function runOnAllDevices(
-  args: Object,
+  args: FlagsT,
   cmd: string,
   packageNameWithSuffix: string,
   packageName: string,
   adbPath: string,
 ) {
   try {
-    const gradleArgs = [];
+    const tasks = args.tasks || ['install' + toPascalCase(args.variant)];
+    const gradleArgs = getTaskNames(args.appFolder, tasks);
 
-    if (args.installDebug) {
-      gradleArgs.push(getCommand(args.appFolder, args.installDebug));
-    } else if (args.variant) {
-      gradleArgs.push(
-        `${getCommand(
-          args.appFolder,
-          'install',
-        )}${args.variant[0].toUpperCase()}${args.variant.slice(1)}`,
-      );
-    } else if (args.flavor) {
-      logger.warn('--flavor has been deprecated. Use --variant instead');
-      gradleArgs.push(
-        `${getCommand(
-          args.appFolder,
-          'install',
-        )}${args.flavor[0].toUpperCase()}${args.flavor.slice(1)}`,
-      );
-    } else {
-      gradleArgs.push(getCommand(args.appFolder, 'installDebug'));
-    }
-
-    logger.info(
-      `Building and installing the app on the device (cd android && ${cmd} ${gradleArgs.join(
-        ' ',
-      )})...`,
+    logger.info('Installing the app...');
+    logger.debug(
+      `Running command "cd android && ${cmd} ${gradleArgs.join(' ')}"`,
     );
 
-    execFileSync(cmd, gradleArgs, {
-      stdio: [process.stdin, process.stdout, process.stderr],
-    });
-  } catch (e) {
-    logger.error(
-      'Could not install the app on the device, read the error above for details.\n' +
-        'Make sure you have an Android emulator running or a device connected and have\n' +
-        'set up your Android development environment:\n' +
-        'https://facebook.github.io/react-native/docs/getting-started.html',
-    );
-    // stderr is automatically piped from the gradle process, so the user
-    // should see the error already, there is no need to do
-    // `logger.info(e.stderr)`
-    return Promise.reject(e);
+    execFileSync(cmd, gradleArgs, {stdio: ['inherit', 'inherit', 'pipe']});
+  } catch (error) {
+    throw createInstallError(error);
   }
   const devices = adb.getDevices(adbPath);
-  if (devices && devices.length > 0) {
-    devices.forEach(device => {
-      tryRunAdbReverse(args.port, device);
-      tryLaunchAppOnDevice(
-        device,
-        packageNameWithSuffix,
-        packageName,
-        adbPath,
-        args.mainActivity,
-      );
-    });
-  } else {
-    try {
-      // If we cannot execute based on adb devices output, fall back to
-      // shell am start
-      const fallbackAdbArgs = [
-        'shell',
-        'am',
-        'start',
-        '-n',
-        `${packageNameWithSuffix}/${packageName}.MainActivity`,
-      ];
-      logger.info(
-        `Starting the app (${adbPath} ${fallbackAdbArgs.join(' ')}...`,
-      );
-      spawnSync(adbPath, fallbackAdbArgs, {stdio: 'inherit'});
-    } catch (e) {
-      logger.error('adb invocation failed. Do you have adb in your PATH?');
-      // stderr is automatically piped from the gradle process, so the user
-      // should see the error already, there is no need to do
-      // `logger.info(e.stderr)`
-      return Promise.reject(e);
-    }
+
+  (devices.length > 0 ? devices : [undefined]).forEach(device => {
+    tryRunAdbReverse(args.port, device);
+    tryLaunchAppOnDevice(
+      device,
+      packageNameWithSuffix,
+      packageName,
+      adbPath,
+      args.mainActivity,
+    );
+  });
+}
+
+function createInstallError(error) {
+  const stderr = (error.stderr || '').toString();
+  const docs =
+    'https://facebook.github.io/react-native/docs/getting-started.html#android-development-environment';
+  let message = `Make sure you have the Android development environment set up: ${chalk.underline.dim(
+    docs,
+  )}`;
+
+  // Pass the error message from the command to stdout because we pipe it to
+  // parent process so it's not visible
+  logger.log(stderr);
+
+  // Handle some common failures and make the errors more helpful
+  if (stderr.includes('No connected devices')) {
+    message =
+      'Make sure you have an Android emulator running or a device connected';
+  } else if (
+    stderr.includes('licences have not been accepted') ||
+    stderr.includes('accept the SDK license')
+  ) {
+    message = `Please accept all necessary SDK licenses using SDK Manager: "${chalk.bold(
+      '$ANDROID_HOME/tools/bin/sdkmanager --licenses',
+    )}"`;
   }
+
+  return new CLIError(`Failed to install the app. ${message}.`, error);
 }
 
 export default runOnAllDevices;

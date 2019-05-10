@@ -21,8 +21,10 @@ describe('--appFolder', () => {
     jest.clearAllMocks();
   });
 
-  it('uses installDebug as default if no arguments', () => {
-    runOnAllDevices({});
+  it('uses task "install[Variant]" as default task', () => {
+    runOnAllDevices({
+      variant: 'debug',
+    });
 
     expect(execFileSync.mock.calls[0][1]).toContain('installDebug');
   });
@@ -30,59 +32,51 @@ describe('--appFolder', () => {
   it('uses appFolder and default variant', () => {
     runOnAllDevices({
       appFolder: 'someApp',
+      variant: 'debug',
     });
 
     expect(execFileSync.mock.calls[0][1]).toContain('someApp:installDebug');
   });
 
-  it('uses appFolder and variant', () => {
-    runOnAllDevices({
-      appFolder: 'app',
-      variant: 'debug',
-    });
-
-    expect(execFileSync.mock.calls[0][1]).toContain('app:installDebug');
-
-    runOnAllDevices({
-      appFolder: 'anotherApp',
-      variant: 'debug',
-    });
-
-    expect(execFileSync.mock.calls[1][1]).toContain('anotherApp:installDebug');
-
+  it('uses appFolder and custom variant', () => {
     runOnAllDevices({
       appFolder: 'anotherApp',
       variant: 'staging',
     });
 
-    expect(execFileSync.mock.calls[2][1]).toContain(
+    expect(execFileSync.mock.calls[0][1]).toContain(
       'anotherApp:installStaging',
     );
   });
 
-  it('uses appFolder and flavor', () => {
+  it('uses only task argument', () => {
     runOnAllDevices({
-      appFolder: 'app',
-      flavor: 'someFlavor',
+      tasks: ['someTask'],
+      variant: 'debug',
     });
 
-    expect(execFileSync.mock.calls[0][1]).toContain('app:installSomeFlavor');
+    expect(execFileSync.mock.calls[0][1]).toContain('someTask');
   });
 
-  it('uses only installDebug argument', () => {
-    runOnAllDevices({
-      installDebug: 'someCommand',
-    });
-
-    expect(execFileSync.mock.calls[0][1]).toContain('someCommand');
-  });
-
-  it('uses appFolder and custom installDebug argument', () => {
+  it('uses appFolder and custom task argument', () => {
     runOnAllDevices({
       appFolder: 'anotherApp',
-      installDebug: 'someCommand',
+      tasks: ['someTask'],
+      variant: 'debug',
     });
 
-    expect(execFileSync.mock.calls[0][1]).toContain('anotherApp:someCommand');
+    expect(execFileSync.mock.calls[0][1]).toContain('anotherApp:someTask');
+  });
+
+  it('uses multiple tasks', () => {
+    runOnAllDevices({
+      appFolder: 'app',
+      tasks: ['clean', 'someTask'],
+    });
+
+    expect(execFileSync.mock.calls[0][1]).toContain(
+      'app:clean',
+      'app:someTask',
+    );
   });
 });

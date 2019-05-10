@@ -30,10 +30,24 @@ function checkAndroid(root) {
   return fs.existsSync(path.join(root, 'android/gradlew'));
 }
 
+export type FlagsT = {|
+  tasks?: Array<string>,
+  root: string,
+  variant: string,
+  appFolder: string,
+  appId: string,
+  appIdSuffix: string,
+  mainActivity: string,
+  deviceId?: string,
+  packager: boolean,
+  port: number,
+  terminal: string,
+|};
+
 /**
  * Starts the app on a connected Android emulator or device.
  */
-function runAndroid(argv: Array<string>, ctx: ConfigT, args: Object) {
+function runAndroid(argv: Array<string>, config: ConfigT, args: FlagsT) {
   if (!checkAndroid(args.root)) {
     logger.error(
       'Android project not found. Are you sure this is a React Native project?',
@@ -53,7 +67,7 @@ function runAndroid(argv: Array<string>, ctx: ConfigT, args: Object) {
     } else {
       // result == 'not_running'
       logger.info('Starting JS server...');
-      startServerInNewWindow(args.port, args.terminal, ctx.reactNativePath);
+      startServerInNewWindow(args.port, args.terminal, config.reactNativePath);
     }
     return buildAndRun(args);
   });
@@ -90,16 +104,13 @@ function buildAndRun(args) {
 
   const adbPath = getAdbPath();
   if (args.deviceId) {
-    if (typeof args.deviceId === 'string') {
-      return runOnSpecificDevice(
-        args,
-        cmd,
-        packageNameWithSuffix,
-        packageName,
-        adbPath,
-      );
-    }
-    logger.error('Argument missing for parameter --deviceId');
+    return runOnSpecificDevice(
+      args,
+      cmd,
+      packageNameWithSuffix,
+      packageName,
+      adbPath,
+    );
   } else {
     return runOnAllDevices(
       args,
@@ -119,21 +130,20 @@ function runOnSpecificDevice(
   adbPath,
 ) {
   const devices = adb.getDevices(adbPath);
-  if (devices && devices.length > 0) {
-    if (devices.indexOf(args.deviceId) !== -1) {
+  const {deviceId} = args;
+  if (devices.length > 0 && deviceId) {
+    if (devices.indexOf(deviceId) !== -1) {
       buildApk(gradlew);
       installAndLaunchOnDevice(
         args,
-        args.deviceId,
+        deviceId,
         packageNameWithSuffix,
         packageName,
         adbPath,
       );
     } else {
       logger.error(
-        `Could not find device with the id: "${
-          args.deviceId
-        }". Choose one of the following:`,
+        `Could not find device with the id: "${deviceId}". Please choose one of the following:`,
         ...devices,
       );
     }
@@ -144,17 +154,13 @@ function runOnSpecificDevice(
 
 function buildApk(gradlew) {
   try {
-    logger.info('Building the app...');
-
     // using '-x lint' in order to ignore linting errors while building the apk
-    execFileSync(gradlew, ['build', '-x', 'lint'], {
-      stdio: [process.stdin, process.stdout, process.stderr],
-    });
+    const gradleArgs = ['build', '-x', 'lint'];
+    logger.info('Building the app...');
+    logger.debug(`Running command "${gradlew} ${gradleArgs.join(' ')}"`);
+    execFileSync(gradlew, gradleArgs, {stdio: 'inherit'});
   } catch (error) {
-    throw new CLIError(
-      'Could not build the app, read the error above for details',
-      error,
-    );
+    throw new CLIError('Failed to build the app.', error);
   }
 }
 
@@ -174,18 +180,13 @@ function tryInstallAppOnDevice(args, adbPath, device) {
 
     const pathToApk = `${buildDirectory}/${apkFile}`;
     const adbArgs = ['-s', device, 'install', '-r', '-d', pathToApk];
-    logger.info(
-      `Installing the app on the device (cd android && adb -s ${device} install -r -d ${pathToApk}`,
+    logger.info(`Installing the app on the device "${device}"...`);
+    logger.debug(
+      `Running command "cd android && adb -s ${device} install -r -d ${pathToApk}"`,
     );
-    execFileSync(adbPath, adbArgs, {
-      stdio: [process.stdin, process.stdout, process.stderr],
-    });
-  } catch (e) {
-    logger.error(
-      `${
-        e.message
-      }\nCould not install the app on the device, read the error above for details.`,
-    );
+    execFileSync(adbPath, adbArgs, {stdio: 'inherit'});
+  } catch (error) {
+    throw new CLIError('Failed to install the app on the device.', error);
   }
 }
 
@@ -306,20 +307,14 @@ export default {
   func: runAndroid,
   options: [
     {
-      name: '--install-debug',
-    },
-    {
       name: '--root [string]',
       description:
         'Override the root directory for the android build (which contains the android directory)',
       default: '',
     },
     {
-      name: '--flavor [string]',
-      description: '--flavor has been deprecated. Use --variant instead',
-    },
-    {
       name: '--variant [string]',
+      description: "Specify your app's build variant",
       default: 'debug',
     },
     {
@@ -363,6 +358,11 @@ export default {
       description:
         'Launches the Metro Bundler in a new window using the specified terminal path.',
       default: getDefaultUserTerminal,
+    },
+    {
+      name: '--tasks [list]',
+      description: 'Run custom Gradle tasks. By default it\'s "installDebug"',
+      parse: (val: string) => val.split(','),
     },
   ],
 };

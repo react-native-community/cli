@@ -23,7 +23,7 @@ async function installPods({
 
     try {
       await commandExists('pod');
-    } catch (err) {
+    } catch (e) {
       loader.stop();
 
       const {shouldInstallCocoaPods} = await inquirer.prompt([
@@ -42,7 +42,7 @@ async function installPods({
           try {
             // If that doesn't work then try with sudo
             await execa('sudo', ['gem', 'install', 'cocoapods']);
-          } catch (err) {
+          } catch (error) {
             throw new Error(
               `Error occured while trying to install CocoaPods, which is required by this template.\nPlease try again manually: "sudo gem install cocoapods".\nCocoaPods documentation: ${chalk.dim.underline(
                 'https://cocoapods.org/',

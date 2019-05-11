@@ -228,7 +228,7 @@ export default (async function initialize(
   try {
     await createProject(projectName, options, version);
 
-    await printRunInstructions(process.cwd(), projectName);
+    printRunInstructions(process.cwd(), projectName);
   } catch (e) {
     logger.error(e.message);
     fs.removeSync(projectName);

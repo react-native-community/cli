@@ -3,6 +3,7 @@ import execa from 'execa';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
 import commandExists from 'command-exists';
+import {logger} from '@react-native-community/cli-tools';
 
 async function installPods({
   projectName,

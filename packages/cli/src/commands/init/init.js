@@ -2,12 +2,9 @@
 import os from 'os';
 import path from 'path';
 import fs from 'fs-extra';
-import execa from 'execa';
 import Ora from 'ora';
 import minimist from 'minimist';
 import semver from 'semver';
-import inquirer from 'inquirer';
-import commandExists from 'command-exists';
 import type {ConfigT} from 'types';
 import {validateProjectName} from './validate';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
@@ -21,10 +18,10 @@ import {
 } from './template';
 import {changePlaceholderInTemplate} from './editTemplate';
 import * as PackageManager from '../../tools/packageManager';
+import installPods from '../../tools/installPods';
 import {processTemplateName} from './templateName';
 import banner from './banner';
 import {getLoader} from '../../tools/loader';
-import {CLIError} from '@react-native-community/cli-tools/build/errors';
 
 type Options = {|
   template?: string,
@@ -98,7 +95,7 @@ async function createFromTemplate({
       loader.succeed();
     }
 
-    await installDependencies({npm, loader});
+    await installDependencies({projectName, npm, loader});
   } catch (e) {
     loader.fail();
     throw new Error(e);
@@ -107,68 +104,12 @@ async function createFromTemplate({
   }
 }
 
-async function installPods(loader: typeof Ora) {
-  process.chdir('ios');
-
-  const hasPods = await fs.pathExists('Podfile');
-
-  if (!hasPods) {
-    return;
-  }
-
-  try {
-    await commandExists('pod');
-  } catch (err) {
-    loader.succeed();
-
-    const {shouldInstallCocoaPods} = await inquirer.prompt([
-      {
-        type: 'confirm',
-        name: 'shouldInstallCocoaPods',
-        message: 'CocoaPods is not installed, do you want to install it?',
-      },
-    ]);
-
-    if (shouldInstallCocoaPods) {
-      try {
-        // First attempt to install `cocoapods`
-        await execa('gem', ['install', 'cocoapods'], {
-          stdio: 'pipe',
-        });
-      } catch (err) {
-        try {
-          // If that doesn't work then try with sudo
-          await execa('sudo', ['gem', 'install', 'cocoapods'], {
-            stdio: 'pipe',
-          });
-        } catch (err) {
-          throw new CLIError(
-            'Error occurred while trying to install CocoaPods, please run this command again.',
-            err,
-          );
-        }
-      }
-
-      loader.start('Installing pods');
-    }
-  }
-
-  try {
-    await execa('pod', ['install'], {
-      stdio: 'pipe',
-    });
-  } catch (err) {
-    throw new CLIError(
-      'Failed to run "pod install", please try to run it manually.',
-      err,
-    );
-  }
-}
-
 async function installDependencies({
+  projectName,
   npm,
   loader,
 }: {
+  projectName: string,
   npm?: boolean,
   loader: typeof Ora,
 }) {
@@ -180,9 +121,7 @@ async function installDependencies({
   });
 
   if (process.platform === 'darwin') {
-    await installPods(loader);
-
-    process.chdir('..');
+    await installPods({projectName, loader});
   }
 
   loader.succeed();

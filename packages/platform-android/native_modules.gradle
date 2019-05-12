@@ -54,8 +54,7 @@ class ReactNativeModules {
   private ArrayList<HashMap<String, String>> reactNativeModules
 
   private static String LOG_PREFIX = ":ReactNative:"
-  private static String REACT_NATIVE_CLI_BIN = "node_modules${File.separator}@react-native-community${File.separator}cli${File.separator}build${File.separator}index.js"
-  private static String REACT_NATIVE_CONFIG_CMD = "node ${REACT_NATIVE_CLI_BIN} config"
+  private static String REACT_NATIVE_CONFIG_CMD = "node ./node_modules/.bin/react-native config"
 
   ReactNativeModules(Logger logger) {
     this.logger = logger

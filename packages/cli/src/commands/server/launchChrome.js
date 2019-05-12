@@ -8,7 +8,7 @@
  * @flow
  */
 
-import opn from 'opn';
+import open from 'open';
 import {execSync} from 'child_process';
 import {logger} from '@react-native-community/cli-tools';
 
@@ -45,7 +45,7 @@ function getChromeAppName(): string {
 }
 
 function launchChrome(url: string) {
-  opn(url, {app: [getChromeAppName()]}, err => {
+  open(url, {app: [getChromeAppName()]}, err => {
     if (err) {
       logger.error('Google Chrome exited with error:', err);
     }

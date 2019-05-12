@@ -5,6 +5,8 @@ import fs from 'fs-extra';
 import Ora from 'ora';
 import minimist from 'minimist';
 import semver from 'semver';
+import inquirer from 'inquirer';
+import mkdirp from 'mkdirp';
 import type {ConfigT} from 'types';
 import {validateProjectName} from './validate';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
@@ -22,21 +24,12 @@ import installPods from '../../tools/installPods';
 import {processTemplateName} from './templateName';
 import banner from './banner';
 import {getLoader} from '../../tools/loader';
+import {CLIError} from '@react-native-community/cli-tools';
 
 type Options = {|
   template?: string,
   npm?: boolean,
 |};
-
-function getProjectPath({
-  projectName,
-  customProjectPath = '',
-}: {
-  projectName: string,
-  customProjectPath: string,
-}) {
-  return path.join(customProjectPath, projectName);
-}
 
 function adjustNameIfUrl(name, cwd) {
   // We use package manager to infer the name of the template module for us.
@@ -137,18 +130,41 @@ async function installDependencies({
   loader.succeed();
 }
 
-function createProject(
-  projectPath: string,
+async function createProject(
+  customProjectPath: string,
   projectName: string,
   options: Options,
   version: string,
 ) {
+  const projectPath =
+    customProjectPath || path.relative(process.cwd(), projectName);
+  const projectPathExists = await fs.pathExists(projectPath);
+
+  if (projectPathExists) {
+    const {shouldReplaceProjectPath} = await inquirer.prompt([
+      {
+        type: 'confirm',
+        name: 'shouldReplaceProjectPath',
+        message: `Directory "${projectPath}" already exists, do you want to replace it?`,
+      },
+    ]);
+
+    if (!shouldReplaceProjectPath) {
+      throw new DirectoryAlreadyExistsError(projectPath);
+    }
+
+    await fs.emptyDir(projectPath);
+  }
+
   try {
-    fs.mkdirSync(projectPath, {recursive: true});
+    mkdirp.sync(projectPath);
     process.chdir(projectPath);
-  } catch (err) {
-    throw new Error(
-      'Cannot initialize new project because custom project directory does not exist.',
+  } catch (error) {
+    throw new CLIError(
+      `Error occurred while trying to ${
+        projectPathExists ? 'replace' : 'create'
+      } project directory.`,
+      error,
     );
   }
 
@@ -181,14 +197,8 @@ export default (async function initialize(
    */
   const version: string = minimist(process.argv).version || 'latest';
 
-  const projectPath = getProjectPath({projectName, customProjectPath});
-
-  if (fs.existsSync(projectPath)) {
-    throw new DirectoryAlreadyExistsError(projectName);
-  }
-
   try {
-    await createProject(projectPath, projectName, options, version);
+    await createProject(customProjectPath, projectName, options, version);
 
     printRunInstructions(process.cwd(), projectName);
   } catch (e) {

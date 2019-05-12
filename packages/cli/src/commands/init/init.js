@@ -2,6 +2,7 @@
 import os from 'os';
 import path from 'path';
 import fs from 'fs-extra';
+import Ora from 'ora';
 import minimist from 'minimist';
 import semver from 'semver';
 import type {ConfigT} from 'types';
@@ -17,6 +18,7 @@ import {
 } from './template';
 import {changePlaceholderInTemplate} from './editTemplate';
 import * as PackageManager from '../../tools/packageManager';
+import installPods from '../../tools/installPods';
 import {processTemplateName} from './templateName';
 import banner from './banner';
 import {getLoader} from '../../tools/loader';
@@ -93,15 +95,36 @@ async function createFromTemplate({
       loader.succeed();
     }
 
-    loader.start('Installing all required dependencies');
-    await PackageManager.installAll({preferYarn: !npm, silent: true});
-    loader.succeed();
+    await installDependencies({projectName, npm, loader});
   } catch (e) {
     loader.fail();
     throw new Error(e);
   } finally {
     fs.removeSync(templateSourceDir);
   }
+}
+
+async function installDependencies({
+  projectName,
+  npm,
+  loader,
+}: {
+  projectName: string,
+  npm?: boolean,
+  loader: typeof Ora,
+}) {
+  loader.start('Installing all required dependencies');
+
+  await PackageManager.installAll({
+    preferYarn: !npm,
+    silent: true,
+  });
+
+  if (process.platform === 'darwin') {
+    await installPods({projectName, loader});
+  }
+
+  loader.succeed();
 }
 
 function createProject(projectName: string, options: Options, version: string) {

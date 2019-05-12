@@ -27,6 +27,7 @@
     "@react-native-community/cli-platform-ios": "^2.0.0-alpha.18",
     "@react-native-community/cli-tools": "^2.0.0-alpha.18",
     "chalk": "^1.1.1",
+    "command-exists": "^1.2.8",
     "commander": "^2.19.0",
     "compression": "^1.7.1",
     "connect": "^3.6.5",

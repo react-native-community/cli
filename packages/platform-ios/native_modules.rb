@@ -11,7 +11,7 @@ def use_native_modules!(root = "..", packages = nil)
       # Check if project uses Yarn
       Pod::Executable.execute_command("node", ["-e", "console.log(require.resolve('#{root}/yarn.lock'))"], true)
       command = "yarn"
-      args = ["run", "react-native", "config"]
+      args = ["run", "--silent", "react-native", "config"]
     rescue
     end
 
@@ -24,9 +24,6 @@ def use_native_modules!(root = "..", packages = nil)
     json = []
     output.each_line do |line|
       case line
-      when /^yarn run/
-      when /^\$/
-      when /^Done/
       when /^warn\s(.+)/
         Pod::UI.warn($1)
       when /^(success|info|error|debug)\s(.+)/

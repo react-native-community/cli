@@ -164,6 +164,23 @@ class ReactNativeModules {
   }
 
   /**
+   * Given a command string output, filter out non-json parts that may
+   * come from the package manager running the command.
+   *
+   * @param commandOutput
+   * @return string
+   */
+  String getCommandJsonOutput(String commandOutput) {
+    def output = []
+    commandOutput.readLines().forEach { line ->
+        if (line.startsWith("{") || line.startsWith("}") || line.startsWith(" ")) {
+            output.add(line)
+        }
+    }
+    return String.join("\n", output)
+  }
+
+  /**
    * Runs a process to call the React Native CLI Config command and parses the output
    *
    * @return ArrayList < HashMap < String , String > >
@@ -191,8 +208,7 @@ class ReactNativeModules {
       return reactNativeModules
     }
 
-    def reactNativeConfigOutput = cmdProcess.in.text
-    // TODO: filter out "warn ...", "yarn run ..." "$ ..." "Done in ..." from reactNativeConfigOutput that are output by Yarn
+    def reactNativeConfigOutput = getCommandJsonOutput(cmdProcess.in.text)
     def json = new JsonSlurper().parseText(reactNativeConfigOutput)
     def dependencies = json["dependencies"]
 

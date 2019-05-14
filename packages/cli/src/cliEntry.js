@@ -19,6 +19,7 @@ import init from './commands/init/initCompat';
 import assertRequiredOptions from './tools/assertRequiredOptions';
 import {logger} from '@react-native-community/cli-tools';
 import {setProjectDir} from './tools/packageManager';
+import resolveNodeModuleDir from './tools/config/resolveNodeModuleDir';
 import getLatestRelease from './tools/releaseChecker/getLatestRelease';
 import printNewRelease from './tools/releaseChecker/printNewRelease';
 import pkgJson from '../package.json';
@@ -174,8 +175,8 @@ async function setupAndRun() {
     // New version check must occur before `commander.parse` to ensure that
     // the message of a new release happens before anything else.
     const {version: currentVersion} = require(path.join(
-      ctx.root,
-      'node_modules/react-native/package.json',
+      resolveNodeModuleDir(ctx.root, 'react-native'),
+      'package.json',
     ));
     const latestRelease = await getLatestRelease(currentVersion);
 

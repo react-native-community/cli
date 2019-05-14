@@ -47,6 +47,7 @@ export default (async function(currentVersion: string) {
     logger.debug(
       'Something went wrong with remote version checking, moving on',
     );
+    logger.debug(e);
   }
 });
 

@@ -23,6 +23,7 @@
     "testEnvironment": "node"
   },
   "dependencies": {
+    "@hapi/joi": "^15.0.3",
     "@react-native-community/cli-platform-android": "^2.0.0-alpha.19",
     "@react-native-community/cli-platform-ios": "^2.0.0-alpha.19",
     "@react-native-community/cli-tools": "^2.0.0-alpha.19",
@@ -40,7 +41,6 @@
     "glob": "^7.1.1",
     "graceful-fs": "^4.1.3",
     "inquirer": "^3.0.6",
-    "joi": "^14.3.1",
     "lodash": "^4.17.5",
     "metro": "^0.53.1",
     "metro-config": "^0.53.1",

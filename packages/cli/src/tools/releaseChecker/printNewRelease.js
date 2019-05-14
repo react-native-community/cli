@@ -9,7 +9,10 @@ import cacheManager from './releaseCacheManager';
 /**
  * Notifies the user that a newer version of React Native is available.
  */
-export default function(latestRelease: Release, currentVersion: string) {
+export default function printNewRelease(
+  latestRelease: Release,
+  currentVersion: string,
+) {
   const aWeek = 7 * 24 * 60 * 60 * 1000;
 
   const lastChecked = cacheManager.get('lastChecked');

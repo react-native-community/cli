@@ -110,16 +110,18 @@ const addCommand = (command: CommandT, ctx: ConfigT) => {
   const cmd = commander
     .command(command.name)
     .description(command.description)
-    .action(function handleAction(...args) {
+    .action(async function handleAction(...args) {
       const passedOptions = this.opts();
       const argv: Array<string> = Array.from(args).slice(0, -1);
 
-      Promise.resolve()
-        .then(() => {
-          assertRequiredOptions(options, passedOptions);
-          return command.func(argv, ctx, passedOptions);
-        })
-        .catch(handleError);
+      try {
+        assertRequiredOptions(options, passedOptions);
+        await command.func(argv, ctx, passedOptions);
+      } catch (error) {
+        handleError(error);
+      } finally {
+        checkForNewRelease();
+      }
     });
 
   cmd.helpInformation = printHelpInformation.bind(
@@ -142,7 +144,6 @@ const addCommand = (command: CommandT, ctx: ConfigT) => {
 async function run() {
   try {
     await setupAndRun();
-    checkForNewRelease();
   } catch (e) {
     handleError(e);
   }

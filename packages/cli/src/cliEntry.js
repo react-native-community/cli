@@ -142,6 +142,7 @@ const addCommand = (command: CommandT, ctx: ConfigT) => {
 async function run() {
   try {
     await setupAndRun();
+    checkForNewRelease();
   } catch (e) {
     handleError(e);
   }
@@ -171,27 +172,6 @@ async function setupAndRun() {
 
   setProjectDir(ctx.root);
 
-  try {
-    // New version check must occur before `commander.parse` to ensure that
-    // the message of a new release happens before anything else.
-    const {version: currentVersion} = require(path.join(
-      resolveNodeModuleDir(ctx.root, 'react-native'),
-      'package.json',
-    ));
-    const latestRelease = await getLatestRelease(currentVersion);
-
-    if (latestRelease) {
-      printNewRelease(latestRelease, currentVersion);
-    }
-  } catch (_ignored) {
-    // We let the flow continue as this component is not vital for the rest of
-    // the CLI.
-    logger.debug(
-      'Cannot detect current version of React Native, ' +
-        'skipping check for a newer release',
-    );
-  }
-
   [...commands, ...ctx.commands].forEach(command => addCommand(command, ctx));
 
   commander.parse(process.argv);
@@ -208,6 +188,29 @@ async function setupAndRun() {
   }
 
   logger.setVerbose(commander.verbose);
+}
+
+async function checkForNewRelease() {
+  try {
+    const ctx = loadConfig();
+    const {version: currentVersion} = require(path.join(
+      resolveNodeModuleDir(ctx.root, 'react-native'),
+      'package.json',
+    ));
+    const latestRelease = await getLatestRelease(currentVersion);
+
+    if (latestRelease) {
+      printNewRelease(latestRelease, currentVersion);
+    }
+  } catch (e) {
+    // We let the flow continue as this component is not vital for the rest of
+    // the CLI.
+    logger.debug(
+      'Cannot detect current version of React Native, ' +
+        'skipping check for a newer release',
+    );
+    logger.debug(e);
+  }
 }
 
 export default {

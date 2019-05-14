@@ -54,8 +54,8 @@ class ReactNativeModules {
   private ArrayList<HashMap<String, String>> reactNativeModules
 
   private static String LOG_PREFIX = ":ReactNative:"
-  private static String REACT_NATIVE_CLI_BIN = "node_modules${File.separator}@react-native-community${File.separator}cli${File.separator}build${File.separator}index.js"
-  private static String REACT_NATIVE_CONFIG_CMD = "node ${REACT_NATIVE_CLI_BIN} config"
+  private static String REACT_NATIVE_CONFIG_CMD = "yarn run --silent react-native config"
+  private static String REACT_NATIVE_CONFIG_CMD_FALLBACK = "node ./node_modules/.bin/react-native config"
 
   ReactNativeModules(Logger logger) {
     this.logger = logger
@@ -173,9 +173,17 @@ class ReactNativeModules {
     ArrayList<HashMap<String, String>> reactNativeModules = new ArrayList<HashMap<String, String>>()
 
     def cmdProcess
+    def root = getReactNativeProjectRoot()
+    def command = REACT_NATIVE_CONFIG_CMD_FALLBACK
 
     try {
-      cmdProcess = Runtime.getRuntime().exec(REACT_NATIVE_CONFIG_CMD, null, getReactNativeProjectRoot())
+      try {
+        // Check if project uses Yarn
+        def isYarnProject = Runtime.getRuntime().exec("node -e console.log(require.resolve('./yarn.lock'))", null, root)
+        isYarnProject.waitFor()
+        command = REACT_NATIVE_CONFIG_CMD
+      } catch(Exception exception) {}
+      cmdProcess = Runtime.getRuntime().exec(command, null, root)
       cmdProcess.waitFor()
     } catch (Exception exception) {
       this.logger.warn("${LOG_PREFIX}${exception.message}")

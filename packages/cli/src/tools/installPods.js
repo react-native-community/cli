@@ -7,6 +7,8 @@ import inquirer from 'inquirer';
 import commandExists from 'command-exists';
 import {logger} from '@react-native-community/cli-tools';
 
+const COCOAPODS_INSTALLATION_TIMEOUT = 30000;
+
 async function installPods({
   projectName,
   loader,
@@ -43,6 +45,12 @@ async function installPods({
       ]);
 
       if (shouldInstallCocoaPods) {
+        // Show a helpful notice when installation takes more than usually
+        const cocoaPodsInstallationTimeMessage = setTimeout(
+          () =>
+            logger.info('Installing CocoaPods, this may take a few minutes'),
+          COCOAPODS_INSTALLATION_TIMEOUT,
+        );
         try {
           // First attempt to install `cocoapods`
           await execa('gem', ['install', 'cocoapods']);
@@ -59,6 +67,8 @@ async function installPods({
               )}`,
             );
           }
+        } finally {
+          clearTimeout(cocoaPodsInstallationTimeMessage);
         }
 
         // This only shows when `CocoaPods` is automatically installed,

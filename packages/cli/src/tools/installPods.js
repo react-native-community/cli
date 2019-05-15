@@ -12,7 +12,7 @@ async function installPods({
   loader,
 }: {
   projectName: string,
-  loader: typeof Ora,
+  loader?: typeof Ora,
 }) {
   try {
     process.chdir('ios');
@@ -26,7 +26,9 @@ async function installPods({
     try {
       await commandExists('pod');
     } catch (e) {
-      loader.stop();
+      if (loader) {
+        loader.stop();
+      }
 
       const {shouldInstallCocoaPods} = await inquirer.prompt([
         {
@@ -61,7 +63,9 @@ async function installPods({
 
         // This only shows when `CocoaPods` is automatically installed,
         // if it's already installed then we just show the `Installing dependencies` step
-        loader.start('Installing CocoaPods dependencies');
+        if (loader) {
+          loader.start('Installing CocoaPods dependencies');
+        }
       }
     }
 

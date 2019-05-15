@@ -30,7 +30,7 @@ const getBlacklistRE = () => createBlacklist([/.*\/__fixtures__\/.*/]);
  * @todo(grabbou): As a separate PR, haste.platforms should be added before "native".
  * Otherwise, a.native.js will not load on Windows or other platforms
  */
-export const getDefaultConfig = (ctx: ConfigT, options?: ConfigOptionsT) => {
+export const getDefaultConfig = (ctx: ConfigT) => {
   return {
     resolver: {
       resolverMainFields: ['react-native', 'browser', 'main'],
@@ -61,7 +61,6 @@ export const getDefaultConfig = (ctx: ConfigT, options?: ConfigOptionsT) => {
       ),
     },
     watchFolders: getWatchFolders(),
-    ...(options && options.reporter ? {reporter: options.reporter} : {}),
   };
 };
 
@@ -82,6 +81,19 @@ export type ConfigOptionsT = {|
  * This allows the CLI to always overwrite the file settings.
  */
 export default function load(ctx: ConfigT, options?: ConfigOptionsT) {
-  const defaultConfig = getDefaultConfig(ctx, options);
+  const defaultConfig = getDefaultConfig(ctx);
+  if (options && options.reporter) {
+    /**
+     * $FlowIssue: Metro doesn't accept `reporter` to be passed along other options
+     * and will ignore the value, if provided.
+     *
+     * We explicitly read `reporter` value and set it on a default configuration. Note
+     * that all other options described in the `ConfigOptionsT` are handled by Metro
+     * automatically.
+     *
+     * This is a temporary workaround.
+     */
+    defaultConfig.reporter = options.reporter;
+  }
   return loadConfig({cwd: ctx.root, ...options}, defaultConfig);
 }

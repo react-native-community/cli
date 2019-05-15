@@ -40,14 +40,24 @@ async function installPods({
         },
       ]);
 
+      // This is only shown if it takes more than 30 seconds for the CocoaPods installation to finish
+      const cocoaPodsInstallationTimeMessage = setTimeout(
+        () => logger.info('Installing CocoaPods, this may take a few minutes'),
+        30000,
+      );
+
       if (shouldInstallCocoaPods) {
         try {
           // First attempt to install `cocoapods`
           await execa('gem', ['install', 'cocoapods']);
+
+          clearTimeout(cocoaPodsInstallationTimeMessage);
         } catch (_error) {
           try {
             // If that doesn't work then try with sudo
             await execa('sudo', ['gem', 'install', 'cocoapods']);
+
+            clearTimeout(cocoaPodsInstallationTimeMessage);
           } catch (error) {
             logger.log(error.stderr);
 

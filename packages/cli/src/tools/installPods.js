@@ -32,7 +32,11 @@ async function installPods({
         {
           type: 'confirm',
           name: 'shouldInstallCocoaPods',
-          message: 'CocoaPods is not installed, do you want to install it?',
+          message: `CocoaPods ${chalk.dim.underline(
+            '(https://cocoapods.org/)',
+          )} ${chalk.reset.bold(
+            "is not installed. It's necessary for iOS project to run correctly. Do you want to install it?",
+          )}`,
         },
       ]);
 

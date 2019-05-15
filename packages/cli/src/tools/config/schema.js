@@ -1,7 +1,7 @@
 /**
  * @flow
  */
-import t from 'joi';
+import t from '@hapi/joi';
 
 const map = (key, value) =>
   t

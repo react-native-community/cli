@@ -3,7 +3,7 @@
  *
  * Loads and validates a project configuration
  */
-import Joi from 'joi';
+import Joi from '@hapi/joi';
 import cosmiconfig from 'cosmiconfig';
 import path from 'path';
 import chalk from 'chalk';

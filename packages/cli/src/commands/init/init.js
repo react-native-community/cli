@@ -31,6 +31,40 @@ type Options = {|
   npm?: boolean,
 |};
 
+async function setProjectDirectory({projectName, directory}) {
+  const projectDirectory =
+    directory || path.relative(process.cwd(), projectName);
+  const projectDirectoryExists = await fs.pathExists(projectDirectory);
+
+  if (projectDirectoryExists) {
+    const {shouldReplaceprojectDirectory} = await inquirer.prompt([
+      {
+        type: 'confirm',
+        name: 'shouldReplaceprojectDirectory',
+        message: `Directory "${projectDirectory}" already exists, do you want to replace it?`,
+      },
+    ]);
+
+    if (!shouldReplaceprojectDirectory) {
+      throw new DirectoryAlreadyExistsError(projectDirectory);
+    }
+
+    await fs.emptyDir(projectDirectory);
+  }
+
+  try {
+    mkdirp.sync(projectDirectory);
+    process.chdir(projectDirectory);
+  } catch (error) {
+    throw new CLIError(
+      `Error occurred while trying to ${
+        projectDirectoryExists ? 'replace' : 'create'
+      } project directory.`,
+      error,
+    );
+  }
+}
+
 function adjustNameIfUrl(name, cwd) {
   // We use package manager to infer the name of the template module for us.
   // That's why we get it from temporary package.json, where the name is the
@@ -49,14 +83,19 @@ async function createFromTemplate({
   templateName,
   version,
   npm,
+  directory,
 }: {
   projectName: string,
   templateName: string,
   version?: string,
   npm?: boolean,
+  directory?: string,
 }) {
   logger.debug('Initializing new project');
   logger.log(banner);
+
+  await setProjectDirectory({projectName, directory});
+
   const Loader = getLoader();
   const loader = new Loader({text: 'Downloading template'});
   const templateSourceDir = fs.mkdtempSync(
@@ -131,48 +170,16 @@ async function installDependencies({
 }
 
 async function createProject(
-  customProjectPath: string,
   projectName: string,
   options: Options,
   version: string,
 ) {
-  const projectPath =
-    customProjectPath || path.relative(process.cwd(), projectName);
-  const projectPathExists = await fs.pathExists(projectPath);
-
-  if (projectPathExists) {
-    const {shouldReplaceProjectPath} = await inquirer.prompt([
-      {
-        type: 'confirm',
-        name: 'shouldReplaceProjectPath',
-        message: `Directory "${projectPath}" already exists, do you want to replace it?`,
-      },
-    ]);
-
-    if (!shouldReplaceProjectPath) {
-      throw new DirectoryAlreadyExistsError(projectPath);
-    }
-
-    await fs.emptyDir(projectPath);
-  }
-
-  try {
-    mkdirp.sync(projectPath);
-    process.chdir(projectPath);
-  } catch (error) {
-    throw new CLIError(
-      `Error occurred while trying to ${
-        projectPathExists ? 'replace' : 'create'
-      } project directory.`,
-      error,
-    );
-  }
-
   if (options.template) {
     return createFromTemplate({
       projectName,
       templateName: options.template,
       npm: options.npm,
+      directory: options.directory,
     });
   }
 
@@ -181,11 +188,12 @@ async function createProject(
     templateName: 'react-native',
     version,
     npm: options.npm,
+    directory: options.directory,
   });
 }
 
 export default (async function initialize(
-  [projectName, customProjectPath]: Array<string>,
+  [projectName]: Array<string>,
   _context: ConfigT,
   options: Options,
 ) {
@@ -198,7 +206,7 @@ export default (async function initialize(
   const version: string = minimist(process.argv).version || 'latest';
 
   try {
-    await createProject(customProjectPath, projectName, options, version);
+    await createProject(projectName, options, version);
 
     printRunInstructions(process.cwd(), projectName);
   } catch (e) {

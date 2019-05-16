@@ -1,7 +1,6 @@
 // @flow
 import fs from 'fs';
 import path from 'path';
-import inquirer from 'inquirer';
 import {run, getTempDirectory, cleanup, writeFiles} from '../jest/helpers';
 
 const DIR = getTempDirectory('command-init');

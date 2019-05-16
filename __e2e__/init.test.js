@@ -1,6 +1,7 @@
 // @flow
 import fs from 'fs';
 import path from 'path';
+import inquirer from 'inquirer';
 import {run, getTempDirectory, cleanup, writeFiles} from '../jest/helpers';
 
 const DIR = getTempDirectory('command-init');
@@ -87,35 +88,24 @@ test('init --template file:/tmp/custom/template', () => {
 
 test('init --template with custom project path', () => {
   const projectName = 'TestInit';
-  const customProjectPath = getTempDirectory('command-init-custom-path');
-
-  // Create directory
-  writeFiles(customProjectPath, {});
+  const customPath = 'custom-path';
 
   run(DIR, [
     'init',
     '--template',
     'react-native-new-template',
     projectName,
-    customProjectPath,
+    '--directory',
+    'custom-path',
   ]);
 
   // make sure we don't leave garbage
-  expect(fs.readdirSync(customProjectPath)).toEqual([projectName]);
-  expect(fs.readdirSync(path.join(customProjectPath, projectName))).toEqual(
-    templateFiles,
-  );
+  expect(fs.readdirSync(DIR)).toEqual([customPath]);
+  expect(fs.readdirSync(path.join(DIR, customPath))).toEqual(templateFiles);
 
-  const pkgJson = require(path.join(
-    customProjectPath,
-    projectName,
-    'package.json',
-  ));
+  const pkgJson = require(path.join(DIR, customPath, 'package.json'));
 
   expect(pkgJson).toMatchSnapshot(
     'package.json contains necessary configuration',
   );
-
-  // Remove custom project path
-  cleanup(customProjectPath);
 });

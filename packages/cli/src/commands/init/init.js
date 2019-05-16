@@ -32,10 +32,20 @@ type Options = {|
   directory?: string,
 |};
 
+function isProjectDirectoryExistent({projectName, directory}) {
+  const projectDirectory =
+    directory || path.relative(process.cwd(), projectName);
+
+  return fs.pathExists(projectDirectory);
+}
+
 async function setProjectDirectory({projectName, directory}) {
   const projectDirectory =
     directory || path.relative(process.cwd(), projectName);
-  const projectDirectoryExists = await fs.pathExists(projectDirectory);
+  const projectDirectoryExists = await isProjectDirectoryExistent({
+    projectName,
+    directory,
+  });
 
   if (projectDirectoryExists) {
     const {shouldReplaceprojectDirectory} = await inquirer.prompt([
@@ -206,12 +216,21 @@ export default (async function initialize(
    */
   const version: string = minimist(process.argv).version || 'latest';
 
+  const projectDirectoryExists = await isProjectDirectoryExistent({
+    projectName,
+    directory: options.directory,
+  });
+
   try {
     await createProject(projectName, options, version);
 
     printRunInstructions(process.cwd(), projectName);
   } catch (e) {
     logger.error(e.message);
-    fs.removeSync(projectName);
+
+    // Only remove project if it didn't exist before running `init`
+    if (!projectDirectoryExists) {
+      fs.removeSync(projectName);
+    }
   }
 });

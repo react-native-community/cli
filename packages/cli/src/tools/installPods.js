@@ -17,6 +17,10 @@ async function installPods({
   loader?: typeof Ora,
 }) {
   try {
+    if (!(await fs.pathExists('ios'))) {
+      return;
+    }
+
     process.chdir('ios');
 
     const hasPods = await fs.pathExists('Podfile');

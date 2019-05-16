@@ -29,6 +29,7 @@ import {CLIError} from '@react-native-community/cli-tools';
 type Options = {|
   template?: string,
   npm?: boolean,
+  directory?: string,
 |};
 
 async function setProjectDirectory({projectName, directory}) {

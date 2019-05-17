@@ -106,6 +106,7 @@ function resolveSymlinkPaths(maybeSymlinkPaths, ignoredPaths) {
     }
 
     if (
+      visited.length > 0 &&
       ignoredPaths.indexOf(resolvedPath) < 0 &&
       fs.existsSync(resolvedPath)
     ) {

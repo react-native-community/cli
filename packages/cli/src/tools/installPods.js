@@ -1,5 +1,5 @@
 // @flow
-import fs from 'fs-extra';
+import fs from 'fs';
 import execa from 'execa';
 import chalk from 'chalk';
 import Ora from 'ora';
@@ -17,13 +17,13 @@ async function installPods({
   loader?: typeof Ora,
 }) {
   try {
-    if (!(await fs.pathExists('ios'))) {
+    if (!fs.existsSync('ios')) {
       return;
     }
 
     process.chdir('ios');
 
-    const hasPods = await fs.pathExists('Podfile');
+    const hasPods = fs.existsSync('Podfile');
 
     if (!hasPods) {
       return;

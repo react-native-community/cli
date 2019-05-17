@@ -26,6 +26,8 @@ import banner from './banner';
 import {getLoader} from '../../tools/loader';
 import {CLIError} from '@react-native-community/cli-tools';
 
+const DEFAULT_VERSION = 'latest';
+
 type Options = {|
   template?: string,
   npm?: boolean,
@@ -87,13 +89,11 @@ function adjustNameIfUrl(name, cwd) {
 async function createFromTemplate({
   projectName,
   templateName,
-  version,
   npm,
   directory,
 }: {
   projectName: string,
   templateName: string,
-  version?: string,
   npm?: boolean,
   directory: string,
 }) {
@@ -108,17 +108,9 @@ async function createFromTemplate({
     path.join(os.tmpdir(), 'rncli-init-template-'),
   );
 
-  if (version && semver.valid(version) && !semver.gte(version, '0.60.0-rc.0')) {
-    throw new Error(
-      'Cannot use React Native CLI to initialize project with version lower than 0.60.0.',
-    );
-  }
-
   try {
     loader.start();
-    let {uri, name} = await processTemplateName(
-      version ? `${templateName}@${version}` : templateName,
-    );
+    let {uri, name} = await processTemplateName(templateName);
 
     await installTemplatePackage(uri, templateSourceDir, npm);
 
@@ -181,14 +173,21 @@ async function createProject(
   version: string,
   options: Options,
 ) {
-  const templateName = options.template || 'react-native';
+  const templateName = options.template || `react-native@${version}`;
+
+  if (
+    version !== DEFAULT_VERSION &&
+    semver.valid(version) &&
+    !semver.gte(version, '0.60.0-rc.0')
+  ) {
+    throw new Error(
+      'Cannot use React Native CLI to initialize project with version lower than 0.60.0.',
+    );
+  }
 
   return createFromTemplate({
     projectName,
     templateName,
-    // version is "latest" by default, but it's easier for us to treat it as
-    // undefined when the "template" param is passed. Might refactor later
-    version: options.template ? undefined : version,
     npm: options.npm,
     directory,
   });
@@ -196,10 +195,10 @@ async function createProject(
 
 export default (async function initialize(
   [projectName]: Array<string>,
-  _context: ConfigT,
+  context: ConfigT,
   options: Options,
 ) {
-  const rootFolder = process.cwd();
+  const rootFolder = context.root;
 
   validateProjectName(projectName);
 
@@ -207,7 +206,7 @@ export default (async function initialize(
    * Commander is stripping `version` from options automatically.
    * We have to use `minimist` to take that directly from `process.argv`
    */
-  const version: string = minimist(process.argv).version || 'latest';
+  const version: string = minimist(process.argv).version || DEFAULT_VERSION;
 
   const directoryName = getProjectDirectory({
     projectName,

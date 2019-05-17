@@ -50,6 +50,7 @@ async function setProjectDirectory(directory) {
         type: 'confirm',
         name: 'shouldReplaceprojectDirectory',
         message: `Directory "${directory}" already exists, do you want to replace it?`,
+        default: false,
       },
     ]);
 

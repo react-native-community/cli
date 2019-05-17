@@ -26,29 +26,22 @@ import banner from './banner';
 import {getLoader} from '../../tools/loader';
 import {CLIError} from '@react-native-community/cli-tools';
 
-type Options<Directory> = {|
+type Options = {|
   template?: string,
   npm?: boolean,
-  directory: Directory,
+  directory?: string,
 |};
 
-function getProjectDirectory({
-  projectName,
-  directory,
-}): {directory: string, directoryExists: boolean} {
-  const projectDirectory = path.relative(
-    process.cwd(),
-    directory || projectName,
-  );
-  const directoryExists = fs.pathExistsSync(projectDirectory);
-
-  return {
-    directory: projectDirectory,
-    directoryExists,
-  };
+function doesDirectoryExist(dir: string) {
+  return fs.existsSync(dir);
 }
 
-async function setProjectDirectory({directory, directoryExists}) {
+function getProjectDirectory({projectName, directory}): string {
+  return path.relative(process.cwd(), directory || projectName);
+}
+
+async function setProjectDirectory(directory) {
+  const directoryExists = doesDirectoryExist(directory);
   if (directoryExists) {
     const {shouldReplaceprojectDirectory} = await inquirer.prompt([
       {
@@ -97,19 +90,17 @@ async function createFromTemplate({
   version,
   npm,
   directory,
-  directoryExists,
 }: {
   projectName: string,
   templateName: string,
   version?: string,
   npm?: boolean,
   directory: string,
-  directoryExists: boolean,
 }) {
   logger.debug('Initializing new project');
   logger.log(banner);
 
-  await setProjectDirectory({directory, directoryExists});
+  await setProjectDirectory(directory);
 
   const Loader = getLoader();
   const loader = new Loader({text: 'Downloading template'});
@@ -186,34 +177,26 @@ async function installDependencies({
 
 async function createProject(
   projectName: string,
-  options: Options<string>,
+  options: Options,
   version: string,
-  directoryExists: boolean,
 ) {
-  if (options.template) {
-    return createFromTemplate({
-      projectName,
-      templateName: options.template,
-      npm: options.npm,
-      directory: options.directory,
-      directoryExists,
-    });
-  }
+  const templateName = options.template || 'react-native';
 
   return createFromTemplate({
     projectName,
-    templateName: 'react-native',
-    version,
+    templateName,
+    // version is "latest" by default, but it's easier for us to treat it as
+    // undefined when the "template" param is passed. Might refactor later
+    version: options.template ? undefined : version,
     npm: options.npm,
-    directory: options.directory,
-    directoryExists,
+    directory: options.directory || projectName,
   });
 }
 
 export default (async function initialize(
   [projectName]: Array<string>,
   _context: ConfigT,
-  options: Options<?string>,
+  options: Options,
 ) {
   const rootFolder = process.cwd();
 
@@ -225,24 +208,19 @@ export default (async function initialize(
    */
   const version: string = minimist(process.argv).version || 'latest';
 
-  const {directory, directoryExists} = getProjectDirectory({
+  const directory = getProjectDirectory({
     projectName,
     directory: options.directory,
   });
 
   try {
-    await createProject(
-      projectName,
-      {...options, directory},
-      version,
-      directoryExists,
-    );
+    await createProject(projectName, {...options, directory}, version);
 
     printRunInstructions(rootFolder, projectName);
   } catch (e) {
     logger.error(e.message);
     // Only remove project if it didn't exist before running `init`
-    if (!directoryExists) {
+    if (!doesDirectoryExist(directory)) {
       fs.removeSync(path.resolve(rootFolder, directory));
     }
   }

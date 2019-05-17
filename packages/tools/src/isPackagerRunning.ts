@@ -24,7 +24,7 @@ async function isPackagerRunning(
     const body = await result.text();
 
     return body === 'packager-status:running' ? 'running' : 'unrecognized';
-  } catch (e) {
+  } catch (_error) {
     return 'not_running';
   }
 }

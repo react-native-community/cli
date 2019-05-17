@@ -49,6 +49,7 @@ export const dependencyConfig = t
             ios: t
               .object({
                 project: t.string(),
+                podspec: t.string(),
                 sharedLibraries: t.array().items(t.string()),
                 libraryFolder: t.string(),
               })

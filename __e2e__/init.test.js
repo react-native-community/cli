@@ -94,7 +94,6 @@ test('init --template with custom project path', () => {
     '--template',
     'react-native-new-template',
     projectName,
-    '--directory',
     'custom-path',
   ]);
 

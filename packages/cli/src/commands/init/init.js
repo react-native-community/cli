@@ -26,50 +26,52 @@ import banner from './banner';
 import {getLoader} from '../../tools/loader';
 import {CLIError} from '@react-native-community/cli-tools';
 
-type Options = {|
+type Options<Directory> = {|
   template?: string,
   npm?: boolean,
-  directory?: string,
+  directory: Directory,
 |};
 
-function isProjectDirectoryExistent({projectName, directory}) {
-  const projectDirectory =
-    directory || path.relative(process.cwd(), projectName);
+function getProjectDirectory({
+  projectName,
+  directory,
+}): {directory: string, directoryExists: boolean} {
+  const projectDirectory = path.relative(
+    process.cwd(),
+    directory || projectName,
+  );
+  const directoryExists = fs.pathExistsSync(projectDirectory);
 
-  return fs.pathExists(projectDirectory);
+  return {
+    directory: projectDirectory,
+    directoryExists,
+  };
 }
 
-async function setProjectDirectory({projectName, directory}) {
-  const projectDirectory =
-    directory || path.relative(process.cwd(), projectName);
-  const projectDirectoryExists = await isProjectDirectoryExistent({
-    projectName,
-    directory,
-  });
-
-  if (projectDirectoryExists) {
+async function setProjectDirectory({directory, directoryExists}) {
+  if (directoryExists) {
     const {shouldReplaceprojectDirectory} = await inquirer.prompt([
       {
         type: 'confirm',
         name: 'shouldReplaceprojectDirectory',
-        message: `Directory "${projectDirectory}" already exists, do you want to replace it?`,
+        message: `Directory "${directory}" already exists, do you want to replace it?`,
       },
     ]);
 
     if (!shouldReplaceprojectDirectory) {
-      throw new DirectoryAlreadyExistsError(projectDirectory);
+      throw new DirectoryAlreadyExistsError(directory);
     }
 
-    await fs.emptyDir(projectDirectory);
+    await fs.emptyDir(directory);
   }
 
   try {
-    mkdirp.sync(projectDirectory);
-    process.chdir(projectDirectory);
+    mkdirp.sync(directory);
+    process.chdir(directory);
   } catch (error) {
     throw new CLIError(
       `Error occurred while trying to ${
-        projectDirectoryExists ? 'replace' : 'create'
+        directoryExists ? 'replace' : 'create'
       } project directory.`,
       error,
     );
@@ -95,17 +97,19 @@ async function createFromTemplate({
   version,
   npm,
   directory,
+  directoryExists,
 }: {
   projectName: string,
   templateName: string,
   version?: string,
   npm?: boolean,
-  directory?: string,
+  directory: string,
+  directoryExists: boolean,
 }) {
   logger.debug('Initializing new project');
   logger.log(banner);
 
-  await setProjectDirectory({projectName, directory});
+  await setProjectDirectory({directory, directoryExists});
 
   const Loader = getLoader();
   const loader = new Loader({text: 'Downloading template'});
@@ -182,8 +186,9 @@ async function installDependencies({
 
 async function createProject(
   projectName: string,
-  options: Options,
+  options: Options<string>,
   version: string,
+  directoryExists: boolean,
 ) {
   if (options.template) {
     return createFromTemplate({
@@ -191,6 +196,7 @@ async function createProject(
       templateName: options.template,
       npm: options.npm,
       directory: options.directory,
+      directoryExists,
     });
   }
 
@@ -200,14 +206,17 @@ async function createProject(
     version,
     npm: options.npm,
     directory: options.directory,
+    directoryExists,
   });
 }
 
 export default (async function initialize(
   [projectName]: Array<string>,
   _context: ConfigT,
-  options: Options,
+  options: Options<?string>,
 ) {
+  const rootFolder = process.cwd();
+
   validateProjectName(projectName);
 
   /**
@@ -216,21 +225,25 @@ export default (async function initialize(
    */
   const version: string = minimist(process.argv).version || 'latest';
 
-  const projectDirectoryExists = await isProjectDirectoryExistent({
+  const {directory, directoryExists} = getProjectDirectory({
     projectName,
     directory: options.directory,
   });
 
   try {
-    await createProject(projectName, options, version);
+    await createProject(
+      projectName,
+      {...options, directory},
+      version,
+      directoryExists,
+    );
 
-    printRunInstructions(process.cwd(), projectName);
+    printRunInstructions(rootFolder, projectName);
   } catch (e) {
     logger.error(e.message);
-
     // Only remove project if it didn't exist before running `init`
-    if (!projectDirectoryExists) {
-      fs.removeSync(projectName);
+    if (!directoryExists) {
+      fs.removeSync(path.resolve(rootFolder, directory));
     }
   }
 });

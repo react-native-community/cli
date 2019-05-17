@@ -9,11 +9,12 @@ export default {
   options: [
     {
       name: '--version [string]',
-      description: 'Version of React Native',
+      description: 'Uses a valid semver version of React Native as a template',
     },
     {
       name: '--template [string]',
-      description: 'Custom template',
+      description:
+        'Uses a custom template. Valid arguments are: npm package, absolute directory prefixed with `file://`, Git repository or a tarball',
     },
     {
       name: '--npm',

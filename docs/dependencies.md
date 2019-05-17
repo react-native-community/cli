@@ -56,6 +56,7 @@ The following settings are available on iOS and Android:
 ```ts
 type DependencyParamsIOST = {
   project?: string,
+  podspec?: string,
   sharedLibraries?: string[],
 };
 
@@ -70,6 +71,10 @@ type DependencyParamsAndroidT = {
 #### platforms.ios.project
 
 Custom path to `.xcodeproj`
+
+#### platforms.ios.podspec
+
+Custom `podspec` name to use when auto-linking (without the file extension). Your `podspec` file must be located in the root of the dependency package.
 
 #### platforms.ios.sharedLibraries
 

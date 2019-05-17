@@ -9,19 +9,22 @@
  */
 
 import path from 'path';
+import fs from 'fs';
 import chalk from 'chalk';
 import {logger} from '@react-native-community/cli-tools';
 
 function printRunInstructions(projectDir: string, projectName: string) {
   const absoluteProjectDir = path.resolve(projectDir);
-  const xcodeProjectPath = `${path.resolve(
-    projectDir,
-    'ios',
-    projectName,
-  )}.xcodeproj`;
+  const iosProjectDir = path.resolve(projectDir, 'ios');
+
+  const iosPodsFile = path.resolve(iosProjectDir, `${projectName}.xcworkspace`);
+  const isUsingPods = fs.existsSync(iosPodsFile);
+
   const relativeXcodeProjectPath = path.relative(
     process.cwd(),
-    xcodeProjectPath,
+    isUsingPods
+      ? iosPodsFile
+      : path.resolve(iosProjectDir, `${projectName}.xcodeproj`),
   );
 
   logger.log(`

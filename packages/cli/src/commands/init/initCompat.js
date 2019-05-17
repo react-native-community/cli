@@ -15,6 +15,7 @@ import printRunInstructions from './printRunInstructions';
 import {createProjectFromTemplate} from '../../tools/generator/templates';
 import * as PackageManager from '../../tools/packageManager';
 import {logger} from '@react-native-community/cli-tools';
+import installPods from '../../tools/installPods';
 
 /**
  * Creates the template for a React Native project given the provided
@@ -76,6 +77,13 @@ async function generateProject(destinationRoot, newProjectName, options) {
   ]);
 
   addJestToPackageJson(destinationRoot);
+
+  if (process.platform === 'darwin') {
+    logger.info('Installing required CocoaPods dependencies');
+
+    await installPods({projectName: newProjectName});
+  }
+
   printRunInstructions(destinationRoot, newProjectName);
 }
 

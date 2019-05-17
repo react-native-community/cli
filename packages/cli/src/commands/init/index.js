@@ -3,20 +3,26 @@ import init from './init';
 
 export default {
   func: init,
-  name: 'init <packageName>',
-  description: 'initialize new React Native project',
+  name: 'init <projectName>',
+  description:
+    'Initialize a new React Native project named <projectName> in a directory of the same name.',
   options: [
     {
       name: '--version [string]',
-      description: 'Version of RN',
+      description: 'Uses a valid semver version of React Native as a template',
     },
     {
       name: '--template [string]',
-      description: 'Custom template',
+      description:
+        'Uses a custom template. Valid arguments are: npm package, absolute directory prefixed with `file://`, Git repository or a tarball',
     },
     {
       name: '--npm',
-      description: 'Force use of npm during initialization',
+      description: 'Forces using npm for initialization',
+    },
+    {
+      name: '--directory [string]',
+      description: 'Uses a custom directory instead of `<projectName>`.',
     },
   ],
 };

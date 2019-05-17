@@ -55,6 +55,10 @@ const handleError = err => {
 // one modified to suit our needs
 function printHelpInformation(examples, pkg) {
   let cmdName = this._name;
+  const argsList = this._args
+    .map(arg => (arg.required ? `<${arg.name}>` : `[${arg.name}]`))
+    .join(' ');
+
   if (this._alias) {
     cmdName = `${cmdName}|${this._alias}`;
   }
@@ -64,7 +68,7 @@ function printHelpInformation(examples, pkg) {
     : [];
 
   let output = [
-    chalk.bold(`react-native ${cmdName}`),
+    chalk.bold(`react-native ${cmdName} ${argsList}`),
     this._description ? `\n${this._description}\n` : '',
     ...sourceInformation,
     `${chalk.bold('Options:')}`,

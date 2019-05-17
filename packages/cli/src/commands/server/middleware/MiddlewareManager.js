@@ -20,6 +20,7 @@ import copyToClipBoardMiddleware from './copyToClipBoardMiddleware';
 import getSecurityHeadersMiddleware from './getSecurityHeadersMiddleware';
 import loadRawBodyMiddleware from './loadRawBodyMiddleware';
 import openStackFrameInEditorMiddleware from './openStackFrameInEditorMiddleware';
+import openURLMiddleware from './openURLMiddleware';
 import statusPageMiddleware from './statusPageMiddleware';
 import systraceProfileMiddleware from './systraceProfileMiddleware';
 import getDevToolsMiddleware from './getDevToolsMiddleware';
@@ -51,6 +52,7 @@ export default class MiddlewareManager {
       .use(compression())
       .use('/debugger-ui', serveStatic(debuggerUIFolder))
       .use(openStackFrameInEditorMiddleware(this.options))
+      .use(openURLMiddleware)
       .use(copyToClipBoardMiddleware)
       .use(statusPageMiddleware)
       .use(systraceProfileMiddleware)

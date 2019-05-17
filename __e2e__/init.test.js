@@ -22,27 +22,27 @@ test('init --template fails without package name', () => {
   expect(stderr).toContain('missing required argument');
 });
 
-test('init --template', () => {
-  const templateFiles = [
-    '.buckconfig',
-    '.eslintrc.js',
-    '.flowconfig',
-    '.gitattributes',
-    // should be here, but it's not published yet
-    // '.gitignore',
-    '.watchmanconfig',
-    'App.js',
-    '__tests__',
-    'android',
-    'babel.config.js',
-    'index.js',
-    'ios',
-    'metro.config.js',
-    'node_modules',
-    'package.json',
-    'yarn.lock',
-  ];
+const templateFiles = [
+  '.buckconfig',
+  '.eslintrc.js',
+  '.flowconfig',
+  '.gitattributes',
+  // should be here, but it's not published yet
+  // '.gitignore',
+  '.watchmanconfig',
+  'App.js',
+  '__tests__',
+  'android',
+  'babel.config.js',
+  'index.js',
+  'ios',
+  'metro.config.js',
+  'node_modules',
+  'package.json',
+  'yarn.lock',
+];
 
+test('init --template', () => {
   const {stdout} = run(DIR, [
     'init',
     '--template',
@@ -83,4 +83,22 @@ test('init --template file:/tmp/custom/template', () => {
   ]);
 
   expect(stdout).toContain('Run instructions');
+});
+
+test('init --template with custom project path', () => {
+  const projectName = 'TestInit';
+  const customPath = 'custom-path';
+
+  run(DIR, [
+    'init',
+    '--template',
+    'react-native-new-template',
+    projectName,
+    '--directory',
+    'custom-path',
+  ]);
+
+  // make sure we don't leave garbage
+  expect(fs.readdirSync(DIR)).toEqual([customPath]);
+  expect(fs.readdirSync(path.join(DIR, customPath))).toEqual(templateFiles);
 });

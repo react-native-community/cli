@@ -5,6 +5,8 @@ import fs from 'fs-extra';
 import Ora from 'ora';
 import minimist from 'minimist';
 import semver from 'semver';
+import inquirer from 'inquirer';
+import mkdirp from 'mkdirp';
 import type {ConfigT} from 'types';
 import {validateProjectName} from './validate';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
@@ -22,11 +24,55 @@ import installPods from '../../tools/installPods';
 import {processTemplateName} from './templateName';
 import banner from './banner';
 import {getLoader} from '../../tools/loader';
+import {CLIError} from '@react-native-community/cli-tools';
+
+const DEFAULT_VERSION = 'latest';
 
 type Options = {|
   template?: string,
   npm?: boolean,
+  directory?: string,
 |};
+
+function doesDirectoryExist(dir: string) {
+  return fs.existsSync(dir);
+}
+
+function getProjectDirectory({projectName, directory}): string {
+  return path.relative(process.cwd(), directory || projectName);
+}
+
+async function setProjectDirectory(directory) {
+  const directoryExists = doesDirectoryExist(directory);
+  if (directoryExists) {
+    const {shouldReplaceprojectDirectory} = await inquirer.prompt([
+      {
+        type: 'confirm',
+        name: 'shouldReplaceprojectDirectory',
+        message: `Directory "${directory}" already exists, do you want to replace it?`,
+        default: false,
+      },
+    ]);
+
+    if (!shouldReplaceprojectDirectory) {
+      throw new DirectoryAlreadyExistsError(directory);
+    }
+
+    await fs.emptyDir(directory);
+  }
+
+  try {
+    mkdirp.sync(directory);
+    process.chdir(directory);
+  } catch (error) {
+    throw new CLIError(
+      `Error occurred while trying to ${
+        directoryExists ? 'replace' : 'create'
+      } project directory.`,
+      error,
+    );
+  }
+}
 
 function adjustNameIfUrl(name, cwd) {
   // We use package manager to infer the name of the template module for us.
@@ -44,33 +90,28 @@ function adjustNameIfUrl(name, cwd) {
 async function createFromTemplate({
   projectName,
   templateName,
-  version,
   npm,
+  directory,
 }: {
   projectName: string,
   templateName: string,
-  version?: string,
   npm?: boolean,
+  directory: string,
 }) {
   logger.debug('Initializing new project');
   logger.log(banner);
+
+  await setProjectDirectory(directory);
+
   const Loader = getLoader();
   const loader = new Loader({text: 'Downloading template'});
   const templateSourceDir = fs.mkdtempSync(
     path.join(os.tmpdir(), 'rncli-init-template-'),
   );
 
-  if (version && semver.valid(version) && !semver.gte(version, '0.60.0-rc.0')) {
-    throw new Error(
-      'Cannot use React Native CLI to initialize project with version lower than 0.60.0.',
-    );
-  }
-
   try {
     loader.start();
-    let {uri, name} = await processTemplateName(
-      version ? `${templateName}@${version}` : templateName,
-    );
+    let {uri, name} = await processTemplateName(templateName);
 
     await installTemplatePackage(uri, templateSourceDir, npm);
 
@@ -127,49 +168,62 @@ async function installDependencies({
   loader.succeed();
 }
 
-function createProject(projectName: string, options: Options, version: string) {
-  fs.mkdirSync(projectName);
-  process.chdir(projectName);
+async function createProject(
+  projectName: string,
+  directory: string,
+  version: string,
+  options: Options,
+) {
+  const templateName = options.template || `react-native@${version}`;
 
-  if (options.template) {
-    return createFromTemplate({
-      projectName,
-      templateName: options.template,
-      npm: options.npm,
-    });
+  if (
+    version !== DEFAULT_VERSION &&
+    semver.valid(version) &&
+    !semver.gte(version, '0.60.0-rc.0')
+  ) {
+    throw new Error(
+      'Cannot use React Native CLI to initialize project with version lower than 0.60.0.',
+    );
   }
 
   return createFromTemplate({
     projectName,
-    templateName: 'react-native',
-    version,
+    templateName,
     npm: options.npm,
+    directory,
   });
 }
 
 export default (async function initialize(
   [projectName]: Array<string>,
-  _context: ConfigT,
+  context: ConfigT,
   options: Options,
 ) {
+  const rootFolder = context.root;
+
   validateProjectName(projectName);
 
   /**
    * Commander is stripping `version` from options automatically.
    * We have to use `minimist` to take that directly from `process.argv`
    */
-  const version: string = minimist(process.argv).version || 'latest';
+  const version: string = minimist(process.argv).version || DEFAULT_VERSION;
 
-  if (fs.existsSync(projectName)) {
-    throw new DirectoryAlreadyExistsError(projectName);
-  }
+  const directoryName = getProjectDirectory({
+    projectName,
+    directory: options.directory || projectName,
+  });
+  const directoryExists = doesDirectoryExist(directoryName);
 
   try {
-    await createProject(projectName, options, version);
+    await createProject(projectName, directoryName, version, options);
 
-    printRunInstructions(process.cwd(), projectName);
+    printRunInstructions(rootFolder, projectName);
   } catch (e) {
     logger.error(e.message);
-    fs.removeSync(projectName);
+    // Only remove project if it didn't exist before running `init`
+    if (!directoryExists) {
+      fs.removeSync(path.resolve(rootFolder, directoryName));
+    }
   }
 });

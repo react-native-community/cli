@@ -114,13 +114,15 @@ Output project and dependencies configuration in JSON format to stdout. Used by 
 
 > Available since 0.60.0
 
-Usage:
+> **IMPORTANT**: Please note that this command is not available through `react-native-cli`, hence you need to either invoke it directly from `@react-native-community/cli` or `react-native` package which proxies binary to this CLI since 0.60.0, so it's possible to use it with e.g. `npx`.
+
+Usage (with `npx`):
 
 ```sh
-react-native init <projectName> [options]
+npx react-native init <projectName> [directory] [options]
 ```
 
-Initialize new React Native project. You can find out more use cases in [init docs](./init.md).
+Initialize a new React Native project named `<projectName>` in a directory of the same name or specified by an optional `[directory]` argument. You can find out more use cases in [init docs](./init.md).
 
 #### Options
 
@@ -140,10 +142,11 @@ Uses a custom template. Accepts following template sources:
 Example:
 
 ```sh
-react-native init MyApp --template react-native-custom-template
-react-native init MyApp --template typescript
-react-native init MyApp --template file:///Users/name/template-path
-react-native init MyApp --template file:///Users/name/template-name-1.0.0.tgz
+npx react-native init MyApp CustomDirectory
+npx react-native init MyApp --template react-native-custom-template
+npx react-native init MyApp --template typescript
+npx react-native init MyApp --template file:///Users/name/template-path
+npx react-native init MyApp --template file:///Users/name/template-name-1.0.0.tgz
 ```
 
 A template is any directory or npm package that contains a `template.config.js` file in the root with following of the following type:
@@ -164,9 +167,9 @@ Example `template.config.js`:
 
 ```js
 module.exports = {
-  placeholderName: "ProjectName",
-  templateDir: "./template",
-  postInitScript: "./script.js",
+  placeholderName: 'ProjectName',
+  templateDir: './template',
+  postInitScript: './script.js',
 };
 ```
 

@@ -29,7 +29,6 @@ import {CLIError} from '@react-native-community/cli-tools';
 type Options = {|
   template?: string,
   npm?: boolean,
-  directory?: string,
 |};
 
 function doesDirectoryExist(dir: string) {
@@ -177,8 +176,9 @@ async function installDependencies({
 
 async function createProject(
   projectName: string,
-  options: Options,
+  directory: string,
   version: string,
+  options: Options,
 ) {
   const templateName = options.template || 'react-native';
 
@@ -189,12 +189,12 @@ async function createProject(
     // undefined when the "template" param is passed. Might refactor later
     version: options.template ? undefined : version,
     npm: options.npm,
-    directory: options.directory || projectName,
+    directory,
   });
 }
 
 export default (async function initialize(
-  [projectName]: Array<string>,
+  [projectName, directory]: Array<string>,
   _context: ConfigT,
   options: Options,
 ) {
@@ -208,20 +208,21 @@ export default (async function initialize(
    */
   const version: string = minimist(process.argv).version || 'latest';
 
-  const directory = getProjectDirectory({
+  const directoryName = getProjectDirectory({
     projectName,
-    directory: options.directory,
+    directory: directory || projectName,
   });
+  const directoryExists = doesDirectoryExist(directoryName);
 
   try {
-    await createProject(projectName, {...options, directory}, version);
+    await createProject(projectName, directoryName, version, options);
 
     printRunInstructions(rootFolder, projectName);
   } catch (e) {
     logger.error(e.message);
     // Only remove project if it didn't exist before running `init`
-    if (!doesDirectoryExist(directory)) {
-      fs.removeSync(path.resolve(rootFolder, directory));
+    if (!directoryExists) {
+      fs.removeSync(path.resolve(rootFolder, directoryName));
     }
   }
 });

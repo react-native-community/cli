@@ -101,10 +101,4 @@ test('init --template with custom project path', () => {
   // make sure we don't leave garbage
   expect(fs.readdirSync(DIR)).toEqual([customPath]);
   expect(fs.readdirSync(path.join(DIR, customPath))).toEqual(templateFiles);
-
-  const pkgJson = require(path.join(DIR, customPath, 'package.json'));
-
-  expect(pkgJson).toMatchSnapshot(
-    'package.json contains necessary configuration',
-  );
 });

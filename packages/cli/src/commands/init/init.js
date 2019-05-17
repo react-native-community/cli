@@ -29,6 +29,7 @@ import {CLIError} from '@react-native-community/cli-tools';
 type Options = {|
   template?: string,
   npm?: boolean,
+  directory?: string,
 |};
 
 function doesDirectoryExist(dir: string) {
@@ -194,7 +195,7 @@ async function createProject(
 }
 
 export default (async function initialize(
-  [projectName, directory]: Array<string>,
+  [projectName]: Array<string>,
   _context: ConfigT,
   options: Options,
 ) {
@@ -210,7 +211,7 @@ export default (async function initialize(
 
   const directoryName = getProjectDirectory({
     projectName,
-    directory: directory || projectName,
+    directory: options.directory || projectName,
   });
   const directoryExists = doesDirectoryExist(directoryName);
 

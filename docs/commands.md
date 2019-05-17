@@ -119,16 +119,20 @@ Output project and dependencies configuration in JSON format to stdout. Used by 
 Usage (with `npx`):
 
 ```sh
-npx react-native init <projectName> [directory] [options]
+npx react-native init <projectName> [options]
 ```
 
-Initialize a new React Native project named `<projectName>` in a directory of the same name or specified by an optional `[directory]` argument. You can find out more use cases in [init docs](./init.md).
+Initialize a new React Native project named <projectName> in a directory of the same name. You can find out more use cases in [init docs](./init.md).
 
 #### Options
 
 #### `--version [string]`
 
 Uses a valid semver version of React Native as a template.
+
+#### `--directory [string]`
+
+Uses a custom directory instead of `<projectName>`.
 
 #### `--template [string]`
 
@@ -142,7 +146,6 @@ Uses a custom template. Accepts following template sources:
 Example:
 
 ```sh
-npx react-native init MyApp CustomDirectory
 npx react-native init MyApp --template react-native-custom-template
 npx react-native init MyApp --template typescript
 npx react-native init MyApp --template file:///Users/name/template-path

@@ -3,9 +3,9 @@ import init from './init';
 
 export default {
   func: init,
-  name: 'init <projectName> [directory]',
+  name: 'init <projectName>',
   description:
-    'Initialize a new React Native project named <projectName> in a directory of the same name or specified by an optional [directory] argument.',
+    'Initialize a new React Native project named <projectName> in a directory of the same name.',
   options: [
     {
       name: '--version [string]',
@@ -18,7 +18,11 @@ export default {
     },
     {
       name: '--npm',
-      description: 'Force use of npm during initialization',
+      description: 'Forces using npm for initialization',
+    },
+    {
+      name: '--directory [string]',
+      description: 'Uses a custom directory instead of `<projectName>`.',
     },
   ],
 };

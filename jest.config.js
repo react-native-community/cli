@@ -12,7 +12,7 @@ module.exports = {
       ...common,
       displayName: 'unit',
       setupFiles: ['<rootDir>/jest/setupUnitTests.js'],
-      testMatch: ['<rootDir>/**/__tests__/*{.,-}test.js'],
+      testMatch: ['<rootDir>/**/__tests__/*{.,-}test.[jt]s'],
     },
   ],
 };

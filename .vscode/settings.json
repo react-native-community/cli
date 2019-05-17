@@ -1,0 +1,24 @@
+{
+  "editor.rulers": [80],
+  "files.exclude": {
+    "**/.git": true,
+    "**/node_modules": true,
+    "**/build": true
+  },
+  "editor.formatOnSave": true,
+  "flow.useNPMPackagedFlow": true,
+  "javascript.validate.enable": false,
+  "prettier.eslintIntegration": true,
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    {
+      "language": "typescript",
+      "autoFix": true
+    },
+    {
+      "language": "typescriptreact",
+      "autoFix": true
+    }
+  ]
+}

@@ -1,9 +1,9 @@
 {
   "name": "@react-native-community/cli-platform-android",
-  "version": "2.0.0-alpha.20",
+  "version": "2.0.0-alpha.21",
   "main": "build/index.js",
   "dependencies": {
-    "@react-native-community/cli-tools": "^2.0.0-alpha.20",
+    "@react-native-community/cli-tools": "^2.0.0-alpha.21",
     "logkitty": "^0.4.0",
     "slash": "^2.0.0",
     "xmldoc": "^0.4.0"

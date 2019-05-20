@@ -1,28 +1,24 @@
 /**
- * @flow
- */
-
-/**
- * CLIError
- *
- * Features:
- * - uses original stack trace when error object is passed
- * - makes an inline string to match current styling inside CLI
+ * A custom Error that creates a single-lined message to match current styling inside CLI.
+ * Uses original stack trace when `originalError` is passed or erase the stack if it's not defined.
  */
 export class CLIError extends Error {
-  constructor(msg: string, originError?: Error | string) {
+  constructor(msg: string, originalError?: Error | string) {
     super(inlineString(msg));
-    if (originError) {
+    if (originalError) {
       this.stack =
-        typeof originError === 'string'
-          ? originError
-          : originError.stack ||
+        typeof originalError === 'string'
+          ? originalError
+          : originalError.stack ||
             ''
               .split('\n')
               .slice(0, 2)
               .join('\n');
     } else {
-      Error.captureStackTrace(this, CLIError);
+      // When the "originalError" is not passed, it means that we know exactly
+      // what went wrong and provide means to fix it. In such cases showing the
+      // stack is an unnecessary clutter to the CLI output, hence removing it.
+      delete this.stack;
     }
   }
 }

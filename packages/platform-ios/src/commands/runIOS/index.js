@@ -114,13 +114,13 @@ async function runOnSimulator(xcodeProject, scheme, args: FlagsT) {
         {encoding: 'utf8'},
       ),
     );
-  } catch (e) {
-    throw new CLIError('Could not parse the simulator list output');
+  } catch (error) {
+    throw new CLIError('Could not parse the simulator list output', error);
   }
 
   const selectedSimulator = findMatchingSimulator(simulators, args.simulator);
   if (!selectedSimulator) {
-    throw new CLIError(`Could not find ${args.simulator} simulator`);
+    throw new CLIError(`Could not find "${args.simulator}" simulator`);
   }
 
   /**

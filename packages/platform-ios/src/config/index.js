@@ -53,7 +53,7 @@ export function projectConfig(
     folder,
     pbxprojPath: path.join(projectPath, 'project.pbxproj'),
     podfile: findPodfilePath(projectPath),
-    podspec: findPodspecName(folder),
+    podspec: userConfig.podspec || findPodspecName(folder),
     projectPath,
     projectName: path.basename(projectPath),
     libraryFolder: userConfig.libraryFolder || 'Libraries',

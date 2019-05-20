@@ -12,7 +12,6 @@ import makeHook from './makeHook';
 import {
   readConfigFromDisk,
   readDependencyConfigFromDisk,
-  readLegacyDependencyConfigFromDisk,
 } from './readConfigFromDisk';
 
 import {type ConfigT} from 'types';
@@ -39,9 +38,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
       let config;
       try {
         root = resolveNodeModuleDir(projectRoot, dependencyName);
-        config =
-          readLegacyDependencyConfigFromDisk(root) ||
-          readDependencyConfigFromDisk(root);
+        config = readDependencyConfigFromDisk(root);
       } catch (error) {
         logger.warn(
           inlineString(`

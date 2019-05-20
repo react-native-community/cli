@@ -122,7 +122,7 @@ function readLegacyDependencyConfigFromDisk(
   logger.warn(
     `Package ${chalk.bold(
       path.basename(name),
-     )} is using deprecated "rnpm" config that will stop working from next release. Please notify its maintainers about it.`,
+    )} is using deprecated "rnpm" config that will stop working from next release. Please notify its maintainers about it.`,
   );
 
   return transformedConfig;

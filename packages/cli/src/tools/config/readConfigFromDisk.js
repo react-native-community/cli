@@ -55,7 +55,9 @@ export function readDependencyConfigFromDisk(
     searchPlaces,
   });
 
-  const {config} = explorer.searchSync(rootFolder) || {config: undefined};
+  const {config} = explorer.searchSync(rootFolder) || {
+    config: readLegacyDependencyConfigFromDisk(rootFolder),
+  };
 
   const result = Joi.validate(config, schema.dependencyConfig);
 
@@ -90,7 +92,7 @@ const loadProjectCommands = (
 /**
  * Reads a legacy configuration from a `package.json` "rnpm" key.
  */
-export function readLegacyDependencyConfigFromDisk(
+function readLegacyDependencyConfigFromDisk(
   rootFolder: string,
 ): ?UserDependencyConfigT {
   const {rnpm: config, name} = require(path.join(rootFolder, 'package.json'));
@@ -113,7 +115,7 @@ export function readLegacyDependencyConfigFromDisk(
     commands: loadProjectCommands(rootFolder, config.plugin),
     platforms: config.platform
       ? require(path.join(rootFolder, config.platform))
-      : undefined,
+      : {},
   };
 
   // @todo: paste a link to documentation that explains the migration steps
@@ -123,11 +125,5 @@ export function readLegacyDependencyConfigFromDisk(
     )} is using deprecated "rnpm" config that will stop working from next release. Consider upgrading to the new config format.`,
   );
 
-  const result = Joi.validate(transformedConfig, schema.dependencyConfig);
-
-  if (result.error) {
-    throw new JoiError(result.error);
-  }
-
-  return result.value;
+  return transformedConfig;
 }

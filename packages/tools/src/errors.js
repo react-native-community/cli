@@ -16,8 +16,7 @@ export class CLIError extends Error {
       this.stack =
         typeof originError === 'string'
           ? originError
-          : originError.stack ||
-            ''
+          : originError.stack
               .split('\n')
               .slice(0, 2)
               .join('\n');

@@ -16,17 +16,18 @@ import fetch from 'node-fetch';
  *   - `not_running`: the packager nor any process is running on the expected port.
  *   - `unrecognized`: one other process is running on the port we expect the packager to be running.
  */
-async function isPackagerRunning(
+function isPackagerRunning(
   packagerPort: string = process.env.RCT_METRO_PORT || '8081',
 ): Promise<'running' | 'not_running' | 'unrecognized'> {
-  try {
-    const result = await fetch(`http://localhost:${packagerPort}/status`);
-    const body = await result.text();
-
-    return body === 'packager-status:running' ? 'running' : 'unrecognized';
-  } catch (_error) {
-    return 'not_running';
-  }
+  return fetch(`http://localhost:${packagerPort}/status`).then(
+    res =>
+      res
+        .text()
+        .then(body =>
+          body === 'packager-status:running' ? 'running' : 'unrecognized',
+        ),
+    () => 'not_running',
+  );
 }
 
 export default isPackagerRunning;

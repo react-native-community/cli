@@ -7,7 +7,7 @@ module.exports = {
     'prettier/prettier': [2, 'fb'],
   },
   // @todo: remove once we cover whole codebase with types
-  plugins: ['import'],
+  plugins: ['eslint-plugin-import'],
   settings: {
     react: {
       version: 'latest',
@@ -16,8 +16,6 @@ module.exports = {
       alias: {
         map: [['types', './types/index.js']],
       },
-      // Use <rootDir>/tsconfig.json for typescript resolution
-      typescript: {},
     },
   },
   overrides: [

@@ -129,7 +129,7 @@ Properties were renamed. Look at the following example for the differences.
     "android": {},
     "assets": ["./path-to-assets"],
     "hooks": {
-      "prelink": "./path-to-a-postlink-hook"
+      "prelink": "./path-to-a-prelink-hook"
     }
   }
 }
@@ -146,7 +146,7 @@ module.exports = {
     },
     assets: ['./path-to-assets'],
     hooks: {
-      prelink: './path-to-a-postlink-hook',
+      prelink: './path-to-a-prelink-hook',
     },
   },
 };

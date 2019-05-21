@@ -47,7 +47,9 @@ const handleError = err => {
       )}`,
     );
   }
-  logger.debug(chalk.dim(err.stack));
+  if (err.stack) {
+    logger.log(chalk.dim(err.stack));
+  }
   process.exit(1);
 };
 

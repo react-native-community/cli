@@ -7,7 +7,7 @@
  * @format
  */
 import chalk from 'chalk';
-import {CLIError, inlineString} from '@react-native-community/cli-tools';
+import {CLIError} from '@react-native-community/cli-tools';
 
 import readPodfile from './readPodfile';
 import findPodTargetLine from './findPodTargetLine';
@@ -36,20 +36,18 @@ function getLinesToAddEntry(podLines, {projectName}) {
   }
   const firstTargetLined = findPodTargetLine(podLines, projectName);
   if (firstTargetLined === null) {
-    throw new CLIError(
-      inlineString(`
-        We couldn't find a target to add a CocoaPods dependency.
-        
-        Make sure that you have a "${chalk.dim(
-          `target '${projectName.replace('.xcodeproj', '')}' do`,
-        )}" line in your Podfile.
-        
-        Alternatively, include "${chalk.dim(
-          MARKER_TEXT,
-        )}" in a Podfile where we should add
-        linked dependencies.
-    `),
-    );
+    throw new CLIError(`
+      We couldn't find a target to add a CocoaPods dependency.
+
+      Make sure that you have a "${chalk.dim(
+        `target '${projectName.replace('.xcodeproj', '')}' do`,
+      )}" line in your Podfile.
+
+      Alternatively, include "${chalk.dim(
+        MARKER_TEXT,
+      )}" in a Podfile where we should add
+      linked dependencies.
+    `);
   }
   return findLineToAddPod(podLines, firstTargetLined);
 }

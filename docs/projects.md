@@ -14,10 +14,10 @@ For example, below configuration informs CLI of the additional assets to link an
 module.exports = {
   project: {
     ios: {
-      project: './CustomProject.xcodeproj'
-    }
+      project: './CustomProject.xcodeproj',
+    },
   },
-  assets: ['./assets']
+  assets: ['./assets'],
 };
 ```
 
@@ -59,7 +59,7 @@ React Native from a (custom) source.
 
 ### project
 
-A map of specific settings that can be set per platform. The exact shape is always defined by the package that provides given platform. 
+A map of specific settings that can be set per platform. The exact shape is always defined by the package that provides given platform.
 
 In most cases, as a React Native developer, you should not need to define any of these.
 
@@ -67,23 +67,23 @@ The following settings are available on iOS and Android:
 
 ```ts
 type ProjectParamsAndroidT = {
-  sourceDir?: string,
-  manifestPath?: string,
-  packageName?: string,
-  packageFolder?: string,
-  mainFilePath?: string,
-  stringsPath?: string,
-  settingsGradlePath?: string,
-  assetsPath?: string,
-  buildGradlePath?: string,
-  packageName?: string,
+  sourceDir?: string;
+  manifestPath?: string;
+  packageName?: string;
+  packageFolder?: string;
+  mainFilePath?: string;
+  stringsPath?: string;
+  settingsGradlePath?: string;
+  assetsPath?: string;
+  buildGradlePath?: string;
+  packageName?: string;
 };
 
 type ProjectParamsIOST = {
-  project?: string,
-  sharedLibraries?: string[],
-  libraryFolder?: string,
-  plist: any[],
+  project?: string;
+  sharedLibraries?: string[];
+  libraryFolder?: string;
+  plist: any[];
 };
 ```
 
@@ -104,17 +104,19 @@ An array of commands defined inside a project. You can check the format and opti
 Dependencies is a map where key is the name of the dependency and value is an object that can override any of the resolved settings for a particular package.
 
 For example, you could set:
+
 ```js
 module.exports = {
   dependencies: {
     ['react-native-webview']: {
       platforms: {
-        ios: null
-      }
-    }
-  }
-}
+        ios: null,
+      },
+    },
+  },
+};
 ```
+
 in order to disable linking of React Native WebView on iOS.
 
 The object provided here is deep merged with the dependency config. Check [`projectConfig`](platforms.md#projectconfig) and [`dependencyConfig`](platforms.md#dependencyConfig) return values for a full list of properties that you can override.
@@ -150,6 +152,3 @@ module.exports = {
   assets: ['./path-to-assets'],
 };
 ```
-
-
-

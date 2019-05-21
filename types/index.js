@@ -245,20 +245,6 @@ type ProjectConfigAndroidT = {
 type DependencyConfigAndroidT = {
   sourceDir: string,
   folder: string,
-  manifest: Manifest,
   packageImportPath: string,
   packageInstance: string,
-};
-
-type Manifest = {
-  name: string,
-  attr: {
-    [key: string]: string,
-    package: string,
-  },
-  val: string,
-  isValCdata: boolean,
-  children: Array<Manifest>,
-  firstChild: Manifest,
-  lastChild: Manifest,
 };

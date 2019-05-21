@@ -4,9 +4,9 @@ A dependency is a JavaScript package that is listed under dependencies present i
 
 For example, `lodash` is a dependency that doesn't have any native code to link. On the other hand, `react-native-vector-icons` is a dependency that contains not only native code, but also font assets that the CLI should link.
 
-By default, CLI analyses the folder structure inside the dependency and looks for assets and native files to link. This simple heuristic works in most of the cases. 
+By default, CLI analyses the folder structure inside the dependency and looks for assets and native files to link. This simple heuristic works in most of the cases.
 
-At the same time, a dependency can explicitly set its configuration in case CLI cannot infer it properly. A dependency can also define additional settings, such as a script to run after linking, in order to support some advanced use-cases. 
+At the same time, a dependency can explicitly set its configuration in case CLI cannot infer it properly. A dependency can also define additional settings, such as a script to run after linking, in order to support some advanced use-cases.
 
 ## How does it work?
 
@@ -34,12 +34,12 @@ The following type describes the configuration of a dependency that can be set u
 ```ts
 type DependencyConfigT = {
   platforms: {
-    [key: string]: any,
-  },
-  assets: string[],
+    [key: string]: any;
+  };
+  assets: string[];
   hooks: {
-    [key: string]: string,
-  }
+    [key: string]: string;
+  };
 };
 ```
 
@@ -47,7 +47,7 @@ type DependencyConfigT = {
 
 ### platforms
 
-A map of specific settings that can be set per platform. The exact shape is always defined by the package that provides given platform. 
+A map of specific settings that can be set per platform. The exact shape is always defined by the package that provides given platform.
 
 In most cases, as a library author, you should not need to define any of these.
 
@@ -55,16 +55,16 @@ The following settings are available on iOS and Android:
 
 ```ts
 type DependencyParamsIOST = {
-  project?: string,
-  podspec?: string,
-  sharedLibraries?: string[],
+  project?: string;
+  podspec?: string;
+  sharedLibraries?: string[];
 };
 
 type DependencyParamsAndroidT = {
-  sourceDir?: string,
-  manifestPath?: string,
-  packageImportPath?: string,
-  packageInstance?: string
+  sourceDir?: string;
+  manifestPath?: string;
+  packageImportPath?: string;
+  packageInstance?: string;
 };
 ```
 
@@ -94,7 +94,7 @@ Custom package import. For example: `import com.acme.AwesomePackage;`.
 
 #### platforms.android.packageInstance
 
-Custom syntax to instantiate a package. By default, it's a `new AwesomePackage()`. It can be useful when your package requires additional arguments while initializing. 
+Custom syntax to instantiate a package. By default, it's a `new AwesomePackage()`. It can be useful when your package requires additional arguments while initializing.
 
 For settings applicable on other platforms, please consult their respective documentation.
 
@@ -104,7 +104,7 @@ An array of assets folders to glob for files to link.
 
 ### hooks
 
-A map where key is the name of a hook and value is the path to a file to execute. 
+A map where key is the name of a hook and value is the path to a file to execute.
 
 For example, `link` command supports `prelink` and `postlink` hooks to run before and after linking is done.
 
@@ -116,7 +116,7 @@ These are the only ones supported by CLI at the moment. Depending on the package
 
 The changes are mostly cosmetic so the migration should be pretty straight-forward.
 
-> Note: We read `rnpm` configuration to remain backwards-compatible. Dependency maintainers should update their configuration in the nearest future. 
+> Note: We read `rnpm` configuration to remain backwards-compatible. Dependency maintainers should update their configuration in the nearest future.
 
 ### Changing the configuration
 
@@ -146,9 +146,9 @@ module.exports = {
     },
     assets: ['./path-to-assets'],
     hooks: {
-      prelink: './path-to-a-postlink-hook'
-    }
-  }
+      prelink: './path-to-a-postlink-hook',
+    },
+  },
 };
 ```
 

@@ -15,16 +15,15 @@ module.exports = {
   commands: [
     {
       name: 'foo-command',
-      func: () => console.log('It worked')
-    }
-  ]
+      func: () => console.log('It worked'),
+    },
+  ],
 };
 ```
 
-> Above is an example of a plugin that exports a command named `foo-command` that can be executed with `react-native foo-command` and logs "It worked" and exits. 
+> Above is an example of a plugin that exports a command named `foo-command` that can be executed with `react-native foo-command` and logs "It worked" and exits.
 
-
-At the startup, React Native CLI reads configuration from all dependencies listed in `package.json` and reduces them into a single configuration. 
+At the startup, React Native CLI reads configuration from all dependencies listed in `package.json` and reduces them into a single configuration.
 
 At the end, an array of commands concatenated from all plugins is passed on to the CLI to be loaded after built-in commands.
 
@@ -56,7 +55,7 @@ type Command = {
 
 #### `name`
 
-A name that will be used in order to run the command. 
+A name that will be used in order to run the command.
 
 Note: If you want your command to accept additional arguments, make sure to include them in the name.
 
@@ -110,26 +109,30 @@ A command with arguments and options (if applicable) that can be run in order to
 
 ## Migrating from `rnpm` configuration
 
-The changes are mostly cosmetic so the migration should be pretty straight-forward. 
+The changes are mostly cosmetic so the migration should be pretty straight-forward.
 
 ### Changing the configuration
 
 A `plugin` property should be renamed to `commands`.
 
 For example, the following `rnpm` configuration inside `package.json`:
+
 ```json
 {
   "rnpm": {
-    "plugin": "./path-to-commands.js",
+    "plugin": "./path-to-commands.js"
   }
 }
 ```
+
 should be moved to a `react-native.config.js`:
+
 ```js
 module.exports = {
-  commands: require('./path-to-commands.js')
+  commands: require('./path-to-commands.js'),
 };
 ```
+
 provided that `./path-to-commands.js` returns an array of commands.
 
 ### Renaming command options

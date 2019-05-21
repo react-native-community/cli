@@ -33,6 +33,7 @@ npx react-native@${VERSION} init ProjectName
 #### Initializing project with custom template.
 
 In following examples `TEMPLATE_NAME` can be either:
+
 - Full package name, eg. `react-native-template-typescript`.
 - Shorthand name of template, eg. `typescript`.
 - Absolute path to directory containing template, eg. `file:///Users/username/project/some-template`.
@@ -47,6 +48,7 @@ npx react-native@${VERSION} init ProjectName --template ${TEMPLATE_NAME}
 ```
 
 You can force usage of `npm` if you have both `yarn` and `npm` installed on your machine:
+
 ```sh
 npx react-native init ProjectName --npm
 ```
@@ -69,13 +71,13 @@ Every custom template needs to have configuration file called `template.config.j
 ```js
 module.exports = {
   // Placeholder name that will be replaced in package.json, index.json, android/, ios/ for a project name.
-  placeholderName: "ProjectName",
+  placeholderName: 'ProjectName',
 
   // Directory with the template which will be copied and processed by React Native CLI. Template directory should have package.json with all dependencies specified, including `react-native`.
-  templateDir: "./template",
+  templateDir: './template',
 
   // Path to script, which will be executed after initialization process, but before installing all the dependencies specified in the template.
-  postInitScript: "./script.js",
+  postInitScript: './script.js',
 };
 ```
 

@@ -126,5 +126,5 @@ export function dependencyConfig(folder, userConfig = {}) {
   const packageInstance =
     userConfig.packageInstance || `new ${packageClassName}()`;
 
-  return {sourceDir, folder, manifest, packageImportPath, packageInstance};
+  return {sourceDir, folder, packageImportPath, packageInstance};
 }

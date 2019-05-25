@@ -13,24 +13,13 @@ export default function printNewRelease(
   latestRelease: Release,
   currentVersion: string,
 ) {
-  const aWeek = 7 * 24 * 60 * 60 * 1000;
+  logger.info(
+    'Your current version of React Native is out of date. ' +
+      `The latest version is ${latestRelease.version}, ` +
+      `while you're on ${currentVersion}`,
+  );
+  logger.info(`Changelog: ${chalk.underline(latestRelease.changelogUrl)}`);
+  logger.info(`To upgrade, run ${chalk.bold('react-native upgrade')}`);
 
-  const lastChecked = cacheManager.get('lastChecked');
-  const now = new Date();
-  if (!lastChecked || now - new Date(lastChecked) > aWeek) {
-    logger.info(
-      'Your current version of React Native is out of date. ' +
-        `The latest version is ${latestRelease.version}, ` +
-        `while you're on ${currentVersion}`,
-    );
-    logger.info(`Changelog: ${chalk.underline(latestRelease.changelogUrl)}`);
-    logger.info(`To upgrade, run ${chalk.bold('react-native upgrade')}`);
-
-    cacheManager.set('lastChecked', now.toISOString());
-  } else {
-    logger.debug(
-      `Last time notified a newer version: ${now.toDateString()}, ` +
-        'skipping this time',
-    );
-  }
+  cacheManager.set('lastChecked', new Date().toISOString());
 }

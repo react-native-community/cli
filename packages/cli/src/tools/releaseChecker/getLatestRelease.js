@@ -29,6 +29,14 @@ export default (async function(currentVersion: string) {
       logger.debug(`Cached release version: ${cachedLatest}`);
     }
 
+    const aWeek = 7 * 24 * 60 * 60 * 1000;
+    const lastChecked = cacheManager.get('lastChecked');
+    const now = new Date();
+    if (lastChecked && now - new Date(lastChecked) < aWeek) {
+      logger.debug('Cached release is still recent, skipping remote check');
+      return;
+    }
+
     logger.debug('Checking for newer releases on GitHub');
     const eTag = cacheManager.get('eTag');
     const latestVersion = await getLatestRnDiffPurgeVersion(eTag);

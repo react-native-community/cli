@@ -1,13 +1,24 @@
-version: 2
+version: 2.1
 
 defaults: &defaults
-  docker:
-    - image: circleci/node:8
   working_directory: ~/react-native-cli
 
-jobs:
-  install-dependencies:
+executors:
+  node8:
     <<: *defaults
+    docker:
+      - image: circleci/node:8
+  nodelts:
+    <<: *defaults
+    docker:
+      - image: circleci/node:lts
+  noderuby:
+    <<: *defaults
+    docker:
+      - image: circleci/ruby:2.4-node
+
+commands:
+  install-dependencies:
     steps:
       - checkout
       - attach_workspace:
@@ -25,28 +36,22 @@ jobs:
           root: .
           paths:
             - .
-  lint:
-    <<: *defaults
+  run-lint:
     steps:
       - attach_workspace:
           at: ~/react-native-cli
       - run: yarn lint
-  typecheck:
-    <<: *defaults
+  run-typecheck:
     steps:
       - attach_workspace:
           at: ~/react-native-cli
       - run: yarn flow-check
-  cocoa-pods:
-    <<: *defaults
-    docker:
-      - image: circleci/ruby:2.4-node
+  run-cocoa-pods-tests:
     steps:
       - attach_workspace:
           at: ~/react-native-cli
       - run: yarn test:ci:cocoapods
-  unit-tests:
-    <<: *defaults
+  run-unit-tests:
     steps:
       - attach_workspace:
           at: ~/react-native-cli
@@ -54,30 +59,63 @@ jobs:
       - store_artifacts:
           path: coverage
           destination: coverage
-  e2e-tests:
-    <<: *defaults
+  run-e2e-tests:
     steps:
       - attach_workspace:
           at: ~/react-native-cli
       - run: yarn test:ci:e2e
 
+jobs:
+  setup:
+    executor: node8
+    steps:
+      - install-dependencies
+  lint:
+    executor: node8
+    steps:
+      - run-lint
+  typecheck:
+    executor: node8
+    steps:
+      - run-typecheck
+  cocoa-pods:
+    executor: noderuby
+    steps:
+      - run-cocoa-pods-tests
+  unit-tests:
+    executor: node8
+    steps:
+      - run-unit-tests
+  e2e-tests:
+    executor: node8
+    steps:
+      - run-e2e-tests
+  lts-tests:
+    executor: nodelts
+    steps:
+      - install-dependencies
+      - run-lint
+      - run-typecheck
+      - run-unit-tests
+      - run-e2e-tests
+
 workflows:
-  version: 2
   build-and-test:
     jobs:
-      - install-dependencies
+      - setup
       - lint:
           requires:
-            - install-dependencies
+            - setup
       - typecheck:
           requires:
-            - install-dependencies
+            - setup
       - unit-tests:
           requires:
-            - install-dependencies
+            - setup
       - e2e-tests:
           requires:
-            - install-dependencies
+            - setup
       - cocoa-pods:
           requires:
-            - install-dependencies
+            - setup
+      - lts-tests

@@ -219,7 +219,15 @@
   connectToDebuggerProxy();
 
   async function getBlobUrl(url) {
-    return await window.deltaUrlToBlobUrl(url.replace('.bundle', '.delta'));
+    // Ensure that the bundle URL has the same origin as this webpage so that
+    // the same-origin policy lets us fetch it
+    const urlObject = new URL(url, location);
+    const relativeUrl = urlObject.pathname.replace('.bundle', '.delta') +
+      urlObject.search +
+      urlObject.hash;
+    const localUrl = new URL(relativeUrl, location).toString();
+
+    return await window.deltaUrlToBlobUrl(localUrl);
   }
 })();
 </script>

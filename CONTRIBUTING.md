@@ -61,6 +61,21 @@ react-native init --version ${RN_VERSION}
 npm config set registry https://registry.npmjs.org/
 ```
 
+## Running RN using local version of CLI
+
+To start a new project with local version of CLI without publishing, or proxy, you can follow these steps:
+
+1. Check out `react-native` repo and update template following [Christoph's instructions](https://gist.github.com/cpojer/38a91f90614f35769e88410e3a387b48)
+
+1. Check out `react-native-cli` repo, cd into it and run `yarn` and `yarn build`.
+
+1. Go back up and create a new RN project: `node ./cli/packages/cli/build/index.js init --template=file:///Users/annadoubkova/Workspace/react-native RNTestProject`
+
+1. Update gradle config in the newly created project following the second part of [Christoph's instructions](https://gist.github.com/cpojer/38a91f90614f35769e88410e3a387b48)
+
+1. Run start command `REACT_NATIVE_APP_ROOT=../cli node ../cli/packages/cli/build/index.js start`
+
+1. Compile your app eg `node ../cli/packages/cli/build/index.js run-android`
 
 ## Typechecking, linting and testing
 

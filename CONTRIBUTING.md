@@ -61,21 +61,25 @@ react-native init --version ${RN_VERSION}
 npm config set registry https://registry.npmjs.org/
 ```
 
-## Running RN using local version of CLI
+## Running `start` command
 
-To start a new project with local version of CLI and RN without publishing or proxy, you can follow these steps:
+In order for symlinks to work correctly when running `start` locally, set REACT_NATIVE_APP_ROOT as the root folder of your cli project:
 
-1. Check out `react-native` repo. Then update template in local `react-native/template/package.json`, replacing dependency version of `react-native` with the absolute path of the react native repo, for example: "react-native": "file:///Users/username/react-native"
+```
+REACT_NATIVE_APP_ROOT=path/to/cli node path/to/cli/packages/cli/build/index.js start
+```
 
-1. Check out `react-native-cli` repo, cd into it and run `yarn` and `yarn build`.
+## Running CLI with React Native from the source
+
+First make sure you have RN repo checked out and CLI repo checked out and built. Then you can start a new RN project with local version of CLI and RN without publishing or proxy:
+
+1. Check out `react-native` repo. Then update template in local `react-native/template/package.json`, replacing dependency version of `react-native` with the absolute path of the react native repo, for example: "react-native": "file:///Users/username/react-native" (you can find the absolute path using `pwd` command)
 
 1. Go back up and create a new RN project: `node ./cli/packages/cli/build/index.js init --template=file:///path/to/local/react-native RNTestProject`
 
 1. To work with android, update gradle config in the newly created project following the second part of [Christoph's instructions](https://gist.github.com/cpojer/38a91f90614f35769e88410e3a387b48)
 
-1. Run start command `REACT_NATIVE_APP_ROOT=../cli node ../cli/packages/cli/build/index.js start`
-
-1. Compile your app eg `node ../cli/packages/cli/build/index.js run-android` (make sure you definitely have NDK r17c installed before building android)
+1. Run start (as described above) and compile your app eg `node ../cli/packages/cli/build/index.js run-android` (make sure you definitely have NDK r17c installed before building android)
 
 ## Typechecking, linting and testing
 

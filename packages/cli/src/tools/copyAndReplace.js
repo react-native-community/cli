@@ -31,7 +31,7 @@ function copyAndReplace(
   replacements,
   contentChangedCallback,
 ) {
-  if (fs.lstatSync(srcPath).isDirectory()) {
+  if (isDirectory(srcPath)) {
     if (!fs.existsSync(destPath)) {
       fs.mkdirSync(destPath);
     }
@@ -129,6 +129,25 @@ function copyBinaryFile(srcPath, destPath, cb) {
       cbCalled = true;
     }
   }
+}
+
+/**
+ * extended directory expectation.
+ * npm installs the directory of a local node module as a link to the folder of origin location.
+ * such the folder should be allowed to copy and replace as a template
+ */
+function isDirectory(srcPath) {
+  let srcStat = fs.lstatSync(srcPath);
+
+  if (srcStat.isSymbolicLink()) {
+    try {
+      return fs.readDirSync(srcPath) || false;
+    } catch {
+      return false;
+    }
+  }
+
+  return srcStat.isDirectory();
 }
 
 export default copyAndReplace;

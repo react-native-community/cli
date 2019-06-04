@@ -60,8 +60,9 @@ function findMatchingSimulator(simulators, simulatorString) {
       const simulator = device[i];
       // Skipping non-available simulator
       if (
-        simulator.availability !== '(available)' &&
-        simulator.isAvailable !== 'YES'
+        simulator.availability !== '(available)' 
+        && simulator.isAvailable !== 'YES'
+        && simulator.isAvailable !== true
       ) {
         continue;
       }

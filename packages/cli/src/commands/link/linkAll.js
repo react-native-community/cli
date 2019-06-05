@@ -4,6 +4,7 @@
 
 import {uniqBy} from 'lodash';
 import path from 'path';
+import chalk from 'chalk';
 import {CLIError, logger} from '@react-native-community/cli-tools';
 import type {ConfigT} from 'types';
 import linkAssets from './linkAssets';
@@ -21,6 +22,15 @@ async function linkAll(config: ConfigT, options: Options) {
   try {
     if (options.linkDeps) {
       logger.debug('Linking all dependencies');
+      logger.info(
+        `Linking dependencies using "${chalk.bold(
+          'link',
+        )}" command is now legacy and likely unnecessary. We encourage you to try ${chalk.bold(
+          'autolinking',
+        )} that comes with React Native v0.60 default template. Autolinking happens at build time – during CocoaPods install or Gradle install phase. More information: ${chalk.dim.underline(
+          'https://github.com/react-native-community/cli/blob/master/docs/autolinking.md',
+        )}`,
+      );
       Object.keys(config.dependencies).forEach(async key => {
         const dependency = config.dependencies[key];
         if (dependency.hooks.prelink) {

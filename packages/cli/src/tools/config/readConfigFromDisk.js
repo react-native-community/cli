@@ -7,23 +7,58 @@ import Joi from '@hapi/joi';
 import cosmiconfig from 'cosmiconfig';
 import path from 'path';
 import chalk from 'chalk';
-
 import {
   type UserDependencyConfigT,
   type UserConfigT,
   type CommandT,
 } from 'types';
-
 import {JoiError} from './errors';
-
 import * as schema from './schema';
-
 import {logger} from '@react-native-community/cli-tools';
+import resolveReactNativePath from './resolveReactNativePath';
+
+const MIGRATION_GUIDE = `Migration guide: ${chalk.dim.underline(
+  'https://github.com/react-native-community/cli/blob/master/docs/configuration.md',
+)}`;
 
 /**
  * Places to look for the new configuration
  */
 const searchPlaces = ['react-native.config.js'];
+
+function readLegacyConfigFromDisk(rootFolder: string): UserConfigT | void {
+  const {rnpm: config} = require(path.join(rootFolder, 'package.json'));
+
+  if (!config) {
+    return undefined;
+  }
+
+  const transformedConfig = {
+    project: {
+      ios: config.ios,
+      android: config.android,
+    },
+    assets: config.assets,
+    commands: [],
+    dependencies: {},
+    platforms: {},
+    get reactNativePath() {
+      return config.reactNativePath
+        ? path.resolve(rootFolder, config.reactNativePath)
+        : resolveReactNativePath(rootFolder);
+    },
+  };
+
+  logger.warn(
+    `Your project is using deprecated "${chalk.bold(
+      'rnpm',
+    )}" config that will stop working from next release. Please use a "${chalk.bold(
+      'react-native.config.js',
+    )}" file to configure the React Native CLI. ${MIGRATION_GUIDE}`,
+  );
+
+  return transformedConfig;
+}
 
 /**
  * Reads a project configuration as defined by the user in the current
@@ -32,7 +67,9 @@ const searchPlaces = ['react-native.config.js'];
 export function readConfigFromDisk(rootFolder: string): UserConfigT {
   const explorer = cosmiconfig('react-native', {searchPlaces});
 
-  const {config} = explorer.searchSync(rootFolder) || {config: undefined};
+  const {config} = explorer.searchSync(rootFolder) || {
+    config: readLegacyConfigFromDisk(rootFolder),
+  };
 
   const result = Joi.validate(config, schema.projectConfig);
 
@@ -118,7 +155,6 @@ function readLegacyDependencyConfigFromDisk(
       : {},
   };
 
-  // @todo: paste a link to documentation that explains the migration steps
   logger.warn(
     `Package ${chalk.bold(
       path.basename(name),

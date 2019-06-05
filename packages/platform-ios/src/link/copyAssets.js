@@ -4,7 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
+ * @flow
  */
 
 import fs from 'fs';
@@ -14,12 +14,16 @@ import createGroupWithMessage from './createGroupWithMessage';
 import getPlist from './getPlist';
 import writePlist from './writePlist';
 import {logger, groupFilesByType} from '@react-native-community/cli-tools';
+import type {ProjectConfigIOST} from '../../../../types';
 
 /**
  * This function works in a similar manner to its Android version,
  * except it does not copy fonts but creates Xcode Group references
  */
-export default function linkAssetsIOS(files, projectConfig) {
+export default function linkAssetsIOS(
+  files: Array<string>,
+  projectConfig: ProjectConfigIOST,
+) {
   const project = xcode.project(projectConfig.pbxprojPath).parseSync();
   const assets = groupFilesByType(files);
   const plist = getPlist(project, projectConfig.sourceDir);
@@ -35,7 +39,7 @@ export default function linkAssetsIOS(files, projectConfig) {
           {target: project.getFirstTarget().uuid},
         );
       })
-      .filter(file => file) // xcode returns false if file is already there
+      .filter(Boolean) // xcode returns false if file is already there
       .map(file => file.basename);
   }
 

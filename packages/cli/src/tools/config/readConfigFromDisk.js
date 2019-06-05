@@ -27,7 +27,14 @@ const MIGRATION_GUIDE = `Migration guide: ${chalk.dim.underline(
 const searchPlaces = ['react-native.config.js'];
 
 function readLegacyConfigFromDisk(rootFolder: string): UserConfigT | void {
-  const {rnpm: config} = require(path.join(rootFolder, 'package.json'));
+  let config;
+
+  try {
+    config = require(path.join(rootFolder, 'package.json')).rnpm;
+  } catch (error) {
+    // when `init` is running, there's no package.json yet
+    return undefined;
+  }
 
   if (!config) {
     return undefined;

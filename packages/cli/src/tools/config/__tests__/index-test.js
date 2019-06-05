@@ -40,6 +40,23 @@ test('should have a valid structure by default', () => {
   expect(removeString(config, DIR)).toMatchSnapshot();
 });
 
+test('should handle deprecated "rnpm" in project root', () => {
+  writeFiles(DIR, {
+    'package.json': `{
+      "rnpm": {
+        "assets": ["./fonts"]
+      }
+    }`,
+    'fonts/SampleFont.ttf': '',
+  });
+  const config = loadConfig(DIR);
+
+  expect(removeString(config, DIR)).toMatchSnapshot('returns valid config');
+  expect(logger.warn).toBeCalledWith(
+    expect.stringMatching(/Your project is using deprecated/),
+  );
+});
+
 test('should return dependencies from package.json', () => {
   writeFiles(DIR, {
     'node_modules/react-native/package.json': '{}',

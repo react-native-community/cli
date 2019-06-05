@@ -35,33 +35,17 @@ function launchDevTools({port, watchFolders}, isChromeConnected) {
 function startCustomDebugger({watchFolders, customDebugger}) {
   const folders = watchFolders.map(escapePath).join(' ');
   const command = `${customDebugger} ${folders}`;
-  console.log('Starting custom debugger by executing:', command);
+  logger.info('Starting custom debugger by executing:', command);
   exec(command, function(error, stdout, stderr) {
     if (error !== null) {
-      console.log('Error while starting custom debugger:', error);
+      logger.error('Error while starting custom debugger:', error);
     }
   });
 }
 
 export default function getDevToolsMiddleware(options, isChromeConnected) {
   return function devToolsMiddleware(req, res, next) {
-    if (req.url === '/launch-safari-devtools') {
-      // TODO: remove `logger.info` and dev tools binary
-      logger.info(
-        'We removed support for Safari dev-tools. ' +
-          'If you still need this, please let us know.',
-      );
-    } else if (req.url === '/launch-chrome-devtools') {
-      // TODO: Remove this case in the future
-      logger.info(
-        'The method /launch-chrome-devtools is deprecated. You are ' +
-          ' probably using an application created with an older CLI with the ' +
-          ' packager of a newer CLI. Please upgrade your application: ' +
-          'https://facebook.github.io/react-native/docs/upgrading.html',
-      );
-      launchDevTools(options, isChromeConnected);
-      res.end('OK');
-    } else if (req.url === '/launch-js-devtools') {
+    if (req.url === '/launch-js-devtools') {
       launchDevTools(options, isChromeConnected);
       res.end('OK');
     } else {

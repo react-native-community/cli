@@ -5,6 +5,7 @@
 import path from 'path';
 import {createBlacklist} from 'metro';
 import {loadConfig} from 'metro-config';
+import {existsSync} from 'fs';
 import {type ConfigT} from 'types';
 import findSymlinkedModules from './findSymlinkedModules';
 
@@ -31,13 +32,16 @@ const getBlacklistRE = () => createBlacklist([/.*\/__fixtures__\/.*/]);
  * Otherwise, a.native.js will not load on Windows or other platforms
  */
 export const getDefaultConfig = (ctx: ConfigT) => {
+  const hasteImplPath = path.join(ctx.reactNativePath, 'jest/hasteImpl');
   return {
     resolver: {
       resolverMainFields: ['react-native', 'browser', 'main'],
       blacklistRE: getBlacklistRE(),
       platforms: [...ctx.haste.platforms, 'native'],
       providesModuleNodeModules: ctx.haste.providesModuleNodeModules,
-      hasteImplModulePath: path.join(ctx.reactNativePath, 'jest/hasteImpl'),
+      hasteImplModulePath: existsSync(hasteImplPath)
+        ? hasteImplPath
+        : undefined,
     },
     serializer: {
       getModulesRunBeforeMainModule: () => [

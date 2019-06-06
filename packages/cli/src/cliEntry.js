@@ -19,6 +19,9 @@ import init from './commands/init/initCompat';
 import assertRequiredOptions from './tools/assertRequiredOptions';
 import {logger} from '@react-native-community/cli-tools';
 import {setProjectDir} from './tools/packageManager';
+import resolveNodeModuleDir from './tools/config/resolveNodeModuleDir';
+import getLatestRelease from './tools/releaseChecker/getLatestRelease';
+import printNewRelease from './tools/releaseChecker/printNewRelease';
 import pkgJson from '../package.json';
 import loadConfig from './tools/config';
 
@@ -107,16 +110,18 @@ const addCommand = (command: CommandT, ctx: ConfigT) => {
   const cmd = commander
     .command(command.name)
     .description(command.description)
-    .action(function handleAction(...args) {
+    .action(async function handleAction(...args) {
       const passedOptions = this.opts();
       const argv: Array<string> = Array.from(args).slice(0, -1);
 
-      Promise.resolve()
-        .then(() => {
-          assertRequiredOptions(options, passedOptions);
-          return command.func(argv, ctx, passedOptions);
-        })
-        .catch(handleError);
+      try {
+        assertRequiredOptions(options, passedOptions);
+        await command.func(argv, ctx, passedOptions);
+      } catch (error) {
+        handleError(error);
+      } finally {
+        checkForNewRelease(ctx.root);
+      }
     });
 
   cmd.helpInformation = printHelpInformation.bind(
@@ -184,6 +189,29 @@ async function setupAndRun() {
   }
 
   logger.setVerbose(commander.verbose);
+}
+
+async function checkForNewRelease(root: string) {
+  try {
+    const {version: currentVersion} = require(path.join(
+      resolveNodeModuleDir(root, 'react-native'),
+      'package.json',
+    ));
+    const {name} = require(path.join(root, 'package.json'));
+    const latestRelease = await getLatestRelease(name, currentVersion);
+
+    if (latestRelease) {
+      printNewRelease(name, latestRelease, currentVersion);
+    }
+  } catch (e) {
+    // We let the flow continue as this component is not vital for the rest of
+    // the CLI.
+    logger.debug(
+      'Cannot detect current version of React Native, ' +
+        'skipping check for a newer release',
+    );
+    logger.debug(e);
+  }
 }
 
 export default {

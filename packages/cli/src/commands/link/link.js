@@ -7,6 +7,7 @@
  * @flow
  */
 
+import chalk from 'chalk';
 import {pick} from 'lodash';
 import {logger, CLIError} from '@react-native-community/cli-tools';
 import {type ConfigT} from 'types';
@@ -76,7 +77,7 @@ async function link(
     await linkAssets(platforms, project, dependency.assets);
   } catch (error) {
     throw new CLIError(
-      `Something went wrong while linking. Reason: ${error.message}`,
+      `Linking "${chalk.bold(dependency.name)}" failed.`,
       error,
     );
   }

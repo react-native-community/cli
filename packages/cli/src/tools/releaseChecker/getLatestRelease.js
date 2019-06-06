@@ -18,19 +18,22 @@ export type Release = {
  * If the latest release is not newer or if it's a prerelease, the function
  * will return undefined.
  */
-export default (async function(currentVersion: string) {
+export default async function getLatestRelease(
+  name: string,
+  currentVersion: string,
+) {
   logger.debug('Checking for a newer version of React Native');
   try {
     logger.debug(`Current version: ${currentVersion}`);
 
-    const cachedLatest: string = cacheManager.get('latestVersion');
+    const cachedLatest = cacheManager.get(name, 'latestVersion');
 
     if (cachedLatest) {
       logger.debug(`Cached release version: ${cachedLatest}`);
     }
 
     const aWeek = 7 * 24 * 60 * 60 * 1000;
-    const lastChecked = cacheManager.get('lastChecked');
+    const lastChecked = cacheManager.get(name, 'lastChecked');
     const now = new Date();
     if (lastChecked && now - new Date(lastChecked) < aWeek) {
       logger.debug('Cached release is still recent, skipping remote check');
@@ -38,8 +41,8 @@ export default (async function(currentVersion: string) {
     }
 
     logger.debug('Checking for newer releases on GitHub');
-    const eTag = cacheManager.get('eTag');
-    const latestVersion = await getLatestRnDiffPurgeVersion(eTag);
+    const eTag = cacheManager.get(name, 'eTag');
+    const latestVersion = await getLatestRnDiffPurgeVersion(name, eTag);
     logger.debug(`Latest release: ${latestVersion}`);
 
     if (
@@ -57,7 +60,7 @@ export default (async function(currentVersion: string) {
     );
     logger.debug(e);
   }
-});
+}
 
 function buildChangelogUrl(version: string) {
   return `https://github.com/facebook/react-native/releases/tag/v${version}`;
@@ -66,7 +69,7 @@ function buildChangelogUrl(version: string) {
 /**
  * Returns the most recent React Native version available to upgrade to.
  */
-async function getLatestRnDiffPurgeVersion(eTag: ?string): Promise<string> {
+async function getLatestRnDiffPurgeVersion(name: string, eTag: ?string) {
   const options = {
     hostname: 'api.github.com',
     path: '/repos/react-native-community/rn-diff-purge/tags',
@@ -87,8 +90,8 @@ async function getLatestRnDiffPurgeVersion(eTag: ?string): Promise<string> {
     // Update cache only if newer release is stable.
     if (!semver.prerelease(latestVersion)) {
       logger.debug(`Saving ${response.eTag} to cache`);
-      cacheManager.set('eTag', response.eTag);
-      cacheManager.set('latestVersion', latestVersion);
+      cacheManager.set(name, 'eTag', response.eTag);
+      cacheManager.set(name, 'latestVersion', latestVersion);
     }
 
     return latestVersion;
@@ -96,7 +99,10 @@ async function getLatestRnDiffPurgeVersion(eTag: ?string): Promise<string> {
 
   // Cache is still valid.
   if (response.statusCode === 304) {
-    return cacheManager.get('latestVersion');
+    const latestVersion = cacheManager.get(name, 'latestVersion');
+    if (latestVersion) {
+      return latestVersion;
+    }
   }
 
   // Should be returned only if something went wrong.

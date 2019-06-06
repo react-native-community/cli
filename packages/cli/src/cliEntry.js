@@ -120,7 +120,7 @@ const addCommand = (command: CommandT, ctx: ConfigT) => {
       } catch (error) {
         handleError(error);
       } finally {
-        checkForNewRelease();
+        checkForNewRelease(ctx.root);
       }
     });
 
@@ -191,17 +191,17 @@ async function setupAndRun() {
   logger.setVerbose(commander.verbose);
 }
 
-async function checkForNewRelease() {
+async function checkForNewRelease(root: string) {
   try {
-    const ctx = loadConfig();
     const {version: currentVersion} = require(path.join(
-      resolveNodeModuleDir(ctx.root, 'react-native'),
+      resolveNodeModuleDir(root, 'react-native'),
       'package.json',
     ));
-    const latestRelease = await getLatestRelease(currentVersion);
+    const {name} = require(path.join(root, 'package.json'));
+    const latestRelease = await getLatestRelease(name, currentVersion);
 
     if (latestRelease) {
-      printNewRelease(latestRelease, currentVersion);
+      printNewRelease(name, latestRelease, currentVersion);
     }
   } catch (e) {
     // We let the flow continue as this component is not vital for the rest of

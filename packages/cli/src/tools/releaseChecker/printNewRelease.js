@@ -10,16 +10,17 @@ import cacheManager from './releaseCacheManager';
  * Notifies the user that a newer version of React Native is available.
  */
 export default function printNewRelease(
+  name: string,
   latestRelease: Release,
   currentVersion: string,
 ) {
   logger.info(
-    'Your current version of React Native is out of date. ' +
-      `The latest version is ${latestRelease.version}, ` +
-      `while you're on ${currentVersion}`,
+    `React Native v${
+      latestRelease.version
+    } is now available (your project is running on v${currentVersion}).`,
   );
-  logger.info(`Changelog: ${chalk.underline(latestRelease.changelogUrl)}`);
-  logger.info(`To upgrade, run ${chalk.bold('react-native upgrade')}`);
+  logger.info(`Changelog: ${chalk.dim.underline(latestRelease.changelogUrl)}.`);
+  logger.info(`To upgrade, run "${chalk.bold('react-native upgrade')}".`);
 
-  cacheManager.set('lastChecked', new Date().toISOString());
+  cacheManager.set(name, 'lastChecked', new Date().toISOString());
 }

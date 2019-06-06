@@ -12,6 +12,24 @@ Object {
 }
 `;
 
+exports[`should handle deprecated "rnpm" in project root: returns valid config 1`] = `
+Object {
+  "assets": Array [
+    "<<REPLACED>>/fonts/SampleFont.ttf",
+  ],
+  "commands": Array [],
+  "dependencies": Object {},
+  "haste": Object {
+    "platforms": Array [],
+    "providesModuleNodeModules": Array [],
+  },
+  "platforms": Object {},
+  "project": Object {},
+  "reactNativePath": "<<REPLACED>>/node_modules/react-native",
+  "root": "<<REPLACED>>",
+}
+`;
+
 exports[`should have a valid structure by default 1`] = `
 Object {
   "assets": Array [],

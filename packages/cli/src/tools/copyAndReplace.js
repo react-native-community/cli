@@ -4,7 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
+ * @flow
  */
 
 import fs from 'fs';
@@ -26,10 +26,10 @@ const binaryExtensions = ['.png', '.jar', '.keystore'];
  *        Function(path, 'identical' | 'changed' | 'new') => 'keep' | 'overwrite'
  */
 function copyAndReplace(
-  srcPath,
-  destPath,
-  replacements,
-  contentChangedCallback,
+  srcPath: string,
+  destPath: string,
+  replacements: {[key: string]: string},
+  contentChangedCallback: (destPath: string, contentChanged: string) => void,
 ) {
   if (isDirectory(srcPath)) {
     if (!fs.existsSync(destPath)) {
@@ -132,16 +132,16 @@ function copyBinaryFile(srcPath, destPath, cb) {
 }
 
 /**
- * extended directory expectation.
+ * Extended directory expectation.
  * npm installs the directory of a local node module as a link to the folder of origin location.
  * such the folder should be allowed to copy and replace as a template
  */
-function isDirectory(srcPath) {
+function isDirectory(srcPath: string) {
   let srcStat = fs.lstatSync(srcPath);
 
   if (srcStat.isSymbolicLink()) {
     try {
-      return fs.readDirSync(srcPath) || false;
+      return Boolean(fs.readdirSync(srcPath));
     } catch {
       return false;
     }

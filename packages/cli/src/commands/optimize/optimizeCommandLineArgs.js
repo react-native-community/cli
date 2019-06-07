@@ -20,11 +20,11 @@ export default [
     parse: (quality: string) => Number(quality),
   },
   {
-    name: 'include <string>',
+    name: 'include [string]',
     description: 'Only optimize assets that match this glob pattern',
   },
   {
-    name: 'exclude <string>',
+    name: 'exclude [string]',
     description: 'Exclude assets that match this glob pattern',
   },
 ];

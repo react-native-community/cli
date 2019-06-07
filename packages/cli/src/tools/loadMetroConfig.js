@@ -32,7 +32,7 @@ const getBlacklistRE = () => createBlacklist([/.*\/__fixtures__\/.*/]);
  * Otherwise, a.native.js will not load on Windows or other platforms
  */
 export const getDefaultConfig = (ctx: ConfigT) => {
-  const hasteImplPath = path.join(ctx.reactNativePath, 'jest/hasteImpl');
+  const hasteImplPath = path.join(ctx.reactNativePath, 'jest/hasteImpl.js');
   return {
     resolver: {
       resolverMainFields: ['react-native', 'browser', 'main'],

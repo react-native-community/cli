@@ -23,6 +23,7 @@
     "testEnvironment": "node"
   },
   "dependencies": {
+    "@expo/json-file": "^8.1.4",
     "@hapi/joi": "^15.0.3",
     "@react-native-community/cli-platform-android": "^2.0.0-alpha.23",
     "@react-native-community/cli-platform-ios": "^2.0.0-alpha.23",

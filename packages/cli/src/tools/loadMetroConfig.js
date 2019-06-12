@@ -53,7 +53,7 @@ export const getDefaultConfig = (ctx: ConfigT) => {
         require(path.join(ctx.reactNativePath, 'rn-get-polyfills'))(),
     },
     server: {
-      port: process.env.RCT_METRO_PORT || 8081,
+      port: Number(process.env.RCT_METRO_PORT) || 8081,
     },
     transformer: {
       babelTransformerPath: require.resolve(

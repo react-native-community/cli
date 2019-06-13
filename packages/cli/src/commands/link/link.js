@@ -7,6 +7,7 @@
  * @flow
  */
 
+import chalk from 'chalk';
 import {pick} from 'lodash';
 import {logger, CLIError} from '@react-native-community/cli-tools';
 import {type ConfigT} from 'types';
@@ -17,6 +18,7 @@ import linkAll from './linkAll';
 
 type FlagsType = {
   platforms?: Array<string>,
+  all?: boolean,
 };
 
 /**
@@ -46,10 +48,8 @@ async function link(
   );
 
   if (rawPackageName === undefined) {
-    logger.debug(
-      'No package name provided, will attempt to link all possible packages.',
-    );
-    return linkAll(ctx);
+    logger.debug('No package name provided, will linking all possible assets.');
+    return linkAll(ctx, {linkDeps: opts.all, linkAssets: true});
   }
 
   // Trim the version / tag out of the package name (eg. package@latest)
@@ -77,7 +77,7 @@ async function link(
     await linkAssets(platforms, project, dependency.assets);
   } catch (error) {
     throw new CLIError(
-      `Something went wrong while linking. Reason: ${error.message}`,
+      `Linking "${chalk.bold(dependency.name)}" failed.`,
       error,
     );
   }
@@ -87,13 +87,17 @@ export const func = link;
 
 export default {
   func: link,
-  description: 'scope link command to certain platforms (comma-separated)',
+  description: 'links assets and optionally native modules',
   name: 'link [packageName]',
   options: [
     {
       name: '--platforms [list]',
-      description:
-        'If you want to link dependencies only for specific platforms',
+      description: 'Scope linking to specified platforms',
+      parse: (val: string) => val.toLowerCase().split(','),
+    },
+    {
+      name: '--all [boolean]',
+      description: 'Link all native modules and assets',
       parse: (val: string) => val.toLowerCase().split(','),
     },
   ],

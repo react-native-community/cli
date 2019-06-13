@@ -210,9 +210,13 @@ Usage:
 react-native link [packageName]
 ```
 
-Link native dependency or all native dependencies if no `packageName` passed.
+Links assets and optionally native modules.
 
 #### Options
+
+#### `--all`
+
+Link all native modules and assets.
 
 #### `--platforms [list]`
 

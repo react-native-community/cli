@@ -1,5 +1,5 @@
 // @flow
-
+import chalk from 'chalk';
 import type {DependencyConfigT, ProjectConfigT, PlatformsT} from 'types';
 import {logger} from '@react-native-community/cli-tools';
 import pollParams from './pollParams';
@@ -39,19 +39,23 @@ const linkDependency = async (
 
     if (isInstalled) {
       logger.info(
-        `${getPlatformName(platform)} module "${name}" is already linked`,
+        `${getPlatformName(platform)} module "${chalk.bold(
+          name,
+        )}" is already linked`,
       );
       return;
     }
 
-    logger.info(`Linking "${name}" ${getPlatformName(platform)} dependency`);
+    logger.info(
+      `Linking "${chalk.bold(name)}" ${getPlatformName(platform)} dependency`,
+    );
     // $FlowFixMe
     linkConfig.register(name, dependencyConfig, params, projectConfig);
 
     logger.info(
-      `${getPlatformName(platform)} module "${
-        dependency.name
-      }" has been successfully linked`,
+      `${getPlatformName(platform)} module "${chalk.bold(
+        dependency.name,
+      )}" has been successfully linked`,
     );
   });
 };

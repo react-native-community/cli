@@ -29,7 +29,7 @@ const linkAssets = (
     linkConfig.copyAssets(assets, project[platform]);
   });
 
-  logger.info('Assets have been successfully linked to your project');
+  logger.success('Assets have been successfully linked to your project');
 };
 
 export default linkAssets;

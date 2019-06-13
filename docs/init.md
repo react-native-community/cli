@@ -66,7 +66,7 @@ react-native init ProjectName
 
 # Creating custom template
 
-Every custom template needs to have configuration file called `template.config.js` in the root of the project:
+Every custom template needs to have configuration file called `template.config` in the root of the project:
 
 ```js
 module.exports = {
@@ -77,7 +77,7 @@ module.exports = {
   templateDir: './template',
 
   // Path to script, which will be executed after initialization process, but before installing all the dependencies specified in the template.
-  postInitScript: './script.js',
+  postInitScript: './script.sh',
 };
 ```
 

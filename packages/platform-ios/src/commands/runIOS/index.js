@@ -329,7 +329,13 @@ function getBuildPath(configuration, appName, isDevice, scheme) {
     device = 'iphonesimulator';
   }
 
-  return `build/${scheme}/Build/Products/${configuration}-${device}/${appName}.app`;
+  let buildPath = `build/${scheme}/Build/Products/${configuration}-${device}/${appName}.app`;
+  // Check wether app file exist, sometimes `-derivedDataPath` option of `xcodebuild` not works as expected.
+  if (!fs.existsSync(path.join(buildPath))) {
+    return `DerivedData/Build/Products/${configuration}-${device}/${appName}.app`;
+  }
+
+  return buildPath;
 }
 
 function getProductName(buildOutput) {

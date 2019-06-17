@@ -47,6 +47,7 @@ jest.mock('../../../tools/fetch', () => ({
   fetch: jest.fn(() => Promise.resolve('patch')),
 }));
 jest.mock('@react-native-community/cli-tools', () => ({
+  ...jest.requireActual('@react-native-community/cli-tools'),
   logger: {
     info: jest.fn((...args) => mockPushLog('info', args)),
     error: jest.fn((...args) => mockPushLog('error', args)),
@@ -187,7 +188,7 @@ test('fetches regular patch, adds remote, applies patch, installs deps, removes 
     "info Fetching diff between v0.57.8 and v0.58.4...
     [fs] write tmp-upgrade-rn.patch
     $ execa git rev-parse --show-prefix
-    $ execa git apply --check tmp-upgrade-rn.patch --exclude=package.json -p2 --3way --directory=
+    $ execa git apply --binary --check tmp-upgrade-rn.patch --exclude=package.json -p2 --3way --directory=
     info Applying diff...
     $ execa git apply tmp-upgrade-rn.patch --exclude=package.json -p2 --3way --directory=
     [fs] unlink tmp-upgrade-rn.patch
@@ -219,7 +220,7 @@ test('fetches regular patch, adds remote, applies patch, installs deps, removes 
     "info Fetching diff between v0.57.8 and v0.58.4...
     [fs] write tmp-upgrade-rn.patch
     $ execa git rev-parse --show-prefix
-    $ execa git apply --check tmp-upgrade-rn.patch --exclude=NestedApp/package.json -p2 --3way --directory=NestedApp/
+    $ execa git apply --binary --check tmp-upgrade-rn.patch --exclude=NestedApp/package.json -p2 --3way --directory=NestedApp/
     info Applying diff...
     $ execa git apply tmp-upgrade-rn.patch --exclude=NestedApp/package.json -p2 --3way --directory=NestedApp/
     [fs] unlink tmp-upgrade-rn.patch
@@ -266,7 +267,7 @@ test('cleans up if patching fails,', async () => {
     "info Fetching diff between v0.57.8 and v0.58.4...
     [fs] write tmp-upgrade-rn.patch
     $ execa git rev-parse --show-prefix
-    $ execa git apply --check tmp-upgrade-rn.patch --exclude=package.json -p2 --3way --directory=
+    $ execa git apply --binary --check tmp-upgrade-rn.patch --exclude=package.json -p2 --3way --directory=
     info Applying diff (excluding: package.json, .flowconfig)...
     $ execa git apply tmp-upgrade-rn.patch --exclude=package.json --exclude=.flowconfig -p2 --3way --directory=
     error: .flowconfig: does not exist in index

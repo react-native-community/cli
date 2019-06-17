@@ -5,7 +5,7 @@ import chalk from 'chalk';
 import semver from 'semver';
 import execa from 'execa';
 import type {ConfigT} from 'types';
-import {logger} from '@react-native-community/cli-tools';
+import {logger, CLIError} from '@react-native-community/cli-tools';
 import * as PackageManager from '../../tools/packageManager';
 import {fetch} from '../../tools/fetch';
 import legacyUpgrade from './legacyUpgrade';
@@ -179,6 +179,10 @@ const applyPatch = async (
       );
       await execa('git', [
         'apply',
+        // According to git documentation, `--binary` flag is turned on by
+        // default. However it's necessary when running `git apply --check` to
+        // actually accept binary files, maybe a bug in git?
+        '--binary',
         '--check',
         tmpPatchFile,
         ...excludes,
@@ -307,7 +311,7 @@ async function upgrade(argv: Array<string>, ctx: ConfigT, args: FlagsT) {
         `${rnDiffPurgeRawDiffsUrl}/${currentVersion}..${newVersion}.diff`,
       )}`);
 
-      throw new Error(
+      throw new CLIError(
         'Upgrade failed. Please see the messages above for details',
       );
     }

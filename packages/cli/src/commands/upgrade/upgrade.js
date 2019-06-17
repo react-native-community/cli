@@ -147,6 +147,10 @@ const applyPatch = async (
       );
       await execa('git', [
         'apply',
+        // According to git documentation, `--binary` flag is turned on by
+        // default. However it's necessary when running `git apply --check` to
+        // actually accept binary files, maybe a bug in git?
+        '--binary',
         '--check',
         tmpPatchFile,
         ...excludes,

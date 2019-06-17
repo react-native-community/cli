@@ -179,7 +179,7 @@ test(
 "info Fetching diff between v0.57.8 and v0.58.4...
 [fs] write tmp-upgrade-rn.patch
 $ execa git rev-parse --show-prefix
-$ execa git apply --check tmp-upgrade-rn.patch --exclude=package.json -p2 --3way --directory=
+$ execa git apply --binary --check tmp-upgrade-rn.patch --exclude=package.json -p2 --3way --directory=
 info Applying diff...
 $ execa git apply tmp-upgrade-rn.patch --exclude=package.json -p2 --3way --directory=
 [fs] unlink tmp-upgrade-rn.patch
@@ -213,7 +213,7 @@ test(
 "info Fetching diff between v0.57.8 and v0.58.4...
 [fs] write tmp-upgrade-rn.patch
 $ execa git rev-parse --show-prefix
-$ execa git apply --check tmp-upgrade-rn.patch --exclude=NestedApp/package.json -p2 --3way --directory=NestedApp/
+$ execa git apply --binary --check tmp-upgrade-rn.patch --exclude=NestedApp/package.json -p2 --3way --directory=NestedApp/
 info Applying diff...
 $ execa git apply tmp-upgrade-rn.patch --exclude=NestedApp/package.json -p2 --3way --directory=NestedApp/
 [fs] unlink tmp-upgrade-rn.patch
@@ -262,7 +262,7 @@ test('cleans up if patching fails,', async () => {
 "info Fetching diff between v0.57.8 and v0.58.4...
 [fs] write tmp-upgrade-rn.patch
 $ execa git rev-parse --show-prefix
-$ execa git apply --check tmp-upgrade-rn.patch --exclude=package.json -p2 --3way --directory=
+$ execa git apply --binary --check tmp-upgrade-rn.patch --exclude=package.json -p2 --3way --directory=
 info Applying diff (excluding: package.json, .flowconfig)...
 $ execa git apply tmp-upgrade-rn.patch --exclude=package.json --exclude=.flowconfig -p2 --3way --directory=
 error: .flowconfig: does not exist in index

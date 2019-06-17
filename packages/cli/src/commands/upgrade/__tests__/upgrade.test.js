@@ -204,7 +204,7 @@ test('fetches regular patch, adds remote, applies patch, installs deps, removes 
     success Upgraded React Native to v0.58.4 🎉. Now you can review and commit the changes"
   `);
   expect(
-    snapshotDiff(samplePatch, fs.writeFileSync.mock.calls[0][1], {
+    snapshotDiff(samplePatch, (fs.writeFileSync: any).mock.calls[0][1], {
       contextLines: 1,
     }),
   ).toMatchSnapshot(
@@ -294,7 +294,7 @@ test('works with --name-ios and --name-android', async () => {
     opts,
   );
   expect(
-    snapshotDiff(samplePatch, fs.writeFileSync.mock.calls[0][1], {
+    snapshotDiff(samplePatch, (fs.writeFileSync: any).mock.calls[0][1], {
       contextLines: 1,
     }),
   ).toMatchSnapshot(

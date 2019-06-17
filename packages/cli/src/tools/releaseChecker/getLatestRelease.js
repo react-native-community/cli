@@ -110,11 +110,11 @@ async function getLatestRnDiffPurgeVersion(name: string, eTag: ?string) {
 }
 
 type Headers = {
-  'User-Agent': string,
-  [header: string]: string,
+  'User-Agent': mixed,
+  [header: string]: mixed,
 };
 
-function httpsGet(options: any) {
+function httpsGet(options) {
   return new Promise((resolve, reject) => {
     https
       .get(options, result => {

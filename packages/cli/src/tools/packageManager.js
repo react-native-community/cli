@@ -26,12 +26,12 @@ const npmConfig = {
 function configurePackageManager(
 	pmIsYarn: boolean,
 	packageNames: Array<string>,
-	options?: Options, args: string
+	options?: Options, installType: string
 ) {
   const pm = pmIsYarn ? 'yarn' : 'npm';
   const pmConfig = pm === 'npm' ? npmConfig : yarnConfig;
 
-  let args = pmConfig[args];
+  let args = pmConfig[installType];
   args.push(...packageNames);
   return executeCommand(pm, args, options);
 }

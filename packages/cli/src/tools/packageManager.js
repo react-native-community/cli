@@ -11,6 +11,31 @@ type Options = {|
 
 let projectDir;
 
+const yarnConfig = {
+	'dependencies': ['add'],
+	'devDependencies': ['add', '-D'],
+	'uninstallDependencies': ['remove']
+};
+
+const npmConfig = {
+	'dependencies': ['install', '--save', '--save-exact'],
+	'devDependencies': ['install', '--save-dev', '--save-exact'],
+	'uninstallDependencies': ['uninstall', '--save']
+};
+
+function configurePackageManager(
+	pmIsYarn: boolean,
+	packageNames: Array<string>,
+	options?: Options, args: string
+) {
+  const pm = pmIsYarn ? 'yarn' : 'npm';
+  const pmConfig = pm === 'npm' ? npmConfig : yarnConfig;
+
+  let args = pmConfig[args];
+  args.push(...packageNames);
+  return executeCommand(pm, args, options);
+}
+
 function executeCommand(
   command: string,
   args: Array<string>,
@@ -36,33 +61,18 @@ export function setProjectDir(dir: string) {
 }
 
 export function install(packageNames: Array<string>, options?: Options) {
-  return shouldUseYarn(options)
-    ? executeCommand('yarn', ['add', ...packageNames], options)
-    : executeCommand(
-        'npm',
-        ['install', ...packageNames, '--save', '--save-exact'],
-        options,
-      );
+  configurePackageManager(shouldUseYarn(options), packageNames, options, 'dependencies');
 }
 
 export function installDev(packageNames: Array<string>, options?: Options) {
-  return shouldUseYarn(options)
-    ? executeCommand('yarn', ['add', '-D', ...packageNames], options)
-    : executeCommand(
-        'npm',
-        ['install', ...packageNames, '--save-dev', '--save-exact'],
-        options,
-      );
+  configurePackageManager(shouldUseYarn(options), packageNames, options, 'devDependencies');
 }
 
 export function uninstall(packageNames: Array<string>, options?: Options) {
-  return shouldUseYarn(options)
-    ? executeCommand('yarn', ['remove', ...packageNames], options)
-    : executeCommand('npm', ['uninstall', ...packageNames, '--save'], options);
+  configurePackageManager(shouldUseYarn(options), packageNames, options, 'uninstallDependencies');
 }
 
 export function installAll(options?: Options) {
-  return shouldUseYarn(options)
-    ? executeCommand('yarn', ['install'], options)
-    : executeCommand('npm', ['install'], options);
+  const pm = shouldUseYarn(options) ? 'yarn': 'npm';
+  return executeCommand(pm, ['install'], options);
 }

@@ -12,21 +12,22 @@ type Options = {|
 let projectDir;
 
 const yarnConfig = {
-	'dependencies': ['add'],
-	'devDependencies': ['add', '-D'],
-	'uninstallDependencies': ['remove']
+  dependencies: ['add'],
+  devDependencies: ['add', '-D'],
+  uninstallDependencies: ['remove'],
 };
 
 const npmConfig = {
-	'dependencies': ['install', '--save', '--save-exact'],
-	'devDependencies': ['install', '--save-dev', '--save-exact'],
-	'uninstallDependencies': ['uninstall', '--save']
+  dependencies: ['install', '--save', '--save-exact'],
+  devDependencies: ['install', '--save-dev', '--save-exact'],
+  uninstallDependencies: ['uninstall', '--save'],
 };
 
 function configurePackageManager(
-	pmIsYarn: boolean,
-	packageNames: Array<string>,
-	options?: Options, installType: string
+  pmIsYarn: boolean,
+  packageNames: Array<string>,
+  options?: Options,
+  installType: string,
 ) {
   const pm = pmIsYarn ? 'yarn' : 'npm';
   const pmConfig = pm === 'npm' ? npmConfig : yarnConfig;
@@ -61,18 +62,33 @@ export function setProjectDir(dir: string) {
 }
 
 export function install(packageNames: Array<string>, options?: Options) {
-  configurePackageManager(shouldUseYarn(options), packageNames, options, 'dependencies');
+  configurePackageManager(
+    shouldUseYarn(options),
+    packageNames,
+    options,
+    'dependencies',
+  );
 }
 
 export function installDev(packageNames: Array<string>, options?: Options) {
-  configurePackageManager(shouldUseYarn(options), packageNames, options, 'devDependencies');
+  configurePackageManager(
+    shouldUseYarn(options),
+    packageNames,
+    options,
+    'devDependencies',
+  );
 }
 
 export function uninstall(packageNames: Array<string>, options?: Options) {
-  configurePackageManager(shouldUseYarn(options), packageNames, options, 'uninstallDependencies');
+  configurePackageManager(
+    shouldUseYarn(options),
+    packageNames,
+    options,
+    'uninstallDependencies',
+  );
 }
 
 export function installAll(options?: Options) {
-  const pm = shouldUseYarn(options) ? 'yarn': 'npm';
+  const pm = shouldUseYarn(options) ? 'yarn' : 'npm';
   return executeCommand(pm, ['install'], options);
 }

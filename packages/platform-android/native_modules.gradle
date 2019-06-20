@@ -148,7 +148,7 @@ class ReactNativeModules {
       packageImports = "import ${applicationId}.BuildConfig;\nimport ${applicationId}.R;\n\n"
       packageImports = packageImports + packages.collect {
         "// ${it.name}\n${it.packageImportPath}"
-      }.join(';\n')
+      }.join('\n')
       packageClassInstances = ",\n      " + packages.collect { it.packageInstance }.join(',')
     }
 

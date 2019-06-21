@@ -11,28 +11,30 @@ type Options = {|
 
 let projectDir;
 
-const yarnConfig = {
-  dependencies: ['add'],
-  devDependencies: ['add', '-D'],
-  uninstallDependencies: ['remove'],
-};
-
-const npmConfig = {
-  dependencies: ['install', '--save', '--save-exact'],
-  devDependencies: ['install', '--save-dev', '--save-exact'],
-  uninstallDependencies: ['uninstall', '--save'],
+const packageManagers = {
+  yarn: {
+    add: ['add'],
+    addDev: ['add', '-D'],
+    remove: ['remove'],
+    install: ['install'],
+  },
+  npm: {
+    add: ['install', '--save', '--save-exact'],
+    addDev: ['install', '--save-dev', '--save-exact'],
+    remove: ['uninstall', '--save'],
+    install: ['install'],
+  },
 };
 
 function configurePackageManager(
-  pmIsYarn: boolean,
   packageNames: Array<string>,
   options?: Options,
-  installType: string,
+  action: 'add' | 'addDev' | 'remove',
 ) {
-  const pm = pmIsYarn ? 'yarn' : 'npm';
-  const pmConfig = pm === 'npm' ? npmConfig : yarnConfig;
+  const pm = shouldUseYarn(options) ? 'yarn' : 'npm';
+  const pmConfig = packageManagers[pm];
 
-  const [executable, ...flags] = pmConfig[installType];
+  const [executable, ...flags] = pmConfig[action];
   const args = [executable, ...packageNames, ...flags];
   return executeCommand(pm, args, options);
 }
@@ -62,33 +64,17 @@ export function setProjectDir(dir: string) {
 }
 
 export function install(packageNames: Array<string>, options?: Options) {
-  return configurePackageManager(
-    shouldUseYarn(options),
-    packageNames,
-    options,
-    'dependencies',
-  );
+  return configurePackageManager(packageNames, options, 'add');
 }
 
 export function installDev(packageNames: Array<string>, options?: Options) {
-  return configurePackageManager(
-    shouldUseYarn(options),
-    packageNames,
-    options,
-    'devDependencies',
-  );
+  return configurePackageManager(packageNames, options, 'addDev');
 }
 
 export function uninstall(packageNames: Array<string>, options?: Options) {
-  return configurePackageManager(
-    shouldUseYarn(options),
-    packageNames,
-    options,
-    'uninstallDependencies',
-  );
+  return configurePackageManager(packageNames, options, 'remove');
 }
 
 export function installAll(options?: Options) {
-  const pm = shouldUseYarn(options) ? 'yarn' : 'npm';
-  return executeCommand(pm, ['install'], options);
+  return configurePackageManager(options, 'install');
 }

@@ -121,9 +121,9 @@ export type ConfigT = {|
       },
       assets: string[],
       hooks: {
-        [key: string]: () => void,
-        prelink?: () => void,
-        postlink?: () => void,
+        [key: string]: string,
+        prelink?: string,
+        postlink?: string,
       },
       params: InquirerPromptT[],
     },

@@ -11,6 +11,7 @@ import {flatMap, values, difference} from 'lodash';
 import {logger, CLIError} from '@react-native-community/cli-tools';
 import type {ConfigT} from 'types';
 import getPlatformName from './getPlatformName';
+import makeHook from './makeHook';
 
 const unlinkDependency = (
   platforms,
@@ -91,7 +92,7 @@ async function unlink(args: Array<string>, ctx: ConfigT) {
   const dependencies = values(otherDependencies);
   try {
     if (dependency.hooks.preulink) {
-      await dependency.hooks.preulink();
+      await makeHook(dependency.hooks.preulink)();
     }
     unlinkDependency(
       ctx.platforms,
@@ -101,7 +102,7 @@ async function unlink(args: Array<string>, ctx: ConfigT) {
       dependencies,
     );
     if (dependency.hooks.postunlink) {
-      await dependency.hooks.postunlink();
+      await makeHook(dependency.hooks.postunlink)();
     }
   } catch (error) {
     throw new CLIError(

@@ -9,6 +9,7 @@ import {CLIError, logger} from '@react-native-community/cli-tools';
 import type {ConfigT} from 'types';
 import linkAssets from './linkAssets';
 import linkDependency from './linkDependency';
+import makeHook from './makeHook';
 
 const dedupeAssets = (assets: Array<string>): Array<string> =>
   uniqBy(assets, asset => path.basename(asset));
@@ -35,11 +36,11 @@ async function linkAll(config: ConfigT, options: Options) {
       const dependency = config.dependencies[key];
       try {
         if (dependency.hooks.prelink) {
-          await dependency.hooks.prelink();
+          await makeHook(dependency.hooks.prelink)();
         }
         await linkDependency(config.platforms, config.project, dependency);
         if (dependency.hooks.postlink) {
-          await dependency.hooks.postlink();
+          await makeHook(dependency.hooks.postlink)();
         }
       } catch (error) {
         throw new CLIError(

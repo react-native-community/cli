@@ -1,9 +1,15 @@
 import {func as link} from '../link';
 import loadConfig from '../../../tools/config';
+import makeHook from '../makeHook';
 
 jest.mock('chalk', () => ({grey: str => str, bold: str => str}));
 jest.mock('../../../tools/config');
 jest.mock('../../../tools/logger');
+jest.mock('../makeHook', () => {
+  return jest.fn(() => {
+    return jest.fn(() => Promise.resolve());
+  });
+});
 
 const baseConfig = loadConfig();
 
@@ -54,9 +60,9 @@ describe('link', () => {
     expect(spy).toHaveBeenCalled();
   });
 
-  it('should register native module when android/ios projects are present', done => {
-    const prelink = jest.fn();
-    const postlink = jest.fn();
+  it('should register native module when android/ios projects are present', async () => {
+    const prelink = 'node prelink.js';
+    const postlink = 'node postlink.js';
     const registerNativeModule = jest.fn();
 
     const config = {
@@ -87,19 +93,9 @@ describe('link', () => {
       },
     };
 
-    link(['react-native-blur'], config, {}).then(() => {
-      expect(registerNativeModule.mock.calls).toHaveLength(2);
-
-      expect(prelink.mock.invocationCallOrder[0]).toBeLessThan(
-        registerNativeModule.mock.invocationCallOrder[0],
-      );
-
-      expect(postlink.mock.invocationCallOrder[0]).toBeGreaterThan(
-        registerNativeModule.mock.invocationCallOrder[0],
-      );
-
-      done();
-    });
+    await link(['react-native-blur'], config, {});
+    expect(registerNativeModule.mock.calls).toHaveLength(2);
+    expect(makeHook.mock.calls).toEqual([[prelink], [postlink]]);
   });
 
   it('should copy assets only from the specific dependency that we are linking', done => {

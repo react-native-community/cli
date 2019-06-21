@@ -35,7 +35,7 @@ function configurePackageManager(
   const pmConfig = packageManagers[pm];
 
   const [executable, ...flags] = pmConfig[action];
-  const args = [executable, ...packageNames, ...flags];
+  const args = [executable, ...flags, ...packageNames];
   return executeCommand(pm, args, options);
 }
 

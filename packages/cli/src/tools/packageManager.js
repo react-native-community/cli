@@ -13,28 +13,26 @@ let projectDir;
 
 const packageManagers = {
   yarn: {
-    add: ['add'],
-    addDev: ['add', '-D'],
-    remove: ['remove'],
-    install: ['install'],
+    install: ['add'],
+    installDev: ['add', '-D'],
+    uninstall: ['remove'],
+    installAll: ['install'],
   },
   npm: {
-    add: ['install', '--save', '--save-exact'],
-    addDev: ['install', '--save-dev', '--save-exact'],
-    remove: ['uninstall', '--save'],
-    install: ['install'],
+    install: ['install', '--save', '--save-exact'],
+    installDev: ['install', '--save-dev', '--save-exact'],
+    uninstall: ['uninstall', '--save'],
+    installAll: ['install'],
   },
 };
 
 function configurePackageManager(
   packageNames: Array<string>,
   options?: Options,
-  action: 'add' | 'addDev' | 'remove',
+  action: 'install' | 'installDev' | 'installAll' | 'uninstall',
 ) {
   const pm = shouldUseYarn(options) ? 'yarn' : 'npm';
-  const pmConfig = packageManagers[pm];
-
-  const [executable, ...flags] = pmConfig[action];
+  const [executable, ...flags] = packageManagers[pm][action];
   const args = [executable, ...flags, ...packageNames];
   return executeCommand(pm, args, options);
 }
@@ -64,20 +62,17 @@ export function setProjectDir(dir: string) {
 }
 
 export function install(packageNames: Array<string>, options?: Options) {
-  return configurePackageManager(packageNames, options, 'add');
+  return configurePackageManager(packageNames, options, 'install');
 }
 
 export function installDev(packageNames: Array<string>, options?: Options) {
-  return configurePackageManager(packageNames, options, 'addDev');
+  return configurePackageManager(packageNames, options, 'installDev');
 }
 
 export function uninstall(packageNames: Array<string>, options?: Options) {
-  return configurePackageManager(packageNames, options, 'remove');
+  return configurePackageManager(packageNames, options, 'uninstall');
 }
 
 export function installAll(options?: Options) {
-  const pm = shouldUseYarn(options) ? 'yarn' : 'npm';
-  const pmConfig = packageManagers[pm];
-
-  return executeCommand(pm, pmConfig.install, options);
+  return configurePackageManager([], options, 'installAll');
 }

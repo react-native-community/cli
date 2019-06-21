@@ -12,7 +12,7 @@
     "test": "jest",
     "test:ci:unit": "jest packages --ci --coverage",
     "test:ci:e2e": "jest e2e --ci -i",
-    "lint": "eslint --fix --ext .js,.ts . --cache --report-unused-disable-directives",
+    "lint": "eslint --ext .js,.ts . --cache --report-unused-disable-directives",
     "test:ci:cocoapods": "ruby packages/platform-ios/native_modules.rb",
     "flow-check": "flow check",
     "postinstall": "yarn build",

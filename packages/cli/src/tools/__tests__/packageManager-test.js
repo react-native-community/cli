@@ -55,7 +55,7 @@ describe('npm', () => {
 
     expect(execa).toHaveBeenCalledWith(
       'npm',
-      ['install', ...PACKAGES, '--save', '--save-exact'],
+      ['install', '--save', '--save-exact', ...PACKAGES],
       EXEC_OPTS,
     );
   });
@@ -65,7 +65,7 @@ describe('npm', () => {
 
     expect(execa).toHaveBeenCalledWith(
       'npm',
-      ['install', ...PACKAGES, '--save-dev', '--save-exact'],
+      ['install', '--save-dev', '--save-exact', ...PACKAGES],
       EXEC_OPTS,
     );
   });
@@ -75,7 +75,7 @@ describe('npm', () => {
 
     expect(execa).toHaveBeenCalledWith(
       'npm',
-      ['uninstall', ...PACKAGES, '--save'],
+      ['uninstall', '--save', ...PACKAGES],
       EXEC_OPTS,
     );
   });
@@ -87,7 +87,7 @@ it('should use npm if yarn is not available', () => {
 
   expect(execa).toHaveBeenCalledWith(
     'npm',
-    ['install', ...PACKAGES, '--save', '--save-exact'],
+    ['install', '--save', '--save-exact', ...PACKAGES],
     EXEC_OPTS,
   );
 });
@@ -100,7 +100,7 @@ it('should use npm if project is not using yarn', () => {
 
   expect(execa).toHaveBeenCalledWith(
     'npm',
-    ['install', ...PACKAGES, '--save', '--save-exact'],
+    ['install', '--save', '--save-exact', ...PACKAGES],
     EXEC_OPTS,
   );
   expect(yarn.isProjectUsingYarn).toHaveBeenCalledWith(PROJECT_ROOT);

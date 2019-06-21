@@ -62,7 +62,7 @@ export function setProjectDir(dir: string) {
 }
 
 export function install(packageNames: Array<string>, options?: Options) {
-  configurePackageManager(
+  return configurePackageManager(
     shouldUseYarn(options),
     packageNames,
     options,
@@ -71,7 +71,7 @@ export function install(packageNames: Array<string>, options?: Options) {
 }
 
 export function installDev(packageNames: Array<string>, options?: Options) {
-  configurePackageManager(
+  return configurePackageManager(
     shouldUseYarn(options),
     packageNames,
     options,
@@ -80,7 +80,7 @@ export function installDev(packageNames: Array<string>, options?: Options) {
 }
 
 export function uninstall(packageNames: Array<string>, options?: Options) {
-  configurePackageManager(
+  return configurePackageManager(
     shouldUseYarn(options),
     packageNames,
     options,

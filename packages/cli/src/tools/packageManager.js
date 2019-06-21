@@ -76,5 +76,8 @@ export function uninstall(packageNames: Array<string>, options?: Options) {
 }
 
 export function installAll(options?: Options) {
-  return configurePackageManager(options, 'install');
+  const pm = shouldUseYarn(options) ? 'yarn' : 'npm';
+  const pmConfig = packageManagers[pm];
+
+  return executeCommand(pm, pmConfig.install, options);
 }

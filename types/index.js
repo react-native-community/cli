@@ -66,7 +66,7 @@ type ProjectParamsAndroidT = {
  */
 type ProjectParamsIOST = {
   project?: string,
-  podspec?: string,
+  podspecPath?: string,
   sharedLibraries?: string[],
   libraryFolder?: string,
   plist: any[],
@@ -222,14 +222,14 @@ export type ProjectConfigIOST = {
   folder: string,
   pbxprojPath: string,
   podfile: null,
-  podspec: null | string,
+  podspecPath: null | string,
   projectPath: string,
   projectName: string,
   libraryFolder: string,
   sharedLibraries: Array<any>,
   plist: Array<any>,
 };
-type DependencyConfigIOST = ProjectConfigIOST;
+export type DependencyConfigIOST = ProjectConfigIOST;
 type ProjectConfigAndroidT = {
   sourceDir: string,
   isFlat: boolean,

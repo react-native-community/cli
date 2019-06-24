@@ -41,7 +41,7 @@ def use_native_modules!(root = "..", packages = nil)
   packages.each do |package_name, package|
     next unless package_config = package["platforms"]["ios"]
 
-    podspec_path = File.join(package["root"], "#{package_config["podspec"]}.podspec")
+    podspec_path = package_config["podspecPath"]
     spec = Pod::Specification.from_file(podspec_path)
 
     # We want to do a look up inside the current CocoaPods target
@@ -57,7 +57,7 @@ def use_native_modules!(root = "..", packages = nil)
       existing_dep.name.split('/').first == spec.name
     end
 
-    pod spec.name, :path => package["root"]
+    pod spec.name, :path => File.dirname(podspec_path)
 
     if package_config["scriptPhases"]
       # Can be either an object, or an array of objects
@@ -126,16 +126,16 @@ if $0 == __FILE__
       }
 
       @ios_package = ios_package = {
-        "root" => "/Users/grabbou/Repositories/WebViewDemoApp/node_modules/react",
+        "root" => "/root/app/node_modules/react",
         "platforms" => {
           "ios" => {
-            "podspec" => "React",
+            "podspecPath" => "/root/app/node_modules/react/React.podspec",
           },
           "android" => nil,
         },
       }
       @android_package = {
-        "root" => "/Users/grabbou/Repositories/WebViewDemoApp/node_modules/react-native-google-play-game-services",
+        "root" => "/root/app/node_modules/react-native-google-play-game-services",
         "platforms" => {
           "ios" => nil,
           "android" => {
@@ -160,7 +160,7 @@ if $0 == __FILE__
       end
 
       Pod::Specification.singleton_class.send(:define_method, :from_file) do |podspec_path|
-        podspec_path.must_equal File.join(ios_package["root"], "#{ios_package["platforms"]["ios"]["podspec"]}.podspec")
+        podspec_path.must_equal ios_package["platforms"]["ios"]["podspecPath"]
         spec
       end
 

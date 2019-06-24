@@ -81,6 +81,7 @@ type ProjectParamsAndroidT = {
 
 type ProjectParamsIOST = {
   project?: string;
+  podspecPath?: string;
   sharedLibraries?: string[];
   libraryFolder?: string;
   plist: any[];

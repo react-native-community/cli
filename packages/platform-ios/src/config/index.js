@@ -11,7 +11,7 @@
 import path from 'path';
 import findProject from './findProject';
 import findPodfilePath from './findPodfilePath';
-import findPodspecName from './findPodspecName';
+import findPodspec from './findPodspec';
 import type {UserConfigT} from 'types';
 
 /**
@@ -47,13 +47,19 @@ export function projectConfig(
   }
 
   const projectPath = path.join(folder, project);
+  const sourceDir = path.dirname(projectPath);
 
   return {
-    sourceDir: path.dirname(projectPath),
+    sourceDir,
     folder,
     pbxprojPath: path.join(projectPath, 'project.pbxproj'),
     podfile: findPodfilePath(projectPath),
-    podspec: userConfig.podspec || findPodspecName(folder),
+    podspecPath:
+      userConfig.podspecPath ||
+      // podspecs are usually placed in the root dir of the library or in the
+      // iOS project path
+      findPodspec(folder) ||
+      findPodspec(sourceDir),
     projectPath,
     projectName: path.basename(projectPath),
     libraryFolder: userConfig.libraryFolder || 'Libraries',

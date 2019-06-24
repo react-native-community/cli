@@ -8,6 +8,7 @@
  */
 
 import readPodfile from './readPodfile';
+import getPodspecName from '../config/getPodspecName';
 
 export default function isInstalled(iOSProject, dependencyConfig) {
   if (!iOSProject.podfile) {
@@ -15,7 +16,7 @@ export default function isInstalled(iOSProject, dependencyConfig) {
   }
   // match line with pod declaration: pod 'dependencyPodName' (other possible parameters of pod are ignored)
   const dependencyRegExp = new RegExp(
-    `pod\\s+('|")${dependencyConfig.podspec}('|")`,
+    `pod\\s+('|")${getPodspecName(dependencyConfig.podspecPath)}('|")`,
     'g',
   );
   const podLines = readPodfile(iOSProject.podfile);

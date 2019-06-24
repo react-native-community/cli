@@ -4,14 +4,14 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
+ * @flow
  */
 
 import xcode from 'xcode';
 import fs from 'fs';
 import path from 'path';
 import {isEmpty} from 'lodash';
-
+import type {DependencyConfigIOST, ProjectConfigIOST} from 'types';
 import addToHeaderSearchPaths from './addToHeaderSearchPaths';
 import getHeadersInFolder from './getHeadersInFolder';
 import getHeaderSearchPath from './getHeaderSearchPath';
@@ -30,8 +30,8 @@ import {logger} from '@react-native-community/cli-tools';
  * If library is already linked, this action is a no-op.
  */
 export default function registerNativeModuleIOS(
-  dependencyConfig,
-  projectConfig,
+  dependencyConfig: DependencyConfigIOST,
+  projectConfig: ProjectConfigIOST,
 ) {
   logger.debug(`Reading ${projectConfig.pbxprojPath}`);
   const project = xcode.project(projectConfig.pbxprojPath).parseSync();

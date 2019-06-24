@@ -17,19 +17,19 @@ const PODFILES_PATH = path.join(__dirname, '../__fixtures__/');
 describe('pods::isInstalled', () => {
   it('returns false if pod is missing', () => {
     const project = {podfile: path.join(PODFILES_PATH, 'PodfileSimple')};
-    const podspecName = {podspec: 'NotExisting'};
+    const podspecName = {podspecPath: '/path/NotExisting'};
     expect(isInstalled(project, podspecName)).toBe(false);
   });
 
   it('returns true for existing pod with version number', () => {
     const project = {podfile: path.join(PODFILES_PATH, 'PodfileSimple')};
-    const podspecName = {podspec: 'TestPod'};
+    const podspecName = {podspecPath: '/path/TestPod.podspec'};
     expect(isInstalled(project, podspecName)).toBe(true);
   });
 
   it('returns true for existing pod with path', () => {
     const project = {podfile: path.join(PODFILES_PATH, 'PodfileWithTarget')};
-    const podspecName = {podspec: 'Yoga'};
+    const podspecName = {podspecPath: '/path/Yoga.podspec'};
     expect(isInstalled(project, podspecName)).toBe(true);
   });
 
@@ -37,7 +37,7 @@ describe('pods::isInstalled', () => {
     const project = {
       podfile: path.join(PODFILES_PATH, 'PodfileWithFunction'),
     };
-    const podspecName = {podspec: 'React'};
+    const podspecName = {podspecPath: '/path/React.podspec'};
     expect(isInstalled(project, podspecName)).toBe(true);
   });
 });

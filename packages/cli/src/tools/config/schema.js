@@ -49,7 +49,7 @@ export const dependencyConfig = t
             ios: t
               .object({
                 project: t.string(),
-                podspec: t.string(),
+                podspecPath: t.string(),
                 sharedLibraries: t.array().items(t.string()),
                 libraryFolder: t.string(),
               })
@@ -113,7 +113,7 @@ export const projectConfig = t
                 folder: t.string(),
                 pbxprojPath: t.string(),
                 podfile: t.string(),
-                podspec: t.string(),
+                podspecPath: t.string(),
                 projectPath: t.string(),
                 projectName: t.string(),
                 libraryFolder: t.string(),

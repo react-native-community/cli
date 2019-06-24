@@ -83,7 +83,7 @@ type ProjectConfigIOST = {
   folder: string;
   pbxprojPath: string;
   podfile: null;
-  podspec: null;
+  podspecPath: null;
   projectPath: string;
   projectName: string;
   libraryFolder: string;

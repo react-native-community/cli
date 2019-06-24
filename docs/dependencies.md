@@ -56,7 +56,7 @@ The following settings are available on iOS and Android:
 ```ts
 type DependencyParamsIOST = {
   project?: string;
-  podspec?: string;
+  podspecPath?: string;
   sharedLibraries?: string[];
 };
 
@@ -70,11 +70,11 @@ type DependencyParamsAndroidT = {
 
 #### platforms.ios.project
 
-Custom path to `.xcodeproj`
+Custom path to `.xcodeproj`.
 
-#### platforms.ios.podspec
+#### platforms.ios.podspecPath
 
-Custom `podspec` name to use when auto-linking (without the file extension). Your `podspec` file must be located in the root of the dependency package.
+Custom path to `.podspec` file to use when auto-linking. Example: `node_modules/react-native-module/ios/module.podspec`.
 
 #### platforms.ios.sharedLibraries
 

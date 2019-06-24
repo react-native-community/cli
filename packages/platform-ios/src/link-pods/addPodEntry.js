@@ -4,18 +4,22 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
+ * @flow
  */
 
 import {logger} from '@react-native-community/cli-tools';
+import getPodspecName from '../config/getPodspecName';
 
 export default function addPodEntry(
-  podLines,
-  linesToAddEntry,
-  podName,
-  nodePath,
+  podLines: Array<string>,
+  linesToAddEntry?:
+    | Array<{line: number, indentation: number}>
+    | {line: number, indentation: number},
+  podspecPath: string,
+  nodeModulePath: string,
 ) {
-  const newEntry = `pod '${podName}', :path => '../node_modules/${nodePath}'\n`;
+  const podName = getPodspecName(podspecPath);
+  const newEntry = `pod '${podName}', :path => '../node_modules/${nodeModulePath}'\n`;
 
   if (!linesToAddEntry) {
     return;

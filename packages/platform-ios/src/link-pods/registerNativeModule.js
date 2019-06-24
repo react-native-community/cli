@@ -4,11 +4,11 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
+ * @flow
  */
 import chalk from 'chalk';
 import {CLIError} from '@react-native-community/cli-tools';
-
+import type {ProjectConfigIOST} from 'types';
 import readPodfile from './readPodfile';
 import findPodTargetLine from './findPodTargetLine';
 import findLineToAddPod from './findLineToAddPod';
@@ -19,13 +19,13 @@ import addPodEntry from './addPodEntry';
 import savePodFile from './savePodFile';
 
 export default function registerNativeModulePods(
-  name,
-  dependencyConfig,
-  iOSProject,
+  name: string,
+  podspecPath: string,
+  iOSProject: ProjectConfigIOST,
 ) {
   const podLines = readPodfile(iOSProject.podfile);
   const linesToAddEntry = getLinesToAddEntry(podLines, iOSProject);
-  addPodEntry(podLines, linesToAddEntry, dependencyConfig.podspec, name);
+  addPodEntry(podLines, linesToAddEntry, podspecPath, name);
   savePodFile(iOSProject.podfile, podLines);
 }
 

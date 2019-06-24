@@ -16,7 +16,7 @@ import {logger} from '@react-native-community/cli-tools';
  */
 export default function unregisterNativeModule(dependencyConfig, iOSProject) {
   const podContent = fs.readFileSync(iOSProject.podfile, 'utf8');
-  const removed = removePodEntry(podContent, dependencyConfig.podspec);
+  const removed = removePodEntry(podContent, dependencyConfig.podspecPath);
   logger.debug(`Writing changes to ${iOSProject.podfile}`);
   fs.writeFileSync(iOSProject.podfile, removed);
 }

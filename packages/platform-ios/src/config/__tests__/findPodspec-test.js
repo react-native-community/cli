@@ -4,11 +4,10 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
- * @emails oncall+javascript_foundation
+ * @flow
  */
 
-import findPodspecName from '../findPodspecName';
+import findPodspec from '../findPodspec';
 import * as projects from '../__fixtures__/projects';
 
 jest.mock('path');
@@ -16,18 +15,21 @@ jest.mock('fs');
 
 const fs = require('fs');
 
-describe('ios::findPodspecName', () => {
+describe('ios::findPodspec', () => {
   it('returns null if there is not podspec file', () => {
+    // $FlowFixMe
     fs.__setMockFilesystem(projects.flat);
-    expect(findPodspecName('')).toBeNull();
+    expect(findPodspec('')).toBeNull();
   });
 
   it('returns podspec name if only one exists', () => {
+    // $FlowFixMe
     fs.__setMockFilesystem(projects.withPods.ios);
-    expect(findPodspecName('/')).toBe('TestPod');
+    expect(findPodspec('/')).toBe('/TestPod.podspec');
   });
 
   it('returns podspec name that match packet directory', () => {
+    // $FlowFixMe
     fs.__setMockFilesystem({
       user: {
         PacketName: {
@@ -36,10 +38,13 @@ describe('ios::findPodspecName', () => {
         },
       },
     });
-    expect(findPodspecName('/user/PacketName')).toBe('PacketName');
+    expect(findPodspec('/user/PacketName')).toBe(
+      '/user/PacketName/PacketName.podspec',
+    );
   });
 
   it('returns first podspec name if not match in directory', () => {
+    // $FlowFixMe
     fs.__setMockFilesystem({
       user: {
         packet: {
@@ -48,6 +53,6 @@ describe('ios::findPodspecName', () => {
         },
       },
     });
-    expect(findPodspecName('/user/packet')).toBe('Another');
+    expect(findPodspec('/user/packet')).toBe('/user/packet/Another.podspec');
   });
 });

@@ -25,12 +25,6 @@ function linkAll(
   platforms: PlatformsT,
   project: ProjectConfigT,
 ) {
-  logger.warn(
-    'Running `react-native link` without package name is deprecated and will be removed ' +
-      'in next release. If you use this command to link your project assets, ' +
-      'please let us know about your use case here: https://goo.gl/RKTeoc',
-  );
-
   const projectAssets = getAssets(context.root);
   const dependencies = getProjectDependencies(context.root);
   const depenendenciesConfig = dependencies.map(dependnecy =>

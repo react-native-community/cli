@@ -49,6 +49,7 @@ public class PackageList {
 class ReactNativeModules {
   private Logger logger
   private Project project
+  private String packageName
   private DefaultSettings defaultSettings
   private ExtraPropertiesExtension extension
   private ArrayList<HashMap<String, String>> reactNativeModules
@@ -136,16 +137,16 @@ class ReactNativeModules {
    * @param outputDir
    * @param generatedFileName
    * @param generatedFileContentsTemplate
-   * @param applicationId
    */
-  void generatePackagesFile(File outputDir, String generatedFileName, String generatedFileContentsTemplate, String applicationId) {
+  void generatePackagesFile(File outputDir, String generatedFileName, String generatedFileContentsTemplate) {
     ArrayList<HashMap<String, String>>[] packages = this.reactNativeModules
+    String packageName = this.packageName
 
     String packageImports = ""
     String packageClassInstances = ""
 
     if (packages.size() > 0) {
-      packageImports = "import ${applicationId}.BuildConfig;\nimport ${applicationId}.R;\n\n"
+      packageImports = "import ${packageName}.BuildConfig;\nimport ${packageName}.R;\n\n"
       packageImports = packageImports + packages.collect {
         "// ${it.name}\n${it.packageImportPath}"
       }.join('\n')
@@ -193,6 +194,7 @@ class ReactNativeModules {
 
     def reactNativeConfigOutput = cmdProcess.in.text
     def json = new JsonSlurper().parseText(reactNativeConfigOutput)
+    this.packageName = json["project"]["android"]["packageName"]
     def dependencies = json["dependencies"]
 
     dependencies.each { name, value ->
@@ -233,17 +235,11 @@ ext.applyNativeModulesSettingsGradle = { DefaultSettings defaultSettings ->
 ext.applyNativeModulesAppBuildGradle = { Project project ->
   autoModules.applyBuildGradle(project, ext)
 
-  def applicationId
   def generatedSrcDir = new File(buildDir, "generated/rncli/src/main/java/com/facebook/react")
-
-  // TODO(salakar): not sure if this is the best way of getting the package name (used to import BuildConfig)
-  project.android.applicationVariants.all { variant ->
-    applicationId = [variant.mergedFlavor.applicationId, variant.buildType.applicationIdSuffix].findAll().join()
-  }
 
   task generatePackageList {
     doLast {
-      autoModules.generatePackagesFile(generatedSrcDir, generatedFileName, generatedFileContentsTemplate, applicationId)
+      autoModules.generatePackagesFile(generatedSrcDir, generatedFileName, generatedFileContentsTemplate)
     }
   }
 

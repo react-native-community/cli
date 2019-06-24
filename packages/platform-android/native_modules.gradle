@@ -49,6 +49,7 @@ public class PackageList {
 class ReactNativeModules {
   private Logger logger
   private Project project
+  private String packageName
   private DefaultSettings defaultSettings
   private ExtraPropertiesExtension extension
   private ArrayList<HashMap<String, String>> reactNativeModules
@@ -138,8 +139,9 @@ class ReactNativeModules {
    * @param generatedFileContentsTemplate
    * @param packageName
    */
-  void generatePackagesFile(File outputDir, String generatedFileName, String generatedFileContentsTemplate, String packageName) {
+  void generatePackagesFile(File outputDir, String generatedFileName, String generatedFileContentsTemplate) {
     ArrayList<HashMap<String, String>>[] packages = this.reactNativeModules
+    String packageName = this.packageName
 
     String packageImports = ""
     String packageClassInstances = ""
@@ -193,6 +195,7 @@ class ReactNativeModules {
 
     def reactNativeConfigOutput = cmdProcess.in.text
     def json = new JsonSlurper().parseText(reactNativeConfigOutput)
+    this.packageName = json["project"]["android"]["packageName"]
     def dependencies = json["dependencies"]
 
     dependencies.each { name, value ->
@@ -235,12 +238,9 @@ ext.applyNativeModulesAppBuildGradle = { Project project ->
 
   def generatedSrcDir = new File(buildDir, "generated/rncli/src/main/java/com/facebook/react")
 
-  def manifest = new XmlSlurper().parse(android.sourceSets.main.manifest.srcFile)
-  def packageName = manifest.@package.text()
-
   task generatePackageList {
     doLast {
-      autoModules.generatePackagesFile(generatedSrcDir, generatedFileName, generatedFileContentsTemplate, packageName)
+      autoModules.generatePackagesFile(generatedSrcDir, generatedFileName, generatedFileContentsTemplate)
     }
   }
 

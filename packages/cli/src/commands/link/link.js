@@ -15,6 +15,7 @@ import getPlatformName from './getPlatformName';
 import linkDependency from './linkDependency';
 import linkAssets from './linkAssets';
 import linkAll from './linkAll';
+import makeHook from './makeHook';
 
 type FlagsType = {
   platforms?: Array<string>,
@@ -68,11 +69,11 @@ async function link(
 
   try {
     if (dependency.hooks.prelink) {
-      await dependency.hooks.prelink();
+      await makeHook(dependency.hooks.prelink)();
     }
     await linkDependency(platforms, project, dependency);
     if (dependency.hooks.postlink) {
-      await dependency.hooks.postlink();
+      await makeHook(dependency.hooks.postlink)();
     }
     await linkAssets(platforms, project, dependency.assets);
   } catch (error) {

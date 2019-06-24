@@ -15,7 +15,7 @@ const path = require('path');
 
 const PODFILES_PATH = path.join(__dirname, '../__fixtures__/');
 const LINE_AFTER_TARGET_IN_TEST_PODFILE = 4;
-console.log(PODFILES_PATH);
+
 describe('pods::findLineToAddPod', () => {
   it('returns null if file is not Podfile', () => {
     const podfile = readPodfile(path.join(PODFILES_PATH, 'Info.plist'));

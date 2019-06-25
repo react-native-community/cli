@@ -13,32 +13,41 @@ import {
   readConfigFromDisk,
   readDependencyConfigFromDisk,
 } from './readConfigFromDisk';
-import {type ConfigT} from 'types';
+import type {
+  ConfigT,
+  UserDependencyConfigT,
+  UserConfigT,
+  DependencyConfigT,
+} from 'types';
 import assign from '../assign';
 import merge from '../merge';
 import resolveNodeModuleDir from './resolveNodeModuleDir';
 
 function getDependencyConfig(
-  root,
-  dependencyName,
-  finalConfig,
-  config,
-  userConfig,
-  isPlatform,
-) {
+  root: string,
+  dependencyName: string,
+  finalConfig: ConfigT,
+  config: UserDependencyConfigT,
+  userConfig: UserConfigT,
+  isPlatform: boolean,
+): DependencyConfigT {
   return merge(
     {
       root,
       name: dependencyName,
       platforms: Object.keys(finalConfig.platforms).reduce(
         (dependency, platform) => {
-          // Linking platforms is not supported
-          dependency[platform] = isPlatform
-            ? null
-            : finalConfig.platforms[platform].dependencyConfig(
-                root,
-                config.dependency.platforms[platform] || {},
-              );
+          const platformConfig = finalConfig.platforms[platform];
+          dependency[platform] =
+            // Linking platforms is not supported
+            isPlatform || !platformConfig
+              ? null
+              : platformConfig.dependencyConfig(
+                  root,
+                  /* $FlowFixMe - can't figure out which platform's dependency
+                   config to choose */
+                  config.dependency.platforms[platform],
+                );
           return dependency;
         },
         {},

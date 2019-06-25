@@ -72,9 +72,14 @@ type ProjectParamsIOST = {
   plist: any[],
 };
 
-type PlatformConfig<ProjectParams, ProjectConfig, DependencyConfig> = {
-  projectConfig: (string, ProjectParams) => ?ProjectConfig,
-  dependencyConfig: (string, ProjectParams) => ?DependencyConfig,
+type PlatformConfig<
+  ProjectParams,
+  DependencyParams,
+  ProjectConfig,
+  DependencyConfig,
+> = {
+  projectConfig: (string, ?ProjectParams) => ?ProjectConfig,
+  dependencyConfig: (string, ?DependencyParams) => ?DependencyConfig,
   linkConfig: () => {
     isInstalled: (ProjectConfig, string, DependencyConfig) => boolean,
     register: (string, DependencyConfig, Object, ProjectConfig) => void,
@@ -131,14 +136,16 @@ export type ConfigT = {|
 
   // Map of available platforms (built-ins and dynamically loaded)
   platforms: {
-    [name: string]: PlatformConfig<Object, Object, Object>,
+    [name: string]: PlatformConfig<any, any, any, any>,
     ios?: PlatformConfig<
       ProjectParamsIOST,
+      ProjectParamsIOST, // DependencyParams are the same as ProjectParams on iOS
       ProjectConfigIOST,
       DependencyConfigIOST,
     >,
     android?: PlatformConfig<
       ProjectParamsAndroidT,
+      DependencyParamsAndroidT,
       ProjectConfigAndroidT,
       DependencyConfigAndroidT,
     >,

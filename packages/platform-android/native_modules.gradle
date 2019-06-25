@@ -150,7 +150,7 @@ class ReactNativeModules {
       packageImports = packageImports + packages.collect {
         "// ${it.name}\n${it.packageImportPath}"
       }.join('\n')
-      packageClassInstances = ",\n      " + packages.collect { it.packageInstance }.join(',')
+      packageClassInstances = ",\n      " + packages.collect { it.packageInstance }.join(",\n      ")
     }
 
     String generatedFileContents = generatedFileContentsTemplate

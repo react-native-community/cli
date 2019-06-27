@@ -16,6 +16,7 @@ import type {ConfigT} from 'types';
 import findXcodeProject from './findXcodeProject';
 import parseIOSDevicesList from './parseIOSDevicesList';
 import findMatchingSimulator from './findMatchingSimulator';
+import getIOSLinkConfig from '../../link/index';
 import {
   logger,
   CLIError,
@@ -41,6 +42,8 @@ function runIOS(_: Array<string>, ctx: ConfigT, args: FlagsT) {
       'iOS project folder not found. Are you sure this is a React Native project?',
     );
   }
+  // const linkConfig = getIOSLinkConfig();
+  // linkConfig.isInstalled(ctx.project)
 
   process.chdir(args.projectPath);
 

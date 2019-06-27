@@ -17,29 +17,39 @@ const dedupeAssets = (assets: Array<string>): Array<string> =>
 type Options = {
   linkDeps?: boolean,
   linkAssets?: boolean,
+  checkInstalled?: boolean,
 };
 
 async function linkAll(config: ConfigT, options: Options) {
+  let deps = [];
   if (options.linkDeps) {
-    logger.debug('Linking all dependencies');
-    logger.info(
-      `Linking dependencies using "${chalk.bold(
-        'link',
-      )}" command is now legacy and likely unnecessary. We encourage you to try ${chalk.bold(
-        'autolinking',
-      )} that comes with React Native v0.60 default template. Autolinking happens at build time – during CocoaPods install or Gradle install phase. More information: ${chalk.dim.underline(
-        'https://github.com/react-native-community/cli/blob/master/docs/autolinking.md',
-      )}`,
-    );
+    if (!options.checkInstalled) {
+      logger.debug('Linking all dependencies');
+      logger.info(
+        `Linking dependencies using "${chalk.bold(
+          'link',
+        )}" command is now legacy and likely unnecessary. We encourage you to try ${chalk.bold(
+          'autolinking',
+        )} that comes with React Native v0.60 default template. Autolinking happens at build time – during CocoaPods install or Gradle install phase. More information: ${chalk.dim.underline(
+          'https://github.com/react-native-community/cli/blob/master/docs/autolinking.md',
+        )}`,
+      );
+    }
 
     for (let key in config.dependencies) {
       const dependency = config.dependencies[key];
       try {
-        if (dependency.hooks.prelink) {
+        if (!options.checkInstalled && dependency.hooks.prelink) {
           await makeHook(dependency.hooks.prelink)();
         }
-        await linkDependency(config.platforms, config.project, dependency);
-        if (dependency.hooks.postlink) {
+        const x = await linkDependency(
+          config.platforms,
+          config.project,
+          dependency,
+          options.checkInstalled,
+        );
+        deps = deps.concat(x.filter(d => d && d.isInstalled));
+        if (!options.checkInstalled && dependency.hooks.postlink) {
           await makeHook(dependency.hooks.postlink)();
         }
       } catch (error) {
@@ -50,6 +60,21 @@ async function linkAll(config: ConfigT, options: Options) {
       }
     }
   }
+
+  if (options.checkInstalled) {
+    const installedModules = [...new Set(deps.map(dep => dep.dependency.name))];
+    if (installedModules.length) {
+      logger.warn(
+        `Following modules are linked using legacy "react-native link": \n${installedModules
+          .map(x => `  - ${chalk.bold(x)}`)
+          .join(
+            '\n',
+          )}\nPlease unlink them to not conflict with autolinking. You can do so with "react-native unlink" command. If any module is not compatible with autolinking (it breaks the build phase), please ignore this warning and notify its maintainers about it.`,
+      );
+    }
+    return;
+  }
+
   if (options.linkAssets) {
     logger.debug('Linking all assets');
     const projectAssets = config.assets;

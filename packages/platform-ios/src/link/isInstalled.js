@@ -11,12 +11,22 @@ import xcode from 'xcode';
 import getGroup from './getGroup';
 import hasLibraryImported from './hasLibraryImported';
 
+const memo = new Map();
+
 /**
  * Returns true if `xcodeproj` specified by dependencyConfig is present
  * in a top level `libraryFolder`
  */
 export default function isInstalled(projectConfig, dependencyConfig) {
-  const project = xcode.project(projectConfig.pbxprojPath).parseSync();
+  let project;
+
+  if (memo.has(projectConfig.pbxprojPath)) {
+    project = memo.get(projectConfig.pbxprojPath);
+  } else {
+    project = xcode.project(projectConfig.pbxprojPath).parseSync();
+    memo.set(projectConfig.pbxprojPath, project);
+  }
+  // const project = xcode.project(projectConfig.pbxprojPath).parseSync();
   const libraries = getGroup(project, projectConfig.libraryFolder);
 
   if (!libraries) {

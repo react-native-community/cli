@@ -48,3 +48,19 @@ On the iOS side, you will need to ensure you have a Podspec to the root of your 
 ## How can I customize how autolinking works for my package?
 
 A library can add a `react-native.config.js` configuration file, which will customize the defaults.
+
+## How do I disable autolinking for unsupported package?
+
+It happens, that during transition period or due to convoluted setup some packages don't support autolinking on certain platforms. To disable autolinking from running for a certain package, update your `react-native.config.js`'s `dependencies` entry to look like this:
+
+```js
+module.exports = {
+  dependencies: {
+    'some-unsupported-package': {
+      platforms: {
+        android: null, // disable Android platform, other platforms will still autolink if provided
+      },
+    },
+  },
+};
+```

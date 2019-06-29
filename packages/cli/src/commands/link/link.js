@@ -50,7 +50,7 @@ async function link(
 
   if (rawPackageName === undefined) {
     logger.debug('No package name provided, will linking all possible assets.');
-    return linkAll(ctx, {linkDeps: opts.all, linkAssets: true, dryRun: true});
+    return linkAll(ctx, {linkDeps: opts.all, linkAssets: true});
   }
 
   // Trim the version / tag out of the package name (eg. package@latest)

@@ -4,12 +4,13 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
+ * @flow
  */
 
 import xcode from 'xcode';
 import getGroup from './getGroup';
 import hasLibraryImported from './hasLibraryImported';
+import type {ProjectConfigIOST, DependencyConfigIOST} from 'types';
 
 const memo = new Map();
 
@@ -17,7 +18,10 @@ const memo = new Map();
  * Returns true if `xcodeproj` specified by dependencyConfig is present
  * in a top level `libraryFolder`
  */
-export default function isInstalled(projectConfig, dependencyConfig) {
+export default function isInstalled(
+  projectConfig: ProjectConfigIOST,
+  dependencyConfig: DependencyConfigIOST,
+) {
   let project;
 
   if (memo.has(projectConfig.pbxprojPath)) {

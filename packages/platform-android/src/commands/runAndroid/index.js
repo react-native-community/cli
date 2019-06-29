@@ -24,6 +24,7 @@ import {
   getDefaultUserTerminal,
   CLIError,
 } from '@react-native-community/cli-tools';
+import warnAboutManuallyLinkedLibs from '../../link/warnAboutManuallyLinkedLibs';
 
 // Verifies this is an Android project
 function checkAndroid(root) {
@@ -54,6 +55,8 @@ function runAndroid(argv: Array<string>, config: ConfigT, args: FlagsT) {
     );
     return;
   }
+
+  warnAboutManuallyLinkedLibs(config);
 
   if (!args.packager) {
     return buildAndRun(args);

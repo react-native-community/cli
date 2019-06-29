@@ -9,10 +9,10 @@ const linkDependency = async (
   platforms: PlatformsT,
   project: ProjectConfigT,
   dependency: DependencyConfigT,
-  dryRun?: boolean = false,
 ) => {
   const params = await pollParams(dependency.params);
-  return Object.keys(platforms || {}).map<any>(platform => {
+
+  Object.keys(platforms || {}).forEach(platform => {
     const projectConfig = project[platform];
     const dependencyConfig = dependency.platforms[platform];
 
@@ -36,10 +36,6 @@ const linkDependency = async (
       // $FlowFixMe
       dependencyConfig,
     );
-
-    if (dryRun) {
-      return {dependency, platform, isInstalled};
-    }
 
     if (isInstalled) {
       logger.info(

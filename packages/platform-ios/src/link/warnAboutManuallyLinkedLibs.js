@@ -28,7 +28,7 @@ export default function warnAboutManuallyLinkedLibs(
         deps = deps.concat(x ? dependency.name : []);
       }
     } catch (error) {
-      logger.debug('error');
+      logger.debug('Checking manually linked modules failed.', error);
     }
   }
 

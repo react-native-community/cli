@@ -30,7 +30,7 @@ export default function isInstalled(
     project = xcode.project(projectConfig.pbxprojPath).parseSync();
     memo.set(projectConfig.pbxprojPath, project);
   }
-  // const project = xcode.project(projectConfig.pbxprojPath).parseSync();
+
   const libraries = getGroup(project, projectConfig.libraryFolder);
 
   if (!libraries) {

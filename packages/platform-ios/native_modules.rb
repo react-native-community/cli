@@ -7,14 +7,6 @@ def use_native_modules!(root = "..", packages = nil)
   if (!packages)
     command = "node"
     args = ["./node_modules/.bin/react-native", "config"]
-    begin
-      # Check if project uses Yarn
-      Pod::Executable.execute_command("node", ["-e", "console.log(require.resolve('#{root}/yarn.lock'))"], true)
-      command = "yarn"
-      args = ["run", "--silent", "react-native", "config"]
-    rescue
-    end
-
     output = ""
     # Make sure `react-native config` is ran from your project root
     Dir.chdir(root) do

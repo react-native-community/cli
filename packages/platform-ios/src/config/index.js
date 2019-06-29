@@ -9,10 +9,13 @@
  */
 
 import path from 'path';
+import {memoize} from 'lodash';
 import findProject from './findProject';
 import findPodfilePath from './findPodfilePath';
 import findPodspec from './findPodspec';
 import type {UserConfigT} from 'types';
+
+const memoizedFindProject = memoize(findProject);
 
 /**
  * For libraries specified without an extension, add '.tbd' for those that
@@ -37,7 +40,7 @@ export function projectConfig(
   if (!userConfig) {
     return;
   }
-  const project = userConfig.project || findProject(folder);
+  const project = userConfig.project || memoizedFindProject(folder);
 
   /**
    * No iOS config found here

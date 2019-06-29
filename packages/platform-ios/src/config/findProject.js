@@ -10,7 +10,6 @@
 
 import glob from 'glob';
 import path from 'path';
-import {memoize} from 'lodash';
 
 /**
  * Glob pattern to look for xcodeproj
@@ -38,10 +37,9 @@ const GLOB_EXCLUDE_PATTERN = ['**/@(Pods|node_modules)/**'];
  *
  * Returns first match if files are found or null
  *
- * Note: `./ios/*.xcodeproj` are returned regardless of the name.
- * Note2: Globbing is expensive and often repeated on the same folder, hence memoizing
+ * Note: `./ios/*.xcodeproj` are returned regardless of the name
  */
-export default memoize(function findProject(folder: string): string | null {
+export default function findProject(folder: string): string | null {
   const projects = glob
     .sync(GLOB_PATTERN, {
       cwd: folder,
@@ -58,4 +56,4 @@ export default memoize(function findProject(folder: string): string | null {
   }
 
   return projects[0];
-});
+}

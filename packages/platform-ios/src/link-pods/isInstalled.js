@@ -4,14 +4,18 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
+ * @flow
  */
 
 import readPodfile from './readPodfile';
 import getPodspecName from '../config/getPodspecName';
+import type {ProjectConfigIOST, DependencyConfigIOST} from 'types';
 
-export default function isInstalled(iOSProject, dependencyConfig) {
-  if (!iOSProject.podfile) {
+export default function isInstalled(
+  iOSProject: ProjectConfigIOST,
+  dependencyConfig: DependencyConfigIOST,
+) {
+  if (!iOSProject.podfile || !dependencyConfig.podspecPath) {
     return false;
   }
   // match line with pod declaration: pod 'dependencyPodName' (other possible parameters of pod are ignored)

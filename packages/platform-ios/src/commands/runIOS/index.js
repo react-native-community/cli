@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  *
  * @flow
- * @format
  */
 
 import child_process from 'child_process';
@@ -16,6 +15,7 @@ import type {ConfigT} from 'types';
 import findXcodeProject from './findXcodeProject';
 import parseIOSDevicesList from './parseIOSDevicesList';
 import findMatchingSimulator from './findMatchingSimulator';
+import warnAboutManuallyLinkedLibs from '../../link/warnAboutManuallyLinkedLibs';
 import {
   logger,
   CLIError,
@@ -41,6 +41,8 @@ function runIOS(_: Array<string>, ctx: ConfigT, args: FlagsT) {
       'iOS project folder not found. Are you sure this is a React Native project?',
     );
   }
+
+  warnAboutManuallyLinkedLibs(ctx);
 
   process.chdir(args.projectPath);
 

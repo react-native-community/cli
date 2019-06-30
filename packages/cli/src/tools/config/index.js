@@ -193,7 +193,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
         )
         .join(
           '\n',
-        )}\nPlease notify its maintainers about it. You can find more details at ${chalk.dim.underline(
+        )}\nPlease notify their maintainers about it. You can find more details at ${chalk.dim.underline(
         'https://react-native-community/cli/docs/configuration.md#migration-guide',
       )}.`,
     );

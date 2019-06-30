@@ -302,3 +302,36 @@ test('does not use restricted "react-native" key to resolve config from package.
   expect(dependencies).toHaveProperty('react-native-netinfo');
   expect(spy).not.toHaveBeenCalled();
 });
+
+test('supports default dependencies from user configuration', () => {
+  const depsWithLocalLibrary = {
+    'local-rn-library': {
+      platforms: {
+        ios: {
+          sourceDir: '/root/ios',
+          folder: '/root/ios',
+          pbxprojPath: 'root/ios/RNLibrary.xcodeproj/project.pbxproj',
+          podspecPath: 'root/RNLibrary.podspec',
+          projectPath: 'root/ios/RNLibrary.xcodeproj',
+          projectName: 'RNLibrary.xcodeproj',
+          libraryFolder: 'Libraries',
+        },
+        android: {
+          sourceDir: '/root/android',
+          folder: '/root/android',
+          packageImportPath: 'import com.myproject.RNLibraryPackage;',
+          packageInstance: 'new RNLibraryPackage()',
+        },
+      },
+    },
+  };
+
+  writeFiles(DIR, {
+    'react-native.config.js': `module.exports = {
+      dependencies: ${JSON.stringify(depsWithLocalLibrary, null, 2)}
+    }`,
+  });
+
+  const {dependencies} = loadConfig(DIR);
+  expect(dependencies).toMatchObject(depsWithLocalLibrary);
+});

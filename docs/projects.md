@@ -109,7 +109,7 @@ For example, you could set:
 ```js
 module.exports = {
   dependencies: {
-    ['react-native-webview']: {
+    'react-native-webview': {
       platforms: {
         ios: null,
       },
@@ -119,6 +119,25 @@ module.exports = {
 ```
 
 in order to disable linking of React Native WebView on iOS.
+
+Another use-case would be supporting local libraries that are not discoverable for autolinking, since they're not part of your `dependencies` or `devDependencies`:
+
+```js
+module.exports = {
+  dependencies: {
+    'local-rn-library': {
+      platforms: {
+        android: {
+          sourceDir: '/root/android',
+          folder: '/root/android',
+          packageImportPath: 'import com.myproject.RNLibraryPackage;',
+          packageInstance: 'new RNLibraryPackage()',
+        },
+      },
+    },
+  },
+};
+```
 
 The object provided here is deep merged with the dependency config. Check [`projectConfig`](platforms.md#projectconfig) and [`dependencyConfig`](platforms.md#dependencyConfig) return values for a full list of properties that you can override.
 

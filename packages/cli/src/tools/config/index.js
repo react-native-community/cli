@@ -73,7 +73,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
         ? path.resolve(projectRoot, userConfig.reactNativePath)
         : resolveReactNativePath(projectRoot);
     },
-    dependencies: {},
+    dependencies: userConfig.dependencies,
     commands: userConfig.commands,
     get assets() {
       return findAssets(projectRoot, userConfig.assets);

@@ -55,8 +55,6 @@ class ReactNativeModules {
   private ArrayList<HashMap<String, String>> reactNativeModules
 
   private static String LOG_PREFIX = ":ReactNative:"
-  private static String REACT_NATIVE_CONFIG_CMD = "yarn run --silent react-native config"
-  private static String REACT_NATIVE_CONFIG_CMD_FALLBACK = "node ./node_modules/.bin/react-native config"
 
   ReactNativeModules(Logger logger) {
     this.logger = logger
@@ -175,20 +173,14 @@ class ReactNativeModules {
 
     def cmdProcess
     def root = getReactNativeProjectRoot()
-    def command = REACT_NATIVE_CONFIG_CMD_FALLBACK
+    def command = "node ./node_modules/.bin/react-native config"
 
     try {
-      try {
-        // Check if project uses Yarn
-        def isYarnProject = Runtime.getRuntime().exec("node -e console.log(require.resolve('./yarn.lock'))", null, root)
-        isYarnProject.waitFor()
-        command = REACT_NATIVE_CONFIG_CMD
-      } catch(Exception exception) {}
       cmdProcess = Runtime.getRuntime().exec(command, null, root)
       cmdProcess.waitFor()
     } catch (Exception exception) {
       this.logger.warn("${LOG_PREFIX}${exception.message}")
-      this.logger.warn("${LOG_PREFIX}Automatic import of native modules failed. (UNKNOWN)")
+      this.logger.warn("${LOG_PREFIX}Automatic import of native modules failed.")
       return reactNativeModules
     }
 

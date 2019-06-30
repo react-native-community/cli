@@ -95,13 +95,23 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
     },
   };
 
+  let depsWithWarnings = [];
+
   const finalConfig = findDependencies(projectRoot).reduce(
     (acc: ConfigT, dependencyName) => {
       let root;
       let config;
       try {
         root = resolveNodeModuleDir(projectRoot, dependencyName);
-        config = readDependencyConfigFromDisk(root);
+        const output = readDependencyConfigFromDisk(root);
+        config = output.config;
+
+        if (output.legacy) {
+          const pkg = require(path.join(root, 'package.json'));
+          const link =
+            pkg.homepage || `https://npmjs.com/package/${dependencyName}`;
+          depsWithWarnings.push([dependencyName, link]);
+        }
       } catch (error) {
         logger.warn(
           inlineString(`
@@ -171,6 +181,23 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
     },
     initialConfig,
   );
+
+  if (depsWithWarnings.length) {
+    logger.warn(
+      `The following packages use deprecated "rnpm" config that will stop working from next release:\n${depsWithWarnings
+        .map(
+          ([name, link]) =>
+            `  - ${chalk.bold(name)} ${chalk.dim(
+              `(${chalk.underline(link)})`,
+            )}`,
+        )
+        .join(
+          '\n',
+        )}\nPlease notify its maintainers about it. You can find more details at ${chalk.dim.underline(
+        'https://react-native-community/cli/docs/configuration.md#migration-guide',
+      )}.`,
+    );
+  }
 
   return finalConfig;
 }

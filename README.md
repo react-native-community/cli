@@ -17,10 +17,11 @@ This CLI is intended to be used with a certain version of React Native. You'll f
 
 ## Documentation
 
+- [configuration](./docs/configuration.md)
 - [commands](./docs/commands.md)
+- [plugins](./docs/plugins.md)
 - [init](./docs/init.md)
 - [autolinking](./docs/autolinking.md)
-- [plugins](./docs/plugins.md)
 
 ## About
 

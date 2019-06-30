@@ -126,14 +126,7 @@ Another use-case would be supporting local libraries that are not discoverable f
 module.exports = {
   dependencies: {
     'local-rn-library': {
-      platforms: {
-        android: {
-          sourceDir: '/root/android',
-          folder: '/root/android',
-          packageImportPath: 'import com.myproject.RNLibraryPackage;',
-          packageInstance: 'new RNLibraryPackage()',
-        },
-      },
+      root: '/root/libraries',
     },
   },
 };

@@ -118,23 +118,7 @@ Currently autolinking doesn't support local libraries out of the box. However, w
 module.exports = {
   dependencies: {
     'local-rn-library': {
-      platforms: {
-        ios: {
-          sourceDir: '/root/ios',
-          folder: '/root/ios',
-          pbxprojPath: 'root/ios/RNLibrary.xcodeproj/project.pbxproj',
-          podspecPath: 'root/RNLibrary.podspec',
-          projectPath: 'root/ios/RNLibrary.xcodeproj',
-          projectName: 'RNLibrary.xcodeproj',
-          libraryFolder: 'Libraries',
-        },
-        android: {
-          sourceDir: '/root/android',
-          folder: '/root/android',
-          packageImportPath: 'import com.myproject.RNLibraryPackage;',
-          packageInstance: 'new RNLibraryPackage()',
-        },
-      },
+      root: '/root/libraries',
     },
   },
 };

@@ -285,8 +285,6 @@ test.skip('should skip packages that have invalid configuration', () => {
 });
 
 test('does not use restricted "react-native" key to resolve config from package.json', () => {
-  jest.resetModules();
-
   writeFiles(DIR, {
     'node_modules/react-native-netinfo/package.json': `{
       "react-native": "src/index.js"
@@ -304,34 +302,46 @@ test('does not use restricted "react-native" key to resolve config from package.
 });
 
 test('supports default dependencies from user configuration', () => {
-  const depsWithLocalLibrary = {
-    'local-rn-library': {
-      platforms: {
-        ios: {
-          sourceDir: '/root/ios',
-          folder: '/root/ios',
-          pbxprojPath: 'root/ios/RNLibrary.xcodeproj/project.pbxproj',
-          podspecPath: 'root/RNLibrary.podspec',
-          projectPath: 'root/ios/RNLibrary.xcodeproj',
-          projectName: 'RNLibrary.xcodeproj',
-          libraryFolder: 'Libraries',
-        },
-        android: {
-          sourceDir: '/root/android',
-          folder: '/root/android',
-          packageImportPath: 'import com.myproject.RNLibraryPackage;',
-          packageInstance: 'new RNLibraryPackage()',
-        },
-      },
-    },
-  };
-
   writeFiles(DIR, {
+    'node_modules/react-native/package.json': '{}',
+    'native-libs/local-lib/ios/LocalRNLibrary.xcodeproj/project.pbxproj': '',
     'react-native.config.js': `module.exports = {
-      dependencies: ${JSON.stringify(depsWithLocalLibrary, null, 2)}
+      dependencies: {
+        'local-lib': {
+          root: "${DIR}/native-libs/local-lib",
+        },
+      }
+    }`,
+    'package.json': `{
+      "dependencies": {
+        "react-native": "0.0.1"
+      }
     }`,
   });
 
   const {dependencies} = loadConfig(DIR);
-  expect(dependencies).toMatchObject(depsWithLocalLibrary);
+  expect(removeString(dependencies['local-lib'], DIR)).toMatchInlineSnapshot(`
+    Object {
+      "assets": Array [],
+      "hooks": Object {},
+      "name": "local-lib",
+      "params": Array [],
+      "platforms": Object {
+        "android": null,
+        "ios": Object {
+          "folder": "<<REPLACED>>/native-libs/local-lib",
+          "libraryFolder": "Libraries",
+          "pbxprojPath": "<<REPLACED>>/native-libs/local-lib/ios/LocalRNLibrary.xcodeproj/project.pbxproj",
+          "plist": Array [],
+          "podfile": null,
+          "podspecPath": null,
+          "projectName": "LocalRNLibrary.xcodeproj",
+          "projectPath": "<<REPLACED>>/native-libs/local-lib/ios/LocalRNLibrary.xcodeproj",
+          "sharedLibraries": Array [],
+          "sourceDir": "<<REPLACED>>/native-libs/local-lib/ios",
+        },
+      },
+      "root": "<<REPLACED>>/native-libs/local-lib",
+    }
+  `);
 });

@@ -97,90 +97,94 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
 
   let depsWithWarnings = [];
 
-  const finalConfig = findDependencies(projectRoot).reduce(
-    (acc: ConfigT, dependencyName) => {
-      let root;
-      let config;
-      try {
-        root = resolveNodeModuleDir(projectRoot, dependencyName);
-        const output = readDependencyConfigFromDisk(root);
-        config = output.config;
+  const finalConfig = [
+    ...Object.keys(userConfig.dependencies),
+    ...findDependencies(projectRoot),
+  ].reduce((acc: ConfigT, dependencyName) => {
+    const localDependencyRoot =
+      userConfig.dependencies[dependencyName] &&
+      userConfig.dependencies[dependencyName].root;
+    let root;
+    let config;
+    try {
+      root =
+        localDependencyRoot ||
+        resolveNodeModuleDir(projectRoot, dependencyName);
+      const output = readDependencyConfigFromDisk(root);
+      config = output.config;
 
-        if (output.legacy) {
-          const pkg = require(path.join(root, 'package.json'));
-          const link =
-            pkg.homepage || `https://npmjs.com/package/${dependencyName}`;
-          depsWithWarnings.push([dependencyName, link]);
-        }
-      } catch (error) {
-        logger.warn(
-          inlineString(`
-            Package ${chalk.bold(
-              dependencyName,
-            )} has been ignored because it contains invalid configuration.
-
-            Reason: ${chalk.dim(error.message)}
-          `),
-        );
-        return acc;
+      if (output.legacy && !localDependencyRoot) {
+        const pkg = require(path.join(root, 'package.json'));
+        const link =
+          pkg.homepage || `https://npmjs.com/package/${dependencyName}`;
+        depsWithWarnings.push([dependencyName, link]);
       }
+    } catch (error) {
+      logger.warn(
+        inlineString(`
+          Package ${chalk.bold(
+            dependencyName,
+          )} has been ignored because it contains invalid configuration.
 
-      /**
-       * @todo: remove this code once `react-native` is published with
-       * `platforms` and `commands` inside `react-native.config.js`.
-       */
-      if (dependencyName === 'react-native') {
-        if (Object.keys(config.platforms).length === 0) {
-          config.platforms = {ios, android};
-        }
-        if (config.commands.length === 0) {
-          config.commands = [...ios.commands, ...android.commands];
-        }
+          Reason: ${chalk.dim(error.message)}`),
+      );
+      return acc;
+    }
+
+    /**
+     * @todo: remove this code once `react-native` is published with
+     * `platforms` and `commands` inside `react-native.config.js`.
+     */
+    if (dependencyName === 'react-native') {
+      if (Object.keys(config.platforms).length === 0) {
+        config.platforms = {ios, android};
       }
+      if (config.commands.length === 0) {
+        config.commands = [...ios.commands, ...android.commands];
+      }
+    }
 
-      const isPlatform = Object.keys(config.platforms).length > 0;
+    const isPlatform = Object.keys(config.platforms).length > 0;
 
-      /**
-       * Legacy `rnpm` config required `haste` to be defined. With new config,
-       * we do it automatically.
-       *
-       * @todo: Remove this once `rnpm` config is deprecated and all major RN libs are converted.
-       */
-      const haste = config.haste || {
-        providesModuleNodeModules: isPlatform ? [dependencyName] : [],
-        platforms: Object.keys(config.platforms),
-      };
+    /**
+     * Legacy `rnpm` config required `haste` to be defined. With new config,
+     * we do it automatically.
+     *
+     * @todo: Remove this once `rnpm` config is deprecated and all major RN libs are converted.
+     */
+    const haste = config.haste || {
+      providesModuleNodeModules: isPlatform ? [dependencyName] : [],
+      platforms: Object.keys(config.platforms),
+    };
 
-      return (assign({}, acc, {
-        dependencies: assign({}, acc.dependencies, {
-          // $FlowExpectedError: Dynamic getters are not supported
-          get [dependencyName]() {
-            return getDependencyConfig(
-              root,
-              dependencyName,
-              finalConfig,
-              config,
-              userConfig,
-              isPlatform,
-            );
-          },
-        }),
-        commands: [...acc.commands, ...config.commands],
-        platforms: {
-          ...acc.platforms,
-          ...config.platforms,
+    return (assign({}, acc, {
+      dependencies: assign({}, acc.dependencies, {
+        // $FlowExpectedError: Dynamic getters are not supported
+        get [dependencyName]() {
+          return getDependencyConfig(
+            root,
+            dependencyName,
+            finalConfig,
+            config,
+            userConfig,
+            isPlatform,
+          );
         },
-        haste: {
-          providesModuleNodeModules: [
-            ...acc.haste.providesModuleNodeModules,
-            ...haste.providesModuleNodeModules,
-          ],
-          platforms: [...acc.haste.platforms, ...haste.platforms],
-        },
-      }): ConfigT);
-    },
-    initialConfig,
-  );
+      }),
+      commands: [...acc.commands, ...config.commands],
+      platforms: {
+        ...acc.platforms,
+        ...config.platforms,
+      },
+      haste: {
+        providesModuleNodeModules: [
+          ...acc.haste.providesModuleNodeModules,
+          ...haste.providesModuleNodeModules,
+        ],
+        platforms: [...acc.haste.platforms, ...haste.platforms],
+      },
+    }): ConfigT);
+  }, initialConfig);
 
   if (depsWithWarnings.length) {
     logger.warn(

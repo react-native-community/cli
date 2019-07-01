@@ -36,7 +36,7 @@ export default function warnAboutManuallyLinkedLibs(
 
   if (installedModules.length) {
     logger.error(
-      `React Native CLI uses autolinking for native dependencies, but following modules are linked manually: \n${installedModules
+      `React Native CLI uses autolinking for native dependencies, but the following modules are linked manually: \n${installedModules
         .map(
           x =>
             `  - ${chalk.bold(x)} ${chalk.dim(
@@ -45,7 +45,9 @@ export default function warnAboutManuallyLinkedLibs(
         )
         .join(
           '\n',
-        )}\nThis is likely to happen when upgrading React Native from version lower than 0.60 to 0.60 or later. Please unlink them as they are likely to cause build failures. You can do so with "react-native unlink" command as shown above. If a library is not compatible with autolinking yet, please ignore this warning and notify the library maintainers.`,
+        )}\nThis is likely happening when upgrading React Native from below 0.60 to 0.60 or above. Going forward, you can unlink this dependency via "react-native unlink <dependency>" and it will be included in your app automatically. If a library isn't compatible with autolinking, disregard this message and notify the library maintainers.\nRead more about autolinking: ${chalk.dim.underline(
+        'https://github.com/react-native-community/cli/blob/master/docs/autolinking.md',
+      )}`,
     );
   }
 }

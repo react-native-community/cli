@@ -93,14 +93,15 @@ export function readConfigFromDisk(rootFolder: string): UserConfigT {
  */
 export function readDependencyConfigFromDisk(
   rootFolder: string,
-): UserDependencyConfigT {
+): {config: UserDependencyConfigT, legacy?: boolean} {
   const explorer = cosmiconfig('react-native', {
     stopDir: rootFolder,
     searchPlaces,
   });
 
-  const {config} = explorer.searchSync(rootFolder) || {
+  const {config, legacy} = explorer.searchSync(rootFolder) || {
     config: readLegacyDependencyConfigFromDisk(rootFolder),
+    legacy: true,
   };
 
   const result = Joi.validate(config, schema.dependencyConfig);
@@ -109,7 +110,7 @@ export function readDependencyConfigFromDisk(
     throw new JoiError(result.error);
   }
 
-  return result.value;
+  return {config: result.value, legacy: legacy && config !== undefined};
 }
 
 /**
@@ -139,7 +140,7 @@ const loadProjectCommands = (
 function readLegacyDependencyConfigFromDisk(
   rootFolder: string,
 ): ?UserDependencyConfigT {
-  const {rnpm: config, name} = require(path.join(rootFolder, 'package.json'));
+  const {rnpm: config} = require(path.join(rootFolder, 'package.json'));
 
   if (!config) {
     return undefined;
@@ -161,12 +162,6 @@ function readLegacyDependencyConfigFromDisk(
       ? require(path.join(rootFolder, config.platform))
       : {},
   };
-
-  logger.warn(
-    `Package "${chalk.bold(
-      path.basename(name),
-    )}" is using deprecated "rnpm" config that will stop working from next release. Please notify its maintainers about it.`,
-  );
 
   return transformedConfig;
 }

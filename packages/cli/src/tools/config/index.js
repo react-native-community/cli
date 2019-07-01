@@ -187,9 +187,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
       `The following packages use deprecated "rnpm" config that will stop working from next release:\n${depsWithWarnings
         .map(
           ([name, link]) =>
-            `  - ${chalk.bold(name)} ${chalk.dim(
-              `(${chalk.underline(link)})`,
-            )}`,
+            `  - ${chalk.bold(name)}: ${chalk.dim(chalk.underline(link))}`,
         )
         .join(
           '\n',

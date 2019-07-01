@@ -36,7 +36,7 @@ export default function warnAboutManuallyLinkedLibs(
 
   if (installedModules.length) {
     logger.error(
-      `React Native CLI uses autolinking for native dependencies, but following modules are linked manually: \n${installedModules
+      `React Native CLI uses autolinking for native dependencies, but the following modules are linked manually: \n${installedModules
         .map(
           x =>
             `  - ${chalk.bold(x)} ${chalk.dim(

@@ -1,20 +1,25 @@
 # Autolinking
 
-Autolinking is a mechanism built into CLI that allows adding a dependency with native components for React Native to be as simple as:
+React Native libraries often come with platform-specific (native) code. Autolinking is a mechanism that allows your project to discover and use this code.
+
+Add a library using your favorite package manager and run the build:
 
 ```sh
+# install
 yarn add react-native-webview
+cd ios && pod install && cd .. # CocoaPods on iOS needs this extra step
+# run
+yarn react-native run-ios
+yarn react-native run-android
 ```
 
-> Autolinking is a replacement for [`react-native link`](./linking.md) that brings new features (such as ability to easily integrate native dependencies on iOS) and fixes some of the long-standing issues.
+That's it. No more editing build config files to use native code.
+
+> Autolinking is a replacement for [`react-native link`](./linking.md). If you have been using React Native before version 0.60, please `unlink` native dependencies if you have any from a previous install.
 
 ## How does it work
 
-React Native CLI provides a [`config`](./commands.md#config) command which grabs all of the configuration for React Native packages installed in the project (by scanning dependencies in `package.json`) and outputs it in JSON format.
-
-This information is then used by the projects advertised as platforms (with `react-native` being a default project supporting both iOS and Android platforms) that implement their autolinking behavior.
-
-This design ensures consistent settings for any platform and allows `react-native config` to update the implementation of how to source this information (be it specified filenames, entries in the module’s package.json, etc).
+Each platform defines its own [`platforms`](./platforms.md) configuration. It instructs the CLI on how to find information about native dependencies. This information is exposed through the [`config`](./commands.md#config) command in a JSON format. It's then used by the scripts run by the platform's build tools. Each script applies the logic to link native dependencies specific to its platform.
 
 ## Platform iOS
 
@@ -25,19 +30,20 @@ The `Podfile` gets the package metadata from `react-native config` and:
 
 This means that all libraries need to ship a Podspec in the root of their folder to work seamlessly. This references the native code that your library depends on, and notes any of its other native dependencies.
 
-The implementation ensures that a library is imported only once, so if you need to have a custom `pod` directive then including it above the function `use_native_modules!`.
+The implementation ensures that a library is imported only once. If you need to have a custom `pod` directive then include it above the `use_native_modules!` function.
 
-See implementation of [native_modules.rb](https://github.com/react-native-community/cli/blob/master/packages/platform-ios/native_modules.rb).
+See the implementation of [native_modules.rb](https://github.com/react-native-community/cli/blob/master/packages/platform-ios/native_modules.rb).
 
-_Notes_: Auto-linking assumes your Podfile is in a sub-folder from your `package.json` - if this is not the case, use the first parameter to tell the linker where to find the `package.json` e.g. `use_native_modules!("../../")`.
+> Autolinking assumes your Podfile is in a sub-folder from your `package.json`. If this is not the case, use the first parameter to tell the linker where to find the `package.json` e.g. `use_native_modules!("../../")`.
 
 ## Platform Android
 
-1. At build time, before the build script is run, a first gradle plugin (`settings.gradle`) is ran that takes the package metadata from `react-native config` to dynamically include Android library projects into the build.
-1. A second plugin then adds those dependencies to the app project and generates a manifest of React Native packages to include in the fully generated file `/android/build/generated/rn/src/main/java/com/facebook/react/PackageList.java`.
-1. Finally, at runtime (on startup) the list of React Native packages, generated in step 2, is used to instruct the React Native runtime of what native modules are available.
+1. At build time, before the build script is run:
+   1. A first Gradle plugin (in `settings.gradle`) runs. It uses the package metadata from `react-native config` to add Android projects.
+   1. A second Gradle plugin (in `build.gradle`) runs. It creates a list of React Native packages to include in the generated `/android/build/generated/rn/src/main/java/com/facebook/react/PackageList.java` file.
+1. At runtime, the list of React Native packages, generated in step 1.2, is passed to React Native host.
 
-See implementation of [native_modules.gradle](https://github.com/react-native-community/cli/blob/master/packages/platform-android/native_modules.gradle).
+See the implementation of [native_modules.gradle](https://github.com/react-native-community/cli/blob/master/packages/platform-android/native_modules.gradle).
 
 ## What do I need to have in my package to make it work?
 
@@ -51,7 +57,7 @@ A library can add a `react-native.config.js` configuration file, which will cust
 
 ## How do I disable autolinking for unsupported package?
 
-It happens, that during transition period or due to convoluted setup some packages don't support autolinking on certain platforms. To disable autolinking from running for a certain package, update your `react-native.config.js`'s `dependencies` entry to look like this:
+During the transition period some packages may not support autolinking on certain platforms. To disable autolinking for a package, update your `react-native.config.js`'s `dependencies` entry to look like this:
 
 ```js
 module.exports = {

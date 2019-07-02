@@ -118,9 +118,7 @@ class ReactNativeModules {
       androidRoot = this.defaultSettings.rootProject.projectDir
     }
 
-
     File rnRoot = new File(androidRoot, this.root)
-    // allow custom React Native project roots for non-standard directory structures
     this.logger.debug("${LOG_PREFIX}Using React Native project root path '${rnRoot.toString()}'")
     return rnRoot
   }

@@ -34,16 +34,55 @@ The implementation ensures that a library is imported only once. If you need to 
 
 See the implementation of [native_modules.rb](https://github.com/react-native-community/cli/blob/master/packages/platform-ios/native_modules.rb).
 
-> Autolinking assumes your Podfile is in a sub-folder from your `package.json`. If this is not the case, use the first parameter to tell the linker where to find the `package.json` e.g. `use_native_modules!("../../")`.
+### Custom root (monorepos)
+
+The project root is where `node_modules` with `react-native` is. Autolinking script assume your project root to be `".."`, relative to `ios` directory. If you're in a project with custom structure, like this:
+
+```
+root/
+  node_modules
+  example/
+    ios/
+```
+
+you'll need to set a custom root. Pass it as an argument to `use_native_modules!`:
+
+```rb
+# example/ios/Podfile
+use_native_modules!("../..")
+```
 
 ## Platform Android
 
 1. At build time, before the build script is run:
-   1. A first Gradle plugin (in `settings.gradle`) runs. It uses the package metadata from `react-native config` to add Android projects.
-   1. A second Gradle plugin (in `build.gradle`) runs. It creates a list of React Native packages to include in the generated `/android/build/generated/rn/src/main/java/com/facebook/react/PackageList.java` file.
+   1. A first Gradle plugin (in `settings.gradle`) runs `applyNativeModulesSettingsGradle` method. It uses the package metadata from `react-native config` to add Android projects.
+   1. A second Gradle plugin (in `app/build.gradle`) runs `applyNativeModulesAppBuildGradle` method. It creates a list of React Native packages to include in the generated `/android/build/generated/rn/src/main/java/com/facebook/react/PackageList.java` file.
 1. At runtime, the list of React Native packages, generated in step 1.2, is passed to React Native host.
 
 See the implementation of [native_modules.gradle](https://github.com/react-native-community/cli/blob/master/packages/platform-android/native_modules.gradle).
+
+### Custom root (monorepos)
+
+The project root is where `node_modules` with `react-native` is. Autolinking scripts assume your project root to be `".."`, relative to `android` directory. If you're in a project with custom structure, like this:
+
+```
+root/
+  node_modules
+  example/
+    android/
+```
+
+you'll need to set a custom root. Pass it as a second argument to `applyNativeModulesSettingsGradle` and `applyNativeModulesAppBuildGradle` methods:
+
+```groovy
+// example/android/settings.gradle
+applyNativeModulesSettingsGradle(settings, "../..")
+```
+
+```groovy
+// example/android/app/build.gradle
+applyNativeModulesAppBuildGradle(project, "../..")
+```
 
 ## What do I need to have in my package to make it work?
 

@@ -1,10 +1,21 @@
 # Autolinking
 
-React Native libraries usually come with platform-specific (native) code. Autolinking is a mechanism that allows your project to discover and use this code.
+React Native libraries often come with platform-specific (native) code. Autolinking is a mechanism that allows your project to discover and use this code.
 
-Add a library using your favorite package manager and run the build. That's it. No more editing build config files to use native code.
+Add a library using your favorite package manager and run the build:
 
-> Autolinking is a replacement for [`react-native link`](./linking.md). You're expected to `unlink` native dependencies (if any) for it to work well. It will also ease React Native upgrades in the future.
+```sh
+# install
+yarn add react-native-webview
+cd ios && pod install && cd .. # CocoaPods on iOS needs this extra step
+# run
+yarn react-native run-ios
+yarn react-native run-android
+```
+
+That's it. No more editing build config files to use native code.
+
+> Autolinking is a replacement for [`react-native link`](./linking.md). If you have been using React Native before version 0.60, please `unlink` native dependencies if you have any from a previous install.
 
 ## How does it work
 

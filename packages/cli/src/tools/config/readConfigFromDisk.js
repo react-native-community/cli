@@ -140,7 +140,24 @@ const loadProjectCommands = (
 function readLegacyDependencyConfigFromDisk(
   rootFolder: string,
 ): ?UserDependencyConfigT {
-  const {rnpm: config} = require(path.join(rootFolder, 'package.json'));
+  let config = {};
+
+  try {
+    config = require(path.join(rootFolder, 'package.json')).rnpm;
+  } catch (error) {
+    // package.json is usually missing in local libraries that are not in
+    // project "dependencies", so we just return a bare config
+    return {
+      dependency: {
+        platforms: {},
+        assets: [],
+        hooks: {},
+        params: [],
+      },
+      commands: [],
+      platforms: {},
+    };
+  }
 
   if (!config) {
     return undefined;

@@ -94,17 +94,33 @@ On the iOS side, you will need to ensure you have a Podspec to the root of your 
 
 A library can add a `react-native.config.js` configuration file, which will customize the defaults.
 
-## How do I disable autolinking for unsupported package?
+## How can I disable autolinking for unsupported library?
 
 During the transition period some packages may not support autolinking on certain platforms. To disable autolinking for a package, update your `react-native.config.js`'s `dependencies` entry to look like this:
 
 ```js
+// react-native.config.js
 module.exports = {
   dependencies: {
     'some-unsupported-package': {
       platforms: {
         android: null, // disable Android platform, other platforms will still autolink if provided
       },
+    },
+  },
+};
+```
+
+## How can I autolink a local library?
+
+We can leverage CLI configuration to make it "see" React Native libraries that are not part of our 3rd party dependencies. To do so, update your `react-native.config.js`'s `dependencies` entry to look like this:
+
+```js
+// react-native.config.js
+module.exports = {
+  dependencies: {
+    'local-rn-library': {
+      root: '/root/libraries',
     },
   },
 };

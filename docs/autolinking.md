@@ -99,6 +99,7 @@ A library can add a `react-native.config.js` configuration file, which will cust
 During the transition period some packages may not support autolinking on certain platforms. To disable autolinking for a package, update your `react-native.config.js`'s `dependencies` entry to look like this:
 
 ```js
+// react-native.config.js
 module.exports = {
   dependencies: {
     'some-unsupported-package': {
@@ -112,9 +113,10 @@ module.exports = {
 
 ## How can I autolink a local library?
 
-Currently autolinking doesn't support local libraries out of the box. However, we can leverage CLI configuration to make it "see" the React Native libraries that are not part of our 3rd party dependencies. To make autolinking see custom libraries that are not in `node_modules`, update your `react-native.config.js`'s `dependencies` entry to look like this (adjust paths where necessary):
+We can leverage CLI configuration to make it "see" React Native libraries that are not part of our 3rd party dependencies. To do so, update your `react-native.config.js`'s `dependencies` entry to look like this:
 
 ```js
+// react-native.config.js
 module.exports = {
   dependencies: {
     'local-rn-library': {

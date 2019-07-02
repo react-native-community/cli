@@ -301,7 +301,7 @@ test('does not use restricted "react-native" key to resolve config from package.
   expect(spy).not.toHaveBeenCalled();
 });
 
-test('supports default dependencies from user configuration', () => {
+test('supports dependencies from user configuration with custom root and properties', () => {
   writeFiles(DIR, {
     'node_modules/react-native/package.json': '{}',
     'native-libs/local-lib/ios/LocalRNLibrary.xcodeproj/project.pbxproj': '',
@@ -309,6 +309,11 @@ test('supports default dependencies from user configuration', () => {
       dependencies: {
         'local-lib': {
           root: "${DIR}/native-libs/local-lib",
+          platforms: {
+            ios: {
+              podspecPath: "custom-path"
+            }
+          }
         },
       }
     }`,
@@ -334,7 +339,7 @@ test('supports default dependencies from user configuration', () => {
           "pbxprojPath": "<<REPLACED>>/native-libs/local-lib/ios/LocalRNLibrary.xcodeproj/project.pbxproj",
           "plist": Array [],
           "podfile": null,
-          "podspecPath": null,
+          "podspecPath": "custom-path",
           "projectName": "LocalRNLibrary.xcodeproj",
           "projectPath": "<<REPLACED>>/native-libs/local-lib/ios/LocalRNLibrary.xcodeproj",
           "sharedLibraries": Array [],

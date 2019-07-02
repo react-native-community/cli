@@ -110,13 +110,13 @@ const getVersionToUpgradeTo = async (argv, currentVersion, projectDir) => {
     return null;
   }
 
-  if (currentVersion > newVersion) {
+  if (semver.gt(currentVersion, newVersion)) {
     logger.error(
       `Trying to upgrade from newer version "${currentVersion}" to older "${newVersion}"`,
     );
     return null;
   }
-  if (currentVersion === newVersion) {
+  if (semver.eq(currentVersion, newVersion)) {
     const {
       dependencies: {'react-native': version},
     } = require(path.join(projectDir, 'package.json'));

@@ -147,6 +147,10 @@ test('errors when older version passed', async () => {
   expect(logger.error).toBeCalledWith(
     `Trying to upgrade from newer version "${currentVersion}" to older "${olderVersion}"`,
   );
+  await upgrade.func(['0.57.10'], ctx, opts);
+  expect(logger.error).not.toBeCalledWith(
+    `Trying to upgrade from newer version "${currentVersion}" to older "0.57.10"`,
+  );
 }, 60000);
 
 test('warns when dependency upgrade version is in semver range', async () => {

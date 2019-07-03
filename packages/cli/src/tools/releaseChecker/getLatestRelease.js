@@ -1,10 +1,10 @@
 /**
  * @flow
  */
-import https from 'https';
 import semver from 'semver';
 import logger from '../logger';
 import cacheManager from './releaseCacheManager';
+import {fetch} from '@react-native-community/cli-tools';
 
 export type Release = {
   version: string,
@@ -81,11 +81,12 @@ async function getLatestRnDiffPurgeVersion(name: string, eTag: ?string) {
     options.headers['If-None-Match'] = eTag;
   }
 
-  const response = await httpsGet(options);
+  const response = await fetch(options);
 
   // Remote is newer.
-  if (response.statusCode === 200) {
-    const latestVersion = JSON.parse(response.body)[0].name.substring(8);
+  if (response.status === 200) {
+    const body: Array<any> = await response.json();
+    const latestVersion = body[0].name.substring(8);
 
     // Update cache only if newer release is stable.
     if (!semver.prerelease(latestVersion)) {
@@ -114,27 +115,27 @@ type Headers = {
   [header: string]: mixed,
 };
 
-function httpsGet(options) {
-  return new Promise((resolve, reject) => {
-    https
-      .get(options, result => {
-        let body = '';
+// function httpsGet(options) {
+//   return new Promise((resolve, reject) => {
+//     https
+//       .get(options, result => {
+//         let body = '';
 
-        result.setEncoding('utf8');
-        result.on('data', data => {
-          body += data;
-        });
+//         result.setEncoding('utf8');
+//         result.on('data', data => {
+//           body += data;
+//         });
 
-        result.on('end', () => {
-          resolve({
-            body,
-            eTag: result.headers.etag,
-            statusCode: result.statusCode,
-          });
-        });
+//         result.on('end', () => {
+//           resolve({
+//             body,
+//             eTag: result.headers.etag,
+//             statusCode: result.statusCode,
+//           });
+//         });
 
-        result.on('error', error => reject(error));
-      })
-      .on('error', error => reject(error));
-  });
-}
+//         result.on('error', error => reject(error));
+//       })
+//       .on('error', error => reject(error));
+//   });
+// }

@@ -1,11 +1,17 @@
 // @flow
 import {processTemplateName} from '../templateName';
-import {fetch} from '../../../tools/fetch';
+import {fetch} from '@react-native-community/cli-tools';
 
-jest.mock('../../../tools/fetch', () => ({fetch: jest.fn()}));
+jest.mock('@react-native-community/cli-tools', () => ({fetch: jest.fn()}));
 
 const RN_NPM_PACKAGE = 'react-native';
 const ABS_RN_PATH = '/path/to/react-native';
+
+const mockFetch = (value: any, status: number) => {
+  (fetch: any).mockImplementation(() =>
+    Promise.resolve({json: () => Promise.resolve(value), status}),
+  );
+};
 
 test('supports file protocol with absolute path', async () => {
   jest.mock(
@@ -23,9 +29,7 @@ test('supports file protocol with absolute path', async () => {
 
 test('supports shorthand templates', async () => {
   const templateName = 'typescript';
-  (fetch: any).mockImplementationOnce(() => {
-    return Promise.resolve(`{"name": "react-native-template-${templateName}"}`);
-  });
+  mockFetch({name: 'react-native-template-${templateName}'}, 200);
   expect(await processTemplateName(templateName)).toEqual({
     uri: `react-native-template-${templateName}`,
     name: `react-native-template-${templateName}`,
@@ -34,9 +38,7 @@ test('supports shorthand templates', async () => {
 
 test('supports not-found shorthand templates', async () => {
   const templateName = 'typescriptz';
-  (fetch: any).mockImplementationOnce(() => {
-    return Promise.resolve('Not found');
-  });
+  mockFetch('Not found', 200);
   expect(await processTemplateName(templateName)).toEqual({
     uri: templateName,
     name: templateName,

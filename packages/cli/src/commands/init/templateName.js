@@ -1,7 +1,7 @@
 // @flow
 import path from 'path';
 import {URL} from 'url';
-import {fetch} from '../../tools/fetch';
+import {fetch} from '@react-native-community/cli-tools';
 
 const FILE_PROTOCOL = /file:/;
 const HTTP_PROTOCOL = /https?:/;
@@ -81,7 +81,13 @@ async function tryTemplateShorthand(templateName: string) {
       `https://registry.yarnpkg.com/${reactNativeTemplatePackage}/latest`,
     );
 
-    if (JSON.parse(response).name) {
+    if (response.status < 200 || response.status > 299) {
+      throw new Error(`Failed to load page, status code: ${response.status}`);
+    }
+
+    const body = await response.json();
+
+    if (body.name) {
       return reactNativeTemplatePackage;
     }
   } catch (e) {

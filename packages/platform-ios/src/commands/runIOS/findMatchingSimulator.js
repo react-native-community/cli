@@ -28,9 +28,9 @@ function findMatchingSimulator(simulators, simulatorString) {
 
   // Failed to run with --simulator option in Xcode 10.2.1 update for simulator name with brackets
   // e.g "iPad Pro (9.7-inch)"
-  const parsedSimulatorName = simulatorString
-    ? simulatorString.match(/(.*)? (?:\((.*)?\))?/)
-    : [];
+  // const parsedSimulatorName = simulatorString
+  //   ? simulatorString.match(/(.*)? (?:\((.*)?\))?/)
+  //   : [];
 
   // Changed to support new Xcoce simulator name and iOS/tvOS version support
   // e.g. --simulator='iPhone XS'

@@ -14,8 +14,9 @@ type FlagsT = {
   legacy: boolean,
 };
 
-const rnDiffPurgeUrl =
-  'https://github.com/react-native-community/rn-diff-purge';
+const webDiffUrl = 'https://react-native-community.github.io/upgrade-helper';
+const rawDiffUrl =
+  'https://raw.githubusercontent.com/react-native-community/rn-diff-purge/diffs/diffs';
 
 const getLatestRNVersion = async (): Promise<string> => {
   logger.info('No version passed. Fetching latest...');
@@ -45,9 +46,7 @@ const getPatch = async (currentVersion, newVersion, projectDir) => {
   logger.info(`Fetching diff between v${currentVersion} and v${newVersion}...`);
 
   try {
-    patch = await fetch(
-      `${rnDiffPurgeUrl}/compare/version/${currentVersion}...version/${newVersion}.diff`,
-    );
+    patch = await fetch(`${rawDiffUrl}/${currentVersion}..${newVersion}.diff`);
   } catch (error) {
     logger.error(
       `Failed to fetch diff for react-native@${newVersion}. Maybe it's not released yet?`,
@@ -134,7 +133,9 @@ const applyPatch = async (
   newVersion: string,
   tmpPatchFile: string,
 ) => {
-  let filesToExclude = ['package.json'];
+  const defaultExcludes = ['package.json'];
+  let filesThatDontExist = [];
+  let filesThatFailedToApply = [];
   // $FlowFixMe ThenableChildProcess is incompatible with Promise
   const {stdout: relativePathFromRoot} = await execa('git', [
     'rev-parse',
@@ -142,7 +143,7 @@ const applyPatch = async (
   ]);
   try {
     try {
-      const excludes = filesToExclude.map(
+      const excludes = defaultExcludes.map(
         e => `--exclude=${path.join(relativePathFromRoot, e)}`,
       );
       await execa('git', [
@@ -160,19 +161,41 @@ const applyPatch = async (
       ]);
       logger.info('Applying diff...');
     } catch (error) {
-      filesToExclude = [
-        ...filesToExclude,
-        ...error.stderr
-          .split('\n')
+      const errorLines = error.stderr.split('\n');
+      filesThatDontExist = [
+        ...errorLines
           .filter(x => x.includes('does not exist in index'))
           .map(x => x.replace(/^error: (.*): does not exist in index$/, '$1')),
       ].filter(Boolean);
 
-      logger.info(`Applying diff (excluding: ${filesToExclude.join(', ')})...`);
-    } finally {
-      const excludes = filesToExclude.map(
-        e => `--exclude=${path.join(relativePathFromRoot, e)}`,
+      filesThatFailedToApply = errorLines
+        .filter(x => x.includes('patch does not apply'))
+        .map(x => x.replace(/^error: (.*): patch does not apply$/, '$1'))
+        .filter(Boolean);
+
+      logger.info('Applying diff...');
+      logger.warn(
+        `Excluding files that exist in the template, but not in your project:\n${filesThatDontExist
+          .map(file => `  - ${chalk.bold(file)}`)
+          .join('\n')}`,
       );
+      if (filesThatFailedToApply.length) {
+        logger.error(
+          `Excluding files that failed to apply the diff:\n${filesThatFailedToApply
+            .map(file => `  - ${chalk.bold(file)}`)
+            .join(
+              '\n',
+            )}\nPlease make sure to check the actual changes after the upgrade command is finished.\nYou can find them in our Upgrade Helper web app: ${chalk.underline.dim(
+            `${webDiffUrl}/?from=${currentVersion}&to=${newVersion}`,
+          )}`,
+        );
+      }
+    } finally {
+      const excludes = [
+        ...defaultExcludes,
+        ...filesThatDontExist,
+        ...filesThatFailedToApply,
+      ].map(e => `--exclude=${path.join(relativePathFromRoot, e)}`);
       await execa('git', [
         'apply',
         tmpPatchFile,
@@ -184,9 +207,11 @@ const applyPatch = async (
     }
   } catch (error) {
     if (error.stderr) {
-      logger.log(`${chalk.dim(error.stderr.trim())}`);
+      logger.debug(`"git apply" failed. Error output:\n${error.stderr}`);
     }
-    logger.error('Automatically applying diff failed');
+    logger.error(
+      'Automatically applying diff failed. We did our best to automatically upgrade as many files as possible',
+    );
     return false;
   }
   return true;
@@ -247,7 +272,7 @@ async function upgrade(argv: Array<string>, ctx: ContextT, args: FlagsT) {
     if (!patchSuccess) {
       if (stdout) {
         logger.warn(
-          'Continuing after failure. Most of the files are upgraded but you will need to deal with some conflicts manually',
+          'Continuing after failure. Some of the files are upgraded but you will need to deal with conflicts manually',
         );
         await installDeps(newVersion, projectDir);
         logger.info('Running "git status" to check what changed...');
@@ -272,11 +297,11 @@ async function upgrade(argv: Array<string>, ctx: ContextT, args: FlagsT) {
 • Release notes: ${chalk.underline.dim(
         `https://github.com/facebook/react-native/releases/tag/v${newVersion}`,
       )}
-• Comparison between versions: ${chalk.underline.dim(
-        `${rnDiffPurgeUrl}/compare/version/${currentVersion}..version/${newVersion}`,
+• Manual Upgrade Helper: ${chalk.underline.dim(
+        `${webDiffUrl}/?from=${currentVersion}&to=${newVersion}`,
       )}
 • Git diff: ${chalk.underline.dim(
-        `${rnDiffPurgeUrl}/compare/version/${currentVersion}..version/${newVersion}.diff`,
+        `${rawDiffUrl}/${currentVersion}..${newVersion}.diff`,
       )}`);
 
       throw new Error(

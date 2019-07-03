@@ -49,6 +49,7 @@ jest.mock('../../../tools/logger', () => ({
   error: jest.fn((...args) => mockPushLog('error', args)),
   warn: jest.fn((...args) => mockPushLog('warn', args)),
   success: jest.fn((...args) => mockPushLog('success', args)),
+  debug: jest.fn((...args) => mockPushLog('debug', args)),
   log: jest.fn((...args) => mockPushLog(args)),
 }));
 
@@ -239,7 +240,8 @@ test('cleans up if patching fails,', async () => {
     if (command === 'git' && args[0] === 'apply') {
       return Promise.reject({
         code: 1,
-        stderr: 'error: .flowconfig: does not exist in index\n',
+        stderr:
+          'error: .flowconfig: does not exist in index\nerror: ios/MyApp.xcodeproj/project.pbxproj: patch does not apply',
       });
     }
     if (command === 'git' && args[0] === 'rev-parse') {
@@ -259,16 +261,24 @@ test('cleans up if patching fails,', async () => {
 [fs] write tmp-upgrade-rn.patch
 $ execa git rev-parse --show-prefix
 $ execa git apply --binary --check tmp-upgrade-rn.patch --exclude=package.json -p2 --3way --directory=
-info Applying diff (excluding: package.json, .flowconfig)...
-$ execa git apply tmp-upgrade-rn.patch --exclude=package.json --exclude=.flowconfig -p2 --3way --directory=
+info Applying diff...
+warn Excluding files that exist in the template, but not in your project:
+  - .flowconfig
+error Excluding files that failed to apply the diff:
+  - ios/MyApp.xcodeproj/project.pbxproj
+Please make sure to check the actual changes after the upgrade command is finished.
+You can find them in our Upgrade Helper web app: https://react-native-community.github.io/upgrade-helper/?from=0.57.8&to=0.58.4
+$ execa git apply tmp-upgrade-rn.patch --exclude=package.json --exclude=.flowconfig --exclude=ios/MyApp.xcodeproj/project.pbxproj -p2 --3way --directory=
+debug \\"git apply\\" failed. Error output:
 error: .flowconfig: does not exist in index
-error Automatically applying diff failed
+error: ios/MyApp.xcodeproj/project.pbxproj: patch does not apply
+error Automatically applying diff failed. We did our best to automatically upgrade as many files as possible
 [fs] unlink tmp-upgrade-rn.patch
 $ execa git status -s
 error Patch failed to apply for unknown reason. Please fall back to manual way of upgrading
 info You may find these resources helpful:
 • Release notes: https://github.com/facebook/react-native/releases/tag/v0.58.4
-• Comparison between versions: https://github.com/react-native-community/rn-diff-purge/compare/version/0.57.8..version/0.58.4
-• Git diff: https://github.com/react-native-community/rn-diff-purge/compare/version/0.57.8..version/0.58.4.diff"
+• Manual Upgrade Helper: https://react-native-community.github.io/upgrade-helper/?from=0.57.8&to=0.58.4
+• Git diff: https://raw.githubusercontent.com/react-native-community/rn-diff-purge/diffs/diffs/0.57.8..0.58.4.diff"
 `);
 });

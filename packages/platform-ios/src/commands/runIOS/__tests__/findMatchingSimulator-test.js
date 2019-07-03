@@ -676,7 +676,7 @@ describe('findMatchingSimulator', () => {
     ).toEqual(null);
   });
 
-  it('should return iPad(name with bracket) simulator if simulator name is in the list', () => {
+  it('should return iPad(name with brackets) simulator if simulator name is in the list', () => {
     expect(
       findMatchingSimulator(
         {
@@ -751,7 +751,7 @@ describe('findMatchingSimulator', () => {
     });
   });
 
-  it('should return iPad(name with bracket) simulator if simulator name and specified iOS version is in the list', () => {
+  it('should return iPad(name with brackets) simulator if simulator name and specified iOS version is in the list', () => {
     expect(
       findMatchingSimulator(
         {

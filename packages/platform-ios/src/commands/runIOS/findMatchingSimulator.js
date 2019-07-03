@@ -26,9 +26,21 @@ function findMatchingSimulator(simulators, simulatorString) {
   }
   const devices = simulators.devices;
 
+  // Failed to run with --simulator option in Xcode 10.2.1 update for simulator name with brackets
+  // e.g "iPad Pro (9.7-inch)"
   const parsedSimulatorName = simulatorString
     ? simulatorString.match(/(.*)? (?:\((.*)?\))?/)
     : [];
+
+  // Changed to support new Xcoce simulator name and iOS/tvOS version support
+  // e.g. --simulator='iPhone XS'
+  // e.g. --simulator='iPhone XS - 12.0'
+  // e.g. --simulator='iPad Pro (9.7-inch)'
+  // e.g. --simulator='iPad Pro (9.7-inch) - 12.2'
+  const parsedSimulatorName = simulatorString
+    ? simulatorString.match(/(.*)? - (?:(\d+\.\d+)?$)?/)
+    : [];
+
   if (parsedSimulatorName && parsedSimulatorName[2] !== undefined) {
     var simulatorVersion = parsedSimulatorName[2];
     var simulatorName = parsedSimulatorName[1];

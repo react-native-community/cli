@@ -5,8 +5,8 @@
 #
 def use_native_modules!(root = "..", packages = nil)
   if (!packages)
-    command = "node"
-    args = ["./node_modules/.bin/react-native", "config"]
+    command = "./node_modules/.bin/react-native"
+    args = ["config"]
     output = ""
     # Make sure `react-native config` is ran from your project root
     Dir.chdir(root) do
@@ -15,14 +15,7 @@ def use_native_modules!(root = "..", packages = nil)
 
     json = []
     output.each_line do |line|
-      case line
-      when /^warn\s(.+)/
-        Pod::UI.warn($1)
-      when /^(success|info|error|debug)\s(.+)/
-        Pod::UI.message($1)
-      else
-        json << line
-      end
+      json << line
     end
     config = JSON.parse(json.join("\n"))
     packages = config["dependencies"]

@@ -169,7 +169,15 @@ async function setupAndRun() {
     }
   }
 
+  // when we run `config`, we don't want to output anything to the console. We
+  // expect it to return valid JSON
+  if (process.argv.includes('config')) {
+    logger.disable();
+  }
+
   const ctx = loadConfig();
+
+  logger.enable();
 
   setProjectDir(ctx.root);
 

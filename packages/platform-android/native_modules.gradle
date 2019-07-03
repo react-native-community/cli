@@ -167,7 +167,7 @@ class ReactNativeModules {
 
     def cmdProcess
     def root = getReactNativeProjectRoot()
-    def command = "node ./node_modules/.bin/react-native config"
+    def command = "./node_modules/.bin/react-native config"
 
     try {
       cmdProcess = Runtime.getRuntime().exec(command, null, root)

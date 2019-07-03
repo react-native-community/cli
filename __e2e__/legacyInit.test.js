@@ -17,6 +17,7 @@ afterEach(() => {
 test('legacy init through react-native-cli', () => {
   const templateFiles = [
     '.buckconfig',
+    '.eslintrc.js',
     '.flowconfig',
     '.gitattributes',
     '.gitignore',
@@ -64,7 +65,7 @@ test('legacy init through react-native-cli', () => {
     name: 'TestApp',
     private: true,
     scripts: {
-      start: 'node node_modules/react-native/local-cli/cli.js start',
+      start: 'react-native start',
       test: 'jest',
     },
   });

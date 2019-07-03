@@ -106,6 +106,7 @@ export const projectConfig = t
       t.string(),
       t
         .object({
+          root: t.string(),
           platforms: map(t.string(), t.any()).keys({
             ios: t
               .object({

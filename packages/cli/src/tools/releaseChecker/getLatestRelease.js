@@ -114,28 +114,3 @@ type Headers = {
   'User-Agent': mixed,
   [header: string]: mixed,
 };
-
-// function httpsGet(options) {
-//   return new Promise((resolve, reject) => {
-//     https
-//       .get(options, result => {
-//         let body = '';
-
-//         result.setEncoding('utf8');
-//         result.on('data', data => {
-//           body += data;
-//         });
-
-//         result.on('end', () => {
-//           resolve({
-//             body,
-//             eTag: result.headers.etag,
-//             statusCode: result.statusCode,
-//           });
-//         });
-
-//         result.on('error', error => reject(error));
-//       })
-//       .on('error', error => reject(error));
-//   });
-// }

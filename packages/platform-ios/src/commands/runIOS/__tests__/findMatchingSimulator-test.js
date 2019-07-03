@@ -602,7 +602,7 @@ describe('findMatchingSimulator', () => {
             ],
           },
         },
-        'iPhone 6s (10.0)',
+        'iPhone 6s - 10.0',
       ),
     ).toEqual({
       udid: 'CBBB8FB8-77AB-49A9-8297-4CCFE3189C22',
@@ -671,7 +671,7 @@ describe('findMatchingSimulator', () => {
             ],
           },
         },
-        'iPhone 6s (10.0)',
+        'iPhone 6s - 10.0',
       ),
     ).toEqual(null);
   });

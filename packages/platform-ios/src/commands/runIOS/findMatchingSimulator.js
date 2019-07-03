@@ -32,7 +32,7 @@ function findMatchingSimulator(simulators, simulatorString) {
   //   ? simulatorString.match(/(.*)? (?:\((.*)?\))?/)
   //   : [];
 
-  // Changed to support new Xcoce simulator name and iOS/tvOS version support
+  // Changed to support new Xcode simulator name and iOS/tvOS version support
   // e.g. --simulator='iPhone XS'
   // e.g. --simulator='iPhone XS - 12.0'
   // e.g. --simulator='iPad Pro (9.7-inch)'

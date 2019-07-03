@@ -717,7 +717,7 @@ describe('findMatchingSimulator', () => {
                 availability: '(available)',
                 name: 'iPad Pro (9.7-inch)',
                 udid: 'B2141C1E-86B7-4A10-82A7-4956799526DF',
-              }
+              },
             ],
             'iOS 12.2': [
               {
@@ -744,10 +744,10 @@ describe('findMatchingSimulator', () => {
         'iPad Pro (9.7-inch)',
       ),
     ).toEqual({
-      state: 'Shutdown',
-      availability: '(available)',
-      name: 'iPad Pro (9.7-inch)',
       udid: 'B2141C1E-86B7-4A10-82A7-4956799526DF',
+      name: 'iPad Pro (9.7-inch)',
+      booted: false,
+      version: 'iOS 12.0',
     });
   });
 
@@ -812,17 +812,17 @@ describe('findMatchingSimulator', () => {
                 availability: '(available)',
                 name: 'iPad Pro (9.7-inch)',
                 udid: 'B2141C1E-86B7-4A10-82A7-4956799526DF',
-              }
+              },
             ],
           },
         },
         'iPad Pro (9.7-inch) (12.2)',
       ),
     ).toEqual({
-      state: 'Shutdown',
-      availability: '(available)',
-      name: 'iPad Pro (9.7-inch)',
       udid: 'B2141C1E-86B7-4A10-82A7-4956799526DF',
+      name: 'iPad Pro (9.7-inch)',
+      booted: false,
+      version: 'iOS 12.2',
     });
   });
 
@@ -887,7 +887,7 @@ describe('findMatchingSimulator', () => {
                 availability: '(available)',
                 name: 'iPad Pro (9.7-inch)',
                 udid: 'B2141C1E-86B7-4A10-82A7-4956799526DF',
-              }
+              },
             ],
           },
         },

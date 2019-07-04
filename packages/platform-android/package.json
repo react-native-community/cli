@@ -4,7 +4,7 @@
   "main": "build/index.js",
   "dependencies": {
     "@react-native-community/cli-tools": "^2.0.2",
-    "logkitty": "^0.4.0",
+    "logkitty": "^0.5.0",
     "slash": "^2.0.0",
     "xmldoc": "^0.4.0"
   },

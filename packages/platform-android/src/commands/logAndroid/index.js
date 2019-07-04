@@ -10,7 +10,7 @@ import {
   makeTagsFilter,
   formatEntry,
   formatError,
-  Priority,
+  AndroidPriority,
 } from 'logkitty';
 import {logger} from '@react-native-community/cli-tools';
 
@@ -19,7 +19,7 @@ async function logAndroid() {
 
   const emitter = logkitty({
     platform: 'android',
-    minPriority: Priority.VERBOSE,
+    minPriority: AndroidPriority.VERBOSE,
     filter: makeTagsFilter('ReactNative', 'ReactNativeJS'),
   });
 

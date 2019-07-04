@@ -5971,10 +5971,10 @@ log-symbols@^2.2.0:
   dependencies:
     chalk "^2.0.1"
 
-logkitty@^0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/logkitty/-/logkitty-0.4.0.tgz#4a534bb4fb2b27f0120ed7b9fc62b8aa3ba6bb43"
-  integrity sha512-IKuHwaXYDpbEzC9EfsrmvwdS80b4Lv+W4n7g6GG0gBHt5kXzQEvew46E0omrSD3ycEpTOtAX7BXGWnOUFEksYA==
+logkitty@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/logkitty/-/logkitty-0.5.0.tgz#5a348c2049551aa02da69543c3b5c44e28c7c24f"
+  integrity sha512-UA06TmPaSPiHxMBlo5uxL3ZvjJ2Gx/rEECrqowHsIsNoAoSB8aBSP553Fr2FJhOp3it2ulLsd520DZWS1IaYOw==
   dependencies:
     ansi-fragments "^0.2.1"
     yargs "^12.0.5"

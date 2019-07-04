@@ -188,7 +188,7 @@ async function runOnSimulator(xcodeProject, scheme, args: FlagsT) {
   ]);
 
   if (result.status === 0) {
-    logger.success('Successfully launched app on the simulator');
+    logger.success('Successfully launched the app on the simulator');
   } else {
     logger.error('Failed to launch the app on simulator', result.stderr);
   }

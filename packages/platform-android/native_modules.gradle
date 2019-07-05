@@ -17,9 +17,15 @@ import java.util.ArrayList;
 {{ packageImports }}
 
 public class PackageList {
+  private Application application;
   private ReactNativeHost reactNativeHost;
   public PackageList(ReactNativeHost reactNativeHost) {
     this.reactNativeHost = reactNativeHost;
+  }
+  
+  public PackageList(Application application) {
+    this.reactNativeHost = null;
+    this.application = application;
   }
 
   private ReactNativeHost getReactNativeHost() {
@@ -31,6 +37,7 @@ public class PackageList {
   }
 
   private Application getApplication() {
+    if (this.reactNativeHost == null) return this.application;
     return this.reactNativeHost.getApplication();
   }
 

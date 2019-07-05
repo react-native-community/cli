@@ -76,10 +76,20 @@ async function tryTemplateShorthand(templateName: string) {
     return templateName;
   }
   try {
-    const reactNativeTemplatePackage = `react-native-template-${templateName}`;
-    const response = await fetch(
-      `https://registry.yarnpkg.com/${reactNativeTemplatePackage}/latest`,
-    );
+    const nameTagArray = templateName.split('@');
+    const name = nameTagArray[0];
+    const tag = nameTagArray[1];
+    const reactNativeTemplatePackage = `react-native-template-${name}`;
+    var response;
+    if (tag) {
+      response = await fetch(
+        `https://registry.yarnpkg.com/${reactNativeTemplatePackage}/${tag}`,
+      );
+    } else {
+      response = await fetch(
+        `https://registry.yarnpkg.com/${reactNativeTemplatePackage}/latest`,
+      );
+    }
 
     if (JSON.parse(response).name) {
       return reactNativeTemplatePackage;

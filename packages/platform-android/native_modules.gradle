@@ -167,18 +167,23 @@ class ReactNativeModules {
 
     def cmdProcess
     def root = getReactNativeProjectRoot()
-    def command = "./node_modules/.bin/react-native config"
-
+    def command = "node ./node_modules/react-native/cli.js config"
+    def reactNativeConfigOutput = ""
+    
     try {
       cmdProcess = Runtime.getRuntime().exec(command, null, root)
-      cmdProcess.waitFor()
+      def inputStreamReader = new InputStreamReader(cmdProcess.getInputStream())
+      def bufferedReader = new BufferedReader(inputStreamReader)
+      def line = null
+      while ((line = bufferedReader.readLine()) != null){
+          reactNativeConfigOutput += line
+      }
     } catch (Exception exception) {
       this.logger.warn("${LOG_PREFIX}${exception.message}")
       this.logger.warn("${LOG_PREFIX}Automatic import of native modules failed.")
       return reactNativeModules
     }
 
-    def reactNativeConfigOutput = cmdProcess.in.text
     def json = new JsonSlurper().parseText(reactNativeConfigOutput)
     this.packageName = json["project"]["android"]["packageName"]
     def dependencies = json["dependencies"]

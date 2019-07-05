@@ -10,6 +10,7 @@
 import envinfo from 'envinfo';
 import {logger} from '@react-native-community/cli-tools';
 import type {ConfigT} from 'types';
+import releaseChecker from '../../tools/releaseChecker';
 
 const info = async function getInfo(
   argv: Array<string>,
@@ -29,6 +30,8 @@ const info = async function getInfo(
     logger.log(output.trim());
   } catch (err) {
     logger.error(`Unable to print environment info.\n${err}`);
+  } finally {
+    await releaseChecker(ctx.root);
   }
 };
 

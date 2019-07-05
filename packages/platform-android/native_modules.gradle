@@ -172,12 +172,13 @@ class ReactNativeModules {
     
     try {
       cmdProcess = Runtime.getRuntime().exec(command, null, root)
-      def inputStreamReader = new InputStreamReader(cmdProcess.getInputStream())
-      def bufferedReader = new BufferedReader(inputStreamReader)
-      def line = null
-      while ((line = bufferedReader.readLine()) != null){
-          reactNativeConfigOutput += line
+      def bufferedReader = new BufferedReader(new InputStreamReader(cmdProcess.getInputStream()))
+      def buff = ""
+      def readBuffer = new StringBuffer()
+      while ((buff = bufferedReader.readLine()) != null){
+          readBuffer.append(buff)
       }
+      reactNativeConfigOutput = readBuffer.toString()
     } catch (Exception exception) {
       this.logger.warn("${LOG_PREFIX}${exception.message}")
       this.logger.warn("${LOG_PREFIX}Automatic import of native modules failed.")

@@ -60,9 +60,9 @@ function runIOS(_: Array<string>, ctx: ConfigT, args: FlagsT) {
   const scheme = args.scheme || inferredSchemeName;
 
   logger.info(
-    `Found Xcode ${xcodeProject.isWorkspace ? 'workspace' : 'project'} ${
-      xcodeProject.name
-    }`,
+    `Found Xcode ${
+      xcodeProject.isWorkspace ? 'workspace' : 'project'
+    } "${chalk.bold(xcodeProject.name)}"`,
   );
 
   const {device, udid} = args;
@@ -161,14 +161,12 @@ async function runOnSimulator(xcodeProject, scheme, args: FlagsT) {
 
   const appPath = getBuildPath(args.configuration, appName, false, scheme);
 
-  logger.info(`Installing ${appPath}`);
+  logger.info(`Installing "${chalk.bold(appPath)}"`);
 
   child_process.spawnSync(
     'xcrun',
     ['simctl', 'install', selectedSimulator.udid, appPath],
-    {
-      stdio: 'inherit',
-    },
+    {stdio: 'inherit'},
   );
 
   const bundleID = child_process
@@ -180,15 +178,20 @@ async function runOnSimulator(xcodeProject, scheme, args: FlagsT) {
     // $FlowExpectedError https://github.com/facebook/flow/issues/5675
     .trim();
 
-  logger.info(`Launching ${bundleID}`);
+  logger.info(`Launching "${chalk.bold(bundleID)}"`);
 
-  child_process.spawnSync(
-    'xcrun',
-    ['simctl', 'launch', selectedSimulator.udid, bundleID],
-    {
-      stdio: 'inherit',
-    },
-  );
+  const result = child_process.spawnSync('xcrun', [
+    'simctl',
+    'launch',
+    selectedSimulator.udid,
+    bundleID,
+  ]);
+
+  if (result.status === 0) {
+    logger.success('Successfully launched the app on the simulator');
+  } else {
+    logger.error('Failed to launch the app on simulator', result.stderr);
+  }
 }
 
 async function runOnDevice(selectedDevice, scheme, xcodeProject, args: FlagsT) {
@@ -221,7 +224,7 @@ async function runOnDevice(selectedDevice, scheme, xcodeProject, args: FlagsT) {
     '--justlaunch',
   ];
 
-  logger.info(`Installing and launching your app on ${selectedDevice.name}...`);
+  logger.info(`Installing and launching your app on ${selectedDevice.name}`);
 
   const iosDeployOutput = child_process.spawnSync(
     'ios-deploy',
@@ -254,7 +257,11 @@ function buildProject(xcodeProject, udid, scheme, args: FlagsT) {
       '-derivedDataPath',
       `build/${scheme}`,
     ];
-    logger.info(`Building using "xcodebuild ${xcodebuildArgs.join(' ')}"`);
+    logger.info(
+      `Building ${chalk.dim(
+        `(using "xcodebuild ${xcodebuildArgs.join(' ')}")`,
+      )}`,
+    );
     let xcpretty;
     if (!args.verbose) {
       xcpretty =
@@ -271,11 +278,16 @@ function buildProject(xcodeProject, udid, scheme, args: FlagsT) {
     let buildOutput = '';
     let errorOutput = '';
     buildProcess.stdout.on('data', data => {
-      buildOutput += data.toString();
+      const stringData = data.toString();
+      buildOutput += stringData;
       if (xcpretty) {
         xcpretty.stdin.write(data);
       } else {
-        logger.info(data.toString());
+        if (logger.isVerbose()) {
+          logger.debug(stringData);
+        } else {
+          process.stdout.write('.');
+        }
       }
     });
     buildProcess.stderr.on('data', data => {
@@ -284,6 +296,8 @@ function buildProject(xcodeProject, udid, scheme, args: FlagsT) {
     buildProcess.on('close', code => {
       if (xcpretty) {
         xcpretty.stdin.end();
+      } else {
+        process.stdout.write('\n');
       }
       if (code !== 0) {
         reject(
@@ -295,7 +309,7 @@ function buildProject(xcodeProject, udid, scheme, args: FlagsT) {
             logs further, consider building your app with Xcode.app, by opening
             ${xcodeProject.name}.
           `,
-            errorOutput,
+            buildOutput + '\n' + errorOutput,
           ),
         );
         return;
@@ -307,7 +321,7 @@ function buildProject(xcodeProject, udid, scheme, args: FlagsT) {
 
 function bootSimulator(selectedSimulator) {
   const simulatorFullName = formattedDeviceName(selectedSimulator);
-  logger.info(`Launching ${simulatorFullName}...`);
+  logger.info(`Launching ${simulatorFullName}`);
   try {
     child_process.spawnSync('xcrun', [
       'instruments',

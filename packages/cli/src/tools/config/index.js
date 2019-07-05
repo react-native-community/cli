@@ -97,10 +97,12 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
 
   let depsWithWarnings = [];
 
-  const finalConfig = [
-    ...Object.keys(userConfig.dependencies),
-    ...findDependencies(projectRoot),
-  ].reduce((acc: ConfigT, dependencyName) => {
+  const finalConfig = Array.from(
+    new Set([
+      ...Object.keys(userConfig.dependencies),
+      ...findDependencies(projectRoot),
+    ]),
+  ).reduce((acc: ConfigT, dependencyName) => {
     const localDependencyRoot =
       userConfig.dependencies[dependencyName] &&
       userConfig.dependencies[dependencyName].root;

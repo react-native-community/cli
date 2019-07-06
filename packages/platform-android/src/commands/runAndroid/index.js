@@ -252,7 +252,8 @@ function startServerInNewWindow(port, terminal, reactNativePath) {
 
   /**
    * Quick & temporary fix for packager crashing on Windows due to using removed --projectRoot flag
-   * in script. So we just replace the contents of the script with the fixed version.
+   * in script. So we just replace the contents of the script with the fixed version. This should be
+   * removed when PR #25517 on RN Repo gets approved and a new RN version is released.
    */
   const launchPackagerScriptContent = `:: Copyright (c) Facebook, Inc. and its affiliates.
   ::

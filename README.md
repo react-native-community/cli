@@ -25,10 +25,13 @@ This CLI is intended to be used with a certain version of React Native. You'll f
 
 ## About
 
-This repository contains tools and helpers for React Native projects in form of a CLI. We want to make a couple of things clear for you first:
-
-- this is a monorepo;
-- there are currently two CLIs: the actual one called [`@react-native-community/cli`](./packages/cli) that does all the job and global [`react-native-cli`](./packages/global-cli) which is used as its proxy and installation helper;
+This repository contains tools and helpers for React Native projects in form of a CLI. 
+### Let's clear some confusions:
+1. This is a mono-repo.
+2. There are currently two CLIs: the actual one called [`@react-native-community/cli`](./packages/cli) that does all the job and global [`react-native-cli`](./packages/global-cli) which is used as its proxy and installation helper.
+3. [`@react-native-community/cli`](./packages/cli) is a dependency of `react-native`. That makes it a "transitive dependency" of your project.
+4. [`react-native-cli`](./packages/global-cli) is a global package, we discourage to use it, it's kind of a proxy to [`@react-native-community/cli`](./packages/cli), but it's a bit more complicated that that.
+5. We update the CLI independently of React Native itself.
 
 We know it's confusing, but we're actively working to make this indirection gone.
 
@@ -75,6 +78,12 @@ You can also add npm scripts to call it with whichever package manager you use:
   }
 }
 ```
+## Updating the CLI
+1. If you use lock files (`yarn.lock` or `package-lock.json`) - find the `@react-native-community/cli` entry, remove it, run `yarn`/`npm install` once again.
+2. If you don't use lock files – you should. But in such a case, remove `node_modules` and run `yarn`/`npm install` again.
+3. Run `npm list @react-native-community/cli` or `yarn list @react-native-community/cli` and verify you're on the latest version.
+
+After performing these steps you should be on the latest CLI version. Feel free to do it once in a while, because we release often.
 
 ## Maintainers
 

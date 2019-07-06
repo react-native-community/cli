@@ -251,6 +251,23 @@ function startServerInNewWindow(port, terminal, reactNativePath) {
     : `export RCT_METRO_PORT=${port}`;
 
   /**
+   * Quick & temporary fix for packager crashing on Windows due to using removed --projectRoot flag
+   * in script. So we just replace the contents of the script with the fixed version.
+   */
+  const launchPackagerScriptContent = `:: Copyright (c) Facebook, Inc. and its affiliates.
+  ::
+  :: This source code is licensed under the MIT license found in the
+  :: LICENSE file in the root directory of this source tree.
+  
+  @echo off
+  title Metro Bundler
+  call .packager.bat
+  cd ../../../
+  node "%~dp0..\\cli.js" start
+  pause
+  exit`;
+
+  /**
    * Set up the `.packager.(env|bat)` file to ensure the packager starts on the right port.
    */
   const launchPackagerScript = path.join(
@@ -296,6 +313,11 @@ function startServerInNewWindow(port, terminal, reactNativePath) {
   if (/^win/.test(process.platform)) {
     procConfig.detached = true;
     procConfig.stdio = 'ignore';
+    //Temporary fix for #484. See comment on line 254
+    fs.writeFileSync(launchPackagerScript, launchPackagerScriptContent, {
+      encoding: 'utf8',
+      flag: 'w',
+    });
     return spawn('cmd.exe', ['/C', launchPackagerScript], procConfig);
   }
   logger.error(

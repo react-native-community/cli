@@ -10,7 +10,7 @@ _Note: CLI has been extracted from core `react-native` as a part of "[Lean Core]
 
 ## Compatibility
 
-Our release cycle is indepdenent of `react-native`. We follow semver and here is the compatibility table:
+Our release cycle is independent of `react-native`. We follow semver and here is the compatibility table:
 
 | `@react-native-community/cli` | `react-native` |
 | ----------------------------- | -------------- |

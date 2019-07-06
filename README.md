@@ -8,6 +8,19 @@ Command line tools that ship with [`react-native`](https://github.com/facebook/r
 
 _Note: CLI has been extracted from core `react-native` as a part of "[Lean Core](https://github.com/facebook/react-native/issues/23313)" effort. Please read [this blog post](https://blog.callstack.io/the-react-native-cli-has-a-new-home-79b63838f0e6) for more details._
 
+## Contents
+
+- [Compatibility](#compatibility)
+- [Documentation](#documentation)
+- [About](#about)
+- [Creating a new React Native project](#creating-a-new-react-native-project)
+	- [Using `npx` (_recommended_)](#using-npx-recommended)
+	- [Using global CLI (_legacy_)](#using-global-cli-legacy)
+- [Usage in an existing React Native project](#usage-in-an-existing-react-native-project)
+- [Updating the CLI](#updating-the-cli)
+- [Maintainers](#maintainers)
+- [License](#license)
+
 ## Compatibility
 
 Our release cycle is independent of `react-native`. We follow semver and here is the compatibility table:

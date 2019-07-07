@@ -54,6 +54,7 @@ test.each`
   templateName             | uri                      | name
   ${'react-native@0.58.0'} | ${'react-native@0.58.0'} | ${'react-native'}
   ${'some-name@latest'}    | ${'some-name@latest'}    | ${'some-name'}
+  ${'@scoped/name'}        | ${'@scoped/name'}        | ${'@scoped/name'}
   ${'@scoped/name@0.58.0'} | ${'@scoped/name@0.58.0'} | ${'@scoped/name'}
   ${'@scoped/name@tag'}    | ${'@scoped/name@tag'}    | ${'@scoped/name'}
 `(

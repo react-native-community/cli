@@ -7,7 +7,7 @@ const FILE_PROTOCOL = /file:/;
 const HTTP_PROTOCOL = /https?:/;
 const TARBALL = /\.tgz$/;
 const VERSION_POSTFIX = /(.*)(-\d+\.\d+\.\d+)/;
-const VERSIONED_PACKAGE = /(@?.*)(@)(.*)/;
+const VERSIONED_PACKAGE = /(@?.+)(@)(.+)/;
 
 function handleFileProtocol(filePath: string) {
   const uri = new URL(filePath).pathname;

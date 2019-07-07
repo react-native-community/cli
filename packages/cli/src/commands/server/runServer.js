@@ -48,7 +48,6 @@ async function runServer(argv: Array<string>, ctx: ConfigT, args: Args) {
     port: args.port,
     resetCache: args.resetCache,
     watchFolders: args.watchFolders,
-    projectRoot: ctx.root,
     sourceExts: args.sourceExts,
     reporter,
   });

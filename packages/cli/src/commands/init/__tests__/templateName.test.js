@@ -21,28 +21,6 @@ test('supports file protocol with absolute path', async () => {
   });
 });
 
-test('supports shorthand templates', async () => {
-  const templateName = 'typescript';
-  (fetch: any).mockImplementationOnce(() => {
-    return Promise.resolve(`{"name": "react-native-template-${templateName}"}`);
-  });
-  expect(await processTemplateName(templateName)).toEqual({
-    uri: `react-native-template-${templateName}`,
-    name: `react-native-template-${templateName}`,
-  });
-});
-
-test('supports not-found shorthand templates', async () => {
-  const templateName = 'typescriptz';
-  (fetch: any).mockImplementationOnce(() => {
-    return Promise.resolve('Not found');
-  });
-  expect(await processTemplateName(templateName)).toEqual({
-    uri: templateName,
-    name: templateName,
-  });
-});
-
 test('supports npm packages as template names', async () => {
   expect(await processTemplateName(RN_NPM_PACKAGE)).toEqual({
     uri: RN_NPM_PACKAGE,

@@ -23,16 +23,18 @@ Each platform defines its own [`platforms`](./platforms.md) configuration. It in
 
 ## Platform iOS
 
-The `Podfile` gets the package metadata from `react-native config` and:
+The [native_modules.rb](https://github.com/react-native-community/cli/blob/master/packages/platform-ios/native_modules.rb) script required by `Podfile` gets the package metadata from `react-native config` during install phase and:
 
 1. Adds dependencies via CocoaPods dev pods (using files from a local path).
 1. Adds build phase scripts to the App project’s build phase. (see examples below)
 
-This means that all libraries need to ship a Podspec in the root of their folder to work seamlessly. This references the native code that your library depends on, and notes any of its other native dependencies.
+This means that all libraries need to ship a Podspec either in the root of their folder or where the Xcode project is. Podspec references the native code that your library depends on.
 
 The implementation ensures that a library is imported only once. If you need to have a custom `pod` directive then include it above the `use_native_modules!` function.
 
-See the implementation of [native_modules.rb](https://github.com/react-native-community/cli/blob/master/packages/platform-ios/native_modules.rb).
+### Example
+
+See example usage in React Native template's [Podfile](https://github.com/facebook/react-native/blob/0.60-stable/template/ios/Podfile).
 
 ### Custom root (monorepos)
 
@@ -45,21 +47,31 @@ root/
     ios/
 ```
 
-you'll need to set a custom root. Pass it as an argument to `use_native_modules!`:
+you'll need to set a custom root. Pass it as an argument to `use_native_modules!` and adjust the `native_modules` path accordingly:
 
 ```rb
 # example/ios/Podfile
+require_relative '../../node_modules/@react-native-community/cli-platform-ios/native_modules'
+# ...
 use_native_modules!("../..")
 ```
 
 ## Platform Android
 
+The [native_modules.gradle](https://github.com/react-native-community/cli/blob/master/packages/platform-android/native_modules.gradle) script is included in your project's `settings.gradle` and `app/build.gradle` files and:
+
 1. At build time, before the build script is run:
    1. A first Gradle plugin (in `settings.gradle`) runs `applyNativeModulesSettingsGradle` method. It uses the package metadata from `react-native config` to add Android projects.
    1. A second Gradle plugin (in `app/build.gradle`) runs `applyNativeModulesAppBuildGradle` method. It creates a list of React Native packages to include in the generated `/android/build/generated/rn/src/main/java/com/facebook/react/PackageList.java` file.
-1. At runtime, the list of React Native packages, generated in step 1.2, is passed to React Native host.
+1. At runtime, the list of React Native packages generated in step 1.2 is registered by `getPackages` method of `ReactNativeHost` in `MainApplication.java`.
 
-See the implementation of [native_modules.gradle](https://github.com/react-native-community/cli/blob/master/packages/platform-android/native_modules.gradle).
+### Example
+
+See example usage in React Native template:
+
+- [settings.gradle](https://github.com/facebook/react-native/blob/0.60-stable/template/android/settings.gradle)
+- [app/build.gradle](https://github.com/facebook/react-native/blob/0.60-stable/template/android/app/build.gradle#L185)
+- [MainApplication.java](https://github.com/facebook/react-native/blob/769e35ba5f4c31ef913035a5cc8bc0e88546ca55/template/android/app/src/main/java/com/helloworld/MainApplication.java#L22-L28)
 
 ### Custom root (monorepos)
 
@@ -72,15 +84,17 @@ root/
     android/
 ```
 
-you'll need to set a custom root. Pass it as a second argument to `applyNativeModulesSettingsGradle` and `applyNativeModulesAppBuildGradle` methods:
+you'll need to set a custom root. Pass it as a second argument to `applyNativeModulesSettingsGradle` and `applyNativeModulesAppBuildGradle` methods and adjust the `native_modules.gradle` path accordingly:
 
 ```groovy
 // example/android/settings.gradle
+apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle");
 applyNativeModulesSettingsGradle(settings, "../..")
 ```
 
 ```groovy
 // example/android/app/build.gradle
+apply from: file("../../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle");
 applyNativeModulesAppBuildGradle(project, "../..")
 ```
 

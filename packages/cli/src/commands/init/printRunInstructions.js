@@ -14,7 +14,7 @@ import chalk from 'chalk';
 import {logger} from '@react-native-community/cli-tools';
 
 function printRunInstructions(projectDir: string, projectName: string) {
-  const absoluteProjectDir = path.resolve(projectDir);
+  const absoluteProjectDir = path.resolve(`${projectDir}/${projectName}`);
   const iosProjectDir = path.resolve(projectDir, 'ios');
 
   const iosPodsFile = path.resolve(iosProjectDir, `${projectName}.xcworkspace`);

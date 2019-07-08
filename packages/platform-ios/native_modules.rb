@@ -27,6 +27,17 @@ def use_native_modules!(root = "..", packages = nil)
     next unless package_config = package["platforms"]["ios"]
 
     podspec_path = package_config["podspecPath"]
+
+    # Add a warning to the queue and continue to the next dependency if the podspec_path is nil/empty
+    if podspec_path.nil? || podspec_path.empty?
+      Pod::UI.warn("use_native_modules! skipped the react-native dependency '#{package["name"]}'. No podspec file was found.",
+        [
+          "Check to see if there is an updated version that contains the necessary podspec file",
+          "Contact the library maintainers or send them a PR to add a podspec. The react-native-webview podspec is a good example of a package.json driven podspec. See https://github.com/react-native-community/react-native-webview/blob/master/react-native-webview.podspec"
+        ])
+    end
+    next if podspec_path.nil? || podspec_path.empty?
+
     spec = Pod::Specification.from_file(podspec_path)
 
     # We want to do a look up inside the current CocoaPods target

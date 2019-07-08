@@ -41,7 +41,7 @@ verdaccio
 ```sh
 npm set registry http://localhost:4873/
 ```
-* Clone `react-native` and `@react-native-commiunity/cli`
+* Clone `react-native` and `@react-native-community/cli`
 * Release new version of `@react-native-community/cli` to local npm proxy. If you have any issues, head over to [verdaccio](https://github.com/verdaccio/verdaccio) and check out the docs.
 ```
 cd /path/to/cli/packages/cli && npm publish

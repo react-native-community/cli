@@ -42,7 +42,11 @@ def use_native_modules!(root = "..", packages = nil)
       existing_dep.name.split('/').first == spec.name
     end
 
-    pod spec.name, :path => File.dirname(podspec_path)
+    # Use relative path
+    absolute_podspec_path = File.dirname(podspec_path)
+    relative_podspec_path = File.join(root, absolute_podspec_path.partition('node_modules').last(2).join())
+
+    pod spec.name, :path => relative_podspec_path
 
     if package_config["scriptPhases"]
       # Can be either an object, or an array of objects
@@ -174,7 +178,7 @@ if $0 == __FILE__
       @podfile.use_native_modules('..', @config)
       @activated_pods.must_equal [{
         name: "ios-dep",
-        options: { path: @ios_package["root"] }
+        options: { path: "../node_modules/react" }
       }]
     end
 

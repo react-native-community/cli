@@ -139,7 +139,6 @@ Uses a custom directory instead of `<projectName>`.
 Uses a custom template. Accepts following template sources:
 
 - an npm package name
-- a shorthand name for packages prefixed with `react-native-template-`
 - an absolute path to a local directory
 - an absolute path to a tarball created using `npm pack`
 

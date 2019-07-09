@@ -35,7 +35,6 @@ npx react-native@${VERSION} init ProjectName
 In following examples `TEMPLATE_NAME` can be either:
 
 - Full package name, eg. `react-native-template-typescript`.
-- Shorthand name of template, eg. `typescript`.
 - Absolute path to directory containing template, eg. `file:///Users/username/project/some-template`.
 - Absolute path to a tarball created using `npm pack`.
 

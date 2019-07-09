@@ -475,10 +475,16 @@ Unlinks single package native dependencies and then uninstalls it from `package.
 Usage:
 
 ```
-react-native unlink <packageName>
+react-native unlink <packageName> [options]
 ```
 
 Unlink native dependency linked with the `link` command.
+
+#### Options
+
+#### `--platforms [list]`
+
+Scope unlinking to specified platforms
 
 ### `upgrade`
 

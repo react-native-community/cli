@@ -4,8 +4,6 @@
 import path from 'path';
 import chalk from 'chalk';
 import {logger, inlineString} from '@react-native-community/cli-tools';
-import * as ios from '@react-native-community/cli-platform-ios';
-import * as android from '@react-native-community/cli-platform-android';
 import findDependencies from './findDependencies';
 import resolveReactNativePath from './resolveReactNativePath';
 import findAssets from './findAssets';
@@ -131,19 +129,6 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
           Reason: ${chalk.dim(error.message)}`),
       );
       return acc;
-    }
-
-    /**
-     * @todo: remove this code once `react-native` is published with
-     * `platforms` and `commands` inside `react-native.config.js`.
-     */
-    if (dependencyName === 'react-native') {
-      if (Object.keys(config.platforms).length === 0) {
-        config.platforms = {ios, android};
-      }
-      if (config.commands.length === 0) {
-        config.commands = [...ios.commands, ...android.commands];
-      }
     }
 
     const isPlatform = Object.keys(config.platforms).length > 0;

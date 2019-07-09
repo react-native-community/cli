@@ -7,11 +7,15 @@
  * @flow
  */
 
-import {flatMap, values, difference} from 'lodash';
+import {flatMap, values, difference, pick} from 'lodash';
 import {logger, CLIError} from '@react-native-community/cli-tools';
 import type {ConfigT} from 'types';
 import getPlatformName from './getPlatformName';
 import makeHook from './makeHook';
+
+type Flags = {
+  platforms?: Array<string>,
+};
 
 const unlinkDependency = (
   platforms,
@@ -78,8 +82,20 @@ const unlinkDependency = (
  * If optional argument [packageName] is provided, it's the only one
  * that's checked
  */
-async function unlink(args: Array<string>, ctx: ConfigT) {
+async function unlink(args: Array<string>, ctx: ConfigT, opts: Flags) {
   const packageName = args[0];
+  let platforms = ctx.platforms;
+
+  if (opts.platforms) {
+    platforms = pick(platforms, opts.platforms);
+    logger.debug('Skipping selected platforms');
+  }
+
+  logger.debug(
+    `Available platforms: ${Object.keys(platforms)
+      .map(getPlatformName)
+      .join(', ')}`,
+  );
 
   const {[packageName]: dependency, ...otherDependencies} = ctx.dependencies;
 
@@ -95,7 +111,7 @@ async function unlink(args: Array<string>, ctx: ConfigT) {
       await makeHook(dependency.hooks.preulink)();
     }
     unlinkDependency(
-      ctx.platforms,
+      platforms,
       ctx.project,
       dependency,
       packageName,
@@ -122,12 +138,12 @@ async function unlink(args: Array<string>, ctx: ConfigT) {
     return;
   }
 
-  Object.keys(ctx.platforms || {}).forEach(platform => {
+  Object.keys(platforms || {}).forEach(platform => {
     const projectConfig = ctx.project[platform];
     const linkConfig =
-      ctx.platforms[platform] &&
-      ctx.platforms[platform].linkConfig &&
-      ctx.platforms[platform].linkConfig();
+      platforms[platform] &&
+      platforms[platform].linkConfig &&
+      platforms[platform].linkConfig();
     if (!linkConfig || !linkConfig.unlinkAssets || !projectConfig) {
       return;
     }
@@ -146,4 +162,11 @@ export default {
   func: unlink,
   description: 'unlink native dependency',
   name: 'unlink <packageName>',
+  options: [
+    {
+      name: '--platforms [list]',
+      description: 'Scope unlinking to specified platforms',
+      parse: (val: string) => val.toLowerCase().split(','),
+    },
+  ],
 };

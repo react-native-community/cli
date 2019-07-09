@@ -43,10 +43,10 @@ def use_native_modules!(root = "..", packages = nil)
     end
 
     # Use relative path
-    absolute_path = File.dirname(podspec_path)
-    relative_path = '../' + absolute_path.partition('node_modules').last(2).join()
+    absolute_podspec_path = File.dirname(podspec_path)
+    relative_podspec_path = File.join(root, absolute_podspec_path.partition('node_modules').last(2).join())
 
-    pod spec.name, :path => relative_path
+    pod spec.name, :path => relative_podspec_path
 
     if package_config["scriptPhases"]
       # Can be either an object, or an array of objects

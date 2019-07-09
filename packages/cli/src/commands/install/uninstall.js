@@ -10,13 +10,13 @@
 import type {ConfigT} from 'types';
 import {logger} from '@react-native-community/cli-tools';
 import * as PackageManager from '../../tools/packageManager';
-import link from '../link/unlink';
+import unlink from '../link/unlink';
 
 async function uninstall(args: Array<string>, ctx: ConfigT) {
   const name = args[0];
 
   logger.info(`Unlinking "${name}"...`);
-  await link.func([name], ctx);
+  await unlink.func([name], ctx, {});
 
   logger.info(`Uninstalling "${name}"...`);
   await PackageManager.uninstall([name]);

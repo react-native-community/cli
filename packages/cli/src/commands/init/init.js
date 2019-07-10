@@ -154,7 +154,7 @@ async function installDependencies({
   npm?: boolean,
   loader: typeof Ora,
 }) {
-  loader.start('Installing all required dependencies');
+  loader.start('Installing dependencies');
 
   await PackageManager.installAll({
     preferYarn: !npm,

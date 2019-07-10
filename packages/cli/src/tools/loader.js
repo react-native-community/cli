@@ -2,14 +2,15 @@
 import Ora from 'ora';
 import logger from './logger';
 
-class OraMock {
+class OraNoop {
   succeed() {}
   fail() {}
-  start() {}
+  start(message?: string) {}
+  info(message?: string) {}
 }
 
-function getLoader(): typeof Ora {
-  return logger.isVerbose() ? OraMock : Ora;
+export function getLoader(): typeof Ora {
+  return logger.isVerbose() ? OraNoop : Ora;
 }
 
-export {getLoader};
+export const NoopLoader = OraNoop;

@@ -91,7 +91,7 @@ function runIOS(_: Array<string>, ctx: ConfigT, args: FlagsT) {
   if (device) {
     return logger.error(
       `Could not find a device named: "${chalk.bold(
-        device,
+        String(device),
       )}". ${printFoundDevices(devices)}`,
     );
   }

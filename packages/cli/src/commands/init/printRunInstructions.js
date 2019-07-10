@@ -31,7 +31,7 @@ function printRunInstructions(projectDir: string, projectName: string) {
   ${chalk.cyan(`Run instructions for ${chalk.bold('iOS')}`)}:
     • cd ${absoluteProjectDir} && react-native run-ios
     - or -
-    • Open ${relativeXcodeProjectPath} in Xcode
+    • Open ${relativeXcodeProjectPath} in Xcode or run "xed -b ios"
     • Hit the Run button
 
   ${chalk.green(`Run instructions for ${chalk.bold('Android')}`)}:

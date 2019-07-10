@@ -7,8 +7,6 @@ import inquirer from 'inquirer';
 import commandExists from 'command-exists';
 import {logger} from '@react-native-community/cli-tools';
 
-const COCOAPODS_INSTALLATION_TIMEOUT = 30000;
-
 async function installPods({
   projectName,
   loader,
@@ -33,7 +31,7 @@ async function installPods({
       await commandExists('pod');
     } catch (e) {
       if (loader) {
-        loader.stop();
+        loader.info();
       }
 
       const {shouldInstallCocoaPods} = await inquirer.prompt([
@@ -49,12 +47,10 @@ async function installPods({
       ]);
 
       if (shouldInstallCocoaPods) {
-        // Show a helpful notice when installation takes more than usually
-        const cocoaPodsInstallationTimeMessage = setTimeout(
-          () =>
-            logger.info('Installing CocoaPods, this may take a few minutes'),
-          COCOAPODS_INSTALLATION_TIMEOUT,
-        );
+        if (loader) {
+          loader.start('Installing CocoaPods');
+        }
+
         try {
           // First attempt to install `cocoapods`
           await execa('gem', ['install', 'cocoapods']);
@@ -63,6 +59,9 @@ async function installPods({
             // If that doesn't work then try with sudo
             await execa('sudo', ['gem', 'install', 'cocoapods']);
           } catch (error) {
+            if (loader) {
+              loader.fail();
+            }
             logger.log(error.stderr);
 
             throw new Error(
@@ -72,7 +71,34 @@ async function installPods({
             );
           }
         } finally {
-          clearTimeout(cocoaPodsInstallationTimeMessage);
+          if (loader) {
+            loader.succeed();
+          }
+        }
+
+        try {
+          if (loader) {
+            loader.start('Updating CocoaPods repositories');
+          }
+
+          await execa('pod', ['repo', 'update']);
+        } catch (error) {
+          // "pod" command outputs errors to stdout (at least some of them)
+          logger.log(error.stderr || error.stdout);
+
+          if (loader) {
+            loader.fail();
+          }
+
+          throw new Error(
+            `Failed to update CocoaPods repositories for iOS project.\nPlease try again manually: "pod repo update".\nCocoaPods documentation: ${chalk.dim.underline(
+              'https://cocoapods.org/',
+            )}`,
+          );
+        } finally {
+          if (loader) {
+            loader.succeed();
+          }
         }
 
         // This only shows when `CocoaPods` is automatically installed,

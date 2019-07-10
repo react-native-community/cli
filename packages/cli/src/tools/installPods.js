@@ -48,7 +48,11 @@ async function installPods({
 
       if (shouldInstallCocoaPods) {
         if (loader) {
-          loader.start('Installing CocoaPods');
+          loader.start(
+            `Installing CocoaPods ${chalk.dim(
+              '(this make take a few minutes)',
+            )}`,
+          );
         }
 
         try {

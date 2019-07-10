@@ -1,10 +1,10 @@
 {
   "name": "@react-native-community/cli-platform-android",
-  "version": "2.1.1",
+  "version": "2.4.1",
   "license": "MIT",
   "main": "build/index.js",
   "dependencies": {
-    "@react-native-community/cli-tools": "^2.0.2",
+    "@react-native-community/cli-tools": "^2.4.1",
     "chalk": "^2.4.2",
     "logkitty": "^0.5.0",
     "slash": "^2.0.0",

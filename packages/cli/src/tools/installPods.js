@@ -100,16 +100,18 @@ async function installPods({
             loader.succeed();
           }
         }
-
-        // This only shows when `CocoaPods` is automatically installed,
-        // if it's already installed then we just show the `Installing dependencies` step
-        if (loader) {
-          loader.start('Installing CocoaPods dependencies');
-        }
       }
     }
 
     try {
+      if (loader) {
+        loader.succeed();
+        loader.start(
+          `Installing CocoaPods dependencies ${chalk.dim(
+            '(this make take a few minutes)',
+          )}`,
+        );
+      }
       await execa('pod', ['install']);
     } catch (error) {
       // "pod" command outputs errors to stdout (at least some of them)

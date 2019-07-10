@@ -32,7 +32,7 @@ async function installPods({
       // Check if "pod" is available and usable. It happens that there are
       // multiple versions of "pod" command and even though it's there, it exits
       // with a failure
-      await execa('pod');
+      await execa('pod', ['--version']);
     } catch (e) {
       loader.info();
 
@@ -83,7 +83,6 @@ async function installPods({
             )}`,
           );
           await execa('pod', ['repo', 'update']);
-          loader.succeed();
         } catch (error) {
           // "pod" command outputs errors to stdout (at least some of them)
           logger.log(error.stderr || error.stdout);
@@ -99,6 +98,7 @@ async function installPods({
     }
 
     try {
+      loader.succeed();
       loader.start(
         `Installing CocoaPods dependencies ${chalk.dim(
           '(this make take a few minutes)',

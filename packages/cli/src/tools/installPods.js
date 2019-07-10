@@ -6,6 +6,7 @@ import Ora from 'ora';
 import inquirer from 'inquirer';
 import commandExists from 'command-exists';
 import {logger} from '@react-native-community/cli-tools';
+import {NoopLoader} from './loader';
 
 async function installPods({
   projectName,
@@ -14,6 +15,7 @@ async function installPods({
   projectName: string,
   loader?: typeof Ora,
 }) {
+  loader = loader || new NoopLoader();
   try {
     if (!fs.existsSync('ios')) {
       return;
@@ -30,9 +32,7 @@ async function installPods({
     try {
       await commandExists('pod');
     } catch (e) {
-      if (loader) {
-        loader.info();
-      }
+      loader.info();
 
       const {shouldInstallCocoaPods} = await inquirer.prompt([
         {
@@ -47,25 +47,20 @@ async function installPods({
       ]);
 
       if (shouldInstallCocoaPods) {
-        if (loader) {
-          loader.start(
-            `Installing CocoaPods ${chalk.dim(
-              '(this make take a few minutes)',
-            )}`,
-          );
-        }
+        loader.start(
+          `Installing CocoaPods ${chalk.dim('(this make take a few minutes)')}`,
+        );
 
         try {
           // First attempt to install `cocoapods`
           await execa('gem', ['install', 'cocoapods']);
+          loader.succeed();
         } catch (_error) {
           try {
             // If that doesn't work then try with sudo
             await execa('sudo', ['gem', 'install', 'cocoapods']);
           } catch (error) {
-            if (loader) {
-              loader.fail();
-            }
+            loader.fail();
             logger.log(error.stderr);
 
             throw new Error(
@@ -74,48 +69,33 @@ async function installPods({
               )}`,
             );
           }
-        } finally {
-          if (loader) {
-            loader.succeed();
-          }
         }
 
         try {
-          if (loader) {
-            loader.start('Updating CocoaPods repositories');
-          }
-
+          loader.start('Updating CocoaPods repositories');
           await execa('pod', ['repo', 'update']);
+          loader.succeed();
         } catch (error) {
           // "pod" command outputs errors to stdout (at least some of them)
           logger.log(error.stderr || error.stdout);
-
-          if (loader) {
-            loader.fail();
-          }
+          loader.fail();
 
           throw new Error(
             `Failed to update CocoaPods repositories for iOS project.\nPlease try again manually: "pod repo update".\nCocoaPods documentation: ${chalk.dim.underline(
               'https://cocoapods.org/',
             )}`,
           );
-        } finally {
-          if (loader) {
-            loader.succeed();
-          }
         }
       }
     }
 
     try {
-      if (loader) {
-        loader.succeed();
-        loader.start(
-          `Installing CocoaPods dependencies ${chalk.dim(
-            '(this make take a few minutes)',
-          )}`,
-        );
-      }
+      loader.succeed();
+      loader.start(
+        `Installing CocoaPods dependencies ${chalk.dim(
+          '(this make take a few minutes)',
+        )}`,
+      );
       await execa('pod', ['install']);
     } catch (error) {
       // "pod" command outputs errors to stdout (at least some of them)

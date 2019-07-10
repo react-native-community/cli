@@ -4,7 +4,6 @@ import execa from 'execa';
 import chalk from 'chalk';
 import Ora from 'ora';
 import inquirer from 'inquirer';
-import commandExists from 'command-exists';
 import {logger} from '@react-native-community/cli-tools';
 import {NoopLoader} from './loader';
 
@@ -30,7 +29,10 @@ async function installPods({
     }
 
     try {
-      await commandExists('pod');
+      // Check if "pod" is available and usable. It happens that there are
+      // multiple versions of "pod" command and even though it's there, it exits
+      // with a failure
+      await execa('pod');
     } catch (e) {
       loader.info();
 
@@ -47,18 +49,21 @@ async function installPods({
       ]);
 
       if (shouldInstallCocoaPods) {
-        loader.start(
-          `Installing CocoaPods ${chalk.dim('(this make take a few minutes)')}`,
-        );
+        loader.start('Installing CocoaPods');
 
         try {
           // First attempt to install `cocoapods`
-          await execa('gem', ['install', 'cocoapods']);
+          await execa('gem', ['install', 'cocoapods', '--no-document']);
           loader.succeed();
         } catch (_error) {
           try {
             // If that doesn't work then try with sudo
-            await execa('sudo', ['gem', 'install', 'cocoapods']);
+            await execa('sudo', [
+              'gem',
+              'install',
+              'cocoapods',
+              '--no-document',
+            ]);
           } catch (error) {
             loader.fail();
             logger.log(error.stderr);
@@ -72,7 +77,11 @@ async function installPods({
         }
 
         try {
-          loader.start('Updating CocoaPods repositories');
+          loader.start(
+            `Updating CocoaPods repositories ${chalk.dim(
+              '(this make take a few minutes)',
+            )}`,
+          );
           await execa('pod', ['repo', 'update']);
           loader.succeed();
         } catch (error) {
@@ -90,7 +99,6 @@ async function installPods({
     }
 
     try {
-      loader.succeed();
       loader.start(
         `Installing CocoaPods dependencies ${chalk.dim(
           '(this make take a few minutes)',

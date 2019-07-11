@@ -179,8 +179,8 @@ export type UserDependencyConfigT = {
   // Additional dependency settings
   dependency: {
     platforms: {
-      android?: DependencyParamsAndroidT,
-      ios?: ProjectParamsIOST,
+      android?: DependencyParamsAndroidT | null,
+      ios?: ProjectParamsIOST | null,
       [key: string]: any,
     },
     assets: string[],

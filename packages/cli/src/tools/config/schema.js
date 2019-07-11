@@ -46,22 +46,28 @@ export const dependencyConfig = t
       .object({
         platforms: map(t.string(), t.any())
           .keys({
-            ios: t
-              .object({
-                project: t.string(),
-                podspecPath: t.string(),
-                sharedLibraries: t.array().items(t.string()),
-                libraryFolder: t.string(),
-              })
-              .default({}),
-            android: t
-              .object({
-                sourceDir: t.string(),
-                manifestPath: t.string(),
-                packageImportPath: t.string(),
-                packageInstance: t.string(),
-              })
-              .default({}),
+            ios: [
+              t
+                .object({
+                  project: t.string(),
+                  podspecPath: t.string(),
+                  sharedLibraries: t.array().items(t.string()),
+                  libraryFolder: t.string(),
+                })
+                .default({}),
+              t.any().allow(null),
+            ],
+            android: [
+              t
+                .object({
+                  sourceDir: t.string(),
+                  manifestPath: t.string(),
+                  packageImportPath: t.string(),
+                  packageInstance: t.string(),
+                })
+                .default({}),
+              t.any().allow(null),
+            ],
           })
           .default(),
         assets: t

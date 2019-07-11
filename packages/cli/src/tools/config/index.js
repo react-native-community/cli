@@ -37,10 +37,12 @@ function getDependencyConfig(
       name: dependencyName,
       platforms: Object.keys(finalConfig.platforms).reduce(
         (dependency, platform) => {
+          const isDisabled = config.dependency.platforms[platform] === null;
           const platformConfig = finalConfig.platforms[platform];
+
           dependency[platform] =
             // Linking platforms is not supported
-            isPlatform || !platformConfig
+            isDisabled || isPlatform || !platformConfig
               ? null
               : platformConfig.dependencyConfig(
                   root,

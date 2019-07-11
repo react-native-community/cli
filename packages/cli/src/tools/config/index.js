@@ -64,6 +64,7 @@ function getDependencyConfig(
  * Loads CLI configuration
  */
 function loadConfig(projectRoot: string = process.cwd()): ConfigT {
+  let lazyProject;
   const userConfig = readConfigFromDisk(projectRoot);
 
   const initialConfig: ConfigT = {
@@ -84,14 +85,19 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
       platforms: Object.keys(userConfig.platforms),
     },
     get project() {
-      const project = {};
+      if (lazyProject) {
+        return lazyProject;
+      }
+
+      lazyProject = {};
       for (const platform in finalConfig.platforms) {
-        project[platform] = finalConfig.platforms[platform].projectConfig(
+        lazyProject[platform] = finalConfig.platforms[platform].projectConfig(
           projectRoot,
           userConfig.project[platform] || {},
         );
       }
-      return project;
+
+      return lazyProject;
     },
   };
 

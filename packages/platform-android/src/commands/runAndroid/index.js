@@ -9,10 +9,9 @@
 
 import path from 'path';
 import {spawnSync, spawn, execFileSync} from 'child_process';
+import chalk from 'chalk';
 import fs from 'fs';
-
 import type {ConfigT} from 'types';
-
 import adb from './adb';
 import runOnAllDevices from './runOnAllDevices';
 import tryRunAdbReverse from './tryRunAdbReverse';
@@ -43,6 +42,7 @@ export type FlagsT = {|
   packager: boolean,
   port: number,
   terminal: string,
+  jetifier: boolean,
 |};
 
 /**
@@ -57,6 +57,19 @@ function runAndroid(argv: Array<string>, config: ConfigT, args: FlagsT) {
   }
 
   warnAboutManuallyLinkedLibs(config);
+
+  if (args.jetifier) {
+    logger.info(
+      `Running ${chalk.bold(
+        'jetifier',
+      )} to migrate libraries to AndroidX. ${chalk.dim(
+        'You can disable it using "--no-jetifier" flag.',
+      )}`,
+    );
+    // Jetifier is a side-effectful module without a default export. Requiring
+    // it ad-hoc.
+    require('jetifier');
+  }
 
   if (!args.packager) {
     return buildAndRun(args);
@@ -259,7 +272,7 @@ function startServerInNewWindow(port, terminal, reactNativePath) {
   ::
   :: This source code is licensed under the MIT license found in the
   :: LICENSE file in the root directory of this source tree.
-  
+
   @echo off
   title Metro Bundler
   call .packager.bat
@@ -389,6 +402,12 @@ export default {
       name: '--tasks [list]',
       description: 'Run custom Gradle tasks. By default it\'s "installDebug"',
       parse: (val: string) => val.split(','),
+    },
+    {
+      name: '--no-jetifier',
+      description:
+        'Do not run "jetifier" – the AndroidX transition tool. By default it runs before Gradle to ease working with libraries that don\'t support AndroidX yet. See more at: https://www.npmjs.com/package/jetifier.',
+      default: false,
     },
   ],
 };

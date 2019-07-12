@@ -45,6 +45,7 @@ async function installPods({
           )} ${chalk.reset.bold(
             "is not installed. It's necessary for iOS project to run correctly. Do you want to install it?",
           )}`,
+          default: true
         },
       ]);
 

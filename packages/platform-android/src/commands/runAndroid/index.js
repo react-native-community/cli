@@ -406,7 +406,7 @@ export default {
     {
       name: '--no-jetifier',
       description:
-        'Do not run "jetifier" – the AndroidX transition tool. By default it runs before Gradle to ease working with libraries that doesn\'t support AndroiX yet. See more at: https://www.npmjs.com/package/jetifier.',
+        'Do not run "jetifier" – the AndroidX transition tool. By default it runs before Gradle to ease working with libraries that don\'t support AndroidX yet. See more at: https://www.npmjs.com/package/jetifier.',
       default: false,
     },
   ],

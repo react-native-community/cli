@@ -15,7 +15,7 @@ import {logger} from '@react-native-community/cli-tools';
 
 function printRunInstructions(projectDir: string, projectName: string) {
   const absoluteProjectDir = path.resolve(projectDir);
-  const iosProjectDir = path.resolve(projectDir, 'ios');
+  const iosProjectDir = path.resolve(projectDir, `${projectName}/ios`);
 
   const iosPodsFile = path.resolve(iosProjectDir, `${projectName}.xcworkspace`);
   const isUsingPods = fs.existsSync(iosPodsFile);

@@ -14,6 +14,7 @@ import upgrade from './upgrade/upgrade';
 import info from './info/info';
 import config from './config/config';
 import init from './init';
+import doctor from './doctor';
 
 export default ([
   server,
@@ -27,4 +28,5 @@ export default ([
   info,
   config,
   init,
+  doctor,
 ]: CommandT[]);

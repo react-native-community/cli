@@ -66,9 +66,12 @@ function runAndroid(argv: Array<string>, config: ConfigT, args: FlagsT) {
         'You can disable it using "--no-jetifier" flag.',
       )}`,
     );
-    // Jetifier is a side-effectful module without a default export. Requiring
-    // it ad-hoc.
-    require('jetifier');
+
+    try {
+      execFileSync(require.resolve('jetifier/bin/jetify'), {stdio: 'inherit'});
+    } catch (error) {
+      throw new CLIError('Failed to run jetifier.', error);
+    }
   }
 
   if (!args.packager) {

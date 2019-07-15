@@ -16,7 +16,11 @@ const runAutomaticFix = async ({issues, automaticFixLevel, stats, loader}) => {
 
   const totalIssues = stats.errors + stats.warnings;
 
-  logger.log(`\nAttemping to fix ${chalk.bold(totalIssues)} issues...`);
+  logger.log(
+    `\nAttempting to fix ${chalk.bold(totalIssues)} issue${
+      totalIssues > 1 ? 's' : ''
+    }...`,
+  );
 
   for (const category of issues) {
     logger.log(`\n${chalk.dim(category.label)}`);

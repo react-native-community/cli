@@ -68,9 +68,13 @@ function copyProjectTemplateAndReplace(
 
     const relativeFilePath = translateFilePath(
       path.relative(srcPath, absoluteSrcFilePath),
-    )
-      .replace(/HelloWorld/g, newProjectName)
-      .replace(/helloworld/g, newProjectName.toLowerCase());
+    ).replace(/helloworld/gi, match => {
+      if (match === 'HelloWorld') {
+        return newProjectName;
+      } else {
+        return newProjectName.toLowerCase();
+      }
+    });
 
     // Templates may contain files that we don't want to copy.
     // Examples:
@@ -101,9 +105,8 @@ function copyProjectTemplateAndReplace(
       absoluteSrcFilePath,
       path.resolve(destPath, relativeFilePath),
       {
-        'Hello App Display Name': options.displayName || newProjectName,
-        HelloWorld: newProjectName,
-        helloworld: newProjectName.toLowerCase(),
+        displayName: options.displayName,
+        projectName: newProjectName,
       },
       contentChangedCallback,
     );

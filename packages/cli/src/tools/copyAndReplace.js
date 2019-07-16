@@ -71,9 +71,19 @@ function copyAndReplace(
     // Text file
     const srcPermissions = fs.statSync(srcPath).mode;
     let content = fs.readFileSync(srcPath, 'utf8');
-    Object.keys(replacements).forEach(regex => {
-      content = content.replace(new RegExp(regex, 'g'), replacements[regex]);
-    });
+
+    content = content
+      .replace(
+        new RegExp('Hello App Display Name', 'g'),
+        replacements.displayName || replacements.projectName,
+      )
+      .replace(/helloworld/gi, match => {
+        if (match === 'HelloWorld') {
+          return replacements.projectName;
+        } else {
+          return replacements.projectName.toLowerCase();
+        }
+      });
 
     let shouldOverwrite = 'overwrite';
     if (contentChangedCallback) {

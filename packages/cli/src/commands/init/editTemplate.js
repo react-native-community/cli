@@ -11,12 +11,16 @@ function replaceNameInUTF8File(
 ) {
   logger.debug(`Replacing in ${filePath}`);
   const fileContent = fs.readFileSync(filePath, 'utf8');
-  const replacedFileContent = fileContent
-    .replace(new RegExp(templateName, 'g'), projectName)
-    .replace(
-      new RegExp(templateName.toLowerCase(), 'g'),
-      projectName.toLowerCase(),
-    );
+  const replacedFileContent = fileContent.replace(
+    new RegExp(templateName, 'gi'),
+    match => {
+      if (match === templateName) {
+        return projectName;
+      } else {
+        return projectName.toLowerCase();
+      }
+    },
+  );
 
   if (fileContent !== replacedFileContent) {
     fs.writeFileSync(filePath, replacedFileContent, 'utf8');
@@ -39,7 +43,12 @@ function shouldRenameFile(filePath: string, nameToReplace: string) {
 }
 
 function shouldIgnoreFile(filePath: string) {
-  return filePath.match(/node_modules|yarn.lock|package-lock.json/g);
+  return filePath.match(
+    new RegExp(
+      `node_modules|yarn.lock|package-lock.json|${process.cwd()}`,
+      'g',
+    ),
+  );
 }
 
 const UNDERSCORED_DOTFILES = [
@@ -74,13 +83,14 @@ export function changePlaceholderInTemplate(
       if (shouldIgnoreFile(filePath)) {
         return;
       }
+
       if (!fs.statSync(filePath).isDirectory()) {
         replaceNameInUTF8File(filePath, projectName, placeholderName);
       }
+
       if (shouldRenameFile(filePath, placeholderName)) {
         renameFile(filePath, placeholderName, projectName);
-      }
-      if (shouldRenameFile(filePath, placeholderName.toLowerCase())) {
+      } else if (shouldRenameFile(filePath, placeholderName.toLowerCase())) {
         renameFile(
           filePath,
           placeholderName.toLowerCase(),

@@ -5,8 +5,7 @@ import fs from 'fs';
 import snapshotDiff from 'snapshot-diff';
 import stripAnsi from 'strip-ansi';
 import upgrade from '../upgrade';
-import {fetch} from '@react-native-community/cli-tools';
-import logger from '../../../tools/logger';
+import {fetch, logger} from '@react-native-community/cli-tools';
 import loadConfig from '../../../tools/config';
 import merge from '../../../tools/merge';
 

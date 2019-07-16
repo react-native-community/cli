@@ -80,7 +80,7 @@ async function installPods({
         try {
           loader.start(
             `Updating CocoaPods repositories ${chalk.dim(
-              '(this make take a few minutes)',
+              '(this may take a few minutes)',
             )}`,
           );
           await execa('pod', ['repo', 'update']);
@@ -102,7 +102,7 @@ async function installPods({
       loader.succeed();
       loader.start(
         `Installing CocoaPods dependencies ${chalk.dim(
-          '(this make take a few minutes)',
+          '(this may take a few minutes)',
         )}`,
       );
       await execa('pod', ['install']);

@@ -82,7 +82,7 @@ An array of shared iOS libraries to link with the dependency. E.g. `libc++`. Thi
 
 #### platforms.android.sourceDir
 
-Path to a folder with source files.
+A relative path to a folder with source files. E.g. `custom-android`, or `custom-android/app`. By default, CLI searches for `android` and `android/app` as source dirs.
 
 #### platforms.android.manifestPath
 

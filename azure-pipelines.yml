@@ -13,14 +13,8 @@ steps:
   - script: yarn install
     displayName: 'Install dependencies'
 
-  - script: yarn lint
-    displayName: 'Linting'
-
-  - script: yarn flow-check
-    displayName: 'Flow check'
-
   - script: yarn test:ci:unit
     displayName: 'Unit tests'
 
-  - script: yarn  test:ci:e2e
-    displayName: 'E2e tests'
+  - script: yarn test:ci:e2e
+    displayName: 'E2E tests'

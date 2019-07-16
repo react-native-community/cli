@@ -9,7 +9,7 @@ export function validateProjectName(name: string) {
     throw new InvalidNameError(name);
   }
 
-  if (name === 'React' || name === 'react') {
+  if (name.match(/helloworld|react/gi)) {
     throw new ReservedNameError();
   }
 }

@@ -10,7 +10,7 @@ async function unwrapFetchResult(response: Response) {
   const data = await response.text();
 
   try {
-    return JSON.stringify(data);
+    return JSON.parse(data);
   } catch (e) {
     return data;
   }

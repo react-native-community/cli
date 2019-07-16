@@ -1,5 +1,5 @@
 trigger:
-  - azure
+  - master
 
 pool:
   vmImage: 'windows-2019'

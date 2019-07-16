@@ -1,0 +1,26 @@
+trigger:
+  - azure
+
+pool:
+  vmImage: 'windows-2019'
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '10.x'
+    displayName: 'Install Node.js'
+
+  - script: yarn install
+    displayName: 'Install dependencies'
+
+  - script: yarn lint
+    displayName: 'Linting'
+
+  - script: yarn flow-check
+    displayName: 'Flow check'
+
+  - script: yarn test:ci:unit
+    displayName: 'Unit tests'
+
+  - script: yarn  test:ci:e2e
+    displayName: 'E2e tests'

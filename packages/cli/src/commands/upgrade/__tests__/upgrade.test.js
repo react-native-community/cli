@@ -45,7 +45,7 @@ jest.mock('../../../tools/packageManager', () => ({
 }));
 jest.mock('@react-native-community/cli-tools', () => ({
   ...jest.requireActual('@react-native-community/cli-tools'),
-  fetch: jest.fn(() => Promise.resolve({data: 'patch', status: 200})),
+  fetch: jest.fn(),
   logger: {
     info: jest.fn((...args) => mockPushLog('info', args)),
     error: jest.fn((...args) => mockPushLog('error', args)),
@@ -56,7 +56,7 @@ jest.mock('@react-native-community/cli-tools', () => ({
   },
 }));
 
-const mockFetch = (value, status) => {
+const mockFetch = (value = '', status = 200) => {
   (fetch: any).mockImplementation(() => Promise.resolve({data: value, status}));
 };
 
@@ -164,7 +164,7 @@ test('warns when dependency upgrade version is in semver range', async () => {
 }, 60000);
 
 test('fetches empty patch and installs deps', async () => {
-  mockFetch('', 200);
+  mockFetch();
   await upgrade.func([newVersion], ctx, opts);
   expect(flushOutput()).toMatchInlineSnapshot(`
     "info Fetching diff between v0.57.8 and v0.58.4...

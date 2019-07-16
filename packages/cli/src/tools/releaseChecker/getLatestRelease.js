@@ -71,8 +71,6 @@ function buildChangelogUrl(version: string) {
  */
 async function getLatestRnDiffPurgeVersion(name: string, eTag: ?string) {
   const options = {
-    hostname: 'api.github.com',
-    path: '/repos/react-native-community/rn-diff-purge/tags',
     // https://developer.github.com/v3/#user-agent-required
     headers: ({'User-Agent': 'React-Native-CLI'}: Headers),
   };
@@ -81,7 +79,10 @@ async function getLatestRnDiffPurgeVersion(name: string, eTag: ?string) {
     options.headers['If-None-Match'] = eTag;
   }
 
-  const {data, status, headers} = await fetch(options);
+  const {data, status, headers} = await fetch(
+    'https://api.github.com/repos/react-native-community/rn-diff-purge/tags',
+    options,
+  );
 
   // Remote is newer.
   if (status === 200) {

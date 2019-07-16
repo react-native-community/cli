@@ -8,6 +8,7 @@
  */
 
 import path from 'path';
+import execa from 'execa';
 import {spawnSync, spawn, execFileSync} from 'child_process';
 import chalk from 'chalk';
 import fs from 'fs';
@@ -48,7 +49,7 @@ export type FlagsT = {|
 /**
  * Starts the app on a connected Android emulator or device.
  */
-function runAndroid(argv: Array<string>, config: ConfigT, args: FlagsT) {
+async function runAndroid(argv: Array<string>, config: ConfigT, args: FlagsT) {
   if (!checkAndroid(args.root)) {
     logger.error(
       'Android project not found. Are you sure this is a React Native project?',
@@ -68,7 +69,7 @@ function runAndroid(argv: Array<string>, config: ConfigT, args: FlagsT) {
     );
 
     try {
-      execFileSync(require.resolve('jetifier/bin/jetify'), {stdio: 'inherit'});
+      await execa(require.resolve('jetifier/bin/jetify'), {stdio: 'inherit'});
     } catch (error) {
       throw new CLIError('Failed to run jetifier.', error);
     }

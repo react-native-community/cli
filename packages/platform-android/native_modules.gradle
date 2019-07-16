@@ -22,7 +22,7 @@ public class PackageList {
   public PackageList(ReactNativeHost reactNativeHost) {
     this.reactNativeHost = reactNativeHost;
   }
-  
+
   public PackageList(Application application) {
     this.reactNativeHost = null;
     this.application = application;
@@ -109,12 +109,7 @@ class ReactNativeModules {
   }
 
   /**
-   * This returns the users project root (e.g. where the node_modules dir is located).
-   *
-   * This defaults to up one directory from the root android directory unless the user has defined
-   * a `ext.reactNativeProjectRoot` extension property
-   *
-   * @return
+   * Returns the user's project root (i.e. where the node_modules dir is located).
    */
   File getReactNativeProjectRoot() {
     File androidRoot
@@ -176,7 +171,7 @@ class ReactNativeModules {
     def root = getReactNativeProjectRoot()
     def command = "node ./node_modules/react-native/cli.js config"
     def reactNativeConfigOutput = ""
-    
+
     try {
       cmdProcess = Runtime.getRuntime().exec(command, null, root)
       def bufferedReader = new BufferedReader(new InputStreamReader(cmdProcess.getInputStream()))

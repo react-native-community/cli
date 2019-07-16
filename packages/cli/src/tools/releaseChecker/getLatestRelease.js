@@ -1,10 +1,10 @@
 /**
  * @flow
  */
-import https from 'https';
 import semver from 'semver';
 import logger from '../logger';
 import cacheManager from './releaseCacheManager';
+import {fetch} from '@react-native-community/cli-tools';
 
 export type Release = {
   version: string,
@@ -71,8 +71,6 @@ function buildChangelogUrl(version: string) {
  */
 async function getLatestRnDiffPurgeVersion(name: string, eTag: ?string) {
   const options = {
-    hostname: 'api.github.com',
-    path: '/repos/react-native-community/rn-diff-purge/tags',
     // https://developer.github.com/v3/#user-agent-required
     headers: ({'User-Agent': 'React-Native-CLI'}: Headers),
   };
@@ -81,16 +79,22 @@ async function getLatestRnDiffPurgeVersion(name: string, eTag: ?string) {
     options.headers['If-None-Match'] = eTag;
   }
 
-  const response = await httpsGet(options);
+  const {data, status, headers} = await fetch(
+    'https://api.github.com/repos/react-native-community/rn-diff-purge/tags',
+    options,
+  );
 
   // Remote is newer.
-  if (response.statusCode === 200) {
-    const latestVersion = JSON.parse(response.body)[0].name.substring(8);
+  if (status === 200) {
+    const body: Array<any> = data;
+    const latestVersion = body[0].name.substring(8);
 
     // Update cache only if newer release is stable.
     if (!semver.prerelease(latestVersion)) {
-      logger.debug(`Saving ${response.eTag} to cache`);
-      cacheManager.set(name, 'eTag', response.eTag);
+      const eTagHeader = headers.get('eTag');
+
+      logger.debug(`Saving ${eTagHeader} to cache`);
+      cacheManager.set(name, 'eTag', eTagHeader);
       cacheManager.set(name, 'latestVersion', latestVersion);
     }
 
@@ -98,7 +102,7 @@ async function getLatestRnDiffPurgeVersion(name: string, eTag: ?string) {
   }
 
   // Cache is still valid.
-  if (response.statusCode === 304) {
+  if (status === 304) {
     const latestVersion = cacheManager.get(name, 'latestVersion');
     if (latestVersion) {
       return latestVersion;
@@ -113,28 +117,3 @@ type Headers = {
   'User-Agent': mixed,
   [header: string]: mixed,
 };
-
-function httpsGet(options) {
-  return new Promise((resolve, reject) => {
-    https
-      .get(options, result => {
-        let body = '';
-
-        result.setEncoding('utf8');
-        result.on('data', data => {
-          body += data;
-        });
-
-        result.on('end', () => {
-          resolve({
-            body,
-            eTag: result.headers.etag,
-            statusCode: result.statusCode,
-          });
-        });
-
-        result.on('error', error => reject(error));
-      })
-      .on('error', error => reject(error));
-  });
-}

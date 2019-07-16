@@ -5,6 +5,7 @@
 jest.mock('@react-native-community/cli-tools', () => {
   return {
     ...jest.requireActual('@react-native-community/cli-tools'),
+    fetch: jest.fn(),
     logger: {
       success: jest.fn(),
       info: jest.fn(),

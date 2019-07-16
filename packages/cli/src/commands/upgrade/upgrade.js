@@ -5,9 +5,8 @@ import chalk from 'chalk';
 import semver from 'semver';
 import execa from 'execa';
 import type {ConfigT} from 'types';
-import {logger, CLIError} from '@react-native-community/cli-tools';
+import {logger, CLIError, fetch} from '@react-native-community/cli-tools';
 import * as PackageManager from '../../tools/packageManager';
-import {fetch} from '../../tools/fetch';
 import legacyUpgrade from './legacyUpgrade';
 
 type FlagsT = {
@@ -46,8 +45,13 @@ const getPatch = async (currentVersion, newVersion, config) => {
   logger.info(`Fetching diff between v${currentVersion} and v${newVersion}...`);
 
   try {
-    patch = await fetch(`${rawDiffUrl}/${currentVersion}..${newVersion}.diff`);
+    const {data} = await fetch(
+      `${rawDiffUrl}/${currentVersion}..${newVersion}.diff`,
+    );
+
+    patch = data;
   } catch (error) {
+    logger.error(error.message);
     logger.error(
       `Failed to fetch diff for react-native@${newVersion}. Maybe it's not released yet?`,
     );

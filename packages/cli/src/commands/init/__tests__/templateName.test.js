@@ -1,8 +1,5 @@
 // @flow
 import {processTemplateName} from '../templateName';
-import {fetch} from '../../../tools/fetch';
-
-jest.mock('../../../tools/fetch', () => ({fetch: jest.fn()}));
 
 const RN_NPM_PACKAGE = 'react-native';
 const ABS_RN_PATH = '/path/to/react-native';

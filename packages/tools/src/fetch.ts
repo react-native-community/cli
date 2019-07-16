@@ -4,6 +4,7 @@ import nodeFetch, {
   Request,
   Headers,
 } from 'node-fetch';
+import {CLIError} from './errors';
 
 async function unwrapFetchResult(response: Response) {
   const data = await response.text();
@@ -21,6 +22,10 @@ export default async function fetch(
 ): Promise<{status: number, data: any, headers: Headers}> {
   const result = await nodeFetch(url, options);
   const data = await unwrapFetchResult(result);
+
+  if (result.status >= 400) {
+    throw new CLIError(`Fetch request failed with status ${result.status}`);
+  }
 
   return {
     status: result.status,

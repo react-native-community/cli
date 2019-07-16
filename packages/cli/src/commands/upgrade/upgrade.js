@@ -45,13 +45,10 @@ const getPatch = async (currentVersion, newVersion, config) => {
   logger.info(`Fetching diff between v${currentVersion} and v${newVersion}...`);
 
   try {
-    const {status, data} = await fetch(
+    const {data} = await fetch(
       `${rawDiffUrl}/${currentVersion}..${newVersion}.diff`,
     );
 
-    if (status < 200 || status > 299) {
-      throw new CLIError(`Failed to get diff, status code: ${status}`);
-    }
     patch = data;
   } catch (error) {
     logger.error(error);

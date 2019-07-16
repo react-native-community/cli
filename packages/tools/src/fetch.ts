@@ -6,10 +6,12 @@ import nodeFetch, {
 } from 'node-fetch';
 
 async function unwrapFetchResult(response: Response) {
+  const data = await response.text();
+
   try {
-    return response.json();
+    return JSON.stringify(data);
   } catch (e) {
-    return response.text();
+    return data;
   }
 }
 
@@ -18,10 +20,11 @@ export default async function fetch(
   options?: FetchOptions,
 ): Promise<{status: number, data: any, headers: Headers}> {
   const result = await nodeFetch(url, options);
+  const data = await unwrapFetchResult(result);
 
   return {
     status: result.status,
     headers: result.headers,
-    data: await unwrapFetchResult(result),
+    data,
   };
 }

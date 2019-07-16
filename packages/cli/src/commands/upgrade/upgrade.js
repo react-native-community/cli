@@ -50,10 +50,11 @@ const getPatch = async (currentVersion, newVersion, config) => {
     );
 
     if (status < 200 || status > 299) {
-      throw new Error(`Failed to load page, status code: ${status}`);
+      throw new CLIError(`Failed to get diff, status code: ${status}`);
     }
     patch = data;
   } catch (error) {
+    logger.error(error);
     logger.error(
       `Failed to fetch diff for react-native@${newVersion}. Maybe it's not released yet?`,
     );

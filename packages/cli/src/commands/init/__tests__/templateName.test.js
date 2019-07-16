@@ -1,8 +1,6 @@
 // @flow
 import {processTemplateName} from '../templateName';
 
-jest.mock('@react-native-community/cli-tools', () => ({fetch: jest.fn()}));
-
 const RN_NPM_PACKAGE = 'react-native';
 const ABS_RN_PATH = '/path/to/react-native';
 

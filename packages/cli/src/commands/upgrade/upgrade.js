@@ -45,14 +45,14 @@ const getPatch = async (currentVersion, newVersion, config) => {
   logger.info(`Fetching diff between v${currentVersion} and v${newVersion}...`);
 
   try {
-    const response = await fetch(
+    const {status, data} = await fetch(
       `${rawDiffUrl}/${currentVersion}..${newVersion}.diff`,
     );
 
-    if (response.status < 200 || response.status > 299) {
-      throw new Error(`Failed to load page, status code: ${response.status}`);
+    if (status < 200 || status > 299) {
+      throw new Error(`Failed to load page, status code: ${status}`);
     }
-    patch = await response.json();
+    patch = data;
   } catch (error) {
     logger.error(
       `Failed to fetch diff for react-native@${newVersion}. Maybe it's not released yet?`,

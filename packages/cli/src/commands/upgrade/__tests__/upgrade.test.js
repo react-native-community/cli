@@ -45,9 +45,7 @@ jest.mock('../../../tools/packageManager', () => ({
 }));
 jest.mock('@react-native-community/cli-tools', () => ({
   ...jest.requireActual('@react-native-community/cli-tools'),
-  fetch: jest.fn(() =>
-    Promise.resolve({json: () => Promise.resolve('patch'), status: 200}),
-  ),
+  fetch: jest.fn(() => Promise.resolve({data: 'patch', status: 200})),
   logger: {
     info: jest.fn((...args) => mockPushLog('info', args)),
     error: jest.fn((...args) => mockPushLog('error', args)),
@@ -59,9 +57,7 @@ jest.mock('@react-native-community/cli-tools', () => ({
 }));
 
 const mockFetch = (value, status) => {
-  (fetch: any).mockImplementation(() =>
-    Promise.resolve({json: () => Promise.resolve(value), status}),
-  );
+  (fetch: any).mockImplementation(() => Promise.resolve({data: value, status}));
 };
 
 const mockExecaDefault = (command, args) => {
@@ -184,9 +180,7 @@ test('fetches empty patch and installs deps', async () => {
 }, 60000);
 
 test('fetches regular patch, adds remote, applies patch, installs deps, removes remote,', async () => {
-  (fetch: any).mockImplementation(() =>
-    Promise.resolve({json: () => Promise.resolve(samplePatch), status: 200}),
-  );
+  mockFetch(samplePatch, 200);
   await upgrade.func(
     [newVersion],
     merge(ctx, {

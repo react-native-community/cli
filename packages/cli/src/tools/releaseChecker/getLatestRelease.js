@@ -81,17 +81,19 @@ async function getLatestRnDiffPurgeVersion(name: string, eTag: ?string) {
     options.headers['If-None-Match'] = eTag;
   }
 
-  const response = await fetch(options);
+  const {data, status, headers} = await fetch(options);
 
   // Remote is newer.
-  if (response.status === 200) {
-    const body: Array<any> = await response.json();
+  if (status === 200) {
+    const body: Array<any> = data;
     const latestVersion = body[0].name.substring(8);
 
     // Update cache only if newer release is stable.
     if (!semver.prerelease(latestVersion)) {
-      logger.debug(`Saving ${response.eTag} to cache`);
-      cacheManager.set(name, 'eTag', response.eTag);
+      const eTagHeader = headers.get('eTag');
+
+      logger.debug(`Saving ${eTagHeader} to cache`);
+      cacheManager.set(name, 'eTag', eTagHeader);
       cacheManager.set(name, 'latestVersion', latestVersion);
     }
 
@@ -99,7 +101,7 @@ async function getLatestRnDiffPurgeVersion(name: string, eTag: ?string) {
   }
 
   // Cache is still valid.
-  if (response.statusCode === 304) {
+  if (status === 304) {
     const latestVersion = cacheManager.get(name, 'latestVersion');
     if (latestVersion) {
       return latestVersion;

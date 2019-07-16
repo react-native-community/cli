@@ -54,7 +54,9 @@ export async function copyTemplate(
 
   logger.debug(`Copying template from ${templatePath}`);
 
-  await copyFiles(templatePath, process.cwd());
+  await copyFiles(templatePath, process.cwd(), {
+    exclude: [new RegExp(path.resolve(templatePath, 'node_modules'))],
+  });
 }
 
 export function executePostInitScript(

@@ -9,10 +9,9 @@
 
 import path from 'path';
 import {spawnSync, spawn, execFileSync} from 'child_process';
+import chalk from 'chalk';
 import fs from 'fs';
-
 import type {ConfigT} from 'types';
-
 import adb from './adb';
 import runOnAllDevices from './runOnAllDevices';
 import tryRunAdbReverse from './tryRunAdbReverse';
@@ -43,6 +42,7 @@ export type FlagsT = {|
   packager: boolean,
   port: number,
   terminal: string,
+  jetifier: boolean,
 |};
 
 /**
@@ -57,6 +57,22 @@ function runAndroid(argv: Array<string>, config: ConfigT, args: FlagsT) {
   }
 
   warnAboutManuallyLinkedLibs(config);
+
+  if (args.jetifier) {
+    logger.info(
+      `Running ${chalk.bold(
+        'jetifier',
+      )} to migrate libraries to AndroidX. ${chalk.dim(
+        'You can disable it using "--no-jetifier" flag.',
+      )}`,
+    );
+
+    try {
+      execFileSync(require.resolve('jetifier/bin/jetify'), {stdio: 'inherit'});
+    } catch (error) {
+      throw new CLIError('Failed to run jetifier.', error);
+    }
+  }
 
   if (!args.packager) {
     return buildAndRun(args);
@@ -251,6 +267,24 @@ function startServerInNewWindow(port, terminal, reactNativePath) {
     : `export RCT_METRO_PORT=${port}`;
 
   /**
+   * Quick & temporary fix for packager crashing on Windows due to using removed --projectRoot flag
+   * in script. So we just replace the contents of the script with the fixed version. This should be
+   * removed when PR #25517 on RN Repo gets approved and a new RN version is released.
+   */
+  const launchPackagerScriptContent = `:: Copyright (c) Facebook, Inc. and its affiliates.
+  ::
+  :: This source code is licensed under the MIT license found in the
+  :: LICENSE file in the root directory of this source tree.
+
+  @echo off
+  title Metro Bundler
+  call .packager.bat
+  cd ../../../
+  node "%~dp0..\\cli.js" start
+  pause
+  exit`;
+
+  /**
    * Set up the `.packager.(env|bat)` file to ensure the packager starts on the right port.
    */
   const launchPackagerScript = path.join(
@@ -296,6 +330,11 @@ function startServerInNewWindow(port, terminal, reactNativePath) {
   if (/^win/.test(process.platform)) {
     procConfig.detached = true;
     procConfig.stdio = 'ignore';
+    //Temporary fix for #484. See comment on line 254
+    fs.writeFileSync(launchPackagerScript, launchPackagerScriptContent, {
+      encoding: 'utf8',
+      flag: 'w',
+    });
     return spawn('cmd.exe', ['/C', launchPackagerScript], procConfig);
   }
   logger.error(
@@ -366,6 +405,12 @@ export default {
       name: '--tasks [list]',
       description: 'Run custom Gradle tasks. By default it\'s "installDebug"',
       parse: (val: string) => val.split(','),
+    },
+    {
+      name: '--no-jetifier',
+      description:
+        'Do not run "jetifier" – the AndroidX transition tool. By default it runs before Gradle to ease working with libraries that don\'t support AndroidX yet. See more at: https://www.npmjs.com/package/jetifier.',
+      default: false,
     },
   ],
 };

@@ -17,9 +17,15 @@ import java.util.ArrayList;
 {{ packageImports }}
 
 public class PackageList {
+  private Application application;
   private ReactNativeHost reactNativeHost;
   public PackageList(ReactNativeHost reactNativeHost) {
     this.reactNativeHost = reactNativeHost;
+  }
+
+  public PackageList(Application application) {
+    this.reactNativeHost = null;
+    this.application = application;
   }
 
   private ReactNativeHost getReactNativeHost() {
@@ -31,6 +37,7 @@ public class PackageList {
   }
 
   private Application getApplication() {
+    if (this.reactNativeHost == null) return this.application;
     return this.reactNativeHost.getApplication();
   }
 
@@ -102,12 +109,7 @@ class ReactNativeModules {
   }
 
   /**
-   * This returns the users project root (e.g. where the node_modules dir is located).
-   *
-   * This defaults to up one directory from the root android directory unless the user has defined
-   * a `ext.reactNativeProjectRoot` extension property
-   *
-   * @return
+   * Returns the user's project root (i.e. where the node_modules dir is located).
    */
   File getReactNativeProjectRoot() {
     File androidRoot
@@ -167,18 +169,24 @@ class ReactNativeModules {
 
     def cmdProcess
     def root = getReactNativeProjectRoot()
-    def command = "node ./node_modules/.bin/react-native config"
+    def command = "node ./node_modules/react-native/cli.js config"
+    def reactNativeConfigOutput = ""
 
     try {
       cmdProcess = Runtime.getRuntime().exec(command, null, root)
-      cmdProcess.waitFor()
+      def bufferedReader = new BufferedReader(new InputStreamReader(cmdProcess.getInputStream()))
+      def buff = ""
+      def readBuffer = new StringBuffer()
+      while ((buff = bufferedReader.readLine()) != null){
+          readBuffer.append(buff)
+      }
+      reactNativeConfigOutput = readBuffer.toString()
     } catch (Exception exception) {
       this.logger.warn("${LOG_PREFIX}${exception.message}")
       this.logger.warn("${LOG_PREFIX}Automatic import of native modules failed.")
       return reactNativeModules
     }
 
-    def reactNativeConfigOutput = cmdProcess.in.text
     def json = new JsonSlurper().parseText(reactNativeConfigOutput)
     this.packageName = json["project"]["android"]["packageName"]
     def dependencies = json["dependencies"]

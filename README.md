@@ -1,19 +1,34 @@
 # React Native CLI
 
-Command line tools to interact with React Native projects.
+Command line tools that ship with [`react-native`](https://github.com/facebook/react-native) in form of the `@react-native-community/cli` package.
+
+> It exposes `react-native` binary, so your can call `yarn react-native` or `npx react-native` directly from your project.
 
 [![Build Status][build-badge]][build] [![Version][version-badge]][package] [![MIT License][license-badge]][license] [![PRs Welcome][prs-welcome-badge]][prs-welcome]
 
 _Note: CLI has been extracted from core `react-native` as a part of "[Lean Core](https://github.com/facebook/react-native/issues/23313)" effort. Please read [this blog post](https://blog.callstack.io/the-react-native-cli-has-a-new-home-79b63838f0e6) for more details._
 
+## Contents
+
+- [Compatibility](#compatibility)
+- [Documentation](#documentation)
+- [About](#about)
+- [Creating a new React Native project](#creating-a-new-react-native-project)
+	- [Using `npx` (_recommended_)](#using-npx-recommended)
+	- [Using global CLI (_legacy_)](#using-global-cli-legacy)
+- [Usage in an existing React Native project](#usage-in-an-existing-react-native-project)
+- [Updating the CLI](#updating-the-cli)
+- [Maintainers](#maintainers)
+- [License](#license)
+
 ## Compatibility
 
-This CLI is intended to be used with a certain version of React Native. You'll find the support table with compatible versions below.
+Our release cycle is independent of `react-native`. We follow semver and here is the compatibility table:
 
-| CLI    | React Native |
-| ------ | ------------ |
-| ^2.0.0 | ^0.60.0      |
-| ^1.0.0 | ^0.59.0      |
+| `@react-native-community/cli` | `react-native` |
+| ----------------------------- | -------------- |
+| ^2.0.0                        | ^0.60.0        |
+| [^1.0.0](tree/1.x)            | ^0.59.0        |
 
 ## Documentation
 
@@ -25,18 +40,22 @@ This CLI is intended to be used with a certain version of React Native. You'll f
 
 ## About
 
-This repository contains tools and helpers for React Native projects in form of a CLI. We want to make a couple of things clear for you first:
+This repository contains tools and helpers for React Native projects in form of a command line tool. There's been quite some confusion around that since the extraction from React Native core. Let's clear them up:
 
-- this is a monorepo;
-- there are currently two CLIs: the actual one called [`@react-native-community/cli`](./packages/cli) that does all the job and global [`react-native-cli`](./packages/global-cli) which is used as its proxy and installation helper;
+- There are currently two CLIs:
+  - [`@react-native-community/cli`](./packages/cli) – **the one used directly by `react-native`**. That makes it a transitive dependency of your project.
+  - [`react-native-cli`](./packages/global-cli) – an optional global convenience package, which is a proxy to [`@react-native-community/cli`](./packages/cli) and global installation helper. **Please consider it legacy, because it's not necessary anymore**.
+- When we say "the CLI" we mean `@react-native-community/cli`.
+- We update the CLI independently of React Native itself. Please see [how to use the latest version](#updating-the-cli).
+- This is a monorepo to keep stuff organized.
 
-We know it's confusing, but we're actively working to make this indirection gone.
+We're actively working to make any indirections gone.
 
 ## Creating a new React Native project
 
 There are two ways to start a React Native project.
 
-### Using `npx`
+### Using `npx` (_recommended_)
 
 > Available since `react-native@0.60`
 
@@ -46,7 +65,7 @@ This method is preferred if you don't want to install global packages.
 npx react-native init MyApp
 ```
 
-### Using global CLI
+### Using global CLI (_legacy_)
 
 You'll need to install a global module [`react-native-cli`](./packages/global-cli) and follow instructions there.
 
@@ -62,7 +81,9 @@ Example running `start` command in terminal:
 
 ```sh
 yarn react-native start
-# or if you don't use Yarn:
+# or:
+npx react-native start
+# or
 node ./node_modules/.bin/react-native start
 ```
 
@@ -75,6 +96,16 @@ You can also add npm scripts to call it with whichever package manager you use:
   }
 }
 ```
+
+## Updating the CLI
+
+Because we release independently of `react-native`, it happens that you may be locked on a version without fixes for bugs that affect you. Here's how to get it sorted:
+
+1. If you use lock files (`yarn.lock` or `package-lock.json`) - find the `@react-native-community/cli` entry, remove it, run `yarn install` / `npm install` once again.
+2. If you don't use lock files – remove `node_modules` and run `yarn install` / `npm install` again.
+3. Run `yarn list @react-native-community/cli` or `npm list @react-native-community/cli` and verify you're on the latest version.
+
+After performing these steps you should be on the latest CLI version. Feel free to do it once in a while, because we release often.
 
 ## Maintainers
 

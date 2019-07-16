@@ -11,12 +11,24 @@ import fs from 'fs';
 import path from 'path';
 import walk from './walk';
 
+type Options = {
+  exclude?: Array<RegExp>,
+};
+
 /**
  * Copy files (binary included) recursively.
  */
-async function copyFiles(srcPath: string, destPath: string) {
+async function copyFiles(
+  srcPath: string,
+  destPath: string,
+  options?: Options = {},
+) {
   return Promise.all(
     walk(srcPath).map(async absoluteSrcFilePath => {
+      const exclude = options.exclude;
+      if (exclude && exclude.some(p => p.test(absoluteSrcFilePath))) {
+        return;
+      }
       const relativeFilePath = path.relative(srcPath, absoluteSrcFilePath);
       await copyFile(
         absoluteSrcFilePath,

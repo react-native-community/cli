@@ -1,13 +1,11 @@
 // @flow
 import path from 'path';
 import {URL} from 'url';
-import {fetch} from '@react-native-community/cli-tools';
 
 const FILE_PROTOCOL = /file:/;
-const HTTP_PROTOCOL = /https?:/;
 const TARBALL = /\.tgz$/;
 const VERSION_POSTFIX = /(.*)(-\d+\.\d+\.\d+)/;
-const VERSIONED_PACKAGE = /(@?.*)(@)(.*)/;
+const VERSIONED_PACKAGE = /(@?.+)(@)(.+)/;
 
 function handleFileProtocol(filePath: string) {
   const uri = new URL(filePath).pathname;
@@ -57,41 +55,8 @@ export async function processTemplateName(templateName: string) {
     return handleVersionedPackage(templateName);
   }
 
-  const name = await tryTemplateShorthand(templateName);
-
   return {
-    uri: name,
-    name,
+    uri: templateName,
+    name: templateName,
   };
-}
-
-/**
- * `init` may be invoked with a shorthand like `--template typescript`
- * which should resolve to `react-native-template-typescript` package.
- * To support that, we query npm registry if a package like this exists, if not
- * we return the original name without a change.
- */
-async function tryTemplateShorthand(templateName: string) {
-  if (templateName.match(FILE_PROTOCOL) || templateName.match(HTTP_PROTOCOL)) {
-    return templateName;
-  }
-  try {
-    const reactNativeTemplatePackage = `react-native-template-${templateName}`;
-    const response = await fetch(
-      `https://registry.yarnpkg.com/${reactNativeTemplatePackage}/latest`,
-    );
-
-    if (response.status < 200 || response.status > 299) {
-      throw new Error(`Failed to load page, status code: ${response.status}`);
-    }
-
-    const body = await response.json();
-
-    if (body.name) {
-      return reactNativeTemplatePackage;
-    }
-  } catch (e) {
-    // we expect this to fail when `file://` protocol or regular module is passed
-  }
-  return templateName;
 }

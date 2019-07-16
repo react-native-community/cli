@@ -3,14 +3,6 @@ import info from '../info';
 import {logger} from '@react-native-community/cli-tools';
 import loadConfig from '../../../tools/config';
 
-jest.mock('@react-native-community/cli-tools', () => ({
-  logger: {
-    info: jest.fn(),
-    error: jest.fn(),
-    log: jest.fn(),
-  },
-}));
-
 jest.mock('../../../tools/config');
 
 beforeEach(() => {

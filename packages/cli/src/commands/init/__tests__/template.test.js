@@ -72,7 +72,9 @@ test('copyTemplate', async () => {
     TEMPLATE_NAME,
     TEMPLATE_DIR,
   );
-  expect(copyFiles.default).toHaveBeenCalledWith(expect.any(String), CWD);
+  expect(copyFiles.default).toHaveBeenCalledWith(expect.any(String), CWD, {
+    exclude: [expect.any(RegExp)],
+  });
 });
 
 test('executePostInitScript', async () => {

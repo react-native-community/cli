@@ -64,6 +64,7 @@ function getDependencyConfig(
  * Loads CLI configuration
  */
 function loadConfig(projectRoot: string = process.cwd()): ConfigT {
+  let lazyProject;
   const userConfig = readConfigFromDisk(projectRoot);
 
   const initialConfig: ConfigT = {
@@ -84,23 +85,30 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
       platforms: Object.keys(userConfig.platforms),
     },
     get project() {
-      const project = {};
+      if (lazyProject) {
+        return lazyProject;
+      }
+
+      lazyProject = {};
       for (const platform in finalConfig.platforms) {
-        project[platform] = finalConfig.platforms[platform].projectConfig(
+        lazyProject[platform] = finalConfig.platforms[platform].projectConfig(
           projectRoot,
           userConfig.project[platform] || {},
         );
       }
-      return project;
+
+      return lazyProject;
     },
   };
 
   let depsWithWarnings = [];
 
-  const finalConfig = [
-    ...Object.keys(userConfig.dependencies),
-    ...findDependencies(projectRoot),
-  ].reduce((acc: ConfigT, dependencyName) => {
+  const finalConfig = Array.from(
+    new Set([
+      ...Object.keys(userConfig.dependencies),
+      ...findDependencies(projectRoot),
+    ]),
+  ).reduce((acc: ConfigT, dependencyName) => {
     const localDependencyRoot =
       userConfig.dependencies[dependencyName] &&
       userConfig.dependencies[dependencyName].root;
@@ -196,7 +204,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
         .join(
           '\n',
         )}\nPlease notify their maintainers about it. You can find more details at ${chalk.dim.underline(
-        'https://react-native-community/cli/docs/configuration.md#migration-guide',
+        'https://github.com/react-native-community/cli/blob/master/docs/configuration.md#migration-guide',
       )}.`,
     );
   }

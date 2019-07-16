@@ -154,7 +154,7 @@ async function installDependencies({
   npm?: boolean,
   loader: typeof Ora,
 }) {
-  loader.start('Installing all required dependencies');
+  loader.start('Installing dependencies');
 
   await PackageManager.installAll({
     preferYarn: !npm,
@@ -218,7 +218,8 @@ export default (async function initialize(
   try {
     await createProject(projectName, directoryName, version, options);
 
-    printRunInstructions(rootFolder, projectName);
+    const projectFolder = path.join(rootFolder, projectName);
+    printRunInstructions(projectFolder, projectName);
   } catch (e) {
     logger.error(e.message);
     // Only remove project if it didn't exist before running `init`

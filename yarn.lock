@@ -2948,11 +2948,6 @@ combined-stream@^1.0.6, combined-stream@~1.0.6:
   dependencies:
     delayed-stream "~1.0.0"
 
-command-exists@^1.2.8:
-  version "1.2.8"
-  resolved "https://registry.yarnpkg.com/command-exists/-/command-exists-1.2.8.tgz#715acefdd1223b9c9b37110a149c6392c2852291"
-  integrity sha512-PM54PkseWbiiD/mMsbvW351/u+dafwTJ0ye2qB60G1aGQP9j3xK2gmMDc+R34L3nDtx4qMCitXT75mkbkGJDLw==
-
 commander@^2.19.0, commander@~2.19.0:
   version "2.19.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.19.0.tgz#f6198aa84e5b83c46054b94ddedbfed5ee9ff12a"
@@ -5583,6 +5578,11 @@ jest@^24.6.0:
     import-local "^2.0.0"
     jest-cli "^24.7.1"
 
+jetifier@^1.6.2:
+  version "1.6.2"
+  resolved "https://registry.yarnpkg.com/jetifier/-/jetifier-1.6.2.tgz#c1d8b7cc2af1d3a255963dbdaed3d56157e94712"
+  integrity sha512-KQKWmj7CNGcOztXwkWoZHoGHJqHBM2hI7YXRHv0tdSz5Gw063CU6z6o8sXaD1+ctTfYQOk+I87NPvPnX/3B3Kw==
+
 js-levenshtein@^1.1.3:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/js-levenshtein/-/js-levenshtein-1.1.4.tgz#3a56e3cbf589ca0081eb22cd9ba0b1290a16d26e"
@@ -5971,10 +5971,10 @@ log-symbols@^2.2.0:
   dependencies:
     chalk "^2.0.1"
 
-logkitty@^0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/logkitty/-/logkitty-0.4.0.tgz#4a534bb4fb2b27f0120ed7b9fc62b8aa3ba6bb43"
-  integrity sha512-IKuHwaXYDpbEzC9EfsrmvwdS80b4Lv+W4n7g6GG0gBHt5kXzQEvew46E0omrSD3ycEpTOtAX7BXGWnOUFEksYA==
+logkitty@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/logkitty/-/logkitty-0.5.0.tgz#5a348c2049551aa02da69543c3b5c44e28c7c24f"
+  integrity sha512-UA06TmPaSPiHxMBlo5uxL3ZvjJ2Gx/rEECrqowHsIsNoAoSB8aBSP553Fr2FJhOp3it2ulLsd520DZWS1IaYOw==
   dependencies:
     ansi-fragments "^0.2.1"
     yargs "^12.0.5"

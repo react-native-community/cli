@@ -5,8 +5,8 @@
 #
 def use_native_modules!(root = "..", packages = nil)
   if (!packages)
-    command = "node"
-    args = ["./node_modules/.bin/react-native", "config"]
+    command = "./node_modules/.bin/react-native"
+    args = ["config"]
     output = ""
     # Make sure `react-native config` is ran from your project root
     Dir.chdir(root) do
@@ -15,14 +15,7 @@ def use_native_modules!(root = "..", packages = nil)
 
     json = []
     output.each_line do |line|
-      case line
-      when /^warn\s(.+)/
-        Pod::UI.warn($1)
-      when /^(success|info|error|debug)\s(.+)/
-        Pod::UI.message($1)
-      else
-        json << line
-      end
+      json << line
     end
     config = JSON.parse(json.join("\n"))
     packages = config["dependencies"]
@@ -34,6 +27,18 @@ def use_native_modules!(root = "..", packages = nil)
     next unless package_config = package["platforms"]["ios"]
 
     podspec_path = package_config["podspecPath"]
+
+    # Add a warning to the queue and continue to the next dependency if the podspec_path is nil/empty
+    if podspec_path.nil? || podspec_path.empty?
+      Pod::UI.warn("use_native_modules! skipped the react-native dependency '#{package["name"]}'. No podspec file was found.",
+        [
+          "Check to see if there is an updated version that contains the necessary podspec file",
+          "Contact the library maintainers or send them a PR to add a podspec. The react-native-webview podspec is a good example of a package.json driven podspec. See https://github.com/react-native-community/react-native-webview/blob/master/react-native-webview.podspec",
+          "If necessary, you can disable autolinking for the dependency and link it manually. See https://github.com/react-native-community/cli/blob/master/docs/autolinking.md#how-can-i-disable-autolinking-for-unsupported-library"
+        ])
+    end
+    next if podspec_path.nil? || podspec_path.empty?
+
     spec = Pod::Specification.from_file(podspec_path)
 
     # We want to do a look up inside the current CocoaPods target
@@ -49,7 +54,11 @@ def use_native_modules!(root = "..", packages = nil)
       existing_dep.name.split('/').first == spec.name
     end
 
-    pod spec.name, :path => File.dirname(podspec_path)
+    # Use relative path
+    absolute_podspec_path = File.dirname(podspec_path)
+    relative_podspec_path = File.join(root, absolute_podspec_path.partition('node_modules').last(2).join())
+
+    pod spec.name, :path => relative_podspec_path
 
     if package_config["scriptPhases"]
       # Can be either an object, or an array of objects
@@ -181,7 +190,7 @@ if $0 == __FILE__
       @podfile.use_native_modules('..', @config)
       @activated_pods.must_equal [{
         name: "ios-dep",
-        options: { path: @ios_package["root"] }
+        options: { path: "../node_modules/react" }
       }]
     end
 

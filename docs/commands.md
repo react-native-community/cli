@@ -139,7 +139,6 @@ Uses a custom directory instead of `<projectName>`.
 Uses a custom template. Accepts following template sources:
 
 - an npm package name
-- a shorthand name for packages prefixed with `react-native-template-`
 - an absolute path to a local directory
 - an absolute path to a tarball created using `npm pack`
 
@@ -327,6 +326,12 @@ Launches the Metro Bundler in a new window using the specified terminal path.
 Run custom gradle tasks. If this argument is provided, then `--variant` option is ignored.
 Example: `yarn react-native run-android --tasks clean,installDebug`.
 
+#### `--no-jetifier`
+
+> default: false
+
+Do not run [jetifier](https://www.npmjs.com/package/jetifier) – the AndroidX transition tool. By default it runs before Gradle to ease working with libraries that don't support AndroidX yet.
+
 ### `run-ios`
 
 Usage:
@@ -476,10 +481,16 @@ Unlinks single package native dependencies and then uninstalls it from `package.
 Usage:
 
 ```
-react-native unlink <packageName>
+react-native unlink <packageName> [options]
 ```
 
 Unlink native dependency linked with the `link` command.
+
+#### Options
+
+#### `--platforms [list]`
+
+Scope unlinking to specified platforms
 
 ### `upgrade`
 

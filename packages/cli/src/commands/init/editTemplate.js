@@ -48,6 +48,7 @@ const UNDERSCORED_DOTFILES = [
   'flowconfig',
   'gitattributes',
   'gitignore',
+  'prettierrc.js',
   'watchmanconfig',
 ];
 

@@ -17,6 +17,7 @@ import messageSocket from './messageSocket';
 import webSocketProxy from './webSocketProxy';
 import MiddlewareManager from './middleware/MiddlewareManager';
 import loadMetroConfig from '../../tools/loadMetroConfig';
+import releaseChecker from '../../tools/releaseChecker';
 
 export type Args = {|
   assetPlugins?: string[],
@@ -47,7 +48,6 @@ async function runServer(argv: Array<string>, ctx: ConfigT, args: Args) {
     port: args.port,
     resetCache: args.resetCache,
     watchFolders: args.watchFolders,
-    projectRoot: ctx.root,
     sourceExts: args.sourceExts,
     reporter,
   });
@@ -107,6 +107,8 @@ async function runServer(argv: Array<string>, ctx: ConfigT, args: Args) {
   // For more info: https://github.com/nodejs/node/issues/13391
   //
   serverInstance.keepAliveTimeout = 30000;
+
+  await releaseChecker(ctx.root);
 }
 
 function getReporterImpl(customLogReporterPath: ?string) {

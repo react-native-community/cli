@@ -71,7 +71,6 @@ export const getDefaultConfig = (ctx: ConfigT) => {
 export type ConfigOptionsT = {|
   maxWorkers?: number,
   port?: number,
-  projectRoot?: string,
   resetCache?: boolean,
   watchFolders?: string[],
   sourceExts?: string[],

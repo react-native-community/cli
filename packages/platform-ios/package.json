@@ -1,10 +1,11 @@
 {
   "name": "@react-native-community/cli-platform-ios",
-  "version": "2.0.1",
+  "version": "2.4.1",
+  "license": "MIT",
   "main": "build/index.js",
   "dependencies": {
-    "@react-native-community/cli-tools": "^2.0.1",
-    "chalk": "^1.1.1",
+    "@react-native-community/cli-tools": "^2.4.1",
+    "chalk": "^2.4.2",
     "xcode": "^2.0.0"
   },
   "files": [

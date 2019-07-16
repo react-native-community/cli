@@ -24,7 +24,9 @@ export default async function fetch(
   const data = await unwrapFetchResult(result);
 
   if (result.status >= 400) {
-    throw new CLIError(`Fetch request failed with status ${result.status}`);
+    throw new CLIError(
+      `Fetch request failed with status ${result.status}: ${data}.`,
+    );
   }
 
   return {

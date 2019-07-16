@@ -51,7 +51,7 @@ const getPatch = async (currentVersion, newVersion, config) => {
 
     patch = data;
   } catch (error) {
-    logger.error(error);
+    logger.error(error.message);
     logger.error(
       `Failed to fetch diff for react-native@${newVersion}. Maybe it's not released yet?`,
     );

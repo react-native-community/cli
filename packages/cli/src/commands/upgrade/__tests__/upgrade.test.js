@@ -5,8 +5,7 @@ import fs from 'fs';
 import snapshotDiff from 'snapshot-diff';
 import stripAnsi from 'strip-ansi';
 import upgrade from '../upgrade';
-import {fetch} from '../../../tools/fetch';
-import logger from '../../../tools/logger';
+import {fetch, logger} from '@react-native-community/cli-tools';
 import loadConfig from '../../../tools/config';
 import merge from '../../../tools/merge';
 
@@ -43,11 +42,9 @@ jest.mock('../../../tools/packageManager', () => ({
     mockPushLog('$ yarn add', ...args);
   },
 }));
-jest.mock('../../../tools/fetch', () => ({
-  fetch: jest.fn(() => Promise.resolve('patch')),
-}));
 jest.mock('@react-native-community/cli-tools', () => ({
   ...jest.requireActual('@react-native-community/cli-tools'),
+  fetch: jest.fn(),
   logger: {
     info: jest.fn((...args) => mockPushLog('info', args)),
     error: jest.fn((...args) => mockPushLog('error', args)),
@@ -57,6 +54,10 @@ jest.mock('@react-native-community/cli-tools', () => ({
     log: jest.fn((...args) => mockPushLog(args)),
   },
 }));
+
+const mockFetch = (value = '', status = 200) => {
+  (fetch: any).mockImplementation(() => Promise.resolve({data: value, status}));
+};
 
 const mockExecaDefault = (command, args) => {
   mockPushLog('$', 'execa', command, args);
@@ -121,7 +122,7 @@ test('uses latest version of react-native when none passed', async () => {
 }, 60000);
 
 test('applies patch in current working directory when nested', async () => {
-  (fetch: any).mockImplementation(() => Promise.resolve(samplePatch));
+  mockFetch(samplePatch, 200);
   (execa: any).mockImplementation(mockExecaNested);
   const config = {...ctx, root: '/project/root/NestedApp'};
   await upgrade.func([newVersion], config, opts);
@@ -162,7 +163,7 @@ test('warns when dependency upgrade version is in semver range', async () => {
 }, 60000);
 
 test('fetches empty patch and installs deps', async () => {
-  (fetch: any).mockImplementation(() => Promise.resolve(''));
+  mockFetch();
   await upgrade.func([newVersion], ctx, opts);
   expect(flushOutput()).toMatchInlineSnapshot(`
     "info Fetching diff between v0.57.8 and v0.58.4...
@@ -178,7 +179,7 @@ test('fetches empty patch and installs deps', async () => {
 }, 60000);
 
 test('fetches regular patch, adds remote, applies patch, installs deps, removes remote,', async () => {
-  (fetch: any).mockImplementation(() => Promise.resolve(samplePatch));
+  mockFetch(samplePatch, 200);
   await upgrade.func(
     [newVersion],
     merge(ctx, {
@@ -217,7 +218,7 @@ test('fetches regular patch, adds remote, applies patch, installs deps, removes 
   );
 }, 60000);
 test('fetches regular patch, adds remote, applies patch, installs deps, removes remote when updated from nested directory', async () => {
-  (fetch: any).mockImplementation(() => Promise.resolve(samplePatch));
+  mockFetch(samplePatch, 200);
   (execa: any).mockImplementation(mockExecaNested);
   const config = {...ctx, root: '/project/root/NestedApp'};
   await upgrade.func([newVersion], config, opts);
@@ -242,7 +243,7 @@ test('fetches regular patch, adds remote, applies patch, installs deps, removes 
   `);
 }, 60000);
 test('cleans up if patching fails,', async () => {
-  (fetch: any).mockImplementation(() => Promise.resolve(samplePatch));
+  mockFetch(samplePatch, 200);
   (execa: any).mockImplementation((command, args) => {
     mockPushLog('$', 'execa', command, args);
     if (command === 'npm' && args[3] === '--json') {
@@ -296,7 +297,7 @@ test('cleans up if patching fails,', async () => {
   `);
 }, 60000);
 test('works with --name-ios and --name-android', async () => {
-  (fetch: any).mockImplementation(() => Promise.resolve(samplePatch));
+  mockFetch(samplePatch, 200);
   await upgrade.func(
     [newVersion],
     merge(ctx, {

@@ -1,6 +1,7 @@
 // @flow
 import InvalidNameError from './errors/InvalidNameError';
 import ReservedNameError from './errors/ReservedNameError';
+import HelloWorldError from './errors/HelloWorldError';
 
 const NAME_REGEX = /^[$A-Z_][0-9A-Z_$]*$/i;
 
@@ -9,7 +10,11 @@ export function validateProjectName(name: string) {
     throw new InvalidNameError(name);
   }
 
-  if (name.match(/helloworld|react/gi)) {
+  if (name === 'React' || name === 'react') {
     throw new ReservedNameError();
+  }
+
+  if (name.match(/helloworld/gi)) {
+    throw new HelloWorldError();
   }
 }

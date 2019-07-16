@@ -2,6 +2,7 @@
 import {validateProjectName} from '../validate';
 import InvalidNameError from '../errors/InvalidNameError';
 import ReservedNameError from '../errors/ReservedNameError';
+import HelloWorldError from '../errors/HelloWorldError';
 
 test.each(['projectName', 'ProjectName', 'project_name'])(
   "'%s' project name should be valid",
@@ -24,8 +25,8 @@ test.each([
     error: ReservedNameError,
   },
   {
-    name: 'helloworld',
-    error: ReservedNameError,
+    name: 'helloworld_test',
+    error: HelloWorldError,
   },
 ])("'%s' is invalid name", ({name, error}: {name: string, error: Error}) => {
   expect(() => validateProjectName(name)).toThrowError(error);

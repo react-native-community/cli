@@ -19,10 +19,9 @@ async function isPackagerRunning(
   packagerPort: string = process.env.RCT_METRO_PORT || '8081',
 ): Promise<'running' | 'not_running' | 'unrecognized'> {
   try {
-    const result = await fetch(`http://localhost:${packagerPort}/status`);
-    const body = await result.text();
+    const {data} = await fetch(`http://localhost:${packagerPort}/status`);
 
-    return body === 'packager-status:running' ? 'running' : 'unrecognized';
+    return data === 'packager-status:running' ? 'running' : 'unrecognized';
   } catch (_error) {
     return 'not_running';
   }

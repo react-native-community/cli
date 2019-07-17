@@ -8,7 +8,14 @@ import execa from 'execa';
 import chalk from 'chalk';
 import {Writable} from 'readable-stream';
 
-const CLI_PATH = path.resolve(__dirname, '../packages/cli/build/bin.js');
+const CLI_PATH = path.resolve(
+  __dirname,
+  '..',
+  'packages',
+  'cli',
+  'build',
+  'bin.js',
+);
 
 type RunOptions = {
   nodeOptions?: string,

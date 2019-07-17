@@ -20,6 +20,7 @@ export default function printNewRelease(
     } is now available (your project is running on v${currentVersion}).`,
   );
   logger.info(`Changelog: ${chalk.dim.underline(latestRelease.changelogUrl)}.`);
+  logger.info(`Diff: ${chalk.dim.underline(latestRelease.diffUrl)}.`);
   logger.info(`To upgrade, run "${chalk.bold('react-native upgrade')}".`);
 
   cacheManager.set(name, 'lastChecked', new Date().toISOString());

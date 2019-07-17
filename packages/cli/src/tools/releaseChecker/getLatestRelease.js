@@ -9,6 +9,7 @@ import {fetch} from '@react-native-community/cli-tools';
 export type Release = {
   version: string,
   changelogUrl: string,
+  diffUrl: string,
 };
 
 /**
@@ -52,6 +53,7 @@ export default async function getLatestRelease(
       return {
         version: latestVersion,
         changelogUrl: buildChangelogUrl(latestVersion),
+        diffUrl: buildDiffUrl(currentVersion),
       };
     }
   } catch (e) {
@@ -64,6 +66,10 @@ export default async function getLatestRelease(
 
 function buildChangelogUrl(version: string) {
   return `https://github.com/facebook/react-native/releases/tag/v${version}`;
+}
+
+function buildDiffUrl(version: string) {
+  return `https://react-native-community.github.io/upgrade-helper/?from=${version}`;
 }
 
 /**

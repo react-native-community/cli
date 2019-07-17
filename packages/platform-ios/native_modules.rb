@@ -3,8 +3,8 @@
 # which declare themselves to be iOS dependencies (via having a Podspec) and automatically
 # imports those into your current target.
 #
-def use_native_modules!(root = "..", packages = nil)
-  if (!packages)
+def use_native_modules!(root = "..", config = nil)
+  if (!config)
     command = "./node_modules/.bin/react-native"
     args = ["config"]
     output = ""
@@ -17,11 +17,12 @@ def use_native_modules!(root = "..", packages = nil)
     output.each_line do |line|
       json << line
     end
+
     config = JSON.parse(json.join("\n"))
-    packages = config["dependencies"]
-    project_root = config["root"]
   end
 
+  packages = config["dependencies"]
+  project_root = config["root"]
   found_pods = []
 
   packages.each do |package_name, package|
@@ -145,7 +146,13 @@ if $0 == __FILE__
           },
         }
       }
-      @config = { "ios-dep" => @ios_package, "android-dep" => @android_package }
+      @config = {
+        "root" => "/root/app",
+        "dependencies" => {
+          "ios-dep" => @ios_package,
+          "android-dep" => @android_package
+        }
+      }
 
       @activated_pods = activated_pods = []
       @current_target_definition_dependencies = current_target_definition_dependencies = []
@@ -212,9 +219,11 @@ if $0 == __FILE__
     end
 
     it "prints out the native module pods that were found" do
-      @podfile.use_native_modules('..', {})
-      @podfile.use_native_modules('..', { "pkg-1" => @ios_package })
-      @podfile.use_native_modules('..', { "pkg-1" => @ios_package, "pkg-2" => @ios_package })
+      @podfile.use_native_modules('..', { "root" => "", "dependencies" => {} })
+      @podfile.use_native_modules('..', { "root" => "", "dependencies" => { "pkg-1" => @ios_package }})
+      @podfile.use_native_modules('..', {
+        "root" => "", "dependencies" => { "pkg-1" => @ios_package, "pkg-2" => @ios_package }
+      })
       @printed_messages.must_equal [
         "Detected React Native module pod for ios-dep",
         "Detected React Native module pods for ios-dep, and ios-dep"
@@ -223,7 +232,7 @@ if $0 == __FILE__
 
     describe "concerning script_phases" do
       it "uses the options directly" do
-        @config["ios-dep"]["platforms"]["ios"]["scriptPhases"] = [@script_phase]
+        @config["dependencies"]["ios-dep"]["platforms"]["ios"]["scriptPhases"] = [@script_phase]
         @podfile.use_native_modules('..', @config)
         @added_scripts.must_equal [{
           "script" => "123",
@@ -236,7 +245,7 @@ if $0 == __FILE__
       it "reads a script file relative to the package root" do
         @script_phase.delete("script")
         @script_phase["path"] = "./some_shell_script.sh"
-        @config["ios-dep"]["platforms"]["ios"]["scriptPhases"] = [@script_phase]
+        @config["dependencies"]["ios-dep"]["platforms"]["ios"]["scriptPhases"] = [@script_phase]
 
         file_read_mock = MiniTest::Mock.new
         file_read_mock.expect(:call, "contents from file", [File.join(@ios_package["root"], "some_shell_script.sh")])

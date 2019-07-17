@@ -56,7 +56,7 @@ def use_native_modules!(root = "..", packages = nil)
 
     # Use relative path
     absolute_podspec_path = File.dirname(podspec_path)
-    relative_podspec_path = File.join(root, absolute_podspec_path.partition('node_modules').last(2).join())
+    relative_podspec_path = File.join(root, "node_modules", package["name"])
 
     pod spec.name, :path => relative_podspec_path
 

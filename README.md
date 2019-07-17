@@ -14,8 +14,8 @@ _Note: CLI has been extracted from core `react-native` as a part of "[Lean Core]
 - [Documentation](#documentation)
 - [About](#about)
 - [Creating a new React Native project](#creating-a-new-react-native-project)
-	- [Using `npx` (_recommended_)](#using-npx-recommended)
-	- [Using global CLI (_legacy_)](#using-global-cli-legacy)
+  - [Using `npx` (_recommended_)](#using-npx-recommended)
+  - [Using global CLI (_legacy_)](#using-global-cli-legacy)
 - [Usage in an existing React Native project](#usage-in-an-existing-react-native-project)
 - [Updating the CLI](#updating-the-cli)
 - [Maintainers](#maintainers)
@@ -25,10 +25,10 @@ _Note: CLI has been extracted from core `react-native` as a part of "[Lean Core]
 
 Our release cycle is independent of `react-native`. We follow semver and here is the compatibility table:
 
-| `@react-native-community/cli` | `react-native` |
-| ----------------------------- | -------------- |
-| ^2.0.0                        | ^0.60.0        |
-| [^1.0.0](tree/1.x)            | ^0.59.0        |
+| `@react-native-community/cli`                                    | `react-native` |
+| ---------------------------------------------------------------- | -------------- |
+| ^2.0.0                                                           | ^0.60.0        |
+| [^1.0.0](https://github.com/react-native-community/cli/tree/1.x) | ^0.59.0        |
 
 ## Documentation
 

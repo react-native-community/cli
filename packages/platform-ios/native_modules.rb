@@ -19,6 +19,7 @@ def use_native_modules!(root = "..", packages = nil)
     end
     config = JSON.parse(json.join("\n"))
     packages = config["dependencies"]
+    project_root = config["root"]
   end
 
   found_pods = []
@@ -55,10 +56,10 @@ def use_native_modules!(root = "..", packages = nil)
     end
 
     # Use relative path
-    absolute_podspec_path = File.dirname(podspec_path)
-    relative_podspec_path = File.join(root, absolute_podspec_path.partition('node_modules').last(2).join())
+    folder = package_config["folder"]
+    path = folder.partition(project_root).last()
 
-    pod spec.name, :path => relative_podspec_path
+    pod spec.name, :path => File.join(root, path)
 
     if package_config["scriptPhases"]
       # Can be either an object, or an array of objects

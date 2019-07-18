@@ -162,7 +162,7 @@ async function installDependencies({
   });
 
   if (process.platform === 'darwin') {
-    await installPods({projectName, loader});
+    await installPods({projectName, loader, shouldUpdatePods: false});
   }
 
   loader.succeed();

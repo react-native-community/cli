@@ -19,7 +19,9 @@ const DIR = getTempDirectory('resolve_config_path_test');
 // Removes string from all key/values within an object
 const removeString = (config, str) =>
   JSON.parse(
-    JSON.stringify(config).replace(new RegExp(str, 'g'), '<<REPLACED>>'),
+    JSON.stringify(config, (_key, value) =>
+      typeof value === 'string' ? value.replace(str, '<<REPLACED>>') : value,
+    ),
   );
 
 beforeEach(() => {

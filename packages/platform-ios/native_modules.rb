@@ -58,7 +58,7 @@ def use_native_modules!(root = "..", config = nil)
 
     # Use relative path
     folder = File.dirname(podspec_path)
-    path = folder.partition(project_root).last()
+    path = folder.split(project_root).last
 
     pod spec.name, :path => File.join(root, path)
 

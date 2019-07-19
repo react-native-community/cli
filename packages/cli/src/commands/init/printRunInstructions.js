@@ -14,14 +14,12 @@ import chalk from 'chalk';
 import {logger} from '@react-native-community/cli-tools';
 
 function printRunInstructions(projectDir: string, projectName: string) {
-  const relativeProjectDir = path.relative(projectDir, projectName);
-  const iosProjectDir = path.resolve(projectDir, `${projectName}/ios`);
-
+  const iosProjectDir = path.resolve(projectDir, 'ios');
   const iosPodsFile = path.resolve(iosProjectDir, `${projectName}.xcworkspace`);
   const isUsingPods = fs.existsSync(iosPodsFile);
 
   const relativeXcodeProjectPath = path.relative(
-    process.cwd(),
+    '..',
     isUsingPods
       ? iosPodsFile
       : path.resolve(iosProjectDir, `${projectName}.xcodeproj`),
@@ -29,14 +27,14 @@ function printRunInstructions(projectDir: string, projectName: string) {
 
   logger.log(`
   ${chalk.cyan(`Run instructions for ${chalk.bold('iOS')}`)}:
-    • cd ${relativeProjectDir} && react-native run-ios
-    - or -
+    • cd ${projectName} && react-native run-ios
+    ${chalk.dim('- or -')}
     • Open ${relativeXcodeProjectPath} in Xcode or run "xed -b ios"
     • Hit the Run button
 
   ${chalk.green(`Run instructions for ${chalk.bold('Android')}`)}:
     • Have an Android emulator running (quickest way to get started), or a device connected.
-    • cd ${relativeProjectDir} && react-native run-android
+    • cd ${projectName} && react-native run-android
 `);
 }
 

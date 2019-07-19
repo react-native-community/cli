@@ -166,15 +166,28 @@ const installDeps = async (newVersion, projectDir) => {
 
 const installCocoaPodsDeps = async (projectDir, thirdPartyIOSDeps) => {
   if (process.platform === 'darwin') {
-    logger.info(
-      `Installing CocoaPods dependencies ${chalk.dim(
-        '(this may take a few minutes)',
-      )}`,
-    );
-    await installPods({
-      projectName: projectDir.split('/').pop(),
-      shouldUpdatePods: thirdPartyIOSDeps.length > 0,
-    });
+    try {
+      logger.info(
+        `Installing CocoaPods dependencies ${chalk.dim(
+          '(this may take a few minutes)',
+        )}`,
+      );
+      await installPods({
+        projectName: projectDir.split('/').pop(),
+        shouldUpdatePods: thirdPartyIOSDeps.length > 0,
+      });
+    } catch (error) {
+      if (error.stderr) {
+        logger.debug(
+          `"pod install" or "pod repo update" failed. Error output:\n${
+            error.stderr
+          }`,
+        );
+      }
+      logger.error(
+        'Installation of CocoaPods dependencies failed. Try to install them manually by running "pod install" in "ios" directory after finishing upgrade',
+      );
+    }
   }
 };
 

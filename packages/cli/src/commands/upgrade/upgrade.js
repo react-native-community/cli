@@ -365,7 +365,7 @@ async function upgrade(argv: Array<string>, ctx: ConfigT, args: FlagsT) {
       }
       if (process.platform === 'darwin') {
         logger.warn(
-          'After resolving conflicts don\'t forget to change into "ios" directory and run "pod install"',
+          'After resolving conflicts don\'t forget to run "pod install" inside "ios" directory',
         );
       }
       logger.info(`You may find these resources helpful:

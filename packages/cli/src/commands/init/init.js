@@ -222,6 +222,5 @@ export default (async function initialize(
     printRunInstructions(projectFolder, projectName);
   } catch (e) {
     logger.error(e.message);
-    // Do not remove project, to allow for manual troubleshooting.
   }
 });

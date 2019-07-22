@@ -35,6 +35,7 @@ export type Args = {|
   verbose?: boolean,
   watchFolders?: string[],
   config?: string,
+  projectRoot?: string,
 |};
 
 async function runServer(argv: Array<string>, ctx: ConfigT, args: Args) {

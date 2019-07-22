@@ -213,7 +213,6 @@ export default (async function initialize(
     projectName,
     directory: options.directory || projectName,
   });
-  const directoryExists = doesDirectoryExist(directoryName);
 
   try {
     await createProject(projectName, directoryName, version, options);
@@ -222,9 +221,5 @@ export default (async function initialize(
     printRunInstructions(projectFolder, projectName);
   } catch (e) {
     logger.error(e.message);
-    // Only remove project if it didn't exist before running `init`
-    if (!directoryExists) {
-      fs.removeSync(path.resolve(rootFolder, directoryName));
-    }
   }
 });

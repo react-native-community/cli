@@ -77,7 +77,7 @@ const getVersionToUpgradeTo = async (argv, currentVersion, projectDir) => {
     return null;
   }
 
-  if (semver.gt(currentVersion, newVersion)) {
+  if (semver.gt(newVersion, currentVersion)) {
     logger.error(
       `Trying to upgrade from newer version "${currentVersion}" to older "${newVersion}"`,
     );

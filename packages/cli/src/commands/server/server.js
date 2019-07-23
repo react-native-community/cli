@@ -25,6 +25,10 @@ export default {
       default: '',
     },
     {
+      name: '--projectRoot [path]',
+      description: 'Path to a custom project root',
+    },
+    {
       name: '--watchFolders [list]',
       description:
         'Specify any additional folders to be added to the watch list',

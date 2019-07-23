@@ -5,17 +5,15 @@
 #
 def use_native_modules!(root = "..", config = nil)
   if (!config)
-    command = "./node_modules/.bin/react-native"
-    args = ["config"]
-    output = ""
+    json = []
+
     # Make sure `react-native config` is ran from your project root
     Dir.chdir(root) do
-      output = Pod::Executable.execute_command(command, args, true)
-    end
-
-    json = []
-    output.each_line do |line|
-      json << line
+      IO.popen("./node_modules/.bin/react-native config") do |data|
+        while line = data.gets
+          json << line
+        end
+      end
     end
 
     config = JSON.parse(json.join("\n"))

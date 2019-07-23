@@ -23,10 +23,22 @@ function filterConfig(config) {
   return filtered;
 }
 
+type Args = {|
+  format: boolean,
+|};
+
 export default {
   name: 'config',
   description: 'Print CLI configuration',
-  func: async (argv: string[], ctx: ConfigT) => {
-    console.log(JSON.stringify(filterConfig(ctx), null, 2));
+  func: async (argv: string[], ctx: ConfigT, args: Args) => {
+    const indent = args.format ? 2 : 0;
+    console.log(JSON.stringify(filterConfig(ctx), null, indent));
   },
+  options: [
+    {
+      name: '--format [boolean]',
+      description: 'Display config JSON formatted nicely',
+      default: false,
+    },
+  ],
 };

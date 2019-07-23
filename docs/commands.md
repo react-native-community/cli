@@ -110,6 +110,14 @@ react-native config
 
 Output project and dependencies configuration in JSON format to stdout. Used by [autolinking](./autolinking.md).
 
+#### Options
+
+#### `--format [boolean]`
+
+> default: false
+
+Display config JSON formatted nicely.
+
 ### `init`
 
 > Available since 0.60.0

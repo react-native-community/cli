@@ -99,6 +99,11 @@ async function runServer(argv: Array<string>, ctx: ContextT, args: Args) {
   middlewareManager.attachDevToolsSocket(wsProxy);
   middlewareManager.attachDevToolsSocket(ms);
 
+  middlewareManager.getConnectInstance().use('/reload', (req, res) => {
+    ms.broadcast('reload', null);
+    res.end('OK');
+  });
+
   // In Node 8, the default keep-alive for an HTTP connection is 5 seconds. In
   // early versions of Node 8, this was implemented in a buggy way which caused
   // some HTTP responses (like those containing large JS bundles) to be

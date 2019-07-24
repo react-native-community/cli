@@ -43,9 +43,8 @@ function linkAll(
       () => promisify(config.commands.prelink || commandStub),
       () => linkDependency(platforms, project, config),
       () => promisify(config.commands.postlink || commandStub),
-      () => linkAssets(platforms, project, assets),
     ]),
-  );
+  ).concat([() => linkAssets(platforms, project, assets)]);
 
   return promiseWaterfall(tasks).catch(err => {
     logger.error(

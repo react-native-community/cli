@@ -91,3 +91,145 @@ exports.noPackage = {
     },
   },
 };
+
+exports.findPackagesClassNameKotlinValid = [
+  `
+  class SomeExampleKotlinPackage() : ReactPackage {
+    override fun createNativeModules(reactContext: ReactApplicationContext): MutableList<NativeModule> {
+        return Collections.emptyList()
+    }
+    override fun createViewManagers(reactContext: ReactApplicationContext): MutableList<SimpleViewManager<View>> {
+       return Collections.emptyList()
+    }
+  }`,
+  `
+  class SomeExampleKotlinPackage : ReactPackage {
+    override fun createNativeModules(reactContext: ReactApplicationContext): MutableList<NativeModule> {
+        return Collections.emptyList()
+    }
+    override fun createViewManagers(reactContext: ReactApplicationContext): MutableList<SimpleViewManager<View>> {
+       return Collections.emptyList()
+    }
+  }`,
+  `
+  class SomeExampleKotlinPackage:ReactPackage {
+    override fun createNativeModules(reactContext: ReactApplicationContext): MutableList<NativeModule> {
+        return Collections.emptyList()
+    }
+    override fun createViewManagers(reactContext: ReactApplicationContext): MutableList<SimpleViewManager<View>> {
+       return Collections.emptyList()
+    }
+  }`,
+  `
+  class SomeExampleKotlinPackage
+    :
+  ReactPackage {
+    override fun createNativeModules(reactContext: ReactApplicationContext): MutableList<NativeModule> {
+        return Collections.emptyList()
+    }
+    override fun createViewManagers(reactContext: ReactApplicationContext): MutableList<SimpleViewManager<View>> {
+       return Collections.emptyList()
+    }
+  }`,
+  `
+  class SomeExampleKotlinPackage() : SomeDelegate, OtherDelegate, ReactPackage {
+    override fun createNativeModules(reactContext: ReactApplicationContext): MutableList<NativeModule> {
+        return Collections.emptyList()
+    }
+    override fun createViewManagers(reactContext: ReactApplicationContext): MutableList<SimpleViewManager<View>> {
+       return Collections.emptyList()
+    }
+  }`,
+  `
+  class SomeExampleKotlinPackage(val name: String) : SomeDelegate, OtherDelegate, ReactPackage {
+    override fun createNativeModules(reactContext: ReactApplicationContext): MutableList<NativeModule> {
+        return Collections.emptyList()
+    }
+    override fun createViewManagers(reactContext: ReactApplicationContext): MutableList<SimpleViewManager<View>> {
+       return Collections.emptyList()
+    }
+  }`,
+  `
+  class SomeExampleKotlinPackage : SomeSuper(), ReactPackage {
+    override fun createNativeModules(reactContext: ReactApplicationContext): MutableList<NativeModule> {
+        return Collections.emptyList()
+    }
+    override fun createViewManagers(reactContext: ReactApplicationContext): MutableList<SimpleViewManager<View>> {
+       return Collections.emptyList()
+    }
+  }`,
+];
+
+exports.findPackagesClassNameKotlinNotValid = [
+  `
+  class SomeExampleKotlinPackage() {
+    override fun createNativeModules(reactContext: ReactApplicationContext): MutableList<NativeModule> {
+        return Collections.emptyList()
+    }
+    override fun createViewManagers(reactContext: ReactApplicationContext): MutableList<SimpleViewManager<View>> {
+       return Collections.emptyList()
+    }
+  }`,
+  `
+  class SomeExampleKotlinPackage {
+    val package: ReactPackage = ReactPackage()
+  }`,
+  `
+  class ReactPackage {
+    override fun createNativeModules(reactContext: ReactApplicationContext): MutableList<NativeModule> {
+        return Collections.emptyList()
+    }
+    override fun createViewManagers(reactContext: ReactApplicationContext): MutableList<SimpleViewManager<View>> {
+       return Collections.emptyList()
+    }
+  }`,
+];
+
+exports.findPackagesClassNameJavaValid = [
+  `
+  class SomeExampleKotlinPackage implements ReactPackage {
+    
+  }
+  `,
+  `
+  class SomeExampleKotlinPackage implements SomePackage, ReactPackage {
+    
+  }
+  `,
+  `
+  class SomeExampleKotlinPackage extends SomeSuper implements SomePackage, ReactPackage {
+    
+  }
+  `,
+  `
+  class SomeExampleKotlinPackage
+    implements
+    SomePackage,
+    ReactPackage {
+    
+  }
+  `,
+];
+
+exports.findPackagesClassNameJavaNotValid = [
+  `
+  class SomeExampleKotlinPackage implements SomePackage {
+    
+  }
+  `,
+  `
+  class ReactPackage {
+    
+  }
+  `,
+  `
+  class SomeExampleKotlinPackage extends ReactPackage {
+    
+  }
+  `,
+  `
+  class SomeExampleKotlinPackage {
+    
+  }
+  `,
+];

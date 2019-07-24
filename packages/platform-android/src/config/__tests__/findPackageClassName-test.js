@@ -57,27 +57,25 @@ const fs = require('fs');
 });
 
 describe('android:FindPackageClassNameRegex', () => {
-  it('returns the name of the kotlin class implementing ReactPackage', () => {
-    mocks.findPackagesClassNameKotlinValid.forEach(file => {
-      expect(matchClassName(file)[1]).toBe('SomeExampleKotlinPackage');
+  [
+    mocks.findPackagesClassNameKotlinValid,
+    mocks.findPackagesClassNameJavaValid,
+  ].forEach(files => {
+    it('returns the name of the kotlin/java class implementing ReactPackage', () => {
+      files.forEach(file => {
+        expect(matchClassName(file)[1]).toBe('SomeExampleKotlinPackage');
+      });
     });
   });
 
-  it('returns `null` if there are no matches for kotlin classes', () => {
-    mocks.findPackagesClassNameKotlinNotValid.forEach(file => {
-      expect(matchClassName(file)).toBeNull();
-    });
-  });
-
-  it('returns the name of the java class implementing ReactPackage', () => {
-    mocks.findPackagesClassNameJavaValid.forEach(file => {
-      expect(matchClassName(file)[1]).toBe('SomeExampleKotlinPackage');
-    });
-  });
-
-  it('returns `null` if there are no matches for java classes', () => {
-    mocks.findPackagesClassNameJavaNotValid.forEach(file => {
-      expect(matchClassName(file)).toBeNull();
+  [
+    mocks.findPackagesClassNameKotlinNotValid,
+    mocks.findPackagesClassNameJavaNotValid,
+  ].forEach(files => {
+    it('returns `null` if there are no matches for kotlin/java classes', () => {
+      files.forEach(file => {
+        expect(matchClassName(file)).toBeNull();
+      });
     });
   });
 });

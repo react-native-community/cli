@@ -25,10 +25,16 @@ export default {
       default: '',
     },
     {
+      name: '--projectRoot [path]',
+      description: 'Path to a custom project root',
+      parse: (val: string) => path.resolve(val),
+    },
+    {
       name: '--watchFolders [list]',
       description:
         'Specify any additional folders to be added to the watch list',
-      parse: (val: string) => val.split(','),
+      parse: (val: string) =>
+        val.split(',').map((folder: string) => path.resolve(folder)),
     },
     {
       name: '--assetPlugins [list]',

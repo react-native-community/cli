@@ -9,7 +9,7 @@
  */
 
 import mocks from '../__fixtures__/android';
-import findPackageClassName from '../findPackageClassName';
+import findPackageClassName, {matchClassName} from '../findPackageClassName';
 
 jest.mock('path');
 jest.mock('fs');
@@ -52,6 +52,30 @@ const fs = require('fs');
 
     it('returns `null` if there are no matches', () => {
       expect(findPackageClassName(`${root}empty`)).toBeNull();
+    });
+  });
+});
+
+describe('android:FindPackageClassNameRegex', () => {
+  [
+    mocks.findPackagesClassNameKotlinValid,
+    mocks.findPackagesClassNameJavaValid,
+  ].forEach(files => {
+    it('returns the name of the kotlin/java class implementing ReactPackage', () => {
+      files.forEach(file => {
+        expect(matchClassName(file)[1]).toBe('SomeExampleKotlinPackage');
+      });
+    });
+  });
+
+  [
+    mocks.findPackagesClassNameKotlinNotValid,
+    mocks.findPackagesClassNameJavaNotValid,
+  ].forEach(files => {
+    it('returns `null` if there are no matches for kotlin/java classes', () => {
+      files.forEach(file => {
+        expect(matchClassName(file)).toBeNull();
+      });
     });
   });
 });

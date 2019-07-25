@@ -22,12 +22,19 @@ export default function getPackageClassName(folder) {
 
   const packages = files
     .map(filePath => fs.readFileSync(path.join(folder, filePath), 'utf8'))
-    .map(file =>
-      file.match(
-        /class\s+(.+[^\s])(\s+implements\s+|\s*:)[\s,\w]*[^{]*ReactPackage/,
-      ),
-    )
+    .map(matchClassName)
     .filter(match => match);
 
   return packages.length ? packages[0][1] : null;
+}
+
+/**
+ * Match function that is looking for package's class name in file
+ *
+ * @param {String} file Content of file to match
+ */
+export function matchClassName(file) {
+  return file.match(
+    /class\s+(\w+[^(\s]*)[\s\w():]*(\s+implements\s+|:)[\s\w():,]*[^{]*ReactPackage/,
+  );
 }

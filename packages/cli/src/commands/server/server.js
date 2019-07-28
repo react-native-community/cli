@@ -34,7 +34,7 @@ export default {
       description:
         'Specify any additional folders to be added to the watch list',
       parse: (val: string) =>
-        val.split(',').map((folder: string) => path.resolve(folder)),
+        val.split(',').map<string>((folder: string) => path.resolve(folder)),
     },
     {
       name: '--assetPlugins [list]',

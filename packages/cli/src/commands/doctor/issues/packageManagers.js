@@ -50,4 +50,4 @@ const npm = {
   runAutomaticFix: () => console.log('should fix node'),
 };
 
-export {yarn, npm};
+export {packageManager, yarn, npm};

@@ -76,7 +76,6 @@ type ProjectParamsAndroidT = {
   settingsGradlePath?: string;
   assetsPath?: string;
   buildGradlePath?: string;
-  packageName?: string;
 };
 
 type ProjectParamsIOST = {

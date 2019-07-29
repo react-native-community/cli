@@ -149,6 +149,7 @@ export interface DependencyConfigAndroid {
 }
 
 export interface DependencyParamsAndroid {
+  packageName?: string;
   sourceDir?: string;
   manifestPath?: string;
   packageImportPath?: string;

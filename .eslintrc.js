@@ -1,3 +1,5 @@
+const prettierConfig = require('./.prettierrc');
+
 module.exports = {
   extends: ['@react-native-community', 'plugin:import/errors'],
   env: {
@@ -30,6 +32,12 @@ module.exports = {
       ],
       env: {
         jest: true,
+      },
+    },
+    {
+      files: ['*.ts', '**/*.ts'],
+      rules: {
+        'prettier/prettier': [2, {prettierConfig, parser: 'typescript'}],
       },
     },
   ],

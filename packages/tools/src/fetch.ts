@@ -19,7 +19,7 @@ async function unwrapFetchResult(response: Response) {
 export default async function fetch(
   url: string | Request,
   options?: FetchOptions,
-): Promise<{status: number, data: any, headers: Headers}> {
+): Promise<{status: number; data: any; headers: Headers}> {
   const result = await nodeFetch(url, options);
   const data = await unwrapFetchResult(result);
 

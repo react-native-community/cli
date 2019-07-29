@@ -11,7 +11,7 @@ import {logger} from '@react-native-community/cli-tools';
 
 export default function applyPatch(
   file: string,
-  patch: {patch: string, pattern: string | RegExp},
+  patch: {patch: string; pattern: string | RegExp},
 ) {
   if (file) {
     logger.debug(`Patching ${file}`);

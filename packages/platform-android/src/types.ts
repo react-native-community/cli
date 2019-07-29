@@ -9,18 +9,18 @@ export interface Command {
     args: Object,
   ) => Promise<void> | void;
   options?: Array<{
-    name: string,
-    description?: string,
-    parse?: (val: string) => any,
+    name: string;
+    description?: string;
+    parse?: (val: string) => any;
     default?:
       | string
       | boolean
       | number
-      | ((ctx: Config) => string | boolean | number),
+      | ((ctx: Config) => string | boolean | number);
   }>;
   examples?: Array<{
-    desc: string,
-    cmd: string,
+    desc: string;
+    cmd: string;
   }>;
 }
 
@@ -28,7 +28,7 @@ interface PlatformConfig<
   ProjectParams,
   DependencyParams,
   ProjectConfig,
-  DependencyConfig,
+  DependencyConfig
 > {
   projectConfig: (
     projectRoot: string,
@@ -43,21 +43,21 @@ interface PlatformConfig<
       projectConfig: ProjectConfig,
       packageName: string,
       dependencyConfig: DependencyConfig,
-    ) => boolean,
+    ) => boolean;
     register: (
       name: string,
       dependencyConfig: DependencyConfig,
       params: Object,
       projectConfig: ProjectConfig,
-    ) => void,
+    ) => void;
     unregister: (
       name: string,
       dependencyConfig: DependencyConfig,
       projectConfig: ProjectConfig,
       otherDependencies: Array<DependencyConfig>,
-    ) => void,
-    copyAssets: (assets: string[], projectConfig: ProjectConfig) => void,
-    unlinkAssets: (assets: string[], projectConfig: ProjectConfig) => void,
+    ) => void;
+    copyAssets: (assets: string[], projectConfig: ProjectConfig) => void;
+    unlinkAssets: (assets: string[], projectConfig: ProjectConfig) => void;
   };
 }
 
@@ -70,8 +70,8 @@ export interface Config {
 
   // Object that contains configuration for a project (null, when platform not available)
   project: {
-    android?: ProjectConfigAndroid,
-    [key: string]: any,
+    android?: ProjectConfigAndroid;
+    [key: string]: any;
   };
 
   // An array of assets as defined by the user
@@ -80,19 +80,19 @@ export interface Config {
   // Map of the dependencies that are present in the project
   dependencies: {
     [key: string]: {
-      name: string,
-      root: string,
+      name: string;
+      root: string;
       platforms: {
-        android?: DependencyConfigAndroid | null,
-        [key: string]: any,
-      },
-      assets: string[],
+        android?: DependencyConfigAndroid | null;
+        [key: string]: any;
+      };
+      assets: string[];
       hooks: {
-        prelink?: string,
-        postlink?: string,
-      },
-      params: InquirerPromptT[],
-    },
+        prelink?: string;
+        postlink?: string;
+      };
+      params: InquirerPromptT[];
+    };
   };
 
   // Map of available platforms (built-ins and dynamically loaded)
@@ -102,8 +102,8 @@ export interface Config {
       DependencyParamsAndroid,
       ProjectConfigAndroid,
       DependencyConfigAndroid
-    >,
-    [name: string]: PlatformConfig<any, any, any, any>,
+    >;
+    [name: string]: PlatformConfig<any, any, any, any>;
   };
 
   // An array of commands that are present in 3rd party packages
@@ -111,8 +111,8 @@ export interface Config {
 
   // Haste configuration resolved based on available plugins
   haste: {
-    platforms: Array<string>,
-    providesModuleNodeModules: Array<string>,
+    platforms: Array<string>;
+    providesModuleNodeModules: Array<string>;
   };
 }
 
@@ -149,8 +149,6 @@ export interface DependencyConfigAndroid {
 }
 
 export interface DependencyParamsAndroid {
-  // LOL?
-  packageName?: string;
   sourceDir?: string;
   manifestPath?: string;
   packageImportPath?: string;

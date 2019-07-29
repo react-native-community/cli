@@ -4,12 +4,10 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
- * @emails oncall+javascript_foundation
  */
 
 import findAndroidAppFolder from '../findAndroidAppFolder';
-import mocks from '../__fixtures__/android';
+import * as mocks from '../__fixtures__/android';
 
 jest.mock('path');
 jest.mock('fs');

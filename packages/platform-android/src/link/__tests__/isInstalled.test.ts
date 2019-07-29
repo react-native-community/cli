@@ -4,8 +4,6 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
- * @emails oncall+javascript_foundation
  */
 
 import isInstalled from '../isInstalled';
@@ -32,7 +30,7 @@ describe('android::isInstalled', () => {
     ['test-not-there-yet', false],
   ])(
     'properly detects if %p project is already in build.gradle',
-    (project, isPresent) => {
+    (project: string, isPresent: boolean) => {
       expect(isInstalled(projectConfig, project)).toBe(isPresent);
     },
   );

@@ -4,7 +4,6 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
  */
 
 const fs = jest.requireActual('fs');
@@ -17,7 +16,7 @@ const mainJavaClass = fs.readFileSync(
   path.join(__dirname, './files/Main.java'),
 );
 
-function generateValidFileStructure(classFileName) {
+function generateValidFileStructure(classFileName: string) {
   return {
     src: {
       'AndroidManifest.xml': manifest,
@@ -37,11 +36,11 @@ function generateValidFileStructure(classFileName) {
   };
 }
 
-exports.valid = generateValidFileStructure('ReactPackage.java');
+export const valid = generateValidFileStructure('ReactPackage.java');
 
-exports.validKotlin = generateValidFileStructure('ReactPackage.kt');
+export const validKotlin = generateValidFileStructure('ReactPackage.kt');
 
-exports.userConfigManifest = {
+export const userConfigManifest = {
   src: {
     main: {
       'AndroidManifest.xml': manifest,
@@ -64,7 +63,7 @@ exports.userConfigManifest = {
   },
 };
 
-exports.corrupted = {
+export const corrupted = {
   src: {
     'AndroidManifest.xml': manifest,
     main: {
@@ -77,7 +76,7 @@ exports.corrupted = {
   },
 };
 
-exports.noPackage = {
+export const noPackage = {
   src: {
     'AndroidManifest.xml': manifest,
     main: {
@@ -92,7 +91,7 @@ exports.noPackage = {
   },
 };
 
-exports.findPackagesClassNameKotlinValid = [
+export const findPackagesClassNameKotlinValid = [
   `
   class SomeExampleKotlinPackage() : ReactPackage {
     override fun createNativeModules(reactContext: ReactApplicationContext): MutableList<NativeModule> {
@@ -160,7 +159,7 @@ exports.findPackagesClassNameKotlinValid = [
   }`,
 ];
 
-exports.findPackagesClassNameKotlinNotValid = [
+export const findPackagesClassNameKotlinNotValid = [
   `
   class SomeExampleKotlinPackage() {
     override fun createNativeModules(reactContext: ReactApplicationContext): MutableList<NativeModule> {
@@ -185,7 +184,7 @@ exports.findPackagesClassNameKotlinNotValid = [
   }`,
 ];
 
-exports.findPackagesClassNameJavaValid = [
+export const findPackagesClassNameJavaValid = [
   `
   class SomeExampleKotlinPackage implements ReactPackage {
     
@@ -211,7 +210,7 @@ exports.findPackagesClassNameJavaValid = [
   `,
 ];
 
-exports.findPackagesClassNameJavaNotValid = [
+export const findPackagesClassNameJavaNotValid = [
   `
   class SomeExampleKotlinPackage implements SomePackage {
     

@@ -10,7 +10,7 @@ import applyParams from '../applyParams';
 
 const packageInstance = "new SomeLibrary(${foo}, ${bar}, 'something')";
 const name = 'some-library';
-const params = {
+const params: any = {
   foo: 'foo',
   bar: 'bar',
 };
@@ -18,6 +18,7 @@ const params = {
 describe('makePackagePatch@0.20', () => {
   it('should build a patch', () => {
     const packagePatch = makePackagePatch(packageInstance, params, name);
+    // @ts-ignore
     expect(Object.prototype.toString(packagePatch)).toBe('[object Object]');
   });
 

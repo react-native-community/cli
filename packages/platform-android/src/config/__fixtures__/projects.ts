@@ -1,4 +1,4 @@
-import android from './android';
+import * as android from './android';
 
 export const flat = {
   android: android.valid,

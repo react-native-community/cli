@@ -4,7 +4,6 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
  */
 
 import applyPatch from './patches/applyPatch';
@@ -13,12 +12,17 @@ import makeSettingsPatch from './patches/makeSettingsPatch';
 import makeBuildPatch from './patches/makeBuildPatch';
 import makeImportPatch from './patches/makeImportPatch';
 import makePackagePatch from './patches/makePackagePatch';
+import {
+  ProjectConfigAndroid,
+  DependencyConfigAndroid,
+  ProjectParamsAndroid,
+} from '../types';
 
 export default function registerNativeAndroidModule(
-  name,
-  androidConfig,
-  params,
-  projectConfig,
+  name: string,
+  androidConfig: DependencyConfigAndroid,
+  params: ProjectParamsAndroid,
+  projectConfig: ProjectConfigAndroid,
 ) {
   const buildPatch = makeBuildPatch(name);
 

@@ -4,12 +4,16 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
  */
 
 import applyParams from './applyParams';
+import {ProjectParamsAndroid} from '../../types';
 
-export default function makePackagePatch(packageInstance, params, prefix) {
+export default function makePackagePatch(
+  packageInstance: string,
+  params: ProjectParamsAndroid,
+  prefix: string,
+) {
   const processedInstance = applyParams(packageInstance, params, prefix);
 
   return {

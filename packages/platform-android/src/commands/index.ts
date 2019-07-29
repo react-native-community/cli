@@ -1,6 +1,3 @@
-/**
- * @flow
- */
 import logAndroid from './logAndroid';
 import runAndroid from './runAndroid';
 

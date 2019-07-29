@@ -4,7 +4,6 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
  */
 
 import fs from 'fs';
@@ -12,7 +11,7 @@ import normalizeProjectName from './normalizeProjectName';
 
 const depConfigs = ['compile', 'api', 'implementation'];
 
-export default function makeBuildPatch(name, buildGradlePath) {
+export default function makeBuildPatch(name: string, buildGradlePath?: string) {
   const normalizedProjectName = normalizeProjectName(name);
   const installPattern = new RegExp(
     buildDepRegExp(normalizedProjectName, ...depConfigs),
@@ -25,13 +24,16 @@ export default function makeBuildPatch(name, buildGradlePath) {
   };
 }
 
-function makePatchString(normalizedProjectName, buildGradlePath) {
+function makePatchString(
+  normalizedProjectName: string,
+  buildGradlePath?: string,
+) {
   const defaultPatchString = `    implementation project(':${normalizedProjectName}')\n`;
   if (!buildGradlePath) {
     return defaultPatchString;
   }
 
-  const buildGradle = fs.readFileSync(buildGradlePath);
+  const buildGradle = fs.readFileSync(buildGradlePath, 'utf8');
 
   for (const config of depConfigs) {
     const depPattern = new RegExp(
@@ -45,7 +47,10 @@ function makePatchString(normalizedProjectName, buildGradlePath) {
   return defaultPatchString;
 }
 
-function buildDepRegExp(normalizedProjectName, ...configs) {
+function buildDepRegExp(
+  normalizedProjectName: string,
+  ...configs: Array<string>
+) {
   const orConfigs = configs.join('|');
   return `(${orConfigs})\\w*\\s*\\(*project\\s*\\(['"]:${normalizedProjectName}['"]\\)`;
 }

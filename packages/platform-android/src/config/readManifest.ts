@@ -4,13 +4,11 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
-function getAdbPath() {
-  return process.env.ANDROID_HOME
-    ? `${process.env.ANDROID_HOME}/platform-tools/adb`
-    : 'adb';
-}
+import fs from 'fs';
+import xml from 'xmldoc';
 
-export default getAdbPath;
+export default function readManifest(manifestPath: string) {
+  return new xml.XmlDocument(fs.readFileSync(manifestPath, 'utf8'));
+}

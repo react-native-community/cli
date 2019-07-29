@@ -4,7 +4,6 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 import chalk from 'chalk';
@@ -13,7 +12,7 @@ import {logger, CLIError} from '@react-native-community/cli-tools';
 import adb from './adb';
 import tryRunAdbReverse from './tryRunAdbReverse';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
-import type {FlagsT} from '.';
+import {Flags} from '.';
 
 function getTaskNames(
   appFolder: string,
@@ -29,7 +28,7 @@ function toPascalCase(value: string) {
 }
 
 function runOnAllDevices(
-  args: FlagsT,
+  args: Flags,
   cmd: string,
   packageNameWithSuffix: string,
   packageName: string,
@@ -54,19 +53,21 @@ function runOnAllDevices(
   }
   const devices = adb.getDevices(adbPath);
 
-  (devices.length > 0 ? devices : [undefined]).forEach(device => {
-    tryRunAdbReverse(args.port, device);
-    tryLaunchAppOnDevice(
-      device,
-      packageNameWithSuffix,
-      packageName,
-      adbPath,
-      args.mainActivity,
-    );
-  });
+  (devices.length > 0 ? devices : [undefined]).forEach(
+    (device: string | void) => {
+      tryRunAdbReverse(args.port, device);
+      tryLaunchAppOnDevice(
+        device,
+        packageNameWithSuffix,
+        packageName,
+        adbPath,
+        args.mainActivity,
+      );
+    },
+  );
 }
 
-function createInstallError(error) {
+function createInstallError(error: any) {
   const stderr = (error.stderr || '').toString();
   const docs =
     'https://facebook.github.io/react-native/docs/getting-started.html#android-development-environment';

@@ -4,7 +4,6 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
  */
 
 import path from 'path';
@@ -12,14 +11,19 @@ import findAndroidAppFolder from './findAndroidAppFolder';
 import findManifest from './findManifest';
 import findPackageClassName from './findPackageClassName';
 import readManifest from './readManifest';
+import {ProjectParamsAndroid, DependencyParamsAndroid} from '../types';
+import {XmlDocument} from 'xmldoc';
 
-const getPackageName = manifest => manifest.attr.package;
+const getPackageName = (manifest: XmlDocument) => manifest.attr.package;
 
 /**
  * Gets android project config by analyzing given folder and taking some
  * defaults specified by user into consideration
  */
-export function projectConfig(folder, userConfig = {}) {
+export function projectConfig(
+  folder: string,
+  userConfig: ProjectParamsAndroid = {},
+) {
   const src = userConfig.sourceDir || findAndroidAppFolder(folder);
 
   if (!src) {
@@ -92,7 +96,10 @@ export function projectConfig(folder, userConfig = {}) {
  * Same as projectConfigAndroid except it returns
  * different config that applies to packages only
  */
-export function dependencyConfig(folder, userConfig = {}) {
+export function dependencyConfig(
+  folder: string,
+  userConfig: DependencyParamsAndroid = {},
+) {
   const src = userConfig.sourceDir || findAndroidAppFolder(folder);
 
   if (!src) {

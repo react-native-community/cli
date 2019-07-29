@@ -4,7 +4,6 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 import {execFileSync} from 'child_process';
@@ -12,7 +11,10 @@ import {logger} from '@react-native-community/cli-tools';
 import getAdbPath from './getAdbPath';
 
 // Runs ADB reverse tcp:8081 tcp:8081 to allow loading the jsbundle from the packager
-function tryRunAdbReverse(packagerPort: number | string, device?: string) {
+function tryRunAdbReverse(
+  packagerPort: number | string,
+  device?: string | void,
+) {
   try {
     const adbPath = getAdbPath();
     const adbArgs = ['reverse', `tcp:${packagerPort}`, `tcp:${packagerPort}`];

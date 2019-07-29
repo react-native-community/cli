@@ -22,6 +22,7 @@ describe('--appFolder', () => {
   });
 
   it('uses task "install[Variant]" as default task', () => {
+    // @ts-ignore
     runOnAllDevices({
       variant: 'debug',
     });
@@ -30,6 +31,7 @@ describe('--appFolder', () => {
   });
 
   it('uses appFolder and default variant', () => {
+    // @ts-ignore
     runOnAllDevices({
       appFolder: 'someApp',
       variant: 'debug',
@@ -39,6 +41,7 @@ describe('--appFolder', () => {
   });
 
   it('uses appFolder and custom variant', () => {
+    // @ts-ignore
     runOnAllDevices({
       appFolder: 'anotherApp',
       variant: 'staging',
@@ -50,6 +53,7 @@ describe('--appFolder', () => {
   });
 
   it('uses only task argument', () => {
+    // @ts-ignore
     runOnAllDevices({
       tasks: ['someTask'],
       variant: 'debug',
@@ -59,6 +63,7 @@ describe('--appFolder', () => {
   });
 
   it('uses appFolder and custom task argument', () => {
+    // @ts-ignore
     runOnAllDevices({
       appFolder: 'anotherApp',
       tasks: ['someTask'],
@@ -69,6 +74,7 @@ describe('--appFolder', () => {
   });
 
   it('uses multiple tasks', () => {
+    // @ts-ignore
     runOnAllDevices({
       appFolder: 'app',
       tasks: ['clean', 'someTask'],
@@ -76,6 +82,7 @@ describe('--appFolder', () => {
 
     expect(execFileSync.mock.calls[0][1]).toContain(
       'app:clean',
+      // @ts-ignore
       'app:someTask',
     );
   });

@@ -1,18 +1,16 @@
-// @flow
-
 import chalk from 'chalk';
 import {logger} from '@react-native-community/cli-tools';
-import type {ConfigT} from 'types';
 import getLinkConfig from './index';
+import {Config} from '../types';
 
 // TODO: move to cli-tools once platform-ios and platform-android are migrated
 // to TS and unify with iOS implementation
 export default function warnAboutManuallyLinkedLibs(
-  config: ConfigT,
+  config: Config,
   platform: string = 'android',
-  linkConfig: $Call<typeof getLinkConfig> = getLinkConfig(),
+  linkConfig: any = getLinkConfig(),
 ) {
-  let deps = [];
+  let deps: Array<string> = [];
 
   for (let key in config.dependencies) {
     const dependency = config.dependencies[key];

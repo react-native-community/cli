@@ -4,7 +4,6 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 import path from 'path';
@@ -12,7 +11,7 @@ import execa from 'execa';
 import {spawnSync, spawn, execFileSync} from 'child_process';
 import chalk from 'chalk';
 import fs from 'fs';
-import type {ConfigT} from 'types';
+import {Config} from '../../types';
 import adb from './adb';
 import runOnAllDevices from './runOnAllDevices';
 import tryRunAdbReverse from './tryRunAdbReverse';
@@ -27,29 +26,29 @@ import {
 import warnAboutManuallyLinkedLibs from '../../link/warnAboutManuallyLinkedLibs';
 
 // Verifies this is an Android project
-function checkAndroid(root) {
+function checkAndroid(root: string) {
   return fs.existsSync(path.join(root, 'android/gradlew'));
 }
 
-export type FlagsT = {|
-  tasks?: Array<string>,
-  root: string,
-  variant: string,
-  appFolder: string,
-  appId: string,
-  appIdSuffix: string,
-  mainActivity: string,
-  deviceId?: string,
-  packager: boolean,
-  port: number,
-  terminal: string,
-  jetifier: boolean,
-|};
+export interface Flags {
+  tasks?: Array<string>;
+  root: string;
+  variant: string;
+  appFolder: string;
+  appId: string;
+  appIdSuffix: string;
+  mainActivity: string;
+  deviceId?: string;
+  packager: boolean;
+  port: number;
+  terminal: string;
+  jetifier: boolean;
+}
 
 /**
  * Starts the app on a connected Android emulator or device.
  */
-async function runAndroid(argv: Array<string>, config: ConfigT, args: FlagsT) {
+async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
   if (!checkAndroid(args.root)) {
     logger.error(
       'Android project not found. Are you sure this is a React Native project?',
@@ -93,7 +92,11 @@ async function runAndroid(argv: Array<string>, config: ConfigT, args: FlagsT) {
   });
 }
 
-function getPackageNameWithSuffix(appId, appIdSuffix, packageName) {
+function getPackageNameWithSuffix(
+  appId: string,
+  appIdSuffix: string,
+  packageName: string,
+) {
   if (appId) {
     return appId;
   }
@@ -105,15 +108,15 @@ function getPackageNameWithSuffix(appId, appIdSuffix, packageName) {
 }
 
 // Builds the app and runs it on a connected emulator / device.
-function buildAndRun(args) {
+function buildAndRun(args: Flags) {
   process.chdir(path.join(args.root, 'android'));
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
 
   // "app" is usually the default value for Android apps with only 1 app
   const {appFolder} = args;
+  // @ts-ignore
   const packageName = fs
     .readFileSync(`${appFolder}/src/main/AndroidManifest.xml`, 'utf8')
-    // $FlowFixMe
     .match(/package="(.+?)"/)[1];
 
   const packageNameWithSuffix = getPackageNameWithSuffix(
@@ -143,11 +146,11 @@ function buildAndRun(args) {
 }
 
 function runOnSpecificDevice(
-  args,
-  gradlew,
-  packageNameWithSuffix,
-  packageName,
-  adbPath,
+  args: Flags,
+  gradlew: 'gradlew.bat' | './gradlew',
+  packageNameWithSuffix: string,
+  packageName: string,
+  adbPath: string,
 ) {
   const devices = adb.getDevices(adbPath);
   const {deviceId} = args;
@@ -172,7 +175,7 @@ function runOnSpecificDevice(
   }
 }
 
-function buildApk(gradlew) {
+function buildApk(gradlew: string) {
   try {
     // using '-x lint' in order to ignore linting errors while building the apk
     const gradleArgs = ['build', '-x', 'lint'];
@@ -184,7 +187,7 @@ function buildApk(gradlew) {
   }
 }
 
-function tryInstallAppOnDevice(args, adbPath, device) {
+function tryInstallAppOnDevice(args: Flags, adbPath: string, device: string) {
   try {
     // "app" is usually the default value for Android apps with only 1 app
     const {appFolder} = args;
@@ -211,11 +214,11 @@ function tryInstallAppOnDevice(args, adbPath, device) {
 }
 
 function getInstallApkName(
-  appFolder,
-  adbPath,
-  variant,
-  device,
-  buildDirectory,
+  appFolder: string,
+  adbPath: string,
+  variant: string,
+  device: string,
+  buildDirectory: string,
 ) {
   const availableCPUs = adb.getAvailableCPUs(adbPath, device);
 
@@ -237,11 +240,11 @@ function getInstallApkName(
 }
 
 function installAndLaunchOnDevice(
-  args,
-  selectedDevice,
-  packageNameWithSuffix,
-  packageName,
-  adbPath,
+  args: Flags,
+  selectedDevice: string,
+  packageNameWithSuffix: string,
+  packageName: string,
+  adbPath: string,
 ) {
   tryRunAdbReverse(args.port, selectedDevice);
   tryInstallAppOnDevice(args, adbPath, selectedDevice);
@@ -254,7 +257,12 @@ function installAndLaunchOnDevice(
   );
 }
 
-function startServerInNewWindow(port, terminal, reactNativePath) {
+// @ts-ignore
+function startServerInNewWindow(
+  port: number,
+  terminal: string,
+  reactNativePath: string,
+) {
   /**
    * Set up OS-specific filenames and commands
    */
@@ -299,7 +307,7 @@ function startServerInNewWindow(port, terminal, reactNativePath) {
    */
   const scriptsDir = path.dirname(launchPackagerScript);
   const packagerEnvFile = path.join(scriptsDir, packagerEnvFilename);
-  const procConfig: Object = {cwd: scriptsDir};
+  const procConfig: any = {cwd: scriptsDir};
 
   /**
    * Ensure we overwrite file by passing the `w` flag

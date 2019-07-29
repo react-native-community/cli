@@ -4,7 +4,6 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
  */
 
 import fs from 'fs';
@@ -16,11 +15,12 @@ import makeBuildPatch from './patches/makeBuildPatch';
 import makeStringsPatch from './patches/makeStringsPatch';
 import makeImportPatch from './patches/makeImportPatch';
 import makePackagePatch from './patches/makePackagePatch';
+import {ProjectConfigAndroid, DependencyConfigAndroid} from '../types';
 
 export default function unregisterNativeAndroidModule(
-  name,
-  androidConfig,
-  projectConfig,
+  name: string,
+  androidConfig: DependencyConfigAndroid,
+  projectConfig: ProjectConfigAndroid,
 ) {
   const buildPatch = makeBuildPatch(name, projectConfig.buildGradlePath);
   const strings = fs.readFileSync(projectConfig.stringsPath, 'utf8');
@@ -28,7 +28,9 @@ export default function unregisterNativeAndroidModule(
 
   strings.replace(
     /moduleConfig="true" name="(\w+)">(.*)</g,
+    // @ts-ignore
     (_, param, value) => {
+      // @ts-ignore
       params[param.slice(toCamelCase(name).length + 1)] = value;
     },
   );

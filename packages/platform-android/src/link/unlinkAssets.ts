@@ -4,10 +4,9 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
-import fs from 'fs-extra';
+import fs from 'fs';
 import path from 'path';
 import {logger, groupFilesByType} from '@react-native-community/cli-tools';
 
@@ -17,18 +16,22 @@ import {logger, groupFilesByType} from '@react-native-community/cli-tools';
  * For now, the only types of files that are handled are:
  * - Fonts (otf, ttf) - copied to targetPath/fonts under original name
  */
-export default function copyAssetsAndroid(
+export default function unlinkAssetsAndroid(
   files: Array<string>,
   project: {assetsPath: string},
 ) {
   const assets = groupFilesByType(files);
 
   logger.debug(`Assets path: ${project.assetsPath}`);
-  (assets.font || []).forEach(asset => {
-    const fontsDir = path.join(project.assetsPath, 'fonts');
-    logger.debug(`Copying asset ${asset}`);
-    // @todo: replace with fs.mkdirSync(path, {recursive}) + fs.copyFileSync
-    // and get rid of fs-extra once we move to Node 10
-    fs.copySync(asset, path.join(fontsDir, path.basename(asset)));
+  (assets.font || []).forEach(file => {
+    const filePath = path.join(
+      project.assetsPath,
+      'fonts',
+      path.basename(file),
+    );
+    if (fs.existsSync(filePath)) {
+      logger.debug(`Removing asset ${filePath}`);
+      fs.unlinkSync(filePath);
+    }
   });
 }

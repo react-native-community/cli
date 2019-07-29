@@ -4,10 +4,9 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
  */
 
-export default function makeImportPatch(packageImportPath) {
+export default function makeImportPatch(packageImportPath: string) {
   return {
     pattern: 'import com.facebook.react.ReactApplication;',
     patch: `\n${packageImportPath}`,

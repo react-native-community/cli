@@ -4,17 +4,12 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
  */
 
 import fs from 'fs';
 import path from 'path';
 
-/**
- * @param  {String} folder Folder to seek in
- * @return {String}
- */
-export default function findAndroidAppFolder(folder) {
+export default function findAndroidAppFolder(folder: string) {
   const flat = 'android';
   const nested = path.join('android', 'app');
 

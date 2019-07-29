@@ -1,6 +1,4 @@
 /**
- * @flow
- *
  * Android platform files
  */
 

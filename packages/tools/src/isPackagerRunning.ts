@@ -16,7 +16,7 @@ import fetch from './fetch';
  *   - `unrecognized`: one other process is running on the port we expect the packager to be running.
  */
 async function isPackagerRunning(
-  packagerPort: string = process.env.RCT_METRO_PORT || '8081',
+  packagerPort: string | number = process.env.RCT_METRO_PORT || '8081',
 ): Promise<'running' | 'not_running' | 'unrecognized'> {
   try {
     const {data} = await fetch(`http://localhost:${packagerPort}/status`);

@@ -47,7 +47,7 @@ root/
     ios/
 ```
 
-you'll need to set a custom root. Pass it as an argument to `use_native_modules!`--set inside a target, adjust the `native_modules`--and every pods--path accordingly:
+you'll need to set a custom root. Pass it as an argument to `use_native_modules!` function inside the targets and adjust the relatively required `native_modules` path accordingly:
 
 ```rb
 # example/ios/Podfile

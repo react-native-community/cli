@@ -56,7 +56,6 @@ target 'RNapp' do
   pod 'React', :path => '../../node_modules/react-native/'
   use_native_modules!("../..")
 end
-# ...
 ```
 
 ## Platform Android

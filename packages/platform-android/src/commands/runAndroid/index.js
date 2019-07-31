@@ -9,7 +9,6 @@
 
 import path from 'path';
 import execa from 'execa';
-import {spawnSync, spawn, execFileSync} from 'child_process';
 import chalk from 'chalk';
 import fs from 'fs';
 import type {ConfigT} from 'types';
@@ -87,7 +86,19 @@ async function runAndroid(argv: Array<string>, config: ConfigT, args: FlagsT) {
     } else {
       // result == 'not_running'
       logger.info('Starting JS server...');
-      startServerInNewWindow(args.port, args.terminal, config.reactNativePath);
+      try {
+        startServerInNewWindow(
+          args.port,
+          args.terminal,
+          config.reactNativePath,
+        );
+      } catch (error) {
+        logger.warn(
+          `Failed to automatically start the packager server. Please run "react-native start" manually. Error details: ${
+            error.message
+          }`,
+        );
+      }
     }
     return buildAndRun(args);
   });
@@ -178,7 +189,7 @@ function buildApk(gradlew) {
     const gradleArgs = ['build', '-x', 'lint'];
     logger.info('Building the app...');
     logger.debug(`Running command "${gradlew} ${gradleArgs.join(' ')}"`);
-    execFileSync(gradlew, gradleArgs, {stdio: 'inherit'});
+    execa.sync(gradlew, gradleArgs, {stdio: 'inherit'});
   } catch (error) {
     throw new CLIError('Failed to build the app.', error);
   }
@@ -204,7 +215,7 @@ function tryInstallAppOnDevice(args, adbPath, device) {
     logger.debug(
       `Running command "cd android && adb -s ${device} install -r -d ${pathToApk}"`,
     );
-    execFileSync(adbPath, adbArgs, {stdio: 'inherit'});
+    execa.sync(adbPath, adbArgs, {stdio: 'inherit'});
   } catch (error) {
     throw new CLIError('Failed to install the app on the device.', error);
   }
@@ -310,23 +321,29 @@ function startServerInNewWindow(port, terminal, reactNativePath) {
   });
 
   if (process.platform === 'darwin') {
-    if (terminal) {
-      return spawnSync(
+    try {
+      return execa.sync(
         'open',
         ['-a', terminal, launchPackagerScript],
         procConfig,
       );
+    } catch (error) {
+      return execa.sync('open', [launchPackagerScript], procConfig);
     }
-    return spawnSync('open', [launchPackagerScript], procConfig);
   }
   if (process.platform === 'linux') {
-    if (terminal) {
-      procConfig.detached = true;
-      return spawn(terminal, ['-e', `sh ${launchPackagerScript}`], procConfig);
+    try {
+      return execa.sync(terminal, ['-e', `sh ${launchPackagerScript}`], {
+        ...procConfig,
+        detached: true,
+      });
+    } catch (error) {
+      // By default, the child shell process will be attached to the parent
+      return execa.sync('sh', [launchPackagerScript], {
+        ...procConfig,
+        detached: false,
+      });
     }
-    // By default, the child shell process will be attached to the parent
-    procConfig.detached = false;
-    return spawn('sh', [launchPackagerScript], procConfig);
   }
   if (/^win/.test(process.platform)) {
     procConfig.detached = true;
@@ -336,7 +353,7 @@ function startServerInNewWindow(port, terminal, reactNativePath) {
       encoding: 'utf8',
       flag: 'w',
     });
-    return spawn('cmd.exe', ['/C', launchPackagerScript], procConfig);
+    return execa.sync('cmd.exe', ['/C', launchPackagerScript], procConfig);
   }
   logger.error(
     `Cannot start the packager. Unknown platform ${process.platform}`,
@@ -400,7 +417,7 @@ export default {
       name: '--terminal [string]',
       description:
         'Launches the Metro Bundler in a new window using the specified terminal path.',
-      default: getDefaultUserTerminal,
+      default: getDefaultUserTerminal(),
     },
     {
       name: '--tasks [list]',

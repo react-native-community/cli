@@ -67,7 +67,7 @@ function runOnAllDevices(
   );
 }
 
-function createInstallError(error: any) {
+function createInstallError(error: Error & {stderr: string}) {
   const stderr = (error.stderr || '').toString();
   const docs =
     'https://facebook.github.io/react-native/docs/getting-started.html#android-development-environment';

@@ -8,7 +8,7 @@
 
 import path from 'path';
 import execa from 'execa';
-import {spawnSync, spawn, execFileSync} from 'child_process';
+import {spawnSync, spawn, execFileSync, SpawnSyncOptions} from 'child_process';
 import chalk from 'chalk';
 import fs from 'fs';
 import {Config} from '../../types';
@@ -307,7 +307,7 @@ function startServerInNewWindow(
    */
   const scriptsDir = path.dirname(launchPackagerScript);
   const packagerEnvFile = path.join(scriptsDir, packagerEnvFilename);
-  const procConfig: any = {cwd: scriptsDir};
+  const procConfig: SpawnSyncOptions & {detached?: boolean} = {cwd: scriptsDir};
 
   /**
    * Ensure we overwrite file by passing the `w` flag

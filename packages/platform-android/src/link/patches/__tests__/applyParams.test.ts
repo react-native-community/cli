@@ -15,6 +15,6 @@ describe('applyParams', () => {
   });
 
   it('use null if no params provided', () => {
-    expect(applyParams('${foo}', {}, 'react-native')).toEqual('');
+    expect(applyParams('${foo}', {}, 'react-native')).toEqual('null');
   });
 });

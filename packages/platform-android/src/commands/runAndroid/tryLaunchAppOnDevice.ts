@@ -10,10 +10,7 @@ import {spawnSync} from 'child_process';
 import {logger, CLIError} from '@react-native-community/cli-tools';
 
 function tryLaunchAppOnDevice(
-  device?: string | void,
-  // Required parameter cannot follow optional parameter.
-  // We should refactor this function to avoid this error.
-  // @ts-ignore
+  device: string | void,
   packageNameWithSuffix: string,
   packageName: string,
   adbPath: string,

@@ -60,24 +60,24 @@ interface PlatformConfig<
     unlinkAssets: (assets: string[], projectConfig: ProjectConfig) => void;
   };
 }
-
+/**
+ * @property root - Root where the configuration has been resolved from
+ * @property reactNativePath - Path to React Native source
+ * @property project - Object that contains configuration for a project (null, when platform not available)
+ * @property assets - An array of assets as defined by the user
+ * @property dependencies - Map of the dependencies that are present in the project
+ * @property platforms - Map of available platforms (build-ins and dynamically loaded)
+ * @property commands - An array of commands that are present in 3rd party packages
+ * @property haste - Haste configuration resolved based on available plugins
+ */
 export interface Config {
-  // Root where the configuration has been resolved from
   root: string;
-
-  // Path to React Native source
   reactNativePath: string;
-
-  // Object that contains configuration for a project (null, when platform not available)
   project: {
     android?: ProjectConfigAndroid;
     [key: string]: any;
   };
-
-  // An array of assets as defined by the user
   assets: string[];
-
-  // Map of the dependencies that are present in the project
   dependencies: {
     [key: string]: {
       name: string;
@@ -94,8 +94,6 @@ export interface Config {
       params: InquirerPromptT[];
     };
   };
-
-  // Map of available platforms (built-ins and dynamically loaded)
   platforms: {
     android: PlatformConfig<
       ProjectParamsAndroid,
@@ -105,11 +103,7 @@ export interface Config {
     >;
     [name: string]: PlatformConfig<any, any, any, any>;
   };
-
-  // An array of commands that are present in 3rd party packages
   commands: Command[];
-
-  // Haste configuration resolved based on available plugins
   haste: {
     platforms: Array<string>;
     providesModuleNodeModules: Array<string>;

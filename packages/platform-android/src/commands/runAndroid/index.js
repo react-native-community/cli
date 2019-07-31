@@ -339,21 +339,20 @@ function startServerInNewWindow(port, terminal, reactNativePath) {
       });
     } catch (error) {
       // By default, the child shell process will be attached to the parent
-      return execa.sync('sh', [launchPackagerScript], {
-        ...procConfig,
-        detached: false,
-      });
+      return execa.sync('sh', [launchPackagerScript], procConfig);
     }
   }
   if (/^win/.test(process.platform)) {
-    procConfig.detached = true;
-    procConfig.stdio = 'ignore';
     //Temporary fix for #484. See comment on line 254
     fs.writeFileSync(launchPackagerScript, launchPackagerScriptContent, {
       encoding: 'utf8',
       flag: 'w',
     });
-    return execa.sync('cmd.exe', ['/C', launchPackagerScript], procConfig);
+    return execa.sync('cmd.exe', ['/C', launchPackagerScript], {
+      ...procConfig,
+      detached: true,
+      stdio: 'ignore',
+    });
   }
   logger.error(
     `Cannot start the packager. Unknown platform ${process.platform}`,

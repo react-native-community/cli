@@ -8,7 +8,9 @@ import {Config} from '../types';
 export default function warnAboutManuallyLinkedLibs(
   config: Config,
   platform: string = 'android',
-  linkConfig: any = getLinkConfig(),
+  linkConfig: ReturnType<
+    Config['platforms']['android']['linkConfig']
+  > = getLinkConfig(),
 ) {
   let deps: Array<string> = [];
 

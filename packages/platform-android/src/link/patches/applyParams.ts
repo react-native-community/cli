@@ -14,11 +14,12 @@ export default function applyParams(
   params: ProjectParamsAndroid,
   prefix: string,
 ) {
-  // @ts-ignore String.replace function must return string, not string | null.
   return str.replace(/\$\{(\w+)\}/g, (_pattern: string, param: string) => {
     const name = `${toCamelCase(prefix)}_${param}`;
 
     // @ts-ignore
-    return params[param] ? `getResources().getString(R.string.${name})` : null;
+    return params[param]
+      ? `getResources().getString(R.string.${name})`
+      : 'null';
   });
 }

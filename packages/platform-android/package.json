@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/cli-platform-android",
-  "version": "2.8.1",
+  "version": "2.8.2",
   "license": "MIT",
   "main": "build/index.js",
   "dependencies": {

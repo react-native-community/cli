@@ -229,11 +229,12 @@ ext.applyNativeModulesSettingsGradle = { DefaultSettings defaultSettings, String
 ext.applyNativeModulesAppBuildGradle = { Project project, String root = ".." ->
   autoModules.applyBuildGradle(project, root)
 
-  def generatedSrcDir = new File(buildDir, "generated/rncli/src/main/java/com/facebook/react")
+  def generatedSrcDir = "generated/rncli/src/main/java"
+  def generatedCodeDir = new File(buildDir, "$generatedSrcDir/com/facebook/react")
 
   task generatePackageList {
     doLast {
-      autoModules.generatePackagesFile(generatedSrcDir, generatedFileName, generatedFileContentsTemplate)
+      autoModules.generatePackagesFile(generatedCodeDir, generatedFileName, generatedFileContentsTemplate)
     }
   }
 
@@ -243,7 +244,7 @@ ext.applyNativeModulesAppBuildGradle = { Project project, String root = ".." ->
     sourceSets {
       main {
         java {
-          srcDirs += generatedSrcDir
+          srcDirs += "build/$generatedSrcDir"
         }
       }
     }

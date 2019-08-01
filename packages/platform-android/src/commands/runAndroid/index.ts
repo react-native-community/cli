@@ -356,7 +356,7 @@ function startServerInNewWindow(
       encoding: 'utf8',
       flag: 'w',
     });
-    return execa.sync('cmd.exe', ['/C', launchPackagerScript], {
+    return execa('cmd.exe', ['/C', launchPackagerScript], {
       ...procConfig,
       detached: true,
       stdio: 'ignore',

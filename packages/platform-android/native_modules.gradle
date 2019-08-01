@@ -2,8 +2,9 @@ import groovy.json.JsonSlurper
 import org.gradle.initialization.DefaultSettings
 
 def generatedFileName = "PackageList.java"
+def generatedFilePackage = "com.facebook.react"
 def generatedFileContentsTemplate = """
-package com.facebook.react;
+package $generatedFilePackage;
 
 import android.app.Application;
 import android.content.Context;
@@ -229,8 +230,8 @@ ext.applyNativeModulesSettingsGradle = { DefaultSettings defaultSettings, String
 ext.applyNativeModulesAppBuildGradle = { Project project, String root = ".." ->
   autoModules.applyBuildGradle(project, root)
 
-  def generatedSrcDir = "generated/rncli/src/main/java"
-  def generatedCodeDir = new File(buildDir, "$generatedSrcDir/com/facebook/react")
+  def generatedSrcDir = new File(buildDir, "generated/rncli/src/main/java")
+  def generatedCodeDir = new File(generatedSrcDir, generatedFilePackage.replace('.', '/'))
 
   task generatePackageList {
     doLast {
@@ -244,7 +245,7 @@ ext.applyNativeModulesAppBuildGradle = { Project project, String root = ".." ->
     sourceSets {
       main {
         java {
-          srcDirs += "build/$generatedSrcDir"
+          srcDirs += generatedSrcDir
         }
       }
     }

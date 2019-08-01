@@ -53,7 +53,7 @@ you'll need to set a custom root. Pass it as an argument to `use_native_modules!
 # example/ios/Podfile
 require_relative '../../node_modules/@react-native-community/cli-platform-ios/native_modules'
 target 'RNapp' do
-  pod 'React', :path => '../../node_modules/react-native/'
+  # React pods and custom pods here...
   use_native_modules!("../..")
 end
 ```

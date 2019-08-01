@@ -47,13 +47,15 @@ root/
     ios/
 ```
 
-you'll need to set a custom root. Pass it as an argument to `use_native_modules!` and adjust the `native_modules` path accordingly:
+you'll need to set a custom root. Pass it as an argument to `use_native_modules!` function inside the targets and adjust the relatively required `native_modules` path accordingly:
 
 ```rb
 # example/ios/Podfile
 require_relative '../../node_modules/@react-native-community/cli-platform-ios/native_modules'
-# ...
-use_native_modules!("../..")
+target 'RNapp' do
+  # React pods and custom pods here...
+  use_native_modules!("../..")
+end
 ```
 
 ## Platform Android

@@ -8,7 +8,6 @@
 
 import path from 'path';
 import execa from 'execa';
-import {spawnSync, spawn, execFileSync, SpawnSyncOptions} from 'child_process';
 import chalk from 'chalk';
 import fs from 'fs';
 import {Config} from '../../types';
@@ -86,7 +85,19 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
     } else {
       // result == 'not_running'
       logger.info('Starting JS server...');
-      startServerInNewWindow(args.port, args.terminal, config.reactNativePath);
+      try {
+        startServerInNewWindow(
+          args.port,
+          args.terminal,
+          config.reactNativePath,
+        );
+      } catch (error) {
+        logger.warn(
+          `Failed to automatically start the packager server. Please run "react-native start" manually. Error details: ${
+            error.message
+          }`,
+        );
+      }
     }
     return buildAndRun(args);
   });
@@ -181,7 +192,7 @@ function buildApk(gradlew: string) {
     const gradleArgs = ['build', '-x', 'lint'];
     logger.info('Building the app...');
     logger.debug(`Running command "${gradlew} ${gradleArgs.join(' ')}"`);
-    execFileSync(gradlew, gradleArgs, {stdio: 'inherit'});
+    execa.sync(gradlew, gradleArgs, {stdio: 'inherit'});
   } catch (error) {
     throw new CLIError('Failed to build the app.', error);
   }
@@ -207,7 +218,7 @@ function tryInstallAppOnDevice(args: Flags, adbPath: string, device: string) {
     logger.debug(
       `Running command "cd android && adb -s ${device} install -r -d ${pathToApk}"`,
     );
-    execFileSync(adbPath, adbArgs, {stdio: 'inherit'});
+    execa.sync(adbPath, adbArgs, {stdio: 'inherit'});
   } catch (error) {
     throw new CLIError('Failed to install the app on the device.', error);
   }
@@ -307,7 +318,7 @@ function startServerInNewWindow(
    */
   const scriptsDir = path.dirname(launchPackagerScript);
   const packagerEnvFile = path.join(scriptsDir, packagerEnvFilename);
-  const procConfig: SpawnSyncOptions & {detached?: boolean} = {cwd: scriptsDir};
+  const procConfig: execa.SyncOptions = {cwd: scriptsDir};
 
   /**
    * Ensure we overwrite file by passing the `w` flag
@@ -318,33 +329,38 @@ function startServerInNewWindow(
   });
 
   if (process.platform === 'darwin') {
-    if (terminal) {
-      return spawnSync(
+    try {
+      return execa.sync(
         'open',
         ['-a', terminal, launchPackagerScript],
         procConfig,
       );
+    } catch (error) {
+      return execa.sync('open', [launchPackagerScript], procConfig);
     }
-    return spawnSync('open', [launchPackagerScript], procConfig);
   }
   if (process.platform === 'linux') {
-    if (terminal) {
-      procConfig.detached = true;
-      return spawn(terminal, ['-e', `sh ${launchPackagerScript}`], procConfig);
+    try {
+      return execa.sync(terminal, ['-e', `sh ${launchPackagerScript}`], {
+        ...procConfig,
+        detached: true,
+      });
+    } catch (error) {
+      // By default, the child shell process will be attached to the parent
+      return execa.sync('sh', [launchPackagerScript], procConfig);
     }
-    // By default, the child shell process will be attached to the parent
-    procConfig.detached = false;
-    return spawn('sh', [launchPackagerScript], procConfig);
   }
   if (/^win/.test(process.platform)) {
-    procConfig.detached = true;
-    procConfig.stdio = 'ignore';
     //Temporary fix for #484. See comment on line 254
     fs.writeFileSync(launchPackagerScript, launchPackagerScriptContent, {
       encoding: 'utf8',
       flag: 'w',
     });
-    return spawn('cmd.exe', ['/C', launchPackagerScript], procConfig);
+    return execa.sync('cmd.exe', ['/C', launchPackagerScript], {
+      ...procConfig,
+      detached: true,
+      stdio: 'ignore',
+    });
   }
   logger.error(
     `Cannot start the packager. Unknown platform ${process.platform}`,
@@ -408,7 +424,7 @@ export default {
       name: '--terminal [string]',
       description:
         'Launches the Metro Bundler in a new window using the specified terminal path.',
-      default: getDefaultUserTerminal,
+      default: getDefaultUserTerminal(),
     },
     {
       name: '--tasks [list]',

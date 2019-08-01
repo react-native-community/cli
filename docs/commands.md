@@ -408,6 +408,10 @@ Starts the server that communicates with connected devices
 
 Specify port to listen on
 
+#### `--projectRoot [list]`
+
+Path to a custom project root
+
 #### `--watchFolders [list]`
 
 Specify any additional folders to be added to the watch list

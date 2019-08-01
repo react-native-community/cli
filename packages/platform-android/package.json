@@ -9,11 +9,17 @@
     "execa": "^1.0.0",
     "jetifier": "^1.6.2",
     "logkitty": "^0.5.0",
-    "slash": "^2.0.0",
-    "xmldoc": "^0.4.0"
+    "slash": "^3.0.0",
+    "xmldoc": "^1.1.2"
   },
   "files": [
     "build",
     "native_modules.gradle"
-  ]
+  ],
+  "devDependencies": {
+    "@types/execa": "^0.9.0",
+    "@types/fs-extra": "^8.0.0",
+    "@types/glob": "^7.1.1",
+    "@types/xmldoc": "^1.1.4"
+  }
 }

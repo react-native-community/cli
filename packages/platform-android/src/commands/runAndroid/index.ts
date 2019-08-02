@@ -356,7 +356,9 @@ function startServerInNewWindow(
       encoding: 'utf8',
       flag: 'w',
     });
-    return execa.sync('cmd.exe', ['/C', launchPackagerScript], {
+
+    // Awaiting this causes the CLI to hang indefinitely, so this must execute without await.
+    return execa('cmd.exe', ['/C', launchPackagerScript], {
       ...procConfig,
       detached: true,
       stdio: 'ignore',

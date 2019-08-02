@@ -35,7 +35,6 @@
   const Page = window.Page = {
 
     state: {
-      isDark: localStorage.getItem('darkTheme') === 'on',
       isPriorityMaintained: localStorage.getItem('maintainPriority') === 'on',
       status: {type: 'disconnected'},
       visibilityState: document.visibilityState,
@@ -48,7 +47,6 @@
 
     render() {
       const {
-        isDark,
         isPriorityMaintained,
         status,
         visibilityState,
@@ -82,11 +80,6 @@
         }
       }
 
-      const darkCheckbox = document.getElementById('dark');
-      document.body.classList.toggle('dark', isDark);
-      darkCheckbox.checked = isDark;
-      localStorage.setItem('darkTheme', isDark ? 'on' : '');
-
       const maintainPriorityCheckbox = document.getElementById('maintain-priority');
       const silence = document.getElementById('silence');
       silence.volume = 0.1;
@@ -97,10 +90,6 @@
       }
       maintainPriorityCheckbox.checked = isPriorityMaintained;
       localStorage.setItem('maintainPriority', isPriorityMaintained ? 'on' : '');
-    },
-
-    toggleDarkTheme() {
-      Page.setState({isDark: !Page.state.isDark});
     },
 
     togglePriorityMaintenance() {
@@ -253,26 +242,27 @@
   .content {
     padding: 10px;
   }
-  body.dark {
-    background-color: #242424;
-    color: #afafaf;
-  }
-  .dark .shortcut {
-    color: #c1c1c1;
-  }
-  .dark a {
-    color: #3b99fc;
-  }
   input[type=checkbox] {
     vertical-align: middle;
+  }
+  @media (prefers-color-scheme: dark) {
+    body {
+      background-color: #242424;
+      color: #afafaf;
+    }
+
+    .shortcut {
+      color: #c1c1c1;
+    }
+
+    a {
+      color: #3b99fc;
+    }
   }
 </style>
 </head>
 <body>
   <div class="content">
-    <label for="dark">
-      <input type="checkbox" id="dark" onclick="Page.toggleDarkTheme()"> Dark Theme
-    </label>
     <label for="maintain-priority">
       <input type="checkbox" id="maintain-priority" onclick="Page.togglePriorityMaintenance()"> Maintain Priority
     </label>

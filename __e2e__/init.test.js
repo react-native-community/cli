@@ -55,7 +55,13 @@ test('init --template', () => {
 
   // make sure we don't leave garbage
   expect(fs.readdirSync(DIR)).toEqual(['TestInit']);
-  expect(fs.readdirSync(path.join(DIR, 'TestInit'))).toEqual(templateFiles);
+
+  let dirFiles = fs.readdirSync(path.join(DIR, 'TestInit'));
+  expect(dirFiles.length).toEqual(templateFiles.length);
+
+  for (var templateFile of templateFiles) {
+    expect(dirFiles.includes(templateFile)).toBe(true);
+  }
 
   const pkgJson = require(path.join(DIR, 'TestInit', 'package.json'));
   expect(pkgJson).toMatchSnapshot(
@@ -74,11 +80,14 @@ test('init --template file:/tmp/custom/template', () => {
     'custom/template/template-dir/package.json': '{}',
     'custom/template/template-dir/empty': '',
   });
+  let templatePath = path.resolve(DIR, 'custom', 'template');
+  if (process.platform === 'win32')
+    templatePath = templatePath.split('\\').join('/');
 
   const {stdout} = run(DIR, [
     'init',
     '--template',
-    `file://${path.resolve(DIR, 'custom', 'template')}`,
+    `file://${templatePath}`,
     'TestInit',
   ]);
 
@@ -100,5 +109,11 @@ test('init --template with custom project path', () => {
 
   // make sure we don't leave garbage
   expect(fs.readdirSync(DIR)).toEqual([customPath]);
-  expect(fs.readdirSync(path.join(DIR, customPath))).toEqual(templateFiles);
+
+  let dirFiles = fs.readdirSync(path.join(DIR, customPath));
+  expect(dirFiles.length).toEqual(templateFiles.length);
+
+  for (var templateFile of templateFiles) {
+    expect(dirFiles.includes(templateFile)).toBe(true);
+  }
 });

@@ -35,7 +35,7 @@
   const Page = window.Page = {
 
     state: {
-      isDark: localStorage.getItem('darkTheme') === 'on',
+      isDark: localStorage.getItem('darkTheme') === null ? window.matchMedia("(prefers-color-scheme: dark)").matches : localStorage.getItem('darkTheme') === 'on',
       isPriorityMaintained: localStorage.getItem('maintainPriority') === 'on',
       status: {type: 'disconnected'},
       visibilityState: document.visibilityState,

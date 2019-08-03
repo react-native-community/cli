@@ -28,7 +28,7 @@ const checkForErrors = (output: string): void => {
     logger.error(
       'Upgrade failed. You do not seem to have an internet connection.',
     );
-    process.exit();
+    process.exit(); // exit gracefully so we don't output duplicate error with stack trace
   }
 
   if (hasErrors(output)) {

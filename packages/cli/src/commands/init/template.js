@@ -4,7 +4,16 @@ import path from 'path';
 import * as PackageManager from '../../tools/packageManager';
 import {logger} from '@react-native-community/cli-tools';
 import copyFiles from '../../tools/copyFiles';
-import {replacePathSepForRegex} from 'jest-regex-util';
+
+const replacePathSepForRegex = (string: string) => {
+  if (path.sep === '\\') {
+    return string.replace(
+      /(\/|(.)?\\(?![[\]{}()*+?.^$|\\]))/g,
+      (_match, _, p2) => (p2 && p2 !== '\\' ? p2 + '\\\\' : '\\\\'),
+    );
+  }
+  return string;
+};
 
 export type TemplateConfig = {
   placeholderName: string,

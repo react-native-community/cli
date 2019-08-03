@@ -30,6 +30,12 @@ function saveAssets(
     return Promise.resolve();
   }
 
+  if (!fs.existsSync(assetsDest)) {
+    let error = `The specified assets destination folder: "${assetsDest}" does not exist, stopping...`;
+    logger.error(error);
+    return Promise.reject();
+  }
+
   const getAssetDestPath =
     platform === 'android' ? getAssetDestPathAndroid : getAssetDestPathIOS;
 

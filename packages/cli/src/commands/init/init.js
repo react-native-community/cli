@@ -58,7 +58,7 @@ async function setProjectDirectory(directory) {
       throw new DirectoryAlreadyExistsError(directory);
     }
 
-    await fs.emptyDir(directory);
+    fs.emptyDirSync(directory);
   }
 
   try {

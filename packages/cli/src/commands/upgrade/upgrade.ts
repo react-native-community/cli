@@ -13,22 +13,55 @@ const webDiffUrl = 'https://react-native-community.github.io/upgrade-helper';
 const rawDiffUrl =
   'https://raw.githubusercontent.com/react-native-community/rn-diff-purge/diffs/diffs';
 
+const isConnected = (output: string): boolean => {
+  // there is no reliable way of checking for internet connectivity, so we should just
+  // read the output from npm (to check for connectivity errors) which is faster and relatively more reliable.
+  return !output.includes('the host is inaccessible');
+};
+
+const hasErrors = (output: string): boolean => output.includes('npm ERR');
+
+const hasWarnings = (output: string): boolean => output.includes('npm WARN');
+
+const checkForErrors = (output: string): void => {
+  if (!isConnected(output)) {
+    logger.error(
+      'Upgrade failed. You do not seem to have an internet connection.',
+    );
+    process.exit();
+  }
+
+  if (hasErrors(output)) {
+    logger.error('Upgrade failed with the following errors:', output);
+    process.exit();
+  }
+
+  if (hasWarnings(output)) {
+    logger.warn(output);
+  }
+};
+
 const getLatestRNVersion = async (): Promise<string> => {
   logger.info('No version passed. Fetching latest...');
-  const {stdout} = await execa('npm', ['info', 'react-native', 'version']);
+  const {stdout, stderr} = await execa('npm', [
+    'info',
+    'react-native',
+    'version',
+  ]);
+  checkForErrors(stderr);
   return stdout;
 };
 
 const getRNPeerDeps = async (
   version: string,
 ): Promise<{[key: string]: string}> => {
-  const {stdout} = await execa('npm', [
+  const {stdout, stderr} = await execa('npm', [
     'info',
     `react-native@${version}`,
     'peerDependencies',
     '--json',
   ]);
-
+  checkForErrors(stderr);
   return JSON.parse(stdout);
 };
 

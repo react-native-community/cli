@@ -28,8 +28,7 @@ async function linkAll(config: Config, options: Options) {
       )}`,
     );
 
-    for (let key in config.dependencies) {
-      const dependency = config.dependencies[key];
+    for (const dependency of config.dependencies) {
       try {
         if (dependency.hooks.prelink) {
           await makeHook(dependency.hooks.prelink)();

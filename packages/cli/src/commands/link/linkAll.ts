@@ -21,7 +21,7 @@ async function linkAll(config: Config, options: Options) {
     logger.info(
       `Linking dependencies using "${chalk.bold(
         'link',
-      )}" command is now legacy and likely unnecessary. We encourage you to try ${chalk.bold(
+      )}" command is now legacy and most likely unnecessary. We encourage you to try ${chalk.bold(
         'autolinking',
       )} that comes with React Native v0.60 default template. Autolinking happens at build time – during CocoaPods install or Gradle install phase. More information: ${chalk.dim.underline(
         'https://github.com/react-native-community/cli/blob/master/docs/autolinking.md',

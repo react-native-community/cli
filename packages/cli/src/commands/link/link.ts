@@ -49,7 +49,7 @@ async function link(
   );
 
   if (rawPackageName === undefined) {
-    logger.debug('No package name provided, will linking all possible assets.');
+    logger.debug('No package name provided, will link all possible assets.');
     return linkAll(ctx, {linkDeps: opts.all, linkAssets: true});
   }
 

@@ -5,6 +5,10 @@ import * as PackageManager from '../../tools/packageManager';
 import {logger} from '@react-native-community/cli-tools';
 import copyFiles from '../../tools/copyFiles';
 
+const RegexEscape = function(regex) {
+  return regex.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+};
+
 export type TemplateConfig = {
   placeholderName: string,
   templateDir: string,
@@ -53,9 +57,9 @@ export async function copyTemplate(
   );
 
   logger.debug(`Copying template from ${templatePath}`);
-
+  let regexStr = path.resolve(templatePath, 'node_modules');
   await copyFiles(templatePath, process.cwd(), {
-    exclude: [new RegExp(path.resolve(templatePath, 'node_modules'))],
+    exclude: [new RegExp(RegexEscape(regexStr))],
   });
 }
 

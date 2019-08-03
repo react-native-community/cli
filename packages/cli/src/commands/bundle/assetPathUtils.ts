@@ -31,7 +31,7 @@ function getAndroidAssetSuffix(scale: number): string {
     case 4:
       return 'xxxhdpi';
     default:
-      throw new Error('no such scale');
+      return undefined;
   }
 }
 

@@ -25,15 +25,13 @@ const hasWarnings = (output: string): boolean => output.includes('npm WARN');
 
 const checkForErrors = (output: string): void => {
   if (!isConnected(output)) {
-    logger.error(
+    throw new CLIError(
       'Upgrade failed. You do not seem to have an internet connection.',
     );
-    process.exit(); // exit gracefully so we don't output duplicate error with stack trace
   }
 
   if (hasErrors(output)) {
-    logger.error('Upgrade failed with the following errors:', output);
-    process.exit();
+    throw new CLIError(`Upgrade failed with the following errors:\n${output}`);
   }
 
   if (hasWarnings(output)) {

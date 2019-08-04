@@ -28,6 +28,11 @@ function checkAndroid(root: string) {
   return fs.existsSync(path.join(root, 'android/gradlew'));
 }
 
+// Validates that the package name is correct
+function validatePackageName(packageName: string) {
+  return /^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/.test(packageName);
+}
+
 export interface Flags {
   tasks?: Array<string>;
   root: string;
@@ -125,9 +130,31 @@ function buildAndRun(args: Flags) {
   // "app" is usually the default value for Android apps with only 1 app
   const {appFolder} = args;
   // @ts-ignore
-  const packageName = fs
-    .readFileSync(`${appFolder}/src/main/AndroidManifest.xml`, 'utf8')
-    .match(/package="(.+?)"/)[1];
+  const androidManifest = fs.readFileSync(
+    `${appFolder}/src/main/AndroidManifest.xml`,
+    'utf8',
+  );
+
+  let packageNameMatchArray = androidManifest.match(/package="(.+?)"/);
+  if (!packageNameMatchArray || packageNameMatchArray.length <= 0) {
+    throw new CLIError(
+      `Failed to build the app: No package name found. Found errors in ${chalk.underline.dim(
+        `${appFolder}/src/main/AndroidManifest.xml`,
+      )}`,
+    );
+  }
+
+  let packageName = packageNameMatchArray[1];
+
+  if (!validatePackageName(packageName)) {
+    logger.warn(
+      `Invalid application's package name "${chalk.bgRed(
+        packageName,
+      )}" in 'AndroidManifest.xml'. Read guidelines for setting the package name here: ${chalk.underline.dim(
+        'https://developer.android.com/studio/build/application-id',
+      )}`,
+    ); // we can also directly add the package naming rules here
+  }
 
   const packageNameWithSuffix = getPackageNameWithSuffix(
     args.appId,

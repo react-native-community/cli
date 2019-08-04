@@ -79,8 +79,15 @@ async function runServer(argv: Array<string>, ctx: ConfigT, args: Args) {
     middlewareManager.serveStatic.bind(middlewareManager),
   );
 
-  metroConfig.server.enhanceMiddleware = middleware =>
-    middlewareManager.getConnectInstance().use(middleware);
+  const customEnhanceMiddleware = metroConfig.server.enhanceMiddleware;
+
+  metroConfig.server.enhanceMiddleware = (middleware, server) => {
+    if (customEnhanceMiddleware) {
+      middleware = customEnhanceMiddleware(middleware, server);
+    }
+
+    return middlewareManager.getConnectInstance().use(middleware);
+  };
 
   const serverInstance = await Metro.runServer(metroConfig, {
     host: args.host,

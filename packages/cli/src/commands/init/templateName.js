@@ -8,8 +8,11 @@ const VERSION_POSTFIX = /(.*)(-\d+\.\d+\.\d+)/;
 const VERSIONED_PACKAGE = /(@?.+)(@)(.+)/;
 
 function handleFileProtocol(filePath: string) {
-  const uri = new URL(filePath).pathname;
-
+  let uri = new URL(filePath).pathname;
+  if (process.platform === 'win32') {
+    // On Windows, the pathname has an extra leading / so remove that
+    uri = uri.substring(1);
+  }
   return {
     uri,
     name: require(path.join(uri, 'package.json')).name,

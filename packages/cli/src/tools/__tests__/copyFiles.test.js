@@ -4,6 +4,16 @@ import path from 'path';
 import copyFiles from '../copyFiles';
 import {cleanup, getTempDirectory} from '../../../../../jest/helpers';
 
+const replacePathSepForRegex = (string: string) => {
+  if (path.sep === '\\') {
+    return string.replace(
+      /(\/|(.)?\\(?![[\]{}()*+?.^$|\\]))/g,
+      (_match, _, p2) => (p2 && p2 !== '\\' ? p2 + '\\\\' : '\\\\'),
+    );
+  }
+  return string;
+};
+
 const DIR = getTempDirectory('copyFiles-test');
 
 beforeEach(() => {
@@ -47,10 +57,10 @@ test('copies text and binary files from source to destination', async () => {
 
 test('copies files from source to destination excluding directory', async () => {
   const src = path.resolve(__dirname, './__fixtures__');
+  let regexStr = path.join(src, 'extraDir');
   await copyFiles(src, DIR, {
-    exclude: [new RegExp(path.join(src, 'extraDir'))],
+    exclude: [new RegExp(replacePathSepForRegex(regexStr))],
   });
-
   expect(fs.readdirSync(DIR)).toMatchInlineSnapshot(`
     Array [
       "binary.keystore",

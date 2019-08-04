@@ -28,7 +28,7 @@ function commandExistsUnixSync(commandName) {
 
 function commandExistsWindowsSync(commandName) {
   try {
-    var stdout = execSync('where ' + commandName, {stdio: []});
+    const stdout = execSync('where ' + commandName, {stdio: []});
     return !!stdout;
   } catch (error) {
     return false;
@@ -87,7 +87,7 @@ function launchDebugger(url: string) {
     launchBrowser(url);
     return;
   }
-  launchChrome();
+  launchChrome(url);
 }
 
 export default launchDebugger;

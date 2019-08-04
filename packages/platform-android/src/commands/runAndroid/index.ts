@@ -207,7 +207,7 @@ function runOnSpecificDevice(
       );
     }
   } else {
-    logger.error('No Android devices connected.');
+    logger.error('No Android device or emulator connected.');
   }
 }
 
@@ -272,7 +272,7 @@ function getInstallApkName(
     return apkName;
   }
 
-  throw new Error('Not found the correct install APK file!');
+  throw new Error('Could not find the correct install APK file!');
 }
 
 function installAndLaunchOnDevice(

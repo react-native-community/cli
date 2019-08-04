@@ -3,16 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import copyFiles from '../copyFiles';
 import {cleanup, getTempDirectory} from '../../../../../jest/helpers';
-
-const replacePathSepForRegex = (string: string) => {
-  if (path.sep === '\\') {
-    return string.replace(
-      /(\/|(.)?\\(?![[\]{}()*+?.^$|\\]))/g,
-      (_match, _, p2) => (p2 && p2 !== '\\' ? p2 + '\\\\' : '\\\\'),
-    );
-  }
-  return string;
-};
+import replacePathSepForRegex from '../replacePathSepForRegex';
 
 const DIR = getTempDirectory('copyFiles-test');
 

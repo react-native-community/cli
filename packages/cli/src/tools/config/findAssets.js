@@ -6,9 +6,9 @@ import glob from 'glob';
 import path from 'path';
 
 const findAssetsInFolder = folder => {
-  let assets = glob.sync(path.join(folder, '**'), {nodir: true});
+  const assets = glob.sync(path.join(folder, '**'), {nodir: true});
   if (process.platform === 'win32') {
-    assets = assets.map(asset => asset.split('/').join('\\'));
+    return assets.map(asset => asset.split('/').join('\\'));
   }
   return assets;
 };

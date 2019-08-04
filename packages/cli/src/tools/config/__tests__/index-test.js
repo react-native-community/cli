@@ -337,7 +337,6 @@ module.exports = {
   });
 
   const {dependencies} = loadConfig(DIR);
-  console.log(dependencies['local-lib']);
   expect(removeString(dependencies['local-lib'], DIR)).toMatchInlineSnapshot(`
     Object {
       "assets": Array [],

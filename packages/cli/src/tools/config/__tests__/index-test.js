@@ -1,16 +1,15 @@
 /**
  * @flow
  */
-
+import path from 'path';
+import slash from 'slash';
 import loadConfig from '..';
-
+import {logger} from '@react-native-community/cli-tools';
 import {
   cleanup,
   writeFiles,
   getTempDirectory,
 } from '../../../../../../jest/helpers';
-
-import {logger} from '@react-native-community/cli-tools';
 
 jest.mock('../resolveNodeModuleDir');
 
@@ -19,7 +18,11 @@ const DIR = getTempDirectory('resolve_config_path_test');
 // Removes string from all key/values within an object
 const removeString = (config, str) =>
   JSON.parse(
-    JSON.stringify(config).replace(new RegExp(str, 'g'), '<<REPLACED>>'),
+    JSON.stringify(config, (_key, value) =>
+      typeof value === 'string'
+        ? slash(value.replace(str, '<<REPLACED>>'))
+        : value,
+    ),
   );
 
 beforeEach(() => {
@@ -302,21 +305,30 @@ test('does not use restricted "react-native" key to resolve config from package.
 });
 
 test('supports dependencies from user configuration with custom root and properties', () => {
+  const escapePathSeparator = (value: string) =>
+    path.sep === '\\' ? value.replace(/(\/|\\)/g, '\\\\') : value;
+
   writeFiles(DIR, {
     'node_modules/react-native/package.json': '{}',
     'native-libs/local-lib/ios/LocalRNLibrary.xcodeproj/project.pbxproj': '',
-    'react-native.config.js': `module.exports = {
-      dependencies: {
-        'local-lib': {
-          root: "${DIR}/native-libs/local-lib",
-          platforms: {
-            ios: {
-              podspecPath: "custom-path"
-            }
-          }
-        },
+    'react-native.config.js': `
+const path = require('path');
+const root = path.resolve('${escapePathSeparator(
+      DIR,
+    )}', 'native-libs', 'local-lib');
+
+module.exports = {
+  dependencies: {
+    'local-lib': {
+      root,
+      platforms: {
+        ios: {
+          podspecPath: "custom-path"
+        }
       }
-    }`,
+    },
+  }
+}`,
     'package.json': `{
       "dependencies": {
         "react-native": "0.0.1"

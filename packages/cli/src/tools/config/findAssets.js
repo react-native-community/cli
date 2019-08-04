@@ -5,8 +5,13 @@
 import glob from 'glob';
 import path from 'path';
 
-const findAssetsInFolder = folder =>
-  glob.sync(path.join(folder, '**'), {nodir: true});
+const findAssetsInFolder = folder => {
+  const assets = glob.sync(path.join(folder, '**'), {nodir: true});
+  if (process.platform === 'win32') {
+    return assets.map(asset => asset.split('/').join('\\'));
+  }
+  return assets;
+};
 
 /**
  * Given an array of assets folders, e.g. ['Fonts', 'Images'],

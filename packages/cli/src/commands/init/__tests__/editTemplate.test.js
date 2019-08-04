@@ -3,6 +3,7 @@ import os from 'os';
 import path from 'path';
 import fs from 'fs-extra';
 import snapshotDiff from 'snapshot-diff';
+import slash from 'slash';
 import walk from '../../../tools/walk';
 import copyFiles from '../../../tools/copyFiles';
 import {changePlaceholderInTemplate} from '../editTemplate';
@@ -80,6 +81,8 @@ test('should edit template', () => {
     snapshotDiff(oldJavaFile, newJavaFile, {contextLines: 1}),
   ).toMatchSnapshot();
   expect(
-    snapshotDiff(fixtureTree, transformedTree, {contextLines: 1}),
+    snapshotDiff(fixtureTree.map(slash), transformedTree.map(slash), {
+      contextLines: 1,
+    }),
   ).toMatchSnapshot();
 });

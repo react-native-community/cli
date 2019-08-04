@@ -34,7 +34,6 @@ test('legacy init through react-native-cli', () => {
     'package.json',
     'yarn.lock',
   ];
-
   const {stdout} = execa.sync('npx', ['react-native-cli', 'init', 'TestApp'], {
     cwd: DIR,
   });
@@ -43,7 +42,13 @@ test('legacy init through react-native-cli', () => {
 
   // make sure we don't leave garbage
   expect(fs.readdirSync(DIR)).toEqual(['TestApp']);
-  expect(fs.readdirSync(path.join(DIR, 'TestApp'))).toEqual(templateFiles);
+
+  let dirFiles = fs.readdirSync(path.join(DIR, 'TestApp'));
+  expect(dirFiles.length).toEqual(templateFiles.length);
+
+  for (const templateFile of templateFiles) {
+    expect(dirFiles.includes(templateFile)).toBe(true);
+  }
 
   const pkgJson = require(path.join(DIR, 'TestApp', 'package.json'));
   expect(pkgJson).toMatchObject({

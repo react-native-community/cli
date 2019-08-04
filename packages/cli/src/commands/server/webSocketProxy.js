@@ -75,7 +75,7 @@ function attachToServer(server, path) {
 
   return {
     server: wss,
-    isChromeConnected() {
+    isDebuggerConnected() {
       return !!debuggerSocket;
     },
   };

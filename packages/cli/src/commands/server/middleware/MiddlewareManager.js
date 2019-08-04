@@ -33,7 +33,7 @@ type Options = {
 
 type WebSocketProxy = {
   server: WebSocketServer,
-  isChromeConnected: () => boolean,
+  isDebuggerConnected: () => boolean,
 };
 
 type Connect = $Call<connect>;
@@ -72,7 +72,7 @@ export default class MiddlewareManager {
 
   attachDevToolsSocket(socket: WebSocketProxy) {
     this.app.use(
-      getDevToolsMiddleware(this.options, () => socket.isChromeConnected()),
+      getDevToolsMiddleware(this.options, () => socket.isDebuggerConnected()),
     );
   }
 }

@@ -59,7 +59,7 @@ test('init --template', () => {
   let dirFiles = fs.readdirSync(path.join(DIR, 'TestInit'));
   expect(dirFiles.length).toEqual(templateFiles.length);
 
-  for (var templateFile of templateFiles) {
+  for (const templateFile of templateFiles) {
     expect(dirFiles.includes(templateFile)).toBe(true);
   }
 
@@ -81,8 +81,9 @@ test('init --template file:/tmp/custom/template', () => {
     'custom/template/template-dir/empty': '',
   });
   let templatePath = path.resolve(DIR, 'custom', 'template');
-  if (process.platform === 'win32')
+  if (process.platform === 'win32') {
     templatePath = templatePath.split('\\').join('/');
+  }
 
   const {stdout} = run(DIR, [
     'init',
@@ -113,7 +114,7 @@ test('init --template with custom project path', () => {
   let dirFiles = fs.readdirSync(path.join(DIR, customPath));
   expect(dirFiles.length).toEqual(templateFiles.length);
 
-  for (var templateFile of templateFiles) {
+  for (const templateFile of templateFiles) {
     expect(dirFiles.includes(templateFile)).toBe(true);
   }
 });

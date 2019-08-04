@@ -46,7 +46,7 @@ test('legacy init through react-native-cli', () => {
   let dirFiles = fs.readdirSync(path.join(DIR, 'TestApp'));
   expect(dirFiles.length).toEqual(templateFiles.length);
 
-  for (var templateFile of templateFiles) {
+  for (const templateFile of templateFiles) {
     expect(dirFiles.includes(templateFile)).toBe(true);
   }
 

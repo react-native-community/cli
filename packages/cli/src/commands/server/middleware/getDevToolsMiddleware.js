@@ -8,7 +8,7 @@
  */
 import {logger} from '@react-native-community/cli-tools';
 import {exec} from 'child_process';
-import launchDebugger from './../launchDebugger';
+import launchDebugger from '../launchDebugger';
 
 function launchDefaultDebugger(port, args = '') {
   const debuggerURL = `http://localhost:${port}/debugger-ui${args}`;

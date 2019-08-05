@@ -21,6 +21,9 @@ function enableWatchMode(messageSocket) {
     } else if (data.name === 'r') {
       // reload app if r is pressed
       messageSocket.broadcast('reload', null);
+    } else if (data.name === 'd') {
+      // open dev menu if d is pressed
+      messageSocket.broadcast('devMenu', null);
     }
   });
 }

@@ -12,6 +12,7 @@ import path from 'path';
 
 export default function indexPageMiddleware(req, res, next) {
   if (req.url === '/') {
+    res.setHeader('Content-Type', 'text/html');
     res.end(fs.readFileSync(path.join(__dirname, 'index.html')));
   } else {
     next();

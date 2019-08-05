@@ -76,7 +76,8 @@ def use_native_modules!(root = "..", config = nil)
           phase["execution_position"] = phase["execution_position"].to_sym
         end
 
-        script_phase phase.symbolize_keys!
+        phase = Hash[phase.map { |k, v| [k.to_sym, v] }]
+        script_phase phase
       end
     end
 

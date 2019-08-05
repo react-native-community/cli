@@ -13,16 +13,16 @@ import makeBuildPatch from './patches/makeBuildPatch';
 import makeImportPatch from './patches/makeImportPatch';
 import makePackagePatch from './patches/makePackagePatch';
 import {
-  ProjectConfigAndroid,
-  DependencyConfigAndroid,
-  ProjectParamsAndroid,
-} from '../types';
+  AndroidProjectConfig,
+  AndroidDependencyConfig,
+  AndroidProjectParams,
+} from '@react-native-community/cli-types';
 
 export default function registerNativeAndroidModule(
   name: string,
-  androidConfig: DependencyConfigAndroid,
-  params: ProjectParamsAndroid,
-  projectConfig: ProjectConfigAndroid,
+  androidConfig: AndroidDependencyConfig,
+  params: AndroidProjectParams,
+  projectConfig: AndroidProjectConfig,
 ) {
   const buildPatch = makeBuildPatch(name);
 

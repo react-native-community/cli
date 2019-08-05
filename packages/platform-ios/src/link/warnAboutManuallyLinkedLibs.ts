@@ -1,15 +1,15 @@
 import chalk from 'chalk';
 import {logger} from '@react-native-community/cli-tools';
-import getLinkConfig from './index';
 import {Config} from '@react-native-community/cli-types';
+import getLinkConfig from './index';
 
 // TODO: move to cli-tools once platform-ios and platform-android are migrated
-// to TS and unify with iOS implementation
+// to TS and unify with Android implementation
 export default function warnAboutManuallyLinkedLibs(
   config: Config,
-  platform: string = 'android',
+  platform: string = 'ios',
   linkConfig: ReturnType<
-    Config['platforms']['android']['linkConfig']
+    Config['platforms']['ios']['linkConfig']
   > = getLinkConfig(),
 ) {
   let deps: Array<string> = [];

@@ -10,7 +10,7 @@ import path from 'path';
 import execa from 'execa';
 import chalk from 'chalk';
 import fs from 'fs';
-import {Config} from '../../types';
+import {Config} from '@react-native-community/cli-types';
 import adb from './adb';
 import runOnAllDevices from './runOnAllDevices';
 import tryRunAdbReverse from './tryRunAdbReverse';

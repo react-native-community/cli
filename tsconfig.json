@@ -19,11 +19,7 @@
     /* Module Resolution Options */
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "baseUrl": ".",
-    "paths": {
-      "types": ["./types"]
-    }
+    "resolveJsonModule": true
   },
   "exclude": ["**/__tests__/**/*", "**/build/**/*"]
 }

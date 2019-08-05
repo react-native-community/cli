@@ -1,22 +1,17 @@
 import {processTemplateName} from '../templateName';
+import fs from 'fs';
 
 const RN_NPM_PACKAGE = 'react-native';
 const ABS_RN_PATH = '/path/to/react-native';
+const ABS_RN_PATH_WINDOWS = 'path/to/react-native';
 
 test('supports file protocol with absolute path', async () => {
-  if (process.platform === 'win32') {
-    console.warn('[SKIP] Jest virtual mocks seem to be broken on Windows');
-    return;
-  }
-  jest.mock(
-    `${ABS_RN_PATH}/package.json`,
-    () => ({
-      name: 'react-native',
-    }),
-    {virtual: true},
-  );
+  jest.spyOn(fs, 'existsSync').mockImplementation(() => true);
+  jest
+    .spyOn(fs, 'readFileSync')
+    .mockImplementation(() => JSON.stringify({name: 'react-native'}));
   expect(await processTemplateName(`file://${ABS_RN_PATH}`)).toEqual({
-    uri: ABS_RN_PATH,
+    uri: process.platform === 'win32' ? ABS_RN_PATH_WINDOWS : ABS_RN_PATH,
     name: RN_NPM_PACKAGE,
   });
 });
@@ -45,6 +40,7 @@ test.each`
 test('supports path to tgz archives', async () => {
   const ABS_RN_TARBALL_PATH =
     '/path/to/react-native/react-native-1.2.3-rc.0.tgz';
+  jest.spyOn(fs, 'existsSync').mockImplementation(() => true);
   expect(await processTemplateName(`file://${ABS_RN_TARBALL_PATH}`)).toEqual({
     uri: `file://${ABS_RN_TARBALL_PATH}`,
     name: 'react-native',

@@ -24,6 +24,7 @@ const hasErrors = (output: string): boolean => output.includes('npm ERR');
 const hasWarnings = (output: string): boolean => output.includes('npm WARN');
 
 const checkForErrors = (output: string): void => {
+  if (!output) return;
   if (!isConnected(output)) {
     throw new CLIError(
       'Upgrade failed. You do not seem to have an internet connection.',

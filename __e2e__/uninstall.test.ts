@@ -35,10 +35,9 @@ test('uninstall fails when package is not installed', () => {
       "dependencies": {}
     }`,
   });
-  const {stderr, code} = run(DIR, ['uninstall', pkg], {expectedFailure: true});
+  const {stderr} = run(DIR, ['uninstall', pkg], {expectedFailure: true});
 
-  expect(stderr).toContain(`Failed to unlink "${pkg}".`);
-  expect(code).toBe(1);
+  expect(stderr).toContain(`error Unknown package name "${pkg}".`);
 });
 
 test.each(['yarn', 'npm'])('uninstall module with %s', pm => {

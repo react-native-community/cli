@@ -1,6 +1,7 @@
 jest.mock('execa', () => jest.fn());
 import execa from 'execa';
 import path from 'path';
+import fs from 'fs';
 import * as PackageManger from '../../../tools/packageManager';
 import {
   installTemplatePackage,
@@ -32,7 +33,7 @@ test('installTemplatePackage', async () => {
 
 test('getTemplateConfig', () => {
   jest.mock(
-    `${TEMPLATE_SOURCE_DIR}/node_modules/${TEMPLATE_NAME}/template.config`,
+    `${TEMPLATE_SOURCE_DIR}/node_modules/${TEMPLATE_NAME}/template.config.js`,
     () => ({
       placeholderName: 'someName',
       templateDir: 'someDir',
@@ -42,7 +43,7 @@ test('getTemplateConfig', () => {
     },
   );
   jest.spyOn(path, 'resolve').mockImplementationOnce((...e) => e.join('/'));
-
+  jest.spyOn(fs, 'existsSync').mockImplementation(() => true);
   expect(getTemplateConfig(TEMPLATE_NAME, TEMPLATE_SOURCE_DIR)).toEqual({
     placeholderName: 'someName',
     templateDir: 'someDir',
@@ -51,7 +52,7 @@ test('getTemplateConfig', () => {
     TEMPLATE_SOURCE_DIR,
     'node_modules',
     TEMPLATE_NAME,
-    'template.config',
+    'template.config.js',
   );
 });
 

@@ -1,6 +1,6 @@
 import execa from 'execa';
 import path from 'path';
-import {logger} from '@react-native-community/cli-tools';
+import {logger, CLIError} from '@react-native-community/cli-tools';
 import * as PackageManager from '../../tools/packageManager';
 import copyFiles from '../../tools/copyFiles';
 import replacePathSepForRegex from '../../tools/replacePathSepForRegex';
@@ -35,12 +35,12 @@ export function getTemplateConfig(
     templateSourceDir,
     'node_modules',
     templateName,
-    'template.config',
+    'template.config.js',
   );
 
   logger.debug(`Getting config from ${configFilePath}.js`);
   if (!fs.existsSync(configFilePath)) {
-    throw new Error(
+    throw new CLIError(
       `Invalid template '${templateName}' specified. Make sure the template is CLI v2 compliant: ${chalk.underline.dim(
         'https://github.com/react-native-community/cli/blob/master/docs/init.md#creating-custom-template',
       )}`,

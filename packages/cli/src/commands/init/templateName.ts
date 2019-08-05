@@ -1,6 +1,7 @@
 import path from 'path';
 import {URL} from 'url';
 import fs from 'fs';
+import {CLIError} from '@react-native-community/cli-tools';
 
 const FILE_PROTOCOL = /file:/;
 const TARBALL = /\.tgz$/;
@@ -10,26 +11,28 @@ const VERSIONED_PACKAGE = /(@?.+)(@)(.+)/;
 function handleFileProtocol(filePath: string) {
   let uri = new URL(filePath).pathname;
   if (process.platform === 'win32') {
-    // On Windows, the pathname has an extra leading / so remove that
+    // On Windows, the pathname has an extra / at the start, so remove that
     uri = uri.substring(1);
   }
   if (!fs.existsSync(uri)) {
-    throw new Error(
+    throw new CLIError(
       `Failed to retrieve package name. The specified template directory path "${uri}" does not exist or is invalid.`,
     );
   }
   const packageJsonPath = path.join(uri, 'package.json');
   if (!fs.existsSync(packageJsonPath)) {
-    throw new Error(
+    throw new CLIError(
       'Failed to retrieve package name. We expect the template directory to include "package.json" file, but it was not found.',
     );
   }
-  const packageJson = require(packageJsonPath);
+  const packageJson = JSON.parse(
+    fs.readFileSync(packageJsonPath, {encoding: 'utf8'}),
+  );
   if (!packageJson.name) {
-    throw new Error(
-      `Failed to retrieve template name. We expect the "package.json" of the template to include the "name" property, but we found "${packageJson.name}" which is invalid.`
-        packageJson,
-      )}"`,
+    throw new CLIError(
+      `Failed to retrieve template name. We expect the "package.json" of the template to include the "name" property, but we found "${
+        packageJson.name
+      }" which is invalid.`,
     );
   }
   return {
@@ -47,7 +50,7 @@ function handleTarball(filePath: string) {
   const nameWithVersion = path.parse(path.basename(filePath)).name;
   const tarballVersionMatch = nameWithVersion.match(VERSION_POSTFIX);
   if (!tarballVersionMatch) {
-    throw new Error(
+    throw new CLIError(
       `Failed to retrieve tarball name. We expect the tarball to include package name and version, e.g.: "template-name-1.2.3-rc.0.tgz", but received: "${nameWithVersion}".`,
     );
   }
@@ -61,7 +64,7 @@ function handleTarball(filePath: string) {
 function handleVersionedPackage(versionedPackage: string) {
   const versionedPackageMatch = versionedPackage.match(VERSIONED_PACKAGE);
   if (!versionedPackageMatch) {
-    throw new Error(
+    throw new CLIError(
       `Failed to retrieve package name. We expect the package to include name and version, e.g.: "template-name@1.2.3-rc.0", but received: "${versionedPackage}".`,
     );
   }
@@ -71,7 +74,7 @@ function handleVersionedPackage(versionedPackage: string) {
   };
 }
 
-export async function processTemplateName(templateName: string) {
+export function processTemplateName(templateName: string) {
   if (templateName.match(TARBALL)) {
     return handleTarball(templateName);
   }

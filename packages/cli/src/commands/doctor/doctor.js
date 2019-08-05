@@ -104,6 +104,7 @@ export default (async function runDoctor() {
 
   const onKeyPress = async key => {
     process.stdin.setRawMode(false);
+    process.stdin.removeAllListeners('data');
 
     if (key === KEYS.EXIT || key === '\u0003') {
       return process.exit(0);

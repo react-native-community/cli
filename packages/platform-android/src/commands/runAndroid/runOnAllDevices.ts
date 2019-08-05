@@ -104,7 +104,7 @@ function createInstallError(error: Error & {stderr: string}) {
     stderr.includes('licences have not been accepted') ||
     stderr.includes('accept the SDK license')
   ) {
-    message = `Please accept all necessary SDK licenses using SDK Manager: "${chalk.bold(
+    message = `Please accept all necessary Android SDK licenses using Android SDK Manager: "${chalk.bold(
       '$ANDROID_HOME/tools/bin/sdkmanager --licenses',
     )}"`;
   }

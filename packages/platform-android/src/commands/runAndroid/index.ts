@@ -87,7 +87,7 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
     return buildAndRun(args);
   }
 
-  return isPackagerRunning(args.port).then(result => {
+  return isPackagerRunning(args.port).then((result: string) => {
     if (result === 'running') {
       logger.info('JS server already running.');
     } else if (result === 'unrecognized') {

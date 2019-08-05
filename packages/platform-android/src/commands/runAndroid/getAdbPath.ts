@@ -7,9 +7,12 @@
  */
 
 import fs from 'fs';
-import {logger, CLIError} from '@react-native-community/cli-tools';
 import chalk from 'chalk';
-import checkCommandExists from './../../../../tools/src/checkCommandExists';
+import {
+  logger,
+  CLIError,
+  checkCommandExists,
+} from '@react-native-community/cli-tools';
 
 function checkAdbPath() {
   const adbPath = getAdbPath();
@@ -30,13 +33,14 @@ function checkAdbPath() {
   } else if (!adbPathExists && !adbCmdExists) {
     throw new CLIError(
       adbNotFoundError
-        .replace('$location$', `'PATH environment variable or ${adbPath}`)
+        .replace('$location$', `PATH environment variable or ${adbPath}`)
         .replace('$prediction$', 'will'),
     );
   }
 }
 
 function checkAndroidSDKPath() {
+  logger.info('here');
   const {ANDROID_HOME} = process.env;
   if (!ANDROID_HOME || !fs.existsSync(ANDROID_HOME)) {
     throw new CLIError(

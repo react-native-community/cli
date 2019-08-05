@@ -35,12 +35,8 @@ const runAutomaticFix = async ({issues, automaticFixLevel, stats, loader}) => {
 
       try {
         await issueToFix.runAutomaticFix({loader: issueSpinner});
-
-        await issueSpinner.succeed();
       } catch (error) {
         // TODO: log the error in a meaningful way
-
-        await issueSpinner.fail();
       }
     }
   }

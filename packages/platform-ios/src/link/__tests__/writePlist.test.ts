@@ -4,8 +4,6 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
- * @emails oncall+javascript_foundation
  */
 
 import getPlistPath from '../getPlistPath';
@@ -43,6 +41,7 @@ describe('ios::writePlist', () => {
   });
 
   it('should write a `.plist` file', () => {
+    // @ts-ignore
     getPlistPath.mockImplementation(() => '/Basic/Info.plist');
     writePlist(project, '/', plist);
     const infoPlist = readFileSync(infoPlistPath).toString();
@@ -53,6 +52,7 @@ describe('ios::writePlist', () => {
   });
 
   it('when plistPath is null it should return null', () => {
+    // @ts-ignore
     getPlistPath.mockImplementation(() => null);
     expect(writePlist(project, '/', plist)).toBeNull();
     expect(fs.writeFileSync).not.toHaveBeenCalled();

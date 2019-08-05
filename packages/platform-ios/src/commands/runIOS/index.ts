@@ -15,7 +15,7 @@ import path from 'path';
 import chalk from 'chalk';
 import {Config} from '@react-native-community/cli-types';
 import findXcodeProject, {ProjectInfo} from './findXcodeProject';
-import parseIOSDevicesList, {IOSDeviceInfo} from './parseIOSDevicesList';
+import parseIOSDevicesList from './parseIOSDevicesList';
 import findMatchingSimulator from './findMatchingSimulator';
 import warnAboutManuallyLinkedLibs from '../../link/warnAboutManuallyLinkedLibs';
 import {
@@ -23,6 +23,7 @@ import {
   CLIError,
   getDefaultUserTerminal,
 } from '@react-native-community/cli-tools';
+import {Device} from '../../types';
 
 type FlagsT = {
   simulator: string;
@@ -201,7 +202,7 @@ async function runOnSimulator(
 }
 
 async function runOnDevice(
-  selectedDevice: IOSDeviceInfo,
+  selectedDevice: Device,
   scheme: string,
   xcodeProject: ProjectInfo,
   args: FlagsT,
@@ -335,7 +336,7 @@ function buildProject(
   });
 }
 
-function bootSimulator(selectedSimulator: IOSDeviceInfo) {
+function bootSimulator(selectedSimulator: Device) {
   const simulatorFullName = formattedDeviceName(selectedSimulator);
   logger.info(`Launching ${simulatorFullName}`);
   try {
@@ -394,7 +395,7 @@ function xcprettyAvailable() {
 }
 
 function matchingDevice(
-  devices: Array<IOSDeviceInfo>,
+  devices: Array<Device>,
   deviceName: string | true | void,
   udid: string | void,
 ) {
@@ -415,18 +416,15 @@ function matchingDevice(
   );
 }
 
-function matchingDeviceByUdid(
-  devices: Array<IOSDeviceInfo>,
-  udid: string | void,
-) {
+function matchingDeviceByUdid(devices: Array<Device>, udid: string | void) {
   return devices.find(device => device.udid === udid);
 }
 
-function formattedDeviceName(simulator: IOSDeviceInfo) {
+function formattedDeviceName(simulator: Device) {
   return `${simulator.name} (${simulator.version})`;
 }
 
-function printFoundDevices(devices: Array<IOSDeviceInfo>) {
+function printFoundDevices(devices: Array<Device>) {
   return [
     'Available devices:',
     ...devices.map(device => `  - ${device.name} (${device.udid})`),

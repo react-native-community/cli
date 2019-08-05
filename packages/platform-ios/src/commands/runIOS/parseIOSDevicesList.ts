@@ -5,18 +5,13 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-
-export type IOSDeviceInfo = {
-  name: string;
-  udid: string;
-  version: string;
-};
+import {Device} from '../../types';
 
 /**
  * Parses the output of `xcrun simctl list devices` command
  */
-function parseIOSDevicesList(text: string): Array<IOSDeviceInfo> {
-  const devices: Array<IOSDeviceInfo> = [];
+function parseIOSDevicesList(text: string): Array<Device> {
+  const devices: Array<Device> = [];
 
   text.split('\n').forEach(line => {
     const device = line.match(/(.*?) \((.*?)\) \[(.*?)\]/);

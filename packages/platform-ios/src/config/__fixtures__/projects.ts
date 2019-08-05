@@ -1,8 +1,6 @@
-/**
- * @flow
- */
-
+// @ts-ignore FIXME: Add global types for jest
 const path = jest.requireActual('path');
+// @ts-ignore
 const fs = jest.requireActual('fs');
 
 const ios = {

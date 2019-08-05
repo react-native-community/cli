@@ -4,11 +4,9 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
- * @emails oncall+javascript_foundation
  */
 
-import getTargets from '../getTargets';
+import getPlist from '../getPlist';
 
 const xcode = require('xcode');
 const path = require('path');
@@ -17,15 +15,15 @@ const project = xcode.project(
   path.join(__dirname, '../__fixtures__/project.pbxproj'),
 );
 
-describe('ios::getTargets', () => {
+describe('ios::getPlist', () => {
   beforeEach(() => {
     project.parseSync();
   });
 
-  it('should return an array of project targets', () => {
-    const targets = getTargets(project);
-    expect(targets).toHaveLength(2);
-    expect(targets[0].name).toContain('Basic.app');
-    expect(targets[1].name).toContain('BasicTests.xctest');
+  it('should return null when `.plist` file missing', () => {
+    const plistPath = getPlist(project, process.cwd());
+    expect(plistPath).toBeNull();
   });
+
+  // @todo - Happy scenario
 });

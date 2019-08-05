@@ -63,6 +63,7 @@ def use_native_modules!(root = "..", config = nil)
       Array(package_config["scriptPhases"]).each do |phase|
         # see https://www.rubydoc.info/gems/cocoapods-core/Pod/Podfile/DSL#script_phase-instance_method
         # for the full object keys
+        Pod::UI.puts "Adding a custom script phase for Pod #{spec.name}: #{phase["name"] || 'No name specified.'}"
 
         # Support passing in a path relative to the root of the package
         if phase["path"]
@@ -75,7 +76,7 @@ def use_native_modules!(root = "..", config = nil)
           phase["execution_position"] = phase["execution_position"].to_sym
         end
 
-        script_phase phase
+        script_phase phase.symbolize_keys!
       end
     end
 

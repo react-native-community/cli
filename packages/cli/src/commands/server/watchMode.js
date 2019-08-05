@@ -6,6 +6,14 @@
  *
  */
 import readline from 'readline';
+import logger from '../../tools/logger';
+import hookStdout from '../../tools/hookStdout';
+
+function printWatchModeInstructions() {
+  logger.log(
+    `\n\nTo reload the app press "r"\nTo open developer menu press "d"`,
+  );
+}
 
 function enableWatchMode(messageSocket) {
   readline.emitKeypressEvents(process.stdin);
@@ -14,6 +22,14 @@ function enableWatchMode(messageSocket) {
   // As a result we have to implement our own method for exiting
   // and other commands.
   process.stdin.setRawMode(true);
+
+  // The most accurate way to ensure we print instructions at the exact
+  // right time.
+  hookStdout(
+    output =>
+      output.includes('Loading dependency graph, done.') &&
+      printWatchModeInstructions(),
+  );
 
   process.stdin.on('keypress', (key, data) => {
     if (data.ctrl === true && data.name === 'c') {

@@ -354,6 +354,7 @@ module.exports = {
           "podspecPath": "custom-path",
           "projectName": "LocalRNLibrary.xcodeproj",
           "projectPath": "<<REPLACED>>/native-libs/local-lib/ios/LocalRNLibrary.xcodeproj",
+          "scriptPhases": Array [],
           "sharedLibraries": Array [],
           "sourceDir": "<<REPLACED>>/native-libs/local-lib/ios",
         },

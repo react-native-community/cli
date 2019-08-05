@@ -12,7 +12,10 @@ const issue = {
       versionRange: versionRanges.NODE_JS,
     }),
   }),
-  runAutomaticFix: () => delay(3000),
+  runAutomaticFix: async ({loader}) => {
+    await delay(500);
+    loader.succeed();
+  },
 };
 
 export default issue;

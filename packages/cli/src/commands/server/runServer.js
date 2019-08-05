@@ -37,6 +37,7 @@ export type Args = {|
   watchFolders?: string[],
   config?: string,
   projectRoot?: string,
+  disableWatchMode?: boolean,
 |};
 
 async function runServer(argv: Array<string>, ctx: ConfigT, args: Args) {
@@ -99,7 +100,9 @@ async function runServer(argv: Array<string>, ctx: ConfigT, args: Args) {
   middlewareManager.attachDevToolsSocket(wsProxy);
   middlewareManager.attachDevToolsSocket(ms);
 
-  enableWatchMode(ms);
+  if (!args.disableWatchMode) {
+    enableWatchMode(ms);
+  }
 
   middlewareManager.getConnectInstance().use('/reload', (req, res) => {
     ms.broadcast('reload', null);

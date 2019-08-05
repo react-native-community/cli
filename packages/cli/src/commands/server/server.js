@@ -108,5 +108,9 @@ export default {
       description: 'Path to the CLI configuration file',
       parse: (val: string) => path.resolve(val),
     },
+    {
+      name: '--disableWatchMode',
+      description: 'Disables watch mode',
+    },
   ],
 };

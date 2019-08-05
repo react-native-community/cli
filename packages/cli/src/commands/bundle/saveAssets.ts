@@ -31,7 +31,7 @@ function saveAssets(
   }
 
   if (!fs.existsSync(assetsDest)) {
-    let error = `The specified assets destination folder: "${assetsDest}" does not exist, stopping...`;
+    let error = `The specified assets destination folder "${assetsDest}" does not exist.`;
     logger.error(error);
     return Promise.reject();
   }

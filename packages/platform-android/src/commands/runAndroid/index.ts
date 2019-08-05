@@ -278,7 +278,7 @@ function getInstallApkName(
     return apkName;
   }
 
-  throw new Error('Could not find the correct install APK file!');
+  throw new CLIError('Could not find the correct install APK file.');
 }
 
 function installAndLaunchOnDevice(

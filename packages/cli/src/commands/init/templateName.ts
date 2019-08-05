@@ -1,6 +1,6 @@
 import path from 'path';
 import {URL} from 'url';
-import fs from 'fs-extra';
+import fs from 'fs';
 
 const FILE_PROTOCOL = /file:/;
 const TARBALL = /\.tgz$/;
@@ -15,19 +15,19 @@ function handleFileProtocol(filePath: string) {
   }
   if (!fs.existsSync(uri)) {
     throw new Error(
-      `Failed to retrieve package name. The specified template directory path: ${uri} does not exist or is invalid.`,
+      `Failed to retrieve package name. The specified template directory path "${uri}" does not exist or is invalid.`,
     );
   }
   const packageJsonPath = path.join(uri, 'package.json');
   if (!fs.existsSync(packageJsonPath)) {
     throw new Error(
-      'Failed to retrieve package name. We expect the template directory to include package.json file, but no such file was found.',
+      'Failed to retrieve package name. We expect the template directory to include "package.json" file, but it was not found.',
     );
   }
   const packageJson = require(packageJsonPath);
   if (!packageJson.name) {
     throw new Error(
-      `Failed to retrieve package name. We expect the package.json to include package name, e.g.: "template-name", but received: "${JSON.stringify(
+      `Failed to retrieve template name. We expect the "package.json" of the template to include the "name" property, but we found "${packageJson.name}" which is invalid.`
         packageJson,
       )}"`,
     );
@@ -40,8 +40,8 @@ function handleFileProtocol(filePath: string) {
 
 function handleTarball(filePath: string) {
   if (!fs.existsSync(filePath)) {
-    throw new Error(
-      `Failed to retrieve tarball name. The specified tarball path: ${filePath} does not exist or is invalid.`,
+    throw new CLIError(
+      `Failed to retrieve tarball name. The specified tarball path "${filePath}" does not exist or is invalid.`,
     );
   }
   const nameWithVersion = path.parse(path.basename(filePath)).name;

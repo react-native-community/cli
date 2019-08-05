@@ -1,5 +1,6 @@
 import versionRanges from '../versionRanges';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
+import {logManualInstallation} from './common';
 
 const xcode = {
   label: 'Xcode',
@@ -9,7 +10,14 @@ const xcode = {
       versionRange: versionRanges.XCODE,
     }),
   }),
-  runAutomaticFix: () => console.log('should fix Xcode'),
+  runAutomaticFix: ({loader}) => {
+    loader.info();
+
+    logManualInstallation({
+      issue: 'Xcode',
+      url: 'https://developer.apple.com/xcode/',
+    });
+  },
 };
 
 export default xcode;

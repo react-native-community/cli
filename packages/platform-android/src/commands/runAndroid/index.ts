@@ -14,7 +14,7 @@ import adb from './adb';
 import runOnAllDevices from './runOnAllDevices';
 import tryRunAdbReverse from './tryRunAdbReverse';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
-import getAdbPath from './getAdbPath';
+import getAdbPath, {checkAdbPath, checkAndroidSDKPath} from './getAdbPath';
 import {
   isPackagerRunning,
   logger,
@@ -31,6 +31,19 @@ function checkAndroid(root: string) {
 // Validates that the package name is correct
 function validatePackageName(packageName: string) {
   return /^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/.test(packageName);
+}
+
+function performChecks(config: Config, args: Flags) {
+  if (!checkAndroid(args.root)) {
+    throw new CLIError(
+      'Android project not found. Are you sure this is a React Native project?',
+    );
+  }
+  checkAndroidSDKPath();
+  checkAdbPath();
+
+  // warn after we have done basic system checks
+  warnAboutManuallyLinkedLibs(config);
 }
 
 export interface Flags {
@@ -52,14 +65,7 @@ export interface Flags {
  * Starts the app on a connected Android emulator or device.
  */
 async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
-  if (!checkAndroid(args.root)) {
-    logger.error(
-      'Android project not found. Are you sure this is a React Native project?',
-    );
-    return;
-  }
-
-  warnAboutManuallyLinkedLibs(config);
+  performChecks(config, args);
 
   if (args.jetifier) {
     logger.info(

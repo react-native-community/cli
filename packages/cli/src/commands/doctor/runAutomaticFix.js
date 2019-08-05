@@ -9,6 +9,7 @@ const AUTOMATIC_FIX_LEVELS = {
 };
 
 const runAutomaticFix = async ({issues, automaticFixLevel, stats, loader}) => {
+  // Remove the fix options from screen
   process.stdout.moveCursor(0, -6);
   process.stdout.clearScreenDown();
 

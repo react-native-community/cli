@@ -18,7 +18,7 @@ import webSocketProxy from './webSocketProxy';
 import MiddlewareManager from './middleware/MiddlewareManager';
 import loadMetroConfig from '../../tools/loadMetroConfig';
 import releaseChecker from '../../tools/releaseChecker';
-import readline from 'readline';
+import enableWatchMode from './watchMode';
 
 export type Args = {|
   assetPlugins?: string[],
@@ -99,7 +99,7 @@ async function runServer(argv: Array<string>, ctx: ConfigT, args: Args) {
   middlewareManager.attachDevToolsSocket(wsProxy);
   middlewareManager.attachDevToolsSocket(ms);
 
-  enableKeyBindings(ms);
+  enableWatchMode(ms);
 
   middlewareManager.getConnectInstance().use('/reload', (req, res) => {
     ms.broadcast('reload', null);
@@ -119,24 +119,6 @@ async function runServer(argv: Array<string>, ctx: ConfigT, args: Args) {
   serverInstance.keepAliveTimeout = 30000;
 
   await releaseChecker(ctx.root);
-}
-
-function enableKeyBindings(messageSocket) {
-  readline.emitKeypressEvents(process.stdin);
-
-  // We need to set this to true to catch key presses individually.
-  // As a result we have to implement our own method for exiting
-  // and other commands.
-  process.stdin.setRawMode(true);
-
-  process.stdin.on('keypress', (key, data) => {
-    if (data.ctrl === true && data.name === 'c') {
-      process.exit();
-    } else if (data.ctrl === true && data.name === 'r') {
-      // reload if ctrl + r is pressed
-      messageSocket.broadcast('reload', null);
-    }
-  });
 }
 
 function getReporterImpl(customLogReporterPath: ?string) {

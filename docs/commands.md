@@ -468,6 +468,10 @@ Path to custom SSL cert
 
 Path to the CLI configuration file
 
+#### `--disableWatchMode [string]`
+
+Disables watch mode
+
 ### `uninstall`
 
 Usage:

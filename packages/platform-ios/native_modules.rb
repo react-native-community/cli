@@ -233,10 +233,10 @@ if $0 == __FILE__
         @config["dependencies"]["ios-dep"]["platforms"]["ios"]["scriptPhases"] = [@script_phase]
         @podfile.use_native_modules('..', @config)
         @added_scripts.must_equal [{
-          "script" => "123",
-          "name" => "My Name",
-          "execution_position" => :before_compile,
-          "input" => "string"
+          :script => "123",
+          :name => "My Name",
+          :execution_position => :before_compile,
+          :input => "string"
         }]
       end
 
@@ -253,10 +253,10 @@ if $0 == __FILE__
         end
 
         @added_scripts.must_equal [{
-          "script" => "contents from file",
-          "name" => "My Name",
-          "execution_position" => :before_compile,
-          "input" => "string"
+          :script => "contents from file",
+          :name => "My Name",
+          :execution_position => :before_compile,
+          :input => "string"
         }]
         file_read_mock.verify
       end

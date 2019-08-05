@@ -23,8 +23,9 @@ function enableWatchMode(messageSocket) {
   // and other commands.
   process.stdin.setRawMode(true);
 
-  // The most accurate way to ensure we print instructions at the exact
-  // right time.
+  // We have no way of knowing when the dependency graph is done loading
+  // except by hooking into stdout itself. We want to print instructions
+  // right after its done loading.
   hookStdout(
     output =>
       output.includes('Loading dependency graph, done.') &&
@@ -37,9 +38,11 @@ function enableWatchMode(messageSocket) {
     } else if (data.name === 'r') {
       // reload app if r is pressed
       messageSocket.broadcast('reload', null);
+      logger.info('Reloading app...');
     } else if (data.name === 'd') {
       // open dev menu if d is pressed
       messageSocket.broadcast('devMenu', null);
+      logger.info('Developer menu opened.');
     }
   });
 }

@@ -13,7 +13,7 @@ import fs from 'fs';
 import filterPlatformAssetScales from './filterPlatformAssetScales';
 import getAssetDestPathAndroid from './getAssetDestPathAndroid';
 import getAssetDestPathIOS from './getAssetDestPathIOS';
-import {logger} from '@react-native-community/cli-tools';
+import {logger, CLIError} from '@react-native-community/cli-tools';
 import {AssetData} from './buildBundle';
 
 interface CopiedFiles {
@@ -32,8 +32,7 @@ function saveAssets(
 
   if (!fs.existsSync(assetsDest)) {
     let error = `The specified assets destination folder "${assetsDest}" does not exist.`;
-    logger.error(error);
-    return Promise.reject();
+    throw new CLIError(error);
   }
 
   const getAssetDestPath =

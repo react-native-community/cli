@@ -4,7 +4,8 @@ import {logger} from '@react-native-community/cli-tools';
 import * as PackageManager from '../../tools/packageManager';
 import copyFiles from '../../tools/copyFiles';
 import replacePathSepForRegex from '../../tools/replacePathSepForRegex';
-import fs from 'fs-extra';
+import fs from 'fs';
+import chalk from 'chalk';
 
 export type TemplateConfig = {
   placeholderName: string;
@@ -40,7 +41,9 @@ export function getTemplateConfig(
   logger.debug(`Getting config from ${configFilePath}.js`);
   if (!fs.existsSync(configFilePath)) {
     throw new Error(
-      `Invalid template '${templateName}' specified. Make sure the template is CLI v2 compliant i.e. has a 'template.config.js' file.`,
+      `Invalid template '${templateName}' specified. Make sure the template is CLI v2 compliant: ${chalk.underline.dim(
+        'https://github.com/react-native-community/cli/blob/master/docs/init.md#creating-custom-template',
+      )}`,
     );
   }
   return require(configFilePath);

@@ -80,6 +80,33 @@ Custom path to `.podspec` file to use when auto-linking. Example: `node_modules/
 
 An array of shared iOS libraries to link with the dependency. E.g. `libc++`. This is mostly a requirement of the native code that a dependency ships with.
 
+#### platforms.ios.scriptPhases
+
+An array of iOS script phases to add to the project. Specifying a `path` property with a path relative to the dependency root will load the contents of the file at the path as the script contents.
+
+**Example:**
+
+```js
+// react-native.config.js
+module.exports = {
+  dependency: {
+    platforms: {
+     ios: {
+        scriptPhases: [
+          {
+            name: '[MY DEPENDENCY] My Script',
+            path: './my_script.sh',
+            execution_position: 'after_compile',
+          },
+        ],
+      },
+    },
+  },
+};
+```
+
+See [`script_phase` options](https://www.rubydoc.info/gems/cocoapods-core/Pod/Podfile/DSL#script_phase-instance_method) for a full list of available object keys.
+
 #### platforms.android.sourceDir
 
 A relative path to a folder with source files. E.g. `custom-android`, or `custom-android/app`. By default, CLI searches for `android` and `android/app` as source dirs.

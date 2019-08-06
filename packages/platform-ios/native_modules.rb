@@ -63,6 +63,7 @@ def use_native_modules!(root = "..", config = nil)
       Array(package_config["scriptPhases"]).each do |phase|
         # see https://www.rubydoc.info/gems/cocoapods-core/Pod/Podfile/DSL#script_phase-instance_method
         # for the full object keys
+        Pod::UI.puts "Adding a custom script phase for Pod #{spec.name}: #{phase["name"] || 'No name specified.'}"
 
         # Support passing in a path relative to the root of the package
         if phase["path"]
@@ -75,6 +76,7 @@ def use_native_modules!(root = "..", config = nil)
           phase["execution_position"] = phase["execution_position"].to_sym
         end
 
+        phase = Hash[phase.map { |k, v| [k.to_sym, v] }]
         script_phase phase
       end
     end
@@ -231,10 +233,10 @@ if $0 == __FILE__
         @config["dependencies"]["ios-dep"]["platforms"]["ios"]["scriptPhases"] = [@script_phase]
         @podfile.use_native_modules('..', @config)
         @added_scripts.must_equal [{
-          "script" => "123",
-          "name" => "My Name",
-          "execution_position" => :before_compile,
-          "input" => "string"
+          :script => "123",
+          :name => "My Name",
+          :execution_position => :before_compile,
+          :input => "string"
         }]
       end
 
@@ -251,10 +253,10 @@ if $0 == __FILE__
         end
 
         @added_scripts.must_equal [{
-          "script" => "contents from file",
-          "name" => "My Name",
-          "execution_position" => :before_compile,
-          "input" => "string"
+          :script => "contents from file",
+          :name => "My Name",
+          :execution_position => :before_compile,
+          :input => "string"
         }]
         file_read_mock.verify
       end

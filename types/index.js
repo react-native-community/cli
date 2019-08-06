@@ -70,6 +70,11 @@ type ProjectParamsIOST = {
   sharedLibraries?: string[],
   libraryFolder?: string,
   plist: any[],
+  scriptPhases: Array<{
+    name?: string,
+    path?: string,
+    [key: string]: string,
+  }>,
 };
 
 type PlatformConfig<

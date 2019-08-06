@@ -68,6 +68,7 @@ export function projectConfig(
     libraryFolder: userConfig.libraryFolder || 'Libraries',
     sharedLibraries: mapSharedLibaries(userConfig.sharedLibraries || []),
     plist: userConfig.plist || [],
+    scriptPhases: userConfig.scriptPhases || [],
   };
 }
 

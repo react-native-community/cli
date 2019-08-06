@@ -52,6 +52,7 @@ export const dependencyConfig = t
                 podspecPath: t.string(),
                 sharedLibraries: t.array().items(t.string()),
                 libraryFolder: t.string(),
+                scriptPhases: t.array().items(t.object()),
               })
               .default({}),
             android: t

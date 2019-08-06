@@ -16,18 +16,21 @@ function handleFileProtocol(filePath: string) {
   }
   if (!fs.existsSync(uri)) {
     throw new CLIError(
-      `Failed to retrieve package name. The specified template directory path "${uri}" does not exist or is invalid.`,
+      `Failed to retrieve template name. The specified template directory path "${uri}" does not exist or is invalid.`,
     );
   }
   const packageJsonPath = path.join(uri, 'package.json');
-  if (!fs.existsSync(packageJsonPath)) {
+
+  try {
+    const packageJson = JSON.parse(
+      fs.readFileSync(packageJsonPath, {encoding: 'utf8'}),
+    );
+  } catch {
     throw new CLIError(
-      'Failed to retrieve package name. We expect the template directory to include "package.json" file, but it was not found.',
+      'Failed to retrieve template name. We expect the template directory to include "package.json" file, but it was not found.',
     );
   }
-  const packageJson = JSON.parse(
-    fs.readFileSync(packageJsonPath, {encoding: 'utf8'}),
-  );
+
   if (!packageJson.name) {
     throw new CLIError(
       `Failed to retrieve template name. We expect the "package.json" of the template to include the "name" property, but we found "${

@@ -20,9 +20,9 @@ function handleFileProtocol(filePath: string) {
     );
   }
   const packageJsonPath = path.join(uri, 'package.json');
-
+  let packageJson = undefined;
   try {
-    const packageJson = JSON.parse(
+    packageJson = JSON.parse(
       fs.readFileSync(packageJsonPath, {encoding: 'utf8'}),
     );
   } catch {
@@ -31,10 +31,10 @@ function handleFileProtocol(filePath: string) {
     );
   }
 
-  if (!packageJson.name) {
+  if (!packageJson || !packageJson.name) {
     throw new CLIError(
       `Failed to retrieve template name. We expect the "package.json" of the template to include the "name" property, but we found "${
-        packageJson.name
+        packageJson ? packageJson.name : `undefined`
       }" which is invalid.`,
     );
   }

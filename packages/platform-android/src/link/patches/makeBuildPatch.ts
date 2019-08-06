@@ -13,15 +13,16 @@ const depConfigs = ['compile', 'api', 'implementation'];
 
 export default function makeBuildPatch(name: string, buildGradlePath?: string) {
   const normalizedProjectName = normalizeProjectName(name);
-  const installPattern = new RegExp(
-    buildDepRegExp(normalizedProjectName, ...depConfigs),
-  );
-
   return {
-    installPattern,
+    installPattern: makeInstallPattern(name),
     pattern: /[^ \t]dependencies {(\r\n|\n)/,
     patch: makePatchString(normalizedProjectName, buildGradlePath),
   };
+}
+
+export function makeInstallPattern(name: string) {
+  const normalizedProjectName = normalizeProjectName(name);
+  return new RegExp(buildDepRegExp(normalizedProjectName, ...depConfigs));
 }
 
 function makePatchString(

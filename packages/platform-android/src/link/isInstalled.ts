@@ -7,12 +7,12 @@
  */
 
 import fs from 'fs';
-import makeBuildPatch from './patches/makeBuildPatch';
+import {makeInstallPattern} from './patches/makeBuildPatch';
 
 export default function isInstalled(
   config: {buildGradlePath: string},
   name: string,
 ) {
   const buildGradle = fs.readFileSync(config.buildGradlePath, 'utf8');
-  return makeBuildPatch(name).installPattern.test(buildGradle);
+  return makeInstallPattern(name).test(buildGradle);
 }

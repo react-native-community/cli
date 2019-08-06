@@ -47,7 +47,6 @@ test('init --template', () => {
     '--template',
     'react-native-new-template',
     'TestInit',
-    '--verbose',
   ]);
 
   expect(stdout).toContain('Welcome to React Native!');

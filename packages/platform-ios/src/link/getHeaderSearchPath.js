@@ -22,14 +22,14 @@ import {last, union} from 'lodash';
  */
 const getOuterDirectory = directories =>
   directories.reduce((topDir, currentDir) => {
-    const currentFolders = currentDir.split(path.sep);
-    const topMostFolders = topDir.split(path.sep);
+    const currentFolders = currentDir.split('/');
+    const topMostFolders = topDir.split('/');
 
     if (
       currentFolders.length === topMostFolders.length &&
       last(currentFolders) !== last(topMostFolders)
     ) {
-      return currentFolders.slice(0, -1).join(path.sep);
+      return currentFolders.slice(0, -1).join('/');
     }
 
     return currentFolders.length < topMostFolders.length ? currentDir : topDir;
@@ -53,8 +53,8 @@ export default function getHeaderSearchPath(sourceDir, headers) {
   const directories = union(headers.map(path.dirname));
 
   return directories.length === 1
-    ? `"$(SRCROOT)${path.sep}${path.relative(sourceDir, directories[0])}"`
-    : `"$(SRCROOT)${path.sep}${path.relative(
+    ? `"$(SRCROOT)/${path.relative(sourceDir, directories[0])}"`
+    : `"$(SRCROOT)/${path.relative(
         sourceDir,
         getOuterDirectory(directories),
       )}/**"`;

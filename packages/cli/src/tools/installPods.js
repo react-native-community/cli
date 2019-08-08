@@ -7,12 +7,35 @@ import inquirer from 'inquirer';
 import {logger} from '@react-native-community/cli-tools';
 import {NoopLoader} from './loader';
 
+async function updatePods(loader: typeof Ora) {
+  try {
+    loader.start(
+      `Updating CocoaPods repositories ${chalk.dim(
+        '(this may take a few minutes)',
+      )}`,
+    );
+    await execa('pod', ['repo', 'update']);
+  } catch (error) {
+    // "pod" command outputs errors to stdout (at least some of them)
+    logger.log(error.stderr || error.stdout);
+    loader.fail();
+
+    throw new Error(
+      `Failed to update CocoaPods repositories for iOS project.\nPlease try again manually: "pod repo update".\nCocoaPods documentation: ${chalk.dim.underline(
+        'https://cocoapods.org/',
+      )}`,
+    );
+  }
+}
+
 async function installPods({
   projectName,
   loader,
+  shouldUpdatePods,
 }: {
   projectName: string,
   loader?: typeof Ora,
+  shouldUpdatePods: boolean,
 }) {
   loader = loader || new NoopLoader();
   try {
@@ -77,25 +100,12 @@ async function installPods({
           }
         }
 
-        try {
-          loader.start(
-            `Updating CocoaPods repositories ${chalk.dim(
-              '(this may take a few minutes)',
-            )}`,
-          );
-          await execa('pod', ['repo', 'update']);
-        } catch (error) {
-          // "pod" command outputs errors to stdout (at least some of them)
-          logger.log(error.stderr || error.stdout);
-          loader.fail();
-
-          throw new Error(
-            `Failed to update CocoaPods repositories for iOS project.\nPlease try again manually: "pod repo update".\nCocoaPods documentation: ${chalk.dim.underline(
-              'https://cocoapods.org/',
-            )}`,
-          );
-        }
+        await updatePods(loader);
       }
+    }
+
+    if (shouldUpdatePods) {
+      await updatePods(loader);
     }
 
     try {

@@ -7,6 +7,7 @@ import execa from 'execa';
 import type {ConfigT} from 'types';
 import {logger, CLIError, fetch} from '@react-native-community/cli-tools';
 import * as PackageManager from '../../tools/packageManager';
+import installPods from '../../tools/installPods';
 import legacyUpgrade from './legacyUpgrade';
 
 type FlagsT = {
@@ -163,6 +164,33 @@ const installDeps = async (newVersion, projectDir) => {
   }
 };
 
+const installCocoaPodsDeps = async (projectDir, thirdPartyIOSDeps) => {
+  if (process.platform === 'darwin') {
+    try {
+      logger.info(
+        `Installing CocoaPods dependencies ${chalk.dim(
+          '(this may take a few minutes)',
+        )}`,
+      );
+      await installPods({
+        projectName: projectDir.split('/').pop(),
+        shouldUpdatePods: thirdPartyIOSDeps.length > 0,
+      });
+    } catch (error) {
+      if (error.stderr) {
+        logger.debug(
+          `"pod install" or "pod repo update" failed. Error output:\n${
+            error.stderr
+          }`,
+        );
+      }
+      logger.error(
+        'Installation of CocoaPods dependencies failed. Try to install them manually by running "pod install" in "ios" directory after finishing upgrade',
+      );
+    }
+  }
+};
+
 const applyPatch = async (
   currentVersion: string,
   newVersion: string,
@@ -265,6 +293,10 @@ async function upgrade(argv: Array<string>, ctx: ConfigT, args: FlagsT) {
     projectDir,
     'node_modules/react-native/package.json',
   ));
+  const thirdPartyIOSDeps = Object.values(ctx.dependencies).filter(
+    // $FlowFixMe
+    dependency => dependency.platforms.ios,
+  );
 
   const newVersion = await getVersionToUpgradeTo(
     argv,
@@ -285,6 +317,8 @@ async function upgrade(argv: Array<string>, ctx: ConfigT, args: FlagsT) {
   if (patch === '') {
     logger.info('Diff has no changes to apply, proceeding further');
     await installDeps(newVersion, projectDir);
+    await installCocoaPodsDeps(projectDir, thirdPartyIOSDeps);
+
     logger.success(
       `Upgraded React Native to v${newVersion} 🎉. Now you can review and commit the changes`,
     );
@@ -319,6 +353,7 @@ async function upgrade(argv: Array<string>, ctx: ConfigT, args: FlagsT) {
       }
     } else {
       await installDeps(newVersion, projectDir);
+      await installCocoaPodsDeps(projectDir, thirdPartyIOSDeps);
       logger.info('Running "git status" to check what changed...');
       await execa('git', ['status'], {stdio: 'inherit'});
     }
@@ -326,6 +361,11 @@ async function upgrade(argv: Array<string>, ctx: ConfigT, args: FlagsT) {
       if (stdout) {
         logger.warn(
           'Please run "git diff" to review the conflicts and resolve them',
+        );
+      }
+      if (process.platform === 'darwin') {
+        logger.warn(
+          'After resolving conflicts don\'t forget to run "pod install" inside "ios" directory',
         );
       }
       logger.info(`You may find these resources helpful:

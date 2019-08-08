@@ -3,6 +3,8 @@
 # which declare themselves to be iOS dependencies (via having a Podspec) and automatically
 # imports those into your current target.
 #
+require 'pathname'
+
 def use_native_modules!(root = "..", config = nil)
   if (!config)
     json = []
@@ -20,7 +22,7 @@ def use_native_modules!(root = "..", config = nil)
   end
 
   packages = config["dependencies"]
-  project_root = config["root"]
+  config_root = config["root"]
   found_pods = []
 
   packages.each do |package_name, package|
@@ -54,7 +56,9 @@ def use_native_modules!(root = "..", config = nil)
       existing_dep.name.split('/').first == spec.name
     end
 
-    relative_path = File.dirname(podspec_path).split(project_root).last || ""
+    podspec_dir_path = Pathname.new(File.dirname(podspec_path))
+    project_root = Pathname.new(config_root)
+    relative_path = podspec_dir_path.relative_path_from project_root
 
     pod spec.name, :path => File.join(root, relative_path)
 
@@ -217,10 +221,10 @@ if $0 == __FILE__
     end
 
     it "prints out the native module pods that were found" do
-      @podfile.use_native_modules('..', { "root" => "", "dependencies" => {} })
-      @podfile.use_native_modules('..', { "root" => "", "dependencies" => { "pkg-1" => @ios_package }})
+      @podfile.use_native_modules('..', { "root" => "/root/app", "dependencies" => {} })
+      @podfile.use_native_modules('..', { "root" => "/root/app", "dependencies" => { "pkg-1" => @ios_package }})
       @podfile.use_native_modules('..', {
-        "root" => "", "dependencies" => { "pkg-1" => @ios_package, "pkg-2" => @ios_package }
+        "root" => "/root/app", "dependencies" => { "pkg-1" => @ios_package, "pkg-2" => @ios_package }
       })
       @printed_messages.must_equal [
         "Detected React Native module pod for ios-dep",

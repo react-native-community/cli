@@ -296,7 +296,7 @@ test('cleans up if patching fails,', async () => {
     [fs] unlink tmp-upgrade-rn.patch
     $ execa git status -s
     error Patch failed to apply for unknown reason. Please fall back to manual way of upgrading
-    warn After resolving conflicts don't forget to change into \\"ios\\" directory and run \\"pod install\\"
+    warn After resolving conflicts don't forget to run \\"pod install\\" inside \\"ios\\" directory
     info You may find these resources helpful:
     • Release notes: https://github.com/facebook/react-native/releases/tag/v0.58.4
     • Manual Upgrade Helper: https://react-native-community.github.io/upgrade-helper/?from=0.57.8&to=0.58.4

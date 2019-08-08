@@ -107,6 +107,9 @@ beforeEach(() => {
   fs.unlinkSync = jest.fn((...args) => mockPushLog('[fs] unlink', args));
   logs = [];
   (execa: any).mockImplementation(mockExecaDefault);
+  Object.defineProperty(process, 'platform', {
+    value: 'darwin',
+  });
 });
 
 afterEach(() => {

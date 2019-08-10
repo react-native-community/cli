@@ -11,7 +11,7 @@
 import open from 'open';
 import {execSync} from 'child_process';
 import {logger} from '@react-native-community/cli-tools';
-import launchBrowser from './launchBrowser';
+import launchDefaultBrowser from './launchDefaultBrowser';
 import chalk from 'chalk';
 
 function commandExistsUnixSync(commandName) {
@@ -83,8 +83,7 @@ function launchDebugger(url: string) {
         'https://www.google.com/chrome/',
       )}`,
     );
-    //fallback to default browser
-    launchBrowser(url);
+    launchDefaultBrowser(url);
     return;
   }
   launchChrome(url);

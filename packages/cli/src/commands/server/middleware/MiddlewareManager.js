@@ -21,7 +21,6 @@ import getSecurityHeadersMiddleware from './getSecurityHeadersMiddleware';
 import loadRawBodyMiddleware from './loadRawBodyMiddleware';
 import openStackFrameInEditorMiddleware from './openStackFrameInEditorMiddleware';
 import openURLMiddleware from './openURLMiddleware';
-import logToConsoleMiddleware from './logToConsoleMiddleware';
 import statusPageMiddleware from './statusPageMiddleware';
 import systraceProfileMiddleware from './systraceProfileMiddleware';
 import getDevToolsMiddleware from './getDevToolsMiddleware';
@@ -54,7 +53,6 @@ export default class MiddlewareManager {
       .use('/debugger-ui', serveStatic(debuggerUIFolder))
       .use(openStackFrameInEditorMiddleware(this.options))
       .use(openURLMiddleware)
-      .use(logToConsoleMiddleware)
       .use(copyToClipBoardMiddleware)
       .use(statusPageMiddleware)
       .use(systraceProfileMiddleware)

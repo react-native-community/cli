@@ -130,6 +130,7 @@ function translateFilePath(filePath) {
     .replace('_eslintrc.js', '.eslintrc.js')
     .replace('_flowconfig', '.flowconfig')
     .replace('_buckconfig', '.buckconfig')
+    .replace('_prettierrc.js', '.prettierrc.js')
     .replace('_watchmanconfig', '.watchmanconfig');
 }
 

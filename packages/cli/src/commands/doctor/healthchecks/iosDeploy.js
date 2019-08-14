@@ -30,7 +30,7 @@ const iosDeploy = {
 
       // Then we just print out the URL that the user can head to download the library
       logManualInstallation({
-        issue: 'ios-deploy',
+        healthcheck: 'ios-deploy',
         url: 'https://github.com/ios-control/ios-deploy#readme',
       });
     }
@@ -46,7 +46,7 @@ const iosDeploy = {
       loader.succeed();
     } catch (_error) {
       logManualInstallation({
-        issue: 'ios-deploy',
+        healthcheck: 'ios-deploy',
         command: installationCommand,
       });
     }

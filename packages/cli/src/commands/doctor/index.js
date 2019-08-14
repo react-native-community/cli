@@ -9,7 +9,7 @@ export default {
   options: [
     {
       name: '--fix',
-      description: 'Fix issues',
+      description: 'Attempt to fix all diagnosed issues.',
     },
   ],
 };

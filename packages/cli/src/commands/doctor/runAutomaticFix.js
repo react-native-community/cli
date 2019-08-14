@@ -8,7 +8,12 @@ const AUTOMATIC_FIX_LEVELS = {
   WARNINGS: 'WARNINGS',
 };
 
-const runAutomaticFix = async ({issues, automaticFixLevel, stats, loader}) => {
+const runAutomaticFix = async ({
+  healthchecks,
+  automaticFixLevel,
+  stats,
+  loader,
+}) => {
   // Remove the fix options from screen
   process.stdout.moveCursor(0, -6);
   process.stdout.clearScreenDown();
@@ -23,19 +28,21 @@ const runAutomaticFix = async ({issues, automaticFixLevel, stats, loader}) => {
     }...`,
   );
 
-  for (const category of issues) {
+  for (const category of healthchecks) {
     logger.log(`\n${chalk.dim(category.label)}`);
 
-    const issuesToFix = category.issues.filter(issue => issue.needsToBeFixed);
+    const healthchecksToRun = category.healthchecks.filter(
+      healthcheck => healthcheck.needsToBeFixed,
+    );
 
-    for (const issueToFix of issuesToFix) {
-      const issueSpinner = ora({
+    for (const healthcheckToRun of healthchecksToRun) {
+      const spinner = ora({
         prefixText: '',
-        text: issueToFix.label,
+        text: healthcheckToRun.label,
       }).start();
 
       try {
-        await issueToFix.runAutomaticFix({loader: issueSpinner});
+        await healthcheckToRun.runAutomaticFix({loader: spinner});
       } catch (error) {
         // TODO: log the error in a meaningful way
       }

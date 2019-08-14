@@ -5,15 +5,15 @@ import xcode from './xcode';
 import cocoaPods from './cocoaPods';
 import iosDeploy from './iosDeploy';
 
-const issues = {
+const healthchecks = {
   common: {
     label: 'Common',
-    issues: [nodeJS, yarn, npm, watchman],
+    healthchecks: [nodeJS, yarn, npm, watchman],
   },
   ios: {
     label: 'iOS',
-    issues: [xcode, cocoaPods, iosDeploy],
+    healthchecks: [xcode, cocoaPods, iosDeploy],
   },
 };
 
-export default issues;
+export default healthchecks;

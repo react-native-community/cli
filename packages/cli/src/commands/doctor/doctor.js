@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import envinfo from 'envinfo';
 import {logger} from '@react-native-community/cli-tools';
-import ISSUES from './issues';
+import HEALTHCHECKS from './healthchecks';
 import {getLoader} from '../../tools/loader';
 import printFixOptions, {KEYS} from './printFixOptions';
 import runAutomaticFix, {AUTOMATIC_FIX_LEVELS} from './runAutomaticFix';
@@ -43,10 +43,10 @@ export default (async function runDoctor() {
     ),
   );
 
-  const iterateOverIssues = async ({label, issues}) => ({
+  const iterateOverHealthchecks = async ({label, healthchecks}) => ({
     label,
-    issues: (await Promise.all(
-      issues.map(async issue => {
+    healthchecks: (await Promise.all(
+      healthchecks.map(async issue => {
         if (issue.visible === false) {
           return;
         }
@@ -68,9 +68,11 @@ export default (async function runDoctor() {
   });
 
   const iterateOverCategories = categories =>
-    Promise.all(categories.map(iterateOverIssues));
+    Promise.all(categories.map(iterateOverHealthchecks));
 
-  const issuesPerCategory = await iterateOverCategories(Object.values(ISSUES));
+  const healthchecksPerCategory = await iterateOverCategories(
+    Object.values(HEALTHCHECKS),
+  );
 
   loader.stop();
 
@@ -79,10 +81,10 @@ export default (async function runDoctor() {
     warnings: 0,
   };
 
-  issuesPerCategory.forEach((issueCategory, key) => {
+  healthchecksPerCategory.forEach((issueCategory, key) => {
     printCategory({...issueCategory, key});
 
-    issueCategory.issues.forEach(issue => {
+    issueCategory.healthchecks.forEach(issue => {
       printIssue(issue);
 
       const isWarning = issue.needsToBeFixed && !issue.isRequired;
@@ -113,7 +115,7 @@ export default (async function runDoctor() {
     if (key === KEYS.FIX_ALL_ISSUES) {
       try {
         await runAutomaticFix({
-          issues: issuesPerCategory,
+          healthchecks: healthchecksPerCategory,
           automaticFixLevel: AUTOMATIC_FIX_LEVELS.ALL_ISSUES,
           stats,
           loader,

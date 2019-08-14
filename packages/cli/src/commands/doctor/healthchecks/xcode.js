@@ -14,7 +14,7 @@ const xcode = {
     loader.info();
 
     logManualInstallation({
-      issue: 'Xcode',
+      healthcheck: 'Xcode',
       url: 'https://developer.apple.com/xcode/',
     });
   },

@@ -408,7 +408,7 @@ Starts the server that communicates with connected devices
 
 Specify port to listen on
 
-#### `--projectRoot [list]`
+#### `--projectRoot [path]`
 
 Path to a custom project root
 

@@ -24,6 +24,11 @@ const printIssue = ({label, needsToBeFixed, isRequired}) => {
   logger.log(` ${symbol} ${label}`);
 };
 
+const printOverallStats = ({errors, warnings}) => {
+  logger.log(`\n${chalk.bold('Errors:')}   ${errors}`);
+  logger.log(`${chalk.bold('Warnings:')} ${warnings}`);
+};
+
 export default (async function runDoctor() {
   const Loader = getLoader();
   const loader = new Loader();
@@ -101,10 +106,7 @@ export default (async function runDoctor() {
     });
   });
 
-  // Print overall stats
-  logger.log();
-  logger.log(`${chalk.bold('Errors:')}   ${stats.errors}`);
-  logger.log(`${chalk.bold('Warnings:')} ${stats.warnings}`);
+  printOverallStats(stats);
 
   const onKeyPress = async key => {
     process.stdin.setRawMode(false);

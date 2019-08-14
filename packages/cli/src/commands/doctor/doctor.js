@@ -74,6 +74,15 @@ export default (async function runDoctor() {
     )).filter(healthcheck => !!healthcheck),
   });
 
+  // Remove all the categories that don't have any healthcheck with `needsToBeFixed`
+  // so they don't show when the user taps to fix encountered issues
+  const removeFixedCategories = categories =>
+    categories.filter(
+      category =>
+        category.healthchecks.filter(healthcheck => healthcheck.needsToBeFixed)
+          .length > 0,
+    );
+
   const iterateOverCategories = categories =>
     Promise.all(categories.map(iterateOverHealthchecks));
 
@@ -119,7 +128,7 @@ export default (async function runDoctor() {
     if (key === KEYS.FIX_ALL_ISSUES) {
       try {
         await runAutomaticFix({
-          healthchecks: healthchecksPerCategory,
+          healthchecks: removeFixedCategories(healthchecksPerCategory),
           automaticFixLevel: AUTOMATIC_FIX_LEVELS.ALL_ISSUES,
           stats,
           loader,

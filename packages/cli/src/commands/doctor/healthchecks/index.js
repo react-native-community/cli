@@ -10,10 +10,14 @@ const healthchecks = {
     label: 'Common',
     healthchecks: [nodeJS, yarn, npm, watchman],
   },
-  ios: {
-    label: 'iOS',
-    healthchecks: [xcode, cocoaPods, iosDeploy],
-  },
+  ...(process.platform === 'darwin'
+    ? {
+        ios: {
+          label: 'iOS',
+          healthchecks: [xcode, cocoaPods, iosDeploy],
+        },
+      }
+    : {}),
 };
 
 export default healthchecks;

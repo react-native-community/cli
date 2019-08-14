@@ -11,7 +11,7 @@
 import open from 'open';
 import {logger} from '@react-native-community/cli-tools';
 
-function launchBrowser(url: string) {
+function launchDefaultBrowser(url: string) {
   open(url, err => {
     if (err) {
       logger.error('Browser exited with error:', err);
@@ -19,4 +19,4 @@ function launchBrowser(url: string) {
   });
 }
 
-export default launchBrowser;
+export default launchDefaultBrowser;

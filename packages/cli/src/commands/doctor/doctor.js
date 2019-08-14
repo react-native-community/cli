@@ -46,25 +46,27 @@ export default (async function runDoctor() {
   const iterateOverHealthchecks = async ({label, healthchecks}) => ({
     label,
     healthchecks: (await Promise.all(
-      healthchecks.map(async issue => {
-        if (issue.visible === false) {
+      healthchecks.map(async healthcheck => {
+        if (healthcheck.visible === false) {
           return;
         }
 
-        const {needsToBeFixed} = issue.getDiagnostics
-          ? issue.getDiagnostics(environmentInfo)
-          : await issue.getDiagnosticsAsync(environmentInfo);
+        const {needsToBeFixed} = healthcheck.getDiagnostics
+          ? healthcheck.getDiagnostics(environmentInfo)
+          : await healthcheck.getDiagnosticsAsync(environmentInfo);
 
         return {
-          label: issue.label,
+          label: healthcheck.label,
           needsToBeFixed,
-          runAutomaticFix: issue.runAutomaticFix,
+          runAutomaticFix: healthcheck.runAutomaticFix,
           // Assume that it's required unless specified otherwise
           isRequired:
-            typeof issue.isRequired === 'undefined' ? true : issue.isRequired,
+            typeof healthcheck.isRequired === 'undefined'
+              ? true
+              : healthcheck.isRequired,
         };
       }),
-    )).filter(issue => !!issue),
+    )).filter(healthcheck => !!healthcheck),
   });
 
   const iterateOverCategories = categories =>

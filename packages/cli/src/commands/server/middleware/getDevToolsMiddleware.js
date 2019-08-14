@@ -6,14 +6,14 @@
  *
  * @format
  */
-import launchChrome from '../launchChrome';
 import {logger} from '@react-native-community/cli-tools';
 import {exec} from 'child_process';
+import launchDebugger from '../launchDebugger';
 
-function launchChromeDevTools(port, args = '') {
+function launchDefaultDebugger(port, args = '') {
   const debuggerURL = `http://localhost:${port}/debugger-ui${args}`;
   logger.info('Launching Dev Tools...');
-  launchChrome(debuggerURL);
+  launchDebugger(debuggerURL);
 }
 
 function escapePath(pathname) {
@@ -21,14 +21,14 @@ function escapePath(pathname) {
   return `"${pathname}"`;
 }
 
-function launchDevTools({port, watchFolders}, isChromeConnected) {
+function launchDevTools({port, watchFolders}, isDebuggerConnected) {
   // Explicit config always wins
   const customDebugger = process.env.REACT_DEBUGGER;
   if (customDebugger) {
     startCustomDebugger({watchFolders, customDebugger});
-  } else if (!isChromeConnected()) {
-    // Dev tools are not yet open; we need to open a session
-    launchChromeDevTools(port);
+  } else if (!isDebuggerConnected()) {
+    // Debugger is not yet open; we need to open a session
+    launchDefaultDebugger(port);
   }
 }
 
@@ -43,10 +43,10 @@ function startCustomDebugger({watchFolders, customDebugger}) {
   });
 }
 
-export default function getDevToolsMiddleware(options, isChromeConnected) {
+export default function getDevToolsMiddleware(options, isDebuggerConnected) {
   return function devToolsMiddleware(req, res, next) {
     if (req.url === '/launch-js-devtools') {
-      launchDevTools(options, isChromeConnected);
+      launchDevTools(options, isDebuggerConnected);
       res.end('OK');
     } else {
       next();

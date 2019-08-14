@@ -11,6 +11,8 @@
 import open from 'open';
 import {execSync} from 'child_process';
 import {logger} from '@react-native-community/cli-tools';
+import launchDefaultBrowser from './launchDefaultBrowser';
+import chalk from 'chalk';
 
 function commandExistsUnixSync(commandName) {
   try {
@@ -21,6 +23,28 @@ function commandExistsUnixSync(commandName) {
     return !!stdout;
   } catch (error) {
     return false;
+  }
+}
+
+function commandExistsWindowsSync(commandName) {
+  try {
+    const stdout = execSync('where ' + commandName, {stdio: []});
+    return !!stdout;
+  } catch (error) {
+    return false;
+  }
+}
+
+function commandExists(commandName) {
+  switch (process.platform) {
+    case 'win32':
+      return commandExistsWindowsSync(commandName);
+    case 'linux':
+    case 'darwin':
+      return commandExistsUnixSync(commandName);
+    default:
+      // assume it doesn't exist, just to be safe.
+      return false;
   }
 }
 
@@ -52,4 +76,17 @@ function launchChrome(url: string) {
   });
 }
 
-export default launchChrome;
+function launchDebugger(url: string) {
+  if (!commandExists(getChromeAppName())) {
+    logger.info(
+      `For a better debugging experience please install Google Chrome from: ${chalk.underline.dim(
+        'https://www.google.com/chrome/',
+      )}`,
+    );
+    launchDefaultBrowser(url);
+    return;
+  }
+  launchChrome(url);
+}
+
+export default launchDebugger;

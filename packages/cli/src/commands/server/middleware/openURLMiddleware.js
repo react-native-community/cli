@@ -7,7 +7,7 @@
  * @format
  */
 
-import launchBrowser from '../launchBrowser';
+import launchDefaultBrowser from '../launchDefaultBrowser';
 import {logger} from '@react-native-community/cli-tools';
 
 /**
@@ -17,7 +17,7 @@ export default function openURLMiddleware(req, res, next) {
   if (req.url === '/open-url') {
     const {url} = JSON.parse(req.rawBody);
     logger.info(`Opening ${url}...`);
-    launchBrowser(url);
+    launchDefaultBrowser(url);
     res.end('OK');
   } else {
     next();

@@ -7,7 +7,7 @@
  * @format
  */
 
-import path from 'path';
+import {posix as path} from 'path';
 import {last, union} from 'lodash';
 
 /**
@@ -22,14 +22,14 @@ import {last, union} from 'lodash';
  */
 const getOuterDirectory = directories =>
   directories.reduce((topDir, currentDir) => {
-    const currentFolders = currentDir.split('/');
-    const topMostFolders = topDir.split('/');
+    const currentFolders = currentDir.split(path.sep);
+    const topMostFolders = topDir.split(path.sep);
 
     if (
       currentFolders.length === topMostFolders.length &&
       last(currentFolders) !== last(topMostFolders)
     ) {
-      return currentFolders.slice(0, -1).join('/');
+      return currentFolders.slice(0, -1).join(path.sep);
     }
 
     return currentFolders.length < topMostFolders.length ? currentDir : topDir;

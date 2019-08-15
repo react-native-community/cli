@@ -21,6 +21,7 @@ test('legacy init through react-native-cli', () => {
     '.flowconfig',
     '.gitattributes',
     '.gitignore',
+    '.prettierrc.js',
     '.watchmanconfig',
     'App.js',
     '__tests__',

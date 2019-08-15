@@ -9,8 +9,7 @@
  */
 
 import getHeaderSearchPath from '../getHeaderSearchPath';
-
-const path = require('path');
+import {posix as path} from 'path';
 
 const SRC_DIR = path.join('react-native-project', 'ios');
 

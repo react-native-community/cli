@@ -10,8 +10,6 @@
 <meta charset=utf-8>
 <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 <title>React Native Debugger</title>
-<script src="/debugger-ui/DeltaPatcher.js"></script>
-<script src="/debugger-ui/deltaUrlToBlobUrl.js"></script>
 <script>
   function onReloadClicked() {
     var xhr = new XMLHttpRequest();
@@ -119,8 +117,6 @@
   function connectToDebuggerProxy() {
     const ws = new WebSocket('ws://' + window.location.host + '/debugger-proxy?role=debugger&name=Chrome');
     let worker;
-    let queuedMessages = [];
-    let appExecuted = false;
 
     function createJSRuntime() {
       // This worker will run the application JavaScript code,
@@ -132,7 +128,7 @@
       };
       window.onbeforeunload = function() {
         return 'If you reload this page, it is going to break the debugging session. ' +
-          'You should press' + refreshShortcut + 'in simulator to reload.';
+          'Press ' + refreshShortcut + ' on the device to reload.';
       };
       updateVisibility();
     }
@@ -185,27 +181,8 @@
       } else if (object.method === '$disconnected') {
         shutdownJSRuntime();
         Page.setState({status: {type: 'disconnected'}});
-      } else if (object.method === 'executeApplicationScript') {
-        appExecuted = false;
-        worker.postMessage({
-          ...object,
-          url: await getBlobUrl(object.url),
-        });
-        appExecuted = true;
-        // Flush any messages queued up and clear them
-        for (const message of queuedMessages) {
-          worker.postMessage(message);
-        }
-        queuedMessages = [];
       } else {
-        // Otherwise, pass through to the worker provided the
-        // application script has been executed. If not add
-        // it to a queue until it has been executed.
-        if (appExecuted) {
-          worker.postMessage(object);
-        } else {
-          queuedMessages.push(object);
-        }
+        worker.postMessage(object);
       }
     };
 
@@ -224,18 +201,6 @@
   }
 
   connectToDebuggerProxy();
-
-  async function getBlobUrl(url) {
-    // Ensure that the bundle URL has the same origin as this webpage so that
-    // the same-origin policy lets us fetch it
-    const urlObject = new URL(url, location);
-    const relativeUrl = urlObject.pathname.replace('.bundle', '.delta') +
-      urlObject.search +
-      urlObject.hash;
-    const localUrl = new URL(relativeUrl, location).toString();
-
-    return await window.deltaUrlToBlobUrl(localUrl);
-  }
 })();
 </script>
 <style type="text/css">

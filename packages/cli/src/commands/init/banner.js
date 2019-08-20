@@ -38,6 +38,6 @@ const learnOnceMessage =
 
 export default `${chalk.blue(reactLogoArray.join('\n'))}
 
-${chalk.yellow.bold(welcomeMessage)}
-${chalk.gray(learnOnceMessage)}
+${chalk.blue.bold(welcomeMessage)}
+${chalk.dim(learnOnceMessage)}
 `;

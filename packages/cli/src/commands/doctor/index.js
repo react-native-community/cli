@@ -11,5 +11,10 @@ export default {
       name: '--fix',
       description: 'Attempt to fix all diagnosed issues.',
     },
+    {
+      name: '--contributor',
+      description:
+        'Add healthchecks required to installations required for contributing to React Native.',
+    },
   ],
 };

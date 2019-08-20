@@ -8,7 +8,8 @@ import xcode from './xcode';
 import cocoaPods from './cocoaPods';
 import iosDeploy from './iosDeploy';
 
-const healthchecks = {
+
+export const getHealthchecks = ({contributor}) => ({
   common: {
     label: 'Common',
     healthchecks: [nodeJS, yarn, npm, watchman],
@@ -16,7 +17,11 @@ const healthchecks = {
   android: {
     label: 'Android',
     // TODO: Android NDK should be shown only with a special flag
-    healthchecks: [androidHomeEnvVariable, androidSDK, androidNDK],
+    healthchecks: [
+      androidHomeEnvVariable,
+      androidSDK,
+      ...(contributor ? [androidNDK] : []),
+    ],
   },
   ...(process.platform === 'darwin'
     ? {
@@ -26,6 +31,4 @@ const healthchecks = {
         },
       }
     : {}),
-};
-
-export default healthchecks;
+});

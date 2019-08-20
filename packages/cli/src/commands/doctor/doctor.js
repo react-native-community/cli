@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import envinfo from 'envinfo';
 import {logger} from '@react-native-community/cli-tools';
-import HEALTHCHECKS from './healthchecks';
+import {getHealthchecks} from './healthchecks';
 import {getLoader} from '../../tools/loader';
 import printFixOptions, {KEYS} from './printFixOptions';
 import runAutomaticFix, {AUTOMATIC_FIX_LEVELS} from './runAutomaticFix';
@@ -29,7 +29,7 @@ const printOverallStats = ({errors, warnings}) => {
   logger.log(`${chalk.bold('Warnings:')} ${warnings}`);
 };
 
-export default (async function runDoctor() {
+export default (async function runDoctor(argv, ctx, options) {
   const Loader = getLoader();
   const loader = new Loader();
 
@@ -87,7 +87,7 @@ export default (async function runDoctor() {
     Promise.all(categories.map(iterateOverHealthchecks));
 
   const healthchecksPerCategory = await iterateOverCategories(
-    Object.values(HEALTHCHECKS),
+    Object.values(getHealthchecks(options)),
   );
 
   loader.stop();

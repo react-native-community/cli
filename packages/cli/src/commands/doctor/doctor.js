@@ -132,6 +132,7 @@ export default (async function runDoctor() {
           automaticFixLevel: AUTOMATIC_FIX_LEVELS.ALL_ISSUES,
           stats,
           loader,
+          environmentInfo,
         });
 
         process.exit(0);

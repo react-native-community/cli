@@ -1,7 +1,6 @@
 import versionRanges from '../versionRanges';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
-
-const delay = amount => new Promise(resolve => setTimeout(resolve, amount));
+import {logManualInstallation} from './common';
 
 const issue = {
   label: 'Node.js',
@@ -13,8 +12,12 @@ const issue = {
     }),
   }),
   runAutomaticFix: async ({loader}) => {
-    await delay(500);
-    loader.succeed();
+    loader.fail();
+
+    logManualInstallation({
+      healthcheck: 'Node.js',
+      url: 'https://nodejs.org/en/download/',
+    });
   },
 };
 

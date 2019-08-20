@@ -8,7 +8,7 @@ const URLS = {
   linux: 'https://stackoverflow.com/a/39228100/4252781',
 };
 
-const label = 'ANDROID_HOME environment variable';
+const label = 'ANDROID_HOME';
 
 const iosDeploy = {
   label,

@@ -124,6 +124,16 @@ export default (async function runDoctor(argv, ctx, options) {
 
   printOverallStats(stats);
 
+  if (options.fix) {
+    return await runAutomaticFix({
+      healthchecks: removeFixedCategories(healthchecksPerCategory),
+      automaticFixLevel: AUTOMATIC_FIX_LEVELS.ALL_ISSUES,
+      stats,
+      loader,
+      environmentInfo,
+    });
+  }
+
   const onKeyPress = async key => {
     process.stdin.setRawMode(false);
     process.stdin.removeAllListeners('data');

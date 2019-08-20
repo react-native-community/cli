@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import envinfo from 'envinfo';
 import {logger} from '@react-native-community/cli-tools';
-import {getHealthchecks} from './healthchecks';
+import {getHealthchecks, HEALTHCHECK_TYPES} from './healthchecks';
 import {getLoader} from '../../tools/loader';
 import printFixOptions, {KEYS} from './printFixOptions';
 import runAutomaticFix, {AUTOMATIC_FIX_LEVELS} from './runAutomaticFix';
@@ -60,15 +60,24 @@ export default (async function runDoctor(argv, ctx, options) {
           ? healthcheck.getDiagnostics(environmentInfo)
           : await healthcheck.getDiagnosticsAsync(environmentInfo);
 
+        // Assume that it's required unless specified otherwise
+        const isRequired =
+          typeof healthcheck.isRequired === 'undefined'
+            ? true
+            : healthcheck.isRequired;
+
+        const isWarning = needsToBeFixed && !isRequired;
+
         return {
           label: healthcheck.label,
           needsToBeFixed,
           runAutomaticFix: healthcheck.runAutomaticFix,
-          // Assume that it's required unless specified otherwise
-          isRequired:
-            typeof healthcheck.isRequired === 'undefined'
-              ? true
-              : healthcheck.isRequired,
+          isRequired,
+          type: needsToBeFixed
+            ? isWarning
+              ? HEALTHCHECK_TYPES.WARNING
+              : HEALTHCHECK_TYPES.ERROR
+            : undefined,
         };
       }),
     )).filter(healthcheck => !!healthcheck),
@@ -100,16 +109,14 @@ export default (async function runDoctor(argv, ctx, options) {
   healthchecksPerCategory.forEach((issueCategory, key) => {
     printCategory({...issueCategory, key});
 
-    issueCategory.healthchecks.forEach(issue => {
-      printIssue(issue);
+    issueCategory.healthchecks.map(healthcheck => {
+      printIssue(healthcheck);
 
-      const isWarning = issue.needsToBeFixed && !issue.isRequired;
-
-      if (isWarning) {
+      if (healthcheck.type === HEALTHCHECK_TYPES.WARNING) {
         return stats.warnings++;
       }
 
-      if (issue.needsToBeFixed) {
+      if (healthcheck.type === HEALTHCHECK_TYPES.ERROR) {
         return stats.errors++;
       }
     });
@@ -125,11 +132,19 @@ export default (async function runDoctor(argv, ctx, options) {
       return process.exit(0);
     }
 
-    if (key === KEYS.FIX_ALL_ISSUES) {
+    if (
+      [KEYS.FIX_ALL_ISSUES, KEYS.FIX_ERRORS, KEYS.FIX_WARNINGS].includes(key)
+    ) {
       try {
+        const automaticFixLevel = {
+          [KEYS.FIX_ALL_ISSUES]: AUTOMATIC_FIX_LEVELS.ALL_ISSUES,
+          [KEYS.FIX_ERRORS]: AUTOMATIC_FIX_LEVELS.ERRORS,
+          [KEYS.FIX_WARNINGS]: AUTOMATIC_FIX_LEVELS.WARNINGS,
+        };
+
         await runAutomaticFix({
           healthchecks: removeFixedCategories(healthchecksPerCategory),
-          automaticFixLevel: AUTOMATIC_FIX_LEVELS.ALL_ISSUES,
+          automaticFixLevel: automaticFixLevel[key],
           stats,
           loader,
           environmentInfo,

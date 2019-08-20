@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import ora from 'ora';
 import logger from '../../tools/logger';
+import {HEALTHCHECK_TYPES} from './healthchecks';
 
 const AUTOMATIC_FIX_LEVELS = {
   ALL_ISSUES: 'ALL_ISSUES',
@@ -19,22 +20,45 @@ const runAutomaticFix = async ({
   process.stdout.moveCursor(0, -6);
   process.stdout.clearScreenDown();
 
-  // TODO: check `automaticFixLevel`, this should match `AUTOMATIC_FIX_LEVELS.ALL_ISSUES`
-
-  const totalIssues = stats.errors + stats.warnings;
+  const totalIssuesBasedOnFixLevel = {
+    [AUTOMATIC_FIX_LEVELS.ALL_ISSUES]: stats.errors + stats.warnings,
+    [AUTOMATIC_FIX_LEVELS.ERRORS]: stats.errors,
+    [AUTOMATIC_FIX_LEVELS.WARNINGS]: stats.warnings,
+  };
+  const issuesCount = totalIssuesBasedOnFixLevel[automaticFixLevel];
 
   logger.log(
-    `\nAttempting to fix ${chalk.bold(totalIssues)} issue${
-      totalIssues > 1 ? 's' : ''
+    `\nAttempting to fix ${chalk.bold(issuesCount)} issue${
+      issuesCount > 1 ? 's' : ''
     }...`,
   );
 
   for (const category of healthchecks) {
-    logger.log(`\n${chalk.dim(category.label)}`);
+    const healthchecksToRun = category.healthchecks.filter(healthcheck => {
+      if (automaticFixLevel === AUTOMATIC_FIX_LEVELS.ALL_ISSUES) {
+        return healthcheck.needsToBeFixed;
+      }
 
-    const healthchecksToRun = category.healthchecks.filter(
-      healthcheck => healthcheck.needsToBeFixed,
-    );
+      if (automaticFixLevel === AUTOMATIC_FIX_LEVELS.ERRORS) {
+        return (
+          healthcheck.needsToBeFixed &&
+          healthcheck.type === HEALTHCHECK_TYPES.ERROR
+        );
+      }
+
+      if (automaticFixLevel === AUTOMATIC_FIX_LEVELS.WARNINGS) {
+        return (
+          healthcheck.needsToBeFixed &&
+          healthcheck.type === HEALTHCHECK_TYPES.WARNING
+        );
+      }
+    });
+
+    if (!healthchecksToRun.length) {
+      continue;
+    }
+
+    logger.log(`\n${chalk.dim(category.label)}`);
 
     for (const healthcheckToRun of healthchecksToRun) {
       const spinner = ora({

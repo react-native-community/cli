@@ -9,6 +9,11 @@ import cocoaPods from './cocoaPods';
 import iosDeploy from './iosDeploy';
 
 
+export const HEALTHCHECK_TYPES = {
+  ERROR: 'ERROR',
+  WARNING: 'WARNING',
+};
+
 export const getHealthchecks = ({contributor}) => ({
   common: {
     label: 'Common',

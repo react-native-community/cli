@@ -13,6 +13,7 @@ const runAutomaticFix = async ({
   automaticFixLevel,
   stats,
   loader,
+  environmentInfo,
 }) => {
   // Remove the fix options from screen
   process.stdout.moveCursor(0, -6);
@@ -42,7 +43,10 @@ const runAutomaticFix = async ({
       }).start();
 
       try {
-        await healthcheckToRun.runAutomaticFix({loader: spinner});
+        await healthcheckToRun.runAutomaticFix({
+          loader: spinner,
+          environmentInfo,
+        });
       } catch (error) {
         // TODO: log the error in a meaningful way
       }

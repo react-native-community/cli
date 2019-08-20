@@ -5,7 +5,8 @@ export default {
   NPM: '>= 4.x',
   WATCHMAN: '4.x',
   // Android
-  ANDROID_NDK: '',
+  ANDROID_SDK: '>= 26.x',
+  ANDROID_NDK: '>= 19.x',
   // iOS
   XCODE: '10.x',
 };

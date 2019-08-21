@@ -27,7 +27,7 @@ function findMatchingSimulator(simulators, simulatorString) {
   const devices = simulators.devices;
 
   const parsedSimulatorName = simulatorString
-    ? simulatorString.match(/(.*)? (?:\((\d+\.\d+)?\))$/)
+    ? simulatorString.match(/(.*)?\s(?:\[(.*)?\])?/)
     : [];
 
   if (parsedSimulatorName && parsedSimulatorName[2] !== undefined) {

@@ -10,6 +10,7 @@ export interface IOSProjectParams {
   sharedLibraries?: string[];
   libraryFolder?: string;
   plist: Array<any>;
+  scriptPhases: Array<any>;
 }
 
 export interface IOSDependencyParams extends IOSProjectParams {}

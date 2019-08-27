@@ -134,6 +134,10 @@ Uses a valid semver version of React Native as a template.
 
 Uses a custom directory instead of `<projectName>`.
 
+### `--title [string]`
+
+Uses a custom title instead of `<projectName>`.
+
 #### `--template [string]`
 
 Uses a custom template. Accepts following template sources:
@@ -162,6 +166,8 @@ type Template = {
   templateDir: string;
   // Path to script, which will be executed after init
   postInitScript?: string;
+  // Placeholder used to rename app title inside values.xml and Info.plist
+  titlePlaceholder?: string;
 };
 ```
 
@@ -170,6 +176,7 @@ Example `template.config.js`:
 ```js
 module.exports = {
   placeholderName: 'ProjectName',
+  titlePlaceholder: 'Project Display Name',
   templateDir: './template',
   postInitScript: './script.js',
 };

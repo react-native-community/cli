@@ -4,6 +4,8 @@ import path from 'path';
 import walk from '../../tools/walk';
 import {logger} from '@react-native-community/cli-tools';
 
+const DEFAULT_TITLE_PLACEHOLDER = 'Hello App Display Name';
+
 function replaceNameInUTF8File(
   filePath: string,
   projectName: string,
@@ -65,6 +67,8 @@ function processDotfiles(filePath: string) {
 export function changePlaceholderInTemplate(
   projectName: string,
   placeholderName: string,
+  placeholderTitle?: string = DEFAULT_TITLE_PLACEHOLDER,
+  projectTitle?: string = projectName,
 ) {
   logger.debug(`Changing ${placeholderName} for ${projectName} in template`);
 
@@ -76,6 +80,7 @@ export function changePlaceholderInTemplate(
       }
       if (!fs.statSync(filePath).isDirectory()) {
         replaceNameInUTF8File(filePath, projectName, placeholderName);
+        replaceNameInUTF8File(filePath, projectTitle, placeholderTitle);
       }
       if (shouldRenameFile(filePath, placeholderName)) {
         renameFile(filePath, placeholderName, projectName);

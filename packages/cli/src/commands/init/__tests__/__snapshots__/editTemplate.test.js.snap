@@ -21,10 +21,12 @@ exports[`should edit template 2`] = `
 - com.placeholdername;
 + com.projectname;
   
-@@ -4,3 +4,3 @@
+@@ -4,4 +4,4 @@
     public static void run() {
 -     String name = \\"PlaceholderName\\";
+-     String title = \\"Hello App Display Name\\";
 +     String name = \\"ProjectName\\";
++     String title = \\"ProjectName\\";
     }"
 `;
 
@@ -55,4 +57,22 @@ exports[`should edit template 3`] = `
 +   \\"/ios/ProjectNameTests\\",
 +   \\"/ios/ProjectNameTests/.gitkeep\\",
     \\"/node_modules\\","
+`;
+
+exports[`should edit template with custom title 1`] = `
+"Snapshot Diff:
+- First value
++ Second value
+
+@@ -1,2 +1,2 @@
+- com.placeholdername;
++ com.projectname;
+  
+@@ -4,4 +4,4 @@
+    public static void run() {
+-     String name = \\"PlaceholderName\\";
+-     String title = \\"Hello App Display Name\\";
++     String name = \\"ProjectName\\";
++     String title = \\"ProjectTitle\\";
+    }"
 `;

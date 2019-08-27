@@ -26,7 +26,7 @@ export default {
     },
     {
       name: '--title [string]',
-      description: 'Uses a custom title name for application',
+      description: 'Uses a custom app title name for application',
     },
   ],
 };

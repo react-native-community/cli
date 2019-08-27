@@ -16,6 +16,7 @@ const FIXTURE_DIR = path.resolve(
 );
 const PLACEHOLDER_NAME = 'PlaceholderName';
 const PROJECT_NAME = 'ProjectName';
+const PROJECT_TITLE = 'ProjectTitle';
 
 async function createTestEnv() {
   const TEST_DIR = `rncli-should-edit-template-${Date.now()}`;
@@ -41,7 +42,10 @@ afterEach(() => {
 test('should edit template', () => {
   jest.spyOn(process, 'cwd').mockImplementation(() => testPath);
 
-  changePlaceholderInTemplate(PROJECT_NAME, PLACEHOLDER_NAME);
+  changePlaceholderInTemplate({
+    projectName: PROJECT_NAME,
+    placeholderName: PLACEHOLDER_NAME,
+  });
 
   const transformedTree = walk(testPath).map(e => e.replace(testPath, ''));
   const fixtureTree = walk(FIXTURE_DIR).map(e => e.replace(FIXTURE_DIR, ''));
@@ -84,5 +88,40 @@ test('should edit template', () => {
     snapshotDiff(fixtureTree.map(slash), transformedTree.map(slash), {
       contextLines: 1,
     }),
+  ).toMatchSnapshot();
+});
+
+test('should edit template with custom title', () => {
+  jest.spyOn(process, 'cwd').mockImplementation(() => testPath);
+
+  changePlaceholderInTemplate({
+    projectName: PROJECT_NAME,
+    placeholderName: PLACEHOLDER_NAME,
+    projectTitle: PROJECT_TITLE,
+  });
+
+  const oldJavaFile = fs.readFileSync(
+    path.resolve(
+      FIXTURE_DIR,
+      'android',
+      'com',
+      PLACEHOLDER_NAME.toLowerCase(),
+      'Main.java',
+    ),
+    'utf8',
+  );
+  const newJavaFile = fs.readFileSync(
+    path.resolve(
+      testPath,
+      'android',
+      'com',
+      PROJECT_NAME.toLowerCase(),
+      'Main.java',
+    ),
+    'utf8',
+  );
+
+  expect(
+    snapshotDiff(oldJavaFile, newJavaFile, {contextLines: 1}),
   ).toMatchSnapshot();
 });

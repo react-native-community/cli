@@ -32,6 +32,8 @@ type Options = {|
   template?: string,
   npm?: boolean,
   directory?: string,
+  displayName?: string,
+  title?: string,
 |};
 
 function doesDirectoryExist(dir: string) {
@@ -92,11 +94,13 @@ async function createFromTemplate({
   templateName,
   npm,
   directory,
+  projectTitle,
 }: {
   projectName: string,
   templateName: string,
   npm?: boolean,
   directory: string,
+  projectTitle?: string,
 }) {
   logger.debug('Initializing new project');
   logger.log(banner);
@@ -125,7 +129,12 @@ async function createFromTemplate({
     loader.succeed();
     loader.start('Processing template');
 
-    changePlaceholderInTemplate(projectName, templateConfig.placeholderName);
+    changePlaceholderInTemplate({
+      projectName,
+      projectTitle,
+      placeholderName: templateConfig.placeholderName,
+      titlePlaceholder: templateConfig.titlePlaceholder,
+    });
 
     loader.succeed();
     const {postInitScript} = templateConfig;
@@ -191,6 +200,7 @@ async function createProject(
     templateName,
     npm: options.npm,
     directory,
+    projectTitle: options.title,
   });
 }
 

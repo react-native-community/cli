@@ -10,6 +10,7 @@ export type TemplateConfig = {
   placeholderName: string,
   templateDir: string,
   postInitScript?: string,
+  titlePlaceholder?: string,
 };
 
 export function installTemplatePackage(

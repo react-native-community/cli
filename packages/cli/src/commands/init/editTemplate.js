@@ -4,6 +4,12 @@ import path from 'path';
 import walk from '../../tools/walk';
 import {logger} from '@react-native-community/cli-tools';
 
+/**
+  TODO: This is a default placeholder for title in react-native template.
+  We should get rid of this once custom templates adapt `placeholderTitle` in their configurations.
+*/
+const DEFAULT_TITLE_PLACEHOLDER = 'Hello App Display Name';
+
 function replaceNameInUTF8File(
   filePath: string,
   projectName: string,
@@ -62,10 +68,17 @@ function processDotfiles(filePath: string) {
   renameFile(filePath, `_${dotfile}`, `.${dotfile}`);
 }
 
-export function changePlaceholderInTemplate(
+export function changePlaceholderInTemplate({
+  projectName,
+  placeholderName,
+  placeholderTitle = DEFAULT_TITLE_PLACEHOLDER,
+  projectTitle = projectName,
+}: {
   projectName: string,
   placeholderName: string,
-) {
+  placeholderTitle?: string,
+  projectTitle?: string,
+}) {
   logger.debug(`Changing ${placeholderName} for ${projectName} in template`);
 
   walk(process.cwd())
@@ -76,6 +89,7 @@ export function changePlaceholderInTemplate(
       }
       if (!fs.statSync(filePath).isDirectory()) {
         replaceNameInUTF8File(filePath, projectName, placeholderName);
+        replaceNameInUTF8File(filePath, projectTitle, placeholderTitle);
       }
       if (shouldRenameFile(filePath, placeholderName)) {
         renameFile(filePath, placeholderName, projectName);

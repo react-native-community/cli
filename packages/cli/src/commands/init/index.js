@@ -24,5 +24,9 @@ export default {
       name: '--directory [string]',
       description: 'Uses a custom directory instead of `<projectName>`.',
     },
+    {
+      name: '--title [string]',
+      description: 'Uses a custom app title name for application',
+    },
   ],
 };

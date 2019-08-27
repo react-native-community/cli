@@ -129,12 +129,12 @@ async function createFromTemplate({
     loader.succeed();
     loader.start('Processing template');
 
-    changePlaceholderInTemplate(
+    changePlaceholderInTemplate({
       projectName,
-      templateConfig.placeholderName,
-      templateConfig.titlePlaceholder,
       projectTitle,
-    );
+      placeholderName: templateConfig.placeholderName,
+      titlePlaceholder: templateConfig.titlePlaceholder,
+    });
 
     loader.succeed();
     const {postInitScript} = templateConfig;

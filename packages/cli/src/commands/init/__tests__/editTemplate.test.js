@@ -42,7 +42,10 @@ afterEach(() => {
 test('should edit template', () => {
   jest.spyOn(process, 'cwd').mockImplementation(() => testPath);
 
-  changePlaceholderInTemplate(PROJECT_NAME, PLACEHOLDER_NAME);
+  changePlaceholderInTemplate({
+    projectName: PROJECT_NAME,
+    placeholderName: PLACEHOLDER_NAME,
+  });
 
   const transformedTree = walk(testPath).map(e => e.replace(testPath, ''));
   const fixtureTree = walk(FIXTURE_DIR).map(e => e.replace(FIXTURE_DIR, ''));
@@ -91,15 +94,11 @@ test('should edit template', () => {
 test('should edit template with custom title', () => {
   jest.spyOn(process, 'cwd').mockImplementation(() => testPath);
 
-  changePlaceholderInTemplate(
-    PROJECT_NAME,
-    PLACEHOLDER_NAME,
-    undefined,
-    PROJECT_TITLE,
-  );
-
-  const transformedTree = walk(testPath).map(e => e.replace(testPath, ''));
-  const fixtureTree = walk(FIXTURE_DIR).map(e => e.replace(FIXTURE_DIR, ''));
+  changePlaceholderInTemplate({
+    projectName: PROJECT_NAME,
+    placeholderName: PLACEHOLDER_NAME,
+    projectTitle: PROJECT_TITLE,
+  });
 
   const oldJavaFile = fs.readFileSync(
     path.resolve(

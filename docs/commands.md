@@ -136,7 +136,7 @@ Uses a custom directory instead of `<projectName>`.
 
 ### `--title [string]`
 
-Uses a custom title instead of `<projectName>`.
+Uses a custom app title instead of `<projectName>`.
 
 #### `--template [string]`
 

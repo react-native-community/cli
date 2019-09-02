@@ -12,7 +12,7 @@ const iosDeploy = {
     }),
   }),
   runAutomaticFix: async ({loader, environmentInfo}) => {
-    const version = environmentInfo.SDKs['Android SDK']['Android NDK'];
+    const version = environmentInfo.SDKs['Android SDK'][0];
     const isNDKInstalled = version !== 'Not Found';
 
     loader.fail();

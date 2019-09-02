@@ -6,6 +6,7 @@ import Ora from 'ora';
 import inquirer from 'inquirer';
 import {logger} from '@react-native-community/cli-tools';
 import {NoopLoader} from './loader';
+import sudo from 'sudo-prompt';
 
 async function updatePods(loader: typeof Ora) {
   try {
@@ -26,6 +27,18 @@ async function updatePods(loader: typeof Ora) {
       )}`,
     );
   }
+}
+
+function runSudo(command: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    sudo.exec(command, error => {
+      if (error) {
+        reject(error);
+      }
+
+      resolve();
+    });
+  });
 }
 
 async function installPods({
@@ -82,12 +95,7 @@ async function installPods({
         } catch (_error) {
           try {
             // If that doesn't work then try with sudo
-            await execa('sudo', [
-              'gem',
-              'install',
-              'cocoapods',
-              '--no-document',
-            ]);
+            await runSudo('gem install cocoapods --no-document');
           } catch (error) {
             loader.fail();
             logger.log(error.stderr);

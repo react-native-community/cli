@@ -17,6 +17,6 @@ const isSoftwareInstalled = async command => {
 };
 
 const doesSoftwareNeedToBeFixed = ({version, versionRange}) =>
-  version === 'Not Found' || !semver.satisfies(version, versionRange);
+  version === 'Not Found' || !semver.satisfies(semver.coerce(version), versionRange);
 
 export {PACKAGE_MANAGERS, isSoftwareInstalled, doesSoftwareNeedToBeFixed};

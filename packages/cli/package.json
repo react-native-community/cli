@@ -53,7 +53,7 @@
     "open": "^6.2.0",
     "ora": "^3.4.0",
     "plist": "^3.0.0",
-    "semver": "^6.1.1",
+    "semver": "^6.3.0",
     "serve-static": "^1.13.1",
     "shell-quote": "1.6.1",
     "sudo-prompt": "^9.0.0",

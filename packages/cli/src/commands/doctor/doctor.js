@@ -1,10 +1,14 @@
+// @flow
 import chalk from 'chalk';
 import envinfo from 'envinfo';
+import Ora from 'ora';
 import {logger} from '@react-native-community/cli-tools';
 import {getHealthchecks, HEALTHCHECK_TYPES} from './healthchecks';
 import {getLoader} from '../../tools/loader';
 import printFixOptions, {KEYS} from './printFixOptions';
 import runAutomaticFix, {AUTOMATIC_FIX_LEVELS} from './runAutomaticFix';
+import type {ConfigT} from 'types';
+import type {EnvironmentInfo} from './types';
 
 const printCategory = ({label, key}) => {
   if (key > 0) {
@@ -14,7 +18,15 @@ const printCategory = ({label, key}) => {
   logger.log(chalk.dim(label));
 };
 
-const printIssue = ({label, needsToBeFixed, isRequired}) => {
+const printIssue = ({
+  label,
+  needsToBeFixed,
+  isRequired,
+}: {
+  label: string,
+  needsToBeFixed: boolean,
+  isRequired: boolean,
+}) => {
   const symbol = needsToBeFixed
     ? isRequired
       ? chalk.red('✖')
@@ -29,7 +41,16 @@ const printOverallStats = ({errors, warnings}) => {
   logger.log(`${chalk.bold('Warnings:')} ${warnings}`);
 };
 
-export default (async function runDoctor(argv, ctx, options) {
+type FlagsT = {
+  fix: boolean | void,
+  contributor: boolean | void,
+};
+
+export default (async function runDoctor(
+  argv: Array<string>,
+  ctx: ConfigT,
+  options: FlagsT,
+) {
   const Loader = getLoader();
   const loader = new Loader();
 
@@ -48,7 +69,24 @@ export default (async function runDoctor(argv, ctx, options) {
     ),
   );
 
-  const iterateOverHealthChecks = async ({label, healthchecks}) => ({
+  const iterateOverHealthChecks = async ({
+    label,
+    healthchecks,
+  }: {
+    label: string,
+    healthchecks: Array<{
+      label: string,
+      visible: boolean,
+      isRequired: boolean,
+      getDiagnostics: (
+        envInfor: EnvironmentInfo,
+      ) => {version: string, needsToBeFixed: boolean},
+      getDiagnosticsAsync: (
+        envInfor: EnvironmentInfo,
+      ) => Promise<{version: string, needsToBeFixed: boolean}>,
+      runAutomaticFix: (args: {loader: typeof Ora}) => Promise<void>,
+    }>,
+  }) => ({
     label,
     healthchecks: (await Promise.all(
       healthchecks.map(async healthcheck => {

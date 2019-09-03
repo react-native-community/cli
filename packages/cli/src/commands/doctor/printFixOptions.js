@@ -1,5 +1,7 @@
+// @flow
 import chalk from 'chalk';
 import {logger} from '@react-native-community/cli-tools';
+
 const KEYS = {
   FIX_ALL_ISSUES: 'f',
   FIX_ERRORS: 'e',
@@ -28,9 +30,10 @@ const printOptions = () => {
 };
 
 export {KEYS};
-export default ({onKeyPress}) => {
+export default ({onKeyPress}: {onKeyPress: any}) => {
   printOptions();
 
+  // $FlowFixMe
   process.stdin.setRawMode(true);
   process.stdin.resume();
   process.stdin.setEncoding('utf8');

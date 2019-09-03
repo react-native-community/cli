@@ -1,4 +1,6 @@
+// @flow
 import execa from 'execa';
+import Ora from 'ora';
 import {isSoftwareInstalled, PACKAGE_MANAGERS} from '../checkInstallation';
 import {packageManager} from './packageManagers';
 import {logManualInstallation} from './common';
@@ -21,7 +23,7 @@ export default {
   getDiagnosticsAsync: async () => ({
     needsToBeFixed: !(await isSoftwareInstalled('ios-deploy')),
   }),
-  runAutomaticFix: async ({loader}) => {
+  runAutomaticFix: async ({loader}: {loader: typeof Ora}) => {
     const installationCommand = getInstallationCommand();
 
     // This means that we couldn't "guess" the package manager
@@ -36,7 +38,7 @@ export default {
     }
 
     try {
-      const installationCommandArgs = installationCommand.split(' ');
+      const installationCommandArgs = (installationCommand || '').split(' ');
 
       await execa(
         installationCommandArgs[0],

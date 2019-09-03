@@ -1,7 +1,9 @@
+// @flow
 import chalk from 'chalk';
 import ora from 'ora';
 import logger from '../../tools/logger';
 import {HEALTHCHECK_TYPES} from './healthchecks';
+import type {EnvironmentInfo} from './types';
 
 const AUTOMATIC_FIX_LEVELS = {
   ALL_ISSUES: 'ALL_ISSUES',
@@ -16,9 +18,17 @@ export default async ({
   stats,
   loader,
   environmentInfo,
+}:{
+  healthchecks: any,
+  automaticFixLevel: $Values<typeof AUTOMATIC_FIX_LEVELS>,
+  stats:{errors: any, warnings: any},
+  loader: typeof ora,
+  environmentInfo: EnvironmentInfo,
 }) => {
   // Remove the fix options from screen
+  // $FlowFixMe
   process.stdout.moveCursor(0, -6);
+  // $FlowFixMe
   process.stdout.clearScreenDown();
 
   const totalIssuesBasedOnFixLevel = {

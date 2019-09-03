@@ -1,4 +1,6 @@
+// @flow
 import chalk from 'chalk';
+import Ora from 'ora';
 import {logManualInstallation} from './common';
 import versionRanges from '../versionRanges';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
@@ -10,7 +12,7 @@ const installMessage = `Read more about how to update Android SDK at ${chalk.dim
 
 export default {
   label: 'Android SDK',
-  getDiagnosticsAsync: async ({SDKs}) => {
+  getDiagnosticsAsync: async ({SDKs}: EnvironmentInfo) => {
     let sdks = SDKs['Android SDK'];
 
     // This is a workaround for envinfo's Android SDK check not working on
@@ -48,7 +50,13 @@ export default {
         }),
     };
   },
-  runAutomaticFix: async ({loader, environmentInfo}) => {
+  runAutomaticFix: async ({
+    loader,
+    environmentInfo,
+  }: {
+    loader: typeof Ora,
+    environmentInfo: EnvironmentInfo,
+  }) => {
     const version = environmentInfo.SDKs['Android SDK'][0];
     const isNDKInstalled = version !== 'Not Found';
 

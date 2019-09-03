@@ -1,3 +1,4 @@
+// @flow
 import fs from 'fs';
 import versionRanges from '../versionRanges';
 import {
@@ -5,6 +6,7 @@ import {
   doesSoftwareNeedToBeFixed,
 } from '../checkInstallation';
 import {install} from '../../../tools/install';
+import type {EnvironmentInfo} from '../types';
 
 const packageManager = (() => {
   if (fs.existsSync('yarn.lock')) {
@@ -20,7 +22,7 @@ const packageManager = (() => {
 
 const yarn = {
   label: 'yarn',
-  getDiagnostics: ({Binaries}) => ({
+  getDiagnostics: ({Binaries}: EnvironmentInfo) => ({
     version: Binaries.Node.version,
     needsToBeFixed: doesSoftwareNeedToBeFixed({
       version: Binaries.Yarn.version,
@@ -37,7 +39,7 @@ const yarn = {
 
 const npm = {
   label: 'npm',
-  getDiagnostics: ({Binaries}) => ({
+  getDiagnostics: ({Binaries}: EnvironmentInfo) => ({
     needsToBeFixed: doesSoftwareNeedToBeFixed({
       version: Binaries.npm.version,
       versionRange: versionRanges.NPM,

@@ -1,17 +1,26 @@
+// @flow
 import chalk from 'chalk';
+import Ora from 'ora';
 import {logManualInstallation} from './common';
 import versionRanges from '../versionRanges';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
+import type {EnvironmentInfo} from '../types';
 
 export default {
   label: 'Android NDK',
-  getDiagnosticsAsync: async ({SDKs}) => ({
+  getDiagnosticsAsync: async ({SDKs}: EnvironmentInfo) => ({
     needsToBeFixed: doesSoftwareNeedToBeFixed({
       version: SDKs['Android SDK']['Android NDK'],
       versionRange: versionRanges.ANDROID_NDK,
     }),
   }),
-  runAutomaticFix: async ({loader, environmentInfo}) => {
+  runAutomaticFix: async ({
+    loader,
+    environmentInfo,
+  }: {
+    loader: typeof Ora,
+    environmentInfo: EnvironmentInfo,
+  }) => {
     const version = environmentInfo.SDKs['Android SDK']['Android NDK'];
     const isNDKInstalled = version !== 'Not Found';
 

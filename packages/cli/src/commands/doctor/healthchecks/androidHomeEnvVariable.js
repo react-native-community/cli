@@ -1,4 +1,6 @@
+// @flow
 import chalk from 'chalk';
+import Ora from 'ora';
 import {logManualInstallation} from './common';
 
 // List of answers on how to set `ANDROID_HOME` for each platform
@@ -15,7 +17,7 @@ export default {
   getDiagnostics: () => ({
     needsToBeFixed: !process.env.ANDROID_HOME,
   }),
-  runAutomaticFix: async ({loader}) => {
+  runAutomaticFix: async ({loader}: {loader: typeof Ora}) => {
     loader.info();
 
     logManualInstallation({

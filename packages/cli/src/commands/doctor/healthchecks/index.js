@@ -8,7 +8,6 @@ import xcode from './xcode';
 import cocoaPods from './cocoaPods';
 import iosDeploy from './iosDeploy';
 
-
 export const HEALTHCHECK_TYPES = {
   ERROR: 'ERROR',
   WARNING: 'WARNING',

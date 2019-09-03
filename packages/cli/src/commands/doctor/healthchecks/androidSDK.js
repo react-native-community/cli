@@ -3,7 +3,7 @@ import {logManualInstallation} from './common';
 import versionRanges from '../versionRanges';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
 
-const iosDeploy = {
+export default {
   label: 'Android SDK',
   getDiagnosticsAsync: async ({SDKs}) => ({
     needsToBeFixed: doesSoftwareNeedToBeFixed({
@@ -31,5 +31,3 @@ const iosDeploy = {
     });
   },
 };
-
-export default iosDeploy;

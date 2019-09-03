@@ -2,7 +2,7 @@ import versionRanges from '../versionRanges';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
 import {logManualInstallation} from './common';
 
-const issue = {
+export default {
   label: 'Node.js',
   getDiagnostics: ({Binaries}) => ({
     version: Binaries.Node.version,
@@ -20,5 +20,3 @@ const issue = {
     });
   },
 };
-
-export default issue;

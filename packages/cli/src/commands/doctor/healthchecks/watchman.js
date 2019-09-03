@@ -1,7 +1,7 @@
 import versionRanges from '../versionRanges';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
 
-const watchman = {
+export default {
   label: 'Watchman',
   getDiagnostics: ({Binaries}) => ({
     needsToBeFixed: doesSoftwareNeedToBeFixed({
@@ -11,5 +11,3 @@ const watchman = {
   }),
   runAutomaticFix: () => console.log('should fix watchman'),
 };
-
-export default watchman;

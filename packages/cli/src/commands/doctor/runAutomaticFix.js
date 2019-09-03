@@ -9,7 +9,8 @@ const AUTOMATIC_FIX_LEVELS = {
   WARNINGS: 'WARNINGS',
 };
 
-const runAutomaticFix = async ({
+export {AUTOMATIC_FIX_LEVELS};
+export default async ({
   healthchecks,
   automaticFixLevel,
   stats,
@@ -77,6 +78,3 @@ const runAutomaticFix = async ({
     }
   }
 };
-
-export {AUTOMATIC_FIX_LEVELS};
-export default runAutomaticFix;

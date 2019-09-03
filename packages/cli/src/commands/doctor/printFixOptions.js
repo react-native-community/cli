@@ -27,7 +27,8 @@ const printOptions = () => {
   printOption(`${chalk.dim('Press')} Enter ${chalk.dim('to exit.')}`);
 };
 
-const printFixOptions = ({onKeyPress}) => {
+export {KEYS};
+export default ({onKeyPress}) => {
   printOptions();
 
   process.stdin.setRawMode(true);
@@ -35,6 +36,3 @@ const printFixOptions = ({onKeyPress}) => {
   process.stdin.setEncoding('utf8');
   process.stdin.on('data', onKeyPress);
 };
-
-export {KEYS};
-export default printFixOptions;

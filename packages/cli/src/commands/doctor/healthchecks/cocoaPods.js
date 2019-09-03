@@ -19,7 +19,7 @@ const reportLoader = async ({loader, type, userHasSudoGranted}) => {
   loader[type]();
 };
 
-const cocoaPods = {
+export default {
   label: 'CocoaPods',
   getDiagnosticsAsync: async () => ({
     needsToBeFixed: !(await isSoftwareInstalled('pod')),
@@ -50,5 +50,3 @@ const cocoaPods = {
     }
   },
 };
-
-export default cocoaPods;

@@ -10,7 +10,7 @@ const URLS = {
 
 const label = 'ANDROID_HOME';
 
-const iosDeploy = {
+export default {
   label,
   getDiagnostics: () => ({
     needsToBeFixed: !process.env.ANDROID_HOME,
@@ -25,5 +25,3 @@ const iosDeploy = {
     });
   },
 };
-
-export default iosDeploy;

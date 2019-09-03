@@ -2,7 +2,7 @@ import versionRanges from '../versionRanges';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
 import {logManualInstallation} from './common';
 
-const xcode = {
+export default {
   label: 'Xcode',
   getDiagnostics: ({IDEs}) => ({
     needsToBeFixed: doesSoftwareNeedToBeFixed({
@@ -19,5 +19,3 @@ const xcode = {
     });
   },
 };
-
-export default xcode;

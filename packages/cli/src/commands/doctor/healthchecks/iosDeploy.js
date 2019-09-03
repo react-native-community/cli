@@ -15,7 +15,7 @@ const getInstallationCommand = () => {
   return undefined;
 };
 
-const iosDeploy = {
+export default {
   label: 'ios-deploy',
   isRequired: false,
   getDiagnosticsAsync: async () => ({
@@ -52,5 +52,3 @@ const iosDeploy = {
     }
   },
 };
-
-export default iosDeploy;

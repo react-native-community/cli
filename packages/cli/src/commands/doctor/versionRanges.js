@@ -1,6 +1,6 @@
 export default {
   // Common
-  NODE_JS: '>= 11 <= 12', //'10.x',
+  NODE_JS: '>= 8.3',
   YARN: '>= 1.10.x',
   NPM: '>= 4.x',
   WATCHMAN: '4.x',

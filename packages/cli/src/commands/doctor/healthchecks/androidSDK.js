@@ -48,11 +48,10 @@ export default ({
     return {
       needsToBeFixed:
         (sdks === 'Not Found' && installMessage) ||
-        (sdks !== 'Not Found' &&
-          doesSoftwareNeedToBeFixed({
-            version: sdks['Build Tools'][0],
-            versionRange: versionRanges.ANDROID_NDK,
-          })),
+        doesSoftwareNeedToBeFixed({
+          version: sdks['Build Tools'][0],
+          versionRange: versionRanges.ANDROID_NDK,
+        }),
     };
   },
   runAutomaticFix: async ({

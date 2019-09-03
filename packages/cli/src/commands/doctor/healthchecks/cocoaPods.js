@@ -1,5 +1,5 @@
 // @flow
-import {isSoftwareInstalled} from '../checkInstallation';
+import {checkSoftwareInstalled} from '../checkInstallation';
 // $FlowFixMe - converted to TS
 import {installCocoaPods} from '../../../tools/installPods';
 import {type HealthCheckInterface} from '../types';
@@ -7,7 +7,7 @@ import {type HealthCheckInterface} from '../types';
 export default ({
   label: 'CocoaPods',
   getDiagnostics: async () => ({
-    needsToBeFixed: !(await isSoftwareInstalled('pod')),
+    needsToBeFixed: await checkSoftwareInstalled('pod'),
   }),
   runAutomaticFix: async ({loader}) => await installCocoaPods(loader),
 }: HealthCheckInterface);

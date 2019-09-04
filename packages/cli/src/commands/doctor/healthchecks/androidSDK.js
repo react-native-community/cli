@@ -3,13 +3,19 @@ import {logManualInstallation} from './common';
 import versionRanges from '../versionRanges';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
 
+const installMessage = `Read more about how to update Android SDK at ${chalk.dim(
+  'https://developer.android.com/studio',
+)}`;
+
 export default {
   label: 'Android SDK',
   getDiagnosticsAsync: async ({SDKs}) => ({
-    needsToBeFixed: doesSoftwareNeedToBeFixed({
-      version: SDKs['Android SDK']['Build Tools'][0],
-      versionRange: versionRanges.ANDROID_NDK,
-    }),
+    needsToBeFixed:
+      (SDKs['Android SDK'] === 'Not Found' && installMessage) ||
+      doesSoftwareNeedToBeFixed({
+        version: SDKs['Android SDK']['Build Tools'][0],
+        versionRange: versionRanges.ANDROID_NDK,
+      }),
   }),
   runAutomaticFix: async ({loader, environmentInfo}) => {
     const version = environmentInfo.SDKs['Android SDK'][0];
@@ -19,9 +25,7 @@ export default {
 
     if (isNDKInstalled) {
       return logManualInstallation({
-        message: `Read more about how to update Android SDK at ${chalk.dim(
-          'https://developer.android.com/studio',
-        )}`,
+        message: installMessage,
       });
     }
 

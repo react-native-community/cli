@@ -2,7 +2,7 @@
 
 Command line tools that ship with [`react-native`](https://github.com/facebook/react-native) in form of the `@react-native-community/cli` package.
 
-> It exposes `react-native` binary, so your can call `yarn react-native` or `npx react-native` directly from your project.
+> It exposes `react-native` binary, so you can call `yarn react-native` or `npx react-native` directly from your project.
 
 [![Build Status][build-badge]][build] [![Version][version-badge]][package] [![MIT License][license-badge]][license] [![PRs Welcome][prs-welcome-badge]][prs-welcome]
 

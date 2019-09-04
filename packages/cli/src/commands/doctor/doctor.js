@@ -48,7 +48,7 @@ export default (async function runDoctor(argv, ctx, options) {
     ),
   );
 
-  const iterateOverHealthchecks = async ({label, healthchecks}) => ({
+  const iterateOverHealthChecks = async ({label, healthchecks}) => ({
     label,
     healthchecks: (await Promise.all(
       healthchecks.map(async healthcheck => {
@@ -61,11 +61,7 @@ export default (async function runDoctor(argv, ctx, options) {
           : await healthcheck.getDiagnosticsAsync(environmentInfo);
 
         // Assume that it's required unless specified otherwise
-        const isRequired =
-          typeof healthcheck.isRequired === 'undefined'
-            ? true
-            : healthcheck.isRequired;
-
+        const isRequired = healthcheck.isRequired !== false;
         const isWarning = needsToBeFixed && !isRequired;
 
         return {
@@ -80,20 +76,18 @@ export default (async function runDoctor(argv, ctx, options) {
             : undefined,
         };
       }),
-    )).filter(healthcheck => !!healthcheck),
+    )).filter(Boolean),
   });
 
   // Remove all the categories that don't have any healthcheck with `needsToBeFixed`
   // so they don't show when the user taps to fix encountered issues
   const removeFixedCategories = categories =>
-    categories.filter(
-      category =>
-        category.healthchecks.filter(healthcheck => healthcheck.needsToBeFixed)
-          .length > 0,
+    categories.filter(category =>
+      category.healthchecks.some(healthcheck => healthcheck.needsToBeFixed),
     );
 
   const iterateOverCategories = categories =>
-    Promise.all(categories.map(iterateOverHealthchecks));
+    Promise.all(categories.map(iterateOverHealthChecks));
 
   const healthchecksPerCategory = await iterateOverCategories(
     Object.values(getHealthchecks(options)),

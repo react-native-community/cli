@@ -38,7 +38,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const exec = require('child_process').exec;
 const execSync = require('child_process').execSync;
 const chalk = require('chalk');
 const prompt = require('prompt');

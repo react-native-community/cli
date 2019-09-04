@@ -1,5 +1,6 @@
 import versionRanges from '../versionRanges';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
+import {install} from '../../../tools/install';
 
 export default {
   label: 'Watchman',
@@ -9,5 +10,10 @@ export default {
       versionRange: versionRanges.WATCHMAN,
     }),
   }),
-  runAutomaticFix: () => console.log('should fix watchman'),
+  runAutomaticFix: async ({loader}) =>
+    await install(
+      'watchman',
+      'https://facebook.github.io/watchman/docs/install.html',
+      loader,
+    ),
 };

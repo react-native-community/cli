@@ -4,8 +4,9 @@ import {
   PACKAGE_MANAGERS,
   doesSoftwareNeedToBeFixed,
 } from '../checkInstallation';
+import {install} from '../../../tools/install';
 
-const identifyPackageManager = () => {
+const packageManager = (() => {
   if (fs.existsSync('yarn.lock')) {
     return PACKAGE_MANAGERS.YARN;
   }
@@ -15,9 +16,7 @@ const identifyPackageManager = () => {
   }
 
   return undefined;
-};
-
-const packageManager = identifyPackageManager();
+})();
 
 const yarn = {
   label: 'yarn',
@@ -32,7 +31,8 @@ const yarn = {
   // or if we can't identify that the user uses yarn or npm
   visible:
     packageManager === PACKAGE_MANAGERS.YARN || packageManager === undefined,
-  runAutomaticFix: () => console.log('should fix node'),
+  runAutomaticFix: async ({loader}) =>
+    await install('yarn', 'https://yarnpkg.com/docs/install', loader),
 };
 
 const npm = {
@@ -47,7 +47,8 @@ const npm = {
   // or if we can't identify that the user uses yarn or npm
   visible:
     packageManager === PACKAGE_MANAGERS.NPM || packageManager === undefined,
-  runAutomaticFix: () => console.log('should fix node'),
+  runAutomaticFix: async ({loader}) =>
+    await install('node', 'https://nodejs.org/', loader),
 };
 
 export {packageManager, yarn, npm};

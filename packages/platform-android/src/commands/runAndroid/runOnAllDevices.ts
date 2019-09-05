@@ -12,6 +12,7 @@ import {logger, CLIError} from '@react-native-community/cli-tools';
 import adb from './adb';
 import tryRunAdbReverse from './tryRunAdbReverse';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
+import tryLaunchEmulator from './tryLaunchEmulator';
 import {Flags} from '.';
 
 function getTaskNames(
@@ -27,13 +28,24 @@ function toPascalCase(value: string) {
   return value[0].toUpperCase() + value.slice(1);
 }
 
-function runOnAllDevices(
+async function runOnAllDevices(
   args: Flags,
   cmd: string,
   packageNameWithSuffix: string,
   packageName: string,
   adbPath: string,
 ) {
+  const devices = adb.getDevices(adbPath);
+  if (devices.length === 0) {
+    logger.info('Trying to launch emulator...');
+    const result = await tryLaunchEmulator(adbPath);
+    if (result) {
+      logger.info('Emulator launch succeeded!');
+    } else {
+      logger.warn('Emulator launch failed.');
+    }
+  }
+
   try {
     const tasks = args.tasks || ['install' + toPascalCase(args.variant)];
     const gradleArgs = getTaskNames(args.appFolder, tasks);
@@ -51,7 +63,6 @@ function runOnAllDevices(
   } catch (error) {
     throw createInstallError(error);
   }
-  const devices = adb.getDevices(adbPath);
 
   (devices.length > 0 ? devices : [undefined]).forEach(
     (device: string | void) => {

@@ -35,12 +35,13 @@ async function runOnAllDevices(
   packageName: string,
   adbPath: string,
 ) {
-  const devices = adb.getDevices(adbPath);
+  let devices = adb.getDevices(adbPath);
   if (devices.length === 0) {
     logger.info('Trying to launch emulator...');
     const result = await tryLaunchEmulator(adbPath);
     if (result.success) {
       logger.info('Emulator launched!');
+      devices = adb.getDevices(adbPath);
     } else {
       logger.error('Emulator launch failed.');
       if (result.error !== undefined) {

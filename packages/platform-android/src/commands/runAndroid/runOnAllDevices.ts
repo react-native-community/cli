@@ -39,10 +39,16 @@ async function runOnAllDevices(
   if (devices.length === 0) {
     logger.info('Trying to launch emulator...');
     const result = await tryLaunchEmulator(adbPath);
-    if (result) {
-      logger.info('Emulator launch succeeded!');
+    if (result.success) {
+      logger.info('Emulator launched!');
     } else {
-      logger.warn('Emulator launch failed.');
+      logger.error('Emulator launch failed.');
+      if (result.error !== undefined) {
+        logger.error(result.error);
+      }
+      logger.warn(
+        'Please launch an emulator manually or connect a device. Otherwise app launch may fail.',
+      );
     }
   }
 

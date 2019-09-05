@@ -14,6 +14,7 @@ jest.mock('child_process', () => ({
 }));
 
 jest.mock('../getAdbPath');
+jest.mock('../tryLaunchEmulator');
 const {execFileSync} = require('child_process');
 
 describe('--appFolder', () => {
@@ -21,18 +22,17 @@ describe('--appFolder', () => {
     jest.clearAllMocks();
   });
 
-  it('uses task "install[Variant]" as default task', () => {
+  it('uses task "install[Variant]" as default task', async () => {
     // @ts-ignore
-    runOnAllDevices({
+    await runOnAllDevices({
       variant: 'debug',
     });
-
     expect(execFileSync.mock.calls[0][1]).toContain('installDebug');
   });
 
-  it('uses appFolder and default variant', () => {
+  it('uses appFolder and default variant', async () => {
     // @ts-ignore
-    runOnAllDevices({
+    await runOnAllDevices({
       appFolder: 'someApp',
       variant: 'debug',
     });
@@ -40,9 +40,9 @@ describe('--appFolder', () => {
     expect(execFileSync.mock.calls[0][1]).toContain('someApp:installDebug');
   });
 
-  it('uses appFolder and custom variant', () => {
+  it('uses appFolder and custom variant', async () => {
     // @ts-ignore
-    runOnAllDevices({
+    await runOnAllDevices({
       appFolder: 'anotherApp',
       variant: 'staging',
     });
@@ -52,9 +52,9 @@ describe('--appFolder', () => {
     );
   });
 
-  it('uses only task argument', () => {
+  it('uses only task argument', async () => {
     // @ts-ignore
-    runOnAllDevices({
+    await runOnAllDevices({
       tasks: ['someTask'],
       variant: 'debug',
     });
@@ -62,9 +62,9 @@ describe('--appFolder', () => {
     expect(execFileSync.mock.calls[0][1]).toContain('someTask');
   });
 
-  it('uses appFolder and custom task argument', () => {
+  it('uses appFolder and custom task argument', async () => {
     // @ts-ignore
-    runOnAllDevices({
+    await runOnAllDevices({
       appFolder: 'anotherApp',
       tasks: ['someTask'],
       variant: 'debug',
@@ -73,9 +73,9 @@ describe('--appFolder', () => {
     expect(execFileSync.mock.calls[0][1]).toContain('anotherApp:someTask');
   });
 
-  it('uses multiple tasks', () => {
+  it('uses multiple tasks', async () => {
     // @ts-ignore
-    runOnAllDevices({
+    await runOnAllDevices({
       appFolder: 'app',
       tasks: ['clean', 'someTask'],
     });

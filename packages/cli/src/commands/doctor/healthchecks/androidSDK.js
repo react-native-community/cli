@@ -17,32 +17,34 @@ export default {
     // Windows. This can be removed when envinfo fixes it.
     // See the PR: https://github.com/tabrindle/envinfo/pull/119
     if (sdks === 'Not Found' && process.platform !== 'darwin') {
-      sdks = await new Promise(resolve => {
-        exec(
-          process.env.ANDROID_HOME
-            ? `${process.env.ANDROID_HOME}/tools/bin/sdkmanager --list`
-            : 'sdkmanager --list',
-          (err, stdout) => {
-            if (err) {
-              resolve('Not Found');
-            } else {
-              const matches = [];
-              const regex = /build-tools;([\d|.]+)[\S\s]/g;
-              let match = null;
-              while ((match = regex.exec(stdout)) !== null) {
-                matches.push(match[1]);
-              }
-              resolve(
+      try {
+        sdks = await new Promise((resolve, reject) => {
+          exec(
+            process.env.ANDROID_HOME
+              ? `${process.env.ANDROID_HOME}/tools/bin/sdkmanager --list`
+              : 'sdkmanager --list',
+            (err, stdout) => {
+              if (err) {
+                reject();
+              } else {
+                const matches = [];
+                const regex = /build-tools;([\d|.]+)[\S\s]/g;
+                let match = null;
+                while ((match = regex.exec(stdout)) !== null) {
+                  matches.push(match[1]);
+                }
                 matches.length > 0
-                  ? {
+                  ? resolve({
                       'Build Tools': matches,
-                    }
-                  : 'Not Found',
-              );
-            }
-          },
-        );
-      });
+                    })
+                  : reject();
+              }
+            },
+          );
+        });
+      } catch {
+        sdks = 'Not Found';
+      }
     }
 
     return {

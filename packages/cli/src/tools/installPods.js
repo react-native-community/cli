@@ -55,7 +55,7 @@ async function installCocoaPods(loader: typeof Ora) {
       message: `CocoaPods ${chalk.dim.underline(
         '(https://cocoapods.org/)',
       )} ${chalk.reset.bold(
-        "is not installed. CocoaPods is necessary for the iOS project to run correctly. Do you want to install it?",
+        'is not installed. CocoaPods is necessary for the iOS project to run correctly. Do you want to install it?',
       )}`,
       choices: [withGem, withHomebrew],
     },

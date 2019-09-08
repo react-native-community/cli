@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import {logManualInstallation} from './common';
 import versionRanges from '../versionRanges';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
-import {exec} from 'child_process';
+import execa from 'execa';
 
 const installMessage = `Read more about how to update Android SDK at ${chalk.dim(
   'https://developer.android.com/studio',
@@ -18,33 +18,25 @@ export default {
     // See the PR: https://github.com/tabrindle/envinfo/pull/119
     if (sdks === 'Not Found' && process.platform !== 'darwin') {
       try {
-        sdks = await new Promise((resolve, reject) => {
-          exec(
-            process.env.ANDROID_HOME
-              ? `${process.env.ANDROID_HOME}/tools/bin/sdkmanager --list`
-              : 'sdkmanager --list',
-            (err, stdout) => {
-              if (err) {
-                reject();
-              } else {
-                const matches = [];
-                const regex = /build-tools;([\d|.]+)[\S\s]/g;
-                let match = null;
-                while ((match = regex.exec(stdout)) !== null) {
-                  matches.push(match[1]);
-                }
-                matches.length > 0
-                  ? resolve({
-                      'Build Tools': matches,
-                    })
-                  : reject();
-              }
-            },
-          );
-        });
-      } catch {
-        sdks = 'Not Found';
-      }
+        const {stdout} = await execa(
+          process.env.ANDROID_HOME
+            ? `${process.env.ANDROID_HOME}/tools/bin/sdkmanager`
+            : 'sdkmanager',
+          ['--list'],
+        );
+
+        const matches = [];
+        const regex = /build-tools;([\d|.]+)[\S\s]/g;
+        let match = null;
+        while ((match = regex.exec(stdout)) !== null) {
+          matches.push(match[1]);
+        }
+        if (matches.length > 0) {
+          sdks = {
+            'Build Tools': matches,
+          };
+        }
+      } catch {}
     }
 
     return {

@@ -7,8 +7,9 @@ All work on React Native CLI happens directly on GitHub. Contributors send pull 
 > **Working on your first pull request?** You can learn how from this *free* series: [How to Contribute to an Open Source Project on GitHub](https://egghead.io/series/how-to-contribute-to-an-open-source-project-on-github).
 
 1. Fork the repo and create your branch from `master` (a guide on [how to fork a repository](https://help.github.com/articles/fork-a-repo/)).
-2. Run `yarn` or `npm install` to install all required dependencies.
-3. Now you are ready to do the changes.
+1. Run `yarn` or `npm install` to install all required dependencies.
+1. Run `yarn watch` to automatically build the changed files.
+1. Now you are ready to do the changes.
 
 ## Repository
 

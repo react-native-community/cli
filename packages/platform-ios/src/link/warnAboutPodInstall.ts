@@ -1,26 +1,11 @@
 import {logger} from '@react-native-community/cli-tools';
-import readPodfileLock from '../link-pods/readPodfileLock';
+import getDependenciesFromPodfileLock from '../link-pods/getDependenciesFromPodfileLock';
 // TODO: move to cli-tools once platform-ios and platform-android are migrated
 // to TS and unify with Android implementation
 export default function warnAboutPodInstall(config: any) {
-  let podLockContent;
-  try {
-    podLockContent = readPodfileLock(`${config.project.ios.podfile}.lock`);
-  } catch (err) {
-    logger.error('Could not find Podfile.lock, did you run pod `install`');
-    return;
-  }
-
-  const podLockDepsIndexStart = podLockContent.findIndex(
-    line => line === 'DEPENDENCIES:',
+  const podLockDeps = getDependenciesFromPodfileLock(
+    `${config.project.ios.podfile}.lock`,
   );
-  const podLockDepsIndexEnd =
-    podLockContent.slice(podLockDepsIndexStart).findIndex(line => line === '') +
-    podLockDepsIndexStart;
-
-  const podLockDeps = podLockContent
-    .slice(podLockDepsIndexStart + 1, podLockDepsIndexEnd)
-    .map(name => name.replace(/ {2}- "?/, '').replace(/ \(.*/, ''));
 
   const podDeps = Object.keys(config.dependencies)
     .map(depName =>

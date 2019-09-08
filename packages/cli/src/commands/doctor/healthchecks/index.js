@@ -16,7 +16,12 @@ export const HEALTHCHECK_TYPES = {
 export const getHealthchecks = ({contributor}) => ({
   common: {
     label: 'Common',
-    healthchecks: [nodeJS, yarn, npm, watchman],
+    healthchecks: [
+      nodeJS,
+      yarn,
+      npm,
+      ...(process.platform === 'darwin' ? [watchman] : []),
+    ],
   },
   android: {
     label: 'Android',

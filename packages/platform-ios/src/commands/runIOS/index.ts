@@ -28,10 +28,10 @@ import {Device} from '../../types';
 type FlagsT = {
   simulator: string;
   configuration: string;
-  scheme: string | void;
+  scheme?: string;
   projectPath: string;
-  device: (string | true) | void;
-  udid: string | void;
+  device?: string | true;
+  udid?: string;
   packager: boolean;
   verbose: boolean;
   port: number;
@@ -257,7 +257,7 @@ async function runOnDevice(
 
 function buildProject(
   xcodeProject: ProjectInfo,
-  udid: string | void,
+  udid: string | undefined,
   scheme: string,
   args: FlagsT,
 ): Promise<string> {
@@ -294,7 +294,7 @@ function buildProject(
     );
     let buildOutput = '';
     let errorOutput = '';
-    buildProcess.stdout.on('data', (data: any) => {
+    buildProcess.stdout.on('data', (data: Buffer) => {
       const stringData = data.toString();
       buildOutput += stringData;
       if (xcpretty) {
@@ -396,8 +396,8 @@ function xcprettyAvailable() {
 
 function matchingDevice(
   devices: Array<Device>,
-  deviceName: string | true | void,
-  udid: string | void,
+  deviceName: string | true | undefined,
+  udid: string | undefined,
 ) {
   if (udid) {
     return matchingDeviceByUdid(devices, udid);
@@ -416,7 +416,10 @@ function matchingDevice(
   );
 }
 
-function matchingDeviceByUdid(devices: Array<Device>, udid: string | void) {
+function matchingDeviceByUdid(
+  devices: Array<Device>,
+  udid: string | undefined,
+) {
   return devices.find(device => device.udid === udid);
 }
 

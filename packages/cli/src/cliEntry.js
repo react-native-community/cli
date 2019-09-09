@@ -13,7 +13,7 @@ import commander from 'commander';
 import path from 'path';
 
 import type {CommandT, ConfigT} from 'types';
-
+// $FlowFixMe - converted to TS
 import commands from './commands';
 import init from './commands/init/initCompat';
 import assertRequiredOptions from './tools/assertRequiredOptions';

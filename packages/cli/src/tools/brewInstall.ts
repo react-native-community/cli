@@ -1,9 +1,8 @@
-// @flow
 import {logger} from '@react-native-community/cli-tools';
 import execa from 'execa';
 import Ora from 'ora';
 
-async function brewInstall(pkg: string, loader: typeof Ora) {
+async function brewInstall(pkg: string, loader: Ora.Ora) {
   loader.start(`Installing ${pkg}`);
   try {
     await execa('brew', ['install', pkg]);

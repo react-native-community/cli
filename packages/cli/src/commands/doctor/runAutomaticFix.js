@@ -1,7 +1,7 @@
 // @flow
 import chalk from 'chalk';
 import ora from 'ora';
-import logger from '../../tools/logger';
+import {logger} from '@react-native-community/cli-tools';
 import {HEALTHCHECK_TYPES} from './healthchecks';
 import type {EnvironmentInfo} from './types';
 

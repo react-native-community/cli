@@ -1,8 +1,7 @@
-// @flow
-import Ora from 'ora';
+import ora from 'ora';
 import {brewInstall} from './brewInstall';
 
-async function install(pkg: string, source: string, loader: typeof Ora) {
+async function install(pkg: string, source: string, loader: ora.Ora) {
   try {
     switch (process.platform) {
       case 'darwin':

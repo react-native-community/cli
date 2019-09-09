@@ -6,6 +6,7 @@ import {
   PACKAGE_MANAGERS,
   doesSoftwareNeedToBeFixed,
 } from '../checkInstallation';
+// $FlowFixMe - converted to TS
 import {install} from '../../../tools/install';
 import type {EnvironmentInfo, HealthCheckInterface} from '../types';
 

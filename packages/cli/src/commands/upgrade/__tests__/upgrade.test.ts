@@ -1,4 +1,3 @@
-// @flow
 import execa from 'execa';
 import path from 'path';
 import fs from 'fs';
@@ -6,7 +5,7 @@ import snapshotDiff from 'snapshot-diff';
 import stripAnsi from 'strip-ansi';
 import upgrade from '../upgrade';
 import {fetch, logger} from '@react-native-community/cli-tools';
-import loadConfig from '../../../tools/config';
+import loadConfig from '../../../tools/config'; // eslint-disable-line
 import merge from '../../../tools/merge';
 
 jest.mock('https');
@@ -56,7 +55,9 @@ jest.mock('@react-native-community/cli-tools', () => ({
 }));
 
 const mockFetch = (value = '', status = 200) => {
-  (fetch: any).mockImplementation(() => Promise.resolve({data: value, status}));
+  (fetch as jest.Mock).mockImplementation(() =>
+    Promise.resolve({data: value, status}),
+  );
 };
 
 const mockExecaDefault = (command, args) => {
@@ -85,9 +86,6 @@ const currentVersion = '0.57.8';
 const newVersion = '0.58.4';
 const olderVersion = '0.56.0';
 const ctx = loadConfig();
-const opts = {
-  legacy: false,
-};
 
 const samplePatch = jest
   .requireActual('fs')
@@ -101,34 +99,30 @@ const flushOutput = () => stripAnsi(logs.join('\n'));
 beforeEach(() => {
   jest.clearAllMocks();
   jest.restoreAllMocks();
-  // $FlowFixMe
   fs.writeFileSync = jest.fn(filename => mockPushLog('[fs] write', filename));
-  // $FlowFixMe
   fs.unlinkSync = jest.fn((...args) => mockPushLog('[fs] unlink', args));
   logs = [];
-  (execa: any).mockImplementation(mockExecaDefault);
+  ((execa as unknown) as jest.Mock).mockImplementation(mockExecaDefault);
   Object.defineProperty(process, 'platform', {
     value: 'darwin',
   });
 });
 
 afterEach(() => {
-  // $FlowFixMe
   fs.writeFileSync = jest.requireMock('fs').writeFileSync;
-  // $FlowFixMe
   fs.unlinkSync = jest.requireMock('fs').unlinkSync;
 });
 
 test('uses latest version of react-native when none passed', async () => {
-  await upgrade.func([], ctx, opts);
+  await upgrade.func([], ctx);
   expect(execa).toBeCalledWith('npm', ['info', 'react-native', 'version']);
 }, 60000);
 
 test('applies patch in current working directory when nested', async () => {
   mockFetch(samplePatch, 200);
-  (execa: any).mockImplementation(mockExecaNested);
+  ((execa as unknown) as jest.Mock).mockImplementation(mockExecaNested);
   const config = {...ctx, root: '/project/root/NestedApp'};
-  await upgrade.func([newVersion], config, opts);
+  await upgrade.func([newVersion], config);
 
   expect(execa).toBeCalledWith('git', [
     'apply',
@@ -141,25 +135,25 @@ test('applies patch in current working directory when nested', async () => {
 });
 
 test('errors when invalid version passed', async () => {
-  await upgrade.func(['next'], ctx, opts);
+  await upgrade.func(['next'], ctx);
   expect(logger.error).toBeCalledWith(
     'Provided version "next" is not allowed. Please pass a valid semver version',
   );
 }, 60000);
 
 test('errors when older version passed', async () => {
-  await upgrade.func([olderVersion], ctx, opts);
+  await upgrade.func([olderVersion], ctx);
   expect(logger.error).toBeCalledWith(
     `Trying to upgrade from newer version "${currentVersion}" to older "${olderVersion}"`,
   );
-  await upgrade.func(['0.57.10'], ctx, opts);
+  await upgrade.func(['0.57.10'], ctx);
   expect(logger.error).not.toBeCalledWith(
     `Trying to upgrade from newer version "${currentVersion}" to older "0.57.10"`,
   );
 }, 60000);
 
 test('warns when dependency upgrade version is in semver range', async () => {
-  await upgrade.func([currentVersion], ctx, opts);
+  await upgrade.func([currentVersion], ctx);
   expect(logger.warn).toBeCalledWith(
     `Specified version "${currentVersion}" is already installed in node_modules and it satisfies "^0.57.8" semver range. No need to upgrade`,
   );
@@ -167,7 +161,7 @@ test('warns when dependency upgrade version is in semver range', async () => {
 
 test('fetches empty patch and installs deps', async () => {
   mockFetch();
-  await upgrade.func([newVersion], ctx, opts);
+  await upgrade.func([newVersion], ctx);
   expect(flushOutput()).toMatchInlineSnapshot(`
     "info Fetching diff between v0.57.8 and v0.58.4...
     info Diff has no changes to apply, proceeding further
@@ -192,7 +186,6 @@ test('fetches regular patch, adds remote, applies patch, installs deps, removes 
         android: {packageName: 'com.testapp'},
       },
     }),
-    opts,
   );
   expect(flushOutput()).toMatchInlineSnapshot(`
     "info Fetching diff between v0.57.8 and v0.58.4...
@@ -215,18 +208,22 @@ test('fetches regular patch, adds remote, applies patch, installs deps, removes 
     success Upgraded React Native to v0.58.4 🎉. Now you can review and commit the changes"
     `);
   expect(
-    snapshotDiff(samplePatch, (fs.writeFileSync: any).mock.calls[0][1], {
-      contextLines: 1,
-    }),
+    snapshotDiff(
+      samplePatch,
+      (fs.writeFileSync as jest.Mock).mock.calls[0][1],
+      {
+        contextLines: 1,
+      },
+    ),
   ).toMatchSnapshot(
     'RnDiffApp is replaced with app name (TestApp and com.testapp)',
   );
 }, 60000);
 test('fetches regular patch, adds remote, applies patch, installs deps, removes remote when updated from nested directory', async () => {
   mockFetch(samplePatch, 200);
-  (execa: any).mockImplementation(mockExecaNested);
+  ((execa as unknown) as jest.Mock).mockImplementation(mockExecaNested);
   const config = {...ctx, root: '/project/root/NestedApp'};
-  await upgrade.func([newVersion], config, opts);
+  await upgrade.func([newVersion], config);
   expect(flushOutput()).toMatchInlineSnapshot(`
     "info Fetching diff between v0.57.8 and v0.58.4...
     [fs] write tmp-upgrade-rn.patch
@@ -250,7 +247,7 @@ test('fetches regular patch, adds remote, applies patch, installs deps, removes 
 }, 60000);
 test('cleans up if patching fails,', async () => {
   mockFetch(samplePatch, 200);
-  (execa: any).mockImplementation((command, args) => {
+  ((execa as unknown) as jest.Mock).mockImplementation((command, args) => {
     mockPushLog('$', 'execa', command, args);
     if (command === 'npm' && args[3] === '--json') {
       return Promise.resolve({
@@ -270,7 +267,7 @@ test('cleans up if patching fails,', async () => {
     return Promise.resolve({stdout: ''});
   });
   try {
-    await upgrade.func([newVersion], ctx, opts);
+    await upgrade.func([newVersion], ctx);
   } catch (error) {
     expect(error.message).toBe(
       'Upgrade failed. Please see the messages above for details',
@@ -313,12 +310,15 @@ test('works with --name-ios and --name-android', async () => {
         android: {packageName: 'co.uk.customandroid.app'},
       },
     }),
-    opts,
   );
   expect(
-    snapshotDiff(samplePatch, (fs.writeFileSync: any).mock.calls[0][1], {
-      contextLines: 1,
-    }),
+    snapshotDiff(
+      samplePatch,
+      (fs.writeFileSync as jest.Mock).mock.calls[0][1],
+      {
+        contextLines: 1,
+      },
+    ),
   ).toMatchSnapshot(
     'RnDiffApp is replaced with app name (CustomIos and co.uk.customandroid.app)',
   );

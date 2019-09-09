@@ -2,6 +2,7 @@
 import Ora from 'ora';
 import versionRanges from '../versionRanges';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
+// $FlowFixMe - converted to TS
 import {install} from '../../../tools/install';
 import type {EnvironmentInfo} from '../types';
 

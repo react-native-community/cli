@@ -1,18 +1,14 @@
-// @flow
 import path from 'path';
 import fs from 'fs';
 import chalk from 'chalk';
 import semver from 'semver';
 import execa from 'execa';
-import type {ConfigT} from 'types';
+import {Config} from '@react-native-community/cli-types';
 import {logger, CLIError, fetch} from '@react-native-community/cli-tools';
-import * as PackageManager from '../../tools/packageManager';
+// @ts-ignore JS file
+import * as PackageManager from '../../tools/packageManager'; // eslint-disable-line import/namespace
+// @ts-ignore JS file
 import installPods from '../../tools/installPods';
-import legacyUpgrade from './legacyUpgrade';
-
-type FlagsT = {
-  legacy: boolean | void,
-};
 
 // https://react-native-community.github.io/upgrade-helper/?from=0.59.10&to=0.60.0-rc.3
 const webDiffUrl = 'https://react-native-community.github.io/upgrade-helper';
@@ -21,7 +17,6 @@ const rawDiffUrl =
 
 const getLatestRNVersion = async (): Promise<string> => {
   logger.info('No version passed. Fetching latest...');
-  // $FlowFixMe - this is public API
   const {stdout} = await execa('npm', ['info', 'react-native', 'version']);
   return stdout;
 };
@@ -29,7 +24,6 @@ const getLatestRNVersion = async (): Promise<string> => {
 const getRNPeerDeps = async (
   version: string,
 ): Promise<{[key: string]: string}> => {
-  // $FlowFixMe - this is public API
   const {stdout} = await execa('npm', [
     'info',
     `react-native@${version}`,
@@ -40,7 +34,11 @@ const getRNPeerDeps = async (
   return JSON.parse(stdout);
 };
 
-const getPatch = async (currentVersion, newVersion, config) => {
+const getPatch = async (
+  currentVersion: string,
+  newVersion: string,
+  config: Config,
+) => {
   let patch;
 
   logger.info(`Fetching diff between v${currentVersion} and v${newVersion}...`);
@@ -73,20 +71,17 @@ const getPatch = async (currentVersion, newVersion, config) => {
     if (platform === 'ios') {
       patchWithRenamedProjects = patchWithRenamedProjects.replace(
         new RegExp('RnDiffApp', 'g'),
-        // $FlowFixMe - poor typings of ProjectConfigIOST
-        config.project[platform].projectName.replace('.xcodeproj', ''),
+        config.project[platform]!.projectName.replace('.xcodeproj', ''),
       );
     } else if (platform === 'android') {
       patchWithRenamedProjects = patchWithRenamedProjects
         .replace(
           new RegExp('com\\.rndiffapp', 'g'),
-          // $FlowFixMe - poor typings of ProjectConfigAndroidT
-          config.project[platform].packageName,
+          config.project[platform]!.packageName,
         )
         .replace(
           new RegExp('com\\.rndiffapp'.split('.').join('/'), 'g'),
-          // $FlowFixMe - poor typings of ProjectConfigAndroidT
-          config.project[platform].packageName.split('.').join('/'),
+          config.project[platform]!.packageName.split('.').join('/'),
         );
     } else {
       logger.warn(
@@ -98,10 +93,14 @@ const getPatch = async (currentVersion, newVersion, config) => {
   return patchWithRenamedProjects;
 };
 
-const getVersionToUpgradeTo = async (argv, currentVersion, projectDir) => {
+const getVersionToUpgradeTo = async (
+  argv: Array<string>,
+  currentVersion: string,
+  projectDir: string,
+) => {
   const newVersion = argv[0]
     ? semver.valid(argv[0]) ||
-      (semver.coerce(argv[0]) ? semver.coerce(argv[0]).version : null)
+      (semver.coerce(argv[0]) ? semver.coerce(argv[0])!.version : null)
     : await getLatestRNVersion();
 
   if (!newVersion) {
@@ -139,7 +138,7 @@ const getVersionToUpgradeTo = async (argv, currentVersion, projectDir) => {
   return newVersion;
 };
 
-const installDeps = async (newVersion, projectDir) => {
+const installDeps = async (newVersion: string) => {
   logger.info(
     `Installing "react-native@${newVersion}" and its peer dependencies...`,
   );
@@ -164,7 +163,10 @@ const installDeps = async (newVersion, projectDir) => {
   }
 };
 
-const installCocoaPodsDeps = async (projectDir, thirdPartyIOSDeps) => {
+const installCocoaPodsDeps = async (
+  projectDir: string,
+  thirdPartyIOSDeps: Array<Config['dependencies'][string]>,
+) => {
   if (process.platform === 'darwin') {
     try {
       logger.info(
@@ -173,7 +175,7 @@ const installCocoaPodsDeps = async (projectDir, thirdPartyIOSDeps) => {
         )}`,
       );
       await installPods({
-        projectName: projectDir.split('/').pop(),
+        projectName: projectDir.split('/').pop() || '',
         shouldUpdatePods: thirdPartyIOSDeps.length > 0,
       });
     } catch (error) {
@@ -197,9 +199,9 @@ const applyPatch = async (
   tmpPatchFile: string,
 ) => {
   const defaultExcludes = ['package.json'];
-  let filesThatDontExist = [];
-  let filesThatFailedToApply = [];
-  // $FlowFixMe ThenableChildProcess is incompatible with Promise
+  let filesThatDontExist: Array<string> = [];
+  let filesThatFailedToApply: Array<string> = [];
+
   const {stdout: relativePathFromRoot} = await execa('git', [
     'rev-parse',
     '--show-prefix',
@@ -224,7 +226,7 @@ const applyPatch = async (
       ]);
       logger.info('Applying diff...');
     } catch (error) {
-      const errorLines = error.stderr.split('\n');
+      const errorLines: Array<string> = error.stderr.split('\n');
       filesThatDontExist = [
         ...errorLines
           .filter(x => x.includes('does not exist in index'))
@@ -283,10 +285,7 @@ const applyPatch = async (
 /**
  * Upgrade application to a new version of React Native.
  */
-async function upgrade(argv: Array<string>, ctx: ConfigT, args: FlagsT) {
-  if (args.legacy) {
-    return legacyUpgrade.func(argv, ctx);
-  }
+async function upgrade(argv: Array<string>, ctx: Config) {
   const tmpPatchFile = 'tmp-upgrade-rn.patch';
   const projectDir = ctx.root;
   const {version: currentVersion} = require(path.join(
@@ -294,7 +293,6 @@ async function upgrade(argv: Array<string>, ctx: ConfigT, args: FlagsT) {
     'node_modules/react-native/package.json',
   ));
   const thirdPartyIOSDeps = Object.values(ctx.dependencies).filter(
-    // $FlowFixMe
     dependency => dependency.platforms.ios,
   );
 
@@ -316,7 +314,7 @@ async function upgrade(argv: Array<string>, ctx: ConfigT, args: FlagsT) {
 
   if (patch === '') {
     logger.info('Diff has no changes to apply, proceeding further');
-    await installDeps(newVersion, projectDir);
+    await installDeps(newVersion);
     await installCocoaPodsDeps(projectDir, thirdPartyIOSDeps);
 
     logger.success(
@@ -343,7 +341,7 @@ async function upgrade(argv: Array<string>, ctx: ConfigT, args: FlagsT) {
         logger.warn(
           'Continuing after failure. Some of the files are upgraded but you will need to deal with conflicts manually',
         );
-        await installDeps(newVersion, projectDir);
+        await installDeps(newVersion);
         logger.info('Running "git status" to check what changed...');
         await execa('git', ['status'], {stdio: 'inherit'});
       } else {
@@ -352,7 +350,7 @@ async function upgrade(argv: Array<string>, ctx: ConfigT, args: FlagsT) {
         );
       }
     } else {
-      await installDeps(newVersion, projectDir);
+      await installDeps(newVersion);
       await installCocoaPodsDeps(projectDir, thirdPartyIOSDeps);
       logger.info('Running "git status" to check what changed...');
       await execa('git', ['status'], {stdio: 'inherit'});
@@ -393,13 +391,5 @@ const upgradeCommand = {
   description:
     "Upgrade your app's template files to the specified or latest npm version using `rn-diff-purge` project. Only valid semver versions are allowed.",
   func: upgrade,
-  options: [
-    {
-      name: '--legacy [boolean]',
-      description:
-        "Legacy implementation. Upgrade your app's template files to the latest version; run this after " +
-        'updating the react-native version in your package.json and running npm install',
-    },
-  ],
 };
 export default upgradeCommand;

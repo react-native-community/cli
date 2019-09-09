@@ -1,5 +1,8 @@
+// @flow
 import chalk from 'chalk';
+import Ora from 'ora';
 import {logManualInstallation} from './common';
+import type {HealthCheckInterface} from '../types';
 
 // List of answers on how to set `ANDROID_HOME` for each platform
 const URLS = {
@@ -10,12 +13,12 @@ const URLS = {
 
 const label = 'ANDROID_HOME';
 
-export default {
+export default ({
   label,
-  getDiagnostics: () => ({
+  getDiagnostics: async () => ({
     needsToBeFixed: !process.env.ANDROID_HOME,
   }),
-  runAutomaticFix: async ({loader}) => {
+  runAutomaticFix: async ({loader}: {loader: typeof Ora}) => {
     loader.info();
 
     logManualInstallation({
@@ -24,4 +27,4 @@ export default {
       )}.`,
     });
   },
-};
+}: HealthCheckInterface);

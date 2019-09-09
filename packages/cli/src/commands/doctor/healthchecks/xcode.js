@@ -1,16 +1,19 @@
+// @flow
+import Ora from 'ora';
 import versionRanges from '../versionRanges';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
 import {logManualInstallation} from './common';
+import type {EnvironmentInfo, HealthCheckInterface} from '../types';
 
-export default {
+export default ({
   label: 'Xcode',
-  getDiagnostics: ({IDEs}) => ({
+  getDiagnostics: async ({IDEs}: EnvironmentInfo) => ({
     needsToBeFixed: doesSoftwareNeedToBeFixed({
       version: IDEs.Xcode.version.split('/')[0],
       versionRange: versionRanges.XCODE,
     }),
   }),
-  runAutomaticFix: ({loader}) => {
+  runAutomaticFix: async ({loader}: {loader: typeof Ora}) => {
     loader.info();
 
     logManualInstallation({
@@ -18,4 +21,4 @@ export default {
       url: 'https://developer.apple.com/xcode/',
     });
   },
-};
+}: HealthCheckInterface);

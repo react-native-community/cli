@@ -121,7 +121,7 @@ async function installPods({
       await execa('pod', ['--version']);
     } catch (e) {
       loader.info();
-      installCocoaPods(loader);
+      await installCocoaPods(loader);
     }
 
     if (shouldUpdatePods) {

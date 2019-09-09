@@ -113,10 +113,9 @@ async function runOnSimulator(
   scheme: string,
   args: FlagsT,
 ) {
-  let simulators;
+  let simulators: {devices: {[index: string]: Array<Device>}};
   try {
     simulators = JSON.parse(
-      // $FlowIssue: https://github.com/facebook/flow/issues/5675
       child_process.execFileSync(
         'xcrun',
         ['simctl', 'list', '--json', 'devices'],

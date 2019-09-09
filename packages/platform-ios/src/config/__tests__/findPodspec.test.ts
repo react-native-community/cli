@@ -16,19 +16,16 @@ const fs = require('fs');
 
 describe('ios::findPodspec', () => {
   it('returns null if there is not podspec file', () => {
-    // $FlowFixMe
     fs.__setMockFilesystem(projects.flat);
     expect(findPodspec('')).toBeNull();
   });
 
   it('returns podspec name if only one exists', () => {
-    // $FlowFixMe
     fs.__setMockFilesystem(projects.withPods.ios);
     expect(findPodspec('/')).toBe('/TestPod.podspec');
   });
 
   it('returns podspec name that match packet directory', () => {
-    // $FlowFixMe
     fs.__setMockFilesystem({
       user: {
         PacketName: {
@@ -43,7 +40,6 @@ describe('ios::findPodspec', () => {
   });
 
   it('returns first podspec name if not match in directory', () => {
-    // $FlowFixMe
     fs.__setMockFilesystem({
       user: {
         packet: {

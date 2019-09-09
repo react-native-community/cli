@@ -1,7 +1,7 @@
 ---
 name: 🐛 Report a bug
 about: Report a reproducible or regression bug in React Native CLI.'
-labels: 'bug'
+labels: 'bug report'
 ---
 
 ## Environment

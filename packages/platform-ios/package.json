@@ -8,6 +8,10 @@
     "chalk": "^2.4.2",
     "xcode": "^2.0.0"
   },
+  "devDependencies": {
+    "@react-native-community/cli-types": "^2.8.3",
+    "@types/plist": "^3.0.2"
+  },
   "files": [
     "build",
     "native_modules.rb"

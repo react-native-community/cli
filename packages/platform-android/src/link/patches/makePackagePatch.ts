@@ -7,11 +7,11 @@
  */
 
 import applyParams from './applyParams';
-import {ProjectParamsAndroid} from '../../types';
+import {AndroidProjectParams} from '@react-native-community/cli-types';
 
 export default function makePackagePatch(
   packageInstance: string,
-  params: ProjectParamsAndroid,
+  params: AndroidProjectParams,
   prefix: string,
 ) {
   const processedInstance = applyParams(packageInstance, params, prefix);

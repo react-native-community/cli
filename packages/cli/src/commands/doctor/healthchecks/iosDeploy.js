@@ -36,10 +36,11 @@ export default ({
         healthcheck: 'ios-deploy',
         url: 'https://github.com/ios-control/ios-deploy#readme',
       });
+      return;
     }
 
     try {
-      const installationCommandArgs = (installationCommand || '').split(' ');
+      const installationCommandArgs = installationCommand.split(' ');
 
       await execa(
         installationCommandArgs[0],

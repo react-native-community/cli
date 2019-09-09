@@ -1,6 +1,7 @@
 // @flow
 import info from '../info';
 import {logger} from '@react-native-community/cli-tools';
+// eslint-disable-next-line import/namespace, import/default
 import loadConfig from '../../../tools/config';
 
 jest.mock('../../../tools/config');
@@ -12,11 +13,11 @@ beforeEach(() => {
 const config = loadConfig();
 
 test('prints output without arguments', async () => {
-  await info.func([], config, {});
+  await info.func([], config);
   expect(logger.info).toHaveBeenCalledWith(
     'Fetching system and libraries information...',
   );
-  const output = (logger.log: any).mock.calls[0][0];
+  const output = (logger.log as jest.Mock).mock.calls[0][0];
   // Checking on output that should be present on all OSes.
   // TODO: move to e2e tests and adjust expectations to include npm packages
   expect(output).toContain('System:');

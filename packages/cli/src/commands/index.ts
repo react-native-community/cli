@@ -15,8 +15,7 @@ import install from './install/install'; // eslint-disable-line
 // @ts-ignore - JS file
 import uninstall from './install/uninstall'; // eslint-disable-line
 import upgrade from './upgrade/upgrade';
-// @ts-ignore - JS file
-import info from './info/info'; // eslint-disable-line
+import info from './info/info';
 // @ts-ignore - JS file
 import config from './config/config'; // eslint-disable-line
 // @ts-ignore - JS file

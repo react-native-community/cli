@@ -9,7 +9,6 @@
 import envinfo from 'envinfo';
 import {logger} from '@react-native-community/cli-tools';
 import {Config} from '@react-native-community/cli-types';
-// @ts-ignore - JS file
 import releaseChecker from '../../tools/releaseChecker';
 
 const info = async function getInfo(_argv: Array<string>, ctx: Config) {

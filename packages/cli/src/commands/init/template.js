@@ -5,6 +5,7 @@ import * as PackageManager from '../../tools/packageManager';
 import {logger} from '@react-native-community/cli-tools';
 // $FlowFixMe - converted to TS
 import copyFiles from '../../tools/copyFiles';
+// $FlowFixMe - converted to TS
 import replacePathSepForRegex from '../../tools/replacePathSepForRegex';
 
 export type TemplateConfig = {

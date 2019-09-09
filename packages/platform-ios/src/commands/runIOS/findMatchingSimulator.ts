@@ -16,10 +16,9 @@ import {Device} from '../../types';
  * If the simulatorString argument is null, we'll go into default mode and return the currently booted simulator, or if
  * none is booted, it will be the first in the list.
  *
- * @param Object simulators a parsed list from `xcrun simctl list --json devices` command
- * @param String|null simulatorString the string with the name of desired simulator. If null, it will use the currently
+ * @param simulators a parsed list from `xcrun simctl list --json devices` command
+ * @param simulatorString the string with the name of desired simulator. If null, it will use the currently
  *        booted simulator, or if none are booted, the first in the list.
- * @returns {Object} {udid, name, version}
  */
 function findMatchingSimulator(
   simulators: {devices: {[index: string]: Array<Device>}},

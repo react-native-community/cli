@@ -306,10 +306,10 @@ function buildProject(
         }
       }
     });
-    buildProcess.stderr.on('data', (data: any) => {
+    buildProcess.stderr.on('data', (data: Buffer) => {
       errorOutput += data;
     });
-    buildProcess.on('close', (code: any) => {
+    buildProcess.on('close', (code: number) => {
       if (xcpretty) {
         xcpretty.stdin.end();
       } else {

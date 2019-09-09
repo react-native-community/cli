@@ -16,8 +16,7 @@ import {
 export default function isInstalled(
   projectConfig: IOSProjectConfig,
   // FIXME: name is never used
-  _name?: string,
-  // @ts-ignore
+  _name: string | undefined,
   dependencyConfig: IOSDependencyConfig,
 ) {
   return (

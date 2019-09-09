@@ -11,11 +11,11 @@ import getPodspecName from '../config/getPodspecName';
 
 export default function addPodEntry(
   podLines: Array<string>,
-  linesToAddEntry?:
+  linesToAddEntry:
     | Array<{line: number; indentation: number}>
     | {line: number; indentation: number}
-    | null,
-  // @ts-ignore Required argument cannot follow optional argument
+    | null
+    | undefined,
   podspecPath: string,
   nodeModulePath: string,
 ) {

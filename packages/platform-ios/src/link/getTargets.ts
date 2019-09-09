@@ -6,6 +6,10 @@
  *
  */
 
+interface Target {
+  value: string;
+}
+
 /**
  * Given xcodeproj it returns list of targets
  */
@@ -15,8 +19,8 @@ export default function getTargets(project: any) {
   } = project.getFirstProject();
   const nativeTargetSection = project.pbxNativeTargetSection();
   return targets
-    .filter((target: any) => nativeTargetSection[target.value] !== undefined)
-    .map((target: any) => {
+    .filter((target: Target) => nativeTargetSection[target.value] !== undefined)
+    .map((target: Target) => {
       const key = target.value;
       const configurationListId =
         nativeTargetSection[key].buildConfigurationList;

@@ -20,9 +20,11 @@ import {
 } from './template';
 import {changePlaceholderInTemplate} from './editTemplate';
 import * as PackageManager from '../../tools/packageManager';
+// $FlowFixMe - converted to TS
 import installPods from '../../tools/installPods';
 import {processTemplateName} from './templateName';
 import banner from './banner';
+// $FlowFixMe - converted to TS
 import {getLoader} from '../../tools/loader';
 import {CLIError} from '@react-native-community/cli-tools';
 

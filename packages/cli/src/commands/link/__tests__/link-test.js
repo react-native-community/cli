@@ -4,7 +4,6 @@ import makeHook from '../makeHook';
 
 jest.mock('chalk', () => ({grey: str => str, bold: str => str}));
 jest.mock('../../../tools/config');
-jest.mock('../../../tools/logger');
 jest.mock('../makeHook', () => {
   return jest.fn(() => {
     return jest.fn(() => Promise.resolve());

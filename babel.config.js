@@ -20,6 +20,7 @@ module.exports = {
     ],
   ],
   plugins: [
+    require.resolve('@babel/plugin-proposal-class-properties'),
     require.resolve('@babel/plugin-transform-strict-mode'),
     [require.resolve('@babel/plugin-transform-modules-commonjs'), {lazy: true}],
     [

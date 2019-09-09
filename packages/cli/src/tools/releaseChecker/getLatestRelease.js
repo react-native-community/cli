@@ -2,7 +2,7 @@
  * @flow
  */
 import semver from 'semver';
-import logger from '../logger';
+import {logger} from '@react-native-community/cli-tools';
 import cacheManager from './releaseCacheManager';
 import {fetch} from '@react-native-community/cli-tools';
 

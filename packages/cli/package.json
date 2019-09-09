@@ -64,6 +64,7 @@
     "react-native": "^0.60.0"
   },
   "devDependencies": {
+    "@types/semver": "^6.0.2",
     "slash": "^3.0.0",
     "snapshot-diff": "^0.5.0"
   }

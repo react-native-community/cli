@@ -1,15 +1,16 @@
-// @flow
 import fs from 'fs';
 import execa from 'execa';
 import chalk from 'chalk';
-import Ora from 'ora';
+import ora from 'ora';
+// @ts-ignore untyped
 import inquirer from 'inquirer';
 import {logger} from '@react-native-community/cli-tools';
 import {NoopLoader} from './loader';
+// @ts-ignore untyped
 import sudo from 'sudo-prompt';
 import {brewInstall} from './brewInstall';
 
-async function updatePods(loader: typeof Ora) {
+async function updatePods(loader: ora.Ora) {
   try {
     loader.start(
       `Updating CocoaPods repositories ${chalk.dim(
@@ -32,7 +33,7 @@ async function updatePods(loader: typeof Ora) {
 
 function runSudo(command: string): Promise<void> {
   return new Promise((resolve, reject) => {
-    sudo.exec(command, error => {
+    sudo.exec(command, (error: Error) => {
       if (error) {
         reject(error);
       }
@@ -42,7 +43,7 @@ function runSudo(command: string): Promise<void> {
   });
 }
 
-async function installCocoaPods(loader: typeof Ora) {
+async function installCocoaPods(loader: ora.Ora) {
   loader.stop();
 
   const withGem = 'Yes, with gem (may require sudo)';
@@ -96,9 +97,9 @@ async function installPods({
   loader,
   shouldUpdatePods,
 }: {
-  projectName: string,
-  loader?: typeof Ora,
-  shouldUpdatePods: boolean,
+  projectName: string;
+  loader?: ora.Ora;
+  shouldUpdatePods: boolean;
 }) {
   loader = loader || new NoopLoader();
   try {

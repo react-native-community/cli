@@ -5,7 +5,7 @@ import path from 'path';
 import fs from 'fs';
 import os from 'os';
 import mkdirp from 'mkdirp';
-import logger from '../logger';
+import {logger} from '@react-native-community/cli-tools';
 
 type ReleaseCacheKey = 'eTag' | 'lastChecked' | 'latestVersion';
 type Cache = {[key: ReleaseCacheKey]: string};

@@ -1,5 +1,5 @@
 // @flow
-import logger from '@react-native-community/cli-tools/build/logger';
+import {logger} from '@react-native-community/cli-tools';
 import chalk from 'chalk';
 
 // Space is necessary to keep correct ordering on screen

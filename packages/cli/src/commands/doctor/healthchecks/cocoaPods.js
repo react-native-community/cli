@@ -1,5 +1,6 @@
 // @flow
 import {isSoftwareInstalled} from '../checkInstallation';
+// $FlowFixMe - converted to TS
 import {installCocoaPods} from '../../../tools/installPods';
 import {type HealthCheckInterface} from '../types';
 

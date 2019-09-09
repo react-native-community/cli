@@ -47,6 +47,9 @@
     "micromatch": "^3.1.10",
     "mkdirp": "^0.5.1",
     "string-length": "^2.0.0",
-    "typescript": "^3.4.5"
+    "typescript": "^3.6.2"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.5.5"
   }
 }

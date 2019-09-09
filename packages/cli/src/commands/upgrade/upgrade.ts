@@ -98,9 +98,11 @@ const getVersionToUpgradeTo = async (
   currentVersion: string,
   projectDir: string,
 ) => {
-  const newVersion = argv[0]
-    ? semver.valid(argv[0]) ||
-      (semver.coerce(argv[0]) ? semver.coerce(argv[0])!.version : null)
+  const argVersion = argv[0];
+  const semverCoercedVersion = semver.coerce(argVersion);
+  const newVersion = argVersion
+    ? semver.valid(argVersion) ||
+      (semverCoercedVersion ? semverCoercedVersion.version : null)
     : await getLatestRNVersion();
 
   if (!newVersion) {

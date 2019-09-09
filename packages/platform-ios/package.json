@@ -9,7 +9,7 @@
     "xcode": "^2.0.0"
   },
   "devDependencies": {
-    "@react-native-community/cli-types": "^2.8.3",
+    "@react-native-community/cli-types": "^3.0.0-alpha.2",
     "@types/plist": "^3.0.2"
   },
   "files": [

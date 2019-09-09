@@ -20,6 +20,7 @@ import type {
   DependencyConfigT,
 } from 'types';
 import assign from '../assign';
+// $FlowFixMe - converted to TS
 import merge from '../merge';
 import resolveNodeModuleDir from './resolveNodeModuleDir';
 

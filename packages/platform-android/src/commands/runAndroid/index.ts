@@ -118,7 +118,7 @@ function getPackageNameWithSuffix(
 }
 
 // Builds the app and runs it on a connected emulator / device.
-async function buildAndRun(args: Flags) {
+function buildAndRun(args: Flags) {
   process.chdir(path.join(args.root, 'android'));
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
 
@@ -144,7 +144,7 @@ async function buildAndRun(args: Flags) {
       adbPath,
     );
   } else {
-    return await runOnAllDevices(
+    return runOnAllDevices(
       args,
       cmd,
       packageNameWithSuffix,

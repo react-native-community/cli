@@ -1,14 +1,13 @@
 // @flow
 import chalk from 'chalk';
 import envinfo from 'envinfo';
-import Ora from 'ora';
 import {logger} from '@react-native-community/cli-tools';
 import {getHealthchecks, HEALTHCHECK_TYPES} from './healthchecks';
 import {getLoader} from '../../tools/loader';
 import printFixOptions, {KEYS} from './printFixOptions';
 import runAutomaticFix, {AUTOMATIC_FIX_LEVELS} from './runAutomaticFix';
 import type {ConfigT} from 'types';
-import type {EnvironmentInfo} from './types';
+import type {HealthCheckInterface} from './types';
 
 const printCategory = ({label, key}) => {
   if (key > 0) {
@@ -74,18 +73,7 @@ export default (async function runDoctor(
     healthchecks,
   }: {
     label: string,
-    healthchecks: Array<{
-      label: string,
-      visible: boolean,
-      isRequired: boolean,
-      getDiagnostics: (
-        envInfor: EnvironmentInfo,
-      ) => {version: string, needsToBeFixed: boolean},
-      getDiagnosticsAsync: (
-        envInfor: EnvironmentInfo,
-      ) => Promise<{version: string, needsToBeFixed: boolean}>,
-      runAutomaticFix: (args: {loader: typeof Ora}) => Promise<void>,
-    }>,
+    healthchecks: Array<HealthCheckInterface>,
   }) => ({
     label,
     healthchecks: (await Promise.all(
@@ -94,9 +82,9 @@ export default (async function runDoctor(
           return;
         }
 
-        const {needsToBeFixed} = healthcheck.getDiagnostics
-          ? healthcheck.getDiagnostics(environmentInfo)
-          : await healthcheck.getDiagnosticsAsync(environmentInfo);
+        const {needsToBeFixed} = await healthcheck.getDiagnostics(
+          environmentInfo,
+        );
 
         // Assume that it's required unless specified otherwise
         const isRequired = healthcheck.isRequired !== false;
@@ -104,7 +92,7 @@ export default (async function runDoctor(
 
         return {
           label: healthcheck.label,
-          needsToBeFixed,
+          needsToBeFixed: Boolean(needsToBeFixed),
           runAutomaticFix: healthcheck.runAutomaticFix,
           isRequired,
           type: needsToBeFixed
@@ -125,6 +113,7 @@ export default (async function runDoctor(
     );
 
   const iterateOverCategories = categories =>
+    // $FlowFixMe - bad Object.values typings
     Promise.all(categories.map(iterateOverHealthChecks));
 
   const healthchecksPerCategory = await iterateOverCategories(
@@ -167,6 +156,7 @@ export default (async function runDoctor(
   }
 
   const onKeyPress = async key => {
+    // $FlowFixMe
     process.stdin.setRawMode(false);
     process.stdin.removeAllListeners('data');
 

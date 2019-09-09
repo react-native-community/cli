@@ -4,6 +4,7 @@ import Ora from 'ora';
 import {isSoftwareInstalled, PACKAGE_MANAGERS} from '../checkInstallation';
 import {packageManager} from './packageManagers';
 import {logManualInstallation} from './common';
+import type {HealthCheckInterface} from '../types';
 
 const getInstallationCommand = () => {
   if (packageManager === PACKAGE_MANAGERS.YARN) {
@@ -17,10 +18,10 @@ const getInstallationCommand = () => {
   return undefined;
 };
 
-export default {
+export default ({
   label: 'ios-deploy',
   isRequired: false,
-  getDiagnosticsAsync: async () => ({
+  getDiagnostics: async () => ({
     needsToBeFixed: !(await isSoftwareInstalled('ios-deploy')),
   }),
   runAutomaticFix: async ({loader}: {loader: typeof Ora}) => {
@@ -53,4 +54,4 @@ export default {
       });
     }
   },
-};
+}: HealthCheckInterface);

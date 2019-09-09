@@ -1,4 +1,5 @@
 // @flow
+import Ora from 'ora';
 import versionRanges from '../versionRanges';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
 import {install} from '../../../tools/install';
@@ -12,7 +13,7 @@ export default {
       versionRange: versionRanges.WATCHMAN,
     }),
   }),
-  runAutomaticFix: async ({loader}) =>
+  runAutomaticFix: async ({loader}: typeof Ora) =>
     await install(
       'watchman',
       'https://facebook.github.io/watchman/docs/install.html',

@@ -18,10 +18,10 @@ export default async ({
   stats,
   loader,
   environmentInfo,
-}:{
+}: {
   healthchecks: any,
   automaticFixLevel: $Values<typeof AUTOMATIC_FIX_LEVELS>,
-  stats:{errors: any, warnings: any},
+  stats: {errors: any, warnings: any},
   loader: typeof ora,
   environmentInfo: EnvironmentInfo,
 }) => {

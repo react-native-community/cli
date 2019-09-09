@@ -1,4 +1,6 @@
 // @flow
+import Ora from 'ora';
+
 export type EnvironmentInfo = {
   System: {
     OS: string,
@@ -61,4 +63,17 @@ export type EnvironmentInfo = {
       path: string,
     },
   },
+};
+
+export type HealthCheckInterface = {
+  label: string,
+  visible?: boolean | void,
+  isRequired?: boolean,
+  getDiagnostics: (
+    environmentInfo: EnvironmentInfo,
+  ) => Promise<{version?: string, needsToBeFixed: boolean | string}>,
+  runAutomaticFix: (args: {
+    loader: typeof Ora,
+    environmentInfo: EnvironmentInfo,
+  }) => Promise<void> | void,
 };

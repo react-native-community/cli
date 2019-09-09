@@ -1,12 +1,13 @@
 // @flow
 import fs from 'fs';
+import Ora from 'ora';
 import versionRanges from '../versionRanges';
 import {
   PACKAGE_MANAGERS,
   doesSoftwareNeedToBeFixed,
 } from '../checkInstallation';
 import {install} from '../../../tools/install';
-import type {EnvironmentInfo} from '../types';
+import type {EnvironmentInfo, HealthCheckInterface} from '../types';
 
 const packageManager = (() => {
   if (fs.existsSync('yarn.lock')) {
@@ -20,9 +21,9 @@ const packageManager = (() => {
   return undefined;
 })();
 
-const yarn = {
+const yarn: HealthCheckInterface = {
   label: 'yarn',
-  getDiagnostics: ({Binaries}: EnvironmentInfo) => ({
+  getDiagnostics: async ({Binaries}: EnvironmentInfo) => ({
     version: Binaries.Node.version,
     needsToBeFixed: doesSoftwareNeedToBeFixed({
       version: Binaries.Yarn.version,
@@ -33,13 +34,13 @@ const yarn = {
   // or if we can't identify that the user uses yarn or npm
   visible:
     packageManager === PACKAGE_MANAGERS.YARN || packageManager === undefined,
-  runAutomaticFix: async ({loader}) =>
+  runAutomaticFix: async ({loader}: typeof Ora) =>
     await install('yarn', 'https://yarnpkg.com/docs/install', loader),
 };
 
-const npm = {
+const npm: HealthCheckInterface = {
   label: 'npm',
-  getDiagnostics: ({Binaries}: EnvironmentInfo) => ({
+  getDiagnostics: async ({Binaries}: EnvironmentInfo) => ({
     needsToBeFixed: doesSoftwareNeedToBeFixed({
       version: Binaries.npm.version,
       versionRange: versionRanges.NPM,
@@ -49,7 +50,7 @@ const npm = {
   // or if we can't identify that the user uses yarn or npm
   visible:
     packageManager === PACKAGE_MANAGERS.NPM || packageManager === undefined,
-  runAutomaticFix: async ({loader}) =>
+  runAutomaticFix: async ({loader}: typeof Ora) =>
     await install('node', 'https://nodejs.org/', loader),
 };
 

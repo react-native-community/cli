@@ -1,16 +1,15 @@
 // @flow
 import execa from 'execa';
 import {logger} from '@react-native-community/cli-tools';
-// $FlowFixMe - converted to TS
 import {getYarnVersionIfAvailable, isProjectUsingYarn} from './yarn';
 
-type Options = {|
-  preferYarn?: boolean,
-  silent?: boolean,
-  cwd?: string,
-|};
+type Options = {
+  preferYarn?: boolean;
+  silent?: boolean;
+  cwd?: string;
+};
 
-let projectDir;
+let projectDir: string;
 
 const packageManagers = {
   yarn: {
@@ -29,8 +28,8 @@ const packageManagers = {
 
 function configurePackageManager(
   packageNames: Array<string>,
-  options?: Options,
   action: 'install' | 'installDev' | 'installAll' | 'uninstall',
+  options?: Options,
 ) {
   const pm = shouldUseYarn(options) ? 'yarn' : 'npm';
   const [executable, ...flags] = packageManagers[pm][action];
@@ -63,17 +62,17 @@ export function setProjectDir(dir: string) {
 }
 
 export function install(packageNames: Array<string>, options?: Options) {
-  return configurePackageManager(packageNames, options, 'install');
+  return configurePackageManager(packageNames, 'install', options);
 }
 
 export function installDev(packageNames: Array<string>, options?: Options) {
-  return configurePackageManager(packageNames, options, 'installDev');
+  return configurePackageManager(packageNames, 'installDev', options);
 }
 
 export function uninstall(packageNames: Array<string>, options?: Options) {
-  return configurePackageManager(packageNames, options, 'uninstall');
+  return configurePackageManager(packageNames, 'uninstall', options);
 }
 
 export function installAll(options?: Options) {
-  return configurePackageManager([], options, 'installAll');
+  return configurePackageManager([], 'installAll', options);
 }

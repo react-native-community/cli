@@ -1,7 +1,7 @@
 // @flow
 import execa from 'execa';
 import Ora from 'ora';
-import {isSoftwareInstalled, PACKAGE_MANAGERS} from '../checkInstallation';
+import {checkSoftwareInstalled, PACKAGE_MANAGERS} from '../checkInstallation';
 import {packageManager} from './packageManagers';
 import {logManualInstallation} from './common';
 import type {HealthCheckInterface} from '../types';
@@ -22,7 +22,7 @@ export default ({
   label: 'ios-deploy',
   isRequired: false,
   getDiagnostics: async () => ({
-    needsToBeFixed: !(await isSoftwareInstalled('ios-deploy')),
+    needsToBeFixed: await checkSoftwareInstalled('ios-deploy'),
   }),
   runAutomaticFix: async ({loader}: {loader: typeof Ora}) => {
     const installationCommand = getInstallationCommand();

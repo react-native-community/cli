@@ -9,7 +9,7 @@ import {Config} from '@react-native-community/cli-types';
 import {logger} from '@react-native-community/cli-tools';
 import * as PackageManager from '../../tools/packageManager';
 // @ts-ignore FIXME after converting link/unlink
-import unlink from '../link/unlink';
+import unlink from '../link/unlink'; // eslint-disable-line import/namespace, import/default
 
 async function uninstall(args: Array<string>, ctx: Config): Promise<void> {
   const name = args[0];

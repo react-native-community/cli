@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "@react-native-community/cli-types": "^3.0.0-alpha.2",
+    "@types/js-yaml": "^3.12.1",
     "@types/plist": "^3.0.2"
   },
   "files": [

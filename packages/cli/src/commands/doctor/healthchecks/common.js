@@ -22,7 +22,9 @@ const logManualInstallation = ({
 
   if (url) {
     return logMessage(
-      `Read more about how to download ${healthcheck} at ${chalk.bold(url)}`,
+      `Read more about how to download ${healthcheck} at ${chalk.dim.underline(
+        url,
+      )}`,
     );
   }
 

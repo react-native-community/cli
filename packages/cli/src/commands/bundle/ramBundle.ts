@@ -4,20 +4,18 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
  */
 // @ts-ignore - no typed definition for the package
 import outputUnbundle from 'metro/src/shared/output/RamBundle';
 import {CommandLineArgs} from './bundleCommandLineArgs';
 import {withOutput as bundleWithOutput} from './bundle';
 import bundleCommandLineArgs from './bundleCommandLineArgs';
-// @ts-ignore FIXME after converting types
-import {ConfigT} from 'types';
+import {Config} from '@react-native-community/cli-types';
 
 /**
  * Builds the bundle starting to look for dependencies at the given entry path.
  */
-function ramBundle(argv: CommandLineArgs, config: ConfigT, args: CommandLineArgs) {
+function ramBundle(argv: Array<string>, config: Config, args: CommandLineArgs) {
   return bundleWithOutput(argv, config, args, outputUnbundle);
 }
 

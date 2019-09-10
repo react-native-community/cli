@@ -4,10 +4,8 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
  */
-// @ts-ignore FIXME after converting types
-import {ConfigT} from 'types';
+import {Config} from '@react-native-community/cli-types';
 import {CommandLineArgs} from './bundleCommandLineArgs';
 import buildBundle from './buildBundle';
 import bundleCommandLineArgs from './bundleCommandLineArgs';
@@ -15,7 +13,12 @@ import bundleCommandLineArgs from './bundleCommandLineArgs';
 /**
  * Builds the bundle starting to look for dependencies at the given entry path.
  */
-function bundleWithOutput(_: any, config: ConfigT, args: CommandLineArgs, output: any) {
+function bundleWithOutput(
+  _: Array<string>,
+  config: Config,
+  args: CommandLineArgs,
+  output: any,
+) {
   return buildBundle(args, config, output);
 }
 

@@ -4,7 +4,6 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
  */
 
 import mkdirp from 'mkdirp';
@@ -15,13 +14,17 @@ import filterPlatformAssetScales from './filterPlatformAssetScales';
 import getAssetDestPathAndroid from './getAssetDestPathAndroid';
 import getAssetDestPathIOS from './getAssetDestPathIOS';
 import {logger} from '@react-native-community/cli-tools';
-import { AssetData } from './buildBundle';
+import {AssetData} from './buildBundle';
 
 interface CopiedFiles {
   [src: string]: string;
 }
 
-function saveAssets(assets: AssetData[], platform: string, assetsDest: string | undefined) {
+function saveAssets(
+  assets: AssetData[],
+  platform: string,
+  assetsDest: string | undefined,
+) {
   if (!assetsDest) {
     logger.warn('Assets destination folder is not set, skipping...');
     return Promise.resolve();
@@ -56,7 +59,7 @@ function copyAll(filesToCopy: CopiedFiles) {
 
   logger.info(`Copying ${queue.length} asset files`);
   return new Promise((resolve, reject) => {
-    const copyNext = (error?: any) => {
+    const copyNext = (error?: NodeJS.ErrnoException) => {
       if (error) {
         reject(error);
         return;
@@ -65,9 +68,11 @@ function copyAll(filesToCopy: CopiedFiles) {
         logger.info('Done copying assets');
         resolve();
       } else {
-        const src = queue.shift() || '';
-        const dest = filesToCopy[src];
-        copy(src, dest, copyNext);
+        const src = queue.shift();
+        if (src) {
+          const dest = filesToCopy[src];
+          copy(src, dest, copyNext);
+        }
       }
     };
     copyNext();

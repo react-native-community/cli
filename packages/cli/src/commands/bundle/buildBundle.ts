@@ -13,8 +13,7 @@ import outputBundle from 'metro/src/shared/output/bundle';
 import path from 'path';
 import chalk from 'chalk';
 import {CommandLineArgs} from './bundleCommandLineArgs';
-// @ts-ignore FIXME after converting types
-import {ConfigT} from 'types';
+import {Config} from '@react-native-community/cli-types';
 import saveAssets from './saveAssets';
 import loadMetroConfig from '../../tools/loadMetroConfig';
 import {logger} from '@react-native-community/cli-tools';
@@ -37,10 +36,14 @@ export interface AssetData {
   scales: number[];
   type: string;
   width: number | null;
-  files: string[],
-};
+  files: string[];
+}
 
-async function buildBundle(args: CommandLineArgs, ctx: ConfigT, output: outputBundle) {
+async function buildBundle(
+  args: CommandLineArgs,
+  ctx: Config,
+  output: outputBundle,
+) {
   const platform: string = args.platform || '';
   const config = await loadMetroConfig(ctx, {
     maxWorkers: args.maxWorkers,

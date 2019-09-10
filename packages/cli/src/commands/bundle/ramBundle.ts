@@ -6,15 +6,18 @@
  *
  * @format
  */
+// @ts-ignore - no typed definition for the package
 import outputUnbundle from 'metro/src/shared/output/RamBundle';
-
+import {CommandLineArgs} from './bundleCommandLineArgs';
 import {withOutput as bundleWithOutput} from './bundle';
 import bundleCommandLineArgs from './bundleCommandLineArgs';
+// @ts-ignore FIXME after converting types
+import {ConfigT} from 'types';
 
 /**
  * Builds the bundle starting to look for dependencies at the given entry path.
  */
-function ramBundle(argv, config, args) {
+function ramBundle(argv: CommandLineArgs, config: ConfigT, args: CommandLineArgs) {
   return bundleWithOutput(argv, config, args, outputUnbundle);
 }
 

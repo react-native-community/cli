@@ -4,26 +4,44 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
+// @ts-ignore - no typed definition for the package
 import Server from 'metro/src/Server';
-
+// @ts-ignore - no typed definition for the package
 import outputBundle from 'metro/src/shared/output/bundle';
 import path from 'path';
 import chalk from 'chalk';
-import type {CommandLineArgs} from './bundleCommandLineArgs';
-import type {ConfigT} from 'types';
+import {CommandLineArgs} from './bundleCommandLineArgs';
+// @ts-ignore FIXME after converting types
+import {ConfigT} from 'types';
 import saveAssets from './saveAssets';
-// $FlowFixMe - converted to typescript
 import loadMetroConfig from '../../tools/loadMetroConfig';
 import {logger} from '@react-native-community/cli-tools';
 
-async function buildBundle(
-  args: CommandLineArgs,
-  ctx: ConfigT,
-  output: typeof outputBundle = outputBundle,
-) {
+interface RequestOptions {
+  entryFile: string;
+  sourceMapUrl: string;
+  dev: boolean;
+  minify: boolean;
+  platform: string;
+}
+
+export interface AssetData {
+  __packager_asset: boolean;
+  fileSystemLocation: string;
+  hash: string;
+  height: number | null;
+  httpServerLocation: string;
+  name: string;
+  scales: number[];
+  type: string;
+  width: number | null;
+  files: string[],
+};
+
+async function buildBundle(args: CommandLineArgs, ctx: ConfigT, output: outputBundle) {
+  const platform: string = args.platform || '';
   const config = await loadMetroConfig(ctx, {
     maxWorkers: args.maxWorkers,
     resetCache: args.resetCache,
@@ -39,7 +57,7 @@ async function buildBundle(
 
     logger.info(
       `Available platforms are: ${config.resolver.platforms
-        .map(x => `"${chalk.bold(x)}"`)
+        .map((x: string) => `"${chalk.bold(x)}"`)
         .join(
           ', ',
         )}. If you are trying to bundle for an out-of-tree platform, it may not be installed.`,
@@ -52,7 +70,7 @@ async function buildBundle(
   // have other choice than defining it as an env variable here.
   process.env.NODE_ENV = args.dev ? 'development' : 'production';
 
-  let sourceMapUrl = args.sourcemapOutput;
+  let sourceMapUrl: string = args.sourcemapOutput || '';
   if (sourceMapUrl && !args.sourcemapUseAbsolutePath) {
     sourceMapUrl = path.basename(sourceMapUrl);
   }
@@ -62,7 +80,7 @@ async function buildBundle(
     sourceMapUrl,
     dev: args.dev,
     minify: args.minify !== undefined ? args.minify : !args.dev,
-    platform: args.platform,
+    platform,
   };
 
   const server = new Server(config);
@@ -73,14 +91,14 @@ async function buildBundle(
     await output.save(bundle, args, logger.info);
 
     // Save the assets of the bundle
-    const outputAssets = await server.getAssets({
+    const outputAssets: AssetData[] = await server.getAssets({
       ...Server.DEFAULT_BUNDLE_OPTIONS,
       ...requestOpts,
       bundleType: 'todo',
     });
 
     // When we're done saving bundle output and the assets, we're done.
-    return await saveAssets(outputAssets, args.platform, args.assetsDest);
+    return await saveAssets(outputAssets, platform, args.assetsDest);
   } finally {
     server.end();
   }

@@ -9,7 +9,7 @@
  */
 
 import path from 'path';
-import type {PackagerAsset} from './assetPathUtils';
+import {PackagerAsset} from './assetPathUtils';
 
 import assetPathUtils from './assetPathUtils';
 

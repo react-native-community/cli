@@ -6,14 +6,16 @@
  *
  * @format
  */
-
+// @ts-ignore FIXME after converting types
+import {ConfigT} from 'types';
+import {CommandLineArgs} from './bundleCommandLineArgs';
 import buildBundle from './buildBundle';
 import bundleCommandLineArgs from './bundleCommandLineArgs';
 
 /**
  * Builds the bundle starting to look for dependencies at the given entry path.
  */
-function bundleWithOutput(_, config, args, output) {
+function bundleWithOutput(_: any, config: ConfigT, args: CommandLineArgs, output: any) {
   return buildBundle(args, config, output);
 }
 

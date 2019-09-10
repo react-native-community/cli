@@ -18,7 +18,7 @@ export type Release = {
 export default async function getLatestRelease(
   name: string,
   currentVersion: string,
-) {
+): Promise<Release | void> {
   logger.debug('Checking for a newer version of React Native');
   try {
     logger.debug(`Current version: ${currentVersion}`);

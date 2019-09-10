@@ -21,6 +21,7 @@ function loadCache(name: string): Cache | undefined {
       saveCache(name, {});
     }
     logger.debug('No release cache found');
+    return undefined;
   }
 }
 

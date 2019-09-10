@@ -100,7 +100,6 @@ async function buildBundle(
     });
 
     // When we're done saving bundle output and the assets, we're done.
-    // @ts-ignore
     return await saveAssets(outputAssets, args.platform, args.assetsDest);
   } finally {
     server.end();

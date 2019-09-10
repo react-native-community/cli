@@ -7,9 +7,7 @@
  */
 
 import path from 'path';
-import {PackagerAsset} from './assetPathUtils';
-
-import assetPathUtils from './assetPathUtils';
+import assetPathUtils, {PackagerAsset} from './assetPathUtils';
 
 function getAssetDestPathAndroid(asset: PackagerAsset, scale: number): string {
   const androidFolder = assetPathUtils.getAndroidResourceFolderName(

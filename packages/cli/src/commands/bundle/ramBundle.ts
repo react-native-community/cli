@@ -7,9 +7,8 @@
  */
 // @ts-ignore - no typed definition for the package
 import outputUnbundle from 'metro/src/shared/output/RamBundle';
-import {CommandLineArgs} from './bundleCommandLineArgs';
 import {withOutput as bundleWithOutput} from './bundle';
-import bundleCommandLineArgs from './bundleCommandLineArgs';
+import bundleCommandLineArgs, {CommandLineArgs} from './bundleCommandLineArgs';
 import {Config} from '@react-native-community/cli-types';
 
 /**

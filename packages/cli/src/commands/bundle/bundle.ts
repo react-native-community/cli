@@ -6,9 +6,8 @@
  *
  */
 import {Config} from '@react-native-community/cli-types';
-import {CommandLineArgs} from './bundleCommandLineArgs';
 import buildBundle from './buildBundle';
-import bundleCommandLineArgs from './bundleCommandLineArgs';
+import bundleCommandLineArgs, {CommandLineArgs} from './bundleCommandLineArgs';
 
 /**
  * Builds the bundle starting to look for dependencies at the given entry path.

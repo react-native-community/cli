@@ -13,8 +13,6 @@ import fs from 'fs';
 import path from 'path';
 import copyProjectTemplateAndReplace from './copyProjectTemplateAndReplace';
 import {logger} from '@react-native-community/cli-tools';
-// @ts-ignore FIXME: after converting to ts
-// eslint-disable-next-line import/namespace
 import * as PackageManager from '../packageManager';
 
 /**

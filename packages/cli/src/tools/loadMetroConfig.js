@@ -7,6 +7,7 @@ import {createBlacklist} from 'metro';
 import {loadConfig} from 'metro-config';
 import {existsSync} from 'fs';
 import {type ConfigT} from 'types';
+// $FlowFixMe - converted to TS
 import findSymlinkedModules from './findSymlinkedModules';
 
 const resolveSymlinksForRoots = roots =>

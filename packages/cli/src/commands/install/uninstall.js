@@ -9,6 +9,7 @@
 
 import type {ConfigT} from 'types';
 import {logger} from '@react-native-community/cli-tools';
+// $FlowFixMe - converted to TS
 import * as PackageManager from '../../tools/packageManager';
 import unlink from '../link/unlink';
 

@@ -13,18 +13,20 @@ const URLS = {
 
 const label = 'ANDROID_HOME';
 
+const message = `Read more about how to set the ${label} at ${chalk.dim(
+  URLS[process.platform],
+)}.`;
+
 export default ({
   label,
   getDiagnostics: async () => ({
-    needsToBeFixed: !process.env.ANDROID_HOME,
+    needsToBeFixed: !process.env.ANDROID_HOME && message,
   }),
   runAutomaticFix: async ({loader}: {loader: typeof Ora}) => {
     loader.info();
 
     logManualInstallation({
-      message: `Read more about how to set the ${label} at ${chalk.dim(
-        URLS[process.platform],
-      )}.`,
+      message,
     });
   },
 }: HealthCheckInterface);

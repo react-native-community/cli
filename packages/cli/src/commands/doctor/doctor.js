@@ -22,10 +22,12 @@ const printIssue = ({
   label,
   needsToBeFixed,
   isRequired,
+  description,
 }: {
   label: string,
   needsToBeFixed: boolean,
   isRequired: boolean,
+  description: string,
 }) => {
   const symbol = needsToBeFixed
     ? isRequired
@@ -33,7 +35,7 @@ const printIssue = ({
       : chalk.yellow('●')
     : chalk.green('✓');
 
-  logger.log(` ${symbol} ${label}`);
+  logger.log(` ${symbol} ${label}${needsToBeFixed ? ': ' + description : ''}`);
 };
 
 const printOverallStats = ({errors, warnings}) => {
@@ -94,6 +96,7 @@ export default (async function runDoctor(
         return {
           label: healthcheck.label,
           needsToBeFixed: Boolean(needsToBeFixed),
+          description: String(needsToBeFixed),
           runAutomaticFix: healthcheck.runAutomaticFix,
           isRequired,
           type: needsToBeFixed

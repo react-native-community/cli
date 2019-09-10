@@ -267,6 +267,7 @@ test('should not add default React Native config when one present', () => {
 });
 
 // @todo: figure out why this test is so flaky
+// eslint-disable-next-line jest/no-disabled-tests
 test.skip('should skip packages that have invalid configuration', () => {
   writeFiles(DIR, {
     'node_modules/react-native/package.json': '{}',

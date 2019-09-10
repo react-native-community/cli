@@ -1,7 +1,5 @@
-// @flow
 jest.mock('execa', () => jest.fn());
 import execa from 'execa';
-// $FlowFixMe - converted to TS
 import * as yarn from '../yarn';
 import {logger} from '@react-native-community/cli-tools';
 import * as PackageManager from '../packageManager';

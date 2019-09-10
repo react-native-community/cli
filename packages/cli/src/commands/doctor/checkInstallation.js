@@ -7,13 +7,13 @@ const PACKAGE_MANAGERS = {
   NPM: 'NPM',
 };
 
-const isSoftwareInstalled = async (command: string) => {
+const checkSoftwareInstalled = async (command: string) => {
   try {
     await commandExists(command);
 
-    return true;
-  } catch (_ignored) {
     return false;
+  } catch (_ignored) {
+    return 'should be installed';
   }
 };
 
@@ -24,7 +24,8 @@ const doesSoftwareNeedToBeFixed = ({
   version: string,
   versionRange: string,
 }) =>
-  version === 'Not Found' ||
-  !semver.satisfies(semver.coerce(version), versionRange);
+  (version === 'Not Found' ||
+    !semver.satisfies(semver.coerce(version), versionRange)) &&
+  `version ${versionRange} is required`;
 
-export {PACKAGE_MANAGERS, isSoftwareInstalled, doesSoftwareNeedToBeFixed};
+export {PACKAGE_MANAGERS, checkSoftwareInstalled, doesSoftwareNeedToBeFixed};

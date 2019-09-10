@@ -49,6 +49,8 @@ export default ({
 
       loader.succeed();
     } catch (_error) {
+      loader.fail();
+
       logManualInstallation({
         healthcheck: 'ios-deploy',
         command: installationCommand,

@@ -13,10 +13,10 @@
 import fs from 'fs';
 
 type Options = {
-  echo: string;
-  ask: string;
-  value: string;
-  autocomplete: string[] | Function;
+  echo?: string;
+  ask?: string;
+  value?: string;
+  autocomplete?: string[] | Function;
 };
 
 const term = 13; // carriage return
@@ -24,7 +24,11 @@ const term = 13; // carriage return
 function create() {
   return prompt;
 
-  function prompt(ask: string | Options, value: string, opts: Options) {
+  function prompt(
+    ask?: string | Options,
+    value?: string | Options,
+    opts?: Options,
+  ) {
     let insert = 0;
     opts = opts || {};
 

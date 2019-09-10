@@ -9,8 +9,10 @@
 
 import chalk from 'chalk';
 import path from 'path';
+// @ts-ignore FIXME: copyAndReplace should be ts
 import copyAndReplace from '../copyAndReplace';
 import promptInitializer from './promptSync';
+// @ts-ignore FIXME: walk should be ts
 import walk from '../walk';
 import {logger} from '@react-native-community/cli-tools';
 

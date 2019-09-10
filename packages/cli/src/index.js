@@ -8,6 +8,7 @@
  */
 
 // gracefulify() has to be called before anything else runs
+// $FlowFixMe - converted to TS
 import './tools/gracefulifyFs';
 import cli from './cliEntry';
 

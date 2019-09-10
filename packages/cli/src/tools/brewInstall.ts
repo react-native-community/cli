@@ -1,16 +1,27 @@
 import {logger} from '@react-native-community/cli-tools';
 import execa from 'execa';
-import Ora from 'ora';
+import chalk from 'chalk';
+import ora from 'ora';
 
-async function brewInstall(pkg: string, loader: Ora.Ora) {
-  loader.start(`Installing ${pkg}`);
+type InstallArgs = {
+  pkg: string;
+  label?: string;
+  loader: ora.Ora;
+};
+
+async function brewInstall({pkg, label, loader}: InstallArgs) {
+  loader.start(label);
   try {
     await execa('brew', ['install', pkg]);
+
     loader.succeed();
   } catch (error) {
-    logger.log(error.stderr);
-    loader.fail(
-      `An error occured while trying to install ${pkg}. Please try again manually: brew install ${pkg}`,
+    loader.fail();
+    logger.log(chalk.dim(`\n${error.stderr}`));
+    logger.log(
+      `An error occured while trying to install ${pkg}. Please try again manually: ${chalk.bold(
+        `brew install ${pkg}`,
+      )}`,
     );
   }
 }

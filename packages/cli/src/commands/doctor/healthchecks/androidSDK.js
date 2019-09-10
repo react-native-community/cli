@@ -51,7 +51,7 @@ export default ({
         (sdks !== 'Not Found' &&
           doesSoftwareNeedToBeFixed({
             version: sdks['Build Tools'][0],
-            versionRange: versionRanges.ANDROID_NDK,
+            versionRange: versionRanges.ANDROID_SDK,
           })),
     };
   },
@@ -63,11 +63,11 @@ export default ({
     environmentInfo: EnvironmentInfo,
   }) => {
     const version = environmentInfo.SDKs['Android SDK'][0];
-    const isNDKInstalled = version !== 'Not Found';
+    const isSDKInstalled = version !== 'Not Found';
 
     loader.fail();
 
-    if (isNDKInstalled) {
+    if (isSDKInstalled) {
       return logManualInstallation({
         message: installMessage,
       });

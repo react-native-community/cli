@@ -87,7 +87,11 @@ async function installCocoaPods(loader: ora.Ora) {
       loader.succeed();
       break;
     case withHomebrew:
-      await brewInstall('cocoapods', loader);
+      await brewInstall({
+        pkg: 'cocoapods',
+        label: 'Installing CocoaPods',
+        loader,
+      });
       break;
   }
 }

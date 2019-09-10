@@ -14,7 +14,7 @@ import link from '../link/link';
 // @ts-ignore FIXME after converting tools/config
 import loadConfig from '../../tools/config';
 
-async function install(args: Array<string>) {
+async function install(args: Array<string>): Promise<void> {
   const name = args[0];
 
   logger.info(`Installing "${name}"...`);

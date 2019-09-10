@@ -13,7 +13,7 @@ import * as PackageManager from '../../tools/packageManager';
 // @ts-ignore FIXME after converting link/unlink
 import unlink from '../link/unlink';
 
-async function uninstall(args: Array<string>, ctx: Config) {
+async function uninstall(args: Array<string>, ctx: Config): Promise<void> {
   const name = args[0];
 
   logger.info(`Unlinking "${name}"...`);

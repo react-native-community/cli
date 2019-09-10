@@ -1,7 +1,6 @@
 import {logger} from '@react-native-community/cli-tools';
 import getDependenciesFromPodfileLock from '../link-pods/getDependenciesFromPodfileLock';
-// TODO: move to cli-tools once platform-ios and platform-android are migrated
-// to TS and unify with Android implementation
+
 export default function warnAboutPodInstall(config: any) {
   const podLockDeps = getDependenciesFromPodfileLock(
     `${config.project.ios.podfile}.lock`,

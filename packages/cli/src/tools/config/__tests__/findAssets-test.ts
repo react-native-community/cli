@@ -32,7 +32,7 @@ describe('findAssets', () => {
 
   it('returns an array of all files in given folders', () => {
     const assets = findAssets('/testDir', ['fonts', 'images']);
-
+    
     expect(Array.isArray(assets)).toBeTruthy();
     expect(assets).toHaveLength(3);
   });

@@ -3,10 +3,10 @@
  * @flow
  */
 import path from 'path';
-import { createBlacklist } from 'metro';
-import { loadConfig } from 'metro-config';
-import { existsSync } from 'fs';
-import { type ConfigT } from 'types';
+import {createBlacklist} from 'metro';
+import {loadConfig} from 'metro-config';
+import {existsSync} from 'fs';
+import {type ConfigT} from 'types';
 // $FlowFixMe - converted to TS
 import findSymlinkedModules from './findSymlinkedModules';
 
@@ -64,36 +64,35 @@ export const getDefaultConfig = (ctx: ConfigT) => {
       port: Number(process.env.RCT_METRO_PORT) || 8081,
     },
     symbolicator: {
-      customizeFrame: (frame: {+ file: ?string
-  }) => {
-  const collapse = Boolean(
-    frame.file && INTERNAL_CALLSITES_REGEX.test(frame.file),
-  );
-  return { collapse };
-},
+      customizeFrame: (frame: {+file: ?string}) => {
+        const collapse = Boolean(
+          frame.file && INTERNAL_CALLSITES_REGEX.test(frame.file),
+        );
+        return {collapse};
+      },
     },
-transformer: {
-  babelTransformerPath: require.resolve(
-    'metro-react-native-babel-transformer',
-  ),
-    assetRegistryPath: path.join(
-      ctx.reactNativePath,
-      'Libraries/Image/AssetRegistry',
-    ),
+    transformer: {
+      babelTransformerPath: require.resolve(
+        'metro-react-native-babel-transformer',
+      ),
+      assetRegistryPath: path.join(
+        ctx.reactNativePath,
+        'Libraries/Image/AssetRegistry',
+      ),
     },
-watchFolders: getWatchFolders(),
+    watchFolders: getWatchFolders(),
   };
 };
 
 export type ConfigOptionsT = {|
   maxWorkers?: number,
-    port ?: number,
-    projectRoot ?: string,
-    resetCache ?: boolean,
-    watchFolders ?: string[],
-    sourceExts ?: string[],
-    reporter ?: any,
-    config ?: string,
+  port?: number,
+  projectRoot?: string,
+  resetCache?: boolean,
+  watchFolders?: string[],
+  sourceExts?: string[],
+  reporter?: any,
+  config?: string,
 |};
 
 /**
@@ -116,5 +115,5 @@ export default function load(ctx: ConfigT, options?: ConfigOptionsT) {
      */
     defaultConfig.reporter = options.reporter;
   }
-  return loadConfig({ cwd: ctx.root, ...options }, defaultConfig);
+  return loadConfig({cwd: ctx.root, ...options}, defaultConfig);
 }

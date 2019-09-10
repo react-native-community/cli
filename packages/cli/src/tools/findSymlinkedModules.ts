@@ -52,19 +52,22 @@ function findModuleSymlinks(
 
   // Find module symlinks
   const moduleFolders = fs.readdirSync(modulesPath);
-  const symlinks = moduleFolders.reduce((links, folderName) => {
-    const folderPath = path.join(modulesPath, folderName);
-    const maybeSymlinkPaths = [];
-    if (folderName.startsWith('@')) {
-      const scopedModuleFolders = fs.readdirSync(folderPath);
-      maybeSymlinkPaths.push(
-        ...scopedModuleFolders.map(name => path.join(folderPath, name)),
-      );
-    } else {
-      maybeSymlinkPaths.push(folderPath);
-    }
-    return links.concat(resolveSymlinkPaths(maybeSymlinkPaths, ignoredPaths));
-  }, [] as string[]);
+  const symlinks = moduleFolders.reduce(
+    (links, folderName) => {
+      const folderPath = path.join(modulesPath, folderName);
+      const maybeSymlinkPaths = [];
+      if (folderName.startsWith('@')) {
+        const scopedModuleFolders = fs.readdirSync(folderPath);
+        maybeSymlinkPaths.push(
+          ...scopedModuleFolders.map(name => path.join(folderPath, name)),
+        );
+      } else {
+        maybeSymlinkPaths.push(folderPath);
+      }
+      return links.concat(resolveSymlinkPaths(maybeSymlinkPaths, ignoredPaths));
+    },
+    [] as string[],
+  );
 
   // For any symlinks found, look in _that_ modules node_modules directory
   // and find any symlinked modules
@@ -84,17 +87,23 @@ function findModuleSymlinks(
   return [...new Set([...symlinks, ...nestedSymlinks])];
 }
 
-function resolveSymlinkPaths(maybeSymlinkPaths: string[], ignoredPaths: string[]) {
-  return maybeSymlinkPaths.reduce((links, maybeSymlinkPath) => {
-    if (fs.lstatSync(maybeSymlinkPath).isSymbolicLink()) {
-      const resolved = path.resolve(
-        path.dirname(maybeSymlinkPath),
-        fs.readlinkSync(maybeSymlinkPath),
-      );
-      if (ignoredPaths.indexOf(resolved) === -1 && fs.existsSync(resolved)) {
-        links.push(resolved);
+function resolveSymlinkPaths(
+  maybeSymlinkPaths: string[],
+  ignoredPaths: string[],
+) {
+  return maybeSymlinkPaths.reduce(
+    (links, maybeSymlinkPath) => {
+      if (fs.lstatSync(maybeSymlinkPath).isSymbolicLink()) {
+        const resolved = path.resolve(
+          path.dirname(maybeSymlinkPath),
+          fs.readlinkSync(maybeSymlinkPath),
+        );
+        if (ignoredPaths.indexOf(resolved) === -1 && fs.existsSync(resolved)) {
+          links.push(resolved);
+        }
       }
-    }
-    return links;
-  }, [] as string[]);
+      return links;
+    },
+    [] as string[],
+  );
 }

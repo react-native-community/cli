@@ -3,11 +3,10 @@
  */
 
 import findDependencies from '../findDependencies';
-
 import {
   cleanup,
   writeFiles,
-  getTempDirectory,
+  getTempDirectory, // $FlowFixMe - converted to TS
 } from '../../../../../../jest/helpers';
 
 jest.mock('../resolveNodeModuleDir');

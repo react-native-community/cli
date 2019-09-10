@@ -3,20 +3,16 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
- *
- * @flow
  */
 
+// @ts-ignore untyped
 import envinfo from 'envinfo';
 import {logger} from '@react-native-community/cli-tools';
-import type {ConfigT} from 'types';
+import {Config} from '@react-native-community/cli-types';
+// @ts-ignore - JS file
 import releaseChecker from '../../tools/releaseChecker';
 
-const info = async function getInfo(
-  argv: Array<string>,
-  ctx: ConfigT,
-  options: {},
-) {
+const info = async function getInfo(_argv: Array<string>, ctx: Config) {
   try {
     logger.info('Fetching system and libraries information...');
     const output = await envinfo.run({

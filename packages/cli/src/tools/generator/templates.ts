@@ -13,6 +13,8 @@ import fs from 'fs';
 import path from 'path';
 import copyProjectTemplateAndReplace from './copyProjectTemplateAndReplace';
 import {logger} from '@react-native-community/cli-tools';
+// @ts-ignore FIXME: after converting to ts
+// eslint-disable-next-line import/namespace
 import * as PackageManager from '../packageManager';
 
 /**
@@ -108,7 +110,10 @@ async function createFromRemoteTemplate(
   }
 }
 
-async function installTemplateDependencies(templatePath, destinationRoot) {
+async function installTemplateDependencies(
+  templatePath: string,
+  _destinationRoot: string,
+) {
   // dependencies.json is a special file that lists additional dependencies
   // that are required by this template
   const dependenciesJsonPath = path.resolve(templatePath, 'dependencies.json');
@@ -118,7 +123,7 @@ async function installTemplateDependencies(templatePath, destinationRoot) {
     return;
   }
 
-  let dependencies;
+  let dependencies: any;
   try {
     dependencies = require(dependenciesJsonPath);
   } catch (err) {
@@ -134,7 +139,10 @@ async function installTemplateDependencies(templatePath, destinationRoot) {
   execSync('react-native link', {stdio: 'inherit'});
 }
 
-async function installTemplateDevDependencies(templatePath, destinationRoot) {
+async function installTemplateDevDependencies(
+  templatePath: string,
+  _destinationRoot: string,
+) {
   // devDependencies.json is a special file that lists additional develop dependencies
   // that are required by this template
   const devDependenciesJsonPath = path.resolve(
@@ -147,7 +155,7 @@ async function installTemplateDevDependencies(templatePath, destinationRoot) {
     return;
   }
 
-  let dependencies;
+  let dependencies: any;
   try {
     dependencies = require(devDependenciesJsonPath);
   } catch (err) {

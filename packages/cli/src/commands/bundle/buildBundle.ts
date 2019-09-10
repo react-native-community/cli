@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-/* eslint-disable import/namespace, import/default */
 
 // @ts-ignore - no typed definition for the package
 import Server from 'metro/src/Server';

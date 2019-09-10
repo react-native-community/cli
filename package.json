@@ -50,6 +50,9 @@
     "typescript": "^3.6.2"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.5.5"
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@types/execa": "^2.0.0",
+    "@types/readable-stream": "^2.3.4",
+    "@types/rimraf": "^2.0.2"
   }
 }

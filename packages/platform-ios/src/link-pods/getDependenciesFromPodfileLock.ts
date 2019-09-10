@@ -11,7 +11,7 @@ export default function getDependenciesFromPodfileLock(
     fileContent = fs.readFileSync(podfileLockPath, 'utf8');
   } catch (err) {
     logger.error(
-      `Could not find ${podfileLockPath}, did you run pod \`install\``,
+      `Could not find ${podfileLockPath}. Did you run \`pod install\` in iOS directory?`,
     );
     return [];
   }

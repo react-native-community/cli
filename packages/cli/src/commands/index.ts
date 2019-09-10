@@ -16,7 +16,6 @@ import upgrade from './upgrade/upgrade';
 import info from './info/info';
 // @ts-ignore - JS file
 import config from './config/config'; // eslint-disable-line import/namespace, import/default
-// @ts-ignore - JS file
 import init from './init';
 // @ts-ignore - JS file
 import doctor from './doctor';

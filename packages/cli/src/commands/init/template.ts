@@ -1,19 +1,15 @@
-// @flow
 import execa from 'execa';
 import path from 'path';
-// $FlowFixMe - converted to TS
-import * as PackageManager from '../../tools/packageManager';
 import {logger} from '@react-native-community/cli-tools';
-// $FlowFixMe - converted to TS
+import * as PackageManager from '../../tools/packageManager';
 import copyFiles from '../../tools/copyFiles';
-// $FlowFixMe - converted to TS
 import replacePathSepForRegex from '../../tools/replacePathSepForRegex';
 
 export type TemplateConfig = {
-  placeholderName: string,
-  templateDir: string,
-  postInitScript?: string,
-  titlePlaceholder?: string,
+  placeholderName: string;
+  templateDir: string;
+  postInitScript?: string;
+  titlePlaceholder?: string;
 };
 
 export function installTemplatePackage(

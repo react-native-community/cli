@@ -1,4 +1,3 @@
-// @flow
 import init from './init';
 
 export default {

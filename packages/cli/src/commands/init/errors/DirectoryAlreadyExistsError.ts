@@ -1,4 +1,3 @@
-// @flow
 export default class DirectoryAlreadyExistsError extends Error {
   constructor(directory: string) {
     super(

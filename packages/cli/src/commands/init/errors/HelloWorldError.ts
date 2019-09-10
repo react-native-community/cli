@@ -1,4 +1,3 @@
-// @flow
 export default class HelloWorldError extends Error {
   constructor() {
     super(

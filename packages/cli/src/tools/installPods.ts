@@ -103,7 +103,7 @@ async function installPods({
 }: {
   projectName: string;
   loader?: ora.Ora;
-  shouldUpdatePods: boolean;
+  shouldUpdatePods?: boolean;
 }) {
   loader = loader || new NoopLoader();
   try {

@@ -7,17 +7,17 @@ import bundle from './bundle/bundle';
 // @ts-ignore - JS file
 import ramBundle from './bundle/ramBundle';
 // @ts-ignore - JS file
-import link from './link/link'; // eslint-disable-line
+import link from './link/link'; // eslint-disable-line import/namespace, import/default
 // @ts-ignore - JS file
-import unlink from './link/unlink'; // eslint-disable-line
+import unlink from './link/unlink'; // eslint-disable-line import/namespace, import/default
 // @ts-ignore - JS file
-import install from './install/install'; // eslint-disable-line
+import install from './install/install'; // eslint-disable-line import/namespace, import/default
 // @ts-ignore - JS file
-import uninstall from './install/uninstall'; // eslint-disable-line
+import uninstall from './install/uninstall'; // eslint-disable-line import/namespace, import/default
 import upgrade from './upgrade/upgrade';
 import info from './info/info';
 // @ts-ignore - JS file
-import config from './config/config'; // eslint-disable-line
+import config from './config/config'; // eslint-disable-line import/namespace, import/default
 // @ts-ignore - JS file
 import init from './init';
 // @ts-ignore - JS file

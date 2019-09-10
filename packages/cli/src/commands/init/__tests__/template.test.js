@@ -2,6 +2,7 @@
 jest.mock('execa', () => jest.fn());
 import execa from 'execa';
 import path from 'path';
+// $FlowFixMe - converted to TS
 import * as PackageManger from '../../../tools/packageManager';
 import {
   installTemplatePackage,

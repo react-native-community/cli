@@ -16,8 +16,10 @@ import type {CommandT, ConfigT} from 'types';
 // $FlowFixMe - converted to TS
 import commands from './commands';
 import init from './commands/init/initCompat';
+// $FlowFixMe - converted to TS
 import assertRequiredOptions from './tools/assertRequiredOptions';
 import {logger} from '@react-native-community/cli-tools';
+// $FlowFixMe - converted to TS
 import {setProjectDir} from './tools/packageManager';
 import pkgJson from '../package.json';
 import loadConfig from './tools/config';

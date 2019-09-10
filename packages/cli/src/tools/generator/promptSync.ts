@@ -43,11 +43,10 @@ function create() {
     const echo = opts.echo;
     const masked = 'echo' in opts;
 
-    let fd = fs.openSync('/dev/tty', 'rs');
-    if (process.platform === 'win32') {
-      // @ts-ignore MEMO: fd exists when win32
-      fd = process.stdin.fd;
-    }
+    const fd =
+      process.platform === 'win32'
+        ? process.stdin.fd
+        : fs.openSync('/dev/tty', 'rs');
 
     const wasRaw = process.stdin.isRaw;
     if (!wasRaw && process.stdin.setRawMode) {

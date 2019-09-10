@@ -1,5 +1,5 @@
 import makeHook from '../makeHook';
-// $FlowFixMe - converted to TS
+
 afterAll(() => {
   jest.restoreAllMocks();
 });

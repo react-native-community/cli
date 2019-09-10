@@ -1,7 +1,6 @@
 import {func as link} from '../link';
 import loadConfig from '../../../tools/config';
 import makeHook from '../makeHook';
-// $FlowFixMe - converted to TS
 jest.mock('chalk', () => ({grey: str => str, bold: str => str}));
 jest.mock('../../../tools/config');
 jest.mock('../makeHook', () => {
@@ -94,7 +93,7 @@ describe('link', () => {
 
     await link(['react-native-blur'], config, {});
     expect(registerNativeModule.mock.calls).toHaveLength(2);
-    expect(makeHook.mock.calls).toEqual([[prelink], [postlink]]);
+    expect((makeHook as jest.Mock).mock.calls).toEqual([[prelink], [postlink]]);
   });
 
   it('should copy assets only from the specific dependency that we are linking', done => {

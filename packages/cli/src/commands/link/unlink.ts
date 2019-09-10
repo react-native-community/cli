@@ -26,7 +26,7 @@ const unlinkDependency = (
   dependency: Config['dependencies']['key'],
   packageName: string,
   otherDependencies: Array<Config['dependencies']['key']>,
-): void | null => {
+): void => {
   Object.keys(platforms || {}).forEach(platform => {
     const projectConfig: AndroidDependencyConfig | IOSDependencyConfig =
       project[platform];

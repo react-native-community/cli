@@ -6,7 +6,7 @@ const linkAssets = (
   platforms: Config['platforms'],
   project: Config['project'],
   assets: Array<string>,
-): void | null => {
+): void => {
   if (isEmpty(assets)) {
     return;
   }

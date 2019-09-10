@@ -86,6 +86,8 @@ export interface Dependency {
   hooks: {
     prelink?: string;
     postlink?: string;
+    preunlink?: string;
+    postunlink?: string;
   };
   params: InquirerPrompt[];
 }

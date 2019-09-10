@@ -6,7 +6,7 @@ import {Config} from '@react-native-community/cli-types';
 import linkAssets from './linkAssets';
 import linkDependency from './linkDependency';
 import makeHook from './makeHook';
-import execa from 'execa';
+import * as execa from 'execa';
 
 const dedupeAssets = (assets: Array<string>): Array<string> =>
   uniqBy(assets, (asset: string) => path.basename(asset));

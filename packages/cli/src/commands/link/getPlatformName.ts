@@ -1,5 +1,4 @@
-type names = {[key: string]: string};
-const names: names = {
+const names: {[key: string]: string} = {
   ios: 'iOS',
   android: 'Android',
 };

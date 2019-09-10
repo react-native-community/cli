@@ -56,6 +56,17 @@ Allows overriding whether bundle is minified. This defaults to false if dev is t
 
 File name where to store the resulting bundle, ex. `/tmp/groups.bundle`.
 
+If you are planning on building an APK, that will run without the packager, by invoking `./gradlew assembleDebug` you have to make sure to put the bundle into the right directory and give it the right name, so that gradle can find it.
+
+For react-native versions 0.57 and above the bundle output path should be:
+`android/app/build/generated/assets/react/debug/index.android.js`
+
+To find out the correct path for previous react-native versions, take a look at the `react.gradle` file here: https://github.com/facebook/react-native/blob/0.57-stable/react.gradle or inside your `node_modules/react-native` directory.
+
+The expected path for the js bundle can be found on the line that starts with `jsBundleDir = `.
+
+Alternatively you can simply set `bundleInDebug: true` in your app/build.gradle file, inside the `project.ext.react` map.
+
 #### `--bundle-encoding [string]`
 
 > default: utf8
@@ -83,6 +94,15 @@ Report SourceMapURL using its full path.
 #### `--assets-dest [string]`
 
 Directory name where to store assets referenced in the bundle.
+
+Similarly to the bundle, the assets must be in a specific directory if you are planning on bundling them in an APK with a debug build and run the app without the packager running ([--bundle-output](https://github.com/react-native-community/cli/blob/master/docs/commands.md#--bundle-output-string)).
+
+For react-native versions 0.57 and above the --assets-dest path should be:
+`android/app/build/generated/res/react/debug`
+
+The expected path for the assets can be found in the react.gradle file on the line that starts with `resourcesDir =`
+
+Alternatively you can simply set `bundleInDebug: true` in your app/build.gradle file, inside the `project.ext.react` map.
 
 #### `--reset-cache`
 

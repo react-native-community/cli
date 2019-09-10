@@ -1,6 +1,7 @@
 // @flow
 import execa from 'execa';
 import path from 'path';
+// $FlowFixMe - converted to TS
 import * as PackageManager from '../../tools/packageManager';
 import {logger} from '@react-native-community/cli-tools';
 // $FlowFixMe - converted to TS

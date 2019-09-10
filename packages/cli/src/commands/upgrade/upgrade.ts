@@ -5,9 +5,7 @@ import semver from 'semver';
 import execa from 'execa';
 import {Config} from '@react-native-community/cli-types';
 import {logger, CLIError, fetch} from '@react-native-community/cli-tools';
-// @ts-ignore JS file
-import * as PackageManager from '../../tools/packageManager'; // eslint-disable-line import/namespace
-// @ts-ignore JS file
+import * as PackageManager from '../../tools/packageManager';
 import installPods from '../../tools/installPods';
 
 // https://react-native-community.github.io/upgrade-helper/?from=0.59.10&to=0.60.0-rc.3

@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
+/* eslint-disable import/namespace, import/default */
 
 // @ts-ignore - no typed definition for the package
 import Server from 'metro/src/Server';
@@ -23,7 +24,7 @@ interface RequestOptions {
   sourceMapUrl: string;
   dev: boolean;
   minify: boolean;
-  platform: string;
+  platform: string | undefined;
 }
 
 export interface AssetData {
@@ -44,7 +45,6 @@ async function buildBundle(
   ctx: Config,
   output: outputBundle,
 ) {
-  const platform: string = args.platform || '';
   const config = await loadMetroConfig(ctx, {
     maxWorkers: args.maxWorkers,
     resetCache: args.resetCache,
@@ -83,7 +83,7 @@ async function buildBundle(
     sourceMapUrl,
     dev: args.dev,
     minify: args.minify !== undefined ? args.minify : !args.dev,
-    platform,
+    platform: args.platform,
   };
 
   const server = new Server(config);
@@ -101,7 +101,8 @@ async function buildBundle(
     });
 
     // When we're done saving bundle output and the assets, we're done.
-    return await saveAssets(outputAssets, platform, args.assetsDest);
+    // @ts-ignore
+    return await saveAssets(outputAssets, args.platform, args.assetsDest);
   } finally {
     server.end();
   }

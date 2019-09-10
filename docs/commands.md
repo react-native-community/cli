@@ -56,6 +56,19 @@ Allows overriding whether bundle is minified. This defaults to false if dev is t
 
 File name where to store the resulting bundle, ex. `/tmp/groups.bundle`.
 
+If you are planning on building a debug APK, that will run without the packager, by invoking `./gradlew assembleDebug` you can simply set `bundleInDebug: true` in your app/build.gradle file, inside the `project.ext.react` map.
+
+<details>
+Alternatively if you want to run <code>react-native bundle</code> manually and then create the APK with <code>./gradlew assembleDebug</code> you have to make sure to put the bundle into the right directory and give it the right name, so that gradle can find it.
+
+For react-native versions 0.57 and above the bundle output path should be:
+<code>android/app/build/generated/assets/react/debug/index.android.js</code>
+
+To find out the correct path for previous react-native versions, take a look at the <code>react.gradle</code> file here: https://github.com/facebook/react-native/blob/0.57-stable/react.gradle or inside your <code>node_modules/react-native</code> directory.
+
+The expected path for the js bundle can be found on the line that starts with <code>jsBundleDir = </code>.
+</details>
+
 #### `--bundle-encoding [string]`
 
 > default: utf8
@@ -83,6 +96,18 @@ Report SourceMapURL using its full path.
 #### `--assets-dest [string]`
 
 Directory name where to store assets referenced in the bundle.
+
+If you are planning on building a debug APK that will run without the packager, see ([--bundle-output](https://github.com/react-native-community/cli/blob/master/docs/commands.md#--bundle-output-string))
+
+<details>
+  Alternatively if you want to run <code>react-native bundle</code> manually and then create the APK with <code>./gradlew assembleDebug</code> you have to make sure to put the assets into the right directory, so that gradle can find them.
+
+For react-native versions 0.57 and above the <code>--assets-dest</code> path should be:
+<code>android/app/build/generated/res/react/debug</code>
+
+The expected path for the assets can be found in the react.gradle file on the line that starts with <code>resourcesDir =</code>
+</details>
+
 
 #### `--reset-cache`
 

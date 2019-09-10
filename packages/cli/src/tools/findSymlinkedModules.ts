@@ -32,7 +32,7 @@ import fs from 'fs';
  */
 export default function findSymlinkedModules(
   projectRoot: string,
-  ignoredRoots?: Array<string> = [],
+  ignoredRoots: Array<string> = [],
 ) {
   const nodeModuleRoot = path.join(projectRoot, 'node_modules');
   const resolvedSymlinks = findModuleSymlinks(nodeModuleRoot, [
@@ -64,7 +64,7 @@ function findModuleSymlinks(
       maybeSymlinkPaths.push(folderPath);
     }
     return links.concat(resolveSymlinkPaths(maybeSymlinkPaths, ignoredPaths));
-  }, []);
+  }, [] as string[]);
 
   // For any symlinks found, look in _that_ modules node_modules directory
   // and find any symlinked modules
@@ -78,13 +78,13 @@ function findModuleSymlinks(
           ...symlinks,
         ]),
       ),
-    [],
+    [] as string[],
   );
 
   return [...new Set([...symlinks, ...nestedSymlinks])];
 }
 
-function resolveSymlinkPaths(maybeSymlinkPaths, ignoredPaths) {
+function resolveSymlinkPaths(maybeSymlinkPaths: string[], ignoredPaths: string[]) {
   return maybeSymlinkPaths.reduce((links, maybeSymlinkPath) => {
     if (fs.lstatSync(maybeSymlinkPath).isSymbolicLink()) {
       const resolved = path.resolve(
@@ -96,5 +96,5 @@ function resolveSymlinkPaths(maybeSymlinkPaths, ignoredPaths) {
       }
     }
     return links;
-  }, []);
+  }, [] as string[]);
 }

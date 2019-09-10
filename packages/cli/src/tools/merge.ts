@@ -9,7 +9,7 @@ export default function merge(
   y: Array<{[key: string]: any}>,
 ) {
   return deepmerge(x, y, {
-    arrayMerge: (destinationArray: any[], sourceArray: any[]): any[] =>
+    arrayMerge: (_destinationArray: any[], sourceArray: any[]): any[] =>
       sourceArray,
   });
 }

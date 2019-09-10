@@ -17,9 +17,9 @@ async function brewInstall({pkg, label, loader}: InstallArgs) {
     loader.succeed();
   } catch (error) {
     loader.fail();
-    logger.log(`\n${error.stderr}`);
+    logger.log(chalk.dim(`\n${error.stderr}`));
     logger.log(
-      `An error occured while trying to install ${pkg}. Please try again manually: ${chalk.dim(
+      `An error occured while trying to install ${pkg}. Please try again manually: ${chalk.bold(
         `brew install ${pkg}`,
       )}`,
     );

@@ -22,13 +22,13 @@ const logManualInstallation = ({
 
   if (url) {
     return logMessage(
-      `Read more about how to download ${healthcheck} at ${chalk.dim(url)}`,
+      `Read more about how to download ${healthcheck} at ${chalk.bold(url)}`,
     );
   }
 
   if (command) {
     return logMessage(
-      `Please install ${healthcheck} by running ${chalk.dim(command)}`,
+      `Please install ${healthcheck} by running ${chalk.bold(command)}`,
     );
   }
 };

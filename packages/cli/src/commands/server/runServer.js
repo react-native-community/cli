@@ -16,6 +16,7 @@ import type {ConfigT} from 'types';
 import messageSocket from './messageSocket';
 import webSocketProxy from './webSocketProxy';
 import MiddlewareManager from './middleware/MiddlewareManager';
+// $FlowFixMe - converted to TS
 import loadMetroConfig from '../../tools/loadMetroConfig';
 // $FlowFixMe - converted to TS
 import releaseChecker from '../../tools/releaseChecker';

@@ -15,6 +15,7 @@ import chalk from 'chalk';
 import type {CommandLineArgs} from './bundleCommandLineArgs';
 import type {ConfigT} from 'types';
 import saveAssets from './saveAssets';
+// $FlowFixMe - converted to typescript
 import loadMetroConfig from '../../tools/loadMetroConfig';
 import {logger} from '@react-native-community/cli-tools';
 

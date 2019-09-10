@@ -1,9 +1,7 @@
-/**
- * @flow
- */
-import t from '@hapi/joi';
+import * as t from '@hapi/joi';
+import {SchemaLike} from '@hapi/joi';
 
-const map = (key, value) =>
+const map = (key: RegExp | SchemaLike, value: SchemaLike) =>
   t
     .object()
     .unknown(true)

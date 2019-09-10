@@ -19,10 +19,7 @@ function resolveSymlinksForRoots(roots: string[]): string[] {
 
 function getWatchFolders(): string[] {
   const root = process.env.REACT_NATIVE_APP_ROOT;
-  if (root) {
-    return resolveSymlinksForRoots([path.resolve(root)]);
-  }
-  return [];
+  return root ? resolveSymlinksForRoots([path.resolve(root)]) : [];
 }
 
 const getBlacklistRE: () => RegExp = () =>

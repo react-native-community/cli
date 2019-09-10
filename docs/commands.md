@@ -97,7 +97,7 @@ Directory name where to store assets referenced in the bundle.
 
 Similarly to the bundle, the assets must be in a specific directory if you are planning on bundling them in an APK with a debug build and run the app without the packager running ([--bundle-output](https://github.com/react-native-community/cli/blob/master/docs/commands.md#--bundle-output-string)).
 
-For react-native versions 0.57 and above the --assets-dest path should be:
+For react-native versions 0.57 and above the `--assets-dest` path should be:
 `android/app/build/generated/res/react/debug`
 
 The expected path for the assets can be found in the react.gradle file on the line that starts with `resourcesDir =`

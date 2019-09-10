@@ -1,30 +1,32 @@
 /**
  * Configuration file of Metro.
- * @flow
  */
 import path from 'path';
+// @ts-ignore - no typed definition for the package
 import {createBlacklist} from 'metro';
+// @ts-ignore - no typed definition for the package
 import {loadConfig} from 'metro-config';
 import {existsSync} from 'fs';
-import {type ConfigT} from 'types';
-// $FlowFixMe - converted to TS
+import {Config} from '@react-native-community/cli-types';
 import findSymlinkedModules from './findSymlinkedModules';
 
-const resolveSymlinksForRoots = roots =>
-  roots.reduce<string[]>(
+function resolveSymlinksForRoots(roots: string[]): string[] {
+  return roots.reduce<string[]>(
     (arr, rootPath) => arr.concat(findSymlinkedModules(rootPath, roots)),
     [...roots],
   );
+}
 
-const getWatchFolders = () => {
+function getWatchFolders(): string[] {
   const root = process.env.REACT_NATIVE_APP_ROOT;
   if (root) {
     return resolveSymlinksForRoots([path.resolve(root)]);
   }
   return [];
-};
+}
 
-const getBlacklistRE = () => createBlacklist([/.*\/__fixtures__\/.*/]);
+const getBlacklistRE: () => RegExp = () =>
+  createBlacklist([/.*\/__fixtures__\/.*/]);
 
 const INTERNAL_CALLSITES_REGEX = new RegExp(
   [
@@ -33,13 +35,39 @@ const INTERNAL_CALLSITES_REGEX = new RegExp(
   ].join('|'),
 );
 
+export interface DefaultConfigOption {
+  resolver: {
+    resolverMainFields: string[];
+    blacklistRE: RegExp;
+    platforms: string[];
+    providesModuleNodeModules: string[];
+    hasteImplModulePath: string | undefined;
+  };
+  serializer: {
+    getModulesRunBeforeMainModule: () => string[];
+    getPolyfills: () => any;
+  };
+  server: {
+    port: number;
+  };
+  symbolicator: {
+    customizeFrame: (frame: {file: string | null}) => {collapse: boolean};
+  };
+  transformer: {
+    babelTransformerPath: string;
+    assetRegistryPath: string;
+  };
+  watchFolders: string[];
+  reporter?: any;
+}
+
 /**
  * Default configuration
  *
  * @todo(grabbou): As a separate PR, haste.platforms should be added before "native".
  * Otherwise, a.native.js will not load on Windows or other platforms
  */
-export const getDefaultConfig = (ctx: ConfigT) => {
+export const getDefaultConfig = (ctx: Config): DefaultConfigOption => {
   const hasteImplPath = path.join(ctx.reactNativePath, 'jest/hasteImpl.js');
   return {
     resolver: {
@@ -64,7 +92,7 @@ export const getDefaultConfig = (ctx: ConfigT) => {
       port: Number(process.env.RCT_METRO_PORT) || 8081,
     },
     symbolicator: {
-      customizeFrame: (frame: {+file: ?string}) => {
+      customizeFrame: (frame: {file: string | null}) => {
         const collapse = Boolean(
           frame.file && INTERNAL_CALLSITES_REGEX.test(frame.file),
         );
@@ -84,23 +112,23 @@ export const getDefaultConfig = (ctx: ConfigT) => {
   };
 };
 
-export type ConfigOptionsT = {|
-  maxWorkers?: number,
-  port?: number,
-  projectRoot?: string,
-  resetCache?: boolean,
-  watchFolders?: string[],
-  sourceExts?: string[],
-  reporter?: any,
-  config?: string,
-|};
+export interface ConfigOptionsT {
+  maxWorkers?: number;
+  port?: number;
+  projectRoot?: string;
+  resetCache?: boolean;
+  watchFolders?: string[];
+  sourceExts?: string[];
+  reporter?: any;
+  config?: string;
+}
 
 /**
  * Loads Metro Config and applies `options` on top of the resolved config.
  *
  * This allows the CLI to always overwrite the file settings.
  */
-export default function load(ctx: ConfigT, options?: ConfigOptionsT) {
+export default function load(ctx: Config, options?: ConfigOptionsT) {
   const defaultConfig = getDefaultConfig(ctx);
   if (options && options.reporter) {
     /**

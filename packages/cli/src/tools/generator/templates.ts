@@ -26,7 +26,6 @@ async function createProjectFromTemplate(
   destPath: string,
   newProjectName: string,
   template: string,
-  destinationRoot: string,
 ) {
   const templatePath = path.dirname(require.resolve('react-native/template'));
   copyProjectTemplateAndReplace(templatePath, destPath, newProjectName);
@@ -44,12 +43,7 @@ async function createProjectFromTemplate(
   // This way we don't have to duplicate the native files in every template.
   // If we duplicated them we'd make RN larger and risk that people would
   // forget to maintain all the copies so they would go out of sync.
-  await createFromRemoteTemplate(
-    template,
-    destPath,
-    newProjectName,
-    destinationRoot,
-  );
+  await createFromRemoteTemplate(template, destPath, newProjectName);
 }
 
 /**
@@ -61,7 +55,6 @@ async function createFromRemoteTemplate(
   template: string,
   destPath: string,
   newProjectName: string,
-  destinationRoot: string,
 ) {
   let installPackage;
   let templateName;
@@ -91,8 +84,8 @@ async function createFromRemoteTemplate(
         'devDependencies.json',
       ],
     });
-    await installTemplateDependencies(templatePath, destinationRoot);
-    await installTemplateDevDependencies(templatePath, destinationRoot);
+    await installTemplateDependencies(templatePath);
+    await installTemplateDevDependencies(templatePath);
   } finally {
     // Clean up the temp files
     try {
@@ -108,10 +101,7 @@ async function createFromRemoteTemplate(
   }
 }
 
-async function installTemplateDependencies(
-  templatePath: string,
-  _destinationRoot: string,
-) {
+async function installTemplateDependencies(templatePath: string) {
   // dependencies.json is a special file that lists additional dependencies
   // that are required by this template
   const dependenciesJsonPath = path.resolve(templatePath, 'dependencies.json');
@@ -137,10 +127,7 @@ async function installTemplateDependencies(
   execSync('react-native link', {stdio: 'inherit'});
 }
 
-async function installTemplateDevDependencies(
-  templatePath: string,
-  _destinationRoot: string,
-) {
+async function installTemplateDevDependencies(templatePath: string) {
   // devDependencies.json is a special file that lists additional develop dependencies
   // that are required by this template
   const devDependenciesJsonPath = path.resolve(

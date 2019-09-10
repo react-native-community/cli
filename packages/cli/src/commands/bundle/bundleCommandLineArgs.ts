@@ -16,7 +16,7 @@ export interface CommandLineArgs {
   transformer?: string;
   minify?: boolean;
   config?: string;
-  platform?: string;
+  platform: string;
   dev: boolean;
   bundleOutput: string;
   bundleEncoding?: string;

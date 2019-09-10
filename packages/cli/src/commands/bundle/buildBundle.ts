@@ -100,7 +100,12 @@ async function buildBundle(
     });
 
     // When we're done saving bundle output and the assets, we're done.
-    return await saveAssets(outputAssets, args.platform, args.assetsDest);
+    // ios is set as the default platform see bundleCommandLineArgs.ts
+    return await saveAssets(
+      outputAssets,
+      args.platform || 'ios',
+      args.assetsDest,
+    );
   } finally {
     server.end();
   }

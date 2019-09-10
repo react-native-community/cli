@@ -10,10 +10,8 @@ import ramBundle from './bundle/ramBundle';
 import link from './link/link'; // eslint-disable-line import/namespace, import/default
 // @ts-ignore - JS file
 import unlink from './link/unlink'; // eslint-disable-line import/namespace, import/default
-// @ts-ignore - JS file
-import install from './install/install'; // eslint-disable-line import/namespace, import/default
-// @ts-ignore - JS file
-import uninstall from './install/uninstall'; // eslint-disable-line import/namespace, import/default
+import install from './install/install';
+import uninstall from './install/uninstall';
 import upgrade from './upgrade/upgrade';
 import info from './info/info';
 // @ts-ignore - JS file

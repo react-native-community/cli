@@ -1,6 +1,3 @@
-/**
- * @flow
- */
 import path from 'path';
 import fs from 'fs';
 import os from 'os';
@@ -8,9 +5,9 @@ import mkdirp from 'mkdirp';
 import {logger} from '@react-native-community/cli-tools';
 
 type ReleaseCacheKey = 'eTag' | 'lastChecked' | 'latestVersion';
-type Cache = {[key: ReleaseCacheKey]: string};
+type Cache = {[key in ReleaseCacheKey]?: string};
 
-function loadCache(name: string): ?Cache {
+function loadCache(name: string): Cache | undefined {
   try {
     const cacheRaw = fs.readFileSync(
       path.resolve(getCacheRootPath(), name),
@@ -24,6 +21,7 @@ function loadCache(name: string): ?Cache {
       saveCache(name, {});
     }
     logger.debug('No release cache found');
+    return undefined;
   }
 }
 
@@ -42,17 +40,18 @@ function saveCache(name: string, cache: Cache) {
 function getCacheRootPath() {
   const cachePath = path.resolve(os.homedir(), '.react-native-cli', 'cache');
   if (!fs.existsSync(cachePath)) {
-    mkdirp(cachePath);
+    mkdirp.sync(cachePath);
   }
 
   return cachePath;
 }
 
-function get(name: string, key: ReleaseCacheKey): ?string {
+function get(name: string, key: ReleaseCacheKey): string | undefined {
   const cache = loadCache(name);
   if (cache) {
     return cache[key];
   }
+  return undefined;
 }
 
 function set(name: string, key: ReleaseCacheKey, value: string) {

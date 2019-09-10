@@ -17,6 +17,7 @@ import messageSocket from './messageSocket';
 import webSocketProxy from './webSocketProxy';
 import MiddlewareManager from './middleware/MiddlewareManager';
 import loadMetroConfig from '../../tools/loadMetroConfig';
+// $FlowFixMe - converted to TS
 import releaseChecker from '../../tools/releaseChecker';
 
 export type Args = {|

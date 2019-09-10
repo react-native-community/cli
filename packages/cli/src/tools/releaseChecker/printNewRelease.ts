@@ -1,9 +1,6 @@
-/**
- * @flow
- */
 import chalk from 'chalk';
 import {logger} from '@react-native-community/cli-tools';
-import type {Release} from './getLatestRelease';
+import {Release} from './getLatestRelease';
 import cacheManager from './releaseCacheManager';
 
 /**

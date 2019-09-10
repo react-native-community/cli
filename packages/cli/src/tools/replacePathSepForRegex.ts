@@ -1,4 +1,3 @@
-// @flow
 import path from 'path';
 
 export default function replacePathSepForRegex(string: string) {

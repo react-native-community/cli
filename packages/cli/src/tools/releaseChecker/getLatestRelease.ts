@@ -1,15 +1,11 @@
-/**
- * @flow
- */
 import semver from 'semver';
-import {logger} from '@react-native-community/cli-tools';
 import cacheManager from './releaseCacheManager';
-import {fetch} from '@react-native-community/cli-tools';
+import {fetch, logger} from '@react-native-community/cli-tools';
 
 export type Release = {
-  version: string,
-  changelogUrl: string,
-  diffUrl: string,
+  version: string;
+  changelogUrl: string;
+  diffUrl: string;
 };
 
 /**
@@ -22,7 +18,7 @@ export type Release = {
 export default async function getLatestRelease(
   name: string,
   currentVersion: string,
-) {
+): Promise<Release | void> {
   logger.debug('Checking for a newer version of React Native');
   try {
     logger.debug(`Current version: ${currentVersion}`);
@@ -36,7 +32,7 @@ export default async function getLatestRelease(
     const aWeek = 7 * 24 * 60 * 60 * 1000;
     const lastChecked = cacheManager.get(name, 'lastChecked');
     const now = new Date();
-    if (lastChecked && now - new Date(lastChecked) < aWeek) {
+    if (lastChecked && Number(now) - Number(new Date(lastChecked)) < aWeek) {
       logger.debug('Cached release is still recent, skipping remote check');
       return;
     }
@@ -75,10 +71,13 @@ function buildDiffUrl(version: string) {
 /**
  * Returns the most recent React Native version available to upgrade to.
  */
-async function getLatestRnDiffPurgeVersion(name: string, eTag: ?string) {
+async function getLatestRnDiffPurgeVersion(
+  name: string,
+  eTag?: string,
+): Promise<string> {
   const options = {
     // https://developer.github.com/v3/#user-agent-required
-    headers: ({'User-Agent': 'React-Native-CLI'}: Headers),
+    headers: {'User-Agent': 'React-Native-CLI'} as Headers,
   };
 
   if (eTag) {
@@ -94,11 +93,10 @@ async function getLatestRnDiffPurgeVersion(name: string, eTag: ?string) {
   if (status === 200) {
     const body: Array<any> = data;
     const latestVersion = body[0].name.substring(8);
+    const eTagHeader = headers.get('eTag');
 
     // Update cache only if newer release is stable.
-    if (!semver.prerelease(latestVersion)) {
-      const eTagHeader = headers.get('eTag');
-
+    if (!semver.prerelease(latestVersion) && eTagHeader) {
       logger.debug(`Saving ${eTagHeader} to cache`);
       cacheManager.set(name, 'eTag', eTagHeader);
       cacheManager.set(name, 'latestVersion', latestVersion);
@@ -120,6 +118,6 @@ async function getLatestRnDiffPurgeVersion(name: string, eTag: ?string) {
 }
 
 type Headers = {
-  'User-Agent': mixed,
-  [header: string]: mixed,
+  'User-Agent': string;
+  [header: string]: string;
 };

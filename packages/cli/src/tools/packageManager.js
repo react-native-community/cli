@@ -1,6 +1,7 @@
 // @flow
 import execa from 'execa';
 import {logger} from '@react-native-community/cli-tools';
+// $FlowFixMe - converted to TS
 import {getYarnVersionIfAvailable, isProjectUsingYarn} from './yarn';
 
 type Options = {|

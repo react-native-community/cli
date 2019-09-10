@@ -1,6 +1,6 @@
-// @flow
 import path from 'path';
 import {logger} from '@react-native-community/cli-tools';
+// @ts-ignore - JS file
 import resolveNodeModuleDir from '../config/resolveNodeModuleDir';
 import getLatestRelease from './getLatestRelease';
 import printNewRelease from './printNewRelease';

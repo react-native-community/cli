@@ -3,16 +3,15 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
- *
- * @flow
  */
 
 import fs from 'fs';
 import path from 'path';
+// @ts-ignore FIXME after converting walk to typescript
 import walk from './walk';
 
 type Options = {
-  exclude?: Array<RegExp>,
+  exclude?: Array<RegExp>;
 };
 
 /**
@@ -21,10 +20,10 @@ type Options = {
 async function copyFiles(
   srcPath: string,
   destPath: string,
-  options?: Options = {},
+  options: Options = {},
 ) {
   return Promise.all(
-    walk(srcPath).map(async absoluteSrcFilePath => {
+    walk(srcPath).map(async (absoluteSrcFilePath: string) => {
       const exclude = options.exclude;
       if (exclude && exclude.some(p => p.test(absoluteSrcFilePath))) {
         return;
@@ -63,7 +62,11 @@ function copyFile(srcPath: string, destPath: string) {
 /**
  * Same as 'cp' on Unix. Don't do any replacements.
  */
-function copyBinaryFile(srcPath, destPath, cb) {
+function copyBinaryFile(
+  srcPath: string,
+  destPath: string,
+  cb: (err?: Error) => void,
+) {
   let cbCalled = false;
   const {mode} = fs.statSync(srcPath);
   const readStream = fs.createReadStream(srcPath);
@@ -79,7 +82,7 @@ function copyBinaryFile(srcPath, destPath, cb) {
     fs.chmodSync(destPath, mode);
   });
   readStream.pipe(writeStream);
-  function done(err) {
+  function done(err?: Error) {
     if (!cbCalled) {
       cb(err);
       cbCalled = true;

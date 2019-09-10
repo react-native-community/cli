@@ -1,11 +1,18 @@
 import ora from 'ora';
 import {brewInstall} from './brewInstall';
 
-async function install(pkg: string, source: string, loader: ora.Ora) {
+type InstallArgs = {
+  pkg: string;
+  label: string;
+  source: string;
+  loader: ora.Ora;
+};
+
+async function install({pkg, label, source, loader}: InstallArgs) {
   try {
     switch (process.platform) {
       case 'darwin':
-        await brewInstall(pkg, loader);
+        await brewInstall({pkg, label, loader});
         break;
       default:
         throw new Error('Not implemented yet');

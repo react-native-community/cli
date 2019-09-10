@@ -6,8 +6,10 @@ import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
 import {install} from '../../../tools/install';
 import type {EnvironmentInfo} from '../types';
 
+const label = 'Watchman';
+
 export default {
-  label: 'Watchman',
+  label,
   getDiagnostics: ({Binaries}: EnvironmentInfo) => ({
     needsToBeFixed: doesSoftwareNeedToBeFixed({
       version: Binaries.Watchman.version,
@@ -15,9 +17,10 @@ export default {
     }),
   }),
   runAutomaticFix: async ({loader}: typeof Ora) =>
-    await install(
-      'watchman',
-      'https://facebook.github.io/watchman/docs/install.html',
+    await install({
+      pkg: 'watchman',
+      label,
+      source: 'https://facebook.github.io/watchman/docs/install.html',
       loader,
-    ),
+    }),
 };

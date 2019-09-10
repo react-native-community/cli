@@ -5,7 +5,7 @@ import snapshotDiff from 'snapshot-diff';
 import stripAnsi from 'strip-ansi';
 import upgrade from '../upgrade';
 import {fetch, logger} from '@react-native-community/cli-tools';
-import loadConfig from '../../../tools/config'; // eslint-disable-line
+import loadConfig from '../../../tools/config'; // eslint-disable-line import/namespace, import/default
 import merge from '../../../tools/merge';
 
 jest.mock('https');

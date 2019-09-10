@@ -6,14 +6,16 @@
  *
  * @format
  */
-
 import {Option} from 'commander';
 import {camelCase} from 'lodash';
 
 // Commander.js has a 2 years old open issue to support <...> syntax
 // for options. Until that gets merged, we run the checks manually
 // https://github.com/tj/commander.js/issues/230
-export default function assertRequiredOptions(options, passedOptions) {
+export default function assertRequiredOptions(
+  options: any[],
+  passedOptions: any,
+) {
   options.forEach(opt => {
     const option = new Option(opt.name);
 

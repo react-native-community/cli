@@ -40,7 +40,7 @@ function saveCache(name: string, cache: Cache) {
 function getCacheRootPath() {
   const cachePath = path.resolve(os.homedir(), '.react-native-cli', 'cache');
   if (!fs.existsSync(cachePath)) {
-    mkdirp(cachePath, () => {});
+    mkdirp.sync(cachePath);
   }
 
   return cachePath;

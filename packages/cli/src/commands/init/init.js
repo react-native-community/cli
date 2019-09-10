@@ -19,6 +19,7 @@ import {
   executePostInitScript,
 } from './template';
 import {changePlaceholderInTemplate} from './editTemplate';
+// $FlowFixMe - converted to TS
 import * as PackageManager from '../../tools/packageManager';
 // $FlowFixMe - converted to TS
 import installPods from '../../tools/installPods';

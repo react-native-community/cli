@@ -13,6 +13,7 @@ import fs from 'fs';
 import path from 'path';
 import copyProjectTemplateAndReplace from './copyProjectTemplateAndReplace';
 import {logger} from '@react-native-community/cli-tools';
+// $FlowFixMe - converted to TS
 import * as PackageManager from '../packageManager';
 
 /**

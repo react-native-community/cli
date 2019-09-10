@@ -1,13 +1,10 @@
-/**
- * @flow
- */
 import {CLIError} from '@react-native-community/cli-tools';
 
 type JoiErrorDetails<K, T> = {
-  message: string,
-  path: string[],
-  type: K,
-  context: T,
+  message: string;
+  path: string[];
+  type: K;
+  context: T;
 };
 
 type JoiErrorT = {
@@ -15,12 +12,12 @@ type JoiErrorT = {
     JoiErrorDetails<
       'object.allowUnknown' | 'object.base' | 'string.base',
       {
-        key: string,
-        label: string,
-        value: Object,
-      },
-    >,
-  >,
+        key: string;
+        label: string;
+        value: Object;
+      }
+    >
+  >;
 };
 
 export class JoiError extends CLIError {

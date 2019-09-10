@@ -4,16 +4,17 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
-
-import type {ConfigT} from 'types';
+/* eslint-disable import/namespace, import/default */
 import {logger} from '@react-native-community/cli-tools';
+// @ts-ignore FIXME after converting tools/packageManager
 import * as PackageManager from '../../tools/packageManager';
+// @ts-ignore FIXME after converting link/link
 import link from '../link/link';
+// @ts-ignore FIXME after converting tools/config
 import loadConfig from '../../tools/config';
 
-async function install(args: Array<string>, ctx: ConfigT) {
+async function install(args: Array<string>) {
   const name = args[0];
 
   logger.info(`Installing "${name}"...`);

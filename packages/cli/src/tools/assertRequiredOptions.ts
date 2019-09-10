@@ -12,7 +12,7 @@ import {Command} from '@react-native-community/cli-types';
 
 type Options = NonNullable<Command['options']>;
 type PassedOptions = {
-  [x: string]: unknown;
+  [key: string]: unknown;
 };
 
 // Commander.js has a 2 years old open issue to support <...> syntax

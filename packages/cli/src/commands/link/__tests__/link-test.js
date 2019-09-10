@@ -1,7 +1,7 @@
 import {func as link} from '../link';
 import loadConfig from '../../../tools/config';
 import makeHook from '../makeHook';
-
+// $FlowFixMe - converted to TS
 jest.mock('chalk', () => ({grey: str => str, bold: str => str}));
 jest.mock('../../../tools/config');
 jest.mock('../makeHook', () => {

@@ -1,15 +1,12 @@
-// @flow
-
 import {isEmpty} from 'lodash';
-import type {PlatformsT, ProjectConfigT} from 'types';
-
+import {Config} from '@react-native-community/cli-types';
 import {logger} from '@react-native-community/cli-tools';
 
 const linkAssets = (
-  platforms: PlatformsT,
-  project: ProjectConfigT,
+  platforms: Config['platforms'],
+  project: Config['project'],
   assets: Array<string>,
-) => {
+): void | null => {
   if (isEmpty(assets)) {
     return;
   }

@@ -1,25 +1,25 @@
-/**
- * @flow
- */
-
 import {uniqBy} from 'lodash';
-import path from 'path';
+import * as path from 'path';
 import chalk from 'chalk';
 import {CLIError, logger} from '@react-native-community/cli-tools';
-import type {ConfigT} from 'types';
+import {Config} from '@react-native-community/cli-types';
 import linkAssets from './linkAssets';
 import linkDependency from './linkDependency';
 import makeHook from './makeHook';
+import execa from 'execa';
 
 const dedupeAssets = (assets: Array<string>): Array<string> =>
-  uniqBy(assets, asset => path.basename(asset));
+  uniqBy(assets, (asset: string) => path.basename(asset));
 
 type Options = {
-  linkDeps?: boolean,
-  linkAssets?: boolean,
+  linkDeps?: boolean;
+  linkAssets?: boolean;
 };
 
-async function linkAll(config: ConfigT, options: Options) {
+const linkAll = async (
+  config: Config,
+  options: Options,
+): Promise<(() => execa.ExecaChildProcess) | void> => {
   if (options.linkDeps) {
     logger.debug('Linking all dependencies');
     logger.info(
@@ -52,8 +52,8 @@ async function linkAll(config: ConfigT, options: Options) {
   }
   if (options.linkAssets) {
     logger.debug('Linking all assets');
-    const projectAssets = config.assets;
-    const assets = dedupeAssets(
+    const projectAssets: Array<string> = config.assets;
+    const assets: Array<string> = dedupeAssets(
       Object.keys(config.dependencies).reduce(
         (acc, dependency) => acc.concat(config.dependencies[dependency].assets),
         projectAssets,
@@ -65,6 +65,6 @@ async function linkAll(config: ConfigT, options: Options) {
       throw new CLIError('Linking assets failed.', error);
     }
   }
-}
+};
 
 export default linkAll;

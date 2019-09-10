@@ -1,19 +1,23 @@
-// @flow
 import chalk from 'chalk';
-import type {DependencyConfigT, ProjectConfigT, PlatformsT} from 'types';
+import {
+  Config,
+  AndroidDependencyConfig,
+  IOSDependencyConfig,
+} from '@react-native-community/cli-types';
 import {logger} from '@react-native-community/cli-tools';
 import pollParams from './pollParams';
-import getPlatformName from './getPlatformName';
+import {getPlatformName} from './getPlatformName';
 
 const linkDependency = async (
-  platforms: PlatformsT,
-  project: ProjectConfigT,
-  dependency: DependencyConfigT,
-) => {
+  platforms: Config['platforms'],
+  project: Config['project'],
+  dependency: Config['dependencies']['key'],
+): Promise<void | null> => {
   const params = await pollParams(dependency.params);
 
   Object.keys(platforms || {}).forEach(platform => {
-    const projectConfig = project[platform];
+    const projectConfig: AndroidDependencyConfig | IOSDependencyConfig =
+      project[platform];
     const dependencyConfig = dependency.platforms[platform];
 
     if (!projectConfig || !dependencyConfig) {

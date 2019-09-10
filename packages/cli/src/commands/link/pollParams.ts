@@ -3,20 +3,17 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
- *
- * @format
- * @flow
  */
 
-import inquirer from 'inquirer';
-import type {InquirerPromptT} from 'types';
+import {prompt} from 'inquirer';
+import {InquirerPrompt} from '@react-native-community/cli-types';
 
-export default (questions: InquirerPromptT) =>
+export default (questions: InquirerPrompt): Promise<any> =>
   new Promise<any>((resolve, reject) => {
     if (!questions) {
       resolve({});
       return;
     }
 
-    inquirer.prompt(questions).then(resolve, reject);
+    prompt(questions).then(resolve, reject);
   });

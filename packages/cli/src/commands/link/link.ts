@@ -4,22 +4,22 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 import chalk from 'chalk';
+import * as execa from 'execa';
 import {pick} from 'lodash';
 import {logger, CLIError} from '@react-native-community/cli-tools';
-import {type ConfigT} from 'types';
-import getPlatformName from './getPlatformName';
+import {Config} from '@react-native-community/cli-types';
+import {getPlatformName} from './getPlatformName';
 import linkDependency from './linkDependency';
 import linkAssets from './linkAssets';
 import linkAll from './linkAll';
 import makeHook from './makeHook';
 
 type FlagsType = {
-  platforms?: Array<string>,
-  all?: boolean,
+  platforms?: Array<string>;
+  all?: boolean;
 };
 
 /**
@@ -28,11 +28,11 @@ type FlagsType = {
  * @param args If optional argument [packageName] is provided,
  *             only that package is processed.
  */
-async function link(
+const link = async (
   [rawPackageName]: Array<string>,
-  ctx: ConfigT,
+  ctx: Config,
   opts: FlagsType,
-) {
+): Promise<(() => execa.ExecaChildProcess) | void> => {
   let platforms = ctx.platforms;
   let project = ctx.project;
 
@@ -54,7 +54,7 @@ async function link(
   }
 
   // Trim the version / tag out of the package name (eg. package@latest)
-  const packageName = rawPackageName.replace(/^(.+?)(@.+?)$/gi, '$1');
+  const packageName: string = rawPackageName.replace(/^(.+?)(@.+?)$/gi, '$1');
 
   if (!Object.keys(ctx.dependencies).includes(packageName)) {
     throw new CLIError(`
@@ -82,7 +82,7 @@ async function link(
       error,
     );
   }
-}
+};
 
 export const func = link;
 
@@ -94,12 +94,12 @@ export default {
     {
       name: '--platforms [list]',
       description: 'Scope linking to specified platforms',
-      parse: (val: string) => val.toLowerCase().split(','),
+      parse: (val: string): Array<string> => val.toLowerCase().split(','),
     },
     {
       name: '--all [boolean]',
       description: 'Link all native modules and assets',
-      parse: (val: string) => val.toLowerCase().split(','),
+      parse: (val: string): Array<string> => val.toLowerCase().split(','),
     },
   ],
 };

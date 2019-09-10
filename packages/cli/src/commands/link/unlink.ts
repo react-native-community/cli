@@ -3,29 +3,33 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
- *
- * @flow
  */
 
 import {flatMap, values, difference, pick} from 'lodash';
 import {logger, CLIError} from '@react-native-community/cli-tools';
-import type {ConfigT} from 'types';
-import getPlatformName from './getPlatformName';
+import {
+  Config,
+  AndroidDependencyConfig,
+  IOSDependencyConfig,
+} from '@react-native-community/cli-types';
+
+import {getPlatformName} from './getPlatformName';
 import makeHook from './makeHook';
 
 type Flags = {
-  platforms?: Array<string>,
+  platforms?: Array<string>;
 };
 
 const unlinkDependency = (
-  platforms,
-  project,
-  dependency,
-  packageName,
-  otherDependencies,
-) => {
+  platforms: Config['platforms'],
+  project: Config['project'],
+  dependency: Config['dependencies']['key'],
+  packageName: string,
+  otherDependencies: Array<Config['dependencies']['key']>,
+): void | null => {
   Object.keys(platforms || {}).forEach(platform => {
-    const projectConfig = project[platform];
+    const projectConfig: AndroidDependencyConfig | IOSDependencyConfig =
+      project[platform];
     const dependencyConfig = dependency.platforms[platform];
     if (!projectConfig || !dependencyConfig) {
       return;
@@ -82,7 +86,11 @@ const unlinkDependency = (
  * If optional argument [packageName] is provided, it's the only one
  * that's checked
  */
-async function unlink(args: Array<string>, ctx: ConfigT, opts: Flags) {
+const unlink = async (
+  args: Array<string>,
+  ctx: Config,
+  opts: Flags,
+): Promise<void | null> => {
   const packageName = args[0];
   let platforms = ctx.platforms;
 
@@ -105,7 +113,9 @@ async function unlink(args: Array<string>, ctx: ConfigT, opts: Flags) {
     `);
   }
 
-  const dependencies = values(otherDependencies);
+  const dependencies: Array<Config['dependencies']['key']> = values(
+    otherDependencies,
+  );
   try {
     if (dependency.hooks.preulink) {
       await makeHook(dependency.hooks.preulink)();
@@ -129,9 +139,9 @@ async function unlink(args: Array<string>, ctx: ConfigT, opts: Flags) {
 
   // @todo move all these to above try/catch
   // @todo it is possible we could be unlinking some project assets in case of duplicate
-  const assets = difference(
+  const assets: Array<string> = difference(
     dependency.assets,
-    flatMap(dependencies, d => d.assets),
+    flatMap(dependencies, (d: {assets: string[]}) => d.assets),
   );
 
   if (assets.length === 0) {
@@ -156,7 +166,7 @@ async function unlink(args: Array<string>, ctx: ConfigT, opts: Flags) {
   logger.info(
     `${packageName} assets has been successfully unlinked from your project`,
   );
-}
+};
 
 export default {
   func: unlink,

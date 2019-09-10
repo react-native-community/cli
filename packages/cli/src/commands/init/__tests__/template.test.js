@@ -9,6 +9,7 @@ import {
   copyTemplate,
   executePostInitScript,
 } from '../template';
+// $FlowFixMe - converted to TS
 import * as copyFiles from '../../../tools/copyFiles';
 
 const TEMPLATE_NAME = 'templateName';

@@ -3,6 +3,7 @@ import execa from 'execa';
 import path from 'path';
 import * as PackageManager from '../../tools/packageManager';
 import {logger} from '@react-native-community/cli-tools';
+// $FlowFixMe - converted to TS
 import copyFiles from '../../tools/copyFiles';
 import replacePathSepForRegex from '../../tools/replacePathSepForRegex';
 

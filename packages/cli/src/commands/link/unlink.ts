@@ -117,8 +117,8 @@ const unlink = async (
     otherDependencies,
   );
   try {
-    if (dependency.hooks.preulink) {
-      await makeHook(dependency.hooks.preulink)();
+    if (dependency.hooks.preunlink) {
+      await makeHook(dependency.hooks.preunlink)();
     }
     unlinkDependency(
       platforms,

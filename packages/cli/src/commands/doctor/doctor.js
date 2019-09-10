@@ -27,7 +27,7 @@ const printIssue = ({
   label: string,
   needsToBeFixed: boolean,
   isRequired: boolean,
-  description: String,
+  description: string,
 }) => {
   const symbol = needsToBeFixed
     ? isRequired
@@ -96,7 +96,7 @@ export default (async function runDoctor(
         return {
           label: healthcheck.label,
           needsToBeFixed: Boolean(needsToBeFixed),
-          description: needsToBeFixed,
+          description: String(needsToBeFixed),
           runAutomaticFix: healthcheck.runAutomaticFix,
           isRequired,
           type: needsToBeFixed

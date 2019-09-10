@@ -66,6 +66,7 @@ The [native_modules.gradle](https://github.com/react-native-community/cli/blob/m
    1. A first Gradle plugin (in `settings.gradle`) runs `applyNativeModulesSettingsGradle` method. It uses the package metadata from `react-native config` to add Android projects.
    1. A second Gradle plugin (in `app/build.gradle`) runs `applyNativeModulesAppBuildGradle` method. It creates a list of React Native packages to include in the generated `/android/build/generated/rn/src/main/java/com/facebook/react/PackageList.java` file.
 1. At runtime, the list of React Native packages generated in step 1.2 is registered by `getPackages` method of `ReactNativeHost` in `MainApplication.java`.
+   1. You can optionally pass in an instance of `MainPackageConfig` when initializing `PackageList` if you want to override the default configuration of `MainReactPackage`.
 
 ### Example
 

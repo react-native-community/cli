@@ -5,10 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-/* eslint-disable import/namespace, import/default */
 import {Config} from '@react-native-community/cli-types';
 import {logger} from '@react-native-community/cli-tools';
-// @ts-ignore FIXME after converting tools/packageManager
 import * as PackageManager from '../../tools/packageManager';
 // @ts-ignore FIXME after converting link/unlink
 import unlink from '../link/unlink';

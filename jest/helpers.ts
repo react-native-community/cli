@@ -3,10 +3,12 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import {createDirectory} from 'jest-util';
+// @ts-ignore jsfile
 import rimraf from 'rimraf';
 // @ts-ignore jsfile
 import execa from 'execa';
 import chalk from 'chalk';
+// @ts-ignore jsfile
 import {Writable} from 'readable-stream';
 
 const CLI_PATH = path.resolve(__dirname, '../packages/cli/build/bin.js');
@@ -47,7 +49,7 @@ export async function runUntil(
 
   spawnPromise.stderr.pipe(
     new Writable({
-      write(chunk, _encoding, callback) {
+      write(chunk: any, _encoding: string, callback: () => void) {
         const output = chunk.toString('utf8');
 
         if (output.includes(text)) {

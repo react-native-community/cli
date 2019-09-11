@@ -37,7 +37,7 @@ export interface Command {
   }>;
 }
 
-interface PlatformConfig<
+export interface PlatformConfig<
   ProjectConfig,
   ProjectParams,
   DependencyConfig,
@@ -92,6 +92,20 @@ export interface Dependency {
   params: InquirerPrompt[];
 }
 
+export type AndroidPlatformConfig = PlatformConfig<
+  AndroidProjectConfig,
+  AndroidProjectParams,
+  AndroidDependencyConfig,
+  AndroidDependencyParams
+>;
+
+export type IOSPlatformConfig = PlatformConfig<
+  IOSProjectConfig,
+  IOSProjectParams,
+  IOSDependencyConfig,
+  IOSDependencyParams
+>;
+
 /**
  * @property root - Root where the configuration has been resolved from
  * @property reactNativePath - Path to React Native source
@@ -113,20 +127,9 @@ export interface Config {
   assets: string[];
   dependencies: {[key: string]: Dependency};
   platforms: {
-    android: PlatformConfig<
-      AndroidProjectConfig,
-      AndroidProjectParams,
-      AndroidDependencyConfig,
-      AndroidDependencyParams
-    >;
-    ios: PlatformConfig<
-      IOSProjectConfig,
-      IOSProjectParams,
-      IOSDependencyConfig,
-      IOSDependencyParams
-    >;
-    [name: string]: PlatformConfig<any, any, any, any>;
-  };
+    android?: AndroidPlatformConfig;
+    ios?: IOSPlatformConfig;
+  } & {[name: string]: PlatformConfig<any, any, any, any>};
   commands: Command[];
   haste: {
     platforms: Array<string>;

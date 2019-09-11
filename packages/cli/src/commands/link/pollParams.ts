@@ -5,11 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import {prompt} from 'inquirer';
-import {InquirerPrompt} from '@react-native-community/cli-types';
+import {prompt, QuestionCollection, Answers} from 'inquirer';
 
-export default (questions: InquirerPrompt): Promise<any> =>
-  new Promise<any>((resolve, reject) => {
+export default (questions: QuestionCollection) =>
+  new Promise<Answers>((resolve, reject) => {
     if (!questions) {
       resolve({});
       return;

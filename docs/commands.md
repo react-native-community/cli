@@ -175,7 +175,6 @@ Example:
 
 ```sh
 npx react-native init MyApp --template react-native-custom-template
-npx react-native init MyApp --template typescript
 npx react-native init MyApp --template file:///Users/name/template-path
 npx react-native init MyApp --template file:///Users/name/template-name-1.0.0.tgz
 ```

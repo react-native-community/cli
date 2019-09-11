@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-
 import path from 'path';
 import execa from 'execa';
 import chalk from 'chalk';
@@ -135,7 +134,6 @@ function buildAndRun(args: Flags) {
     args.appIdSuffix,
     packageName,
   );
-
   const adbPath = getAdbPath();
   if (args.deviceId) {
     return runOnSpecificDevice(

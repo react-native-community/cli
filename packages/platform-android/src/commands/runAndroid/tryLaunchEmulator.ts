@@ -19,10 +19,10 @@ const launchEmulator = async (emulatorName: string, adbPath: string) => {
       [`@${emulatorName}`],
       {
         detached: true,
-        stdio: ['ignore', 'pipe', 'ignore'],
+        stdio: 'ignore',
       },
     );
-
+    cp.unref();
     const timeout = 30;
 
     // Reject command after timeout
@@ -31,29 +31,17 @@ const launchEmulator = async (emulatorName: string, adbPath: string) => {
       reject(`Could not start emulator within ${timeout} seconds.`);
     }, timeout * 1000);
 
-    // When emulator is started from snapshot, it does not emit boot completed message.
-    // It starts immediately so we can check if device is present after some short delay
-    const snapshotStartTimeout = setTimeout(() => {
+    const bootCheckInterval = setInterval(() => {
       if (Adb.getDevices(adbPath).length > 0) {
         cleanup();
         resolve();
       }
-    }, 5000);
+    }, 1000);
 
     const cleanup = () => {
       clearTimeout(rejectTimeout);
-      clearTimeout(snapshotStartTimeout);
-      cp.stdout.destroy();
+      clearInterval(bootCheckInterval);
     };
-
-    cp.unref();
-
-    cp.stdout.addListener('data', message => {
-      if (message.toString().includes('boot completed')) {
-        cleanup();
-        resolve();
-      }
-    });
 
     cp.on('exit', () => {
       cleanup();

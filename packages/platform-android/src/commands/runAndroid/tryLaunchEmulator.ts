@@ -12,10 +12,16 @@ const getEmulators = () => {
 
 const launchEmulator = async (emulatorName: string, adbPath: string) => {
   return new Promise((resolve, reject) => {
-    const cp = execa('emulator', [`@${emulatorName}`], {
-      detached: true,
-      stdio: ['ignore', 'pipe', 'ignore'],
-    });
+    const cp = execa(
+      process.env.ANDROID_HOME
+        ? `${process.env.ANDROID_HOME}/emulator/emulator`
+        : 'emulator',
+      [`@${emulatorName}`],
+      {
+        detached: true,
+        stdio: ['ignore', 'pipe', 'ignore'],
+      },
+    );
 
     const timeout = 30;
 

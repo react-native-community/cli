@@ -1,9 +1,13 @@
 import execa from 'execa';
 import Adb from './adb';
 
+const emulatorCommand = process.env.ANDROID_HOME
+  ? `${process.env.ANDROID_HOME}/emulator/emulator`
+  : 'emulator';
+
 const getEmulators = () => {
   try {
-    const emulatorsOutput = execa.sync('emulator', ['-list-avds']).stdout;
+    const emulatorsOutput = execa.sync(emulatorCommand, ['-list-avds']).stdout;
     return emulatorsOutput.split('\n').filter(name => name !== '');
   } catch {
     return [];
@@ -12,16 +16,10 @@ const getEmulators = () => {
 
 const launchEmulator = async (emulatorName: string, adbPath: string) => {
   return new Promise((resolve, reject) => {
-    const cp = execa(
-      process.env.ANDROID_HOME
-        ? `${process.env.ANDROID_HOME}/emulator/emulator`
-        : 'emulator',
-      [`@${emulatorName}`],
-      {
-        detached: true,
-        stdio: 'ignore',
-      },
-    );
+    const cp = execa(emulatorCommand, [`@${emulatorName}`], {
+      detached: true,
+      stdio: 'ignore',
+    });
     cp.unref();
     const timeout = 30;
 

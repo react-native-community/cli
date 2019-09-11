@@ -4,15 +4,13 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
- * @flow strict
  */
 
-export type PackagerAsset = {
-  +httpServerLocation: string,
-  +name: string,
-  +type: string,
-};
+export interface PackagerAsset {
+  httpServerLocation: string;
+  name: string;
+  type: string;
+}
 
 /**
  * FIXME: using number to represent discrete scale numbers is fragile in essence because of
@@ -38,7 +36,7 @@ function getAndroidAssetSuffix(scale: number): string {
 }
 
 // See https://developer.android.com/guide/topics/resources/drawable-resource.html
-const drawableFileTypes = new Set([
+const drawableFileTypes = new Set<string>([
   'gif',
   'jpeg',
   'jpg',
@@ -48,7 +46,10 @@ const drawableFileTypes = new Set([
   'xml',
 ]);
 
-function getAndroidResourceFolderName(asset: PackagerAsset, scale: number) {
+function getAndroidResourceFolderName(
+  asset: PackagerAsset,
+  scale: number,
+): string {
   if (!drawableFileTypes.has(asset.type)) {
     return 'raw';
   }
@@ -64,7 +65,7 @@ function getAndroidResourceFolderName(asset: PackagerAsset, scale: number) {
   return androidFolder;
 }
 
-function getAndroidResourceIdentifier(asset: PackagerAsset) {
+function getAndroidResourceIdentifier(asset: PackagerAsset): string {
   const folderPath = getBasePath(asset);
   return `${folderPath}/${asset.name}`
     .toLowerCase()
@@ -73,7 +74,7 @@ function getAndroidResourceIdentifier(asset: PackagerAsset) {
     .replace(/^assets_/, ''); // Remove "assets_" prefix
 }
 
-function getBasePath(asset: PackagerAsset) {
+function getBasePath(asset: PackagerAsset): string {
   let basePath = asset.httpServerLocation;
   if (basePath[0] === '/') {
     basePath = basePath.substr(1);

@@ -4,19 +4,17 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow strict
- * @format
  */
 
-const ALLOWED_SCALES = {
+const ALLOWED_SCALES: {[key: string]: number[]} = {
   ios: [1, 2, 3],
 };
 
 function filterPlatformAssetScales(
   platform: string,
-  scales: $ReadOnlyArray<number>,
-): $ReadOnlyArray<number> {
-  const whitelist = ALLOWED_SCALES[platform];
+  scales: ReadonlyArray<number>,
+): ReadonlyArray<number> {
+  const whitelist: number[] = ALLOWED_SCALES[platform];
   if (!whitelist) {
     return scales;
   }

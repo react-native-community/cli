@@ -4,24 +4,44 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
+// @ts-ignore - no typed definition for the package
 import Server from 'metro/src/Server';
-
+// @ts-ignore - no typed definition for the package
 import outputBundle from 'metro/src/shared/output/bundle';
 import path from 'path';
 import chalk from 'chalk';
-import type {CommandLineArgs} from './bundleCommandLineArgs';
-import type {ConfigT} from 'types';
+import {CommandLineArgs} from './bundleCommandLineArgs';
+import {Config} from '@react-native-community/cli-types';
 import saveAssets from './saveAssets';
-// $FlowFixMe - converted to typescript
 import loadMetroConfig from '../../tools/loadMetroConfig';
 import {logger} from '@react-native-community/cli-tools';
 
+interface RequestOptions {
+  entryFile: string;
+  sourceMapUrl: string | undefined;
+  dev: boolean;
+  minify: boolean;
+  platform: string | undefined;
+}
+
+export interface AssetData {
+  __packager_asset: boolean;
+  fileSystemLocation: string;
+  hash: string;
+  height: number | null;
+  httpServerLocation: string;
+  name: string;
+  scales: number[];
+  type: string;
+  width: number | null;
+  files: string[];
+}
+
 async function buildBundle(
   args: CommandLineArgs,
-  ctx: ConfigT,
+  ctx: Config,
   output: typeof outputBundle = outputBundle,
 ) {
   const config = await loadMetroConfig(ctx, {
@@ -73,7 +93,7 @@ async function buildBundle(
     await output.save(bundle, args, logger.info);
 
     // Save the assets of the bundle
-    const outputAssets = await server.getAssets({
+    const outputAssets: AssetData[] = await server.getAssets({
       ...Server.DEFAULT_BUNDLE_OPTIONS,
       ...requestOpts,
       bundleType: 'todo',

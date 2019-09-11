@@ -32,7 +32,7 @@ const INTERNAL_CALLSITES_REGEX = new RegExp(
   ].join('|'),
 );
 
-export interface DefaultConfigOption {
+export interface MetroConfig {
   resolver: {
     resolverMainFields: string[];
     blacklistRE: RegExp;
@@ -64,7 +64,7 @@ export interface DefaultConfigOption {
  * @todo(grabbou): As a separate PR, haste.platforms should be added before "native".
  * Otherwise, a.native.js will not load on Windows or other platforms
  */
-export const getDefaultConfig = (ctx: Config): DefaultConfigOption => {
+export const getDefaultConfig = (ctx: Config): MetroConfig => {
   const hasteImplPath = path.join(ctx.reactNativePath, 'jest/hasteImpl.js');
   return {
     resolver: {
@@ -125,7 +125,10 @@ export interface ConfigOptionsT {
  *
  * This allows the CLI to always overwrite the file settings.
  */
-export default function load(ctx: Config, options?: ConfigOptionsT) {
+export default function load(
+  ctx: Config,
+  options?: ConfigOptionsT,
+): Promise<MetroConfig> {
   const defaultConfig = getDefaultConfig(ctx);
   if (options && options.reporter) {
     /**

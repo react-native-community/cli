@@ -4,29 +4,28 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 import path from 'path';
 
-export type CommandLineArgs = {
-  assetsDest?: string,
-  entryFile: string,
-  resetCache: boolean,
-  resetGlobalCache: boolean,
-  transformer?: string,
-  minify?: boolean,
-  config?: string,
-  platform?: string,
-  dev: boolean,
-  bundleOutput: string,
-  bundleEncoding?: string,
-  maxWorkers?: number,
-  sourcemapOutput?: string,
-  sourcemapSourcesRoot?: string,
-  sourcemapUseAbsolutePath: boolean,
-  verbose: boolean,
-};
+export interface CommandLineArgs {
+  assetsDest?: string;
+  entryFile: string;
+  resetCache: boolean;
+  resetGlobalCache: boolean;
+  transformer?: string;
+  minify?: boolean;
+  config?: string;
+  platform: string;
+  dev: boolean;
+  bundleOutput: string;
+  bundleEncoding?: string;
+  maxWorkers?: number;
+  sourcemapOutput?: string;
+  sourcemapSourcesRoot?: string;
+  sourcemapUseAbsolutePath: boolean;
+  verbose: boolean;
+}
 
 export default [
   {

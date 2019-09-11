@@ -4,7 +4,6 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
  */
 
 import mkdirp from 'mkdirp';
@@ -15,8 +14,17 @@ import filterPlatformAssetScales from './filterPlatformAssetScales';
 import getAssetDestPathAndroid from './getAssetDestPathAndroid';
 import getAssetDestPathIOS from './getAssetDestPathIOS';
 import {logger} from '@react-native-community/cli-tools';
+import {AssetData} from './buildBundle';
 
-function saveAssets(assets, platform, assetsDest) {
+interface CopiedFiles {
+  [src: string]: string;
+}
+
+function saveAssets(
+  assets: AssetData[],
+  platform: string,
+  assetsDest: string | undefined,
+) {
   if (!assetsDest) {
     logger.warn('Assets destination folder is not set, skipping...');
     return Promise.resolve();
@@ -25,7 +33,7 @@ function saveAssets(assets, platform, assetsDest) {
   const getAssetDestPath =
     platform === 'android' ? getAssetDestPathAndroid : getAssetDestPathIOS;
 
-  const filesToCopy = Object.create(null); // Map src -> dest
+  const filesToCopy: CopiedFiles = Object.create(null); // Map src -> dest
   assets.forEach(asset => {
     const validScales = new Set(
       filterPlatformAssetScales(platform, asset.scales),
@@ -43,7 +51,7 @@ function saveAssets(assets, platform, assetsDest) {
   return copyAll(filesToCopy);
 }
 
-function copyAll(filesToCopy) {
+function copyAll(filesToCopy: CopiedFiles) {
   const queue = Object.keys(filesToCopy);
   if (queue.length === 0) {
     return Promise.resolve();
@@ -51,7 +59,7 @@ function copyAll(filesToCopy) {
 
   logger.info(`Copying ${queue.length} asset files`);
   return new Promise((resolve, reject) => {
-    const copyNext = error => {
+    const copyNext = (error?: NodeJS.ErrnoException) => {
       if (error) {
         reject(error);
         return;
@@ -60,7 +68,8 @@ function copyAll(filesToCopy) {
         logger.info('Done copying assets');
         resolve();
       } else {
-        const src = queue.shift();
+        // queue.length === 0 is checked in previous branch, so this is string
+        const src = queue.shift() as string;
         const dest = filesToCopy[src];
         copy(src, dest, copyNext);
       }
@@ -69,9 +78,13 @@ function copyAll(filesToCopy) {
   });
 }
 
-function copy(src, dest, callback) {
+function copy(
+  src: string,
+  dest: string,
+  callback: (error: NodeJS.ErrnoException) => void,
+): void {
   const destDir = path.dirname(dest);
-  mkdirp(destDir, err => {
+  mkdirp(destDir, (err?: NodeJS.ErrnoException) => {
     if (err) {
       callback(err);
       return;

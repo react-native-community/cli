@@ -11,6 +11,8 @@ import {
   AndroidDependencyParams,
 } from './android';
 
+export {EnvironmentInfo, HealthCheckInterface} from './commands/doctor';
+
 export type InquirerPrompt = any;
 
 export interface Command {

@@ -1,4 +1,3 @@
-// @flow
 import Ora from 'ora';
 
 export type EnvironmentInfo = {

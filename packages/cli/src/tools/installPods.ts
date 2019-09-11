@@ -43,11 +43,9 @@ function runSudo(command: string): Promise<void> {
   });
 }
 
-async function installCocoaPods(loader: ora.Ora) {
-  loader.stop();
-
-  const withGem = 'Yes, with gem (may require sudo)';
-  const withHomebrew = 'Yes, with Homebrew';
+async function promptCocoaPodsInstallationQuestion() {
+  const installWithGem = 'Yes, with gem (may require sudo)';
+  const installWithHomebrew = 'Yes, with Homebrew';
 
   const {shouldInstallCocoaPods} = await inquirer.prompt([
     {
@@ -58,41 +56,65 @@ async function installCocoaPods(loader: ora.Ora) {
       )} ${chalk.reset.bold(
         'is not installed. CocoaPods is necessary for the iOS project to run correctly. Do you want to install it?',
       )}`,
-      choices: [withGem, withHomebrew],
+      choices: [installWithGem, installWithHomebrew],
     },
   ]);
 
-  switch (shouldInstallCocoaPods) {
-    case withGem:
-      const options = ['install', 'cocoapods', '--no-document'];
-      loader.start('Installing CocoaPods');
-      try {
-        // First attempt to install `cocoapods`
-        await execa('gem', options);
-      } catch (_error) {
-        // If that doesn't work then try with sudo
-        try {
-          await runSudo(`gem ${options.join(' ')}`);
-        } catch (error) {
-          loader.fail();
-          logger.error(error.stderr);
+  return {
+    installWithGem: shouldInstallCocoaPods === installWithGem,
+    installWithHomebrew: shouldInstallCocoaPods === installWithHomebrew,
+  };
+}
 
-          throw new Error(
-            `An error occured while trying to install CocoaPods, which is required by this template.\nPlease try again manually: sudo gem install cocoapods.\nCocoaPods documentation: ${chalk.dim.underline(
-              'https://cocoapods.org/',
-            )}`,
-          );
-        }
-      }
-      loader.succeed();
-      break;
-    case withHomebrew:
-      await brewInstall({
-        pkg: 'cocoapods',
-        label: 'Installing CocoaPods',
-        loader,
-      });
-      break;
+async function installCocoaPodsWithGem() {
+  const options = ['install', 'cocoapods', '--no-document'];
+
+  try {
+    // First attempt to install `cocoapods`
+    await execa('gem', options);
+  } catch (_error) {
+    // If that doesn't work then try with sudo
+    try {
+      await runSudo(`gem ${options.join(' ')}`);
+    } catch (error) {
+      throw error;
+    }
+  }
+}
+
+async function installCocoaPods(loader: ora.Ora) {
+  loader.stop();
+
+  const {
+    installWithGem,
+    installWithHomebrew,
+  } = await promptCocoaPodsInstallationQuestion();
+
+  if (installWithGem) {
+    loader.start('Installing CocoaPods');
+
+    try {
+      await installCocoaPodsWithGem();
+
+      return loader.succeed();
+    } catch (error) {
+      loader.fail();
+      logger.error(error.stderr);
+
+      throw new Error(
+        `An error occured while trying to install CocoaPods, which is required by this template.\nPlease try again manually: sudo gem install cocoapods.\nCocoaPods documentation: ${chalk.dim.underline(
+          'https://cocoapods.org/',
+        )}`,
+      );
+    }
+  }
+
+  if (installWithHomebrew) {
+    return await brewInstall({
+      pkg: 'cocoapods',
+      label: 'Installing CocoaPods',
+      loader,
+    });
   }
 }
 
@@ -134,7 +156,6 @@ async function installPods({
     }
 
     try {
-      loader.succeed();
       loader.start(
         `Installing CocoaPods dependencies ${chalk.dim(
           '(this may take a few minutes)',
@@ -158,6 +179,6 @@ async function installPods({
   }
 }
 
-export {installCocoaPods};
+export {promptCocoaPodsInstallationQuestion, runSudo, installCocoaPods};
 
 export default installPods;

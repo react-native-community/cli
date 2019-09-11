@@ -8,11 +8,14 @@
 export default function assign(target: Object, ...sources: Object[]) {
   sources.forEach(source => {
     let descriptors = Object.keys(source).reduce(
-      (acc: {[k: string]: any}, key) => {
-        acc[key] = Object.getOwnPropertyDescriptor(source, key);
+      (acc, key) => {
+        const propertyDescriptor = Object.getOwnPropertyDescriptor(source, key);
+        if (propertyDescriptor !== undefined) {
+          acc[key] = propertyDescriptor;
+        }
         return acc;
       },
-      {},
+      {} as PropertyDescriptorMap,
     );
     // by default, Object.assign copies enumerable Symbols too
     Object.getOwnPropertySymbols(source).forEach(sym => {

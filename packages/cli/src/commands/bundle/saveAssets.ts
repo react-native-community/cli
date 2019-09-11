@@ -68,11 +68,10 @@ function copyAll(filesToCopy: CopiedFiles) {
         logger.info('Done copying assets');
         resolve();
       } else {
-        const src = queue.shift();
-        if (src) {
-          const dest = filesToCopy[src];
-          copy(src, dest, copyNext);
-        }
+        // queue.length === 0 is checked in previous branch, so this is string
+        const src = queue.shift() as string;
+        const dest = filesToCopy[src];
+        copy(src, dest, copyNext);
       }
     };
     copyNext();

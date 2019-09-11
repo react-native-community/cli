@@ -5,7 +5,6 @@
  * lazy properties on an object and still be able to merge them together
  *
  */
-
 export default function assign(target: Object, ...sources: Object[]) {
   sources.forEach(source => {
     let descriptors = Object.keys(source).reduce(

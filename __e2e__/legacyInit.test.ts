@@ -1,6 +1,7 @@
 // @flow
 import fs from 'fs';
 import path from 'path';
+// @ts-ignore
 import execa from 'execa';
 import {getTempDirectory, cleanup, writeFiles} from '../jest/helpers';
 

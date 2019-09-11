@@ -3,23 +3,32 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import {createDirectory} from 'jest-util';
+// @ts-ignore jsfile
 import rimraf from 'rimraf';
+// @ts-ignore jsfile
 import execa from 'execa';
 import chalk from 'chalk';
+// @ts-ignore jsfile
 import {Writable} from 'readable-stream';
 
 const CLI_PATH = path.resolve(__dirname, '../packages/cli/build/bin.js');
 
 type RunOptions = {
-  nodeOptions?: string,
-  nodePath?: string,
-  timeout?: number, // kill the process after X milliseconds
-  expectedFailure?: boolean,
+  nodeOptions?: string;
+  nodePath?: string;
+  timeout?: number; // kill the process after X milliseconds
+  expectedFailure?: boolean;
+};
+
+type CLIArgs = {
+  dir: string;
+  args: string[] | undefined;
+  options: RunOptions;
 };
 
 export function run(
   dir: string,
-  args?: Array<string>,
+  args?: string[],
   options: RunOptions = {
     expectedFailure: false,
   },
@@ -30,7 +39,7 @@ export function run(
 // Runs cli until a given output is achieved, then kills it with `SIGTERM`
 export async function runUntil(
   dir: string,
-  args: Array<string> | void,
+  args: string[] | undefined,
   text: string,
   options: RunOptions = {
     expectedFailure: false,
@@ -40,7 +49,7 @@ export async function runUntil(
 
   spawnPromise.stderr.pipe(
     new Writable({
-      write(chunk, _encoding, callback) {
+      write(chunk: any, _encoding: string, callback: () => void) {
         const output = chunk.toString('utf8');
 
         if (output.includes(text)) {
@@ -112,7 +121,7 @@ export const copyDir = (src: string, dest: string) => {
 export const getTempDirectory = (name: string) =>
   path.resolve(os.tmpdir(), name);
 
-function spawnCli(dir: string, args?: Array<string>, options: RunOptions = {}) {
+function spawnCli(dir: string, args?: string[], options: RunOptions = {}) {
   const {spawnArgs, spawnOptions} = getCliArguments({dir, args, options});
 
   const result = execa.sync(process.execPath, spawnArgs, spawnOptions);
@@ -122,11 +131,7 @@ function spawnCli(dir: string, args?: Array<string>, options: RunOptions = {}) {
   return result;
 }
 
-function spawnCliAsync(
-  dir: string,
-  args?: Array<string>,
-  options: RunOptions = {},
-) {
+function spawnCliAsync(dir: string, args?: string[], options: RunOptions = {}) {
   const {spawnArgs, spawnOptions} = getCliArguments({dir, args, options});
 
   try {
@@ -137,7 +142,7 @@ function spawnCliAsync(
   }
 }
 
-function getCliArguments({dir, args, options}) {
+function getCliArguments({dir, args, options}: CLIArgs) {
   const isRelative = !path.isAbsolute(dir);
 
   if (isRelative) {
@@ -163,10 +168,14 @@ function getCliArguments({dir, args, options}) {
   return {spawnArgs, spawnOptions};
 }
 
-function handleTestCliFailure(options, result, dir, args) {
+function handleTestCliFailure(
+  options: RunOptions,
+  result: {[key: string]: any},
+  dir: string,
+  args: string[] | undefined,
+) {
   if (!options.expectedFailure && result.code !== 0) {
     console.log(`Running CLI failed for unexpected reason. Here's more info:
-
 ${chalk.bold('dir:')}    ${dir}
 ${chalk.bold('args:')}   ${(args || []).join(' ')}
 ${chalk.bold('stderr:')} ${result.stderr}

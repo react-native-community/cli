@@ -6,15 +6,16 @@ import ora from 'ora';
 type InstallArgs = {
   pkg: string;
   label?: string;
+  succeedMessage?: string;
   loader: ora.Ora;
 };
 
-async function brewInstall({pkg, label, loader}: InstallArgs) {
+async function brewInstall({pkg, label, succeedMessage, loader}: InstallArgs) {
   loader.start(label);
   try {
     await execa('brew', ['install', pkg]);
 
-    loader.succeed();
+    loader.succeed(succeedMessage);
   } catch (error) {
     loader.fail();
     logger.log(chalk.dim(`\n${error.stderr}`));

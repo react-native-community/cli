@@ -1,17 +1,21 @@
+/**
+ * @flow
+ *
+ * Loads and validates a project configuration
+ */
 import Joi from '@hapi/joi';
 import cosmiconfig from 'cosmiconfig';
 import path from 'path';
 import chalk from 'chalk';
 import {
-  UserConfig,
-  Command,
-  UserDependencyConfig,
-  Config,
-} from '../../../../cli-types';
+  type UserDependencyConfigT,
+  type UserConfigT,
+  type CommandT,
+} from 'types';
 import {JoiError} from './errors';
 import * as schema from './schema';
 import {logger} from '@react-native-community/cli-tools';
-// import resolveReactNativePath from './resolveReactNativePath';
+import resolveReactNativePath from './resolveReactNativePath';
 
 const MIGRATION_GUIDE = `Migration guide: ${chalk.dim.underline(
   'https://github.com/react-native-community/cli/blob/master/docs/configuration.md',
@@ -22,36 +26,35 @@ const MIGRATION_GUIDE = `Migration guide: ${chalk.dim.underline(
  */
 const searchPlaces = ['react-native.config.js'];
 
-function readLegacyConfigFromDisk(rootFolder: string): UserConfig | null {
-  let config: any;
+function readLegacyConfigFromDisk(rootFolder: string): UserConfigT | void {
+  let config;
 
   try {
-    // @ts-ignore json file
     config = require(path.join(rootFolder, 'package.json')).rnpm;
   } catch (error) {
     // when `init` is running, there's no package.json yet
-    return;
+    return undefined;
   }
 
   if (!config) {
-    return;
+    return undefined;
   }
 
-  // const transformedConfig = {
-  //   project: {
-  //     ios: config.ios,
-  //     android: config.android,
-  //   },
-  //   assets: config.assets,
-  //   commands: [],
-  //   dependencies: {},
-  //   platforms: {},
-  //   get reactNativePath() {
-  //     return config.reactNativePath
-  //       ? path.resolve(rootFolder, config.reactNativePath)
-  //       : resolveReactNativePath(rootFolder);
-  //   },
-  // };
+  const transformedConfig = {
+    project: {
+      ios: config.ios,
+      android: config.android,
+    },
+    assets: config.assets,
+    commands: [],
+    dependencies: {},
+    platforms: {},
+    get reactNativePath() {
+      return config.reactNativePath
+        ? path.resolve(rootFolder, config.reactNativePath)
+        : resolveReactNativePath(rootFolder);
+    },
+  };
 
   logger.warn(
     `Your project is using deprecated "${chalk.bold(
@@ -61,15 +64,14 @@ function readLegacyConfigFromDisk(rootFolder: string): UserConfig | null {
     )}" file to configure the React Native CLI. ${MIGRATION_GUIDE}`,
   );
 
-  return;
-  // return transformedConfig;
+  return transformedConfig;
 }
 
 /**
  * Reads a project configuration as defined by the user in the current
  * workspace.
  */
-export function readConfigFromDisk(rootFolder: string): UserConfig {
+export function readConfigFromDisk(rootFolder: string): UserConfigT {
   const explorer = cosmiconfig('react-native', {searchPlaces});
 
   const {config} = explorer.searchSync(rootFolder) || {
@@ -82,7 +84,6 @@ export function readConfigFromDisk(rootFolder: string): UserConfig {
     throw new JoiError(result.error);
   }
 
-  // @ts-ignore
   return result.value;
 }
 
@@ -92,7 +93,7 @@ export function readConfigFromDisk(rootFolder: string): UserConfig {
  */
 export function readDependencyConfigFromDisk(
   rootFolder: string,
-): {config: Config; legacy?: boolean} {
+): {config: UserDependencyConfigT, legacy?: boolean} {
   const explorer = cosmiconfig('react-native', {
     stopDir: rootFolder,
     searchPlaces,
@@ -119,13 +120,18 @@ export function readDependencyConfigFromDisk(
  * Each of the files can export a commands (object) or an array of commands
  */
 const loadProjectCommands = (
-  root: string,
-  commands?: string[],
-): Array<Command> => {
-  return (commands || []).reduce((acc: Array<Command>, cmdPath: string) => {
-    const cmds: Array<Command> | Command = require(path.join(root, cmdPath));
-    return acc.concat(cmds);
-  }, []);
+  root,
+  commands: ?(Array<string> | string),
+): Array<CommandT> => {
+  return []
+    .concat(commands || [])
+    .reduce((acc: Array<CommandT>, cmdPath: string) => {
+      const cmds: Array<CommandT> | CommandT = require(path.join(
+        root,
+        cmdPath,
+      ));
+      return acc.concat(cmds);
+    }, []);
 };
 
 /**
@@ -133,7 +139,7 @@ const loadProjectCommands = (
  */
 function readLegacyDependencyConfigFromDisk(
   rootFolder: string,
-): UserDependencyConfig | null | undefined {
+): ?UserDependencyConfigT {
   let config = {};
 
   try {
@@ -142,18 +148,14 @@ function readLegacyDependencyConfigFromDisk(
     // package.json is usually missing in local libraries that are not in
     // project "dependencies", so we just return a bare config
     return {
-      dependencies: {
-        dependencies: {
-          name: '',
-          root: '',
-          platforms: {},
-          assets: [],
-          hooks: {},
-          params: [],
-        },
+      dependency: {
+        platforms: {},
+        assets: [],
+        hooks: {},
+        params: [],
       },
-      platforms: null,
       commands: [],
+      platforms: {},
     };
   }
 
@@ -161,34 +163,22 @@ function readLegacyDependencyConfigFromDisk(
     return undefined;
   }
 
-  return {
-    dependencies: {
-      dependencies: {
-        name: '',
-        root: '',
-        platforms: {
-          // @ts-ignore
-          ios: config.ios,
-          // @ts-ignore
-          android: config.android,
-        },
-        // @ts-ignore
-        assets: config.assets,
-        // @ts-ignore
-        hooks: config.commands,
-        // @ts-ignore
-        params: config.params,
+  const transformedConfig = {
+    dependency: {
+      platforms: {
+        ios: config.ios,
+        android: config.android,
       },
+      assets: config.assets,
+      hooks: config.commands,
+      params: config.params,
     },
-    // @ts-ignore
-    platforms: config.platform
-      ? //
-        // @ts-ignore
-        require(path.join(rootFolder, config.platform || ''))
-      : {},
-    // @ts-ignore
-    commands: loadProjectCommands(rootFolder, config.plugin),
-    // @ts-ignore
     haste: config.haste,
+    commands: loadProjectCommands(rootFolder, config.plugin),
+    platforms: config.platform
+      ? require(path.join(rootFolder, config.platform))
+      : {},
   };
+
+  return transformedConfig;
 }

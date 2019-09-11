@@ -42,7 +42,7 @@ export interface AssetData {
 async function buildBundle(
   args: CommandLineArgs,
   ctx: Config,
-  output: outputBundle,
+  output: typeof outputBundle = outputBundle,
 ) {
   const config = await loadMetroConfig(ctx, {
     maxWorkers: args.maxWorkers,

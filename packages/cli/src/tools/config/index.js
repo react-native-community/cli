@@ -19,6 +19,7 @@ import type {
   UserConfigT,
   DependencyConfigT,
 } from 'types';
+// $FlowFixMe - converted to TS
 import assign from '../assign';
 // $FlowFixMe - converted to TS
 import merge from '../merge';
@@ -46,7 +47,7 @@ function getDependencyConfig(
               : platformConfig.dependencyConfig(
                   root,
                   /* $FlowFixMe - can't figure out which platform's dependency
-                   config to choose */
+                 config to choose */
                   config.dependency.platforms[platform],
                 );
           return dependency;

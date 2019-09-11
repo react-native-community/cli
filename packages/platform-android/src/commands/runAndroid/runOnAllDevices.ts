@@ -47,7 +47,7 @@ async function runOnAllDevices(
         `Failed to launch emulator. Reason: ${chalk.dim(result.error || '')}.`,
       );
       logger.warn(
-        'Please launch an emulator manually or connect a device. Otherwise app launch may fail.',
+        'Please launch an emulator manually or connect a device. Otherwise app may fail to launch.',
       );
     }
   }

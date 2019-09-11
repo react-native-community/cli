@@ -20,7 +20,7 @@ import {logger} from '@react-native-community/cli-tools';
 
 interface RequestOptions {
   entryFile: string;
-  sourceMapUrl: string;
+  sourceMapUrl: string | undefined;
   dev: boolean;
   minify: boolean;
   platform: string | undefined;
@@ -59,7 +59,7 @@ async function buildBundle(
 
     logger.info(
       `Available platforms are: ${config.resolver.platforms
-        .map((x: string) => `"${chalk.bold(x)}"`)
+        .map(x => `"${chalk.bold(x)}"`)
         .join(
           ', ',
         )}. If you are trying to bundle for an out-of-tree platform, it may not be installed.`,
@@ -72,7 +72,7 @@ async function buildBundle(
   // have other choice than defining it as an env variable here.
   process.env.NODE_ENV = args.dev ? 'development' : 'production';
 
-  let sourceMapUrl: string = args.sourcemapOutput || '';
+  let sourceMapUrl = args.sourcemapOutput;
   if (sourceMapUrl && !args.sourcemapUseAbsolutePath) {
     sourceMapUrl = path.basename(sourceMapUrl);
   }

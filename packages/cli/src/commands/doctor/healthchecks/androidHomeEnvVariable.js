@@ -1,6 +1,7 @@
 // @flow
 import chalk from 'chalk';
 import Ora from 'ora';
+// $FlowFixMe - converted to TS
 import {logManualInstallation} from './common';
 import type {HealthCheckInterface} from '../types';
 

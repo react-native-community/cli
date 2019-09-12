@@ -2,6 +2,7 @@
 import nodeJS from './nodeJS';
 import {yarn, npm} from './packageManagers';
 import watchman from './watchman';
+// $FlowFixMe - converted to TS
 import androidHomeEnvVariable from './androidHomeEnvVariable';
 import androidSDK from './androidSDK';
 import androidNDK from './androidNDK';

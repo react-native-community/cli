@@ -11,7 +11,6 @@ import minimist from 'minimist';
 import path from 'path';
 import process from 'process';
 import printRunInstructions from './printRunInstructions';
-// @ts-ignore FIXME after converting generator/templates to typescript
 import {createProjectFromTemplate} from '../../tools/generator/templates';
 import * as PackageManager from '../../tools/packageManager';
 import {logger} from '@react-native-community/cli-tools';
@@ -57,12 +56,11 @@ async function generateProject(
   const pkgJson = require('react-native/package.json');
   const reactVersion = pkgJson.peerDependencies.react;
 
-  await PackageManager.setProjectDir(destinationRoot);
+  PackageManager.setProjectDir(destinationRoot);
   await createProjectFromTemplate(
     destinationRoot,
     newProjectName,
     options.template,
-    destinationRoot,
   );
 
   logger.info('Adding required dependencies');

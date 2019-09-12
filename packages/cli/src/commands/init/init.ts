@@ -10,8 +10,7 @@ import mkdirp from 'mkdirp';
 import {validateProjectName} from './validate';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
 import printRunInstructions from './printRunInstructions';
-import {logger} from '@react-native-community/cli-tools';
-import {CLIError} from '@react-native-community/cli-tools';
+import {CLIError, logger} from '@react-native-community/cli-tools';
 import {Config} from '@react-native-community/cli-types';
 import {
   installTemplatePackage,

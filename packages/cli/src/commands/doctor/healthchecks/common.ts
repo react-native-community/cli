@@ -1,9 +1,8 @@
-// @flow
 import {logger} from '@react-native-community/cli-tools';
 import chalk from 'chalk';
 
 // Space is necessary to keep correct ordering on screen
-const logMessage = message => logger.log(`   ${message}`);
+const logMessage = (message: string) => logger.log(`   ${message}`);
 
 const logManualInstallation = ({
   healthcheck = '',
@@ -11,10 +10,10 @@ const logManualInstallation = ({
   command,
   message,
 }: {
-  healthcheck?: string,
-  url?: string,
-  command?: string,
-  message?: string,
+  healthcheck?: string;
+  url?: string;
+  command?: string;
+  message?: string;
 }) => {
   if (message) {
     return logMessage(message);

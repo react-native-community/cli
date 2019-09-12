@@ -1,8 +1,10 @@
 // @flow
 import execa from 'execa';
 import Ora from 'ora';
+// $FlowFixMe - converted to TS
 import {checkSoftwareInstalled, PACKAGE_MANAGERS} from '../checkInstallation';
 import {packageManager} from './packageManagers';
+// $FlowFixMe - converted to TS
 import {logManualInstallation} from './common';
 import type {HealthCheckInterface} from '../types';
 

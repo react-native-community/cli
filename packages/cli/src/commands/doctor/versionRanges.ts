@@ -1,4 +1,3 @@
-// @flow
 export default {
   // Common
   NODE_JS: '>= 8.3',

@@ -1,4 +1,5 @@
 // @flow
+// $FlowFixMe - converted to TS
 import {checkSoftwareInstalled} from '../checkInstallation';
 // $FlowFixMe - converted to TS
 import {installCocoaPods} from '../../../tools/installPods';

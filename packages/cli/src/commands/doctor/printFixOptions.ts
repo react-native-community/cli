@@ -1,4 +1,3 @@
-// @flow
 import chalk from 'chalk';
 import {logger} from '@react-native-community/cli-tools';
 
@@ -9,7 +8,7 @@ const KEYS = {
   EXIT: '\r',
 };
 
-const printOption = option => logger.log(` \u203A ${option}`);
+const printOption = (option: string) => logger.log(` \u203A ${option}`);
 const printOptions = () => {
   logger.log();
   logger.log(chalk.bold('Usage'));
@@ -30,11 +29,12 @@ const printOptions = () => {
 };
 
 export {KEYS};
-export default ({onKeyPress}: {onKeyPress: any}) => {
+export default ({onKeyPress}: {onKeyPress: (...args: any[]) => void}) => {
   printOptions();
 
-  // $FlowFixMe
-  process.stdin.setRawMode(true);
+  if (process.stdin.setRawMode) {
+    process.stdin.setRawMode(true);
+  }
   process.stdin.resume();
   process.stdin.setEncoding('utf8');
   process.stdin.on('data', onKeyPress);

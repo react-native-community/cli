@@ -1,4 +1,3 @@
-// @flow
 import semver from 'semver';
 import commandExists from 'command-exists';
 
@@ -21,11 +20,16 @@ const doesSoftwareNeedToBeFixed = ({
   version,
   versionRange,
 }: {
-  version: string,
-  versionRange: string,
-}) =>
-  (version === 'Not Found' ||
-    !semver.satisfies(semver.coerce(version), versionRange)) &&
-  `version ${versionRange} is required`;
+  version: string;
+  versionRange: string;
+}) => {
+  const coercedVersion = semver.coerce(version);
+  return (
+    (version === 'Not Found' ||
+      coercedVersion === null ||
+      !semver.satisfies(coercedVersion, versionRange)) &&
+    `version ${versionRange} is required`
+  );
+};
 
 export {PACKAGE_MANAGERS, checkSoftwareInstalled, doesSoftwareNeedToBeFixed};

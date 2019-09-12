@@ -1,8 +1,11 @@
 // @flow
 import chalk from 'chalk';
 import Ora from 'ora';
+// $FlowFixMe - converted to TS
 import {logManualInstallation} from './common';
+// $FlowFixMe - converted to TS
 import versionRanges from '../versionRanges';
+// $FlowFixMe - converted to TS
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
 import execa from 'execa';
 import type {EnvironmentInfo, HealthCheckInterface} from '../types';

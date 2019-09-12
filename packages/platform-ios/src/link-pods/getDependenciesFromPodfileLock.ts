@@ -1,4 +1,5 @@
 import fs from 'fs';
+import chalk from 'chalk';
 import {logger} from '@react-native-community/cli-tools';
 import {safeLoad} from 'js-yaml';
 
@@ -11,7 +12,9 @@ export default function getDependenciesFromPodfileLock(
     fileContent = fs.readFileSync(podfileLockPath, 'utf8');
   } catch (err) {
     logger.error(
-      `Could not find ${podfileLockPath}. Did you run \`pod install\` in iOS directory?`,
+      `Could not find "Podfile.lock" at ${chalk.dim(
+        podfileLockPath,
+      )}. Did you run "${chalk.bold('pod install')}" in iOS directory?`,
     );
     return [];
   }

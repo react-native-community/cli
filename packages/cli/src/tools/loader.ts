@@ -42,7 +42,8 @@ class OraNoop implements ora.Ora {
 }
 
 export function getLoader() {
-  return logger.isVerbose() ? OraNoop : ora;
+  // FIXME refactor getLoader to not rely on class instantiation to avoid type conflict or implement an default Ora Loader Class definition
+  return logger.isVerbose() ? OraNoop : (ora as any);
 }
 
 export const NoopLoader = OraNoop;

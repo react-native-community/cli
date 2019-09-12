@@ -1,11 +1,9 @@
-// @flow
 import os from 'os';
 import path from 'path';
 import fs from 'fs-extra';
 import snapshotDiff from 'snapshot-diff';
 import slash from 'slash';
 import walk from '../../../tools/walk';
-// $FlowFixMe - converted to TS
 import copyFiles from '../../../tools/copyFiles';
 import {changePlaceholderInTemplate} from '../editTemplate';
 

@@ -1,4 +1,3 @@
-// @flow
 export default class ReservedNameError extends Error {
   constructor() {
     super(

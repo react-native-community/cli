@@ -1,8 +1,6 @@
-// @flow
 jest.mock('execa', () => jest.fn());
 import execa from 'execa';
 import path from 'path';
-// $FlowFixMe - converted to TS
 import * as PackageManger from '../../../tools/packageManager';
 import {
   installTemplatePackage,
@@ -10,7 +8,6 @@ import {
   copyTemplate,
   executePostInitScript,
 } from '../template';
-// $FlowFixMe - converted to TS
 import * as copyFiles from '../../../tools/copyFiles';
 
 const TEMPLATE_NAME = 'templateName';
@@ -22,7 +19,7 @@ afterEach(() => {
 });
 
 test('installTemplatePackage', async () => {
-  jest.spyOn(PackageManger, 'install').mockImplementationOnce(() => {});
+  jest.spyOn(PackageManger, 'install').mockImplementationOnce(() => null);
 
   await installTemplatePackage(TEMPLATE_NAME, TEMPLATE_SOURCE_DIR, true);
 
@@ -63,7 +60,7 @@ test('copyTemplate', async () => {
   const CWD = '.';
 
   jest.spyOn(path, 'resolve').mockImplementationOnce((...e) => e.join('/'));
-  jest.spyOn(copyFiles, 'default').mockImplementationOnce(() => {});
+  jest.spyOn(copyFiles, 'default').mockImplementationOnce(() => null);
   jest.spyOn(process, 'cwd').mockImplementationOnce(() => CWD);
 
   await copyTemplate(TEMPLATE_NAME, TEMPLATE_DIR, TEMPLATE_SOURCE_DIR);

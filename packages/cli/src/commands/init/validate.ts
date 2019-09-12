@@ -1,4 +1,3 @@
-// @flow
 import InvalidNameError from './errors/InvalidNameError';
 import ReservedNameError from './errors/ReservedNameError';
 import HelloWorldError from './errors/HelloWorldError';

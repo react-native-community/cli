@@ -1,8 +1,15 @@
-// @flow
 import fs from 'fs';
 import path from 'path';
-import walk from '../../tools/walk';
 import {logger} from '@react-native-community/cli-tools';
+// @ts-ignore FIXME after converting walk to typescript
+import walk from '../../tools/walk';
+
+interface PlaceholderConfig {
+  projectName: string;
+  placeholderName: string;
+  placeholderTitle?: string;
+  projectTitle?: string;
+}
 
 /**
   TODO: This is a default placeholder for title in react-native template.
@@ -73,12 +80,7 @@ export function changePlaceholderInTemplate({
   placeholderName,
   placeholderTitle = DEFAULT_TITLE_PLACEHOLDER,
   projectTitle = projectName,
-}: {
-  projectName: string,
-  placeholderName: string,
-  placeholderTitle?: string,
-  projectTitle?: string,
-}) {
+}: PlaceholderConfig) {
   logger.debug(`Changing ${placeholderName} for ${projectName} in template`);
 
   walk(process.cwd())

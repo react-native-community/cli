@@ -1,17 +1,17 @@
-// @flow
 import os from 'os';
 import path from 'path';
 import fs from 'fs-extra';
-import Ora from 'ora';
 import minimist from 'minimist';
+import ora from 'ora';
 import semver from 'semver';
+// @ts-ignore untyped
 import inquirer from 'inquirer';
 import mkdirp from 'mkdirp';
-import type {ConfigT} from 'types';
 import {validateProjectName} from './validate';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
 import printRunInstructions from './printRunInstructions';
-import {logger} from '@react-native-community/cli-tools';
+import {CLIError, logger} from '@react-native-community/cli-tools';
+import {Config} from '@react-native-community/cli-types';
 import {
   installTemplatePackage,
   getTemplateConfig,
@@ -19,35 +19,45 @@ import {
   executePostInitScript,
 } from './template';
 import {changePlaceholderInTemplate} from './editTemplate';
-// $FlowFixMe - converted to TS
 import * as PackageManager from '../../tools/packageManager';
-// $FlowFixMe - converted to TS
 import installPods from '../../tools/installPods';
 import {processTemplateName} from './templateName';
 import banner from './banner';
-// $FlowFixMe - converted to TS
 import {getLoader} from '../../tools/loader';
-import {CLIError} from '@react-native-community/cli-tools';
 
 const DEFAULT_VERSION = 'latest';
 
-type Options = {|
-  template?: string,
-  npm?: boolean,
-  directory?: string,
-  displayName?: string,
-  title?: string,
-|};
+type Options = {
+  template?: string;
+  npm?: boolean;
+  directory?: string;
+  displayName?: string;
+  title?: string;
+};
+
+interface TemplateOptions {
+  projectName: string;
+  templateName: string;
+  npm?: boolean;
+  directory: string;
+  projectTitle?: string;
+}
 
 function doesDirectoryExist(dir: string) {
   return fs.existsSync(dir);
 }
 
-function getProjectDirectory({projectName, directory}): string {
+function getProjectDirectory({
+  projectName,
+  directory,
+}: {
+  projectName: string;
+  directory: string;
+}): string {
   return path.relative(process.cwd(), directory || projectName);
 }
 
-async function setProjectDirectory(directory) {
+async function setProjectDirectory(directory: string) {
   const directoryExists = doesDirectoryExist(directory);
   if (directoryExists) {
     const {shouldReplaceprojectDirectory} = await inquirer.prompt([
@@ -79,7 +89,7 @@ async function setProjectDirectory(directory) {
   }
 }
 
-function adjustNameIfUrl(name, cwd) {
+function adjustNameIfUrl(name: string, cwd: string) {
   // We use package manager to infer the name of the template module for us.
   // That's why we get it from temporary package.json, where the name is the
   // first and only dependency (hence 0).
@@ -98,13 +108,7 @@ async function createFromTemplate({
   npm,
   directory,
   projectTitle,
-}: {
-  projectName: string,
-  templateName: string,
-  npm?: boolean,
-  directory: string,
-  projectTitle?: string,
-}) {
+}: TemplateOptions) {
   logger.debug('Initializing new project');
   logger.log(banner);
 
@@ -136,7 +140,7 @@ async function createFromTemplate({
       projectName,
       projectTitle,
       placeholderName: templateConfig.placeholderName,
-      titlePlaceholder: templateConfig.titlePlaceholder,
+      placeholderTitle: templateConfig.titlePlaceholder,
     });
 
     loader.succeed();
@@ -162,9 +166,9 @@ async function installDependencies({
   npm,
   loader,
 }: {
-  projectName: string,
-  npm?: boolean,
-  loader: typeof Ora,
+  projectName: string;
+  npm?: boolean;
+  loader: ora.Ora;
 }) {
   loader.start('Installing dependencies');
 
@@ -209,7 +213,7 @@ async function createProject(
 
 export default (async function initialize(
   [projectName]: Array<string>,
-  context: ConfigT,
+  context: Config,
   options: Options,
 ) {
   const rootFolder = context.root;

@@ -1,4 +1,3 @@
-// @flow
 import {processTemplateName} from '../templateName';
 
 const RN_NPM_PACKAGE = 'react-native';

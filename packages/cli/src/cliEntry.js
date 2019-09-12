@@ -15,6 +15,7 @@ import path from 'path';
 import type {CommandT, ConfigT} from 'types';
 // $FlowFixMe - converted to TS
 import commands from './commands';
+// $FlowFixMe - converted to TS
 import init from './commands/init/initCompat';
 // $FlowFixMe - converted to TS
 import assertRequiredOptions from './tools/assertRequiredOptions';

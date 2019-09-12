@@ -1,4 +1,3 @@
-// @flow
 import {validateProjectName} from '../validate';
 import InvalidNameError from '../errors/InvalidNameError';
 import ReservedNameError from '../errors/ReservedNameError';
@@ -28,6 +27,8 @@ test.each([
     name: 'helloworld_test',
     error: HelloWorldError,
   },
-])("'%s' is invalid name", ({name, error}: {name: string, error: Error}) => {
+  // @ts-ignore-next-line FIXME extending the Error class causes weird TS validation errors
+  // https://stackoverflow.com/questions/41102060/typescript-extending-error-class
+])("'%s' is invalid name", ({name, error}: {name: string; error: Error}) => {
   expect(() => validateProjectName(name)).toThrowError(error);
 });

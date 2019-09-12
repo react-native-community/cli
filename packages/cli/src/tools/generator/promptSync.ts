@@ -12,19 +12,30 @@
 
 import fs from 'fs';
 
+type Options = {
+  echo?: string;
+  ask?: string;
+  value?: string;
+  autocomplete?: string[] | Function;
+};
+
 const term = 13; // carriage return
 
 function create() {
   return prompt;
 
-  function prompt(ask, value, opts) {
+  function prompt(
+    ask?: string | Options,
+    value?: string | Options,
+    opts?: Options,
+  ) {
     let insert = 0;
     opts = opts || {};
 
-    if (Object(ask) === ask) {
+    if (typeof ask === 'object') {
       opts = ask;
       ask = opts.ask;
-    } else if (Object(value) === value) {
+    } else if (typeof value === 'object') {
       opts = value;
       value = opts.value;
     }
@@ -32,13 +43,16 @@ function create() {
     const echo = opts.echo;
     const masked = 'echo' in opts;
 
+    /*eslint-disable prettier/prettier*/
     const fd =
       process.platform === 'win32'
+        // @ts-ignore
         ? process.stdin.fd
         : fs.openSync('/dev/tty', 'rs');
+    /*eslint-enable prettier/prettier*/
 
     const wasRaw = process.stdin.isRaw;
-    if (!wasRaw) {
+    if (!wasRaw && process.stdin.setRawMode) {
       process.stdin.setRawMode(true);
     }
 
@@ -54,7 +68,7 @@ function create() {
     }
 
     while (true) {
-      read = fs.readSync(fd, buf, 0, 3);
+      read = fs.readSync(fd, buf, 0, 3, null);
       if (read > 1) {
         // received a control sequence
         if (buf.toString()) {
@@ -76,7 +90,9 @@ function create() {
         process.stdout.write('^C\n');
         fs.closeSync(fd);
         process.exit(130);
-        process.stdin.setRawMode(wasRaw);
+        if (process.stdin.setRawMode) {
+          process.stdin.setRawMode(!!wasRaw);
+        }
         return null;
       }
 
@@ -130,7 +146,9 @@ function create() {
 
     process.stdout.write('\n');
 
-    process.stdin.setRawMode(wasRaw);
+    if (process.stdin.setRawMode) {
+      process.stdin.setRawMode(!!wasRaw);
+    }
 
     return str || value || '';
   }

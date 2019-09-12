@@ -9,12 +9,21 @@
 
 import chalk from 'chalk';
 import path from 'path';
+// @ts-ignore FIXME: copyAndReplace should be ts
 import copyAndReplace from '../copyAndReplace';
 import promptInitializer from './promptSync';
+// @ts-ignore FIXME: walk should be ts
 import walk from '../walk';
 import {logger} from '@react-native-community/cli-tools';
 
 const prompt = promptInitializer();
+
+type Options = {
+  upgrade?: boolean;
+  force?: boolean;
+  displayName?: string;
+  ignorePaths?: string[];
+};
 
 /**
  * Util for creating a new React Native project.
@@ -31,10 +40,10 @@ const prompt = promptInitializer();
  *        }
  */
 function copyProjectTemplateAndReplace(
-  srcPath,
-  destPath,
-  newProjectName,
-  options = {},
+  srcPath: string,
+  destPath: string,
+  newProjectName: string,
+  options: Options = {},
 ) {
   if (!srcPath) {
     throw new Error('Need a path to copy from');
@@ -46,7 +55,7 @@ function copyProjectTemplateAndReplace(
     throw new Error('Need a project name');
   }
 
-  walk(srcPath).forEach(absoluteSrcFilePath => {
+  walk(srcPath).forEach((absoluteSrcFilePath: string) => {
     // 'react-native upgrade'
     if (options.upgrade) {
       // Don't upgrade these files
@@ -90,7 +99,7 @@ function copyProjectTemplateAndReplace(
 
     let contentChangedCallback = null;
     if (options.upgrade && !options.force) {
-      contentChangedCallback = (_, contentChanged) =>
+      contentChangedCallback = (_destPath: string, contentChanged: string) =>
         upgradeFileContentChangedCallback(
           absoluteSrcFilePath,
           relativeFilePath,
@@ -118,7 +127,7 @@ function copyProjectTemplateAndReplace(
  * This is especially important for .gitignore because npm has some special
  * behavior of automatically renaming .gitignore to .npmignore.
  */
-function translateFilePath(filePath) {
+function translateFilePath(filePath: string) {
   if (!filePath) {
     return filePath;
   }
@@ -135,9 +144,9 @@ function translateFilePath(filePath) {
 }
 
 function upgradeFileContentChangedCallback(
-  absoluteSrcFilePath,
-  relativeDestPath,
-  contentChanged,
+  absoluteSrcFilePath: string,
+  relativeDestPath: string,
+  contentChanged: string,
 ) {
   if (contentChanged === 'new') {
     logger.info(`${chalk.bold('new')} ${relativeDestPath}`);

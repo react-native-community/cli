@@ -5,6 +5,7 @@ import watchman from './watchman';
 // $FlowFixMe - converted to TS
 import androidHomeEnvVariable from './androidHomeEnvVariable';
 import androidSDK from './androidSDK';
+// $FlowFixMe - converted to TS
 import androidNDK from './androidNDK';
 import xcode from './xcode';
 import cocoaPods from './cocoaPods';

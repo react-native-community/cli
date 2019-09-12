@@ -104,7 +104,7 @@ export interface Dependency {
  * @property commands - An array of commands that are present in 3rd party packages
  * @property haste - Haste configuration resolved based on available plugins
  */
-export interface Config {
+export type Config = {
   root: string;
   reactNativePath: string;
   project: {
@@ -134,15 +134,17 @@ export interface Config {
     platforms: Array<string>;
     providesModuleNodeModules: Array<string>;
   };
-}
-
-type Diff<T, U> = T extends U ? never : T;
+};
 
 /**
  * Shares some structure with ConfigT, except that haste and root
  * are calculated and can't be defined
  */
-export type UserConfig = Diff<Config, {root: any; haste: any}> & {
+// For Omit<T, K>, see https://devblogs.microsoft.com/typescript/announcing-typescript-3-5/#the-omit-helper-type
+// export interface UserConfig
+//   extends Omit<Omit<Omit<Config, 'reactNativePath'>, 'haste'>, 'root'> {}
+
+export type UserConfig = Omit<Config, 'root' | 'haste'> & {
   reactNativePath: string | void;
 
   // Additional project settings
@@ -152,6 +154,11 @@ export type UserConfig = Diff<Config, {root: any; haste: any}> & {
     [key: string]: any;
   };
 };
+
+export type UserDependencyConfig = Omit<
+  Config,
+  'root' | 'reactNativePath' | 'project' | 'assets'
+>;
 
 export {
   IOSProjectConfig,

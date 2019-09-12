@@ -1,6 +1,3 @@
-/**
- * @flow
- */
 import path from 'path';
 import chalk from 'chalk';
 import {logger, inlineString} from '@react-native-community/cli-tools';
@@ -13,26 +10,23 @@ import {
   readConfigFromDisk,
   readDependencyConfigFromDisk,
 } from './readConfigFromDisk';
-import type {
-  ConfigT,
-  UserDependencyConfigT,
-  UserConfigT,
-  DependencyConfigT,
-} from 'types';
-// $FlowFixMe - converted to TS
 import assign from '../assign';
-// $FlowFixMe - converted to TS
 import merge from '../merge';
 import resolveNodeModuleDir from './resolveNodeModuleDir';
+import {
+  UserConfig,
+  Config
+} from '../../../../cli-types';
+import {UserDependencyConfig} from '@react-native-community/cli-types/src';
 
 function getDependencyConfig(
   root: string,
   dependencyName: string,
-  finalConfig: ConfigT,
-  config: UserDependencyConfigT,
-  userConfig: UserConfigT,
+  finalConfig: Config,
+  config: UserDependencyConfig,
+  userConfig: UserConfig,
   isPlatform: boolean,
-): DependencyConfigT {
+): UserDependencyConfig | void{
   return merge(
     {
       root,
@@ -65,11 +59,11 @@ function getDependencyConfig(
 /**
  * Loads CLI configuration
  */
-function loadConfig(projectRoot: string = process.cwd()): ConfigT {
+function loadConfig(projectRoot: string = process.cwd()): Config | void{
   let lazyProject;
   const userConfig = readConfigFromDisk(projectRoot);
 
-  const initialConfig: ConfigT = {
+  const initialConfig: Config = {
     root: projectRoot,
     get reactNativePath() {
       return userConfig.reactNativePath
@@ -110,7 +104,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
       ...Object.keys(userConfig.dependencies),
       ...findDependencies(projectRoot),
     ]),
-  ).reduce((acc: ConfigT, dependencyName) => {
+  ).reduce((acc: Config, dependencyName) => {
     const localDependencyRoot =
       userConfig.dependencies[dependencyName] &&
       userConfig.dependencies[dependencyName].root;
@@ -193,7 +187,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
         ],
         platforms: [...acc.haste.platforms, ...haste.platforms],
       },
-    }): ConfigT);
+    }): Config);
   }, initialConfig);
 
   if (depsWithWarnings.length) {

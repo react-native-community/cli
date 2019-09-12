@@ -1,15 +1,11 @@
-// @flow
 import chalk from 'chalk';
-import Ora from 'ora';
-// $FlowFixMe - converted to TS
+import {Ora} from 'ora';
 import {logManualInstallation} from './common';
-// $FlowFixMe - converted to TS
 import versionRanges from '../versionRanges';
-// $FlowFixMe - converted to TS
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
-import type {EnvironmentInfo, HealthCheckInterface} from '../types';
+import {EnvironmentInfo, HealthCheckInterface} from '../types';
 
-export default ({
+export default {
   label: 'Android NDK',
   getDiagnostics: async ({SDKs}: EnvironmentInfo) => ({
     needsToBeFixed: doesSoftwareNeedToBeFixed({
@@ -21,8 +17,8 @@ export default ({
     loader,
     environmentInfo,
   }: {
-    loader: typeof Ora,
-    environmentInfo: EnvironmentInfo,
+    loader: Ora;
+    environmentInfo: EnvironmentInfo;
   }) => {
     const version = environmentInfo.SDKs['Android SDK']['Android NDK'];
     const isNDKInstalled = version !== 'Not Found';
@@ -42,4 +38,4 @@ export default ({
       url: 'https://developer.android.com/ndk/downloads',
     });
   },
-}: HealthCheckInterface);
+} as HealthCheckInterface;

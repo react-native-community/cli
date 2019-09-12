@@ -1,4 +1,4 @@
-import Ora from 'ora';
+import {Ora} from 'ora';
 
 export type EnvironmentInfo = {
   System: {
@@ -72,7 +72,7 @@ export type HealthCheckInterface = {
     environmentInfo: EnvironmentInfo,
   ) => Promise<{version?: string; needsToBeFixed: boolean | string}>;
   runAutomaticFix: (args: {
-    loader: typeof Ora;
+    loader: Ora;
     environmentInfo: EnvironmentInfo;
   }) => Promise<void> | void;
 };

@@ -1,9 +1,7 @@
-// @flow
 import chalk from 'chalk';
-import Ora from 'ora';
-// $FlowFixMe - converted to TS
+import {Ora} from 'ora';
 import {logManualInstallation} from './common';
-import type {HealthCheckInterface} from '../types';
+import {HealthCheckInterface} from '../types';
 
 // List of answers on how to set `ANDROID_HOME` for each platform
 const URLS = {
@@ -14,20 +12,24 @@ const URLS = {
 
 const label = 'ANDROID_HOME';
 
+// Force the options for the platform to avoid providing a link
+// for `ANDROID_HOME` for every platform NodeJS supports
+const platform = process.platform as 'darwin' | 'win32' | 'linux';
+
 const message = `Read more about how to set the ${label} at ${chalk.dim(
-  URLS[process.platform],
+  URLS[platform],
 )}.`;
 
-export default ({
+export default {
   label,
   getDiagnostics: async () => ({
     needsToBeFixed: !process.env.ANDROID_HOME && message,
   }),
-  runAutomaticFix: async ({loader}: {loader: typeof Ora}) => {
+  runAutomaticFix: async ({loader}: {loader: Ora}) => {
     loader.info();
 
     logManualInstallation({
       message,
     });
   },
-}: HealthCheckInterface);
+} as HealthCheckInterface;

@@ -6,10 +6,12 @@
   "dependencies": {
     "@react-native-community/cli-tools": "^2.8.3",
     "chalk": "^2.4.2",
+    "js-yaml": "^3.13.1",
     "xcode": "^2.0.0"
   },
   "devDependencies": {
     "@react-native-community/cli-types": "^3.0.0-alpha.2",
+    "@types/js-yaml": "^3.12.1",
     "@types/plist": "^3.0.2"
   },
   "files": [

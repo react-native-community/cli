@@ -2,6 +2,7 @@
 import chalk from 'chalk';
 import ora from 'ora';
 import {logger} from '@react-native-community/cli-tools';
+// $FlowFixMe - converted to TS
 import {HEALTHCHECK_TYPES} from './healthchecks';
 import type {EnvironmentInfo} from './types';
 

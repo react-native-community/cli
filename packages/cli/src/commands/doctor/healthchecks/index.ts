@@ -1,19 +1,11 @@
-// @flow
 import nodeJS from './nodeJS';
-// $FlowFixMe - converted to TS
 import {yarn, npm} from './packageManagers';
-// $FlowFixMe - converted to TS
 import watchman from './watchman';
-// $FlowFixMe - converted to TS
 import androidHomeEnvVariable from './androidHomeEnvVariable';
 import androidSDK from './androidSDK';
-// $FlowFixMe - converted to TS
 import androidNDK from './androidNDK';
-// $FlowFixMe - converted to TS
 import xcode from './xcode';
-// $FlowFixMe - converted to TS
 import cocoaPods from './cocoaPods';
-// $FlowFixMe - converted to TS
 import iosDeploy from './iosDeploy';
 
 export const HEALTHCHECK_TYPES = {
@@ -22,8 +14,8 @@ export const HEALTHCHECK_TYPES = {
 };
 
 type Options = {
-  fix: boolean | void,
-  contributor: boolean | void,
+  fix: boolean | void;
+  contributor: boolean | void;
 };
 
 export const getHealthchecks = ({contributor}: Options) => ({

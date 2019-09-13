@@ -1,22 +1,17 @@
-// @flow
 import chalk from 'chalk';
-import Ora from 'ora';
-// $FlowFixMe - converted to TS
 import {logManualInstallation} from './common';
-// $FlowFixMe - converted to TS
 import versionRanges from '../versionRanges';
-// $FlowFixMe - converted to TS
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
 import execa from 'execa';
-import type {EnvironmentInfo, HealthCheckInterface} from '../types';
+import {HealthCheckInterface} from '../types';
 
 const installMessage = `Read more about how to update Android SDK at ${chalk.dim(
   'https://developer.android.com/studio',
 )}`;
 
-export default ({
+export default {
   label: 'Android SDK',
-  getDiagnostics: async ({SDKs}: EnvironmentInfo) => {
+  getDiagnostics: async ({SDKs}) => {
     let sdks = SDKs['Android SDK'];
 
     // This is a workaround for envinfo's Android SDK check not working on
@@ -58,13 +53,7 @@ export default ({
           })),
     };
   },
-  runAutomaticFix: async ({
-    loader,
-    environmentInfo,
-  }: {
-    loader: typeof Ora,
-    environmentInfo: EnvironmentInfo,
-  }) => {
+  runAutomaticFix: async ({loader, environmentInfo}) => {
     const version = environmentInfo.SDKs['Android SDK'][0];
     const isSDKInstalled = version !== 'Not Found';
 
@@ -81,4 +70,4 @@ export default ({
       url: 'https://facebook.github.io/react-native/docs/getting-started',
     });
   },
-}: HealthCheckInterface);
+} as HealthCheckInterface;

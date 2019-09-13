@@ -2,6 +2,7 @@
 import chalk from 'chalk';
 import envinfo from 'envinfo';
 import {logger} from '@react-native-community/cli-tools';
+// $FlowFixMe - converted to TS
 import {getHealthchecks, HEALTHCHECK_TYPES} from './healthchecks';
 // $FlowFixMe - converted to TS
 import {getLoader} from '../../tools/loader';

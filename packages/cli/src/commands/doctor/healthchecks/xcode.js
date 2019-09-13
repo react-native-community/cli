@@ -1,7 +1,10 @@
 // @flow
 import Ora from 'ora';
+// $FlowFixMe - converted to TS
 import versionRanges from '../versionRanges';
+// $FlowFixMe - converted to TS
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
+// $FlowFixMe - converted to TS
 import {logManualInstallation} from './common';
 import type {EnvironmentInfo, HealthCheckInterface} from '../types';
 

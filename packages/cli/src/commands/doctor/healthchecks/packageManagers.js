@@ -1,10 +1,12 @@
 // @flow
 import fs from 'fs';
 import Ora from 'ora';
+// $FlowFixMe - converted to TS
 import versionRanges from '../versionRanges';
 import {
   PACKAGE_MANAGERS,
   doesSoftwareNeedToBeFixed,
+  // $FlowFixMe - converted to TS
 } from '../checkInstallation';
 // $FlowFixMe - converted to TS
 import {install} from '../../../tools/install';

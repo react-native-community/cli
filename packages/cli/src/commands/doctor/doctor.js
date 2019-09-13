@@ -5,6 +5,7 @@ import {logger} from '@react-native-community/cli-tools';
 import {getHealthchecks, HEALTHCHECK_TYPES} from './healthchecks';
 // $FlowFixMe - converted to TS
 import {getLoader} from '../../tools/loader';
+// $FlowFixMe - converted to TS
 import printFixOptions, {KEYS} from './printFixOptions';
 import runAutomaticFix, {AUTOMATIC_FIX_LEVELS} from './runAutomaticFix';
 import type {ConfigT} from 'types';

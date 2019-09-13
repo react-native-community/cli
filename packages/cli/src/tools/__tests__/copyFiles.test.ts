@@ -3,7 +3,6 @@ import fs from 'fs';
 import path from 'path';
 import copyFiles from '../copyFiles';
 import {cleanup, getTempDirectory} from '../../../../../jest/helpers';
-// $FlowFixMe - converted to TS
 import replacePathSepForRegex from '../replacePathSepForRegex';
 
 const DIR = getTempDirectory('copyFiles-test');

@@ -68,7 +68,7 @@ async function promptCocoaPodsInstallationQuestion() {
     installWithGem: shouldInstallWithGem,
     installWithHomebrew: !shouldInstallWithGem,
     // This is used for removing the message in `doctor` after it's answered
-    promptQuestion: `? ${promptQuestion} ${
+    promptQuestion: `? ${stripAnsi(promptQuestion)} ${
       shouldInstallWithGem ? installWithGem : installWithHomebrew
     }`,
   };
@@ -133,7 +133,7 @@ async function installPods({
 }: {
   projectName: string;
   loader?: ora.Ora;
-  shouldUpdatePods: boolean;
+  shouldUpdatePods?: boolean;
 }) {
   loader = loader || new NoopLoader();
   try {

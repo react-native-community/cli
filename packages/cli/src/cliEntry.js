@@ -15,6 +15,7 @@ import path from 'path';
 import type {CommandT, ConfigT} from 'types';
 // $FlowFixMe - converted to TS
 import commands from './commands';
+// $FlowFixMe - converted to TS
 import init from './commands/init/initCompat';
 // $FlowFixMe - converted to TS
 import assertRequiredOptions from './tools/assertRequiredOptions';
@@ -189,7 +190,7 @@ async function setupAndRun() {
   // We handle --version as a special case like this because both `commander`
   // and `yargs` append it to every command and we don't want to do that.
   // E.g. outside command `init` has --version flag and we want to preserve it.
-  if (commander.args.length === 0 && commander.version === true) {
+  if (commander.args.length === 0 && commander.rawArgs.includes('--version')) {
     console.log(pkgJson.version);
   }
 

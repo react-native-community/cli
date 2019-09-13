@@ -1,6 +1,8 @@
 // @flow
 import execa from 'execa';
 import chalk from 'chalk';
+import ansiEscapes from 'ansi-escapes';
+import wcwidth from 'wcwidth';
 import {logger} from '@react-native-community/cli-tools';
 import {checkSoftwareInstalled} from '../checkInstallation';
 // $FlowFixMe - converted to TS
@@ -11,11 +13,12 @@ import {
 import {brewInstall} from '../../../tools/brewInstall';
 import {type HealthCheckInterface} from '../types';
 
-function clearQuestion() {
-  // Remove the fix options from screen
-  // $FlowFixMe
-  process.stdout.moveCursor(0, -2);
-  // $FlowFixMe
+function calculateQuestionSize(message) {
+  return Math.max(1, Math.ceil(wcwidth(message) / process.stdout.columns));
+}
+
+function clearQuestion(promptQuestion: string) {
+  process.stdout.moveCursor(0, -calculateQuestionSize(promptQuestion));
   process.stdout.clearScreenDown();
 }
 
@@ -30,6 +33,7 @@ export default ({
     const {
       installWithGem,
       installWithHomebrew,
+      promptQuestion,
     } = await promptCocoaPodsInstallationQuestion();
 
     const installationMethod = installWithGem ? 'gem' : 'Homebrew';
@@ -37,7 +41,7 @@ export default ({
     const loaderSucceedMessage = `CocoaPods (installed with ${installationMethod})`;
 
     // Remove the prompt after the question of how to install CocoaPods is answered
-    clearQuestion();
+    clearQuestion(promptQuestion);
 
     if (installWithGem) {
       loader.start(loaderInstallationMessage);

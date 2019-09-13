@@ -4,6 +4,7 @@ import chalk from 'chalk';
 import ora from 'ora';
 // @ts-ignore untyped
 import inquirer from 'inquirer';
+import stripAnsi from 'strip-ansi';
 import {logger} from '@react-native-community/cli-tools';
 import {NoopLoader} from './loader';
 // @ts-ignore untyped
@@ -44,6 +45,11 @@ function runSudo(command: string): Promise<void> {
 }
 
 async function promptCocoaPodsInstallationQuestion() {
+  const promptQuestion = `CocoaPods ${chalk.dim.underline(
+    '(https://cocoapods.org/)',
+  )} ${chalk.reset.bold(
+    'is not installed. CocoaPods is necessary for the iOS project to run correctly. Do you want to install it?',
+  )}`;
   const installWithGem = 'Yes, with gem (may require sudo)';
   const installWithHomebrew = 'Yes, with Homebrew';
 
@@ -51,18 +57,20 @@ async function promptCocoaPodsInstallationQuestion() {
     {
       type: 'list',
       name: 'shouldInstallCocoaPods',
-      message: `CocoaPods ${chalk.dim.underline(
-        '(https://cocoapods.org/)',
-      )} ${chalk.reset.bold(
-        'is not installed. CocoaPods is necessary for the iOS project to run correctly. Do you want to install it?',
-      )}`,
+      message: promptQuestion,
       choices: [installWithGem, installWithHomebrew],
     },
   ]);
 
+  const shouldInstallWithGem = shouldInstallCocoaPods === installWithGem;
+
   return {
-    installWithGem: shouldInstallCocoaPods === installWithGem,
-    installWithHomebrew: shouldInstallCocoaPods === installWithHomebrew,
+    installWithGem: shouldInstallWithGem,
+    installWithHomebrew: !shouldInstallWithGem,
+    // This is used for removing the message in `doctor` after it's answered
+    promptQuestion: `? ${promptQuestion} ${
+      shouldInstallWithGem ? installWithGem : installWithHomebrew
+    }`,
   };
 }
 

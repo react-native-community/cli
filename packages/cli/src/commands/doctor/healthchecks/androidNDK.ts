@@ -7,12 +7,16 @@ import {EnvironmentInfo, HealthCheckInterface} from '../types';
 
 export default {
   label: 'Android NDK',
-  getDiagnostics: async ({SDKs}: EnvironmentInfo) => ({
-    needsToBeFixed: doesSoftwareNeedToBeFixed({
-      version: SDKs['Android SDK']['Android NDK'],
-      versionRange: versionRanges.ANDROID_NDK,
-    }),
-  }),
+  getDiagnostics: async ({SDKs}: EnvironmentInfo) => {
+    const androidSdk = SDKs['Android SDK'];
+    return {
+      needsToBeFixed: doesSoftwareNeedToBeFixed({
+        version:
+          androidSdk === 'Not Found' ? 'Not Found' : androidSdk['Android NDK'],
+        versionRange: versionRanges.ANDROID_NDK,
+      }),
+    };
+  },
   runAutomaticFix: async ({
     loader,
     environmentInfo,
@@ -20,8 +24,9 @@ export default {
     loader: Ora;
     environmentInfo: EnvironmentInfo;
   }) => {
-    const version = environmentInfo.SDKs['Android SDK']['Android NDK'];
-    const isNDKInstalled = version !== 'Not Found';
+    const androidSdk = environmentInfo.SDKs['Android SDK'];
+    const isNDKInstalled =
+      androidSdk !== 'Not Found' && androidSdk['Android NDK'] !== 'Not Found';
 
     loader.fail();
 

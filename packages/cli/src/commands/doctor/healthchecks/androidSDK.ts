@@ -38,6 +38,9 @@ export default {
         if (matches.length > 0) {
           sdks = {
             'Build Tools': matches,
+            'API Levels': 'Not Found',
+            'Android NDK': 'Not Found',
+            'System Images': 'Not Found',
           };
         }
       } catch {}
@@ -54,7 +57,7 @@ export default {
     };
   },
   runAutomaticFix: async ({loader, environmentInfo}) => {
-    const version = environmentInfo.SDKs['Android SDK'][0];
+    const version = environmentInfo.SDKs['Android SDK'];
     const isSDKInstalled = version !== 'Not Found';
 
     loader.fail();

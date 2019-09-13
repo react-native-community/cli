@@ -14,8 +14,8 @@ import install from './install/install';
 import uninstall from './install/uninstall';
 import upgrade from './upgrade/upgrade';
 import info from './info/info';
+import config from './config/config';
 // @ts-ignore - JS file
-import config from './config/config'; // eslint-disable-line import/namespace, import/default
 import init from './init';
 // @ts-ignore - JS file
 import doctor from './doctor';

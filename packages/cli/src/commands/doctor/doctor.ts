@@ -1,18 +1,19 @@
-// @flow
 import chalk from 'chalk';
+// @ts-ignore
 import envinfo from 'envinfo';
 import {logger} from '@react-native-community/cli-tools';
-// $FlowFixMe - converted to TS
 import {getHealthchecks, HEALTHCHECK_TYPES} from './healthchecks';
-// $FlowFixMe - converted to TS
 import {getLoader} from '../../tools/loader';
-// $FlowFixMe - converted to TS
 import printFixOptions, {KEYS} from './printFixOptions';
 import runAutomaticFix, {AUTOMATIC_FIX_LEVELS} from './runAutomaticFix';
-import type {ConfigT} from 'types';
-import type {HealthCheckInterface} from './types';
+import {Config} from '@react-native-community/cli-types';
+import {
+  HealthcheckCategory,
+  HealthCheckCategoryResult,
+  HealthCheckResult,
+} from './types';
 
-const printCategory = ({label, key}) => {
+const printCategory = ({label, key}: {label: string; key: number}) => {
   if (key > 0) {
     logger.log();
   }
@@ -25,12 +26,7 @@ const printIssue = ({
   needsToBeFixed,
   isRequired,
   description,
-}: {
-  label: string,
-  needsToBeFixed: boolean,
-  isRequired: boolean,
-  description: string,
-}) => {
+}: HealthCheckResult) => {
   const symbol = needsToBeFixed
     ? isRequired
       ? chalk.red('✖')
@@ -40,19 +36,25 @@ const printIssue = ({
   logger.log(` ${symbol} ${label}${needsToBeFixed ? ': ' + description : ''}`);
 };
 
-const printOverallStats = ({errors, warnings}) => {
+const printOverallStats = ({
+  errors,
+  warnings,
+}: {
+  errors: number;
+  warnings: number;
+}) => {
   logger.log(`\n${chalk.bold('Errors:')}   ${errors}`);
   logger.log(`${chalk.bold('Warnings:')} ${warnings}`);
 };
 
 type FlagsT = {
-  fix: boolean | void,
-  contributor: boolean | void,
+  fix: boolean | void;
+  contributor: boolean | void;
 };
 
 export default (async function runDoctor(
-  argv: Array<string>,
-  ctx: ConfigT,
+  argv: string[],
+  ctx: Config,
   options: FlagsT,
 ) {
   const Loader = getLoader();
@@ -76,10 +78,7 @@ export default (async function runDoctor(
   const iterateOverHealthChecks = async ({
     label,
     healthchecks,
-  }: {
-    label: string,
-    healthchecks: Array<HealthCheckInterface>,
-  }) => ({
+  }: HealthcheckCategory): Promise<HealthCheckCategoryResult> => ({
     label,
     healthchecks: (await Promise.all(
       healthchecks.map(async healthcheck => {
@@ -108,23 +107,24 @@ export default (async function runDoctor(
             : undefined,
         };
       }),
-    )).filter(Boolean),
+    )).filter(healthcheck => healthcheck !== undefined) as HealthCheckResult[],
   });
 
   // Remove all the categories that don't have any healthcheck with `needsToBeFixed`
   // so they don't show when the user taps to fix encountered issues
-  const removeFixedCategories = categories =>
+  const removeFixedCategories = (categories: HealthCheckCategoryResult[]) =>
     categories.filter(category =>
-      category.healthchecks.some(healthcheck => healthcheck.needsToBeFixed),
+      category.healthchecks.some(
+        healthcheck => healthcheck && healthcheck.needsToBeFixed,
+      ),
     );
 
-  const iterateOverCategories = categories =>
-    // $FlowFixMe - bad Object.values typings
+  const iterateOverCategories = (categories: HealthcheckCategory[]) =>
     Promise.all(categories.map(iterateOverHealthChecks));
 
-  const healthchecksPerCategory = await iterateOverCategories(
-    Object.values(getHealthchecks(options)),
-  );
+  const healthchecksPerCategory = await iterateOverCategories(Object.values(
+    getHealthchecks(options),
+  ).filter(category => category !== undefined) as HealthcheckCategory[]);
 
   loader.stop();
 
@@ -136,15 +136,17 @@ export default (async function runDoctor(
   healthchecksPerCategory.forEach((issueCategory, key) => {
     printCategory({...issueCategory, key});
 
-    issueCategory.healthchecks.map(healthcheck => {
+    issueCategory.healthchecks.forEach(healthcheck => {
       printIssue(healthcheck);
 
       if (healthcheck.type === HEALTHCHECK_TYPES.WARNING) {
-        return stats.warnings++;
+        stats.warnings++;
+        return;
       }
 
       if (healthcheck.type === HEALTHCHECK_TYPES.ERROR) {
-        return stats.errors++;
+        stats.errors++;
+        return;
       }
     });
   });
@@ -161,13 +163,14 @@ export default (async function runDoctor(
     });
   }
 
-  const onKeyPress = async key => {
-    // $FlowFixMe
+  const onKeyPress = async (key: string) => {
+    // @ts-ignore
     process.stdin.setRawMode(false);
     process.stdin.removeAllListeners('data');
 
     if (key === KEYS.EXIT || key === '\u0003') {
-      return process.exit(0);
+      process.exit(0);
+      return;
     }
 
     if (

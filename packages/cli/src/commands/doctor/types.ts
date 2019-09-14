@@ -66,6 +66,22 @@ export type EnvironmentInfo = {
   };
 };
 
+export type HealthcheckCategory = {
+  label: string;
+  healthchecks: HealthCheckInterface[];
+};
+
+export type Healthchecks = {
+  common: HealthcheckCategory;
+  android: HealthcheckCategory;
+  ios?: HealthcheckCategory;
+};
+
+export type RunAutomaticFix = (args: {
+  loader: Ora;
+  environmentInfo: EnvironmentInfo;
+}) => Promise<void> | void;
+
 export type HealthCheckInterface = {
   label: string;
   visible?: boolean | void;
@@ -73,8 +89,19 @@ export type HealthCheckInterface = {
   getDiagnostics: (
     environmentInfo: EnvironmentInfo,
   ) => Promise<{version?: string; needsToBeFixed: boolean | string}>;
-  runAutomaticFix: (args: {
-    loader: Ora;
-    environmentInfo: EnvironmentInfo;
-  }) => Promise<void> | void;
+  runAutomaticFix: RunAutomaticFix;
+};
+
+export type HealthCheckResult = {
+  label: string;
+  needsToBeFixed: boolean;
+  description: string;
+  runAutomaticFix: RunAutomaticFix;
+  isRequired: boolean;
+  type?: string;
+};
+
+export type HealthCheckCategoryResult = {
+  label: string;
+  healthchecks: HealthCheckResult[];
 };

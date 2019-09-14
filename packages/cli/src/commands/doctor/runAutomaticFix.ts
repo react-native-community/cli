@@ -1,38 +1,41 @@
-// @flow
 import chalk from 'chalk';
-import ora from 'ora';
+import ora, {Ora} from 'ora';
 import {logger} from '@react-native-community/cli-tools';
-// $FlowFixMe - converted to TS
 import {HEALTHCHECK_TYPES} from './healthchecks';
-import type {EnvironmentInfo} from './types';
+import {EnvironmentInfo, HealthCheckCategoryResult} from './types';
 
-const AUTOMATIC_FIX_LEVELS = {
-  ALL_ISSUES: 'ALL_ISSUES',
-  ERRORS: 'ERRORS',
-  WARNINGS: 'WARNINGS',
-};
+enum AUTOMATIC_FIX_LEVELS {
+  ALL_ISSUES = 'ALL_ISSUES',
+  ERRORS = 'ERRORS',
+  WARNINGS = 'WARNINGS',
+}
 
 export {AUTOMATIC_FIX_LEVELS};
-export default async ({
+
+interface RunAutomaticFixArgs {
+  healthchecks: HealthCheckCategoryResult[];
+  automaticFixLevel: AUTOMATIC_FIX_LEVELS;
+  stats: {
+    errors: number;
+    warnings: number;
+  };
+  loader: Ora;
+  environmentInfo: EnvironmentInfo;
+}
+
+export default async function({
   healthchecks,
   automaticFixLevel,
   stats,
-  loader,
   environmentInfo,
-}: {
-  healthchecks: any,
-  automaticFixLevel: $Values<typeof AUTOMATIC_FIX_LEVELS>,
-  stats: {errors: any, warnings: any},
-  loader: typeof ora,
-  environmentInfo: EnvironmentInfo,
-}) => {
+}: RunAutomaticFixArgs) {
   // Remove the fix options from screen
-  // $FlowFixMe
+  // @ts-ignore
   process.stdout.moveCursor(0, -6);
-  // $FlowFixMe
+  // @ts-ignore
   process.stdout.clearScreenDown();
 
-  const totalIssuesBasedOnFixLevel = {
+  const totalIssuesBasedOnFixLevel: {[x in AUTOMATIC_FIX_LEVELS]: any} = {
     [AUTOMATIC_FIX_LEVELS.ALL_ISSUES]: stats.errors + stats.warnings,
     [AUTOMATIC_FIX_LEVELS.ERRORS]: stats.errors,
     [AUTOMATIC_FIX_LEVELS.WARNINGS]: stats.warnings,
@@ -88,4 +91,4 @@ export default async ({
       }
     }
   }
-};
+}

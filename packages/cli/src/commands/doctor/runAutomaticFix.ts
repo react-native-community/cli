@@ -4,13 +4,11 @@ import {logger} from '@react-native-community/cli-tools';
 import {HEALTHCHECK_TYPES} from './healthchecks';
 import {EnvironmentInfo, HealthCheckCategoryResult} from './types';
 
-enum AUTOMATIC_FIX_LEVELS {
+export enum AUTOMATIC_FIX_LEVELS {
   ALL_ISSUES = 'ALL_ISSUES',
   ERRORS = 'ERRORS',
   WARNINGS = 'WARNINGS',
 }
-
-export {AUTOMATIC_FIX_LEVELS};
 
 interface RunAutomaticFixArgs {
   healthchecks: HealthCheckCategoryResult[];

@@ -6,7 +6,7 @@ import {getHealthchecks, HEALTHCHECK_TYPES} from './healthchecks';
 import {getLoader} from '../../tools/loader';
 import printFixOptions, {KEYS} from './printFixOptions';
 import runAutomaticFix, {AUTOMATIC_FIX_LEVELS} from './runAutomaticFix';
-import {Config} from '@react-native-community/cli-types';
+import {CommandFunction} from '@react-native-community/cli-types';
 import {
   HealthcheckCategory,
   HealthCheckCategoryResult,
@@ -52,11 +52,7 @@ type FlagsT = {
   contributor: boolean | void;
 };
 
-export default (async function runDoctor(
-  argv: string[],
-  ctx: Config,
-  options: FlagsT,
-) {
+export default (async (_, __, options: FlagsT) => {
   const Loader = getLoader();
   const loader = new Loader();
 
@@ -198,4 +194,4 @@ export default (async function runDoctor(
   };
 
   printFixOptions({onKeyPress});
-});
+}) as CommandFunction;

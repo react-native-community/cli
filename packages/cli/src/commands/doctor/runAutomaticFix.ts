@@ -67,6 +67,8 @@ export default async function({
           healthcheck.type === HEALTHCHECK_TYPES.WARNING
         );
       }
+
+      return;
     });
 
     if (!healthchecksToRun.length) {

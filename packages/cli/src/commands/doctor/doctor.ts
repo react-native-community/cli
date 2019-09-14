@@ -114,9 +114,7 @@ export default (async function runDoctor(
   // so they don't show when the user taps to fix encountered issues
   const removeFixedCategories = (categories: HealthCheckCategoryResult[]) =>
     categories.filter(category =>
-      category.healthchecks.some(
-        healthcheck => healthcheck && healthcheck.needsToBeFixed,
-      ),
+      category.healthchecks.some(healthcheck => healthcheck.needsToBeFixed),
     );
 
   const iterateOverCategories = (categories: HealthcheckCategory[]) =>

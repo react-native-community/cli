@@ -2067,14 +2067,6 @@
   dependencies:
     "@types/node" "*"
 
-"@types/inquirer@^6.5.0":
-  version "6.5.0"
-  resolved "https://registry.yarnpkg.com/@types/inquirer/-/inquirer-6.5.0.tgz#b83b0bf30b88b8be7246d40e51d32fe9d10e09be"
-  integrity sha512-rjaYQ9b9y/VFGOpqBEXRavc3jh0a+e6evAbI31tMda8VlPaSy0AZJfXsvmIe3wklc7W6C3zCSfleuMXR7NOyXw==
-  dependencies:
-    "@types/through" "*"
-    rxjs "^6.4.0"
-
 "@types/istanbul-lib-coverage@^2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@types/istanbul-lib-coverage/-/istanbul-lib-coverage-2.0.0.tgz#1eb8c033e98cf4e1a4cedcaf8bcafe8cb7591e85"
@@ -2153,11 +2145,6 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-8.10.51.tgz#80600857c0a47a8e8bafc2dae6daed6db58e3627"
   integrity sha512-cArrlJp3Yv6IyFT/DYe+rlO8o3SIHraALbBW/+CcCYW/a9QucpLI+n2p4sRxAvl2O35TiecpX2heSZtJjvEO+Q==
 
-"@types/node@^12.7.5":
-  version "12.7.5"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.7.5.tgz#e19436e7f8e9b4601005d73673b6dc4784ffcc2f"
-  integrity sha512-9fq4jZVhPNW8r+UYKnxF1e2HkDWOWKM5bC2/7c9wPV835I0aOrVbS/Hw/pWPk2uKrNXQqg9Z959Kz+IYDd5p3w==
-
 "@types/plist@^3.0.2":
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/@types/plist/-/plist-3.0.2.tgz#61b3727bba0f5c462fe333542534a0c3e19ccb01"
@@ -2175,13 +2162,6 @@
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-1.0.1.tgz#0a851d3bd96498fa25c33ab7278ed3bd65f06c3e"
   integrity sha512-l42BggppR6zLmpfU6fq9HEa2oGPEI8yrSPL3GITjfRInppYFahObbIQOQK3UGxEnyQpltZLaPe75046NOZQikw==
-
-"@types/through@*":
-  version "0.0.29"
-  resolved "https://registry.yarnpkg.com/@types/through/-/through-0.0.29.tgz#72943aac922e179339c651fa34a4428a4d722f93"
-  integrity sha512-9a7C5VHh+1BKblaYiq+7Tfc+EOmjMdZaD1MYtkQjSoxgB69tBjW98ry6SKsi4zEIWztLOMRuL87A3bdT/Fc/4w==
-  dependencies:
-    "@types/node" "*"
 
 "@types/xmldoc@^1.1.4":
   version "1.1.4"
@@ -8218,13 +8198,6 @@ rxjs@^5.4.3:
 rxjs@^6.1.0:
   version "6.3.3"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.3.3.tgz#3c6a7fa420e844a81390fb1158a9ec614f4bad55"
-  dependencies:
-    tslib "^1.9.0"
-
-rxjs@^6.4.0:
-  version "6.5.3"
-  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.5.3.tgz#510e26317f4db91a7eb1de77d9dd9ba0a4899a3a"
-  integrity sha512-wuYsAYYFdWTAnAaPoKGNhfpWwKZbJW+HgAJ+mImp+Epl7BG8oNWBCTyRM8gba9k4lk8BgWdoYm21Mo/RYhhbgA==
   dependencies:
     tslib "^1.9.0"
 

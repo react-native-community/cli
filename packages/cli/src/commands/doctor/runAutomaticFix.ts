@@ -35,7 +35,7 @@ export default async function({
   // @ts-ignore
   process.stdout.clearScreenDown();
 
-  const totalIssuesBasedOnFixLevel: {[x in AUTOMATIC_FIX_LEVELS]: any} = {
+  const totalIssuesBasedOnFixLevel: {[x in AUTOMATIC_FIX_LEVELS]: number} = {
     [AUTOMATIC_FIX_LEVELS.ALL_ISSUES]: stats.errors + stats.warnings,
     [AUTOMATIC_FIX_LEVELS.ERRORS]: stats.errors,
     [AUTOMATIC_FIX_LEVELS.WARNINGS]: stats.warnings,
@@ -43,7 +43,7 @@ export default async function({
   const issuesCount = totalIssuesBasedOnFixLevel[automaticFixLevel];
 
   logger.log(
-    `\nAttempting to fix ${chalk.bold(issuesCount)} issue${
+    `\nAttempting to fix ${chalk.bold(issuesCount.toString())} issue${
       issuesCount > 1 ? 's' : ''
     }...`,
   );

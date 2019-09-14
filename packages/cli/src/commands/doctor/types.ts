@@ -32,12 +32,14 @@ export type EnvironmentInfo = {
     'iOS SDK': {
       Platforms: string[];
     };
-    'Android SDK': {
-      'API Levels': string[];
-      'Build Tools': string[];
-      'System Images': string[];
-      'Android NDK': string;
-    };
+    'Android SDK':
+      | {
+          'API Levels': string[] | 'Not Found';
+          'Build Tools': string[] | 'Not Found';
+          'System Images': string[] | 'Not Found';
+          'Android NDK': string | 'Not Found';
+        }
+      | 'Not Found';
   };
   IDEs: {
     'Android Studio': string;

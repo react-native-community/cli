@@ -1,12 +1,8 @@
-// @flow
 import execa from 'execa';
-import Ora from 'ora';
-// $FlowFixMe - converted to TS
 import {checkSoftwareInstalled, PACKAGE_MANAGERS} from '../checkInstallation';
 import {packageManager} from './packageManagers';
-// $FlowFixMe - converted to TS
 import {logManualInstallation} from './common';
-import type {HealthCheckInterface} from '../types';
+import {HealthCheckInterface} from '../types';
 
 const getInstallationCommand = () => {
   if (packageManager === PACKAGE_MANAGERS.YARN) {
@@ -20,13 +16,13 @@ const getInstallationCommand = () => {
   return undefined;
 };
 
-export default ({
+export default {
   label: 'ios-deploy',
   isRequired: false,
   getDiagnostics: async () => ({
     needsToBeFixed: await checkSoftwareInstalled('ios-deploy'),
   }),
-  runAutomaticFix: async ({loader}: {loader: typeof Ora}) => {
+  runAutomaticFix: async ({loader}) => {
     const installationCommand = getInstallationCommand();
 
     // This means that we couldn't "guess" the package manager
@@ -59,4 +55,4 @@ export default ({
       });
     }
   },
-}: HealthCheckInterface);
+} as HealthCheckInterface;

@@ -3,7 +3,9 @@ import {
   Config,
   Dependency,
   AndroidDependencyConfig,
+  AndroidProjectConfig,
   IOSDependencyConfig,
+  IOSProjectConfig,
 } from '@react-native-community/cli-types';
 import {logger} from '@react-native-community/cli-tools';
 import pollParams from './pollParams';
@@ -17,9 +19,10 @@ export default async function linkDependency(
   const params = await pollParams(dependency.params);
 
   Object.keys(platforms || {}).forEach(platform => {
-    const projectConfig: AndroidDependencyConfig | IOSDependencyConfig =
+    const projectConfig: AndroidProjectConfig | IOSProjectConfig =
       project[platform];
-    const dependencyConfig = dependency.platforms[platform];
+    const dependencyConfig: AndroidDependencyConfig | IOSDependencyConfig =
+      dependency.platforms[platform];
 
     if (!projectConfig || !dependencyConfig) {
       return;

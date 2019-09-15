@@ -11,7 +11,9 @@ import {
   Config,
   Dependency,
   AndroidDependencyConfig,
+  AndroidProjectConfig,
   IOSDependencyConfig,
+  IOSProjectConfig,
 } from '@react-native-community/cli-types';
 import getPlatformName from './getPlatformName';
 import makeHook from './makeHook';
@@ -28,9 +30,10 @@ const unlinkDependency = (
   otherDependencies: Array<Dependency>,
 ) => {
   Object.keys(platforms || {}).forEach(platform => {
-    const projectConfig: AndroidDependencyConfig | IOSDependencyConfig =
+    const projectConfig: AndroidProjectConfig | IOSProjectConfig =
       project[platform];
-    const dependencyConfig = dependency.platforms[platform];
+    const dependencyConfig: AndroidDependencyConfig | IOSDependencyConfig =
+      dependency.platforms[platform];
     if (!projectConfig || !dependencyConfig) {
       return;
     }

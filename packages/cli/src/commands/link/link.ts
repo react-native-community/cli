@@ -54,7 +54,7 @@ async function link(
   }
 
   // Trim the version / tag out of the package name (eg. package@latest)
-  const packageName: string = rawPackageName.replace(/^(.+?)(@.+?)$/gi, '$1');
+  const packageName = rawPackageName.replace(/^(.+?)(@.+?)$/gi, '$1');
 
   if (!Object.keys(ctx.dependencies).includes(packageName)) {
     throw new CLIError(`

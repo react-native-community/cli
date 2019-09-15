@@ -9,6 +9,7 @@ import {flatMap, values, difference, pick} from 'lodash';
 import {logger, CLIError} from '@react-native-community/cli-tools';
 import {
   Config,
+  Dependency,
   AndroidDependencyConfig,
   IOSDependencyConfig,
 } from '@react-native-community/cli-types';
@@ -22,9 +23,9 @@ type Flags = {
 const unlinkDependency = (
   platforms: Config['platforms'],
   project: Config['project'],
-  dependency: Config['dependencies']['key'],
+  dependency: Dependency,
   packageName: string,
-  otherDependencies: Array<Config['dependencies']['key']>,
+  otherDependencies: Array<Dependency>,
 ) => {
   Object.keys(platforms || {}).forEach(platform => {
     const projectConfig: AndroidDependencyConfig | IOSDependencyConfig =

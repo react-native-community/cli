@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import {
   Config,
+  Dependency,
   AndroidDependencyConfig,
   IOSDependencyConfig,
 } from '@react-native-community/cli-types';
@@ -11,7 +12,7 @@ import getPlatformName from './getPlatformName';
 export default async function linkDependency(
   platforms: Config['platforms'],
   project: Config['project'],
-  dependency: Config['dependencies']['key'],
+  dependency: Dependency,
 ) {
   const params = await pollParams(dependency.params);
 

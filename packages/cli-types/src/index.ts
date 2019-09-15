@@ -92,20 +92,6 @@ export interface Dependency {
   params: InquirerPrompt[];
 }
 
-export type AndroidPlatformConfig = PlatformConfig<
-  AndroidProjectConfig,
-  AndroidProjectParams,
-  AndroidDependencyConfig,
-  AndroidDependencyParams
->;
-
-export type IOSPlatformConfig = PlatformConfig<
-  IOSProjectConfig,
-  IOSProjectParams,
-  IOSDependencyConfig,
-  IOSDependencyParams
->;
-
 /**
  * @property root - Root where the configuration has been resolved from
  * @property reactNativePath - Path to React Native source

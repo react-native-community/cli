@@ -37,7 +37,7 @@ export interface Command {
   }>;
 }
 
-export interface PlatformConfig<
+interface PlatformConfig<
   ProjectConfig,
   ProjectParams,
   DependencyConfig,
@@ -127,9 +127,20 @@ export interface Config {
   assets: string[];
   dependencies: {[key: string]: Dependency};
   platforms: {
-    android?: AndroidPlatformConfig;
-    ios?: IOSPlatformConfig;
-  } & {[name: string]: PlatformConfig<any, any, any, any>};
+    android: PlatformConfig<
+      AndroidProjectConfig,
+      AndroidProjectParams,
+      AndroidDependencyConfig,
+      AndroidDependencyParams
+    >;
+    ios: PlatformConfig<
+      IOSProjectConfig,
+      IOSProjectParams,
+      IOSDependencyConfig,
+      IOSDependencyParams
+    >;
+    [name: string]: PlatformConfig<any, any, any, any>;
+  };
   commands: Command[];
   haste: {
     platforms: Array<string>;

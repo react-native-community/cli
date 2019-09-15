@@ -7,11 +7,10 @@
  */
 
 import chalk from 'chalk';
-import * as execa from 'execa';
 import {pick} from 'lodash';
 import {logger, CLIError} from '@react-native-community/cli-tools';
 import {Config} from '@react-native-community/cli-types';
-import {getPlatformName} from './getPlatformName';
+import getPlatformName from './getPlatformName';
 import linkDependency from './linkDependency';
 import linkAssets from './linkAssets';
 import linkAll from './linkAll';
@@ -28,11 +27,11 @@ type FlagsType = {
  * @param args If optional argument [packageName] is provided,
  *             only that package is processed.
  */
-const link = async (
+async function link(
   [rawPackageName]: Array<string>,
   ctx: Config,
   opts: FlagsType,
-): Promise<(() => execa.ExecaChildProcess) | void> => {
+) {
   let platforms = ctx.platforms;
   let project = ctx.project;
 
@@ -83,7 +82,7 @@ const link = async (
       error,
     );
   }
-};
+}
 
 export const func = link;
 
@@ -95,12 +94,12 @@ export default {
     {
       name: '--platforms [list]',
       description: 'Scope linking to specified platforms',
-      parse: (val: string): Array<string> => val.toLowerCase().split(','),
+      parse: (val: string) => val.toLowerCase().split(','),
     },
     {
       name: '--all [boolean]',
       description: 'Link all native modules and assets',
-      parse: (val: string): Array<string> => val.toLowerCase().split(','),
+      parse: (val: string) => val.toLowerCase().split(','),
     },
   ],
 };

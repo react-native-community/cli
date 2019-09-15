@@ -12,8 +12,7 @@ import {
   AndroidDependencyConfig,
   IOSDependencyConfig,
 } from '@react-native-community/cli-types';
-
-import {getPlatformName} from './getPlatformName';
+import getPlatformName from './getPlatformName';
 import makeHook from './makeHook';
 
 type Flags = {
@@ -26,7 +25,7 @@ const unlinkDependency = (
   dependency: Config['dependencies']['key'],
   packageName: string,
   otherDependencies: Array<Config['dependencies']['key']>,
-): void => {
+) => {
   Object.keys(platforms || {}).forEach(platform => {
     const projectConfig: AndroidDependencyConfig | IOSDependencyConfig =
       project[platform];
@@ -82,11 +81,7 @@ const unlinkDependency = (
  * If optional argument [packageName] is provided, it's the only one
  * that's checked
  */
-const unlink = async (
-  args: Array<string>,
-  ctx: Config,
-  opts: Flags,
-): Promise<void | null> => {
+async function unlink(args: Array<string>, ctx: Config, opts: Flags) {
   const packageName = args[0];
   let platforms = ctx.platforms;
 
@@ -110,9 +105,7 @@ const unlink = async (
     `);
   }
 
-  const dependencies: Array<Config['dependencies']['key']> = values(
-    otherDependencies,
-  );
+  const dependencies = values(otherDependencies);
   try {
     if (dependency.hooks.preunlink) {
       await makeHook(dependency.hooks.preunlink)();
@@ -136,9 +129,9 @@ const unlink = async (
 
   // @todo move all these to above try/catch
   // @todo it is possible we could be unlinking some project assets in case of duplicate
-  const assets: Array<string> = difference(
+  const assets = difference(
     dependency.assets,
-    flatMap(dependencies, (d: {assets: string[]}) => d.assets),
+    flatMap(dependencies, d => d.assets),
   );
 
   if (assets.length === 0) {
@@ -163,7 +156,7 @@ const unlink = async (
   logger.info(
     `${packageName} assets has been successfully unlinked from your project`,
   );
-};
+}
 
 export default {
   func: unlink,

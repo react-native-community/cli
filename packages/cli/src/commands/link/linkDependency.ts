@@ -6,13 +6,13 @@ import {
 } from '@react-native-community/cli-types';
 import {logger} from '@react-native-community/cli-tools';
 import pollParams from './pollParams';
-import {getPlatformName} from './getPlatformName';
+import getPlatformName from './getPlatformName';
 
 export default async function linkDependency(
   platforms: Config['platforms'],
   project: Config['project'],
   dependency: Config['dependencies']['key'],
-): Promise<void | null> {
+) {
   const params = await pollParams(dependency.params);
 
   Object.keys(platforms || {}).forEach(platform => {

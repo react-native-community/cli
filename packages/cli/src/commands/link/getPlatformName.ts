@@ -3,4 +3,6 @@ const names: {[key: string]: string} = {
   android: 'Android',
 };
 
-export const getPlatformName = (name: string): string => names[name] || name;
+export default function getPlatformName(name: string): string {
+  return names[name] || name;
+}

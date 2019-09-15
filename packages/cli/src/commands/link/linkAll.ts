@@ -6,20 +6,16 @@ import {Config} from '@react-native-community/cli-types';
 import linkAssets from './linkAssets';
 import linkDependency from './linkDependency';
 import makeHook from './makeHook';
-import * as execa from 'execa';
 
 const dedupeAssets = (assets: Array<string>): Array<string> =>
-  uniqBy(assets, (asset: string) => path.basename(asset));
+  uniqBy(assets, asset => path.basename(asset));
 
 type Options = {
   linkDeps?: boolean;
   linkAssets?: boolean;
 };
 
-const linkAll = async (
-  config: Config,
-  options: Options,
-): Promise<(() => execa.ExecaChildProcess) | void> => {
+async function linkAll(config: Config, options: Options) {
   if (options.linkDeps) {
     logger.debug('Linking all dependencies');
     logger.info(
@@ -52,8 +48,8 @@ const linkAll = async (
   }
   if (options.linkAssets) {
     logger.debug('Linking all assets');
-    const projectAssets: Array<string> = config.assets;
-    const assets: Array<string> = dedupeAssets(
+    const projectAssets = config.assets;
+    const assets = dedupeAssets(
       Object.keys(config.dependencies).reduce(
         (acc, dependency) => acc.concat(config.dependencies[dependency].assets),
         projectAssets,
@@ -65,6 +61,6 @@ const linkAll = async (
       throw new CLIError('Linking assets failed.', error);
     }
   }
-};
+}
 
 export default linkAll;

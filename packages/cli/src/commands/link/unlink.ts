@@ -45,10 +45,8 @@ const unlinkDependency = (
     }
 
     const isInstalled = linkConfig.isInstalled(
-      // $FlowFixMe
       projectConfig,
       packageName,
-      // $FlowFixMe
       dependencyConfig,
     );
 
@@ -65,9 +63,7 @@ const unlinkDependency = (
 
     linkConfig.unregister(
       packageName,
-      // $FlowFixMe
       dependencyConfig,
-      // $FlowFixMe
       projectConfig,
       otherDependencies,
     );
@@ -95,6 +91,7 @@ const unlink = async (
   let platforms = ctx.platforms;
 
   if (opts.platforms) {
+    // @ts-ignore
     platforms = pick(platforms, opts.platforms);
     logger.debug('Skipping selected platforms');
   }
@@ -159,7 +156,7 @@ const unlink = async (
     }
 
     logger.info(`Unlinking assets from ${platform} project`);
-    // $FlowFixMe
+
     linkConfig.unlinkAssets(assets, projectConfig);
   });
 

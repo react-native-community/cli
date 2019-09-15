@@ -1,5 +1,5 @@
 import {func as link} from '../link';
-import loadConfig from '../../../tools/config';
+import loadConfig from '../../../tools/config'; // eslint-disable-line import/namespace, import/default
 import makeHook from '../makeHook';
 jest.mock('chalk', () => ({grey: str => str, bold: str => str}));
 jest.mock('../../../tools/config');

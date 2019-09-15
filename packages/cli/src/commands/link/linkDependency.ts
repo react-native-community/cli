@@ -8,11 +8,11 @@ import {logger} from '@react-native-community/cli-tools';
 import pollParams from './pollParams';
 import {getPlatformName} from './getPlatformName';
 
-const linkDependency = async (
+export default async function linkDependency(
   platforms: Config['platforms'],
   project: Config['project'],
   dependency: Config['dependencies']['key'],
-): Promise<void | null> => {
+): Promise<void | null> {
   const params = await pollParams(dependency.params);
 
   Object.keys(platforms || {}).forEach(platform => {
@@ -34,10 +34,8 @@ const linkDependency = async (
     }
 
     const isInstalled = linkConfig.isInstalled(
-      // $FlowFixMe
       projectConfig,
       name,
-      // $FlowFixMe
       dependencyConfig,
     );
 
@@ -53,7 +51,7 @@ const linkDependency = async (
     logger.info(
       `Linking "${chalk.bold(name)}" ${getPlatformName(platform)} dependency`,
     );
-    // $FlowFixMe
+
     linkConfig.register(name, dependencyConfig, params, projectConfig);
 
     logger.info(
@@ -62,6 +60,4 @@ const linkDependency = async (
       )}" has been successfully linked`,
     );
   });
-};
-
-export default linkDependency;
+}

@@ -37,6 +37,7 @@ const link = async (
   let project = ctx.project;
 
   if (opts.platforms) {
+    // @ts-ignore
     platforms = pick(platforms, opts.platforms);
     logger.debug('Skipping selected platforms');
   }

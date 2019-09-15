@@ -60,7 +60,7 @@ const linkAll = async (
       ),
     );
     try {
-      await linkAssets(config.platforms, config.project, assets);
+      linkAssets(config.platforms, config.project, assets);
     } catch (error) {
       throw new CLIError('Linking assets failed.', error);
     }

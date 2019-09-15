@@ -2,11 +2,11 @@ import {isEmpty} from 'lodash';
 import {Config} from '@react-native-community/cli-types';
 import {logger} from '@react-native-community/cli-tools';
 
-const linkAssets = (
+export default function linkAssets(
   platforms: Config['platforms'],
   project: Config['project'],
   assets: Array<string>,
-): void => {
+): void {
   if (isEmpty(assets)) {
     return;
   }
@@ -22,11 +22,9 @@ const linkAssets = (
     }
 
     logger.info(`Linking assets to ${platform} project`);
-    // $FlowFixMe: We check for existence of project[platform]
+
     linkConfig.copyAssets(assets, project[platform]);
   });
 
   logger.success('Assets have been successfully linked to your project');
-};
-
-export default linkAssets;
+}

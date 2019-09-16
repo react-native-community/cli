@@ -88,8 +88,8 @@ export default {
       return await brewInstall({
         pkg: 'cocoapods',
         label: loaderInstallationMessage,
-        succeedMessage: loaderSucceedMessage,
         loader,
+        onSuccess: () => loader.succeed(loaderSucceedMessage),
       });
     }
   },

@@ -31,10 +31,12 @@ function copyAndReplace(
   srcPath: string,
   destPath: string,
   replacements: Record<string, string>,
-  contentChangedCallback: (
-    path: string,
-    option: ContentChangedCallbackOption,
-  ) => 'keep' | 'overwrite',
+  contentChangedCallback:
+    | ((
+        path: string,
+        option: ContentChangedCallbackOption,
+      ) => 'keep' | 'overwrite')
+    | null,
 ) {
   if (fs.lstatSync(srcPath).isDirectory()) {
     if (!fs.existsSync(destPath)) {

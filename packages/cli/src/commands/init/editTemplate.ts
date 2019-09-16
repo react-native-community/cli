@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 import {logger} from '@react-native-community/cli-tools';
-// @ts-ignore FIXME after converting walk to typescript
 import walk from '../../tools/walk';
 
 interface PlaceholderConfig {

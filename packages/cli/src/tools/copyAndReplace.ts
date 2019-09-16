@@ -13,6 +13,8 @@ import path from 'path';
 // Binary files, don't process these (avoid decoding as utf8)
 const binaryExtensions = ['.png', '.jar', '.keystore'];
 
+type ContentChangedCallbackOption = 'identical' | 'changed' | 'new' | null;
+
 /**
  * Copy a file to given destination, replacing parts of its contents.
  * @param srcPath Path to a file to be copied.
@@ -26,10 +28,15 @@ const binaryExtensions = ['.png', '.jar', '.keystore'];
  *        Function(path, 'identical' | 'changed' | 'new') => 'keep' | 'overwrite'
  */
 function copyAndReplace(
-  srcPath,
-  destPath,
-  replacements,
-  contentChangedCallback,
+  srcPath: string,
+  destPath: string,
+  replacements: Record<string, string>,
+  contentChangedCallback:
+    | ((
+        path: string,
+        option: ContentChangedCallbackOption,
+      ) => 'keep' | 'overwrite')
+    | null,
 ) {
   if (fs.lstatSync(srcPath).isDirectory()) {
     if (!fs.existsSync(destPath)) {
@@ -45,7 +52,7 @@ function copyAndReplace(
     let shouldOverwrite = 'overwrite';
     if (contentChangedCallback) {
       const newContentBuffer = fs.readFileSync(srcPath);
-      let contentChanged = 'identical';
+      let contentChanged: ContentChangedCallbackOption = 'identical';
       try {
         const origContentBuffer = fs.readFileSync(destPath);
         if (Buffer.compare(origContentBuffer, newContentBuffer) !== 0) {
@@ -78,7 +85,7 @@ function copyAndReplace(
     let shouldOverwrite = 'overwrite';
     if (contentChangedCallback) {
       // Check if contents changed and ask to overwrite
-      let contentChanged = 'identical';
+      let contentChanged: ContentChangedCallbackOption = 'identical';
       try {
         const origContent = fs.readFileSync(destPath, 'utf8');
         if (content !== origContent) {
@@ -106,7 +113,11 @@ function copyAndReplace(
 /**
  * Same as 'cp' on Unix. Don't do any replacements.
  */
-function copyBinaryFile(srcPath, destPath, cb) {
+function copyBinaryFile(
+  srcPath: string,
+  destPath: string,
+  cb: (err?: Error) => void,
+) {
   let cbCalled = false;
   const srcPermissions = fs.statSync(srcPath).mode;
   const readStream = fs.createReadStream(srcPath);
@@ -123,7 +134,7 @@ function copyBinaryFile(srcPath, destPath, cb) {
     done();
   });
   readStream.pipe(writeStream);
-  function done(err) {
+  function done(err?: Error) {
     if (!cbCalled) {
       cb(err);
       cbCalled = true;

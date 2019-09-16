@@ -9,7 +9,6 @@
 
 import chalk from 'chalk';
 import path from 'path';
-// @ts-ignore FIXME: copyAndReplace should be ts
 import copyAndReplace from '../copyAndReplace';
 import promptInitializer from './promptSync';
 // @ts-ignore FIXME: walk should be ts
@@ -17,6 +16,8 @@ import walk from '../walk';
 import {logger} from '@react-native-community/cli-tools';
 
 const prompt = promptInitializer();
+
+type ContentChangedCallbackOption = 'identical' | 'changed' | 'new' | null;
 
 type Options = {
   upgrade?: boolean;
@@ -99,7 +100,10 @@ function copyProjectTemplateAndReplace(
 
     let contentChangedCallback = null;
     if (options.upgrade && !options.force) {
-      contentChangedCallback = (_destPath: string, contentChanged: string) =>
+      contentChangedCallback = (
+        _destPath: string,
+        contentChanged: ContentChangedCallbackOption,
+      ) =>
         upgradeFileContentChangedCallback(
           absoluteSrcFilePath,
           relativeFilePath,
@@ -146,7 +150,7 @@ function translateFilePath(filePath: string) {
 function upgradeFileContentChangedCallback(
   absoluteSrcFilePath: string,
   relativeDestPath: string,
-  contentChanged: string,
+  contentChanged: ContentChangedCallbackOption,
 ) {
   if (contentChanged === 'new') {
     logger.info(`${chalk.bold('new')} ${relativeDestPath}`);

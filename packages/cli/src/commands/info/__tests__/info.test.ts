@@ -1,7 +1,6 @@
 // @flow
 import info from '../info';
 import {logger} from '@react-native-community/cli-tools';
-// eslint-disable-next-line import/namespace, import/default
 import loadConfig from '../../../tools/config';
 
 jest.mock('../../../tools/config');

@@ -8,7 +8,7 @@ import printFixOptions, {KEYS} from './printFixOptions';
 import runAutomaticFix, {AUTOMATIC_FIX_LEVELS} from './runAutomaticFix';
 import {CommandFunction} from '@react-native-community/cli-types';
 import {
-  HealthcheckCategory,
+  HealthCheckCategory,
   HealthCheckCategoryResult,
   HealthCheckResult,
 } from './types';

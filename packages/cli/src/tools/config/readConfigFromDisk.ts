@@ -9,12 +9,13 @@ import resolveReactNativePath from './resolveReactNativePath';
 import {
   UserConfig,
   AndroidProjectConfig,
+  AndroidDependencyConfig,
   IOSProjectConfig,
+  IOSDependencyConfig,
   Command,
   InquirerPrompt,
-} from '../../../../cli-types';
-
-import {UserDependencyConfig} from '@react-native-community/cli-types/src';
+  UserDependencyConfig,
+} from '@react-native-community/cli-types';
 const MIGRATION_GUIDE = `Migration guide: ${chalk.dim.underline(
   'https://github.com/react-native-community/cli/blob/master/docs/configuration.md',
 )}`;
@@ -24,12 +25,15 @@ type LegacyConfig = {
   android: AndroidProjectConfig;
   assets: string[];
   reactNativePath: string;
+  hooks?: {
+    [key: string]: string;
+  };
 };
 
 type LegacyDependencyConfig = {
   platform: any;
-  ios: IOSProjectConfig;
-  android: AndroidProjectConfig;
+  ios: IOSDependencyConfig;
+  android: AndroidDependencyConfig;
   assets: string[];
   plugin: Array<string>;
   params: InquirerPrompt[];
@@ -63,6 +67,7 @@ function readLegacyConfigFromDisk(rootFolder: string): UserConfig | void {
     assets: config.assets,
     commands: [],
     dependencies: {},
+    // @ts-ignore - TODO: platforms can be empty, adjust types
     platforms: {},
     get reactNativePath() {
       return config.reactNativePath
@@ -113,11 +118,11 @@ export function readDependencyConfigFromDisk(
     stopDir: rootFolder,
     searchPlaces,
   });
-  const config: cosmiconfig.CosmiconfigResult = explorer.searchSync(rootFolder);
+  const config = explorer.searchSync(rootFolder);
   const legacy = config ? true : false;
   // @ts-ignore Joi validate the type
   const dependencyConfig: UserDependencyConfig = config
-    ? (config.config as UserDependencyConfig)
+    ? config.config
     : readLegacyDependencyConfigFromDisk(rootFolder);
 
   const result = Joi.validate(config, schema.dependencyConfig);
@@ -129,12 +134,12 @@ export function readDependencyConfigFromDisk(
   return {config: dependencyConfig, legacy: legacy && config !== undefined};
 }
 
-// /**
-//  * Returns an array of commands that are defined in the project.
-//  *
-//  * `config.project` can be either an array of paths or a single string.
-//  * Each of the files can export a commands (object) or an array of commands
-//  */
+/**
+ * Returns an array of commands that are defined in the project.
+ *
+ * `config.project` can be either an array of paths or a single string.
+ * Each of the files can export a commands (object) or an array of commands
+ */
 const loadProjectCommands = (
   root: string,
   ...commands: string[]
@@ -145,9 +150,9 @@ const loadProjectCommands = (
   }, []);
 };
 
-// /**
-//  * Reads a legacy configuration from a `package.json` "rnpm" key.
-//  */
+/**
+ * Reads a legacy configuration from a `package.json` "rnpm" key.
+ */
 function readLegacyDependencyConfigFromDisk(
   rootFolder: string,
 ): UserDependencyConfig | undefined {
@@ -158,6 +163,7 @@ function readLegacyDependencyConfigFromDisk(
   } catch (error) {
     // package.json is usually missing in local libraries that are not in
     // project "dependencies", so we just return a bare config
+    // @ts-ignore - TODO: platforms can be empty, adjust types
     return {
       dependency: {
         platforms: {},
@@ -181,6 +187,7 @@ function readLegacyDependencyConfigFromDisk(
         android: config.android,
       },
       assets: config.assets,
+      // @ts-ignore – likely a bug, but we don't care because legacy config is soon to be removed
       hooks: config.commands,
       params: config.params,
     },

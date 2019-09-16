@@ -21,7 +21,8 @@ export default function findAssets(
 ): Array<string> {
   return (assets || [])
     .map(asset => path.join(folder, asset))
-    .reduce((acc: string[], assetPath: string) => {
-      return acc.concat(findAssetsInFolder(assetPath));
-    }, []);
+    .reduce(
+      (acc, assetPath) => acc.concat(findAssetsInFolder(assetPath)),
+      [] as string[],
+    );
 }

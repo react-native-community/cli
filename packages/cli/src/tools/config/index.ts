@@ -3,6 +3,9 @@ import chalk from 'chalk';
 import {
   UserDependencyConfig,
   ProjectConfig,
+  Dependency,
+  UserConfig,
+  Config,
 } from '@react-native-community/cli-types';
 import {logger, inlineString} from '@react-native-community/cli-tools';
 import * as ios from '@react-native-community/cli-platform-ios';
@@ -17,7 +20,6 @@ import {
 import assign from '../assign';
 import merge from '../merge';
 import resolveNodeModuleDir from './resolveNodeModuleDir';
-import {UserConfig, Config} from '../../../../cli-types';
 
 function getDependencyConfig(
   root: string,
@@ -26,7 +28,7 @@ function getDependencyConfig(
   config: UserDependencyConfig,
   userConfig: UserConfig,
   isPlatform: boolean,
-): UserDependencyConfig {
+): Dependency {
   return merge(
     {
       root,
@@ -46,20 +48,20 @@ function getDependencyConfig(
                 );
           return dependency;
         },
-        {},
+        {} as Config['platforms'],
       ),
       assets: findAssets(root, config.dependency.assets),
       hooks: config.dependency.hooks,
       params: config.dependency.params,
     },
     userConfig.dependencies[dependencyName] || {},
-  );
+  ) as Dependency;
 }
 
 /**
  * Loads CLI configuration
  */
-function loadConfig(projectRoot: string = process.cwd()): Config | void {
+function loadConfig(projectRoot: string = process.cwd()): Config {
   let lazyProject: ProjectConfig;
   const userConfig = readConfigFromDisk(projectRoot);
 
@@ -87,10 +89,13 @@ function loadConfig(projectRoot: string = process.cwd()): Config | void {
 
       lazyProject = {};
       for (const platform in finalConfig.platforms) {
-        lazyProject[platform] = finalConfig.platforms[platform].projectConfig(
-          projectRoot,
-          userConfig.project[platform] || {},
-        );
+        const platformConfig = finalConfig.platforms[platform];
+        if (platformConfig) {
+          lazyProject[platform] = platformConfig.projectConfig(
+            projectRoot,
+            userConfig.project[platform] || {},
+          );
+        }
       }
 
       return lazyProject;
@@ -141,9 +146,11 @@ function loadConfig(projectRoot: string = process.cwd()): Config | void {
      */
     if (dependencyName === 'react-native') {
       if (Object.keys(config.platforms).length === 0) {
+        // @ts-ignore - this code is soon going to be removed
         config.platforms = {ios, android};
       }
       if (config.commands.length === 0) {
+        // @ts-ignore - this code is soon going to be removed
         config.commands = [...ios.commands, ...android.commands];
       }
     }
@@ -163,7 +170,7 @@ function loadConfig(projectRoot: string = process.cwd()): Config | void {
 
     return assign({}, acc, {
       dependencies: assign({}, acc.dependencies, {
-        get [dependencyName](): UserDependencyConfig {
+        get [dependencyName](): Dependency {
           return getDependencyConfig(
             root,
             dependencyName,

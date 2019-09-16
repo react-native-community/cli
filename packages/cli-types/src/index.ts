@@ -117,19 +117,19 @@ export type Config = {
   assets: string[];
   dependencies: {[key: string]: Dependency};
   platforms: {
-    android?: PlatformConfig<
+    android: PlatformConfig<
       AndroidProjectConfig,
       AndroidProjectParams,
       AndroidDependencyConfig,
       AndroidDependencyParams
     >;
-    ios?: PlatformConfig<
+    ios: PlatformConfig<
       IOSProjectConfig,
       IOSProjectParams,
       IOSDependencyConfig,
       IOSDependencyParams
     >;
-    [name: string]: PlatformConfig<any, any, any, any> | void;
+    [name: string]: PlatformConfig<any, any, any, any>;
   };
   commands: Command[];
   haste: {
@@ -139,16 +139,12 @@ export type Config = {
 };
 
 /**
- * Shares some structure with ConfigT, except that haste and root
+ * Shares some structure with Config, except that haste and root
  * are calculated and can't be defined
  */
-// For Omit<T, K>, see https://devblogs.microsoft.com/typescript/announcing-typescript-3-5/#the-omit-helper-type
-// export interface UserConfig
-//   extends Omit<Omit<Omit<Config, 'reactNativePath'>, 'haste'>, 'root'> {}
 
-export type UserConfig = Omit<Config, 'root' | 'haste'> & {
+export type UserConfig = Omit<Omit<Config, 'root'>, 'haste'> & {
   reactNativePath: string | void;
-
   // Additional project settings
   project: {
     android?: AndroidProjectParams;
@@ -159,16 +155,7 @@ export type UserConfig = Omit<Config, 'root' | 'haste'> & {
 
 export type UserDependencyConfig = {
   // Additional dependency settings
-  dependency: {
-    platforms: {
-      android?: AndroidDependencyParams;
-      ios?: IOSDependencyParams;
-      [key: string]: any;
-    };
-    assets: string[];
-    hooks: Dependency['hooks'];
-    params: InquirerPrompt[];
-  };
+  dependency: Omit<Omit<Dependency, 'name'>, 'root'>;
   // An array of commands that ship with the dependency
   commands: Command[];
   // An array of extra platforms to load

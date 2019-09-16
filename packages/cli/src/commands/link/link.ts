@@ -4,13 +4,12 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 import chalk from 'chalk';
 import {pick} from 'lodash';
 import {logger, CLIError} from '@react-native-community/cli-tools';
-import {type ConfigT} from 'types';
+import {Config} from '@react-native-community/cli-types';
 import getPlatformName from './getPlatformName';
 import linkDependency from './linkDependency';
 import linkAssets from './linkAssets';
@@ -18,8 +17,8 @@ import linkAll from './linkAll';
 import makeHook from './makeHook';
 
 type FlagsType = {
-  platforms?: Array<string>,
-  all?: boolean,
+  platforms?: Array<string>;
+  all?: boolean;
 };
 
 /**
@@ -30,13 +29,14 @@ type FlagsType = {
  */
 async function link(
   [rawPackageName]: Array<string>,
-  ctx: ConfigT,
+  ctx: Config,
   opts: FlagsType,
 ) {
   let platforms = ctx.platforms;
   let project = ctx.project;
 
   if (opts.platforms) {
+    // @ts-ignore
     platforms = pick(platforms, opts.platforms);
     logger.debug('Skipping selected platforms');
   }

@@ -2,20 +2,15 @@ import {Command} from '@react-native-community/cli-types';
 
 // @ts-ignore - JS file
 import server from './server/server';
-// @ts-ignore - JS file
 import bundle from './bundle/bundle';
-// @ts-ignore - JS file
 import ramBundle from './bundle/ramBundle';
-// @ts-ignore - JS file
-import link from './link/link'; // eslint-disable-line import/namespace, import/default
-// @ts-ignore - JS file
-import unlink from './link/unlink'; // eslint-disable-line import/namespace, import/default
+import link from './link/link';
+import unlink from './link/unlink';
 import install from './install/install';
 import uninstall from './install/uninstall';
 import upgrade from './upgrade/upgrade';
 import info from './info/info';
 import config from './config/config';
-// @ts-ignore - JS file
 import init from './init';
 // @ts-ignore - JS file
 import doctor from './doctor';

@@ -1,12 +1,8 @@
-/**
- * @flow
- */
-
 import {uniqBy} from 'lodash';
-import path from 'path';
+import * as path from 'path';
 import chalk from 'chalk';
 import {CLIError, logger} from '@react-native-community/cli-tools';
-import type {ConfigT} from 'types';
+import {Config} from '@react-native-community/cli-types';
 import linkAssets from './linkAssets';
 import linkDependency from './linkDependency';
 import makeHook from './makeHook';
@@ -15,11 +11,11 @@ const dedupeAssets = (assets: Array<string>): Array<string> =>
   uniqBy(assets, asset => path.basename(asset));
 
 type Options = {
-  linkDeps?: boolean,
-  linkAssets?: boolean,
+  linkDeps?: boolean;
+  linkAssets?: boolean;
 };
 
-async function linkAll(config: ConfigT, options: Options) {
+async function linkAll(config: Config, options: Options) {
   if (options.linkDeps) {
     logger.debug('Linking all dependencies');
     logger.info(
@@ -60,7 +56,7 @@ async function linkAll(config: ConfigT, options: Options) {
       ),
     );
     try {
-      await linkAssets(config.platforms, config.project, assets);
+      linkAssets(config.platforms, config.project, assets);
     } catch (error) {
       throw new CLIError('Linking assets failed.', error);
     }

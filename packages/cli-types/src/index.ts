@@ -13,14 +13,16 @@ import {
 
 export type InquirerPrompt = any;
 
-export interface Command {
+export type CommandFunction<Args = Object> = (
+  argv: Array<string>,
+  ctx: Config,
+  args: Args,
+) => Promise<void> | void;
+
+export interface Command<Args = Object> {
   name: string;
   description?: string;
-  func: (
-    argv: Array<string>,
-    ctx: Config,
-    args: Object,
-  ) => Promise<void> | void;
+  func: CommandFunction<Args>;
   options?: Array<{
     name: string;
     description?: string;

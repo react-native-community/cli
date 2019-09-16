@@ -4,13 +4,12 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 import fs from 'fs';
 import path from 'path';
 
-function walk(current: string) {
+function walk(current: string): string[] {
   if (!fs.lstatSync(current).isDirectory()) {
     return [current];
   }
@@ -18,7 +17,8 @@ function walk(current: string) {
   const files = fs
     .readdirSync(current)
     .map(child => walk(path.join(current, child)));
-  return [].concat.apply([current], files);
+  const result: string[] = [];
+  return result.concat.apply([current], files);
 }
 
 export default walk;

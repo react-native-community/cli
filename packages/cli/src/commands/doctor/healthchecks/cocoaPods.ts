@@ -14,10 +14,7 @@ import {HealthCheckInterface} from '../types';
 function calculateQuestionSize(promptQuestion: string) {
   return Math.max(
     1,
-    Math.ceil(
-      wcwidth(promptQuestion) /
-        (process.stdout.columns! ? process.stdout.columns! : 80),
-    ),
+    Math.ceil(wcwidth(promptQuestion) / (process.stdout.columns || 80)),
   );
 }
 

@@ -39,19 +39,23 @@ export default {
     loader.stop();
 
     const {
-      installWithGem,
-      installWithHomebrew,
+      installMethod,
       promptQuestion,
     } = await promptCocoaPodsInstallationQuestion();
 
-    const installationMethod = installWithGem ? 'gem' : 'Homebrew';
-    const loaderInstallationMessage = `CocoaPods (installing with ${installationMethod})`;
-    const loaderSucceedMessage = `CocoaPods (installed with ${installationMethod})`;
+    // Capitalise `Homebrew` when printing on the screen
+    const installMethodCapitalized =
+      installMethod === 'homebrew'
+        ? installMethod.substr(0, 1).toUpperCase() +
+          installMethod.substr(1).toLowerCase()
+        : installMethod;
+    const loaderInstallationMessage = `CocoaPods (installing with ${installMethodCapitalized})`;
+    const loaderSucceedMessage = `CocoaPods (installed with ${installMethodCapitalized})`;
 
     // Remove the prompt after the question of how to install CocoaPods is answered
     clearQuestion(promptQuestion);
 
-    if (installWithGem) {
+    if (installMethod === 'gem') {
       loader.start(loaderInstallationMessage);
 
       const options = ['install', 'cocoapods', '--no-document'];
@@ -80,7 +84,7 @@ export default {
       }
     }
 
-    if (installWithHomebrew) {
+    if (installMethod === 'homebrew') {
       return await brewInstall({
         pkg: 'cocoapods',
         label: loaderInstallationMessage,

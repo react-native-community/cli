@@ -11,6 +11,11 @@ import {NoopLoader} from './loader';
 import sudo from 'sudo-prompt';
 import {brewInstall} from './brewInstall';
 
+type PromptCocoaPodsInstallation = {
+  installMethod: 'gem' | 'homebrew';
+  promptQuestion: string;
+};
+
 async function updatePods(loader: ora.Ora) {
   try {
     loader.start(
@@ -44,7 +49,9 @@ function runSudo(command: string): Promise<void> {
   });
 }
 
-async function promptCocoaPodsInstallationQuestion() {
+async function promptCocoaPodsInstallationQuestion(): Promise<
+  PromptCocoaPodsInstallation
+> {
   const promptQuestion = `CocoaPods ${chalk.dim.underline(
     '(https://cocoapods.org/)',
   )} ${chalk.reset.bold(
@@ -65,8 +72,7 @@ async function promptCocoaPodsInstallationQuestion() {
   const shouldInstallWithGem = shouldInstallCocoaPods === installWithGem;
 
   return {
-    installWithGem: shouldInstallWithGem,
-    installWithHomebrew: !shouldInstallWithGem,
+    installMethod: shouldInstallWithGem ? 'gem' : 'homebrew',
     // This is used for removing the message in `doctor` after it's answered
     promptQuestion: `? ${stripAnsi(promptQuestion)} ${
       shouldInstallWithGem ? installWithGem : installWithHomebrew
@@ -93,12 +99,9 @@ async function installCocoaPodsWithGem() {
 async function installCocoaPods(loader: ora.Ora) {
   loader.stop();
 
-  const {
-    installWithGem,
-    installWithHomebrew,
-  } = await promptCocoaPodsInstallationQuestion();
+  const {installMethod} = await promptCocoaPodsInstallationQuestion();
 
-  if (installWithGem) {
+  if (installMethod === 'gem') {
     loader.start('Installing CocoaPods');
 
     try {
@@ -117,7 +120,7 @@ async function installCocoaPods(loader: ora.Ora) {
     }
   }
 
-  if (installWithHomebrew) {
+  if (installMethod === 'homebrew') {
     return await brewInstall({
       pkg: 'cocoapods',
       label: 'Installing CocoaPods',

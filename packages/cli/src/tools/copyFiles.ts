@@ -7,7 +7,6 @@
 
 import fs from 'fs';
 import path from 'path';
-// @ts-ignore FIXME after converting walk to typescript
 import walk from './walk';
 
 type Options = {

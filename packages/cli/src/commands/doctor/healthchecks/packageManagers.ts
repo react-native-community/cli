@@ -1,16 +1,11 @@
-// @flow
 import fs from 'fs';
-import Ora from 'ora';
-// $FlowFixMe - converted to TS
 import versionRanges from '../versionRanges';
 import {
   PACKAGE_MANAGERS,
   doesSoftwareNeedToBeFixed,
-  // $FlowFixMe - converted to TS
 } from '../checkInstallation';
-// $FlowFixMe - converted to TS
 import {install} from '../../../tools/install';
-import type {EnvironmentInfo, HealthCheckInterface} from '../types';
+import {HealthCheckInterface} from '../types';
 
 const packageManager = (() => {
   if (fs.existsSync('yarn.lock')) {
@@ -26,7 +21,7 @@ const packageManager = (() => {
 
 const yarn: HealthCheckInterface = {
   label: 'yarn',
-  getDiagnostics: async ({Binaries}: EnvironmentInfo) => ({
+  getDiagnostics: async ({Binaries}) => ({
     version: Binaries.Node.version,
     needsToBeFixed: doesSoftwareNeedToBeFixed({
       version: Binaries.Yarn.version,
@@ -37,13 +32,18 @@ const yarn: HealthCheckInterface = {
   // or if we can't identify that the user uses yarn or npm
   visible:
     packageManager === PACKAGE_MANAGERS.YARN || packageManager === undefined,
-  runAutomaticFix: async ({loader}: typeof Ora) =>
-    await install('yarn', 'https://yarnpkg.com/docs/install', loader),
+  runAutomaticFix: async ({loader}) =>
+    await install({
+      pkg: 'yarn',
+      label: 'yarn',
+      source: 'https://yarnpkg.com/docs/install',
+      loader,
+    }),
 };
 
 const npm: HealthCheckInterface = {
   label: 'npm',
-  getDiagnostics: async ({Binaries}: EnvironmentInfo) => ({
+  getDiagnostics: async ({Binaries}) => ({
     needsToBeFixed: doesSoftwareNeedToBeFixed({
       version: Binaries.npm.version,
       versionRange: versionRanges.NPM,
@@ -53,8 +53,13 @@ const npm: HealthCheckInterface = {
   // or if we can't identify that the user uses yarn or npm
   visible:
     packageManager === PACKAGE_MANAGERS.NPM || packageManager === undefined,
-  runAutomaticFix: async ({loader}: typeof Ora) =>
-    await install('node', 'https://nodejs.org/', loader),
+  runAutomaticFix: async ({loader}) =>
+    await install({
+      pkg: 'node',
+      label: 'node',
+      source: 'https://nodejs.org/',
+      loader,
+    }),
 };
 
 export {packageManager, yarn, npm};

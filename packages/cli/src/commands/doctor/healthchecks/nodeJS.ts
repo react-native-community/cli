@@ -1,23 +1,18 @@
-// @flow
-import Ora from 'ora';
-// $FlowFixMe - converted to TS
 import versionRanges from '../versionRanges';
-// $FlowFixMe - converted to TS
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
-// $FlowFixMe - converted to TS
 import {logManualInstallation} from './common';
-import type {EnvironmentInfo, HealthCheckInterface} from '../types';
+import {HealthCheckInterface} from '../types';
 
-export default ({
+export default {
   label: 'Node.js',
-  getDiagnostics: async ({Binaries}: EnvironmentInfo) => ({
+  getDiagnostics: async ({Binaries}) => ({
     version: Binaries.Node.version,
     needsToBeFixed: doesSoftwareNeedToBeFixed({
       version: Binaries.Node.version,
       versionRange: versionRanges.NODE_JS,
     }),
   }),
-  runAutomaticFix: async ({loader}: {loader: typeof Ora}) => {
+  runAutomaticFix: async ({loader}) => {
     loader.fail();
 
     logManualInstallation({
@@ -25,4 +20,4 @@ export default ({
       url: 'https://nodejs.org/en/download/',
     });
   },
-}: HealthCheckInterface);
+} as HealthCheckInterface;

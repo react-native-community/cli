@@ -28,10 +28,12 @@ export default async function({
   environmentInfo,
 }: RunAutomaticFixArgs) {
   // Remove the fix options from screen
-  // @ts-ignore
-  process.stdout.moveCursor(0, -6);
-  // @ts-ignore
-  process.stdout.clearScreenDown();
+  if (process.stdout.isTTY) {
+    // @ts-ignore
+    process.stdout.moveCursor(0, -6);
+    // @ts-ignore
+    process.stdout.clearScreenDown();
+  }
 
   const totalIssuesBasedOnFixLevel: {[x in AUTOMATIC_FIX_LEVELS]: number} = {
     [AUTOMATIC_FIX_LEVELS.ALL_ISSUES]: stats.errors + stats.warnings,

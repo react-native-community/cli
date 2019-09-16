@@ -52,7 +52,7 @@ type FlagsT = {
   contributor: boolean | void;
 };
 
-export default (async (_, __, options: FlagsT) => {
+export default (async (_, __, options) => {
   const Loader = getLoader();
   const loader = new Loader();
 
@@ -74,7 +74,7 @@ export default (async (_, __, options: FlagsT) => {
   const iterateOverHealthChecks = async ({
     label,
     healthchecks,
-  }: HealthcheckCategory): Promise<HealthCheckCategoryResult> => ({
+  }: HealthCheckCategory): Promise<HealthCheckCategoryResult> => ({
     label,
     healthchecks: (await Promise.all(
       healthchecks.map(async healthcheck => {
@@ -113,12 +113,12 @@ export default (async (_, __, options: FlagsT) => {
       category.healthchecks.some(healthcheck => healthcheck.needsToBeFixed),
     );
 
-  const iterateOverCategories = (categories: HealthcheckCategory[]) =>
+  const iterateOverCategories = (categories: HealthCheckCategory[]) =>
     Promise.all(categories.map(iterateOverHealthChecks));
 
   const healthchecksPerCategory = await iterateOverCategories(Object.values(
     getHealthchecks(options),
-  ).filter(category => category !== undefined) as HealthcheckCategory[]);
+  ).filter(category => category !== undefined) as HealthCheckCategory[]);
 
   loader.stop();
 
@@ -158,8 +158,9 @@ export default (async (_, __, options: FlagsT) => {
   }
 
   const onKeyPress = async (key: string) => {
-    // @ts-ignore
-    process.stdin.setRawMode(false);
+    if (typeof process.stdin.setRawMode === 'function') {
+      process.stdin.setRawMode(false);
+    }
     process.stdin.removeAllListeners('data');
 
     if (key === KEYS.EXIT || key === '\u0003') {
@@ -194,4 +195,4 @@ export default (async (_, __, options: FlagsT) => {
   };
 
   printFixOptions({onKeyPress});
-}) as CommandFunction;
+}) as CommandFunction<FlagsT>;

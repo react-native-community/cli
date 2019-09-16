@@ -66,15 +66,15 @@ export type EnvironmentInfo = {
   };
 };
 
-export type HealthcheckCategory = {
+export type HealthCheckCategory = {
   label: string;
   healthchecks: HealthCheckInterface[];
 };
 
 export type Healthchecks = {
-  common: HealthcheckCategory;
-  android: HealthcheckCategory;
-  ios?: HealthcheckCategory;
+  common: HealthCheckCategory;
+  android: HealthCheckCategory;
+  ios?: HealthCheckCategory;
 };
 
 export type RunAutomaticFix = (args: {

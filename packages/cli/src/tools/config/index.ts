@@ -1,5 +1,9 @@
 import path from 'path';
 import chalk from 'chalk';
+import {
+  UserDependencyConfig,
+  ProjectConfig,
+} from '@react-native-community/cli-types';
 import {logger, inlineString} from '@react-native-community/cli-tools';
 import * as ios from '@react-native-community/cli-platform-ios';
 import * as android from '@react-native-community/cli-platform-android';
@@ -13,11 +17,7 @@ import {
 import assign from '../assign';
 import merge from '../merge';
 import resolveNodeModuleDir from './resolveNodeModuleDir';
-import {
-  UserConfig,
-  Config
-} from '../../../../cli-types';
-import {UserDependencyConfig} from '@react-native-community/cli-types/src';
+import {UserConfig, Config} from '../../../../cli-types';
 
 function getDependencyConfig(
   root: string,
@@ -26,7 +26,7 @@ function getDependencyConfig(
   config: UserDependencyConfig,
   userConfig: UserConfig,
   isPlatform: boolean,
-): UserDependencyConfig | void{
+): UserDependencyConfig {
   return merge(
     {
       root,
@@ -59,8 +59,8 @@ function getDependencyConfig(
 /**
  * Loads CLI configuration
  */
-function loadConfig(projectRoot: string = process.cwd()): Config | void{
-  let lazyProject;
+function loadConfig(projectRoot: string = process.cwd()): Config | void {
+  let lazyProject: ProjectConfig;
   const userConfig = readConfigFromDisk(projectRoot);
 
   const initialConfig: Config = {
@@ -97,7 +97,7 @@ function loadConfig(projectRoot: string = process.cwd()): Config | void{
     },
   };
 
-  let depsWithWarnings = [];
+  let depsWithWarnings: Array<[string, string]> = [];
 
   const finalConfig = Array.from(
     new Set([
@@ -108,8 +108,8 @@ function loadConfig(projectRoot: string = process.cwd()): Config | void{
     const localDependencyRoot =
       userConfig.dependencies[dependencyName] &&
       userConfig.dependencies[dependencyName].root;
-    let root;
-    let config;
+    let root: string;
+    let config: UserDependencyConfig;
     try {
       root =
         localDependencyRoot ||
@@ -161,10 +161,9 @@ function loadConfig(projectRoot: string = process.cwd()): Config | void{
       platforms: Object.keys(config.platforms),
     };
 
-    return (assign({}, acc, {
+    return assign({}, acc, {
       dependencies: assign({}, acc.dependencies, {
-        // $FlowExpectedError: Dynamic getters are not supported
-        get [dependencyName]() {
+        get [dependencyName](): UserDependencyConfig {
           return getDependencyConfig(
             root,
             dependencyName,
@@ -187,7 +186,7 @@ function loadConfig(projectRoot: string = process.cwd()): Config | void{
         ],
         platforms: [...acc.haste.platforms, ...haste.platforms],
       },
-    }): Config);
+    }) as Config;
   }, initialConfig);
 
   if (depsWithWarnings.length) {

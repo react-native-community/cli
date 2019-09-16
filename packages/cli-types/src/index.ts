@@ -94,6 +94,12 @@ export interface Dependency {
   params: InquirerPrompt[];
 }
 
+export type ProjectConfig = {
+  android?: AndroidProjectConfig;
+  ios?: IOSProjectConfig;
+  [key: string]: any;
+};
+
 /**
  * @property root - Root where the configuration has been resolved from
  * @property reactNativePath - Path to React Native source
@@ -107,27 +113,23 @@ export interface Dependency {
 export type Config = {
   root: string;
   reactNativePath: string;
-  project: {
-    android?: AndroidProjectConfig;
-    ios?: IOSProjectConfig;
-    [key: string]: any;
-  };
+  project: ProjectConfig;
   assets: string[];
   dependencies: {[key: string]: Dependency};
   platforms: {
-    android: PlatformConfig<
+    android?: PlatformConfig<
       AndroidProjectConfig,
       AndroidProjectParams,
       AndroidDependencyConfig,
       AndroidDependencyParams
     >;
-    ios: PlatformConfig<
+    ios?: PlatformConfig<
       IOSProjectConfig,
       IOSProjectParams,
       IOSDependencyConfig,
       IOSDependencyParams
     >;
-    [name: string]: PlatformConfig<any, any, any, any>;
+    [name: string]: PlatformConfig<any, any, any, any> | void;
   };
   commands: Command[];
   haste: {
@@ -155,10 +157,28 @@ export type UserConfig = Omit<Config, 'root' | 'haste'> & {
   };
 };
 
-export type UserDependencyConfig = Omit<
-  Config,
-  'root' | 'reactNativePath' | 'project' | 'assets'
->;
+export type UserDependencyConfig = {
+  // Additional dependency settings
+  dependency: {
+    platforms: {
+      android?: AndroidDependencyParams;
+      ios?: IOSDependencyParams;
+      [key: string]: any;
+    };
+    assets: string[];
+    hooks: Dependency['hooks'];
+    params: InquirerPrompt[];
+  };
+  // An array of commands that ship with the dependency
+  commands: Command[];
+  // An array of extra platforms to load
+  platforms: Config['platforms'];
+  // Haste config defined by legacy `rnpm`
+  haste?: {
+    platforms: string[];
+    providesModuleNodeModules: string[];
+  };
+};
 
 export {
   IOSProjectConfig,

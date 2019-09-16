@@ -34,7 +34,6 @@ type LegacyDependencyConfig = {
   plugin: Array<string>;
   params: InquirerPrompt[];
   haste: any;
-  commands: Command[];
 };
 
 /**
@@ -56,18 +55,20 @@ function readLegacyConfigFromDisk(rootFolder: string): UserConfig | void {
     return undefined;
   }
 
-  const reactNativePath = config.reactNativePath
-    ? path.resolve(rootFolder, config.reactNativePath)
-    : resolveReactNativePath(rootFolder);
-
   const transformedConfig: UserConfig = {
-    reactNativePath: reactNativePath,
     project: {
       android: config.android,
       ios: config.ios,
     },
     assets: config.assets,
     commands: [],
+    dependencies: {},
+    platforms: {},
+    get reactNativePath() {
+      return config.reactNativePath
+        ? path.resolve(rootFolder, config.reactNativePath)
+        : resolveReactNativePath(rootFolder);
+    },
   };
 
   logger.warn(
@@ -158,20 +159,14 @@ function readLegacyDependencyConfigFromDisk(
     // package.json is usually missing in local libraries that are not in
     // project "dependencies", so we just return a bare config
     return {
-      assets: [],
-      dependencies: {
-        dep: {
-          name: '',
-          root: '',
-          platforms: {},
-          assets: null,
-          hooks: null,
-          params: null,
-        },
+      dependency: {
+        platforms: {},
+        assets: [],
+        hooks: {},
+        params: [],
       },
-      platforms: null,
       commands: [],
-      haste: null,
+      platforms: {},
     };
   }
 
@@ -179,27 +174,21 @@ function readLegacyDependencyConfigFromDisk(
     return undefined;
   }
 
-  const platforms = config.platform
-    ? require(path.join(rootFolder, config.platform))
-    : {};
   const transformedConfig: UserDependencyConfig = {
-    assets: [],
-    dependencies: {
-      dep: {
-        name: '',
-        root: '',
-        platforms: {
-          android: config.android,
-          ios: config.ios,
-        },
-        assets: config.assets,
-        hooks: config.commands,
-        params: config.params,
+    dependency: {
+      platforms: {
+        ios: config.ios,
+        android: config.android,
       },
+      assets: config.assets,
+      hooks: config.commands,
+      params: config.params,
     },
-    platforms: platforms,
-    commands: loadProjectCommands(rootFolder, ...config.plugin),
     haste: config.haste,
+    commands: loadProjectCommands(rootFolder, ...config.plugin),
+    platforms: config.platform
+      ? require(path.join(rootFolder, config.platform))
+      : {},
   };
 
   return transformedConfig;

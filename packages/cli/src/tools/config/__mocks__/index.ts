@@ -1,7 +1,3 @@
-/**
- * @flow
- */
-
 export default function mockedLoadConfig() {
   return {
     root: '/project/root',

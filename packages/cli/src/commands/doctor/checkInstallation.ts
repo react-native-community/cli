@@ -1,7 +1,7 @@
 import semver from 'semver';
 import commandExists from 'command-exists';
 
-enum PACKAGE_MANAGERS {
+export enum PACKAGE_MANAGERS {
   YARN = 'YARN',
   NPM = 'NPM',
 }
@@ -32,4 +32,4 @@ const doesSoftwareNeedToBeFixed = ({
   );
 };
 
-export {PACKAGE_MANAGERS, checkSoftwareInstalled, doesSoftwareNeedToBeFixed};
+export {checkSoftwareInstalled, doesSoftwareNeedToBeFixed};

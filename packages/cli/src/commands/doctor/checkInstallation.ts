@@ -1,10 +1,10 @@
 import semver from 'semver';
 import commandExists from 'command-exists';
 
-const PACKAGE_MANAGERS = {
-  YARN: 'YARN',
-  NPM: 'NPM',
-};
+enum PACKAGE_MANAGERS {
+  YARN = 'YARN',
+  NPM = 'NPM',
+}
 
 const checkSoftwareInstalled = async (command: string) => {
   try {

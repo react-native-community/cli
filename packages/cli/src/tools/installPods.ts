@@ -4,7 +4,6 @@ import chalk from 'chalk';
 import ora from 'ora';
 // @ts-ignore untyped
 import inquirer from 'inquirer';
-import stripAnsi from 'strip-ansi';
 import {logger} from '@react-native-community/cli-tools';
 import {NoopLoader} from './loader';
 // @ts-ignore untyped
@@ -74,7 +73,7 @@ async function promptCocoaPodsInstallationQuestion(): Promise<
   return {
     installMethod: shouldInstallWithGem ? 'gem' : 'homebrew',
     // This is used for removing the message in `doctor` after it's answered
-    promptQuestion: `? ${stripAnsi(promptQuestion)} ${
+    promptQuestion: `? ${promptQuestion} ${
       shouldInstallWithGem ? installWithGem : installWithHomebrew
     }`,
   };

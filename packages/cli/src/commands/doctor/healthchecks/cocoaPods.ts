@@ -1,31 +1,14 @@
 import execa from 'execa';
 import chalk from 'chalk';
-import readline from 'readline';
-import wcwidth from 'wcwidth';
 import {logger} from '@react-native-community/cli-tools';
 import {checkSoftwareInstalled} from '../checkInstallation';
 import {
   promptCocoaPodsInstallationQuestion,
   runSudo,
 } from '../../../tools/installPods';
+import {removeMessage} from './common';
 import {brewInstall} from '../../../tools/brewInstall';
 import {HealthCheckInterface} from '../types';
-
-function calculateQuestionSize(promptQuestion: string) {
-  return Math.max(
-    1,
-    Math.ceil(wcwidth(promptQuestion) / (process.stdout.columns || 80)),
-  );
-}
-
-function clearQuestion(promptQuestion: string) {
-  readline.moveCursor(
-    process.stdout,
-    0,
-    -calculateQuestionSize(promptQuestion),
-  );
-  readline.clearScreenDown(process.stdout);
-}
 
 export default {
   label: 'CocoaPods',
@@ -50,7 +33,7 @@ export default {
     const loaderSucceedMessage = `CocoaPods (installed with ${installMethodCapitalized})`;
 
     // Remove the prompt after the question of how to install CocoaPods is answered
-    clearQuestion(promptQuestion);
+    removeMessage(promptQuestion);
 
     if (installMethod === 'gem') {
       loader.start(loaderInstallationMessage);

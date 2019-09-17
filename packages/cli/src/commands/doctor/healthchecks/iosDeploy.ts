@@ -6,7 +6,7 @@ import {checkSoftwareInstalled, PACKAGE_MANAGERS} from '../checkInstallation';
 import {packageManager} from './packageManagers';
 import {logManualInstallation, removeMessage} from './common';
 import {HealthCheckInterface} from '../types';
-import ora from 'ora';
+import {Ora} from 'ora';
 
 const label = 'ios-deploy';
 
@@ -32,7 +32,7 @@ const installLibrary = async ({
 }: {
   installationCommand: string;
   packageManagerToUse: 'yarn' | 'npm';
-  loader: ora.Ora;
+  loader: Ora;
 }) => {
   try {
     loader.start(`${label} (installing with ${packageManagerToUse})`);

@@ -54,7 +54,7 @@ you'll need to set a custom root. Pass it as an argument to `use_native_modules!
 require_relative '../../node_modules/@react-native-community/cli-platform-ios/native_modules'
 target 'RNapp' do
   # React pods and custom pods here...
-  use_native_modules!("../..")
+  use_native_modules!("..")
 end
 ```
 
@@ -92,13 +92,13 @@ you'll need to set a custom root. Pass it as a second argument to `applyNativeMo
 ```groovy
 // example/android/settings.gradle
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle");
-applyNativeModulesSettingsGradle(settings, "../..")
+applyNativeModulesSettingsGradle(settings, "..")
 ```
 
 ```groovy
 // example/android/app/build.gradle
 apply from: file("../../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle");
-applyNativeModulesAppBuildGradle(project, "../..")
+applyNativeModulesAppBuildGradle(project, "..")
 ```
 
 ## What do I need to have in my package to make it work?

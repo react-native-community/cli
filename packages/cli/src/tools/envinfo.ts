@@ -4,6 +4,7 @@ import envinfo from 'envinfo';
 export default async function getEnvironmentInfo() {
   return envinfo.run(
     {
+      System: ['OS', 'CPU', 'Memory', 'Shell'],
       Binaries: ['Node', 'Yarn', 'npm', 'Watchman'],
       IDEs: ['Xcode', 'Android Studio'],
       SDKs: ['iOS SDK', 'Android SDK'],

@@ -52,7 +52,7 @@ export default {
           return loader.succeed(loaderSucceedMessage);
         } catch (error) {
           loader.fail();
-          logger.log(chalk.dim(`\n${error}`));
+          logger.log(chalk.dim(`\n${error.message}`));
 
           return logger.log(
             `An error occured while trying to install CocoaPods. Please try again manually: ${chalk.bold(

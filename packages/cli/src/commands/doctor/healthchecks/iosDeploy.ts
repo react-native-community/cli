@@ -43,7 +43,7 @@ const installLibrary = async ({
     loader.succeed(`${label} (installed with ${packageManagerToUse})`);
   } catch (error) {
     loader.fail();
-    logger.log(chalk.dim(`\n${error}`));
+    logger.log(chalk.dim(`\n${error.message}`));
 
     logManualInstallation({
       healthcheck: 'ios-deploy',

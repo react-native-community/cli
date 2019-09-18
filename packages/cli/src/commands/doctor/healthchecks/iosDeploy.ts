@@ -38,7 +38,9 @@ const installLibrary = async ({
   try {
     loader.start(`${label} (installing with ${packageManagerToUse})`);
 
-    await execa(installationCommand);
+    const installationCommandArgs = installationCommand.split(' ');
+
+    await execa(installationCommandArgs[0], installationCommandArgs.splice(1));
 
     loader.succeed(`${label} (installed with ${packageManagerToUse})`);
   } catch (error) {

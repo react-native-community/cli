@@ -59,7 +59,9 @@
     "semver": "^6.3.0",
     "serve-static": "^1.13.1",
     "shell-quote": "1.6.1",
+    "strip-ansi": "^5.2.0",
     "sudo-prompt": "^9.0.0",
+    "wcwidth": "^1.0.1",
     "ws": "^1.1.0"
   },
   "peerDependencies": {
@@ -71,6 +73,7 @@
     "@types/minimist": "^1.2.0",
     "@types/mkdirp": "^0.5.2",
     "@types/semver": "^6.0.2",
+    "@types/wcwidth": "^1.0.0",
     "slash": "^3.0.0",
     "snapshot-diff": "^0.5.0"
   }

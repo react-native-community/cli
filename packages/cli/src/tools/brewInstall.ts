@@ -7,15 +7,32 @@ type InstallArgs = {
   pkg: string;
   label?: string;
   loader: ora.Ora;
+  onSuccess?: () => void;
+  onFail?: () => void;
 };
 
-async function brewInstall({pkg, label, loader}: InstallArgs) {
+async function brewInstall({
+  pkg,
+  label,
+  loader,
+  onSuccess,
+  onFail,
+}: InstallArgs) {
   loader.start(label);
+
   try {
     await execa('brew', ['install', pkg]);
 
-    loader.succeed();
+    if (typeof onSuccess === 'function') {
+      return onSuccess();
+    }
+
+    return loader.succeed();
   } catch (error) {
+    if (typeof onFail === 'function') {
+      return onFail();
+    }
+
     loader.fail();
     logger.log(chalk.dim(`\n${error.stderr}`));
     logger.log(

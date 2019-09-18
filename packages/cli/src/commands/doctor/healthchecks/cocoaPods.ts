@@ -26,8 +26,7 @@ export default {
     // Capitalise `Homebrew` when printing on the screen
     const installMethodCapitalized =
       installMethod === 'homebrew'
-        ? installMethod.substr(0, 1).toUpperCase() +
-          installMethod.substr(1).toLowerCase()
+        ? installMethod.substr(0, 1).toUpperCase() + installMethod.substr(1)
         : installMethod;
     const loaderInstallationMessage = `CocoaPods (installing with ${installMethodCapitalized})`;
     const loaderSucceedMessage = `CocoaPods (installed with ${installMethodCapitalized})`;

@@ -142,12 +142,14 @@ export function readDependencyConfigFromDisk(
  */
 const loadProjectCommands = (
   root: string,
-  ...commands: string[]
-): Command[] => {
-  return commands.reduce((acc: Command[], cmdPath: string) => {
-    const cmds: Array<Command> | Command = require(path.join(root, cmdPath));
-    return acc.concat(cmds);
-  }, []);
+  commands: Array<string> | string | undefined,
+): Array<Command> => {
+  return ([] as string[])
+    .concat(commands || [])
+    .reduce((acc: Array<Command>, cmdPath: string) => {
+      const cmds: Array<Command> | Command = require(path.join(root, cmdPath));
+      return acc.concat(cmds);
+    }, []);
 };
 
 /**
@@ -192,7 +194,7 @@ function readLegacyDependencyConfigFromDisk(
       params: config.params,
     },
     haste: config.haste,
-    commands: loadProjectCommands(rootFolder, ...config.plugin),
+    commands: loadProjectCommands(rootFolder, config.plugin),
     platforms: config.platform
       ? require(path.join(rootFolder, config.platform))
       : {},

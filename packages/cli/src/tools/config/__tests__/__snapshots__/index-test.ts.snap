@@ -49,10 +49,16 @@ Object {
 exports[`should load an out-of-tree "windows" platform that ships with a dependency 1`] = `
 Object {
   "haste": Object {
-    "platforms": Array [],
-    "providesModuleNodeModules": Array [],
+    "platforms": Array [
+      "windows",
+    ],
+    "providesModuleNodeModules": Array [
+      "react-native-windows",
+    ],
   },
-  "platforms": Object {},
+  "platforms": Object {
+    "windows": Object {},
+  },
 }
 `;
 
@@ -104,6 +110,46 @@ Array [
     "name": "test",
   },
 ]
+`;
+
+exports[`should read \`rnpm\` config from a dependency and transform it to a new format: foo config 1`] = `
+Object {
+  "assets": Array [],
+  "hooks": Object {},
+  "name": "react-native-foo",
+  "params": Array [],
+  "platforms": Object {
+    "android": null,
+    "ios": Object {
+      "folder": "<<REPLACED>>/node_modules/react-native-foo",
+      "libraryFolder": "Libraries",
+      "pbxprojPath": "<<REPLACED>>/node_modules/react-native-foo/customLocation/customProject.xcodeproj/project.pbxproj",
+      "plist": Array [],
+      "podfile": null,
+      "podspecPath": null,
+      "projectName": "customProject.xcodeproj",
+      "projectPath": "<<REPLACED>>/node_modules/react-native-foo/customLocation/customProject.xcodeproj",
+      "scriptPhases": Array [],
+      "sharedLibraries": Array [],
+      "sourceDir": "<<REPLACED>>/node_modules/react-native-foo/customLocation",
+    },
+  },
+  "root": "<<REPLACED>>/node_modules/react-native-foo",
+}
+`;
+
+exports[`should read \`rnpm\` config from a dependency and transform it to a new format: haste config 1`] = `
+Object {
+  "platforms": Array [
+    "ios",
+    "android",
+    "dummy",
+  ],
+  "providesModuleNodeModules": Array [
+    "react-native",
+    "react-native-dummy",
+  ],
+}
 `;
 
 exports[`should read a config of a dependency and use it to load other settings 1`] = `

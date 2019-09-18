@@ -1,7 +1,6 @@
 import androidHomeEnvVariables from '../androidHomeEnvVariable';
 import getEnvironmentInfo from '../../../../tools/envinfo';
 import {EnvironmentInfo} from '../../types';
-import {Ora} from 'ora';
 
 jest.mock('../common');
 
@@ -35,8 +34,7 @@ describe('androidHomeEnvVariables', () => {
   });
 
   it('logs manual installation steps to the screen', async () => {
-    // @ts-ignore
-    const loader: Ora = {
+    const loader: any = {
       info: jest.fn(),
     };
 

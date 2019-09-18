@@ -118,14 +118,12 @@ export function readDependencyConfigFromDisk(
     stopDir: rootFolder,
     searchPlaces,
   });
-  // @ts-ignore
-  let config: UserDependencyConfig = explorer.searchSync(rootFolder);
-  const legacy = !!config;
 
-  if (legacy) {
-    // @ts-ignore TODO: legacy config can be undefined
-    config = readLegacyDependencyConfigFromDisk(rootFolder);
-  }
+  const searchResult = explorer.searchSync(rootFolder);
+  const legacy = !searchResult;
+  let config = searchResult
+    ? (searchResult.config as UserDependencyConfig)
+    : (readLegacyDependencyConfigFromDisk(rootFolder) as UserDependencyConfig);
 
   const result = Joi.validate(config, schema.dependencyConfig);
 

@@ -2,8 +2,13 @@
 
 exports[`should automatically put "react-native" into haste config 1`] = `
 Object {
-  "platforms": Array [],
-  "providesModuleNodeModules": Array [],
+  "platforms": Array [
+    "ios",
+    "android",
+  ],
+  "providesModuleNodeModules": Array [
+    "react-native",
+  ],
 }
 `;
 
@@ -51,7 +56,18 @@ Object {
 }
 `;
 
-exports[`should load commands from "react-native-foo" and "react-native-bar" packages 1`] = `Array []`;
+exports[`should load commands from "react-native-foo" and "react-native-bar" packages 1`] = `
+Array [
+  Object {
+    "func": [Function],
+    "name": "foo-command",
+  },
+  Object {
+    "func": [Function],
+    "name": "bar-command",
+  },
+]
+`;
 
 exports[`should merge project configuration with default values: snapshoting \`react-native-test\` config 1`] = `
 Object {
@@ -62,7 +78,18 @@ Object {
   "name": "react-native-test",
   "params": Array [],
   "platforms": Object {
+    "android": null,
     "ios": Object {
+      "folder": "<<REPLACED>>/node_modules/react-native-test",
+      "libraryFolder": "Libraries",
+      "pbxprojPath": "<<REPLACED>>/node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj",
+      "plist": Array [],
+      "podfile": null,
+      "podspecPath": null,
+      "projectName": "HelloWorld.xcodeproj",
+      "projectPath": "<<REPLACED>>/node_modules/react-native-test/ios/HelloWorld.xcodeproj",
+      "scriptPhases": Array [],
+      "sharedLibraries": Array [],
       "sourceDir": "./abc",
     },
   },
@@ -73,149 +100,8 @@ Object {
 exports[`should not add default React Native config when one present 1`] = `
 Array [
   Object {
-    "description": "starts iOS device syslog tail",
     "func": [Function],
-    "name": "log-ios",
-  },
-  Object {
-    "description": "builds your app and starts it on iOS simulator",
-    "examples": Array [
-      Object {
-        "cmd": "react-native run-ios --simulator \\"iPhone 5\\"",
-        "desc": "Run on a different simulator, e.g. iPhone 5",
-      },
-      Object {
-        "cmd": "react-native run-ios --project-path \\"./app/ios\\"",
-        "desc": "Pass a non-standard location of iOS directory",
-      },
-      Object {
-        "cmd": "react-native run-ios --device \\"Max's iPhone\\"",
-        "desc": "Run on a connected device, e.g. Max's iPhone",
-      },
-      Object {
-        "cmd": "react-native run-ios --simulator \\"Apple TV\\"  --scheme \\"helloworld-tvOS\\"",
-        "desc": "Run on the AppleTV simulator",
-      },
-    ],
-    "func": [Function],
-    "name": "run-ios",
-    "options": Array [
-      Object {
-        "default": "iPhone X",
-        "description": "Explicitly set simulator to use. Optionally include iOS version betweenparenthesis at the end to match an exact version: \\"iPhone 6 (10.0)\\"",
-        "name": "--simulator [string]",
-      },
-      Object {
-        "default": "Debug",
-        "description": "Explicitly set the scheme configuration to use",
-        "name": "--configuration [string]",
-      },
-      Object {
-        "description": "Explicitly set Xcode scheme to use",
-        "name": "--scheme [string]",
-      },
-      Object {
-        "default": "ios",
-        "description": "Path relative to project root where the Xcode project (.xcodeproj) lives.",
-        "name": "--project-path [string]",
-      },
-      Object {
-        "description": "Explicitly set device to use by name.  The value is not required if you have a single device connected.",
-        "name": "--device [string]",
-      },
-      Object {
-        "description": "Explicitly set device to use by udid",
-        "name": "--udid [string]",
-      },
-      Object {
-        "description": "Do not launch packager while building",
-        "name": "--no-packager",
-      },
-      Object {
-        "description": "Do not use xcpretty even if installed",
-        "name": "--verbose",
-      },
-      Object {
-        "default": 8081,
-        "name": "--port [number]",
-        "parse": [Function],
-      },
-      Object {
-        "default": [Function],
-        "description": "Launches the Metro Bundler in a new window using the specified terminal path.",
-        "name": "--terminal [string]",
-      },
-    ],
-  },
-  Object {
-    "description": "starts logkitty",
-    "func": [Function],
-    "name": "log-android",
-  },
-  Object {
-    "description": "builds your app and starts it on a connected Android emulator or device",
-    "func": [Function],
-    "name": "run-android",
-    "options": Array [
-      Object {
-        "default": "",
-        "description": "Override the root directory for the android build (which contains the android directory)",
-        "name": "--root [string]",
-      },
-      Object {
-        "default": "debug",
-        "description": "Specify your app's build variant",
-        "name": "--variant [string]",
-      },
-      Object {
-        "default": "app",
-        "description": "Specify a different application folder name for the android source. If not, we assume is \\"app\\"",
-        "name": "--appFolder [string]",
-      },
-      Object {
-        "default": "",
-        "description": "Specify an applicationId to launch after build.",
-        "name": "--appId [string]",
-      },
-      Object {
-        "default": "",
-        "description": "Specify an applicationIdSuffix to launch after build.",
-        "name": "--appIdSuffix [string]",
-      },
-      Object {
-        "default": "MainActivity",
-        "description": "Name of the activity to start",
-        "name": "--main-activity [string]",
-      },
-      Object {
-        "description": "builds your app and starts it on a specific device/simulator with the given device id (listed by running \\"adb devices\\" on the command line).",
-        "name": "--deviceId [string]",
-      },
-      Object {
-        "description": "Do not launch packager while building",
-        "name": "--no-packager",
-      },
-      Object {
-        "default": 8081,
-        "name": "--port [number]",
-        "parse": [Function],
-      },
-      Object {
-        "default": "iTerm.app",
-        "description": "Launches the Metro Bundler in a new window using the specified terminal path.",
-        "name": "--terminal [string]",
-      },
-      Object {
-        "description": "Run custom Gradle tasks. By default it's \\"installDebug\\"",
-        "name": "--tasks [list]",
-        "parse": [Function],
-      },
-      Object {
-        "default": false,
-        "description": "Do not run \\"jetifier\\" – the AndroidX transition tool. By default it runs before Gradle to ease working with libraries that don't support AndroidX yet. See more at: https://www.npmjs.com/package/jetifier.",
-        "name": "--no-jetifier",
-      },
-    ],
+    "name": "test",
   },
 ]
 `;
@@ -226,9 +112,61 @@ Object {
   "hooks": Object {},
   "name": "react-native-test",
   "params": Array [],
-  "platforms": Object {},
+  "platforms": Object {
+    "android": null,
+    "ios": Object {
+      "folder": "<<REPLACED>>/node_modules/react-native-test",
+      "libraryFolder": "Libraries",
+      "pbxprojPath": "<<REPLACED>>/node_modules/react-native-test/customLocation/customProject.xcodeproj/project.pbxproj",
+      "plist": Array [],
+      "podfile": null,
+      "podspecPath": "<<REPLACED>>/node_modules/react-native-test/ReactNativeTest.podspec",
+      "projectName": "customProject.xcodeproj",
+      "projectPath": "<<REPLACED>>/node_modules/react-native-test/customLocation/customProject.xcodeproj",
+      "scriptPhases": Array [],
+      "sharedLibraries": Array [],
+      "sourceDir": "<<REPLACED>>/node_modules/react-native-test/customLocation",
+    },
+  },
   "root": "<<REPLACED>>/node_modules/react-native-test",
 }
 `;
 
-exports[`should return dependencies from package.json 1`] = `Object {}`;
+exports[`should return dependencies from package.json 1`] = `
+Object {
+  "react-native": Object {
+    "assets": Array [],
+    "hooks": Object {},
+    "name": "react-native",
+    "params": Array [],
+    "platforms": Object {
+      "android": null,
+      "ios": null,
+    },
+    "root": "<<REPLACED>>/node_modules/react-native",
+  },
+  "react-native-test": Object {
+    "assets": Array [],
+    "hooks": Object {},
+    "name": "react-native-test",
+    "params": Array [],
+    "platforms": Object {
+      "android": null,
+      "ios": Object {
+        "folder": "<<REPLACED>>/node_modules/react-native-test",
+        "libraryFolder": "Libraries",
+        "pbxprojPath": "<<REPLACED>>/node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj",
+        "plist": Array [],
+        "podfile": null,
+        "podspecPath": null,
+        "projectName": "HelloWorld.xcodeproj",
+        "projectPath": "<<REPLACED>>/node_modules/react-native-test/ios/HelloWorld.xcodeproj",
+        "scriptPhases": Array [],
+        "sharedLibraries": Array [],
+        "sourceDir": "<<REPLACED>>/node_modules/react-native-test/ios",
+      },
+    },
+    "root": "<<REPLACED>>/node_modules/react-native-test",
+  },
+}
+`;

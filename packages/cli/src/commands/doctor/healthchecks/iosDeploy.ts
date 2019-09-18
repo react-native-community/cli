@@ -2,6 +2,7 @@ import execa from 'execa';
 import chalk from 'chalk';
 // @ts-ignore untyped
 import inquirer from 'inquirer';
+import {logger} from '@react-native-community/cli-tools';
 import {checkSoftwareInstalled, PACKAGE_MANAGERS} from '../checkInstallation';
 import {packageManager} from './packageManagers';
 import {logManualInstallation, removeMessage} from './common';
@@ -37,13 +38,12 @@ const installLibrary = async ({
   try {
     loader.start(`${label} (installing with ${packageManagerToUse})`);
 
-    const installationCommandArgs = installationCommand.split(' ');
-
-    await execa(installationCommandArgs[0], installationCommandArgs.splice(1));
+    await execa(installationCommand);
 
     loader.succeed(`${label} (installed with ${packageManagerToUse})`);
-  } catch (_error) {
+  } catch (error) {
     loader.fail();
+    logger.log(chalk.dim(`\n${error}`));
 
     logManualInstallation({
       healthcheck: 'ios-deploy',
@@ -74,36 +74,37 @@ export default {
       const installWithNpm = 'npm';
       const skipInstallation = 'Skip installation';
 
-      const {whichPackageManagerToUse} = await inquirer.prompt([
+      const {chosenPackageManager} = await inquirer.prompt([
         {
           type: 'list',
-          name: 'whichPackageManagerToUse',
+          name: 'chosenPackageManager',
           message: promptQuestion,
           choices: [installWithYarn, installWithNpm, skipInstallation],
         },
       ]);
 
-      removeMessage(`? ${promptQuestion} ${whichPackageManagerToUse}`);
+      removeMessage(`? ${promptQuestion} ${chosenPackageManager}`);
 
-      if (whichPackageManagerToUse === skipInstallation) {
+      if (chosenPackageManager === skipInstallation) {
         loader.fail();
 
         // Then we just print out the URL that the user can head to download the library
-        return logManualInstallation({
+        logManualInstallation({
           healthcheck: 'ios-deploy',
           url: 'https://github.com/ios-control/ios-deploy#readme',
         });
+
+        return;
       }
 
-      const shouldInstallWithYarn =
-        whichPackageManagerToUse === installWithYarn;
+      const shouldInstallWithYarn = chosenPackageManager === installWithYarn;
 
       return installLibrary({
         installationCommand: shouldInstallWithYarn
           ? installationWithYarn
           : installationWithNpm,
         loader,
-        packageManagerToUse: whichPackageManagerToUse,
+        packageManagerToUse: chosenPackageManager,
       });
     }
 

@@ -61,8 +61,8 @@ function readLegacyConfigFromDisk(rootFolder: string): UserConfig | void {
 
   const transformedConfig: UserConfig = {
     project: {
-      android: config.android,
       ios: config.ios,
+      android: config.android,
     },
     assets: config.assets,
     commands: [],
@@ -104,7 +104,7 @@ export function readConfigFromDisk(rootFolder: string): UserConfig {
     throw new JoiError(result.error);
   }
 
-  return config as UserConfig;
+  return result.value as UserConfig;
 }
 
 /**
@@ -118,12 +118,14 @@ export function readDependencyConfigFromDisk(
     stopDir: rootFolder,
     searchPlaces,
   });
-  const config = explorer.searchSync(rootFolder);
-  const legacy = config ? true : false;
-  // @ts-ignore Joi validate the type
-  const dependencyConfig: UserDependencyConfig = config
-    ? config.config
-    : readLegacyDependencyConfigFromDisk(rootFolder);
+  // @ts-ignore
+  let config: UserDependencyConfig = explorer.searchSync(rootFolder);
+  const legacy = !!config;
+
+  if (legacy) {
+    // @ts-ignore TODO: legacy config can be undefined
+    config = readLegacyDependencyConfigFromDisk(rootFolder);
+  }
 
   const result = Joi.validate(config, schema.dependencyConfig);
 
@@ -131,7 +133,7 @@ export function readDependencyConfigFromDisk(
     throw new JoiError(result.error);
   }
 
-  return {config: dependencyConfig, legacy: legacy && config !== undefined};
+  return {config: result.value, legacy: legacy && config !== undefined};
 }
 
 /**
@@ -156,7 +158,7 @@ const loadProjectCommands = (
 function readLegacyDependencyConfigFromDisk(
   rootFolder: string,
 ): UserDependencyConfig | undefined {
-  let config: LegacyDependencyConfig;
+  let config = {} as LegacyDependencyConfig;
 
   try {
     config = require(path.join(rootFolder, 'package.json')).rnpm;

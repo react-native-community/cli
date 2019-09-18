@@ -1,0 +1,234 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should automatically put "react-native" into haste config 1`] = `
+Object {
+  "platforms": Array [],
+  "providesModuleNodeModules": Array [],
+}
+`;
+
+exports[`should handle deprecated "rnpm" in project root: returns valid config 1`] = `
+Object {
+  "assets": Array [
+    "<<REPLACED>>/fonts/SampleFont.ttf",
+  ],
+  "commands": Array [],
+  "dependencies": Object {},
+  "haste": Object {
+    "platforms": Array [],
+    "providesModuleNodeModules": Array [],
+  },
+  "platforms": Object {},
+  "project": Object {},
+  "reactNativePath": "<<REPLACED>>/node_modules/react-native",
+  "root": "<<REPLACED>>",
+}
+`;
+
+exports[`should have a valid structure by default 1`] = `
+Object {
+  "assets": Array [],
+  "commands": Array [],
+  "dependencies": Object {},
+  "haste": Object {
+    "platforms": Array [],
+    "providesModuleNodeModules": Array [],
+  },
+  "platforms": Object {},
+  "project": Object {},
+  "reactNativePath": "<<REPLACED>>",
+  "root": "<<REPLACED>>",
+}
+`;
+
+exports[`should load an out-of-tree "windows" platform that ships with a dependency 1`] = `
+Object {
+  "haste": Object {
+    "platforms": Array [],
+    "providesModuleNodeModules": Array [],
+  },
+  "platforms": Object {},
+}
+`;
+
+exports[`should load commands from "react-native-foo" and "react-native-bar" packages 1`] = `Array []`;
+
+exports[`should merge project configuration with default values: snapshoting \`react-native-test\` config 1`] = `
+Object {
+  "assets": Array [
+    "foo",
+  ],
+  "hooks": Object {},
+  "name": "react-native-test",
+  "params": Array [],
+  "platforms": Object {
+    "ios": Object {
+      "sourceDir": "./abc",
+    },
+  },
+  "root": "<<REPLACED>>/node_modules/react-native-test",
+}
+`;
+
+exports[`should not add default React Native config when one present 1`] = `
+Array [
+  Object {
+    "description": "starts iOS device syslog tail",
+    "func": [Function],
+    "name": "log-ios",
+  },
+  Object {
+    "description": "builds your app and starts it on iOS simulator",
+    "examples": Array [
+      Object {
+        "cmd": "react-native run-ios --simulator \\"iPhone 5\\"",
+        "desc": "Run on a different simulator, e.g. iPhone 5",
+      },
+      Object {
+        "cmd": "react-native run-ios --project-path \\"./app/ios\\"",
+        "desc": "Pass a non-standard location of iOS directory",
+      },
+      Object {
+        "cmd": "react-native run-ios --device \\"Max's iPhone\\"",
+        "desc": "Run on a connected device, e.g. Max's iPhone",
+      },
+      Object {
+        "cmd": "react-native run-ios --simulator \\"Apple TV\\"  --scheme \\"helloworld-tvOS\\"",
+        "desc": "Run on the AppleTV simulator",
+      },
+    ],
+    "func": [Function],
+    "name": "run-ios",
+    "options": Array [
+      Object {
+        "default": "iPhone X",
+        "description": "Explicitly set simulator to use. Optionally include iOS version betweenparenthesis at the end to match an exact version: \\"iPhone 6 (10.0)\\"",
+        "name": "--simulator [string]",
+      },
+      Object {
+        "default": "Debug",
+        "description": "Explicitly set the scheme configuration to use",
+        "name": "--configuration [string]",
+      },
+      Object {
+        "description": "Explicitly set Xcode scheme to use",
+        "name": "--scheme [string]",
+      },
+      Object {
+        "default": "ios",
+        "description": "Path relative to project root where the Xcode project (.xcodeproj) lives.",
+        "name": "--project-path [string]",
+      },
+      Object {
+        "description": "Explicitly set device to use by name.  The value is not required if you have a single device connected.",
+        "name": "--device [string]",
+      },
+      Object {
+        "description": "Explicitly set device to use by udid",
+        "name": "--udid [string]",
+      },
+      Object {
+        "description": "Do not launch packager while building",
+        "name": "--no-packager",
+      },
+      Object {
+        "description": "Do not use xcpretty even if installed",
+        "name": "--verbose",
+      },
+      Object {
+        "default": 8081,
+        "name": "--port [number]",
+        "parse": [Function],
+      },
+      Object {
+        "default": [Function],
+        "description": "Launches the Metro Bundler in a new window using the specified terminal path.",
+        "name": "--terminal [string]",
+      },
+    ],
+  },
+  Object {
+    "description": "starts logkitty",
+    "func": [Function],
+    "name": "log-android",
+  },
+  Object {
+    "description": "builds your app and starts it on a connected Android emulator or device",
+    "func": [Function],
+    "name": "run-android",
+    "options": Array [
+      Object {
+        "default": "",
+        "description": "Override the root directory for the android build (which contains the android directory)",
+        "name": "--root [string]",
+      },
+      Object {
+        "default": "debug",
+        "description": "Specify your app's build variant",
+        "name": "--variant [string]",
+      },
+      Object {
+        "default": "app",
+        "description": "Specify a different application folder name for the android source. If not, we assume is \\"app\\"",
+        "name": "--appFolder [string]",
+      },
+      Object {
+        "default": "",
+        "description": "Specify an applicationId to launch after build.",
+        "name": "--appId [string]",
+      },
+      Object {
+        "default": "",
+        "description": "Specify an applicationIdSuffix to launch after build.",
+        "name": "--appIdSuffix [string]",
+      },
+      Object {
+        "default": "MainActivity",
+        "description": "Name of the activity to start",
+        "name": "--main-activity [string]",
+      },
+      Object {
+        "description": "builds your app and starts it on a specific device/simulator with the given device id (listed by running \\"adb devices\\" on the command line).",
+        "name": "--deviceId [string]",
+      },
+      Object {
+        "description": "Do not launch packager while building",
+        "name": "--no-packager",
+      },
+      Object {
+        "default": 8081,
+        "name": "--port [number]",
+        "parse": [Function],
+      },
+      Object {
+        "default": "iTerm.app",
+        "description": "Launches the Metro Bundler in a new window using the specified terminal path.",
+        "name": "--terminal [string]",
+      },
+      Object {
+        "description": "Run custom Gradle tasks. By default it's \\"installDebug\\"",
+        "name": "--tasks [list]",
+        "parse": [Function],
+      },
+      Object {
+        "default": false,
+        "description": "Do not run \\"jetifier\\" – the AndroidX transition tool. By default it runs before Gradle to ease working with libraries that don't support AndroidX yet. See more at: https://www.npmjs.com/package/jetifier.",
+        "name": "--no-jetifier",
+      },
+    ],
+  },
+]
+`;
+
+exports[`should read a config of a dependency and use it to load other settings 1`] = `
+Object {
+  "assets": Array [],
+  "hooks": Object {},
+  "name": "react-native-test",
+  "params": Array [],
+  "platforms": Object {},
+  "root": "<<REPLACED>>/node_modules/react-native-test",
+}
+`;
+
+exports[`should return dependencies from package.json 1`] = `Object {}`;

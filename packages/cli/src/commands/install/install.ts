@@ -7,8 +7,7 @@
  */
 import {logger} from '@react-native-community/cli-tools';
 import * as PackageManager from '../../tools/packageManager';
-// @ts-ignore FIXME after converting link/link
-import link from '../link/link'; // eslint-disable-line import/namespace, import/default
+import link from '../link/link';
 import loadConfig from '../../tools/config';
 
 async function install(args: Array<string>): Promise<void> {

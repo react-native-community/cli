@@ -10,7 +10,7 @@ export class JoiError extends CLIError {
           switch (error.type) {
             case 'object.allowUnknown': {
               const value = JSON.stringify(
-                error.context && error.context.label,
+                error.context && error.context.value,
               );
               return `
                 Unknown option ${name} with value "${value}" was found.

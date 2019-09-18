@@ -7,6 +7,7 @@ import androidNDK from './androidNDK';
 import xcode from './xcode';
 import cocoaPods from './cocoaPods';
 import iosDeploy from './iosDeploy';
+import {Healthchecks} from '../types';
 
 export const HEALTHCHECK_TYPES = {
   ERROR: 'ERROR',
@@ -18,7 +19,7 @@ type Options = {
   contributor: boolean | void;
 };
 
-export const getHealthchecks = ({contributor}: Options) => ({
+export const getHealthchecks = ({contributor}: Options): Healthchecks => ({
   common: {
     label: 'Common',
     healthchecks: [

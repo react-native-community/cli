@@ -1,20 +1,28 @@
-// @flow
 import chalk from 'chalk';
-import type {DependencyConfigT, ProjectConfigT, PlatformsT} from 'types';
+import {
+  Config,
+  Dependency,
+  AndroidDependencyConfig,
+  AndroidProjectConfig,
+  IOSDependencyConfig,
+  IOSProjectConfig,
+} from '@react-native-community/cli-types';
 import {logger} from '@react-native-community/cli-tools';
 import pollParams from './pollParams';
 import getPlatformName from './getPlatformName';
 
-const linkDependency = async (
-  platforms: PlatformsT,
-  project: ProjectConfigT,
-  dependency: DependencyConfigT,
-) => {
+export default async function linkDependency(
+  platforms: Config['platforms'],
+  project: Config['project'],
+  dependency: Dependency,
+) {
   const params = await pollParams(dependency.params);
 
   Object.keys(platforms || {}).forEach(platform => {
-    const projectConfig = project[platform];
-    const dependencyConfig = dependency.platforms[platform];
+    const projectConfig: AndroidProjectConfig | IOSProjectConfig =
+      project[platform];
+    const dependencyConfig: AndroidDependencyConfig | IOSDependencyConfig =
+      dependency.platforms[platform];
 
     if (!projectConfig || !dependencyConfig) {
       return;
@@ -30,10 +38,8 @@ const linkDependency = async (
     }
 
     const isInstalled = linkConfig.isInstalled(
-      // $FlowFixMe
       projectConfig,
       name,
-      // $FlowFixMe
       dependencyConfig,
     );
 
@@ -49,7 +55,7 @@ const linkDependency = async (
     logger.info(
       `Linking "${chalk.bold(name)}" ${getPlatformName(platform)} dependency`,
     );
-    // $FlowFixMe
+
     linkConfig.register(name, dependencyConfig, params, projectConfig);
 
     logger.info(
@@ -58,6 +64,4 @@ const linkDependency = async (
       )}" has been successfully linked`,
     );
   });
-};
-
-export default linkDependency;
+}

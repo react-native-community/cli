@@ -3,30 +3,37 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
- *
- * @flow
  */
 
 import {flatMap, values, difference, pick} from 'lodash';
 import {logger, CLIError} from '@react-native-community/cli-tools';
-import type {ConfigT} from 'types';
+import {
+  Config,
+  Dependency,
+  AndroidDependencyConfig,
+  AndroidProjectConfig,
+  IOSDependencyConfig,
+  IOSProjectConfig,
+} from '@react-native-community/cli-types';
 import getPlatformName from './getPlatformName';
 import makeHook from './makeHook';
 
 type Flags = {
-  platforms?: Array<string>,
+  platforms?: Array<string>;
 };
 
 const unlinkDependency = (
-  platforms,
-  project,
-  dependency,
-  packageName,
-  otherDependencies,
+  platforms: Config['platforms'],
+  project: Config['project'],
+  dependency: Dependency,
+  packageName: string,
+  otherDependencies: Array<Dependency>,
 ) => {
   Object.keys(platforms || {}).forEach(platform => {
-    const projectConfig = project[platform];
-    const dependencyConfig = dependency.platforms[platform];
+    const projectConfig: AndroidProjectConfig | IOSProjectConfig =
+      project[platform];
+    const dependencyConfig: AndroidDependencyConfig | IOSDependencyConfig =
+      dependency.platforms[platform];
     if (!projectConfig || !dependencyConfig) {
       return;
     }
@@ -41,10 +48,8 @@ const unlinkDependency = (
     }
 
     const isInstalled = linkConfig.isInstalled(
-      // $FlowFixMe
       projectConfig,
       packageName,
-      // $FlowFixMe
       dependencyConfig,
     );
 
@@ -61,9 +66,7 @@ const unlinkDependency = (
 
     linkConfig.unregister(
       packageName,
-      // $FlowFixMe
       dependencyConfig,
-      // $FlowFixMe
       projectConfig,
       otherDependencies,
     );
@@ -82,11 +85,12 @@ const unlinkDependency = (
  * If optional argument [packageName] is provided, it's the only one
  * that's checked
  */
-async function unlink(args: Array<string>, ctx: ConfigT, opts: Flags) {
+async function unlink(args: Array<string>, ctx: Config, opts: Flags) {
   const packageName = args[0];
   let platforms = ctx.platforms;
 
   if (opts.platforms) {
+    // @ts-ignore
     platforms = pick(platforms, opts.platforms);
     logger.debug('Skipping selected platforms');
   }
@@ -107,8 +111,8 @@ async function unlink(args: Array<string>, ctx: ConfigT, opts: Flags) {
 
   const dependencies = values(otherDependencies);
   try {
-    if (dependency.hooks.preulink) {
-      await makeHook(dependency.hooks.preulink)();
+    if (dependency.hooks.preunlink) {
+      await makeHook(dependency.hooks.preunlink)();
     }
     unlinkDependency(
       platforms,
@@ -149,7 +153,7 @@ async function unlink(args: Array<string>, ctx: ConfigT, opts: Flags) {
     }
 
     logger.info(`Unlinking assets from ${platform} project`);
-    // $FlowFixMe
+
     linkConfig.unlinkAssets(assets, projectConfig);
   });
 

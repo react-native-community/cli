@@ -1,6 +1,7 @@
 import androidHomeEnvVariables from '../androidHomeEnvVariable';
 import getEnvironmentInfo from '../../../../tools/envinfo';
 import {EnvironmentInfo} from '../../types';
+import {NoopLoader} from '../../../../tools/loader';
 
 jest.mock('../common');
 
@@ -34,9 +35,7 @@ describe('androidHomeEnvVariables', () => {
   });
 
   it('logs manual installation steps to the screen', async () => {
-    const loader: any = {
-      info: jest.fn(),
-    };
+    const loader = new NoopLoader();
 
     const environmentInfo: EnvironmentInfo = JSON.parse(
       await getEnvironmentInfo(),

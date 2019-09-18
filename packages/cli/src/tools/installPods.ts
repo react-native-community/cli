@@ -87,11 +87,7 @@ async function installCocoaPodsWithGem() {
     await execa('gem', options);
   } catch (_error) {
     // If that doesn't work then try with sudo
-    try {
-      await runSudo(`gem ${options.join(' ')}`);
-    } catch (error) {
-      throw error;
-    }
+    await runSudo(`gem ${options.join(' ')}`);
   }
 }
 

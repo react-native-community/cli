@@ -5,23 +5,15 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-// @ts-ignore untyped
-import envinfo from 'envinfo';
 import {logger} from '@react-native-community/cli-tools';
 import {Config} from '@react-native-community/cli-types';
 import releaseChecker from '../../tools/releaseChecker';
+import getEnvironmentInfo from '../../tools/envinfo';
 
 const info = async function getInfo(_argv: Array<string>, ctx: Config) {
   try {
     logger.info('Fetching system and libraries information...');
-    const output = await envinfo.run({
-      System: ['OS', 'CPU', 'Memory', 'Shell'],
-      Binaries: ['Node', 'Yarn', 'npm', 'Watchman'],
-      IDEs: ['Xcode', 'Android Studio'],
-      SDKs: ['iOS SDK', 'Android SDK'],
-      npmPackages: ['react', 'react-native', '@react-native-community/cli'],
-      npmGlobalPackages: '*react-native*',
-    });
+    const output = await getEnvironmentInfo();
     logger.log(output.trim());
   } catch (err) {
     logger.error(`Unable to print environment info.\n${err}`);

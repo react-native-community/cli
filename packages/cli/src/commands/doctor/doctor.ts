@@ -194,5 +194,7 @@ export default (async (_, __, options) => {
     }
   };
 
-  printFixOptions({onKeyPress});
+  if (stats.errors || stats.warnings) {
+    printFixOptions({onKeyPress});
+  }
 }) as CommandFunction<FlagsT>;

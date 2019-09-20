@@ -183,7 +183,7 @@ class ReactNativeModules {
 
     def cmdProcess
     def root = getReactNativeProjectRoot()
-    def command = "node ./node_modules/react-native/cli.js config"
+    def command = "node ${root.toString()}/node_modules/react-native/cli.js config"
     def reactNativeConfigOutput = ""
 
     try {

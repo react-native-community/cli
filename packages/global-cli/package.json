@@ -11,9 +11,6 @@
     "type": "git",
     "url": "https://github.com/react-native-community/react-native-cli.git"
   },
-  "scripts": {
-    "test": "mocha"
-  },
   "bin": {
     "react-native": "index.js"
   },

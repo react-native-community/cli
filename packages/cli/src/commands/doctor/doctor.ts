@@ -57,7 +57,7 @@ export default (async (_, __, options) => {
 
   loader.start('Running diagnostics...');
 
-  const environmentInfo = JSON.parse(await getEnvironmentInfo());
+  const environmentInfo = await getEnvironmentInfo();
 
   const iterateOverHealthChecks = async ({
     label,
@@ -117,10 +117,7 @@ export default (async (_, __, options) => {
   };
 
   healthchecksPerCategory.forEach((issueCategory, key) => {
-    printCategory({
-      ...issueCategory,
-      key,
-    });
+    printCategory({...issueCategory, key});
 
     issueCategory.healthchecks.forEach(healthcheck => {
       printIssue(healthcheck);

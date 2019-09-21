@@ -3,19 +3,22 @@ import getEnvironmentInfo from '../../../../tools/envinfo';
 import {EnvironmentInfo} from '../../types';
 import {NoopLoader} from '../../../../tools/loader';
 
-jest.mock('../common');
+import * as common from '../common';
 
-import {logManualInstallation} from '../common';
+const logSpy = jest.spyOn(common, 'logManualInstallation');
 
 describe('androidHomeEnvVariables', () => {
   const OLD_ENV = process.env;
 
+  afterEach(() => {
+    process.env = OLD_ENV;
+    jest.resetAllMocks();
+  });
+
   it('returns a message if no ANDROID_HOME is defined', async () => {
     delete process.env.ANDROID_HOME;
 
-    const environmentInfo: EnvironmentInfo = JSON.parse(
-      await getEnvironmentInfo(),
-    );
+    const environmentInfo: EnvironmentInfo = await getEnvironmentInfo();
     const diagnostics = await androidHomeEnvVariables.getDiagnostics(
       environmentInfo,
     );
@@ -25,9 +28,7 @@ describe('androidHomeEnvVariables', () => {
   it('returns false if ANDROID_HOME is defined', async () => {
     process.env.ANDROID_HOME = '/fake/path/to/android/home';
 
-    const environmentInfo: EnvironmentInfo = JSON.parse(
-      await getEnvironmentInfo(),
-    );
+    const environmentInfo: EnvironmentInfo = await getEnvironmentInfo();
     const diagnostics = await androidHomeEnvVariables.getDiagnostics(
       environmentInfo,
     );
@@ -37,17 +38,10 @@ describe('androidHomeEnvVariables', () => {
   it('logs manual installation steps to the screen', async () => {
     const loader = new NoopLoader();
 
-    const environmentInfo: EnvironmentInfo = JSON.parse(
-      await getEnvironmentInfo(),
-    );
+    const environmentInfo: EnvironmentInfo = await getEnvironmentInfo();
 
     androidHomeEnvVariables.runAutomaticFix({loader, environmentInfo});
 
-    expect(logManualInstallation).toHaveBeenCalledTimes(1);
-  });
-
-  afterEach(() => {
-    process.env = OLD_ENV;
-    jest.resetAllMocks();
+    expect(logSpy).toHaveBeenCalledTimes(1);
   });
 });

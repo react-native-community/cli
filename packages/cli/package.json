@@ -62,7 +62,7 @@
     "strip-ansi": "^5.2.0",
     "sudo-prompt": "^9.0.0",
     "wcwidth": "^1.0.1",
-    "ws": "^1.1.0"
+    "ws": "^3.3.3"
   },
   "peerDependencies": {
     "react-native": "^0.60.0"

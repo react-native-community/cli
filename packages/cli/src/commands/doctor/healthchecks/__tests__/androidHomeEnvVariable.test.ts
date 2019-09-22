@@ -1,6 +1,5 @@
 import androidHomeEnvVariables from '../androidHomeEnvVariable';
 import getEnvironmentInfo from '../../../../tools/envinfo';
-import {EnvironmentInfo} from '../../types';
 import {NoopLoader} from '../../../../tools/loader';
 
 import * as common from '../common';
@@ -18,7 +17,7 @@ describe('androidHomeEnvVariables', () => {
   it('returns a message if no ANDROID_HOME is defined', async () => {
     delete process.env.ANDROID_HOME;
 
-    const environmentInfo: EnvironmentInfo = await getEnvironmentInfo();
+    const environmentInfo = await getEnvironmentInfo();
     const diagnostics = await androidHomeEnvVariables.getDiagnostics(
       environmentInfo,
     );
@@ -28,7 +27,7 @@ describe('androidHomeEnvVariables', () => {
   it('returns false if ANDROID_HOME is defined', async () => {
     process.env.ANDROID_HOME = '/fake/path/to/android/home';
 
-    const environmentInfo: EnvironmentInfo = await getEnvironmentInfo();
+    const environmentInfo = await getEnvironmentInfo();
     const diagnostics = await androidHomeEnvVariables.getDiagnostics(
       environmentInfo,
     );
@@ -38,7 +37,7 @@ describe('androidHomeEnvVariables', () => {
   it('logs manual installation steps to the screen', async () => {
     const loader = new NoopLoader();
 
-    const environmentInfo: EnvironmentInfo = await getEnvironmentInfo();
+    const environmentInfo = await getEnvironmentInfo();
 
     androidHomeEnvVariables.runAutomaticFix({loader, environmentInfo});
 

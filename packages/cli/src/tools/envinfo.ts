@@ -1,5 +1,6 @@
 // @ts-ignore
 import envinfo from 'envinfo';
+import {EnvironmentInfo} from '../commands/doctor/types';
 
 export default async function getEnvironmentInfo() {
   return JSON.parse(
@@ -16,5 +17,5 @@ export default async function getEnvironmentInfo() {
         showNotFound: true,
       },
     ),
-  );
+  ) as EnvironmentInfo;
 }

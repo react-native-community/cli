@@ -1,6 +1,4 @@
 import chalk from 'chalk';
-// @ts-ignore
-import envinfo from 'envinfo';
 import {logger} from '@react-native-community/cli-tools';
 import {getHealthchecks, HEALTHCHECK_TYPES} from './healthchecks';
 import {getLoader} from '../../tools/loader';
@@ -12,6 +10,7 @@ import {
   HealthCheckCategoryResult,
   HealthCheckResult,
 } from './types';
+import getEnvironmentInfo from '../../tools/envinfo';
 
 const printCategory = ({label, key}: {label: string; key: number}) => {
   if (key > 0) {
@@ -58,18 +57,7 @@ export default (async (_, __, options) => {
 
   loader.start('Running diagnostics...');
 
-  const environmentInfo = JSON.parse(
-    await envinfo.run(
-      {
-        Binaries: ['Node', 'Yarn', 'npm', 'Watchman'],
-        IDEs: ['Xcode', 'Android Studio'],
-        SDKs: ['iOS SDK', 'Android SDK'],
-        npmPackages: ['react', 'react-native', '@react-native-community/cli'],
-        npmGlobalPackages: ['*react-native*'],
-      },
-      {json: true, showNotFound: true},
-    ),
-  );
+  const environmentInfo = await getEnvironmentInfo();
 
   const iterateOverHealthChecks = async ({
     label,
@@ -106,8 +94,9 @@ export default (async (_, __, options) => {
     )).filter(healthcheck => healthcheck !== undefined) as HealthCheckResult[],
   });
 
-  // Remove all the categories that don't have any healthcheck with `needsToBeFixed`
-  // so they don't show when the user taps to fix encountered issues
+  // Remove all the categories that don't have any healthcheck with
+  // `needsToBeFixed` so they don't show when the user taps to fix encountered
+  // issues
   const removeFixedCategories = (categories: HealthCheckCategoryResult[]) =>
     categories.filter(category =>
       category.healthchecks.some(healthcheck => healthcheck.needsToBeFixed),

@@ -188,7 +188,7 @@ class ReactNativeModules {
 
     try {
       cmdProcess = Runtime.getRuntime().exec(command, null, root)
-      def bufferedReader = new BufferedReader(new InputStreamReader(cmdProcess.getInputStream()))
+      def bufferedReader = new BufferedReader(new InputStreamReader(cmdProcess.getOutputStream()))
       def buff = ""
       def readBuffer = new StringBuffer()
       while ((buff = bufferedReader.readLine()) != null){

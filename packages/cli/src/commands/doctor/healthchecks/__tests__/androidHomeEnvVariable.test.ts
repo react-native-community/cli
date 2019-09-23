@@ -14,14 +14,14 @@ describe('androidHomeEnvVariables', () => {
     jest.resetAllMocks();
   });
 
-  it('returns a message if no ANDROID_HOME is defined', async () => {
+  it('returns true if no ANDROID_HOME is defined', async () => {
     delete process.env.ANDROID_HOME;
 
     const environmentInfo = await getEnvironmentInfo();
     const diagnostics = await androidHomeEnvVariables.getDiagnostics(
       environmentInfo,
     );
-    expect(typeof diagnostics.needsToBeFixed).toBe('string');
+    expect(diagnostics.needsToBeFixed).toBe(true);
   });
 
   it('returns false if ANDROID_HOME is defined', async () => {

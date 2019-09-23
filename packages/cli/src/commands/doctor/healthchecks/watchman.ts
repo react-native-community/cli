@@ -7,6 +7,8 @@ const label = 'Watchman';
 
 export default {
   label,
+  description:
+    'used for watching changes in the filesystem when in development mode',
   getDiagnostics: async ({Binaries}) => ({
     needsToBeFixed: doesSoftwareNeedToBeFixed({
       version: Binaries.Watchman.version,

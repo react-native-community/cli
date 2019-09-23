@@ -7,6 +7,7 @@ import {EnvironmentInfo, HealthCheckInterface} from '../types';
 
 export default {
   label: 'Android NDK',
+  description: 'required for building React Native from the source',
   getDiagnostics: async ({SDKs}: EnvironmentInfo) => {
     const androidSdk = SDKs['Android SDK'];
     return {

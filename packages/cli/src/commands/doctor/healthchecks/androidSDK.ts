@@ -11,6 +11,7 @@ const installMessage = `Read more about how to update Android SDK at ${chalk.dim
 
 export default {
   label: 'Android SDK',
+  description: 'required for building and installing your app on Android',
   getDiagnostics: async ({SDKs}) => {
     let sdks = SDKs['Android SDK'];
 

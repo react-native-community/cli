@@ -12,6 +12,7 @@ import {HealthCheckInterface} from '../types';
 
 export default {
   label: 'CocoaPods',
+  description: 'required for installing iOS dependencies',
   getDiagnostics: async () => ({
     needsToBeFixed: await checkSoftwareInstalled('pod'),
   }),

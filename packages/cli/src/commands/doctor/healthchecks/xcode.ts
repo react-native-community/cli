@@ -5,6 +5,7 @@ import {HealthCheckInterface} from '../types';
 
 export default {
   label: 'Xcode',
+  description: 'required for building and installing your app on iOS',
   getDiagnostics: async ({IDEs}) => ({
     needsToBeFixed: doesSoftwareNeedToBeFixed({
       version: IDEs.Xcode.version.split('/')[0],

@@ -1,7 +1,7 @@
 import execa from 'execa';
 import chalk from 'chalk';
 import {logger} from '@react-native-community/cli-tools';
-import {checkSoftwareInstalled} from '../checkInstallation';
+import {isSoftwareNotInstalled} from '../checkInstallation';
 import {
   promptCocoaPodsInstallationQuestion,
   runSudo,
@@ -12,8 +12,9 @@ import {HealthCheckInterface} from '../types';
 
 export default {
   label: 'CocoaPods',
+  description: 'required for installing iOS dependencies',
   getDiagnostics: async () => ({
-    needsToBeFixed: await checkSoftwareInstalled('pod'),
+    needsToBeFixed: await isSoftwareNotInstalled('pod'),
   }),
   runAutomaticFix: async ({loader}) => {
     loader.stop();

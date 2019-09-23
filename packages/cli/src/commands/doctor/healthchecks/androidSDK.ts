@@ -11,6 +11,7 @@ const installMessage = `Read more about how to update Android SDK at ${chalk.dim
 
 export default {
   label: 'Android SDK',
+  description: 'required for building and installing your app on Android',
   getDiagnostics: async ({SDKs}) => {
     let sdks = SDKs['Android SDK'];
 
@@ -48,12 +49,11 @@ export default {
 
     return {
       needsToBeFixed:
-        (sdks === 'Not Found' && installMessage) ||
-        (sdks !== 'Not Found' &&
-          doesSoftwareNeedToBeFixed({
-            version: sdks['Build Tools'][0],
-            versionRange: versionRanges.ANDROID_SDK,
-          })),
+        sdks === 'Not Found' ||
+        doesSoftwareNeedToBeFixed({
+          version: sdks['Build Tools'][0],
+          versionRange: versionRanges.ANDROID_SDK,
+        }),
     };
   },
   runAutomaticFix: async ({loader, environmentInfo}) => {

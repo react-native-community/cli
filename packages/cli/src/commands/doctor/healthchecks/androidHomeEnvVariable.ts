@@ -23,7 +23,7 @@ const message = `Read more about how to set the ${label} at ${chalk.dim(
 export default {
   label,
   getDiagnostics: async () => ({
-    needsToBeFixed: !process.env.ANDROID_HOME && message,
+    needsToBeFixed: !process.env.ANDROID_HOME,
   }),
   runAutomaticFix: async ({loader}: {loader: Ora}) => {
     loader.info();

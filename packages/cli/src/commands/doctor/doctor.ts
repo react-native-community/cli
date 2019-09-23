@@ -81,7 +81,7 @@ export default (async (_, __, options) => {
         return {
           label: healthcheck.label,
           needsToBeFixed: Boolean(needsToBeFixed),
-          description: String(needsToBeFixed),
+          description: healthcheck.description,
           runAutomaticFix: healthcheck.runAutomaticFix,
           isRequired,
           type: needsToBeFixed

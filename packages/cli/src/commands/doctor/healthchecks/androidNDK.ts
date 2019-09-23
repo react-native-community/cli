@@ -13,7 +13,7 @@ export default {
     return {
       needsToBeFixed: doesSoftwareNeedToBeFixed({
         version:
-          androidSdk === 'Not Found' ? 'Not Found' : androidSdk['Android NDK'],
+          androidSdk === 'Not Found' ? androidSdk : androidSdk['Android NDK'],
         versionRange: versionRanges.ANDROID_NDK,
       }),
     };

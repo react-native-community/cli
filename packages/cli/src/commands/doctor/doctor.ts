@@ -32,7 +32,8 @@ const printIssue = ({
       : chalk.yellow('●')
     : chalk.green('✓');
 
-  const descriptionToShow = needsToBeFixed && description ? `: ${description}` : '';
+  const descriptionToShow =
+    needsToBeFixed && description ? `: ${description}` : '';
 
   logger.log(` ${symbol} ${label}${descriptionToShow}`);
 };

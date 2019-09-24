@@ -3,7 +3,7 @@ import chalk from 'chalk';
 // @ts-ignore untyped
 import inquirer from 'inquirer';
 import {logger} from '@react-native-community/cli-tools';
-import {checkSoftwareInstalled, PACKAGE_MANAGERS} from '../checkInstallation';
+import {isSoftwareNotInstalled, PACKAGE_MANAGERS} from '../checkInstallation';
 import {packageManager} from './packageManagers';
 import {logManualInstallation, removeMessage} from './common';
 import {HealthCheckInterface} from '../types';
@@ -57,8 +57,10 @@ const installLibrary = async ({
 export default {
   label,
   isRequired: false,
+  description:
+    'required for installing your app on a physical device with the CLI',
   getDiagnostics: async () => ({
-    needsToBeFixed: await checkSoftwareInstalled('ios-deploy'),
+    needsToBeFixed: await isSoftwareNotInstalled('ios-deploy'),
   }),
   runAutomaticFix: async ({loader}) => {
     loader.stop();

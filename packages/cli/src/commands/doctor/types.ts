@@ -86,6 +86,7 @@ export type HealthCheckInterface = {
   label: string;
   visible?: boolean | void;
   isRequired?: boolean;
+  description?: string;
   getDiagnostics: (
     environmentInfo: EnvironmentInfo,
   ) => Promise<{version?: string; needsToBeFixed: boolean | string}>;
@@ -95,7 +96,7 @@ export type HealthCheckInterface = {
 export type HealthCheckResult = {
   label: string;
   needsToBeFixed: boolean;
-  description: string;
+  description: string | undefined;
   runAutomaticFix: RunAutomaticFix;
   isRequired: boolean;
   type?: string;

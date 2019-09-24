@@ -6,13 +6,13 @@ export enum PACKAGE_MANAGERS {
   NPM = 'NPM',
 }
 
-const checkSoftwareInstalled = async (command: string) => {
+const isSoftwareNotInstalled = async (command: string): Promise<boolean> => {
   try {
     await commandExists(command);
 
     return false;
   } catch (_ignored) {
-    return 'should be installed';
+    return true;
   }
 };
 
@@ -22,14 +22,14 @@ const doesSoftwareNeedToBeFixed = ({
 }: {
   version: string;
   versionRange: string;
-}) => {
+}): boolean => {
   const coercedVersion = semver.coerce(version);
+
   return (
-    (version === 'Not Found' ||
-      coercedVersion === null ||
-      !semver.satisfies(coercedVersion, versionRange)) &&
-    `version ${versionRange} is required`
+    version === 'Not Found' ||
+    coercedVersion === null ||
+    !semver.satisfies(coercedVersion, versionRange)
   );
 };
 
-export {checkSoftwareInstalled, doesSoftwareNeedToBeFixed};
+export {isSoftwareNotInstalled, doesSoftwareNeedToBeFixed};

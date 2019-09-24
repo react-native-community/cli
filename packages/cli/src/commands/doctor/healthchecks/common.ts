@@ -2,13 +2,28 @@ import chalk from 'chalk';
 import readline from 'readline';
 import wcwidth from 'wcwidth';
 import stripAnsi from 'strip-ansi';
+import {Ora} from 'ora';
 import {logger} from '@react-native-community/cli-tools';
 
 // Space is necessary to keep correct ordering on screen
-const logMessage = (message: string) => logger.log(`   ${message}`);
+const logMessage = (message?: string) => {
+  const indentation = '   ';
+
+  if (typeof message !== 'string') {
+    logger.log();
+
+    return;
+  }
+
+  const messageByLine = message.split('\n');
+
+  return logger.log(`${indentation}${messageByLine.join(`\n${indentation}`)}`);
+};
+
+const addBlankLine = () => logMessage();
 
 const logManualInstallation = ({
-  healthcheck = '',
+  healthcheck,
   url,
   command,
   message,
@@ -23,18 +38,56 @@ const logManualInstallation = ({
   }
 
   if (url) {
-    return logMessage(
+    logMessage(
       `Read more about how to download ${healthcheck} at ${chalk.dim.underline(
         url,
       )}`,
     );
+
+    return;
   }
 
   if (command) {
-    return logMessage(
+    logMessage(
       `Please install ${healthcheck} by running ${chalk.bold(command)}`,
     );
   }
+};
+
+const logError = ({
+  healthcheck,
+  loader,
+  error,
+  message,
+  command,
+}: {
+  healthcheck: string;
+  loader?: Ora;
+  error: Error;
+  message?: string;
+  command: string;
+}) => {
+  if (loader) {
+    loader.fail();
+  }
+
+  addBlankLine();
+
+  logMessage(chalk.dim(error.message));
+
+  if (message) {
+    logMessage(message);
+    addBlankLine();
+
+    return;
+  }
+
+  logMessage(
+    `The error above occured while trying to install ${healthcheck}. Please try again manually: ${chalk.bold(
+      command,
+    )}`,
+  );
+  addBlankLine();
 };
 
 // Calculate the size of a message on terminal based on rows
@@ -51,4 +104,4 @@ function removeMessage(message: string) {
   readline.clearScreenDown(process.stdout);
 }
 
-export {logManualInstallation, removeMessage};
+export {logManualInstallation, logError, removeMessage};

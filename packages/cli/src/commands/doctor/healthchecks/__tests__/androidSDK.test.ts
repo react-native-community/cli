@@ -33,7 +33,7 @@ describe('androidSDK', () => {
     environmentInfo.SDKs['Android SDK'] = 'Not Found';
     mockExeca('');
     const diagnostics = await androidSDK.getDiagnostics(environmentInfo);
-    expect(typeof diagnostics.needsToBeFixed).toBe('string');
+    expect(diagnostics.needsToBeFixed).toBe(true);
   });
 
   it('returns a message if the SDK version is not in range', async () => {
@@ -43,7 +43,7 @@ describe('androidSDK', () => {
     };
     mockExeca('build-tools;25.0');
     const diagnostics = await androidSDK.getDiagnostics(environmentInfo);
-    expect(typeof diagnostics.needsToBeFixed).toBe('string');
+    expect(diagnostics.needsToBeFixed).toBe(true);
   });
 
   it('returns false if the SDK version is in range', async () => {

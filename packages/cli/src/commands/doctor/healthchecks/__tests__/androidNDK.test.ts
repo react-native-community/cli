@@ -30,6 +30,7 @@ describe('androidNDK', () => {
   });
 
   it('returns a message if the Android NDK is not installed', async () => {
+    // To avoid having to provide fake versions for all the Android SDK tools
     // @ts-ignore
     environmentInfo.SDKs['Android SDK'] = {
       'Android NDK': 'Not Found',
@@ -39,6 +40,7 @@ describe('androidNDK', () => {
   });
 
   it('returns a message if the NDK version is not in range', async () => {
+    // To avoid having to provide fake versions for all the Android SDK tools
     // @ts-ignore
     environmentInfo.SDKs['Android SDK'] = {
       'Android NDK': '18',
@@ -48,6 +50,7 @@ describe('androidNDK', () => {
   });
 
   it('returns false if the NDK version is in range', async () => {
+    // To avoid having to provide fake versions for all the Android SDK tools
     // @ts-ignore
     environmentInfo.SDKs['Android SDK'] = {
       'Android NDK': '19',

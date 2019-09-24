@@ -37,6 +37,7 @@ describe('androidSDK', () => {
   });
 
   it('returns a message if the SDK version is not in range', async () => {
+    // To avoid having to provide fake versions for all the Android SDK tools
     // @ts-ignore
     environmentInfo.SDKs['Android SDK'] = {
       'Build Tools': [25],
@@ -47,6 +48,7 @@ describe('androidSDK', () => {
   });
 
   it('returns false if the SDK version is in range', async () => {
+    // To avoid having to provide fake versions for all the Android SDK tools
     // @ts-ignore
     environmentInfo.SDKs['Android SDK'] = {
       'Build Tools': ['26.0'],

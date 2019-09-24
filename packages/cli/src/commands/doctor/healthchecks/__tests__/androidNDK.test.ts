@@ -7,7 +7,7 @@ import * as common from '../common';
 
 const logSpy = jest.spyOn(common, 'logManualInstallation');
 
-describe('androidHomeEnvVariables', () => {
+describe('androidNDK', () => {
   let initialEnvironmentInfo: EnvironmentInfo;
   let environmentInfo: EnvironmentInfo;
 
@@ -56,7 +56,7 @@ describe('androidHomeEnvVariables', () => {
     expect(diagnostics.needsToBeFixed).toBe(false);
   });
 
-  it('logs manual installation steps to the screen', async () => {
+  it('logs manual installation steps to the screen', () => {
     const loader = new NoopLoader();
 
     androidNDK.runAutomaticFix({loader, environmentInfo});

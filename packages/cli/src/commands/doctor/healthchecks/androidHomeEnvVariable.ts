@@ -26,7 +26,7 @@ export default {
     needsToBeFixed: !process.env.ANDROID_HOME,
   }),
   runAutomaticFix: async ({loader}: {loader: Ora}) => {
-    loader.info();
+    loader.fail();
 
     logManualInstallation({
       message,

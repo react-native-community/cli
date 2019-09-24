@@ -13,7 +13,7 @@ export default {
     }),
   }),
   runAutomaticFix: async ({loader}) => {
-    loader.info();
+    loader.fail();
 
     logManualInstallation({
       healthcheck: 'Xcode',

@@ -18,7 +18,7 @@ const platform = process.platform as 'darwin' | 'win32' | 'linux';
 
 const message = `Read more about how to set the ${label} at ${chalk.dim(
   URLS[platform],
-)}.`;
+)}`;
 
 export default {
   label,
@@ -26,7 +26,7 @@ export default {
     needsToBeFixed: !process.env.ANDROID_HOME,
   }),
   runAutomaticFix: async ({loader}: {loader: Ora}) => {
-    loader.info();
+    loader.fail();
 
     logManualInstallation({
       message,

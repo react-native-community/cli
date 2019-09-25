@@ -2,10 +2,9 @@ import execa from 'execa';
 import chalk from 'chalk';
 // @ts-ignore untyped
 import inquirer from 'inquirer';
-import {logger} from '@react-native-community/cli-tools';
 import {isSoftwareNotInstalled, PACKAGE_MANAGERS} from '../checkInstallation';
 import {packageManager} from './packageManagers';
-import {logManualInstallation, removeMessage} from './common';
+import {logManualInstallation, logError, removeMessage} from './common';
 import {HealthCheckInterface} from '../types';
 import {Ora} from 'ora';
 
@@ -44,11 +43,10 @@ const installLibrary = async ({
 
     loader.succeed(`${label} (installed with ${packageManagerToUse})`);
   } catch (error) {
-    loader.fail();
-    logger.log(chalk.dim(`\n${error.message}`));
-
-    logManualInstallation({
-      healthcheck: 'ios-deploy',
+    logError({
+      healthcheck: label,
+      loader,
+      error,
       command: installationCommand,
     });
   }

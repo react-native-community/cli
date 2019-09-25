@@ -19,7 +19,7 @@ export default {
     await install({
       pkg: 'watchman',
       label,
-      source: 'https://facebook.github.io/watchman/docs/install.html',
+      url: 'https://facebook.github.io/watchman/docs/install.html',
       loader,
     }),
 } as HealthCheckInterface;

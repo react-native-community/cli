@@ -36,7 +36,7 @@ const yarn: HealthCheckInterface = {
     await install({
       pkg: 'yarn',
       label: 'yarn',
-      source: 'https://yarnpkg.com/docs/install',
+      url: 'https://yarnpkg.com/docs/install',
       loader,
     }),
 };
@@ -57,7 +57,7 @@ const npm: HealthCheckInterface = {
     await install({
       pkg: 'node',
       label: 'node',
-      source: 'https://nodejs.org/',
+      url: 'https://nodejs.org/',
       loader,
     }),
 };

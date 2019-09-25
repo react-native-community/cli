@@ -1,17 +1,17 @@
 import execa from 'execa';
-import chalk from 'chalk';
-import {logger} from '@react-native-community/cli-tools';
 import {isSoftwareNotInstalled} from '../checkInstallation';
 import {
   promptCocoaPodsInstallationQuestion,
   runSudo,
 } from '../../../tools/installPods';
-import {removeMessage} from './common';
+import {removeMessage, logError} from './common';
 import {brewInstall} from '../../../tools/brewInstall';
 import {HealthCheckInterface} from '../types';
 
+const label = 'CocoaPods';
+
 export default {
-  label: 'CocoaPods',
+  label,
   description: 'required for installing iOS dependencies',
   getDiagnostics: async () => ({
     needsToBeFixed: await isSoftwareNotInstalled('pod'),
@@ -29,8 +29,8 @@ export default {
       installMethod === 'homebrew'
         ? installMethod.substr(0, 1).toUpperCase() + installMethod.substr(1)
         : installMethod;
-    const loaderInstallationMessage = `CocoaPods (installing with ${installMethodCapitalized})`;
-    const loaderSucceedMessage = `CocoaPods (installed with ${installMethodCapitalized})`;
+    const loaderInstallationMessage = `${label} (installing with ${installMethodCapitalized})`;
+    const loaderSucceedMessage = `${label} (installed with ${installMethodCapitalized})`;
 
     // Remove the prompt after the question of how to install CocoaPods is answered
     removeMessage(promptQuestion);
@@ -52,14 +52,12 @@ export default {
 
           return loader.succeed(loaderSucceedMessage);
         } catch (error) {
-          loader.fail();
-          logger.log(chalk.dim(`\n${error.message}`));
-
-          return logger.log(
-            `An error occured while trying to install CocoaPods. Please try again manually: ${chalk.bold(
-              'sudo gem install cocoapods',
-            )}`,
-          );
+          logError({
+            healthcheck: label,
+            loader,
+            error,
+            command: 'sudo gem install cocoapods',
+          });
         }
       }
     }

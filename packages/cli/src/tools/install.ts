@@ -1,14 +1,15 @@
 import ora from 'ora';
 import {brewInstall} from './brewInstall';
+import {logManualInstallation} from '../commands/doctor/healthchecks/common';
 
 type InstallArgs = {
   pkg: string;
   label: string;
-  source: string;
+  url: string;
   loader: ora.Ora;
 };
 
-async function install({pkg, label, source, loader}: InstallArgs) {
+async function install({pkg, label, url, loader}: InstallArgs) {
   try {
     switch (process.platform) {
       case 'darwin':
@@ -18,7 +19,12 @@ async function install({pkg, label, source, loader}: InstallArgs) {
         throw new Error('Not implemented yet');
     }
   } catch (_error) {
-    loader.info(`Please download and install '${pkg}' from ${source}.`);
+    loader.fail();
+
+    logManualInstallation({
+      healthcheck: label,
+      url,
+    });
   }
 }
 

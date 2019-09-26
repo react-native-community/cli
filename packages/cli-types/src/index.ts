@@ -143,7 +143,7 @@ export type Config = {
  * are calculated and can't be defined
  */
 
-export type UserConfig = Omit<Omit<Config, 'root'>, 'haste'> & {
+export type UserConfig = Omit<Config, 'root' | 'haste'> & {
   reactNativePath: string | void;
   // Additional project settings
   project: {
@@ -155,7 +155,7 @@ export type UserConfig = Omit<Omit<Config, 'root'>, 'haste'> & {
 
 export type UserDependencyConfig = {
   // Additional dependency settings
-  dependency: Omit<Omit<Dependency, 'name'>, 'root'>;
+  dependency: Omit<Dependency, 'name' | 'root'>;
   // An array of commands that ship with the dependency
   commands: Command[];
   // An array of extra platforms to load

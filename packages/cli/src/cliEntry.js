@@ -173,7 +173,18 @@ async function setupAndRun() {
     logger.disable();
   }
 
-  const ctx = loadConfig();
+  let loadConfigPath;
+
+  // I would like to use commander to get this path, but somehow it triggers
+  // process.exit. What would be the correct way to use it with commander?
+  const configPath = process.argv.find(arg =>
+    arg.startsWith('rn-project-path'),
+  );
+  if (configPath != null) {
+    loadConfigPath = configPath.split('=')[1];
+  }
+
+  const ctx = loadConfig(loadConfigPath);
 
   logger.enable();
 

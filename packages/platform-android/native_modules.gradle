@@ -73,6 +73,9 @@ class ReactNativeModules {
   private String packageName
   private DefaultSettings defaultSettings
   private String root
+  // This can differ from the root, the root is where node_modules are located.
+  // the rnProject might not necessarily be in the root.
+  private String rnProjectPath
   private ArrayList<HashMap<String, String>> reactNativeModules
 
   private static String LOG_PREFIX = ":ReactNative:"
@@ -81,17 +84,19 @@ class ReactNativeModules {
     this.logger = logger
   }
 
-  void applySettingsGradle(DefaultSettings defaultSettings, String root) {
+  void applySettingsGradle(DefaultSettings defaultSettings, String root, String rnProjectPath) {
     this.defaultSettings = defaultSettings
     this.root = root
+    this.rnProjectPath = rnProjectPath
     this.reactNativeModules = this.getReactNativeConfig()
 
     addReactNativeModuleProjects()
   }
 
-  void applyBuildGradle(Project project, String root) {
+  void applyBuildGradle(Project project, String root, String rnProjectPath) {
     this.project = project
     this.root = root
+    this.rnProjectPath = rnProjectPath
     this.reactNativeModules = this.getReactNativeConfig()
 
     addReactNativeModuleDependencies()
@@ -140,6 +145,24 @@ class ReactNativeModules {
   }
 
   /**
+   * Returns the user's react-native path, it might differ from where the
+   * node_modules folder is located
+   */
+  File getReactNativeProjectPath() {
+    File androidRoot
+
+    if (this.project) {
+      androidRoot = this.project.rootProject.projectDir
+    } else {
+      androidRoot = this.defaultSettings.rootProject.projectDir
+    }
+
+    File rnRoot = new File(androidRoot, this.rnProjectPath)
+    this.logger.debug("${LOG_PREFIX}Using React Native project path '${rnRoot.toString()}'")
+    return rnRoot
+  } 
+
+  /**
    * Code-gen a java file with all the detected ReactNativePackage instances automatically added
    *
    * @param outputDir
@@ -183,7 +206,8 @@ class ReactNativeModules {
 
     def cmdProcess
     def root = getReactNativeProjectRoot()
-    def command = "node ./node_modules/react-native/cli.js config"
+    def rnPath = getReactNativeProjectPath()
+    def command = "node ./node_modules/react-native/cli.js config rn-project-path=$rnPath"
     def reactNativeConfigOutput = ""
 
     try {
@@ -236,12 +260,12 @@ class ReactNativeModules {
 
 def autoModules = new ReactNativeModules(logger)
 
-ext.applyNativeModulesSettingsGradle = { DefaultSettings defaultSettings, String root = ".." ->
-  autoModules.applySettingsGradle(defaultSettings, root)
+ext.applyNativeModulesSettingsGradle = { DefaultSettings defaultSettings, String root = "..", String rnProjectPath = "../.." ->
+  autoModules.applySettingsGradle(defaultSettings, root, rnProjectPath)
 }
 
-ext.applyNativeModulesAppBuildGradle = { Project project, String root = ".." ->
-  autoModules.applyBuildGradle(project, root)
+ext.applyNativeModulesAppBuildGradle = { Project project, String root = "..", String rnProjectPath = "../.." ->
+  autoModules.applyBuildGradle(project, root, rnProjectPath)
 
   def generatedSrcDir = new File(buildDir, "generated/rncli/src/main/java")
   def generatedCodeDir = new File(generatedSrcDir, generatedFilePackage.replace('.', '/'))

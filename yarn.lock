@@ -2032,6 +2032,13 @@
   resolved "https://registry.yarnpkg.com/@types/command-exists/-/command-exists-1.2.0.tgz#d97e0ed10097090e4ab0367ed425b0312fad86f3"
   integrity sha512-ugsxEJfsCuqMLSuCD4PIJkp5Uk2z6TCMRCgYVuhRo5cYQY3+1xXTQkSlPtkpGHuvWMjS2KTeVQXxkXRACMbM6A==
 
+"@types/cosmiconfig@^5.0.3":
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/@types/cosmiconfig/-/cosmiconfig-5.0.3.tgz#880644bb155d4038d3b752159684b777b0a159dd"
+  integrity sha512-HgTGG7X5y9pLl3pixeo2XtDEFD8rq2EuH+S4mK6teCnAwWMucQl6v1D43hI4Uw1VJh6nu59lxLkqXHRl4uwThA==
+  dependencies:
+    "@types/node" "*"
+
 "@types/events@*":
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/@types/events/-/events-3.0.0.tgz#2862f3f58a9a7f7c3e78d79f130dd4d71c25c2a7"
@@ -2066,6 +2073,13 @@
   integrity sha512-AiHRaEB50LQg0pZmm659vNBb9f4SJ0qrAnteuzhSeAUcJKxoYgEnprg/83kppCnc2zvtCKbdZry1a5pVY3lOTQ==
   dependencies:
     "@types/node" "*"
+
+"@types/hapi__joi@*", "@types/hapi__joi@^15.0.4":
+  version "15.0.4"
+  resolved "https://registry.yarnpkg.com/@types/hapi__joi/-/hapi__joi-15.0.4.tgz#49e2e1e6da15ade0fdd6db4daf94aecb07bb391b"
+  integrity sha512-VSS6zc7AIOdHVXmqKaGNPYl8eGrMvWi0R5pt3evJL3UdxO8XS28/XAkBXNyLQoymHxhMd4bF3o1U9mZkWDeN8w==
+  dependencies:
+    "@types/hapi__joi" "*"
 
 "@types/istanbul-lib-coverage@^2.0.0":
   version "2.0.0"

@@ -8,8 +8,7 @@
 import {logger} from '@react-native-community/cli-tools';
 import * as PackageManager from '../../tools/packageManager';
 import link from '../link/link';
-// @ts-ignore FIXME after converting tools/config
-import loadConfig from '../../tools/config'; // eslint-disable-line import/namespace, import/default
+import loadConfig from '../../tools/config';
 
 async function install(args: Array<string>): Promise<void> {
   const name = args[0];

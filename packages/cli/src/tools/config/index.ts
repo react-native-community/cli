@@ -1,8 +1,12 @@
-/**
- * @flow
- */
 import path from 'path';
 import chalk from 'chalk';
+import {
+  UserDependencyConfig,
+  ProjectConfig,
+  Dependency,
+  UserConfig,
+  Config,
+} from '@react-native-community/cli-types';
 import {logger, inlineString} from '@react-native-community/cli-tools';
 import * as ios from '@react-native-community/cli-platform-ios';
 import * as android from '@react-native-community/cli-platform-android';
@@ -13,26 +17,18 @@ import {
   readConfigFromDisk,
   readDependencyConfigFromDisk,
 } from './readConfigFromDisk';
-import type {
-  ConfigT,
-  UserDependencyConfigT,
-  UserConfigT,
-  DependencyConfigT,
-} from 'types';
-// $FlowFixMe - converted to TS
 import assign from '../assign';
-// $FlowFixMe - converted to TS
 import merge from '../merge';
 import resolveNodeModuleDir from './resolveNodeModuleDir';
 
 function getDependencyConfig(
   root: string,
   dependencyName: string,
-  finalConfig: ConfigT,
-  config: UserDependencyConfigT,
-  userConfig: UserConfigT,
+  finalConfig: Config,
+  config: UserDependencyConfig,
+  userConfig: UserConfig,
   isPlatform: boolean,
-): DependencyConfigT {
+): Dependency {
   return merge(
     {
       root,
@@ -52,24 +48,24 @@ function getDependencyConfig(
                 );
           return dependency;
         },
-        {},
+        {} as Config['platforms'],
       ),
       assets: findAssets(root, config.dependency.assets),
       hooks: config.dependency.hooks,
       params: config.dependency.params,
     },
     userConfig.dependencies[dependencyName] || {},
-  );
+  ) as Dependency;
 }
 
 /**
  * Loads CLI configuration
  */
-function loadConfig(projectRoot: string = process.cwd()): ConfigT {
-  let lazyProject;
+function loadConfig(projectRoot: string = process.cwd()): Config {
+  let lazyProject: ProjectConfig;
   const userConfig = readConfigFromDisk(projectRoot);
 
-  const initialConfig: ConfigT = {
+  const initialConfig: Config = {
     root: projectRoot,
     get reactNativePath() {
       return userConfig.reactNativePath
@@ -93,29 +89,32 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
 
       lazyProject = {};
       for (const platform in finalConfig.platforms) {
-        lazyProject[platform] = finalConfig.platforms[platform].projectConfig(
-          projectRoot,
-          userConfig.project[platform] || {},
-        );
+        const platformConfig = finalConfig.platforms[platform];
+        if (platformConfig) {
+          lazyProject[platform] = platformConfig.projectConfig(
+            projectRoot,
+            userConfig.project[platform] || {},
+          );
+        }
       }
 
       return lazyProject;
     },
   };
 
-  let depsWithWarnings = [];
+  let depsWithWarnings: Array<[string, string]> = [];
 
   const finalConfig = Array.from(
     new Set([
       ...Object.keys(userConfig.dependencies),
       ...findDependencies(projectRoot),
     ]),
-  ).reduce((acc: ConfigT, dependencyName) => {
+  ).reduce((acc: Config, dependencyName) => {
     const localDependencyRoot =
       userConfig.dependencies[dependencyName] &&
       userConfig.dependencies[dependencyName].root;
-    let root;
-    let config;
+    let root: string;
+    let config: UserDependencyConfig;
     try {
       root =
         localDependencyRoot ||
@@ -147,9 +146,11 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
      */
     if (dependencyName === 'react-native') {
       if (Object.keys(config.platforms).length === 0) {
+        // @ts-ignore - this code is soon going to be removed
         config.platforms = {ios, android};
       }
       if (config.commands.length === 0) {
+        // @ts-ignore - this code is soon going to be removed
         config.commands = [...ios.commands, ...android.commands];
       }
     }
@@ -167,10 +168,9 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
       platforms: Object.keys(config.platforms),
     };
 
-    return (assign({}, acc, {
+    return assign({}, acc, {
       dependencies: assign({}, acc.dependencies, {
-        // $FlowExpectedError: Dynamic getters are not supported
-        get [dependencyName]() {
+        get [dependencyName](): Dependency {
           return getDependencyConfig(
             root,
             dependencyName,
@@ -193,7 +193,7 @@ function loadConfig(projectRoot: string = process.cwd()): ConfigT {
         ],
         platforms: [...acc.haste.platforms, ...haste.platforms],
       },
-    }): ConfigT);
+    }) as Config;
   }, initialConfig);
 
   if (depsWithWarnings.length) {

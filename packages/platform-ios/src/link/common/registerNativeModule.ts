@@ -17,8 +17,7 @@ export default function registerNativeModule(
   name: string,
   dependencyConfig: IOSDependencyConfig,
   // FIXME: Params is never used
-  _params?: any,
-  // @ts-ignore
+  _params: any | undefined,
   projectConfig: IOSProjectConfig,
 ) {
   if (projectConfig.podfile && dependencyConfig.podspecPath) {

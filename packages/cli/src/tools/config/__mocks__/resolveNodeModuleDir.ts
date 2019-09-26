@@ -1,7 +1,3 @@
-/**
- * @flow
- */
-
 const path = require('path');
 
 export default function resolveNodeModuleDir(

@@ -1,6 +1,3 @@
-/**
- * @flow
- */
 import {CLIError} from '@react-native-community/cli-tools';
 
 import resolveNodeModuleDir from './resolveNodeModuleDir';

@@ -94,6 +94,12 @@ export interface Dependency {
   params: InquirerPrompt[];
 }
 
+export type ProjectConfig = {
+  android?: AndroidProjectConfig;
+  ios?: IOSProjectConfig;
+  [key: string]: any;
+};
+
 /**
  * @property root - Root where the configuration has been resolved from
  * @property reactNativePath - Path to React Native source
@@ -104,14 +110,10 @@ export interface Dependency {
  * @property commands - An array of commands that are present in 3rd party packages
  * @property haste - Haste configuration resolved based on available plugins
  */
-export interface Config {
+export type Config = {
   root: string;
   reactNativePath: string;
-  project: {
-    android?: AndroidProjectConfig;
-    ios?: IOSProjectConfig;
-    [key: string]: any;
-  };
+  project: ProjectConfig;
   assets: string[];
   dependencies: {[key: string]: Dependency};
   platforms: {
@@ -134,22 +136,34 @@ export interface Config {
     platforms: Array<string>;
     providesModuleNodeModules: Array<string>;
   };
-}
-
-type Diff<T, U> = T extends U ? never : T;
+};
 
 /**
- * Shares some structure with ConfigT, except that haste and root
+ * Shares some structure with Config, except that haste and root
  * are calculated and can't be defined
  */
-export type UserConfig = Diff<Config, {root: any; haste: any}> & {
-  reactNativePath: string | void;
 
+export type UserConfig = Omit<Config, 'root' | 'haste'> & {
+  reactNativePath: string | void;
   // Additional project settings
   project: {
     android?: AndroidProjectParams;
     ios?: IOSProjectParams;
     [key: string]: any;
+  };
+};
+
+export type UserDependencyConfig = {
+  // Additional dependency settings
+  dependency: Omit<Dependency, 'name' | 'root'>;
+  // An array of commands that ship with the dependency
+  commands: Command[];
+  // An array of extra platforms to load
+  platforms: Config['platforms'];
+  // Haste config defined by legacy `rnpm`
+  haste?: {
+    platforms: string[];
+    providesModuleNodeModules: string[];
   };
 };
 

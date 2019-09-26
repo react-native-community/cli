@@ -23,6 +23,7 @@ import {logger} from '@react-native-community/cli-tools';
 // $FlowFixMe - converted to TS
 import {setProjectDir} from './tools/packageManager';
 import pkgJson from '../package.json';
+// $FlowFixMe - converted to TS
 import loadConfig from './tools/config';
 
 commander

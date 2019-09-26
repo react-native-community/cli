@@ -179,7 +179,7 @@ npx react-native init MyApp --template file:///Users/name/template-path
 npx react-native init MyApp --template file:///Users/name/template-name-1.0.0.tgz
 ```
 
-A template is any directory or npm package that contains a `template.config.js` file in the root with following of the following type:
+A template is any directory or npm package that contains a `template.config.js` file in the root with the following type:
 
 ```ts
 type Template = {

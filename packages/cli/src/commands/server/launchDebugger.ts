@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  *
  * @format
- * @flow
  */
 
 import open from 'open';
@@ -14,7 +13,7 @@ import {logger} from '@react-native-community/cli-tools';
 import launchDefaultBrowser from './launchDefaultBrowser';
 import chalk from 'chalk';
 
-function commandExistsUnixSync(commandName) {
+function commandExistsUnixSync(commandName: string) {
   try {
     const stdout = execSync(
       `command -v ${commandName} 2>/dev/null` +
@@ -26,7 +25,7 @@ function commandExistsUnixSync(commandName) {
   }
 }
 
-function commandExistsWindowsSync(commandName) {
+function commandExistsWindowsSync(commandName: string) {
   try {
     const stdout = execSync('where ' + commandName, {stdio: []});
     return !!stdout;
@@ -35,7 +34,7 @@ function commandExistsWindowsSync(commandName) {
   }
 }
 
-function commandExists(commandName) {
+function commandExists(commandName:string) {
   switch (process.platform) {
     case 'win32':
       return commandExistsWindowsSync(commandName);
@@ -69,6 +68,7 @@ function getChromeAppName(): string {
 }
 
 function launchChrome(url: string) {
+  // @ts-ignore open's callback argument definition is not defined in open
   open(url, {app: [getChromeAppName()]}, err => {
     if (err) {
       logger.error('Google Chrome exited with error:', err);

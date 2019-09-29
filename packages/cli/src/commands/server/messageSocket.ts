@@ -9,10 +9,27 @@ import url from 'url';
 import {Server as WebSocketServer} from 'ws';
 import notifier from 'node-notifier';
 import {logger} from '@react-native-community/cli-tools';
+import {Server as HttpServer} from 'http';
+import {Server as HttpsServer} from 'https';
 
 const PROTOCOL_VERSION = 2;
 
-function parseMessage(data, binary) {
+type IdObject = {
+  requestId: string;
+  clientId: string;
+};
+
+type Message = {
+  version?: string;
+  id?: IdObject;
+  method?: string;
+  target: string;
+  result?: any;
+  error?: Error;
+  params?: Record<string, any>;
+};
+
+function parseMessage(data: string, binary: any) {
   if (binary) {
     logger.error('Expected text message, got binary!');
     return undefined;
@@ -31,7 +48,7 @@ function parseMessage(data, binary) {
   return undefined;
 }
 
-function isBroadcast(message) {
+function isBroadcast(message: Message) {
   return (
     typeof message.method === 'string' &&
     message.id === undefined &&
@@ -39,13 +56,13 @@ function isBroadcast(message) {
   );
 }
 
-function isRequest(message) {
+function isRequest(message: Message) {
   return (
     typeof message.method === 'string' && typeof message.target === 'string'
   );
 }
 
-function isResponse(message) {
+function isResponse(message: Message) {
   return (
     typeof message.id === 'object' &&
     typeof message.id.requestId !== 'undefined' &&
@@ -54,7 +71,8 @@ function isResponse(message) {
   );
 }
 
-function attachToServer(server, path) {
+type Server = HttpServer | HttpsServer;
+function attachToServer(server: Server, path: string) {
   const wss = new WebSocketServer({
     server,
     path,
@@ -62,7 +80,7 @@ function attachToServer(server, path) {
   const clients = new Map();
   let nextClientId = 0;
 
-  function getClientWs(clientId) {
+  function getClientWs(clientId: string) {
     const clientWs = clients.get(clientId);
     if (clientWs === undefined) {
       throw new Error(
@@ -72,7 +90,10 @@ function attachToServer(server, path) {
     return clientWs;
   }
 
-  function handleSendBroadcast(broadcasterId, message) {
+  function handleSendBroadcast(
+    broadcasterId: string | null,
+    message: Partial<Message>,
+  ) {
     const forwarded = {
       version: PROTOCOL_VERSION,
       method: message.method,
@@ -104,7 +125,7 @@ function attachToServer(server, path) {
   wss.on('connection', clientWs => {
     const clientId = `client#${nextClientId++}`;
 
-    function handleCaughtError(message, error) {
+    function handleCaughtError(message: Message, error: Error) {
       const errorMessage = {
         id: message.id,
         method: message.method,
@@ -138,7 +159,7 @@ function attachToServer(server, path) {
       }
     }
 
-    function handleServerRequest(message) {
+    function handleServerRequest(message: Message) {
       let result = null;
       switch (message.method) {
         case 'getid':
@@ -165,7 +186,7 @@ function attachToServer(server, path) {
       );
     }
 
-    function forwardRequest(message) {
+    function forwardRequest(message: Message) {
       getClientWs(message.target).send(
         JSON.stringify({
           version: PROTOCOL_VERSION,
@@ -179,7 +200,10 @@ function attachToServer(server, path) {
       );
     }
 
-    function forwardResponse(message) {
+    function forwardResponse(message: Message) {
+      if (!message.id) {
+        return;
+      }
       getClientWs(message.id.clientId).send(
         JSON.stringify({
           version: PROTOCOL_VERSION,
@@ -192,12 +216,14 @@ function attachToServer(server, path) {
 
     clients.set(clientId, clientWs);
     const onCloseHandler = () => {
+      // @ts-ignore
       clientWs.onmessage = null;
       clients.delete(clientId);
     };
     clientWs.onclose = onCloseHandler;
     clientWs.onerror = onCloseHandler;
     clientWs.onmessage = event => {
+      // @ts-ignore
       const message = parseMessage(event.data, event.binary);
       if (message === undefined) {
         logger.error('Received message not matching protocol');
@@ -225,7 +251,7 @@ function attachToServer(server, path) {
   });
 
   return {
-    broadcast: (method, params) => {
+    broadcast: (method: string, params: Record<string, any>) => {
       handleSendBroadcast(null, {method, params});
     },
   };

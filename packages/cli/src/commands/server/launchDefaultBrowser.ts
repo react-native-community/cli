@@ -5,14 +5,14 @@
  * LICENSE file in the root directory of this source tree.
  *
  * @format
- * @flow
  */
 
 import open from 'open';
 import {logger} from '@react-native-community/cli-tools';
 
 function launchDefaultBrowser(url: string) {
-  open(url, err => {
+  // @ts-ignore open's second argument takes an option, not callback
+  open(url, (err: string) => {
     if (err) {
       logger.error('Browser exited with error:', err);
     }

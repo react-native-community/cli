@@ -9,18 +9,22 @@
 
 import ws from 'ws';
 import {logger} from '@react-native-community/cli-tools';
+import {Server as HttpServer} from 'http';
+import {Server as HttpsServer} from 'https';
+import WebSocket from 'ws';
 
-function attachToServer(server, path) {
+type Server = HttpServer | HttpsServer;
+function attachToServer(server: Server, path: string) {
   const WebSocketServer = ws.Server;
   const wss = new WebSocketServer({
     server,
     path,
   });
 
-  let debuggerSocket;
-  let clientSocket;
+  let debuggerSocket: WebSocket | null;
+  let clientSocket: WebSocket | null;
 
-  function send(dest, message) {
+  function send(dest: WebSocket, message: Record<string, any>) {
     if (!dest) {
       return;
     }
@@ -42,10 +46,11 @@ function attachToServer(server, path) {
 
   const clientSocketCloseHandler = () => {
     clientSocket = null;
+    // @ts-ignore
     send(debuggerSocket, JSON.stringify({method: '$disconnected'}));
   };
 
-  wss.on('connection', connection => {
+  wss.on('connection', (connection: any) => {
     const {url} = connection.upgradeReq;
 
     if (url.indexOf('role=debugger') > -1) {
@@ -54,20 +59,29 @@ function attachToServer(server, path) {
         return;
       }
       debuggerSocket = connection;
-      debuggerSocket.onerror = debuggerSocketCloseHandler;
-      debuggerSocket.onclose = debuggerSocketCloseHandler;
-      debuggerSocket.onmessage = ({data}) => send(clientSocket, data);
+      if (debuggerSocket) {
+        debuggerSocket.onerror = debuggerSocketCloseHandler;
+        debuggerSocket.onclose = debuggerSocketCloseHandler;
+        // @ts-ignore
+        debuggerSocket.onmessage = ({data}) => send(clientSocket, data);
+      }
     } else if (url.indexOf('role=client') > -1) {
       if (clientSocket) {
+        // @ts-ignore
         clientSocket.onerror = null;
+        // @ts-ignore
         clientSocket.onclose = null;
+        // @ts-ignore
         clientSocket.onmessage = null;
         clientSocket.close(1011, 'Another client connected');
       }
       clientSocket = connection;
-      clientSocket.onerror = clientSocketCloseHandler;
-      clientSocket.onclose = clientSocketCloseHandler;
-      clientSocket.onmessage = ({data}) => send(debuggerSocket, data);
+      if (clientSocket) {
+        clientSocket.onerror = clientSocketCloseHandler;
+        clientSocket.onclose = clientSocketCloseHandler;
+        // @ts-ignore
+        clientSocket.onmessage = ({data}) => send(debuggerSocket, data);
+      }
     } else {
       connection.close(1011, 'Missing role param');
     }

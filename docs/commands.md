@@ -67,6 +67,7 @@ For react-native versions 0.57 and above the bundle output path should be:
 To find out the correct path for previous react-native versions, take a look at the <code>react.gradle</code> file here: https://github.com/facebook/react-native/blob/0.57-stable/react.gradle or inside your <code>node_modules/react-native</code> directory.
 
 The expected path for the js bundle can be found on the line that starts with <code>jsBundleDir = </code>.
+
 </details>
 
 #### `--bundle-encoding [string]`
@@ -106,8 +107,8 @@ For react-native versions 0.57 and above the <code>--assets-dest</code> path sho
 <code>android/app/build/generated/res/react/debug</code>
 
 The expected path for the assets can be found in the react.gradle file on the line that starts with <code>resourcesDir =</code>
-</details>
 
+</details>
 
 #### `--reset-cache`
 
@@ -379,7 +380,13 @@ Builds your app and starts it on iOS simulator.
 
 Explicitly set the simulator to use. Optionally include iOS version between parenthesis at the end to match an exact version, e.g. `"iPhone 6 (10.0)"`.
 
-Default: `"iPhone X"`
+Default: `""`
+
+Notes: If the argument is not provided, cli will look for devices in following order:
+
+- `iPhone 11`
+- `iPhone X`
+- `iPhone 8`
 
 Notes: `simulator_name` must be a valid iOS simulator name. If in doubt, open your AwesomeApp/ios/AwesomeApp.xcodeproj folder on XCode and unroll the dropdown menu containing the simulator list. The dropdown menu is situated on the right hand side of the play button (top left corner).
 

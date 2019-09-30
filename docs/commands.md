@@ -380,8 +380,6 @@ Builds your app and starts it on iOS simulator.
 
 Explicitly set the simulator to use. Optionally include iOS version between parenthesis at the end to match an exact version, e.g. `"iPhone 6 (10.0)"`.
 
-Default: `""`
-
 Notes: If the argument is not provided, cli will look for devices in following order:
 
 - `iPhone 11`

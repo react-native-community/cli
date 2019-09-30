@@ -11,7 +11,6 @@ import ws from 'ws';
 import {logger} from '@react-native-community/cli-tools';
 import {Server as HttpServer} from 'http';
 import {Server as HttpsServer} from 'https';
-import WebSocket from 'ws';
 
 type Server = HttpServer | HttpsServer;
 function attachToServer(server: Server, path: string) {
@@ -21,10 +20,10 @@ function attachToServer(server: Server, path: string) {
     path,
   });
 
-  let debuggerSocket: WebSocket | null;
-  let clientSocket: WebSocket | null;
+  let debuggerSocket: ws | null;
+  let clientSocket: ws | null;
 
-  function send(dest: WebSocket, message: Record<string, any>) {
+  function send(dest: ws | null, message: ws.Data) {
     if (!dest) {
       return;
     }
@@ -46,7 +45,6 @@ function attachToServer(server: Server, path: string) {
 
   const clientSocketCloseHandler = () => {
     clientSocket = null;
-    // @ts-ignore
     send(debuggerSocket, JSON.stringify({method: '$disconnected'}));
   };
 
@@ -62,16 +60,15 @@ function attachToServer(server: Server, path: string) {
       if (debuggerSocket) {
         debuggerSocket.onerror = debuggerSocketCloseHandler;
         debuggerSocket.onclose = debuggerSocketCloseHandler;
-        // @ts-ignore
         debuggerSocket.onmessage = ({data}) => send(clientSocket, data);
       }
     } else if (url.indexOf('role=client') > -1) {
       if (clientSocket) {
-        // @ts-ignore
+        // @ts-ignore current typing of websocket does not expect null for onerror
         clientSocket.onerror = null;
-        // @ts-ignore
+        // @ts-ignore current typing of websocket does not expect null for onclose
         clientSocket.onclose = null;
-        // @ts-ignore
+        // @ts-ignore current typing of websocket does not expect null for onmessage
         clientSocket.onmessage = null;
         clientSocket.close(1011, 'Another client connected');
       }
@@ -79,7 +76,6 @@ function attachToServer(server: Server, path: string) {
       if (clientSocket) {
         clientSocket.onerror = clientSocketCloseHandler;
         clientSocket.onclose = clientSocketCloseHandler;
-        // @ts-ignore
         clientSocket.onmessage = ({data}) => send(debuggerSocket, data);
       }
     } else {

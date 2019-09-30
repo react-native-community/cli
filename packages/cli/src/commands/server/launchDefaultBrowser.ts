@@ -10,13 +10,14 @@
 import open from 'open';
 import {logger} from '@react-native-community/cli-tools';
 
-function launchDefaultBrowser(url: string) {
-  // @ts-ignore open's second argument takes an option, not callback
-  open(url, (err: string) => {
+async function launchDefaultBrowser(url: string) {
+  try {
+    await open(url);
+  } catch (err) {
     if (err) {
       logger.error('Browser exited with error:', err);
     }
-  });
+  }
 }
 
 export default launchDefaultBrowser;

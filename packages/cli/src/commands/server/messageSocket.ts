@@ -222,8 +222,7 @@ function attachToServer(server: Server, path: string) {
     };
     clientWs.onclose = onCloseHandler;
     clientWs.onerror = onCloseHandler;
-    clientWs.onmessage = event => {
-      // @ts-ignore
+    clientWs.onmessage = (event: any) => {
       const message = parseMessage(event.data, event.binary);
       if (message === undefined) {
         logger.error('Received message not matching protocol');

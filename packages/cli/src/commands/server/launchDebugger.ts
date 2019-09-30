@@ -67,13 +67,14 @@ function getChromeAppName(): string {
   }
 }
 
-function launchChrome(url: string) {
-  // @ts-ignore open's callback argument definition is not defined in open
-  open(url, {app: [getChromeAppName()]}, err => {
+async function launchChrome(url: string) {
+  try {
+    await open(url, {app: [getChromeAppName()]});
+  } catch (err) {
     if (err) {
       logger.error('Google Chrome exited with error:', err);
     }
-  });
+  }
 }
 
 function launchDebugger(url: string) {

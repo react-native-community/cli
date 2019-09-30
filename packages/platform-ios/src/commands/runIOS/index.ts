@@ -128,24 +128,40 @@ async function runOnSimulator(
     throw new CLIError('Could not parse the simulator list output', error);
   }
 
+  let simulator: string = args.simulator;
+  let selectedSimulator: {
+    udid: string;
+    name: string;
+    booted: boolean;
+    version: string;
+  } | null = null;
+
   /**
    * If no simulator was chosen, try simulators in following order
    * - iPhone 11
    * - iPhone X
    * - iPhone 8
    */
-  let simulator: string = args.simulator;
   if (!simulator) {
-    simulator = findMatchingSimulator(simulators, 'iPhone 11')
-      ? 'iPhone 11'
-      : findMatchingSimulator(simulators, 'iPhone X')
-      ? 'iPhone X'
-      : 'iPhone 8';
-  }
+    selectedSimulator = findMatchingSimulator(simulators, 'iPhone 11');
 
-  const selectedSimulator = findMatchingSimulator(simulators, simulator);
-  if (!selectedSimulator) {
-    throw new CLIError(`Could not find "${simulator}" simulator`);
+    if (!selectedSimulator) {
+      selectedSimulator = findMatchingSimulator(simulators, 'iPhone X');
+    }
+
+    if (!selectedSimulator) {
+      selectedSimulator = findMatchingSimulator(simulators, 'iPhone 8');
+    }
+    if (!selectedSimulator) {
+      throw new CLIError(
+        'Could not find any of the following simulators: "iPhone 11" "iPhone X "iPhone 8"',
+      );
+    }
+  } else {
+    selectedSimulator = findMatchingSimulator(simulators, simulator);
+    if (!selectedSimulator) {
+      throw new CLIError(`Could not find "${simulator}" simulator`);
+    }
   }
 
   /**

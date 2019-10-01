@@ -56,7 +56,7 @@ export default {
   label,
   isRequired: false,
   description:
-    'required for installing your app on a physical device with the CLI',
+    'Required for installing your app on a physical device with the CLI',
   getDiagnostics: async () => ({
     needsToBeFixed: await isSoftwareNotInstalled('ios-deploy'),
   }),

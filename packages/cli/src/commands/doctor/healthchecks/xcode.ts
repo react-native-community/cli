@@ -5,13 +5,19 @@ import {HealthCheckInterface} from '../types';
 
 export default {
   label: 'Xcode',
-  description: 'required for building and installing your app on iOS',
-  getDiagnostics: async ({IDEs}) => ({
-    needsToBeFixed: doesSoftwareNeedToBeFixed({
-      version: IDEs.Xcode.version.split('/')[0],
+  description: 'Required for building and installing your app on iOS',
+  getDiagnostics: async ({IDEs}) => {
+    const version = IDEs.Xcode.version.split('/')[0];
+
+    return {
+      needsToBeFixed: doesSoftwareNeedToBeFixed({
+        version,
+        versionRange: versionRanges.XCODE,
+      }),
+      version,
       versionRange: versionRanges.XCODE,
-    }),
-  }),
+    };
+  },
   runAutomaticFix: async ({loader}) => {
     loader.fail();
 

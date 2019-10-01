@@ -89,7 +89,11 @@ export type HealthCheckInterface = {
   description?: string;
   getDiagnostics: (
     environmentInfo: EnvironmentInfo,
-  ) => Promise<{version?: string; needsToBeFixed: boolean | string}>;
+  ) => Promise<{
+    version?: string;
+    versionRange?: string;
+    needsToBeFixed: boolean | string;
+  }>;
   runAutomaticFix: RunAutomaticFix;
 };
 

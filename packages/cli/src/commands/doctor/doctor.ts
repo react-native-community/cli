@@ -149,13 +149,17 @@ export default (async (_, __, options) => {
     });
   }
 
-  const onKeyPress = async (key: string) => {
+  const removeKeyPressListener = () => {
     if (typeof process.stdin.setRawMode === 'function') {
       process.stdin.setRawMode(false);
     }
     process.stdin.removeAllListeners('data');
+  };
 
+  const onKeyPress = async (key: string) => {
     if (key === KEYS.EXIT || key === '\u0003') {
+      removeKeyPressListener();
+
       process.exit(0);
       return;
     }
@@ -163,6 +167,8 @@ export default (async (_, __, options) => {
     if (
       [KEYS.FIX_ALL_ISSUES, KEYS.FIX_ERRORS, KEYS.FIX_WARNINGS].includes(key)
     ) {
+      removeKeyPressListener();
+
       try {
         const automaticFixLevel = {
           [KEYS.FIX_ALL_ISSUES]: AUTOMATIC_FIX_LEVELS.ALL_ISSUES,

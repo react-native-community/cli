@@ -96,6 +96,8 @@ export type HealthCheckInterface = {
 export type HealthCheckResult = {
   label: string;
   needsToBeFixed: boolean;
+  version?: 'Not Found' | string;
+  versionRange?: string;
   description: string | undefined;
   runAutomaticFix: RunAutomaticFix;
   isRequired: boolean;

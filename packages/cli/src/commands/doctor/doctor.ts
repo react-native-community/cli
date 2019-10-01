@@ -1,5 +1,6 @@
 import chalk from 'chalk';
 import {logger} from '@react-native-community/cli-tools';
+import semver from 'semver';
 import {getHealthchecks, HEALTHCHECK_TYPES} from './healthchecks';
 import {getLoader} from '../../tools/loader';
 import printFixOptions, {KEYS} from './printFixOptions';
@@ -11,6 +12,7 @@ import {
   HealthCheckResult,
 } from './types';
 import getEnvironmentInfo from '../../tools/envinfo';
+import {logMessage} from './healthchecks/common';
 
 const printCategory = ({label, key}: {label: string; key: number}) => {
   if (key > 0) {
@@ -23,6 +25,8 @@ const printCategory = ({label, key}: {label: string; key: number}) => {
 const printIssue = ({
   label,
   needsToBeFixed,
+  version,
+  versionRange,
   isRequired,
   description,
 }: HealthCheckResult) => {
@@ -32,10 +36,34 @@ const printIssue = ({
       : chalk.yellow('●')
     : chalk.green('✓');
 
-  const descriptionToShow =
-    needsToBeFixed && description ? `: ${description}` : '';
+  const descriptionToShow = description ? description : '';
 
-  logger.log(` ${symbol} ${label}${descriptionToShow}`);
+  if (needsToBeFixed && versionRange) {
+    const versionToShow = version && version !== 'Not Found' ? version : 'N/A';
+    const cleanedVersionRange = semver.valid(semver.coerce(versionRange)!);
+
+    if (cleanedVersionRange) {
+      logger.log(
+        ` ${symbol} ${label} ${chalk.dim(
+          `(${chalk.yellow(versionToShow)} →  ${chalk.green(
+            cleanedVersionRange,
+          )})`,
+        )}`,
+      );
+
+      if (descriptionToShow) {
+        logMessage(descriptionToShow);
+      }
+
+      return;
+    }
+  }
+
+  logger.log(` ${symbol} ${label}`);
+
+  if (descriptionToShow) {
+    logMessage(descriptionToShow);
+  }
 };
 
 const printOverallStats = ({
@@ -73,9 +101,11 @@ export default (async (_, __, options) => {
           return;
         }
 
-        const {needsToBeFixed} = await healthcheck.getDiagnostics(
-          environmentInfo,
-        );
+        const {
+          needsToBeFixed,
+          version,
+          versionRange,
+        } = await healthcheck.getDiagnostics(environmentInfo);
 
         // Assume that it's required unless specified otherwise
         const isRequired = healthcheck.isRequired !== false;
@@ -84,6 +114,8 @@ export default (async (_, __, options) => {
         return {
           label: healthcheck.label,
           needsToBeFixed: Boolean(needsToBeFixed),
+          version,
+          versionRange,
           description: healthcheck.description,
           runAutomaticFix: healthcheck.runAutomaticFix,
           isRequired,

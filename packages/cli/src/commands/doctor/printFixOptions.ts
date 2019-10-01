@@ -18,7 +18,9 @@ const printOptions = () => {
     )}`,
   );
   printOption(
-    `${chalk.dim('Press')} ${KEYS.FIX_ERRORS} ${chalk.dim('to try to fix errors.')}`,
+    `${chalk.dim('Press')} ${KEYS.FIX_ERRORS} ${chalk.dim(
+      'to try to fix errors.',
+    )}`,
   );
   printOption(
     `${chalk.dim('Press')} ${KEYS.FIX_WARNINGS} ${chalk.dim(

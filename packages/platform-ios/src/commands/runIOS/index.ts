@@ -142,16 +142,13 @@ async function runOnSimulator(
    * - iPhone X
    * - iPhone 8
    */
+  const defaultSimulators = ['iPhone 11', 'iPhone X', 'iPhone 8'];
   if (!simulator) {
-    selectedSimulator = findMatchingSimulator(simulators, 'iPhone 11');
+    defaultSimulators.some(target => {
+      selectedSimulator = findMatchingSimulator(simulators, target);
+      return selectedSimulator;
+    });
 
-    if (!selectedSimulator) {
-      selectedSimulator = findMatchingSimulator(simulators, 'iPhone X');
-    }
-
-    if (!selectedSimulator) {
-      selectedSimulator = findMatchingSimulator(simulators, 'iPhone 8');
-    }
     if (!selectedSimulator) {
       throw new CLIError(
         'Could not find any of the following simulators: "iPhone 11" "iPhone X "iPhone 8"',

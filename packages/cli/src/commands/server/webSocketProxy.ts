@@ -64,12 +64,9 @@ function attachToServer(server: Server, path: string) {
       }
     } else if (url.indexOf('role=client') > -1) {
       if (clientSocket) {
-        // @ts-ignore current typing of websocket does not expect null for onerror
-        clientSocket.onerror = null;
-        // @ts-ignore current typing of websocket does not expect null for onclose
-        clientSocket.onclose = null;
-        // @ts-ignore current typing of websocket does not expect null for onmessage
-        clientSocket.onmessage = null;
+        clientSocket.onerror = () => {};
+        clientSocket.onclose = () => {};
+        clientSocket.onmessage = () => {};
         clientSocket.close(1011, 'Another client connected');
       }
       clientSocket = connection;

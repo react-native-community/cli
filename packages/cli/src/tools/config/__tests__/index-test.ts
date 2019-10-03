@@ -106,6 +106,7 @@ test('should return dependencies from package.json', () => {
 test('should read a config of a dependency and use it to load other settings', () => {
   writeFiles(DIR, {
     ...REACT_NATIVE_MOCK,
+    'node_modules/react-native-test/package.json': '{}',
     'node_modules/react-native-test/ReactNativeTest.podspec': '',
     'node_modules/react-native-test/react-native.config.js': `module.exports = {
       dependency: {

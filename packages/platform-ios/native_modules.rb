@@ -5,24 +5,23 @@
 #
 require 'pathname'
 
-def use_native_modules!(root = "..", config = nil)
+def use_native_modules!(config = nil)
   if (!config)
     json = []
 
-    # Make sure `react-native config` is ran from your project root
-    Dir.chdir(root) do
-      IO.popen("./node_modules/.bin/react-native config") do |data|
-        while line = data.gets
-          json << line
-        end
+    # @todo: Do not use Yarn here, but find path dynamically
+    IO.popen("yarn run --silent react-native config") do |data|
+      while line = data.gets
+        json << line
       end
     end
 
     config = JSON.parse(json.join("\n"))
   end
 
+  project_root = Pathname.new(config["project"]["ios"]["sourceDir"])
+
   packages = config["dependencies"]
-  config_root = config["root"]
   found_pods = []
 
   packages.each do |package_name, package|
@@ -57,10 +56,10 @@ def use_native_modules!(root = "..", config = nil)
     end
 
     podspec_dir_path = Pathname.new(File.dirname(podspec_path))
-    project_root = Pathname.new(config_root)
+    
     relative_path = podspec_dir_path.relative_path_from project_root
 
-    pod spec.name, :path => File.join(root, relative_path)
+    pod spec.name, :path => relative_path
 
     if package_config["scriptPhases"]
       # Can be either an object, or an array of objects

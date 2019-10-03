@@ -8,8 +8,6 @@ import {
   Config,
 } from '@react-native-community/cli-types';
 import {logger, inlineString} from '@react-native-community/cli-tools';
-import * as ios from '@react-native-community/cli-platform-ios';
-import * as android from '@react-native-community/cli-platform-android';
 import findDependencies from './findDependencies';
 import findProjectRoot from './findProjectRoot';
 import resolveReactNativePath from './resolveReactNativePath';
@@ -139,21 +137,6 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
           Reason: ${chalk.dim(error.message)}`),
       );
       return acc;
-    }
-
-    /**
-     * @todo: remove this code once `react-native` is published with
-     * `platforms` and `commands` inside `react-native.config.js`.
-     */
-    if (dependencyName === 'react-native') {
-      if (Object.keys(config.platforms).length === 0) {
-        // @ts-ignore - this code is soon going to be removed
-        config.platforms = {ios, android};
-      }
-      if (config.commands.length === 0) {
-        // @ts-ignore - this code is soon going to be removed
-        config.commands = [...ios.commands, ...android.commands];
-      }
     }
 
     const isPlatform = Object.keys(config.platforms).length > 0;

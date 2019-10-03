@@ -92,7 +92,10 @@ function readLegacyConfigFromDisk(rootFolder: string): UserConfig | void {
  * workspace.
  */
 export function readConfigFromDisk(rootFolder: string): UserConfig {
-  const explorer = cosmiconfig('react-native', {searchPlaces});
+  const explorer = cosmiconfig('react-native', {
+    searchPlaces,
+    stopDir: rootFolder,
+  });
 
   const {config} = explorer.searchSync(rootFolder) || {
     config: readLegacyConfigFromDisk(rootFolder),

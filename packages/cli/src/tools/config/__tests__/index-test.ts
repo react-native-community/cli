@@ -15,6 +15,32 @@ jest.mock('../resolveNodeModuleDir');
 
 const DIR = getTempDirectory('resolve_config_path_test');
 
+const REACT_NATIVE_MOCK = {
+  'node_modules/react-native/package.json': '{}',
+  'node_modules/react-native/react-native.config.js': `
+    const ios = require("${require.resolve(
+      '@react-native-community/cli-platform-ios',
+    )}");
+    const android = require("${require.resolve(
+      '@react-native-community/cli-platform-android',
+    )}");
+    module.exports = {
+      platforms: {
+        ios: {
+          linkConfig: ios.linkConfig,
+          projectConfig: ios.projectConfig,
+          dependencyConfig: ios.dependencyConfig,
+        },
+        android: {
+          linkConfig: android.linkConfig,
+          projectConfig: android.projectConfig,
+          dependencyConfig: android.dependencyConfig,
+        },
+      },
+    };
+  `,
+};
+
 // Removes string from all key/values within an object
 const removeString = (config, str) =>
   JSON.parse(
@@ -62,7 +88,7 @@ test('should handle deprecated "rnpm" in project root', () => {
 
 test('should return dependencies from package.json', () => {
   writeFiles(DIR, {
-    'node_modules/react-native/package.json': '{}',
+    ...REACT_NATIVE_MOCK,
     'node_modules/react-native-test/package.json': '{}',
     'node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj':
       '',
@@ -73,14 +99,17 @@ test('should return dependencies from package.json', () => {
       }
     }`,
   });
+  console.log(
+    require(path.join(DIR, 'node_modules/react-native/react-native.config.js')),
+  );
+
   const {dependencies} = loadConfig(DIR);
   expect(removeString(dependencies, DIR)).toMatchSnapshot();
 });
 
 test('should read a config of a dependency and use it to load other settings', () => {
   writeFiles(DIR, {
-    'node_modules/react-native/package.json': '{}',
-    'node_modules/react-native-test/package.json': '{}',
+    ...REACT_NATIVE_MOCK,
     'node_modules/react-native-test/ReactNativeTest.podspec': '',
     'node_modules/react-native-test/react-native.config.js': `module.exports = {
       dependency: {
@@ -106,7 +135,7 @@ test('should read a config of a dependency and use it to load other settings', (
 
 test('should merge project configuration with default values', () => {
   writeFiles(DIR, {
-    'node_modules/react-native/package.json': '{}',
+    ...REACT_NATIVE_MOCK,
     'node_modules/react-native-test/package.json': '{}',
     'node_modules/react-native-test/react-native.config.js': `module.exports = {
       dependency: {
@@ -143,7 +172,7 @@ test('should merge project configuration with default values', () => {
 
 test('should read `rnpm` config from a dependency and transform it to a new format', () => {
   writeFiles(DIR, {
-    'node_modules/react-native/package.json': '{}',
+    ...REACT_NATIVE_MOCK,
     'node_modules/react-native-foo/package.json': `{
       "name": "react-native-foo",
       "rnpm": {
@@ -234,38 +263,6 @@ test('should load an out-of-tree "windows" platform that ships with a dependency
   expect(removeString({haste, platforms}, DIR)).toMatchSnapshot();
 });
 
-test('should automatically put "react-native" into haste config', () => {
-  writeFiles(DIR, {
-    'node_modules/react-native/package.json': '{}',
-    'package.json': `{
-      "dependencies": {
-        "react-native": "0.0.1"
-      }
-    }`,
-  });
-  const {haste} = loadConfig(DIR);
-  expect(haste).toMatchSnapshot();
-});
-
-test('should not add default React Native config when one present', () => {
-  writeFiles(DIR, {
-    'node_modules/react-native/package.json': '{}',
-    'node_modules/react-native/react-native.config.js': `module.exports = {
-      commands: [{
-        name: 'test',
-        func: () => {},
-      }]
-    }`,
-    'package.json': `{
-      "dependencies": {
-        "react-native": "0.0.1"
-      }
-    }`,
-  });
-  const {commands} = loadConfig(DIR);
-  expect(commands).toMatchSnapshot();
-});
-
 // @todo: figure out why this test is so flaky
 // eslint-disable-next-line jest/no-disabled-tests
 test.skip('should skip packages that have invalid configuration', () => {
@@ -310,7 +307,7 @@ test('supports dependencies from user configuration with custom root and propert
     path.sep === '\\' ? value.replace(/(\/|\\)/g, '\\\\') : value;
 
   writeFiles(DIR, {
-    'node_modules/react-native/package.json': '{}',
+    ...REACT_NATIVE_MOCK,
     'native-libs/local-lib/ios/LocalRNLibrary.xcodeproj/project.pbxproj': '',
     'react-native.config.js': `
 const path = require('path');

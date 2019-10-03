@@ -169,7 +169,7 @@ if $0 == __FILE__
 
       spec.singleton_class.send(:define_method, :name) { "ios-dep" }
 
-      podfile.singleton_class.send(:define_method, :use_native_modules) do |path, config|
+      podfile.singleton_class.send(:define_method, :use_native_modules) do |config|
         use_native_modules!(config)
       end
 

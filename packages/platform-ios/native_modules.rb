@@ -152,7 +152,7 @@ if $0 == __FILE__
         }
       }
       @config = {
-        "project" => project,
+        "project" => @project,
         "dependencies" => {
           "ios-dep" => @ios_package,
           "android-dep" => @android_package
@@ -224,10 +224,10 @@ if $0 == __FILE__
     end
 
     it "prints out the native module pods that were found" do
-      @podfile.use_native_modules({ "project" => project, "dependencies" => {} })
-      @podfile.use_native_modules({ "project" => project, "dependencies" => { "pkg-1" => @ios_package }})
+      @podfile.use_native_modules({ "project" => @project, "dependencies" => {} })
+      @podfile.use_native_modules({ "project" => @project, "dependencies" => { "pkg-1" => @ios_package }})
       @podfile.use_native_modules({
-        "project" => project, "dependencies" => { "pkg-1" => @ios_package, "pkg-2" => @ios_package }
+        "project" => @project, "dependencies" => { "pkg-1" => @ios_package, "pkg-2" => @ios_package }
       })
       @printed_messages.must_equal [
         "Detected React Native module pod for ios-dep",

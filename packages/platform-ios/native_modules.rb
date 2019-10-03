@@ -59,7 +59,7 @@ def use_native_modules!(config = nil)
     
     relative_path = podspec_dir_path.relative_path_from project_root
 
-    pod spec.name, :path => relative_path
+    pod spec.name, :path => relative_path.to_path
 
     if package_config["scriptPhases"]
       # Can be either an object, or an array of objects
@@ -148,7 +148,7 @@ if $0 == __FILE__
       }
       @project = {
         "ios" => {
-          "sourceDir": "/root/app"
+          "sourceDir" => "/root/app/ios"
         }
       }
       @config = {

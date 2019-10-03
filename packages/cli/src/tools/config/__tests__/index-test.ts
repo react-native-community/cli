@@ -99,10 +99,6 @@ test('should return dependencies from package.json', () => {
       }
     }`,
   });
-  console.log(
-    require(path.join(DIR, 'node_modules/react-native/react-native.config.js')),
-  );
-
   const {dependencies} = loadConfig(DIR);
   expect(removeString(dependencies, DIR)).toMatchSnapshot();
 });

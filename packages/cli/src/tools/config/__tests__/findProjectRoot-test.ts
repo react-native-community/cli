@@ -22,6 +22,7 @@ test('resolves to correct project root', () => {
   });
   const cwd = path.join(DIR, 'ios');
   expect(findProjectRoot(cwd)).toBe(DIR);
+  expect(findProjectRoot(DIR)).toBe(DIR);
 });
 
 test('resolves to correct project root in a monorepo', () => {

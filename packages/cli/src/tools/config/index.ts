@@ -1,5 +1,4 @@
 import path from 'path';
-import findUp from 'find-up';
 import chalk from 'chalk';
 import {
   UserDependencyConfig,
@@ -8,14 +7,11 @@ import {
   UserConfig,
   Config,
 } from '@react-native-community/cli-types';
-import {
-  logger,
-  inlineString,
-  CLIError,
-} from '@react-native-community/cli-tools';
+import {logger, inlineString} from '@react-native-community/cli-tools';
 import * as ios from '@react-native-community/cli-platform-ios';
 import * as android from '@react-native-community/cli-platform-android';
 import findDependencies from './findDependencies';
+import findProjectRoot from './findProjectRoot';
 import resolveReactNativePath from './resolveReactNativePath';
 import findAssets from './findAssets';
 import {
@@ -62,26 +58,6 @@ function getDependencyConfig(
     userConfig.dependencies[dependencyName] || {},
   ) as Dependency;
 }
-
-/**
- * Finds project root by looking for a closest `package.json`.
- *
- * Note: It is thetoretically possible that `package.json` doesn't exist
- * in the tree. In that case, we choose to throw an error.
- *
- * When executing via `npx`, this will never happen as `npm` requires that file
- * to be present in order to run
- */
-const findProjectRoot = (): string => {
-  const packageLocation = findUp.sync('package.json');
-  if (!packageLocation) {
-    throw new CLIError(`
-      We couldn't find a package.json in your project. 
-      Are you sure you are running it inside a React Native project?
-    `);
-  }
-  return path.dirname(packageLocation);
-};
 
 /**
  * Loads CLI configuration

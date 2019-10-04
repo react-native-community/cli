@@ -5,8 +5,8 @@ import {CLIError} from '@react-native-community/cli-tools';
 /**
  * Finds project root by looking for a closest `package.json`.
  */
-export default function findProjectRoot(): string {
-  const packageLocation = findUp.sync('package.json');
+export default function findProjectRoot(cwd = process.cwd()): string {
+  const packageLocation = findUp.sync('package.json', {cwd});
 
   /**
    * It is possible that `package.json` doesn't exist

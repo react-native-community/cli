@@ -9,8 +9,7 @@ def use_native_modules!(config = nil)
   if (!config)
     json = []
 
-    # @todo: Do not use Yarn here, but find path dynamically
-    IO.popen("yarn run --silent react-native config") do |data|
+    IO.popen("npx react-native config") do |data|
       while line = data.gets
         json << line
       end

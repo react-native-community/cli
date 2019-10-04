@@ -68,6 +68,26 @@ function getChromeAppName(): string {
   }
 }
 
+function getChromeCommandName(): string {
+  switch (process.platform) {
+    case 'darwin':
+      return '/Applications/Google" "Chrome.app/Contents/MacOS/Google" "Chrome';
+    case 'win32':
+      return 'chrome';
+    case 'linux':
+      if (commandExistsUnixSync('google-chrome')) {
+        return 'google-chrome';
+      }
+      if (commandExistsUnixSync('chromium-browser')) {
+        return 'chromium-browser';
+      }
+      return 'chromium';
+
+    default:
+      return 'google-chrome';
+  }
+}
+
 function launchChrome(url: string) {
   open(url, {app: [getChromeAppName()]}, err => {
     if (err) {
@@ -77,7 +97,7 @@ function launchChrome(url: string) {
 }
 
 function launchDebugger(url: string) {
-  if (!commandExists(getChromeAppName())) {
+  if (!commandExists(getChromeCommandName())) {
     logger.info(
       `For a better debugging experience please install Google Chrome from: ${chalk.underline.dim(
         'https://www.google.com/chrome/',

@@ -129,8 +129,7 @@ async function runOnSimulator(
   }
 
   /**
-   * If no simulator was chosen, try simulators in following order
-   * - iPhone 11
+   * If provided simulator does not exist, try simulators in following order
    * - iPhone X
    * - iPhone 8
    */

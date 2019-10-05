@@ -54,6 +54,7 @@ async function launchDebugger(url: string) {
   try {
     await launchChrome(url);
   } catch (error) {
+    logger.debug(error);
     logger.info(
       `For a better debugging experience please install Google Chrome from: ${chalk.underline.dim(
         'https://www.google.com/chrome/',

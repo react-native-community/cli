@@ -15,29 +15,7 @@ import {execSync, spawn, ChildProcess} from 'child_process';
 import shellQuote from 'shell-quote';
 import {logger} from '@react-native-community/cli-tools';
 
-type Editor =
-  | 'vim'
-  | 'mvim'
-  | 'nano'
-  | 'code'
-  | 'atom'
-  | 'Atom'
-  | 'Atom Beta'
-  | 'subl'
-  | 'sublime'
-  | 'webstorm'
-  | 'wstorm'
-  | 'appcode'
-  | 'charm'
-  | 'idea'
-  | 'joe'
-  | 'emacs'
-  | 'emacsclient'
-  | 'rmate'
-  | 'mate'
-  | 'mine';
-
-function isTerminalEditor(editor: Editor) {
+function isTerminalEditor(editor: string) {
   switch (editor) {
     case 'vim':
     case 'emacs':
@@ -77,7 +55,7 @@ function addWorkspaceToArgumentsIfExists(args: string[], workspace: string) {
 }
 
 function getArgumentsForLineNumber(
-  editor: Editor,
+  editor: string,
   fileName: string,
   lineNumber: number,
   workspace: any,

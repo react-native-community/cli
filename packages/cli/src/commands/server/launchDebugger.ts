@@ -46,7 +46,7 @@ function getChromeAppName(): string {
 }
 
 function launchChrome(url: string) {
-  open(url, {app: [getChromeAppName()], wait: true});
+  return open(url, {app: [getChromeAppName()], wait: true});
 }
 
 async function launchDebugger(url: string) {

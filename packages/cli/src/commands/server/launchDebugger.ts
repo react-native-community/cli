@@ -25,28 +25,6 @@ function commandExistsUnixSync(commandName: string) {
   }
 }
 
-function commandExistsWindowsSync(commandName: string) {
-  try {
-    const stdout = execSync('where ' + commandName, {stdio: []});
-    return !!stdout;
-  } catch (error) {
-    return false;
-  }
-}
-
-function commandExists(commandName: string) {
-  switch (process.platform) {
-    case 'win32':
-      return commandExistsWindowsSync(commandName);
-    case 'linux':
-    case 'darwin':
-      return commandExistsUnixSync(commandName);
-    default:
-      // assume it doesn't exist, just to be safe.
-      return false;
-  }
-}
-
 function getChromeAppName(): string {
   switch (process.platform) {
     case 'darwin':
@@ -77,17 +55,17 @@ async function launchChrome(url: string) {
   }
 }
 
-function launchDebugger(url: string) {
-  if (!commandExists(getChromeAppName())) {
+async function launchDebugger(url: string) {
+  try {
+    await launchChrome(url);
+  } catch (error) {
+    launchDefaultBrowser(url);
     logger.info(
       `For a better debugging experience please install Google Chrome from: ${chalk.underline.dim(
         'https://www.google.com/chrome/',
       )}`,
     );
-    launchDefaultBrowser(url);
-    return;
   }
-  launchChrome(url);
 }
 
 export default launchDebugger;

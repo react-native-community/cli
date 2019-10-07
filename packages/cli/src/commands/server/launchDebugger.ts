@@ -48,9 +48,9 @@ function getChromeAppName(): string {
 async function launchChrome(url: string) {
   try {
     await open(url, {app: [getChromeAppName()], wait: true});
-  } catch (err) {
-    if (err) {
-      logger.error('Google Chrome exited with error:', err);
+  } catch (error) {
+    if (error) {
+      logger.error('Google Chrome exited with error:', error);
     }
   }
 }
@@ -59,12 +59,13 @@ async function launchDebugger(url: string) {
   try {
     await launchChrome(url);
   } catch (error) {
-    launchDefaultBrowser(url);
+    logger.debug(error);
     logger.info(
       `For a better debugging experience please install Google Chrome from: ${chalk.underline.dim(
         'https://www.google.com/chrome/',
       )}`,
     );
+    launchDefaultBrowser(url);
   }
 }
 

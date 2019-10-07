@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  *
  * @format
- * @flow
  */
 
 import open from 'open';
@@ -14,7 +13,7 @@ import {logger} from '@react-native-community/cli-tools';
 import launchDefaultBrowser from './launchDefaultBrowser';
 import chalk from 'chalk';
 
-function commandExistsUnixSync(commandName) {
+function commandExistsUnixSync(commandName: string) {
   try {
     const stdout = execSync(
       `command -v ${commandName} 2>/dev/null` +

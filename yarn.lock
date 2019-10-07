@@ -2149,6 +2149,13 @@
   dependencies:
     "@types/node" "*"
 
+"@types/node-notifier@^5.4.0":
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/@types/node-notifier/-/node-notifier-5.4.0.tgz#4e66c85eb41cce8387b4cd9c6c67852be41a99db"
+  integrity sha512-M1XvCG6Rwej6+W0+kWultE46YS7erOy+W7suRmXtKwLGT3ytj6YEe9lqo47nRfL1xILzg9xJpKeNczIsWR8ymw==
+  dependencies:
+    "@types/node" "*"
+
 "@types/node@*":
   version "12.0.0"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-12.0.0.tgz#d11813b9c0ff8aaca29f04cbc12817f4c7d656e5"
@@ -2181,6 +2188,13 @@
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@types/wcwidth/-/wcwidth-1.0.0.tgz#a58f4673050f98c46ae8f852340889343b21a1f5"
   integrity sha512-X/WFfwGCIisEnd9EOSsX/jt7BHPDkcvQVYwVzc1nsE2K5bC56mWKnmNs0wyjcGcQsP7Wxq2zWSmhDDbF5Z7dDg==
+
+"@types/ws@^6.0.3":
+  version "6.0.3"
+  resolved "https://registry.yarnpkg.com/@types/ws/-/ws-6.0.3.tgz#b772375ba59d79066561c8d87500144d674ba6b3"
+  integrity sha512-yBTM0P05Tx9iXGq00BbJPo37ox68R5vaGTXivs6RGh/BQ6QP5zqZDGWdAO6JbRE/iR1l80xeGAwCQS2nMV9S/w==
+  dependencies:
+    "@types/node" "*"
 
 "@types/xmldoc@^1.1.4":
   version "1.1.4"

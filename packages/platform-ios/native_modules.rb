@@ -6,6 +6,14 @@
 require 'pathname'
 
 def use_native_modules!(config = nil)
+  if (config.is_a? String)
+    Pod::UI.warn("Passing custom root to use_native_modules! is deprecated.",
+      [
+        "CLI detects root of the project automatically. The \"#{config}\" argument was ignored.",
+      ]);
+    config = nil;
+  end
+  
   if (!config)
     json = []
 

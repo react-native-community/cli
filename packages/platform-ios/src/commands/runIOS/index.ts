@@ -128,7 +128,17 @@ async function runOnSimulator(
     throw new CLIError('Could not parse the simulator list output', error);
   }
 
-  const selectedSimulator = findMatchingSimulator(simulators, args.simulator);
+  /**
+   * If provided simulator does not exist, try simulators in following order
+   * - iPhone X
+   * - iPhone 8
+   */
+
+  const fallbackSimulators = ['iPhone X', 'iPhone 8'];
+  const selectedSimulator = fallbackSimulators.reduce((simulator, fallback) => {
+    return simulator || findMatchingSimulator(simulators, fallback);
+  }, findMatchingSimulator(simulators, args.simulator));
+
   if (!selectedSimulator) {
     throw new CLIError(`Could not find "${args.simulator}" simulator`);
   }
@@ -492,7 +502,7 @@ export default {
       description:
         'Explicitly set simulator to use. Optionally include iOS version between' +
         'parenthesis at the end to match an exact version: "iPhone 6 (10.0)"',
-      default: 'iPhone X',
+      default: 'iPhone 11',
     },
     {
       name: '--configuration [string]',

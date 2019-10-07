@@ -69,7 +69,7 @@ function getChromeAppName(): string {
 
 async function launchChrome(url: string) {
   try {
-    await open(url, {app: [getChromeAppName()]});
+    await open(url, {app: [getChromeAppName()], wait: true});
   } catch (err) {
     if (err) {
       logger.error('Google Chrome exited with error:', err);

@@ -54,31 +54,6 @@ See example usage in React Native template:
 - [app/build.gradle](https://github.com/facebook/react-native/blob/0.60-stable/template/android/app/build.gradle#L185)
 - [MainApplication.java](https://github.com/facebook/react-native/blob/769e35ba5f4c31ef913035a5cc8bc0e88546ca55/template/android/app/src/main/java/com/helloworld/MainApplication.java#L22-L28)
 
-### Custom root (monorepos)
-
-The project root is where `node_modules` with `react-native` is. Autolinking scripts assume your project root to be `".."`, relative to `android` directory. If you're in a project with custom structure, like this:
-
-```
-root/
-  node_modules
-  example/
-    android/
-```
-
-you'll need to set a custom root. Pass it as a second argument to `applyNativeModulesSettingsGradle` and `applyNativeModulesAppBuildGradle` methods and adjust the `native_modules.gradle` path accordingly:
-
-```groovy
-// example/android/settings.gradle
-apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle");
-applyNativeModulesSettingsGradle(settings, "../..")
-```
-
-```groovy
-// example/android/app/build.gradle
-apply from: file("../../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle");
-applyNativeModulesAppBuildGradle(project, "../..")
-```
-
 ## What do I need to have in my package to make it work?
 
 You’re already using Gradle, so Android support will work by default.

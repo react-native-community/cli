@@ -150,7 +150,7 @@ class ReactNativeModules {
     ArrayList<HashMap<String, String>> reactNativeModules = new ArrayList<HashMap<String, String>>()
 
     def cmdProcess
-    def command = "npx react-native config"
+    def command = "npx --quiet react-native config"
     def reactNativeConfigOutput = ""
 
     try {

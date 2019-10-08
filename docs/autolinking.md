@@ -95,3 +95,14 @@ module.exports = {
   },
 };
 ```
+
+## How can I use autolinking in a monorepo?
+
+There is nothing extra you need to do - monorepos are supported by default.
+
+Please note that in certain scenarios, such as when using Yarn workspaces, your packages might be hoisted to the root of the repository. If that is the case, please make sure that the following paths are pointing to the
+correct location and update them accordingly:
+
+- path to `native_modules.rb` in your `ios/Podfile`
+- path to `native_modules.gradle` in your `android/settings.gradle`
+- path to `native_modules.gradle` in your `android/app/build.gradle`

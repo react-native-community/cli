@@ -151,6 +151,9 @@ async function run() {
 }
 
 async function setupAndRun() {
+  // Commander is not available yet
+  logger.setVerbose(process.argv.includes('--verbose'));
+
   // We only have a setup script for UNIX envs currently
   if (process.platform !== 'win32') {
     const scriptName = 'setup_env.sh';
@@ -181,12 +184,18 @@ async function setupAndRun() {
 
     const ctx = loadConfig();
 
+    logger.enable();
+
     [...projectCommands, ...ctx.commands].forEach(command =>
       addCommand(command, ctx),
     );
-  } catch (e) {}
-
-  logger.enable();
+  } catch (e) {
+    logger.enable();
+    logger.debug(e.message);
+    logger.debug(
+      'Failed to load configuration of your project. Only a subset of commands will be available.',
+    );
+  }
 
   commander.parse(process.argv);
 
@@ -200,8 +209,6 @@ async function setupAndRun() {
   if (commander.args.length === 0 && commander.rawArgs.includes('--version')) {
     console.log(pkgJson.version);
   }
-
-  logger.setVerbose(commander.verbose);
 }
 
 export default {

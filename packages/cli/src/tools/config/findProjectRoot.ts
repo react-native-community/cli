@@ -17,7 +17,7 @@ export default function findProjectRoot(cwd = process.cwd()): string {
    */
   if (!packageLocation) {
     throw new CLIError(`
-      We couldn't find a package.json in your project. 
+      We couldn't find a package.json in your project.
       Are you sure you are running it inside a React Native project?
     `);
   }

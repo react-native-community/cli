@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  *
  * @format
- * @flow
  */
 
 import open from 'open';
@@ -14,7 +13,7 @@ import {logger} from '@react-native-community/cli-tools';
 import launchDefaultBrowser from './launchDefaultBrowser';
 import chalk from 'chalk';
 
-function commandExistsUnixSync(commandName) {
+function commandExistsUnixSync(commandName: string) {
   try {
     const stdout = execSync(
       `command -v ${commandName} 2>/dev/null` +
@@ -23,28 +22,6 @@ function commandExistsUnixSync(commandName) {
     return !!stdout;
   } catch (error) {
     return false;
-  }
-}
-
-function commandExistsWindowsSync(commandName) {
-  try {
-    const stdout = execSync('where ' + commandName, {stdio: []});
-    return !!stdout;
-  } catch (error) {
-    return false;
-  }
-}
-
-function commandExists(commandName) {
-  switch (process.platform) {
-    case 'win32':
-      return commandExistsWindowsSync(commandName);
-    case 'linux':
-    case 'darwin':
-      return commandExistsUnixSync(commandName);
-    default:
-      // assume it doesn't exist, just to be safe.
-      return false;
   }
 }
 
@@ -69,24 +46,21 @@ function getChromeAppName(): string {
 }
 
 function launchChrome(url: string) {
-  open(url, {app: [getChromeAppName()]}, err => {
-    if (err) {
-      logger.error('Google Chrome exited with error:', err);
-    }
-  });
+  return open(url, {app: [getChromeAppName()], wait: true});
 }
 
-function launchDebugger(url: string) {
-  if (!commandExists(getChromeAppName())) {
+async function launchDebugger(url: string) {
+  try {
+    await launchChrome(url);
+  } catch (error) {
+    logger.debug(error);
     logger.info(
       `For a better debugging experience please install Google Chrome from: ${chalk.underline.dim(
         'https://www.google.com/chrome/',
       )}`,
     );
     launchDefaultBrowser(url);
-    return;
   }
-  launchChrome(url);
 }
 
 export default launchDebugger;

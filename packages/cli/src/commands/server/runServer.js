@@ -13,7 +13,9 @@ import morgan from 'morgan';
 import path from 'path';
 import {logger} from '@react-native-community/cli-tools';
 import type {ConfigT} from 'types';
+// $FlowFixMe - converted to TS
 import messageSocket from './messageSocket';
+// $FlowFixMe - converted to TS
 import webSocketProxy from './webSocketProxy';
 import MiddlewareManager from './middleware/MiddlewareManager';
 // $FlowFixMe - converted to TS

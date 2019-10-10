@@ -18,7 +18,7 @@ fs.chmodSync(xsel, '0755');
 /**
  * Copy the content to host system clipboard.
  */
-function copyToClipBoard(content) {
+function copyToClipBoard(content: string) {
   switch (process.platform) {
     case 'darwin': {
       const child = spawn('pbcopy', []);

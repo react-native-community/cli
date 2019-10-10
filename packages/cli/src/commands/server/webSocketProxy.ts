@@ -9,18 +9,21 @@
 
 import ws from 'ws';
 import {logger} from '@react-native-community/cli-tools';
+import {Server as HttpServer} from 'http';
+import {Server as HttpsServer} from 'https';
 
-function attachToServer(server, path) {
+type Server = HttpServer | HttpsServer;
+function attachToServer(server: Server, path: string) {
   const WebSocketServer = ws.Server;
   const wss = new WebSocketServer({
     server,
     path,
   });
 
-  let debuggerSocket;
-  let clientSocket;
+  let debuggerSocket: ws | null;
+  let clientSocket: ws | null;
 
-  function send(dest, message) {
+  function send(dest: ws | null, message: ws.Data) {
     if (!dest) {
       return;
     }
@@ -45,7 +48,8 @@ function attachToServer(server, path) {
     send(debuggerSocket, JSON.stringify({method: '$disconnected'}));
   };
 
-  wss.on('connection', connection => {
+  wss.on('connection', (connection: ws) => {
+    // @ts-ignore current definition of ws does not have upgradeReq type
     const {url} = connection.upgradeReq;
 
     if (url.indexOf('role=debugger') > -1) {
@@ -54,13 +58,18 @@ function attachToServer(server, path) {
         return;
       }
       debuggerSocket = connection;
-      debuggerSocket.onerror = debuggerSocketCloseHandler;
-      debuggerSocket.onclose = debuggerSocketCloseHandler;
-      debuggerSocket.onmessage = ({data}) => send(clientSocket, data);
+      if (debuggerSocket) {
+        debuggerSocket.onerror = debuggerSocketCloseHandler;
+        debuggerSocket.onclose = debuggerSocketCloseHandler;
+        debuggerSocket.onmessage = ({data}) => send(clientSocket, data);
+      }
     } else if (url.indexOf('role=client') > -1) {
       if (clientSocket) {
+        // @ts-ignore not nullable with current type definition of ws
         clientSocket.onerror = null;
+        // @ts-ignore not nullable with current type definition of ws
         clientSocket.onclose = null;
+        // @ts-ignore not nullable with current type definition of ws
         clientSocket.onmessage = null;
         clientSocket.close(1011, 'Another client connected');
       }

@@ -5,8 +5,8 @@ import {logger} from '@react-native-community/cli-tools';
 import * as PackageManager from '../packageManager';
 
 const PACKAGES = ['react', 'react-native'];
-const EXEC_OPTS = {stdio: 'inherit'};
 const PROJECT_ROOT = '/some/dir';
+const EXEC_OPTS = {stdio: 'inherit', cwd: PROJECT_ROOT};
 
 afterEach(() => {
   jest.resetAllMocks();
@@ -22,13 +22,13 @@ describe('yarn', () => {
   });
 
   it('should install', () => {
-    PackageManager.install(PACKAGES, {preferYarn: true});
+    PackageManager.install(PACKAGES, {preferYarn: true, root: PROJECT_ROOT});
 
     expect(execa).toHaveBeenCalledWith('yarn', ['add', ...PACKAGES], EXEC_OPTS);
   });
 
   it('should installDev', () => {
-    PackageManager.installDev(PACKAGES, {preferYarn: true});
+    PackageManager.installDev(PACKAGES, {preferYarn: true, root: PROJECT_ROOT});
 
     expect(execa).toHaveBeenCalledWith(
       'yarn',
@@ -38,7 +38,7 @@ describe('yarn', () => {
   });
 
   it('should uninstall', () => {
-    PackageManager.uninstall(PACKAGES, {preferYarn: true});
+    PackageManager.uninstall(PACKAGES, {preferYarn: true, root: PROJECT_ROOT});
 
     expect(execa).toHaveBeenCalledWith(
       'yarn',
@@ -50,7 +50,7 @@ describe('yarn', () => {
 
 describe('npm', () => {
   it('should install', () => {
-    PackageManager.install(PACKAGES, {preferYarn: false});
+    PackageManager.install(PACKAGES, {preferYarn: false, root: PROJECT_ROOT});
 
     expect(execa).toHaveBeenCalledWith(
       'npm',
@@ -60,7 +60,10 @@ describe('npm', () => {
   });
 
   it('should installDev', () => {
-    PackageManager.installDev(PACKAGES, {preferYarn: false});
+    PackageManager.installDev(PACKAGES, {
+      preferYarn: false,
+      root: PROJECT_ROOT,
+    });
 
     expect(execa).toHaveBeenCalledWith(
       'npm',
@@ -70,7 +73,7 @@ describe('npm', () => {
   });
 
   it('should uninstall', () => {
-    PackageManager.uninstall(PACKAGES, {preferYarn: false});
+    PackageManager.uninstall(PACKAGES, {preferYarn: false, root: PROJECT_ROOT});
 
     expect(execa).toHaveBeenCalledWith(
       'npm',
@@ -82,7 +85,7 @@ describe('npm', () => {
 
 it('should use npm if yarn is not available', () => {
   jest.spyOn(yarn, 'getYarnVersionIfAvailable').mockImplementation(() => false);
-  PackageManager.install(PACKAGES, {preferYarn: true});
+  PackageManager.install(PACKAGES, {preferYarn: true, root: PROJECT_ROOT});
 
   expect(execa).toHaveBeenCalledWith(
     'npm',
@@ -94,8 +97,7 @@ it('should use npm if yarn is not available', () => {
 it('should use npm if project is not using yarn', () => {
   jest.spyOn(yarn, 'isProjectUsingYarn').mockImplementation(() => false);
 
-  PackageManager.setProjectDir(PROJECT_ROOT);
-  PackageManager.install(PACKAGES);
+  PackageManager.install(PACKAGES, {root: PROJECT_ROOT});
 
   expect(execa).toHaveBeenCalledWith(
     'npm',
@@ -109,8 +111,7 @@ it('should use yarn if project is using yarn', () => {
   jest.spyOn(yarn, 'getYarnVersionIfAvailable').mockImplementation(() => true);
   jest.spyOn(yarn, 'isProjectUsingYarn').mockImplementation(() => true);
 
-  PackageManager.setProjectDir(PROJECT_ROOT);
-  PackageManager.install(PACKAGES);
+  PackageManager.install(PACKAGES, {root: PROJECT_ROOT});
 
   expect(execa).toHaveBeenCalledWith('yarn', ['add', ...PACKAGES], EXEC_OPTS);
   expect(yarn.isProjectUsingYarn).toHaveBeenCalledWith(PROJECT_ROOT);
@@ -125,10 +126,11 @@ test.each([[false, 'pipe'], [true, 'inherit']])(
     jest.spyOn(yarn, 'isProjectUsingYarn').mockImplementation(() => true);
     jest.spyOn(logger, 'isVerbose').mockImplementation(() => isVerbose);
 
-    PackageManager.install(PACKAGES, {silent: true});
+    PackageManager.install(PACKAGES, {root: PROJECT_ROOT, silent: true});
 
     expect(execa).toHaveBeenCalledWith('yarn', ['add', ...PACKAGES], {
       stdio: stdioType,
+      cwd: PROJECT_ROOT,
     });
   },
 );

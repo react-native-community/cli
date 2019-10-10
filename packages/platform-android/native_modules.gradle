@@ -213,14 +213,14 @@ def autoModules = new ReactNativeModules(logger)
 
 ext.applyNativeModulesSettingsGradle = { DefaultSettings defaultSettings, String root = null ->
   if (root != null) {
-    logger.warn("${ReactNativeModules.LOG_PREFIX}Passing custom root to is deprecated. CLI detects root automatically now");
+    logger.warn("${ReactNativeModules.LOG_PREFIX}Passing custom root is deprecated. CLI detects root automatically now");
   }
   autoModules.addReactNativeModuleProjects(defaultSettings)
 }
 
 ext.applyNativeModulesAppBuildGradle = { Project project, String root = null ->
   if (root != null) {
-    logger.warn("${ReactNativeModules.LOG_PREFIX}Passing custom root to is deprecated. CLI detects root automatically now");
+    logger.warn("${ReactNativeModules.LOG_PREFIX}Passing custom root is deprecated. CLI detects root automatically now");
   }
   autoModules.addReactNativeModuleDependencies(project)
 

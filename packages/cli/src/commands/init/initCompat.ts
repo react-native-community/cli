@@ -56,7 +56,6 @@ async function generateProject(
   const pkgJson = require('react-native/package.json');
   const reactVersion = pkgJson.peerDependencies.react;
 
-  PackageManager.setProjectDir(destinationRoot);
   await createProjectFromTemplate(
     destinationRoot,
     newProjectName,
@@ -64,19 +63,26 @@ async function generateProject(
   );
 
   logger.info('Adding required dependencies');
-  await PackageManager.install([`react@${reactVersion}`]);
+  await PackageManager.install([`react@${reactVersion}`], {
+    root: destinationRoot,
+  });
 
   logger.info('Adding required dev dependencies');
-  await PackageManager.installDev([
-    '@babel/core',
-    '@babel/runtime',
-    '@react-native-community/eslint-config',
-    'eslint',
-    'jest',
-    'babel-jest',
-    'metro-react-native-babel-preset',
-    `react-test-renderer@${reactVersion}`,
-  ]);
+  await PackageManager.installDev(
+    [
+      '@babel/core',
+      '@babel/runtime',
+      '@react-native-community/eslint-config',
+      'eslint',
+      'jest',
+      'babel-jest',
+      'metro-react-native-babel-preset',
+      `react-test-renderer@${reactVersion}`,
+    ],
+    {
+      root: destinationRoot,
+    },
+  );
 
   addJestToPackageJson(destinationRoot);
 

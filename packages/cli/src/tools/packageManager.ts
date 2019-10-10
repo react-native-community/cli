@@ -5,7 +5,6 @@ import {getYarnVersionIfAvailable, isProjectUsingYarn} from './yarn';
 type Options = {
   preferYarn?: boolean;
   silent?: boolean;
-  cwd?: string;
   root: string;
 };
 
@@ -38,12 +37,11 @@ function configurePackageManager(
 function executeCommand(
   command: string,
   args: Array<string>,
-  options?: Options,
+  options: Options,
 ) {
   return execa(command, args, {
-    stdio:
-      options && options.silent && !logger.isVerbose() ? 'pipe' : 'inherit',
-    cwd: options && options.cwd,
+    stdio: options.silent && !logger.isVerbose() ? 'pipe' : 'inherit',
+    cwd: options.root,
   });
 }
 

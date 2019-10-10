@@ -1,4 +1,4 @@
-import {Command} from '@react-native-community/cli-types';
+import {DetachedCommand, Command} from '@react-native-community/cli-types';
 
 // @ts-ignore - JS file
 import server from './server/server';
@@ -15,7 +15,7 @@ import init from './init';
 // @ts-ignore - JS file
 import doctor from './doctor';
 
-export default [
+export const projectCommands = [
   server,
   bundle,
   ramBundle,
@@ -26,6 +26,7 @@ export default [
   upgrade,
   info,
   config,
-  init,
   doctor,
 ] as Command[];
+
+export const detachedCommands = [init] as DetachedCommand[];

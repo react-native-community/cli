@@ -11,7 +11,6 @@ import {validateProjectName} from './validate';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
 import printRunInstructions from './printRunInstructions';
 import {CLIError, logger} from '@react-native-community/cli-tools';
-import {Config} from '@react-native-community/cli-types';
 import {
   installTemplatePackage,
   getTemplateConfig,
@@ -152,7 +151,7 @@ async function createFromTemplate({
       loader.succeed();
     }
 
-    await installDependencies({projectName, npm, loader});
+    await installDependencies({projectName, npm, loader, directory});
   } catch (e) {
     loader.fail();
     throw new Error(e);
@@ -165,16 +164,19 @@ async function installDependencies({
   projectName,
   npm,
   loader,
+  directory,
 }: {
   projectName: string;
   npm?: boolean;
   loader: ora.Ora;
+  directory: string;
 }) {
   loader.start('Installing dependencies');
 
   await PackageManager.installAll({
     preferYarn: !npm,
     silent: true,
+    root: directory,
   });
 
   if (process.platform === 'darwin') {
@@ -213,10 +215,9 @@ async function createProject(
 
 export default (async function initialize(
   [projectName]: Array<string>,
-  context: Config,
   options: Options,
 ) {
-  const rootFolder = context.root;
+  const rootFolder = process.cwd();
 
   validateProjectName(projectName);
 

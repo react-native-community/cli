@@ -4,6 +4,7 @@
 export type CommandT = {
   name: string,
   description?: string,
+  detached?: boolean,
   func: (argv: Array<string>, ctx: ConfigT, args: Object) => ?Promise<void>,
   options?: Array<{
     name: string,

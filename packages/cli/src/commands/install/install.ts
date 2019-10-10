@@ -9,12 +9,13 @@ import {logger} from '@react-native-community/cli-tools';
 import * as PackageManager from '../../tools/packageManager';
 import link from '../link/link';
 import loadConfig from '../../tools/config';
+import {Config} from '@react-native-community/cli-types';
 
-async function install(args: Array<string>): Promise<void> {
+async function install(args: Array<string>, ctx: Config): Promise<void> {
   const name = args[0];
 
   logger.info(`Installing "${name}"...`);
-  await PackageManager.install([name]);
+  await PackageManager.install([name], {root: ctx.root});
 
   // Reload configuration to see newly installed dependency
   const newConfig = loadConfig();

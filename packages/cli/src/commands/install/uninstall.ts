@@ -17,7 +17,7 @@ async function uninstall(args: Array<string>, ctx: Config): Promise<void> {
   await unlink.func([name], ctx, {});
 
   logger.info(`Uninstalling "${name}"...`);
-  await PackageManager.uninstall([name]);
+  await PackageManager.uninstall([name], {root: ctx.root});
 
   logger.success(`Successfully uninstalled and unlinked "${name}"`);
 }

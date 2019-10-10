@@ -14,14 +14,12 @@ import path from 'path';
 
 import type {CommandT, ConfigT} from 'types';
 // $FlowFixMe - converted to TS
-import commands from './commands';
+import {detachedCommands, projectCommands} from './commands';
 // $FlowFixMe - converted to TS
 import init from './commands/init/initCompat';
 // $FlowFixMe - converted to TS
 import assertRequiredOptions from './tools/assertRequiredOptions';
 import {logger} from '@react-native-community/cli-tools';
-// $FlowFixMe - converted to TS
-import {setProjectDir} from './tools/packageManager';
 import pkgJson from '../package.json';
 // $FlowFixMe - converted to TS
 import loadConfig from './tools/config';
@@ -117,7 +115,11 @@ const addCommand = (command: CommandT, ctx: ConfigT) => {
 
       try {
         assertRequiredOptions(options, passedOptions);
-        await command.func(argv, ctx, passedOptions);
+        if (command.detached) {
+          await command.func(argv, passedOptions);
+        } else {
+          await command.func(argv, ctx, passedOptions);
+        }
       } catch (error) {
         handleError(error);
       }
@@ -174,13 +176,17 @@ async function setupAndRun() {
     logger.disable();
   }
 
-  const ctx = loadConfig();
-
   logger.enable();
 
-  setProjectDir(ctx.root);
+  detachedCommands.forEach(addCommand);
 
-  [...commands, ...ctx.commands].forEach(command => addCommand(command, ctx));
+  try {
+    const ctx = loadConfig();
+
+    [...projectCommands, ...ctx.commands].forEach(command =>
+      addCommand(command, ctx),
+    );
+  } catch (e) {}
 
   commander.parse(process.argv);
 

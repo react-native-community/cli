@@ -138,7 +138,7 @@ const getVersionToUpgradeTo = async (
   return newVersion;
 };
 
-const installDeps = async (newVersion: string) => {
+const installDeps = async (root: string, newVersion: string) => {
   logger.info(
     `Installing "react-native@${newVersion}" and its peer dependencies...`,
   );
@@ -149,6 +149,7 @@ const installDeps = async (newVersion: string) => {
   ];
   await PackageManager.install(deps, {
     silent: true,
+    root,
   });
   await execa('git', ['add', 'package.json']);
   try {
@@ -314,7 +315,7 @@ async function upgrade(argv: Array<string>, ctx: Config) {
 
   if (patch === '') {
     logger.info('Diff has no changes to apply, proceeding further');
-    await installDeps(newVersion);
+    await installDeps(projectDir, newVersion);
     await installCocoaPodsDeps(projectDir, thirdPartyIOSDeps);
 
     logger.success(
@@ -341,7 +342,7 @@ async function upgrade(argv: Array<string>, ctx: Config) {
         logger.warn(
           'Continuing after failure. Some of the files are upgraded but you will need to deal with conflicts manually',
         );
-        await installDeps(newVersion);
+        await installDeps(projectDir, newVersion);
         logger.info('Running "git status" to check what changed...');
         await execa('git', ['status'], {stdio: 'inherit'});
       } else {
@@ -350,7 +351,7 @@ async function upgrade(argv: Array<string>, ctx: Config) {
         );
       }
     } else {
-      await installDeps(newVersion);
+      await installDeps(projectDir, newVersion);
       await installCocoaPodsDeps(projectDir, thirdPartyIOSDeps);
       logger.info('Running "git status" to check what changed...');
       await execa('git', ['status'], {stdio: 'inherit'});

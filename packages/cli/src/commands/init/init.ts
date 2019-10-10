@@ -49,11 +49,13 @@ function doesDirectoryExist(dir: string) {
 function getProjectDirectory({
   projectName,
   directory,
+  root,
 }: {
   projectName: string;
   directory: string;
+  root: string;
 }): string {
-  return path.relative(process.cwd(), directory || projectName);
+  return path.relative(root, directory || projectName);
 }
 
 async function setProjectDirectory(directory: string) {
@@ -86,6 +88,8 @@ async function setProjectDirectory(directory: string) {
       error,
     );
   }
+
+  return process.cwd();
 }
 
 function adjustNameIfUrl(name: string, cwd: string) {
@@ -111,7 +115,7 @@ async function createFromTemplate({
   logger.debug('Initializing new project');
   logger.log(banner);
 
-  await setProjectDirectory(directory);
+  const projectDirectory = await setProjectDirectory(directory);
 
   const Loader = getLoader();
   const loader = new Loader({text: 'Downloading template'});
@@ -151,7 +155,12 @@ async function createFromTemplate({
       loader.succeed();
     }
 
-    await installDependencies({projectName, npm, loader, directory});
+    await installDependencies({
+      projectName,
+      npm,
+      loader,
+      root: projectDirectory,
+    });
   } catch (e) {
     loader.fail();
     throw new Error(e);
@@ -164,19 +173,19 @@ async function installDependencies({
   projectName,
   npm,
   loader,
-  directory,
+  root,
 }: {
   projectName: string;
   npm?: boolean;
   loader: ora.Ora;
-  directory: string;
+  root: string;
 }) {
   loader.start('Installing dependencies');
 
   await PackageManager.installAll({
     preferYarn: !npm,
     silent: true,
-    root: directory,
+    root,
   });
 
   if (process.platform === 'darwin') {

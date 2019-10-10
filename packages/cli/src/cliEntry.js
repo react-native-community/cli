@@ -170,23 +170,23 @@ async function setupAndRun() {
     }
   }
 
-  // when we run `config`, we don't want to output anything to the console. We
-  // expect it to return valid JSON
-  if (process.argv.includes('config')) {
-    logger.disable();
-  }
-
-  logger.enable();
-
   detachedCommands.forEach(addCommand);
 
   try {
+    // when we run `config`, we don't want to output anything to the console. We
+    // expect it to return valid JSON
+    if (process.argv.includes('config')) {
+      logger.disable();
+    }
+
     const ctx = loadConfig();
 
     [...projectCommands, ...ctx.commands].forEach(command =>
       addCommand(command, ctx),
     );
   } catch (e) {}
+
+  logger.enable();
 
   commander.parse(process.argv);
 

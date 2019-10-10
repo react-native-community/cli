@@ -46,18 +46,6 @@ function doesDirectoryExist(dir: string) {
   return fs.existsSync(dir);
 }
 
-function getProjectDirectory({
-  projectName,
-  directory,
-  root,
-}: {
-  projectName: string;
-  directory: string;
-  root: string;
-}): string {
-  return path.relative(root, directory || projectName);
-}
-
 async function setProjectDirectory(directory: string) {
   const directoryExists = doesDirectoryExist(directory);
   if (directoryExists) {
@@ -226,7 +214,7 @@ export default (async function initialize(
   [projectName]: Array<string>,
   options: Options,
 ) {
-  const rootFolder = process.cwd();
+  const root = process.cwd();
 
   validateProjectName(projectName);
 
@@ -236,15 +224,12 @@ export default (async function initialize(
    */
   const version: string = minimist(process.argv).version || DEFAULT_VERSION;
 
-  const directoryName = getProjectDirectory({
-    projectName,
-    directory: options.directory || projectName,
-  });
+  const directoryName = path.relative(root, options.directory || projectName);
 
   try {
     await createProject(projectName, directoryName, version, options);
 
-    const projectFolder = path.join(rootFolder, projectName);
+    const projectFolder = path.join(root, projectName);
     printRunInstructions(projectFolder, projectName);
   } catch (e) {
     logger.error(e.message);

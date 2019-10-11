@@ -29,7 +29,7 @@ const INTERNAL_CALLSITES_REGEX = new RegExp(
   [
     '/Libraries/Renderer/implementations/.+\\.js$',
     '/Libraries/BatchedBridge/MessageQueue\\.js$',
-    '/Libraries/YellowBox/.+\.js$',
+    '/Libraries/YellowBox/.+\\.js$',
     '/node_modules/react-devtools-core/.+\\.js$',
   ].join('|'),
 );

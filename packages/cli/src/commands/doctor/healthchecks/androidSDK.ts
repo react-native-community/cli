@@ -20,7 +20,6 @@ export default {
     // See the PR: https://github.com/tabrindle/envinfo/pull/119
     if (sdks === 'Not Found' && process.platform !== 'darwin') {
       try {
-        // $FlowFixMe bad execa types
         const {stdout} = await execa(
           process.env.ANDROID_HOME
             ? `${process.env.ANDROID_HOME}/tools/bin/sdkmanager`

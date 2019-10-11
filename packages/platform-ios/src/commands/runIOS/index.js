@@ -120,7 +120,28 @@ async function runOnSimulator(xcodeProject, scheme, args: FlagsT) {
     throw new CLIError('Could not parse the simulator list output', error);
   }
 
-  const selectedSimulator = findMatchingSimulator(simulators, args.simulator);
+  /**
+   * If provided simulator does not exist, try simulators in following order
+   * - iPhone X
+   * - iPhone 8
+   */
+
+  /**
+   * Flow does not properly infer the type of the second argument to reduce().
+   * See https://github.com/facebook/flow/issues/5182.
+   * TODO [flow-bin@>=0.107.0]: Remove workaround.
+   */
+  type ExtractReturnType = <T>(() => T) => T;
+  type ReturnType = $Call<ExtractReturnType, findMatchingSimulator>;
+
+  const fallbackSimulators = ['iPhone X', 'iPhone 8'];
+  const selectedSimulator: ReturnType = fallbackSimulators.reduce(
+    (simulator, fallback) => {
+      return simulator || findMatchingSimulator(simulators, fallback);
+    },
+    findMatchingSimulator(simulators, args.simulator),
+  );
+
   if (!selectedSimulator) {
     throw new CLIError(`Could not find "${args.simulator}" simulator`);
   }
@@ -446,7 +467,7 @@ export default {
       description:
         'Explicitly set simulator to use. Optionally include iOS version between' +
         'parenthesis at the end to match an exact version: "iPhone 6 (10.0)"',
-      default: 'iPhone X',
+      default: 'iPhone 11',
     },
     {
       name: '--configuration [string]',

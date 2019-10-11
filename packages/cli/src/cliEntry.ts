@@ -1,28 +1,17 @@
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * @flow
- */
-
 import chalk from 'chalk';
 import childProcess from 'child_process';
 import commander from 'commander';
 import path from 'path';
 
-import type {CommandT, ConfigT} from 'types';
-// $FlowFixMe - converted to TS
+import {Command, DetachedCommand} from '@react-native-community/cli-types';
+
 import {detachedCommands, projectCommands} from './commands';
-// $FlowFixMe - converted to TS
 import init from './commands/init/initCompat';
-// $FlowFixMe - converted to TS
 import assertRequiredOptions from './tools/assertRequiredOptions';
 import {logger} from '@react-native-community/cli-tools';
-import pkgJson from '../package.json';
-// $FlowFixMe - converted to TS
 import loadConfig from './tools/config';
+
+import pkgJson from '../package.json';
 
 commander
   .option('--version', 'Print CLI version')
@@ -33,9 +22,9 @@ commander.on('command:*', () => {
   process.exit(1);
 });
 
-const defaultOptParser = val => val;
+const defaultOptParser = (val: any) => val;
 
-const handleError = err => {
+const handleError = (err: Error) => {
   if (commander.verbose) {
     logger.error(err.message);
   } else {
@@ -90,7 +79,7 @@ function printHelpInformation(examples, pkg) {
   return output.join('\n').concat('\n');
 }
 
-function printUnknownCommand(cmdName) {
+function printUnknownCommand(cmdName: string) {
   if (cmdName) {
     logger.error(`Unrecognized command "${chalk.bold(cmdName)}".`);
     logger.info(
@@ -103,32 +92,36 @@ function printUnknownCommand(cmdName) {
   }
 }
 
-const addCommand = (command: CommandT, ctx: ConfigT) => {
+const addCommand = (
+  command: Command | DetachedCommand,
+  executeCommand: (
+    argv: Array<string>,
+    options: {[key: string]: any},
+  ) => void | Promise<void>,
+) => {
   const options = command.options || [];
 
   const cmd = commander
     .command(command.name)
-    .description(command.description)
-    .action(async function handleAction(...args) {
+    .action(async function handleAction(this: commander.Command, ...args) {
       const passedOptions = this.opts();
       const argv: Array<string> = Array.from(args).slice(0, -1);
 
       try {
         assertRequiredOptions(options, passedOptions);
-        if (command.detached) {
-          await command.func(argv, passedOptions);
-        } else {
-          await command.func(argv, ctx, passedOptions);
-        }
+        await executeCommand(argv, passedOptions);
       } catch (error) {
         handleError(error);
       }
     });
 
+  if (command.description) {
+    cmd.description(command.description);
+  }
+
   cmd.helpInformation = printHelpInformation.bind(
     cmd,
     command.examples,
-    // $FlowFixMe - we know pkg may be missing...
     command.pkg,
   );
 
@@ -173,7 +166,7 @@ async function setupAndRun() {
     }
   }
 
-  detachedCommands.forEach(addCommand);
+  detachedCommands.forEach(command => addCommand(command, command.func));
 
   try {
     // when we run `config`, we don't want to output anything to the console. We
@@ -187,7 +180,7 @@ async function setupAndRun() {
     logger.enable();
 
     [...projectCommands, ...ctx.commands].forEach(command =>
-      addCommand(command, ctx),
+      addCommand(command, (argv, options) => command.func(argv, ctx, options)),
     );
   } catch (e) {
     logger.enable();

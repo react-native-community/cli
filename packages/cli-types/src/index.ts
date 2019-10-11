@@ -37,6 +37,10 @@ export interface Command<Args = Object> {
     desc: string;
     cmd: string;
   }>;
+  pkg?: {
+    name: string;
+    version: string;
+  };
 }
 
 export type DetachedCommandFunction<Args = Object> = (

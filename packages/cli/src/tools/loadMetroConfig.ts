@@ -46,6 +46,7 @@ export interface MetroConfig {
   };
   server: {
     port: number;
+    enhanceMiddleware?: Function;
   };
   symbolicator: {
     customizeFrame: (frame: {file: string | null}) => {collapse: boolean};
@@ -53,6 +54,7 @@ export interface MetroConfig {
   transformer: {
     babelTransformerPath: string;
     assetRegistryPath: string;
+    assetPlugins?: Array<string>;
   };
   watchFolders: string[];
   reporter?: any;

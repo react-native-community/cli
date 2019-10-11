@@ -3,48 +3,44 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
- *
- * @flow
  */
 
+// @ts-ignore untyped metro
 import Metro from 'metro';
+// @ts-ignore untyped metro
 import {Terminal} from 'metro-core';
 import morgan from 'morgan';
 import path from 'path';
 import {logger} from '@react-native-community/cli-tools';
-import type {ConfigT} from 'types';
-// $FlowFixMe - converted to TS
+import {Config} from '@react-native-community/cli-types';
 import messageSocket from './messageSocket';
-// $FlowFixMe - converted to TS
 import webSocketProxy from './webSocketProxy';
 import MiddlewareManager from './middleware/MiddlewareManager';
-// $FlowFixMe - converted to TS
 import loadMetroConfig from '../../tools/loadMetroConfig';
-// $FlowFixMe - converted to TS
 import releaseChecker from '../../tools/releaseChecker';
 
-export type Args = {|
-  assetPlugins?: string[],
-  cert?: string,
-  customLogReporterPath?: string,
-  host?: string,
-  https?: boolean,
-  maxWorkers?: number,
-  key?: string,
-  platforms?: string[],
-  port?: number,
-  resetCache?: boolean,
-  sourceExts?: string[],
-  transformer?: string,
-  verbose?: boolean,
-  watchFolders?: string[],
-  config?: string,
-  projectRoot?: string,
-|};
+export type Args = {
+  assetPlugins?: string[];
+  cert?: string;
+  customLogReporterPath?: string;
+  host?: string;
+  https?: boolean;
+  maxWorkers?: number;
+  key?: string;
+  platforms?: string[];
+  port?: number;
+  resetCache?: boolean;
+  sourceExts?: string[];
+  transformer?: string;
+  verbose?: boolean;
+  watchFolders?: string[];
+  config?: string;
+  projectRoot?: string;
+};
 
-async function runServer(argv: Array<string>, ctx: ConfigT, args: Args) {
+async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
   const terminal = new Terminal(process.stdout);
-  const ReporterImpl = getReporterImpl(args.customLogReporterPath || null);
+  const ReporterImpl = getReporterImpl(args.customLogReporterPath);
   const reporter = new ReporterImpl(terminal);
 
   const metroConfig = await loadMetroConfig(ctx, {
@@ -71,11 +67,14 @@ async function runServer(argv: Array<string>, ctx: ConfigT, args: Args) {
   });
 
   middlewareManager.getConnectInstance().use(
+    // @ts-ignore morgan and connect types mismatch
     morgan(
       'combined',
-      !logger.isVerbose() && {
-        skip: (req, res) => res.statusCode < 400,
-      },
+      !logger.isVerbose()
+        ? {
+            skip: (_req, res) => res.statusCode < 400,
+          }
+        : undefined,
     ),
   );
 
@@ -85,7 +84,7 @@ async function runServer(argv: Array<string>, ctx: ConfigT, args: Args) {
 
   const customEnhanceMiddleware = metroConfig.server.enhanceMiddleware;
 
-  metroConfig.server.enhanceMiddleware = (middleware, server) => {
+  metroConfig.server.enhanceMiddleware = (middleware: any, server: unknown) => {
     if (customEnhanceMiddleware) {
       middleware = customEnhanceMiddleware(middleware, server);
     }
@@ -109,10 +108,12 @@ async function runServer(argv: Array<string>, ctx: ConfigT, args: Args) {
   middlewareManager.attachDevToolsSocket(wsProxy);
   middlewareManager.attachDevToolsSocket(ms);
 
-  middlewareManager.getConnectInstance().use('/reload', (req, res) => {
-    ms.broadcast('reload', null);
-    res.end('OK');
-  });
+  middlewareManager
+    .getConnectInstance()
+    .use('/reload', (_req: unknown, res: any) => {
+      ms.broadcast('reload');
+      res.end('OK');
+    });
 
   // In Node 8, the default keep-alive for an HTTP connection is 5 seconds. In
   // early versions of Node 8, this was implemented in a buggy way which caused
@@ -129,8 +130,8 @@ async function runServer(argv: Array<string>, ctx: ConfigT, args: Args) {
   await releaseChecker(ctx.root);
 }
 
-function getReporterImpl(customLogReporterPath: ?string) {
-  if (customLogReporterPath == null) {
+function getReporterImpl(customLogReporterPath: string | void) {
+  if (customLogReporterPath === undefined) {
     return require('metro/src/lib/TerminalReporter');
   }
   try {

@@ -19,8 +19,9 @@ export default function copyMiddleware(
   next: (err?: any) => void,
 ) {
   if (req.url === '/copy-to-clipboard') {
-    // @ts-ignore Property 'rawBody' does not exist on type 'IncomingMessage'.
-    const ret = copyToClipBoard(req.rawBody);
+    const ret = copyToClipBoard(
+      (req as http.IncomingMessage & {rawBody: string}).rawBody,
+    );
     if (!ret) {
       logger.warn('Copy button is not supported on this platform!');
     }

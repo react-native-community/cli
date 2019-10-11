@@ -36,28 +36,6 @@ The implementation ensures that a library is imported only once. If you need to 
 
 See example usage in React Native template's [Podfile](https://github.com/facebook/react-native/blob/0.60-stable/template/ios/Podfile).
 
-### Custom root (monorepos)
-
-The project root is where `node_modules` with `react-native` is. Autolinking script assume your project root to be `".."`, relative to `ios` directory. If you're in a project with custom structure, like this:
-
-```
-root/
-  node_modules
-  example/
-    ios/
-```
-
-you'll need to set a custom root. Pass it as an argument to `use_native_modules!` function inside the targets and adjust the relatively required `native_modules` path accordingly:
-
-```rb
-# example/ios/Podfile
-require_relative '../../node_modules/@react-native-community/cli-platform-ios/native_modules'
-target 'RNapp' do
-  # React pods and custom pods here...
-  use_native_modules!("../..")
-end
-```
-
 ## Platform Android
 
 The [native_modules.gradle](https://github.com/react-native-community/cli/blob/master/packages/platform-android/native_modules.gradle) script is included in your project's `settings.gradle` and `app/build.gradle` files and:
@@ -75,31 +53,6 @@ See example usage in React Native template:
 - [settings.gradle](https://github.com/facebook/react-native/blob/0.60-stable/template/android/settings.gradle)
 - [app/build.gradle](https://github.com/facebook/react-native/blob/0.60-stable/template/android/app/build.gradle#L185)
 - [MainApplication.java](https://github.com/facebook/react-native/blob/769e35ba5f4c31ef913035a5cc8bc0e88546ca55/template/android/app/src/main/java/com/helloworld/MainApplication.java#L22-L28)
-
-### Custom root (monorepos)
-
-The project root is where `node_modules` with `react-native` is. Autolinking scripts assume your project root to be `".."`, relative to `android` directory. If you're in a project with custom structure, like this:
-
-```
-root/
-  node_modules
-  example/
-    android/
-```
-
-you'll need to set a custom root. Pass it as a second argument to `applyNativeModulesSettingsGradle` and `applyNativeModulesAppBuildGradle` methods and adjust the `native_modules.gradle` path accordingly:
-
-```groovy
-// example/android/settings.gradle
-apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle");
-applyNativeModulesSettingsGradle(settings, "../..")
-```
-
-```groovy
-// example/android/app/build.gradle
-apply from: file("../../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle");
-applyNativeModulesAppBuildGradle(project, "../..")
-```
 
 ## What do I need to have in my package to make it work?
 
@@ -142,3 +95,14 @@ module.exports = {
   },
 };
 ```
+
+## How can I use autolinking in a monorepo?
+
+There is nothing extra you need to do - monorepos are supported by default.
+
+Please note that in certain scenarios, such as when using Yarn workspaces, your packages might be hoisted to the root of the repository. If that is the case, please make sure that the following paths are pointing to the
+correct location and update them accordingly:
+
+- path to `native_modules.rb` in your `ios/Podfile`
+- path to `native_modules.gradle` in your `android/settings.gradle`
+- path to `native_modules.gradle` in your `android/app/build.gradle`

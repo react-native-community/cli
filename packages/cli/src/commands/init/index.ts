@@ -2,6 +2,7 @@ import init from './init';
 
 export default {
   func: init,
+  detached: true,
   name: 'init <projectName>',
   description:
     'Initialize a new React Native project named <projectName> in a directory of the same name.',

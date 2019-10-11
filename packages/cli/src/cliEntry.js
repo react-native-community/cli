@@ -14,14 +14,12 @@ import path from 'path';
 
 import type {CommandT, ConfigT} from 'types';
 // $FlowFixMe - converted to TS
-import commands from './commands';
+import {detachedCommands, projectCommands} from './commands';
 // $FlowFixMe - converted to TS
 import init from './commands/init/initCompat';
 // $FlowFixMe - converted to TS
 import assertRequiredOptions from './tools/assertRequiredOptions';
 import {logger} from '@react-native-community/cli-tools';
-// $FlowFixMe - converted to TS
-import {setProjectDir} from './tools/packageManager';
 import pkgJson from '../package.json';
 // $FlowFixMe - converted to TS
 import loadConfig from './tools/config';
@@ -117,7 +115,11 @@ const addCommand = (command: CommandT, ctx: ConfigT) => {
 
       try {
         assertRequiredOptions(options, passedOptions);
-        await command.func(argv, ctx, passedOptions);
+        if (command.detached) {
+          await command.func(argv, passedOptions);
+        } else {
+          await command.func(argv, ctx, passedOptions);
+        }
       } catch (error) {
         handleError(error);
       }
@@ -149,6 +151,9 @@ async function run() {
 }
 
 async function setupAndRun() {
+  // Commander is not available yet
+  logger.setVerbose(process.argv.includes('--verbose'));
+
   // We only have a setup script for UNIX envs currently
   if (process.platform !== 'win32') {
     const scriptName = 'setup_env.sh';
@@ -168,19 +173,29 @@ async function setupAndRun() {
     }
   }
 
-  // when we run `config`, we don't want to output anything to the console. We
-  // expect it to return valid JSON
-  if (process.argv.includes('config')) {
-    logger.disable();
+  detachedCommands.forEach(addCommand);
+
+  try {
+    // when we run `config`, we don't want to output anything to the console. We
+    // expect it to return valid JSON
+    if (process.argv.includes('config')) {
+      logger.disable();
+    }
+
+    const ctx = loadConfig();
+
+    logger.enable();
+
+    [...projectCommands, ...ctx.commands].forEach(command =>
+      addCommand(command, ctx),
+    );
+  } catch (e) {
+    logger.enable();
+    logger.debug(e.message);
+    logger.debug(
+      'Failed to load configuration of your project. Only a subset of commands will be available.',
+    );
   }
-
-  const ctx = loadConfig();
-
-  logger.enable();
-
-  setProjectDir(ctx.root);
-
-  [...commands, ...ctx.commands].forEach(command => addCommand(command, ctx));
 
   commander.parse(process.argv);
 
@@ -194,8 +209,6 @@ async function setupAndRun() {
   if (commander.args.length === 0 && commander.rawArgs.includes('--version')) {
     console.log(pkgJson.version);
   }
-
-  logger.setVerbose(commander.verbose);
 }
 
 export default {

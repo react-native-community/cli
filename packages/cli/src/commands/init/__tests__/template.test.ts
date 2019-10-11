@@ -26,7 +26,7 @@ test('installTemplatePackage', async () => {
   expect(PackageManger.install).toHaveBeenCalledWith([TEMPLATE_NAME], {
     preferYarn: false,
     silent: true,
-    cwd: TEMPLATE_SOURCE_DIR,
+    root: TEMPLATE_SOURCE_DIR,
   });
 });
 

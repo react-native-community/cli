@@ -7,10 +7,9 @@
  */
 
 import {execSync} from 'child_process';
-import fs from 'fs';
-import path from 'path';
 import semver from 'semver';
 import {logger} from '@react-native-community/cli-tools';
+import findUp from 'find-up';
 
 /**
  * Use Yarn if available, it's much faster than the npm client.
@@ -41,12 +40,8 @@ export function getYarnVersionIfAvailable() {
 }
 
 /**
- * Check that 'react-native init' itself used yarn to install React Native.
- * When using an old global react-native-cli@1.0.0 (or older), we don't want
- * to install React Native with npm, and React + Jest with yarn.
- * Let's be safe and not mix yarn and npm in a single project.
- * @param projectDir e.g. /Users/martin/AwesomeApp
+ * Check if project is using Yarn (has `yarn.lock` in the tree)
  */
-export function isProjectUsingYarn(projectDir: string) {
-  return fs.existsSync(path.join(projectDir, 'yarn.lock'));
+export function isProjectUsingYarn(cwd: string) {
+  return findUp.sync('yarn.lock', {cwd});
 }

@@ -14,14 +14,14 @@ export type TemplateConfig = {
 
 export function installTemplatePackage(
   templateName: string,
-  cwd: string,
+  root: string,
   npm?: boolean,
 ) {
   logger.debug(`Installing template from ${templateName}`);
   return PackageManager.install([templateName], {
     preferYarn: !npm,
     silent: true,
-    cwd,
+    root,
   });
 }
 

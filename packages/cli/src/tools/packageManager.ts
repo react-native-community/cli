@@ -5,10 +5,8 @@ import {getYarnVersionIfAvailable, isProjectUsingYarn} from './yarn';
 type Options = {
   preferYarn?: boolean;
   silent?: boolean;
-  cwd?: string;
+  root: string;
 };
-
-let projectDir: string;
 
 const packageManagers = {
   yarn: {
@@ -28,7 +26,7 @@ const packageManagers = {
 function configurePackageManager(
   packageNames: Array<string>,
   action: 'install' | 'installDev' | 'installAll' | 'uninstall',
-  options?: Options,
+  options: Options,
 ) {
   const pm = shouldUseYarn(options) ? 'yarn' : 'npm';
   const [executable, ...flags] = packageManagers[pm][action];
@@ -39,39 +37,34 @@ function configurePackageManager(
 function executeCommand(
   command: string,
   args: Array<string>,
-  options?: Options,
+  options: Options,
 ) {
   return execa(command, args, {
-    stdio:
-      options && options.silent && !logger.isVerbose() ? 'pipe' : 'inherit',
-    cwd: options && options.cwd,
+    stdio: options.silent && !logger.isVerbose() ? 'pipe' : 'inherit',
+    cwd: options.root,
   });
 }
 
-function shouldUseYarn(options?: Options) {
+function shouldUseYarn(options: Options) {
   if (options && options.preferYarn !== undefined) {
     return options.preferYarn && getYarnVersionIfAvailable();
   }
 
-  return isProjectUsingYarn(projectDir) && getYarnVersionIfAvailable();
+  return isProjectUsingYarn(options.root) && getYarnVersionIfAvailable();
 }
 
-export function setProjectDir(dir: string) {
-  projectDir = dir;
-}
-
-export function install(packageNames: Array<string>, options?: Options) {
+export function install(packageNames: Array<string>, options: Options) {
   return configurePackageManager(packageNames, 'install', options);
 }
 
-export function installDev(packageNames: Array<string>, options?: Options) {
+export function installDev(packageNames: Array<string>, options: Options) {
   return configurePackageManager(packageNames, 'installDev', options);
 }
 
-export function uninstall(packageNames: Array<string>, options?: Options) {
+export function uninstall(packageNames: Array<string>, options: Options) {
   return configurePackageManager(packageNames, 'uninstall', options);
 }
 
-export function installAll(options?: Options) {
+export function installAll(options: Options) {
   return configurePackageManager([], 'installAll', options);
 }

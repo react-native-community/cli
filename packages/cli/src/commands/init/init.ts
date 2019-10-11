@@ -11,7 +11,6 @@ import {validateProjectName} from './validate';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
 import printRunInstructions from './printRunInstructions';
 import {CLIError, logger} from '@react-native-community/cli-tools';
-import {Config} from '@react-native-community/cli-types';
 import {
   installTemplatePackage,
   getTemplateConfig,
@@ -47,16 +46,6 @@ function doesDirectoryExist(dir: string) {
   return fs.existsSync(dir);
 }
 
-function getProjectDirectory({
-  projectName,
-  directory,
-}: {
-  projectName: string;
-  directory: string;
-}): string {
-  return path.relative(process.cwd(), directory || projectName);
-}
-
 async function setProjectDirectory(directory: string) {
   const directoryExists = doesDirectoryExist(directory);
   if (directoryExists) {
@@ -87,6 +76,8 @@ async function setProjectDirectory(directory: string) {
       error,
     );
   }
+
+  return process.cwd();
 }
 
 function adjustNameIfUrl(name: string, cwd: string) {
@@ -112,7 +103,7 @@ async function createFromTemplate({
   logger.debug('Initializing new project');
   logger.log(banner);
 
-  await setProjectDirectory(directory);
+  const projectDirectory = await setProjectDirectory(directory);
 
   const Loader = getLoader();
   const loader = new Loader({text: 'Downloading template'});
@@ -152,7 +143,12 @@ async function createFromTemplate({
       loader.succeed();
     }
 
-    await installDependencies({projectName, npm, loader});
+    await installDependencies({
+      projectName,
+      npm,
+      loader,
+      root: projectDirectory,
+    });
   } catch (e) {
     loader.fail();
     throw new Error(e);
@@ -165,16 +161,19 @@ async function installDependencies({
   projectName,
   npm,
   loader,
+  root,
 }: {
   projectName: string;
   npm?: boolean;
   loader: ora.Ora;
+  root: string;
 }) {
   loader.start('Installing dependencies');
 
   await PackageManager.installAll({
     preferYarn: !npm,
     silent: true,
+    root,
   });
 
   if (process.platform === 'darwin') {
@@ -213,10 +212,9 @@ async function createProject(
 
 export default (async function initialize(
   [projectName]: Array<string>,
-  context: Config,
   options: Options,
 ) {
-  const rootFolder = context.root;
+  const root = process.cwd();
 
   validateProjectName(projectName);
 
@@ -226,15 +224,12 @@ export default (async function initialize(
    */
   const version: string = minimist(process.argv).version || DEFAULT_VERSION;
 
-  const directoryName = getProjectDirectory({
-    projectName,
-    directory: options.directory || projectName,
-  });
+  const directoryName = path.relative(root, options.directory || projectName);
 
   try {
     await createProject(projectName, directoryName, version, options);
 
-    const projectFolder = path.join(rootFolder, projectName);
+    const projectFolder = path.join(root, projectName);
     printRunInstructions(projectFolder, projectName);
   } catch (e) {
     logger.error(e.message);

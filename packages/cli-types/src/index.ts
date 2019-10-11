@@ -39,6 +39,16 @@ export interface Command<Args = Object> {
   }>;
 }
 
+export type DetachedCommandFunction<Args = Object> = (
+  argv: Array<string>,
+  args: Args,
+) => Promise<void> | void;
+
+export type DetachedCommand<Args = Object> = Command<Args> & {
+  detached: true;
+  func: DetachedCommandFunction<Args>;
+};
+
 interface PlatformConfig<
   ProjectConfig,
   ProjectParams,

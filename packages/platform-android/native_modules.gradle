@@ -69,38 +69,23 @@ public class PackageList {
 
 class ReactNativeModules {
   private Logger logger
-  private Project project
   private String packageName
-  private DefaultSettings defaultSettings
-  private String root
   private ArrayList<HashMap<String, String>> reactNativeModules
 
   private static String LOG_PREFIX = ":ReactNative:"
 
   ReactNativeModules(Logger logger) {
     this.logger = logger
-  }
-
-  void applySettingsGradle(DefaultSettings defaultSettings, String root) {
-    this.defaultSettings = defaultSettings
-    this.root = root
-    this.reactNativeModules = this.getReactNativeConfig()
-
-    addReactNativeModuleProjects()
-  }
-
-  void applyBuildGradle(Project project, String root) {
-    this.project = project
-    this.root = root
-    this.reactNativeModules = this.getReactNativeConfig()
-
-    addReactNativeModuleDependencies()
+   
+    def (nativeModules, packageName) = this.getReactNativeConfig()
+    this.reactNativeModules = nativeModules
+    this.packageName = packageName
   }
 
   /**
    * Include the react native modules android projects and specify their project directory
    */
-  void addReactNativeModuleProjects() {
+  void addReactNativeModuleProjects(DefaultSettings defaultSettings) {
     reactNativeModules.forEach { reactNativeModule ->
       String nameCleansed = reactNativeModule["nameCleansed"]
       String androidSourceDir = reactNativeModule["androidSourceDir"]
@@ -112,31 +97,14 @@ class ReactNativeModules {
   /**
    * Adds the react native modules as dependencies to the users `app` project
    */
-  void addReactNativeModuleDependencies() {
+  void addReactNativeModuleDependencies(Project appProject) {
     reactNativeModules.forEach { reactNativeModule ->
       def nameCleansed = reactNativeModule["nameCleansed"]
-      project.dependencies {
+      appProject.dependencies {
         // TODO(salakar): are other dependency scope methods such as `api` required?
         implementation project(path: ":${nameCleansed}")
       }
     }
-  }
-
-  /**
-   * Returns the user's project root (i.e. where the node_modules dir is located).
-   */
-  File getReactNativeProjectRoot() {
-    File androidRoot
-
-    if (this.project) {
-      androidRoot = this.project.rootProject.projectDir
-    } else {
-      androidRoot = this.defaultSettings.rootProject.projectDir
-    }
-
-    File rnRoot = new File(androidRoot, this.root)
-    this.logger.debug("${LOG_PREFIX}Using React Native project root path '${rnRoot.toString()}'")
-    return rnRoot
   }
 
   /**
@@ -182,12 +150,11 @@ class ReactNativeModules {
     ArrayList<HashMap<String, String>> reactNativeModules = new ArrayList<HashMap<String, String>>()
 
     def cmdProcess
-    def root = getReactNativeProjectRoot()
-    def command = "node ./node_modules/react-native/cli.js config"
+    def command = "npx --quiet react-native config"
     def reactNativeConfigOutput = ""
 
     try {
-      cmdProcess = Runtime.getRuntime().exec(command, null, root)
+      cmdProcess = Runtime.getRuntime().exec(command)
       def bufferedReader = new BufferedReader(new InputStreamReader(cmdProcess.getInputStream()))
       def buff = ""
       def readBuffer = new StringBuffer()
@@ -211,7 +178,6 @@ class ReactNativeModules {
     }
 
     def json = new JsonSlurper().parseText(reactNativeConfigOutput)
-    this.packageName = json["project"]["android"]["packageName"]
     def dependencies = json["dependencies"]
 
     dependencies.each { name, value ->
@@ -235,7 +201,7 @@ class ReactNativeModules {
       }
     }
 
-    return reactNativeModules
+    return [reactNativeModules, json["project"]["android"]["packageName"]];
   }
 }
 
@@ -245,12 +211,20 @@ class ReactNativeModules {
 
 def autoModules = new ReactNativeModules(logger)
 
-ext.applyNativeModulesSettingsGradle = { DefaultSettings defaultSettings, String root = ".." ->
-  autoModules.applySettingsGradle(defaultSettings, root)
+ext.applyNativeModulesSettingsGradle = { DefaultSettings defaultSettings, String root = null ->
+  if (root != null) {
+    logger.warn("${ReactNativeModules.LOG_PREFIX}Passing custom root is deprecated. CLI detects root automatically now.");
+    logger.warn("${ReactNativeModules.LOG_PREFIX}Please remove second argument to `applyNativeModulesSettingsGradle`.");
+  }
+  autoModules.addReactNativeModuleProjects(defaultSettings)
 }
 
-ext.applyNativeModulesAppBuildGradle = { Project project, String root = ".." ->
-  autoModules.applyBuildGradle(project, root)
+ext.applyNativeModulesAppBuildGradle = { Project project, String root = null ->
+  if (root != null) {
+    logger.warn("${ReactNativeModules.LOG_PREFIX}Passing custom root is deprecated. CLI detects root automatically now");
+    logger.warn("${ReactNativeModules.LOG_PREFIX}Please remove second argument to `applyNativeModulesAppBuildGradle`.");
+  }
+  autoModules.addReactNativeModuleDependencies(project)
 
   def generatedSrcDir = new File(buildDir, "generated/rncli/src/main/java")
   def generatedCodeDir = new File(generatedSrcDir, generatedFilePackage.replace('.', '/'))

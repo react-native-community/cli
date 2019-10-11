@@ -5,24 +5,30 @@
 #
 require 'pathname'
 
-def use_native_modules!(root = "..", config = nil)
+def use_native_modules!(config = nil)
+  if (config.is_a? String)
+    Pod::UI.warn("Passing custom root to use_native_modules! is deprecated.",
+      [
+        "CLI detects root of the project automatically. The \"#{config}\" argument was ignored.",
+      ]);
+    config = nil;
+  end
+
   if (!config)
     json = []
 
-    # Make sure `react-native config` is ran from your project root
-    Dir.chdir(root) do
-      IO.popen("./node_modules/.bin/react-native config") do |data|
-        while line = data.gets
-          json << line
-        end
+    IO.popen("npx --quiet react-native config") do |data|
+      while line = data.gets
+        json << line
       end
     end
 
     config = JSON.parse(json.join("\n"))
   end
 
+  project_root = Pathname.new(config["project"]["ios"]["sourceDir"])
+
   packages = config["dependencies"]
-  config_root = config["root"]
   found_pods = []
 
   packages.each do |package_name, package|
@@ -57,10 +63,10 @@ def use_native_modules!(root = "..", config = nil)
     end
 
     podspec_dir_path = Pathname.new(File.dirname(podspec_path))
-    project_root = Pathname.new(config_root)
+    
     relative_path = podspec_dir_path.relative_path_from project_root
 
-    pod spec.name, :path => File.join(root, relative_path)
+    pod spec.name, :path => relative_path.to_path
 
     if package_config["scriptPhases"]
       # Can be either an object, or an array of objects
@@ -129,7 +135,6 @@ if $0 == __FILE__
         "execution_position" => "before_compile",
         "input" => "string"
       }
-
       @ios_package = ios_package = {
         "root" => "/root/app/node_modules/react",
         "platforms" => {
@@ -148,8 +153,13 @@ if $0 == __FILE__
           },
         }
       }
+      @project = {
+        "ios" => {
+          "sourceDir" => "/root/app/ios"
+        }
+      }
       @config = {
-        "root" => "/root/app",
+        "project" => @project,
         "dependencies" => {
           "ios-dep" => @ios_package,
           "android-dep" => @android_package
@@ -166,8 +176,8 @@ if $0 == __FILE__
 
       spec.singleton_class.send(:define_method, :name) { "ios-dep" }
 
-      podfile.singleton_class.send(:define_method, :use_native_modules) do |path, config|
-        use_native_modules!('..', config)
+      podfile.singleton_class.send(:define_method, :use_native_modules) do |config|
+        use_native_modules!(config)
       end
 
       Pod::Specification.singleton_class.send(:define_method, :from_file) do |podspec_path|
@@ -197,7 +207,7 @@ if $0 == __FILE__
     end
 
     it "activates iOS pods" do
-      @podfile.use_native_modules('..', @config)
+      @podfile.use_native_modules(@config)
       @activated_pods.must_equal [{
         name: "ios-dep",
         options: { path: "../node_modules/react" }
@@ -208,7 +218,7 @@ if $0 == __FILE__
       activated_pod = Object.new
       activated_pod.singleton_class.send(:define_method, :name) { "ios-dep" }
       @current_target_definition_dependencies << activated_pod
-      @podfile.use_native_modules('..', @config)
+      @podfile.use_native_modules(@config)
       @activated_pods.must_equal []
     end
 
@@ -216,15 +226,15 @@ if $0 == __FILE__
       activated_pod = Object.new
       activated_pod.singleton_class.send(:define_method, :name) { "ios-dep/foo/bar" }
       @current_target_definition_dependencies << activated_pod
-      @podfile.use_native_modules('..', @config)
+      @podfile.use_native_modules(@config)
       @activated_pods.must_equal []
     end
 
     it "prints out the native module pods that were found" do
-      @podfile.use_native_modules('..', { "root" => "/root/app", "dependencies" => {} })
-      @podfile.use_native_modules('..', { "root" => "/root/app", "dependencies" => { "pkg-1" => @ios_package }})
-      @podfile.use_native_modules('..', {
-        "root" => "/root/app", "dependencies" => { "pkg-1" => @ios_package, "pkg-2" => @ios_package }
+      @podfile.use_native_modules({ "project" => @project, "dependencies" => {} })
+      @podfile.use_native_modules({ "project" => @project, "dependencies" => { "pkg-1" => @ios_package }})
+      @podfile.use_native_modules({
+        "project" => @project, "dependencies" => { "pkg-1" => @ios_package, "pkg-2" => @ios_package }
       })
       @printed_messages.must_equal [
         "Detected React Native module pod for ios-dep",
@@ -235,7 +245,7 @@ if $0 == __FILE__
     describe "concerning script_phases" do
       it "uses the options directly" do
         @config["dependencies"]["ios-dep"]["platforms"]["ios"]["scriptPhases"] = [@script_phase]
-        @podfile.use_native_modules('..', @config)
+        @podfile.use_native_modules(@config)
         @added_scripts.must_equal [{
           :script => "123",
           :name => "My Name",
@@ -253,7 +263,7 @@ if $0 == __FILE__
         file_read_mock.expect(:call, "contents from file", [File.join(@ios_package["root"], "some_shell_script.sh")])
 
         File.stub(:read, file_read_mock) do
-          @podfile.use_native_modules('..', @config)
+          @podfile.use_native_modules(@config)
         end
 
         @added_scripts.must_equal [{

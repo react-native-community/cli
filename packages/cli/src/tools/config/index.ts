@@ -11,6 +11,7 @@ import {logger, inlineString} from '@react-native-community/cli-tools';
 import * as ios from '@react-native-community/cli-platform-ios';
 import * as android from '@react-native-community/cli-platform-android';
 import findDependencies from './findDependencies';
+import findProjectRoot from './findProjectRoot';
 import resolveReactNativePath from './resolveReactNativePath';
 import findAssets from './findAssets';
 import {
@@ -61,7 +62,7 @@ function getDependencyConfig(
 /**
  * Loads CLI configuration
  */
-function loadConfig(projectRoot: string = process.cwd()): Config {
+function loadConfig(projectRoot: string = findProjectRoot()): Config {
   let lazyProject: ProjectConfig;
   const userConfig = readConfigFromDisk(projectRoot);
 

@@ -3,12 +3,15 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
- *
- * @strict
- * @format
  */
+import http from 'http';
 
-export default function getSecurityHeadersMiddleware(req, res, next) {
+export default function getSecurityHeadersMiddleware(
+  req: http.IncomingMessage,
+  res: http.ServerResponse,
+  next: (err?: any) => void,
+) {
+  // @ts-ignore Property 'client' does not exist on type 'IncomingMessage', verify
   const address = req.client.server.address();
 
   // Block any cross origin request.

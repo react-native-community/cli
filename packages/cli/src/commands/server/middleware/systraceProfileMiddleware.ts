@@ -3,14 +3,16 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
- *
- * @format
  */
-
+import http from 'http';
 import fs from 'fs';
 import {logger} from '@react-native-community/cli-tools';
 
-export default function systraceProfileMiddleware(req, res, next) {
+export default function systraceProfileMiddleware(
+  req: http.IncomingMessage & {rawBody: string},
+  res: http.ServerResponse,
+  next: (err?: any) => void,
+) {
   if (req.url !== '/systrace') {
     next();
     return;

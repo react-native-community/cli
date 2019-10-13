@@ -43,8 +43,6 @@ function getDependencyConfig(
               ? null
               : platformConfig.dependencyConfig(
                   root,
-                  /* $FlowFixMe - can't figure out which platform's dependency
-                 config to choose */
                   config.dependency.platforms[platform],
                 );
           return dependency;

@@ -8,7 +8,7 @@ import {logger} from '@react-native-community/cli-tools';
 import {
   cleanup,
   writeFiles,
-  getTempDirectory, // $FlowFixMe - converted to TS
+  getTempDirectory,
 } from '../../../../../../jest/helpers';
 
 jest.mock('../resolveNodeModuleDir');

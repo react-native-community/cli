@@ -3,7 +3,7 @@ import childProcess from 'child_process';
 import commander from 'commander';
 import path from 'path';
 
-import {Command, DetachedCommand} from '@react-native-community/cli-types';
+import {Command, Config} from '@react-native-community/cli-types';
 
 import {detachedCommands, projectCommands} from './commands';
 import init from './commands/init/initCompat';
@@ -21,8 +21,6 @@ commander.on('command:*', () => {
   printUnknownCommand(commander.args.join(' '));
   process.exit(1);
 });
-
-const defaultOptParser = (val: any) => val;
 
 const handleError = (err: Error) => {
   if (commander.verbose) {
@@ -44,11 +42,17 @@ const handleError = (err: Error) => {
   process.exit(1);
 };
 
-// Custom printHelpInformation command inspired by internal Commander.js
-// one modified to suit our needs
-function printHelpInformation(examples, pkg) {
+/**
+ * Custom printHelpInformation command inspired by internal Commander.js
+ * one modified to suit our needs
+ */
+function printHelpInformation(
+  this: commander.Command,
+  examples: Command['examples'],
+  pkg: Command['pkg'],
+) {
   let cmdName = this._name;
-  const argsList = this._args
+  const argsList = (this._args as Array<{required: boolean; name: string}>)
     .map(arg => (arg.required ? `<${arg.name}>` : `[${arg.name}]`))
     .join(' ');
 
@@ -92,24 +96,43 @@ function printUnknownCommand(cmdName: string) {
   }
 }
 
-const addCommand = (
-  command: Command | DetachedCommand,
-  executeCommand: (
-    argv: Array<string>,
-    options: {[key: string]: any},
-  ) => void | Promise<void>,
-) => {
-  const options = command.options || [];
+/**
+ * Custom type assertion needed for the `makeCommand` conditional
+ * types to be properly resolved.
+ */
+const isDetachedCommand = (
+  command: Command<boolean>,
+): command is Command<true> => {
+  return 'detached' in command;
+};
 
+/**
+ * Attaches a new command onto global `commander` instance.
+ *
+ * Note that this function takes additional argument of `Config` type in case
+ * passed `command` needs it for its execution.
+ */
+function attachCommand<T extends boolean>(
+  command: Command<T>,
+  ...rest: T extends false ? [Config] : []
+): void {
+  const options = command.options || [];
   const cmd = commander
     .command(command.name)
-    .action(async function handleAction(this: commander.Command, ...args) {
+    .action(async function handleAction(
+      this: commander.Command,
+      ...args: string[]
+    ) {
       const passedOptions = this.opts();
-      const argv: Array<string> = Array.from(args).slice(0, -1);
+      const argv = Array.from(args).slice(0, -1);
 
       try {
         assertRequiredOptions(options, passedOptions);
-        await executeCommand(argv, passedOptions);
+        if (isDetachedCommand(command)) {
+          command.func(argv, options);
+        } else {
+          command.func(argv, rest[0] as Config, options);
+        }
       } catch (error) {
         handleError(error);
       }
@@ -125,15 +148,17 @@ const addCommand = (
     command.pkg,
   );
 
-  options.forEach(opt =>
+  for (const opt of command.options || []) {
     cmd.option(
       opt.name,
       opt.description,
-      opt.parse || defaultOptParser,
-      typeof opt.default === 'function' ? opt.default(ctx) : opt.default,
-    ),
-  );
-};
+      opt.parse || ((val: any) => val),
+      typeof opt.default === 'function'
+        ? opt.default(rest[0] as Config)
+        : opt.default,
+    );
+  }
+}
 
 async function run() {
   try {
@@ -166,7 +191,9 @@ async function setupAndRun() {
     }
   }
 
-  detachedCommands.forEach(command => addCommand(command, command.func));
+  for (const command of detachedCommands) {
+    attachCommand(command);
+  }
 
   try {
     // when we run `config`, we don't want to output anything to the console. We
@@ -179,9 +206,9 @@ async function setupAndRun() {
 
     logger.enable();
 
-    [...projectCommands, ...ctx.commands].forEach(command =>
-      addCommand(command, (argv, options) => command.func(argv, ctx, options)),
-    );
+    for (const command of [...projectCommands, ...ctx.commands]) {
+      attachCommand(command, ctx);
+    }
   } catch (e) {
     logger.enable();
     logger.debug(e.message);
@@ -204,10 +231,4 @@ async function setupAndRun() {
   }
 }
 
-export default {
-  run,
-  init,
-  loadConfig,
-};
-
-export {run, init, loadConfig};
+export {run as default, init};

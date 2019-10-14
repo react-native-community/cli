@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "rootDir": "",
+    "rootDir": "src",
     "outDir": "build"
   },
   "references": [
@@ -10,5 +10,5 @@
     {"path": "../platform-ios"},
     {"path": "../platform-android"}
   ],
-  "include": ["package.json"]
+  "include": ["../package.json"]
 }

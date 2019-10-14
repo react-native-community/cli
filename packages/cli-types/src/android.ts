@@ -1,27 +1,17 @@
 export interface AndroidProjectConfig {
   sourceDir: string;
   packageName: string;
+  manifestPath: string;
 }
 
-export interface AndroidProjectParams {
-  sourceDir?: string;
-  manifestPath?: string;
-  packageName?: string;
-}
+export type AndroidProjectParams = Partial<AndroidProjectConfig>;
 
 export interface AndroidDependencyConfig {
   sourceDir: string;
   packageName: string;
-
+  manifestPath: string;
   packageImportPath: string;
   packageInstance: string;
 }
 
-export interface AndroidDependencyParams {
-  packageName?: string;
-  sourceDir?: string;
-  manifestPath?: string;
-
-  packageImportPath?: string;
-  packageInstance?: string;
-}
+export type AndroidDependencyParams = Partial<AndroidDependencyConfig>;

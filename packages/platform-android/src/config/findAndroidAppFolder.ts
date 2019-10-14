@@ -9,16 +9,9 @@
 import fs from 'fs';
 import path from 'path';
 
-export default function findAndroidAppFolder(folder: string) {
-  const flat = 'android';
-  const nested = path.join('android', 'app');
-
-  if (fs.existsSync(path.join(folder, nested))) {
-    return nested;
-  }
-
-  if (fs.existsSync(path.join(folder, flat))) {
-    return flat;
+export default function findAndroidAppFolder(root: string) {
+  if (fs.existsSync(path.join(root, 'android'))) {
+    return 'android';
   }
 
   return null;

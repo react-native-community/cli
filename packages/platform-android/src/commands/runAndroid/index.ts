@@ -22,14 +22,8 @@ import {
   CLIError,
 } from '@react-native-community/cli-tools';
 
-// Verifies this is an Android project
-function checkAndroid(root: string) {
-  return fs.existsSync(path.join(root, 'android/gradlew'));
-}
-
 export interface Flags {
   tasks?: Array<string>;
-  root: string;
   variant: string;
   appFolder: string;
   appId: string;
@@ -46,7 +40,7 @@ export interface Flags {
  * Starts the app on a connected Android emulator or device.
  */
 async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
-  if (!checkAndroid(args.root)) {
+  if (!config.project.android) {
     logger.error(
       'Android project not found. Are you sure this is a React Native project?',
     );
@@ -70,7 +64,7 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
   }
 
   if (!args.packager) {
-    return buildAndRun(args);
+    return buildAndRun(args, config);
   }
 
   return isPackagerRunning(args.port).then(result => {
@@ -95,7 +89,7 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
         );
       }
     }
-    return buildAndRun(args);
+    return buildAndRun(args, config);
   });
 }
 
@@ -115,11 +109,13 @@ function getPackageNameWithSuffix(
 }
 
 // Builds the app and runs it on a connected emulator / device.
-function buildAndRun(args: Flags) {
-  process.chdir(path.join(args.root, 'android'));
+function buildAndRun(args: Flags, config: Config) {
+  const androidConfig = config.project.android;
+  if (!androidConfig) {
+    return;
+  }
+  process.chdir(androidConfig.sourceDir);
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
-
-  // "app" is usually the default value for Android apps with only 1 app
   const {appFolder} = args;
   // @ts-ignore
   const packageName = fs
@@ -370,12 +366,6 @@ export default {
     'builds your app and starts it on a connected Android emulator or device',
   func: runAndroid,
   options: [
-    {
-      name: '--root [string]',
-      description:
-        'Override the root directory for the android build (which contains the android directory)',
-      default: '',
-    },
     {
       name: '--variant [string]',
       description: "Specify your app's build variant",

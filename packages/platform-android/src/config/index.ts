@@ -14,22 +14,23 @@ import readManifest from './readManifest';
 import {
   AndroidProjectParams,
   AndroidDependencyParams,
+  AndroidProjectConfig,
 } from '@react-native-community/cli-types';
 import {XmlDocument} from 'xmldoc';
 
 const getPackageName = (manifest: XmlDocument) => manifest.attr.package;
 
 export function projectConfig(
-  folder: string,
+  root: string,
   userConfig: AndroidProjectParams = {},
-) {
-  const src = userConfig.sourceDir || findAndroidAppFolder(folder);
+): AndroidProjectConfig | null {
+  const src = userConfig.sourceDir || findAndroidAppFolder(root);
 
   if (!src) {
     return null;
   }
 
-  const sourceDir = path.join(folder, src);
+  const sourceDir = path.join(root, src);
   const manifestPath = userConfig.manifestPath
     ? path.join(sourceDir, userConfig.manifestPath)
     : findManifest(sourceDir);
@@ -49,20 +50,21 @@ export function projectConfig(
   return {
     sourceDir,
     packageName,
+    manifestPath,
   };
 }
 
 export function dependencyConfig(
-  folder: string,
+  root: string,
   userConfig: AndroidDependencyParams = {},
 ) {
-  const src = userConfig.sourceDir || findAndroidAppFolder(folder);
+  const src = userConfig.sourceDir || findAndroidAppFolder(root);
 
   if (!src) {
     return null;
   }
 
-  const sourceDir = path.join(folder, src);
+  const sourceDir = path.join(root, src);
   const manifestPath = userConfig.manifestPath
     ? path.join(sourceDir, userConfig.manifestPath)
     : findManifest(sourceDir);

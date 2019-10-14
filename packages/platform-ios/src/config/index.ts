@@ -9,32 +9,26 @@
 import path from 'path';
 import {memoize} from 'lodash';
 import findProject from './findProject';
-import findPodfilePath from './findPodfilePath';
 import findPodspec from './findPodspec';
-import {IOSProjectParams} from '@react-native-community/cli-types';
+import {
+  IOSProjectParams,
+  IOSProjectConfig,
+} from '@react-native-community/cli-types';
 
 const memoizedFindProject = memoize(findProject);
-
-/**
- * For libraries specified without an extension, add '.tbd' for those that
- * start with 'lib' and '.framework' to the rest.
- */
-const mapSharedLibaries = (libraries: Array<string>) =>
-  libraries.map(name => {
-    if (path.extname(name)) {
-      return name;
-    }
-    return name + (name.indexOf('lib') === 0 ? '.tbd' : '.framework');
-  });
 
 /**
  * Returns project config by analyzing given folder and applying some user defaults
  * when constructing final object
  */
-export function projectConfig(folder: string, userConfig: IOSProjectParams) {
+export function projectConfig(
+  folder: string,
+  userConfig: IOSProjectParams | null,
+): IOSProjectConfig | null {
   if (!userConfig) {
-    return;
+    return null;
   }
+
   const project = userConfig.project || memoizedFindProject(folder);
 
   /**
@@ -49,20 +43,12 @@ export function projectConfig(folder: string, userConfig: IOSProjectParams) {
 
   return {
     sourceDir,
-    folder,
-    pbxprojPath: path.join(projectPath, 'project.pbxproj'),
-    podfile: findPodfilePath(projectPath),
     podspecPath:
       userConfig.podspecPath ||
       // podspecs are usually placed in the root dir of the library or in the
       // iOS project path
       findPodspec(folder) ||
       findPodspec(sourceDir),
-    projectPath,
-    projectName: path.basename(projectPath),
-    libraryFolder: userConfig.libraryFolder || 'Libraries',
-    sharedLibraries: mapSharedLibaries(userConfig.sharedLibraries || []),
-    plist: userConfig.plist || [],
     scriptPhases: userConfig.scriptPhases || [],
   };
 }

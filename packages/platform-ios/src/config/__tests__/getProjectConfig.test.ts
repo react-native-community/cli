@@ -34,17 +34,4 @@ describe('ios::getProjectConfig', () => {
 
     expect(getProjectConfig(folder, userConfig)).toBeNull();
   });
-
-  it('returns normalized shared library names', () => {
-    const projectConfig = getProjectConfig('/testDir/nested', {
-      sharedLibraries: ['libc++', 'libz.tbd', 'HealthKit', 'HomeKit.framework'],
-    });
-
-    expect(projectConfig.sharedLibraries).toEqual([
-      'libc++.tbd',
-      'libz.tbd',
-      'HealthKit.framework',
-      'HomeKit.framework',
-    ]);
-  });
 });

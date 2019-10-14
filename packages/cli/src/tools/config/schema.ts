@@ -108,14 +108,8 @@ export const projectConfig = t
             ios: t
               .object({
                 sourceDir: t.string(),
-                folder: t.string(),
-                pbxprojPath: t.string(),
-                podfile: t.string(),
                 podspecPath: t.string(),
-                projectPath: t.string(),
-                projectName: t.string(),
-                libraryFolder: t.string(),
-                sharedLibraries: t.array().items(t.string()),
+                scriptPhases: t.array().items(t.object()),
               })
               .allow(null),
             android: t

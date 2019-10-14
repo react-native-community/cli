@@ -74,7 +74,6 @@ export function dependencyConfig(
 
   return {
     sourceDir,
-    podfile: findPodfilePath(projectPath),
     podspecPath:
       userConfig.podspecPath ||
       // podspecs are usually placed in the root dir of the library or in the

@@ -4,11 +4,11 @@ import commander from 'commander';
 import path from 'path';
 
 import {Command, Config} from '@react-native-community/cli-types';
+import {logger} from '@react-native-community/cli-tools';
 
 import {detachedCommands, projectCommands} from './commands';
 import init from './commands/init/initCompat';
 import assertRequiredOptions from './tools/assertRequiredOptions';
-import {logger} from '@react-native-community/cli-tools';
 import loadConfig from './tools/config';
 
 import pkgJson from '../package.json';
@@ -103,7 +103,7 @@ function printUnknownCommand(cmdName: string) {
 const isDetachedCommand = (
   command: Command<boolean>,
 ): command is Command<true> => {
-  return 'detached' in command;
+  return command.detached === true;
 };
 
 /**
@@ -112,9 +112,9 @@ const isDetachedCommand = (
  * Note that this function takes additional argument of `Config` type in case
  * passed `command` needs it for its execution.
  */
-function attachCommand<T extends boolean>(
-  command: Command<T>,
-  ...rest: T extends false ? [Config] : []
+function attachCommand<IsDetached extends boolean>(
+  command: Command<IsDetached>,
+  ...rest: IsDetached extends false ? [Config] : []
 ): void {
   const options = command.options || [];
   const cmd = commander
@@ -231,4 +231,4 @@ async function setupAndRun() {
   }
 }
 
-export {run as default, init};
+export {run, init};

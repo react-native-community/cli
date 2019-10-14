@@ -48,8 +48,6 @@ export const dependencyConfig = t
               .object({
                 project: t.string(),
                 podspecPath: t.string(),
-                sharedLibraries: t.array().items(t.string()),
-                libraryFolder: t.string(),
                 scriptPhases: t.array().items(t.object()),
               })
               .default({}),
@@ -147,8 +145,7 @@ export const projectConfig = t
         ios: t
           .object({
             project: t.string(),
-            sharedLibraries: t.array().items(t.string()),
-            libraryFolder: t.string(),
+            scriptPhases: t.array().items(t.object()),
           })
           .default({}),
         android: t

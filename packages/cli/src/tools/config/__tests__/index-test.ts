@@ -1,6 +1,3 @@
-/**
- * @flow
- */
 import path from 'path';
 import slash from 'slash';
 import loadConfig from '..';

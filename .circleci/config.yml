@@ -41,11 +41,6 @@ commands:
       - attach_workspace:
           at: ~/react-native-cli
       - run: yarn lint
-  run-typecheck:
-    steps:
-      - attach_workspace:
-          at: ~/react-native-cli
-      - run: yarn flow-check
   run-cocoa-pods-tests:
     steps:
       - attach_workspace:
@@ -74,10 +69,6 @@ jobs:
     executor: node8
     steps:
       - run-lint
-  typecheck:
-    executor: node8
-    steps:
-      - run-typecheck
   cocoa-pods:
     executor: noderuby
     steps:
@@ -95,7 +86,6 @@ jobs:
     steps:
       - install-dependencies
       - run-lint
-      - run-typecheck
       - run-unit-tests
       # TODO: figure out why e2e tests fail even though not interfering with
       # other tests
@@ -106,9 +96,6 @@ workflows:
     jobs:
       - setup
       - lint:
-          requires:
-            - setup
-      - typecheck:
           requires:
             - setup
       - unit-tests:

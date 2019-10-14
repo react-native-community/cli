@@ -1,7 +1,3 @@
-/**
- * @flow
- */
-
 import findDependencies from '../findDependencies';
 import {
   cleanup,

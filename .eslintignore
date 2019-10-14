@@ -2,5 +2,4 @@ node_modules/
 debugger-ui/
 templates/
 global-cli/
-flow-typed/
 build/

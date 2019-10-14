@@ -1,4 +1,3 @@
-// @flow
 import path from 'path';
 import {run, getTempDirectory, cleanup, writeFiles} from '../jest/helpers';
 

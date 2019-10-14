@@ -6,16 +6,23 @@
  */
 export interface IOSProjectParams {
   project?: string;
+  scriptPhases?: Array<any>;
+}
+
+export interface IOSDependencyParams {
+  project?: string;
   podspecPath?: string;
   scriptPhases?: Array<any>;
 }
 
-export interface IOSDependencyParams extends IOSProjectParams {}
-
 export interface IOSProjectConfig {
+  sourceDir: string;
+  podfile: string;
+  scriptPhases?: Array<any>;
+}
+
+export interface IOSDependencyConfig {
   sourceDir: string;
   podspecPath: string;
   scriptPhases?: Array<any>;
 }
-
-export interface IOSDependencyConfig extends IOSProjectConfig {}

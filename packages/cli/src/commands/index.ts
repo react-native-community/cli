@@ -4,8 +4,6 @@ import {Command, DetachedCommand} from '@react-native-community/cli-types';
 import server from './server/server';
 import bundle from './bundle/bundle';
 import ramBundle from './bundle/ramBundle';
-import install from './install/install';
-import uninstall from './install/uninstall';
 import upgrade from './upgrade/upgrade';
 import info from './info/info';
 import config from './config/config';
@@ -17,8 +15,6 @@ export const projectCommands = [
   server,
   bundle,
   ramBundle,
-  install,
-  uninstall,
   upgrade,
   info,
   config,

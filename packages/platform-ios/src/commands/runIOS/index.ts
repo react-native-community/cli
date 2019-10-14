@@ -14,7 +14,6 @@ import fs from 'fs';
 import path from 'path';
 import chalk from 'chalk';
 import {Config} from '@react-native-community/cli-types';
-import findXcodeProject, {ProjectInfo} from './findXcodeProject';
 import parseIOSDevicesList from './parseIOSDevicesList';
 import findMatchingSimulator from './findMatchingSimulator';
 import warnAboutManuallyLinkedLibs from '../../link/warnAboutManuallyLinkedLibs';
@@ -39,36 +38,30 @@ type FlagsT = {
   terminal: string | undefined;
 };
 
+type ProjectInfo = NonNullable<Config['project']['ios']>;
+
 function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
-  if (!fs.existsSync(args.projectPath)) {
+  const {
+    project: {ios: xcodeProject},
+  } = ctx;
+
+  if (!xcodeProject) {
     throw new CLIError(
-      'iOS project folder not found. Are you sure this is a React Native project?',
+      'iOS project not found. Are you sure this is a React Native project?',
     );
   }
 
   warnAboutManuallyLinkedLibs(ctx);
   warnAboutPodInstall(ctx);
 
-  process.chdir(args.projectPath);
-
-  const xcodeProject = findXcodeProject(fs.readdirSync('.'));
-  if (!xcodeProject) {
-    throw new CLIError(
-      `Could not find Xcode project files in "${args.projectPath}" folder`,
-    );
-  }
+  process.chdir(xcodeProject.sourceDir);
 
   const inferredSchemeName = path.basename(
-    xcodeProject.name,
-    path.extname(xcodeProject.name),
+    xcodeProject.projectName,
+    path.extname(xcodeProject.projectName),
   );
-  const scheme = args.scheme || inferredSchemeName;
 
-  logger.info(
-    `Found Xcode ${
-      xcodeProject.isWorkspace ? 'workspace' : 'project'
-    } "${chalk.bold(xcodeProject.name)}"`,
-  );
+  const scheme = args.scheme || inferredSchemeName;
 
   const {device, udid} = args;
 
@@ -269,10 +262,11 @@ function buildProject(
   scheme: string,
   args: FlagsT,
 ): Promise<string> {
+  const isWorkspace = path.extname(xcodeProject.projectName) === '.xcworkspace';
   return new Promise((resolve, reject) => {
     const xcodebuildArgs = [
-      xcodeProject.isWorkspace ? '-workspace' : '-project',
-      xcodeProject.name,
+      isWorkspace ? '-workspace' : '-project',
+      xcodeProject.projectName,
       '-configuration',
       args.configuration,
       '-scheme',
@@ -332,7 +326,7 @@ function buildProject(
 
             We ran "xcodebuild" command but it exited with error code ${code}. To debug build
             logs further, consider building your app with Xcode.app, by opening
-            ${xcodeProject.name}.
+            ${xcodeProject.projectName}.
           `,
             buildOutput + '\n' + errorOutput,
           ),
@@ -509,13 +503,6 @@ export default {
     {
       name: '--scheme [string]',
       description: 'Explicitly set Xcode scheme to use',
-    },
-    {
-      name: '--project-path [string]',
-      description:
-        'Path relative to project root where the Xcode project ' +
-        '(.xcodeproj) lives.',
-      default: 'ios',
     },
     {
       name: '--device [string]',

@@ -8,10 +8,7 @@ import * as common from '../common';
 
 const logSpy = jest.spyOn(common, 'logManualInstallation');
 
-const mockExeca = (stdout: string) => {
-  jest.mock('execa', () => jest.fn());
-  ((execa as unknown) as jest.Mock).mockResolvedValue({stdout});
-};
+jest.mock('execa', () => jest.fn());
 
 describe('androidSDK', () => {
   let initialEnvironmentInfo: EnvironmentInfo;
@@ -31,7 +28,7 @@ describe('androidSDK', () => {
 
   it('returns a message if the Android SDK is not installed', async () => {
     environmentInfo.SDKs['Android SDK'] = 'Not Found';
-    mockExeca('');
+    ((execa as unknown) as jest.Mock).mockResolvedValue({stdout: ''});
     const diagnostics = await androidSDK.getDiagnostics(environmentInfo);
     expect(diagnostics.needsToBeFixed).toBe(true);
   });
@@ -42,7 +39,9 @@ describe('androidSDK', () => {
     environmentInfo.SDKs['Android SDK'] = {
       'Build Tools': [25],
     };
-    mockExeca('build-tools;25.0');
+    ((execa as unknown) as jest.Mock).mockResolvedValue({
+      stdout: 'build-tools;25.0',
+    });
     const diagnostics = await androidSDK.getDiagnostics(environmentInfo);
     expect(diagnostics.needsToBeFixed).toBe(true);
   });
@@ -53,7 +52,9 @@ describe('androidSDK', () => {
     environmentInfo.SDKs['Android SDK'] = {
       'Build Tools': ['26.0'],
     };
-    mockExeca('build-tools;26.0');
+    ((execa as unknown) as jest.Mock).mockResolvedValue({
+      stdout: 'build-tools;26.0',
+    });
     const diagnostics = await androidSDK.getDiagnostics(environmentInfo);
     expect(diagnostics.needsToBeFixed).toBe(false);
   });

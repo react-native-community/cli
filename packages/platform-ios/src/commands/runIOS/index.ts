@@ -52,8 +52,8 @@ function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
       If your project contains iOS files, it means that the CLI has failed to detect
       them automatically.
 
-      In this case, consider setting an explicit path to your iOS project by defining
-      the following :
+      In this case, consider setting an explicit path to your iOS \`.xcodeproj\` or
+      \`.xcworkspace\` by defining the following:
       {
         "react-native": {
           "ios": {

@@ -1,5 +1,6 @@
 import chalk from 'chalk';
 import {logger} from '@react-native-community/cli-tools';
+import semver from 'semver';
 import {getHealthchecks, HEALTHCHECK_TYPES} from './healthchecks';
 import {getLoader} from '../../tools/loader';
 import printFixOptions, {KEYS} from './printFixOptions';
@@ -11,6 +12,7 @@ import {
   HealthCheckResult,
 } from './types';
 import getEnvironmentInfo from '../../tools/envinfo';
+import {logMessage} from './healthchecks/common';
 
 const printCategory = ({label, key}: {label: string; key: number}) => {
   if (key > 0) {
@@ -23,6 +25,8 @@ const printCategory = ({label, key}: {label: string; key: number}) => {
 const printIssue = ({
   label,
   needsToBeFixed,
+  version,
+  versionRange,
   isRequired,
   description,
 }: HealthCheckResult) => {
@@ -32,10 +36,23 @@ const printIssue = ({
       : chalk.yellow('●')
     : chalk.green('✓');
 
-  const descriptionToShow =
-    needsToBeFixed && description ? `: ${description}` : '';
+  const descriptionToShow = description ? `- ${description}` : '';
 
   logger.log(` ${symbol} ${label}${descriptionToShow}`);
+
+  if (needsToBeFixed && versionRange) {
+    const versionToShow = version && version !== 'Not Found' ? version : 'N/A';
+    const cleanedVersionRange = semver.valid(semver.coerce(versionRange)!);
+
+    if (cleanedVersionRange) {
+      logMessage(`- Version found: ${chalk.red(versionToShow)}`);
+      logMessage(
+        `- Minimum version required: ${chalk.green(cleanedVersionRange)}`,
+      );
+
+      return;
+    }
+  }
 };
 
 const printOverallStats = ({
@@ -73,9 +90,11 @@ export default (async (_, __, options) => {
           return;
         }
 
-        const {needsToBeFixed} = await healthcheck.getDiagnostics(
-          environmentInfo,
-        );
+        const {
+          needsToBeFixed,
+          version,
+          versionRange,
+        } = await healthcheck.getDiagnostics(environmentInfo);
 
         // Assume that it's required unless specified otherwise
         const isRequired = healthcheck.isRequired !== false;
@@ -84,6 +103,8 @@ export default (async (_, __, options) => {
         return {
           label: healthcheck.label,
           needsToBeFixed: Boolean(needsToBeFixed),
+          version,
+          versionRange,
           description: healthcheck.description,
           runAutomaticFix: healthcheck.runAutomaticFix,
           isRequired,
@@ -149,13 +170,17 @@ export default (async (_, __, options) => {
     });
   }
 
-  const onKeyPress = async (key: string) => {
+  const removeKeyPressListener = () => {
     if (typeof process.stdin.setRawMode === 'function') {
       process.stdin.setRawMode(false);
     }
     process.stdin.removeAllListeners('data');
+  };
 
+  const onKeyPress = async (key: string) => {
     if (key === KEYS.EXIT || key === '\u0003') {
+      removeKeyPressListener();
+
       process.exit(0);
       return;
     }
@@ -163,6 +188,8 @@ export default (async (_, __, options) => {
     if (
       [KEYS.FIX_ALL_ISSUES, KEYS.FIX_ERRORS, KEYS.FIX_WARNINGS].includes(key)
     ) {
+      removeKeyPressListener();
+
       try {
         const automaticFixLevel = {
           [KEYS.FIX_ALL_ISSUES]: AUTOMATIC_FIX_LEVELS.ALL_ISSUES,

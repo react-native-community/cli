@@ -14,15 +14,17 @@ const printOptions = () => {
   logger.log(chalk.bold('Usage'));
   printOption(
     `${chalk.dim('Press')} ${KEYS.FIX_ALL_ISSUES} ${chalk.dim(
-      'to fix all issues.',
+      'to try to fix issues.',
     )}`,
   );
   printOption(
-    `${chalk.dim('Press')} ${KEYS.FIX_ERRORS} ${chalk.dim('to fix errors.')}`,
+    `${chalk.dim('Press')} ${KEYS.FIX_ERRORS} ${chalk.dim(
+      'to try to fix errors.',
+    )}`,
   );
   printOption(
     `${chalk.dim('Press')} ${KEYS.FIX_WARNINGS} ${chalk.dim(
-      'to fix warnings.',
+      'to try to fix warnings.',
     )}`,
   );
   printOption(`${chalk.dim('Press')} Enter ${chalk.dim('to exit.')}`);

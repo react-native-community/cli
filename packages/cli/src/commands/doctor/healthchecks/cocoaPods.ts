@@ -12,7 +12,7 @@ const label = 'CocoaPods';
 
 export default {
   label,
-  description: 'required for installing iOS dependencies',
+  description: 'Required for installing iOS dependencies',
   getDiagnostics: async () => ({
     needsToBeFixed: await isSoftwareNotInstalled('pod'),
   }),

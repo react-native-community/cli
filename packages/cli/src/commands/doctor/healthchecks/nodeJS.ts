@@ -6,11 +6,12 @@ import {HealthCheckInterface} from '../types';
 export default {
   label: 'Node.js',
   getDiagnostics: async ({Binaries}) => ({
-    version: Binaries.Node.version,
     needsToBeFixed: doesSoftwareNeedToBeFixed({
       version: Binaries.Node.version,
       versionRange: versionRanges.NODE_JS,
     }),
+    version: Binaries.Node.version,
+    versionRange: versionRanges.NODE_JS,
   }),
   runAutomaticFix: async ({loader}) => {
     loader.fail();

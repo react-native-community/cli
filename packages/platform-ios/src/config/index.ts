@@ -17,10 +17,6 @@ import {
 
 const memoizedFindProject = memoize(findProject);
 
-/**
- * Returns project config by analyzing given folder and applying some user defaults
- * when constructing final object
- */
 export function projectConfig(
   folder: string,
   userConfig: IOSProjectParams | null,
@@ -31,9 +27,6 @@ export function projectConfig(
 
   const project = userConfig.project || memoizedFindProject(folder);
 
-  /**
-   * No iOS config found here
-   */
   if (!project) {
     return null;
   }

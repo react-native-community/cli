@@ -2,7 +2,7 @@ import path from 'path';
 import chalk from 'chalk';
 import {logger} from '@react-native-community/cli-tools';
 import {Config} from '@react-native-community/cli-types';
-import getDependenciesFromPodfileLock from '../link-pods/getDependenciesFromPodfileLock';
+import getDependenciesFromPodfileLock from './getDependenciesFromPodfileLock';
 
 export default function warnAboutPodInstall(config: Config) {
   const podLockDeps = getDependenciesFromPodfileLock(

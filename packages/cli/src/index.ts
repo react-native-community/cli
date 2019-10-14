@@ -1,28 +1,17 @@
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * @flow
- */
-
 import chalk from 'chalk';
 import childProcess from 'child_process';
 import commander from 'commander';
 import path from 'path';
 
-import type {CommandT, ConfigT} from 'types';
-// $FlowFixMe - converted to TS
-import {detachedCommands, projectCommands} from './commands';
-// $FlowFixMe - converted to TS
-import init from './commands/init/initCompat';
-// $FlowFixMe - converted to TS
-import assertRequiredOptions from './tools/assertRequiredOptions';
+import {Command, Config} from '@react-native-community/cli-types';
 import {logger} from '@react-native-community/cli-tools';
-import pkgJson from '../package.json';
-// $FlowFixMe - converted to TS
+
+import {detachedCommands, projectCommands} from './commands';
+import init from './commands/init/initCompat';
+import assertRequiredOptions from './tools/assertRequiredOptions';
 import loadConfig from './tools/config';
+
+import pkgJson from '../package.json';
 
 commander
   .option('--version', 'Print CLI version')
@@ -33,9 +22,7 @@ commander.on('command:*', () => {
   process.exit(1);
 });
 
-const defaultOptParser = val => val;
-
-const handleError = err => {
+const handleError = (err: Error) => {
   if (commander.verbose) {
     logger.error(err.message);
   } else {
@@ -55,11 +42,17 @@ const handleError = err => {
   process.exit(1);
 };
 
-// Custom printHelpInformation command inspired by internal Commander.js
-// one modified to suit our needs
-function printHelpInformation(examples, pkg) {
+/**
+ * Custom printHelpInformation command inspired by internal Commander.js
+ * one modified to suit our needs
+ */
+function printHelpInformation(
+  this: commander.Command,
+  examples: Command['examples'],
+  pkg: Command['pkg'],
+) {
   let cmdName = this._name;
-  const argsList = this._args
+  const argsList = (this._args as Array<{required: boolean; name: string}>)
     .map(arg => (arg.required ? `<${arg.name}>` : `[${arg.name}]`))
     .join(' ');
 
@@ -90,7 +83,7 @@ function printHelpInformation(examples, pkg) {
   return output.join('\n').concat('\n');
 }
 
-function printUnknownCommand(cmdName) {
+function printUnknownCommand(cmdName: string) {
   if (cmdName) {
     logger.error(`Unrecognized command "${chalk.bold(cmdName)}".`);
     logger.info(
@@ -103,44 +96,69 @@ function printUnknownCommand(cmdName) {
   }
 }
 
-const addCommand = (command: CommandT, ctx: ConfigT) => {
-  const options = command.options || [];
+/**
+ * Custom type assertion needed for the `makeCommand` conditional
+ * types to be properly resolved.
+ */
+const isDetachedCommand = (
+  command: Command<boolean>,
+): command is Command<true> => {
+  return command.detached === true;
+};
 
+/**
+ * Attaches a new command onto global `commander` instance.
+ *
+ * Note that this function takes additional argument of `Config` type in case
+ * passed `command` needs it for its execution.
+ */
+function attachCommand<IsDetached extends boolean>(
+  command: Command<IsDetached>,
+  ...rest: IsDetached extends false ? [Config] : []
+): void {
+  const options = command.options || [];
   const cmd = commander
     .command(command.name)
-    .description(command.description)
-    .action(async function handleAction(...args) {
+    .action(async function handleAction(
+      this: commander.Command,
+      ...args: string[]
+    ) {
       const passedOptions = this.opts();
-      const argv: Array<string> = Array.from(args).slice(0, -1);
+      const argv = Array.from(args).slice(0, -1);
 
       try {
         assertRequiredOptions(options, passedOptions);
-        if (command.detached) {
+        if (isDetachedCommand(command)) {
           await command.func(argv, passedOptions);
         } else {
-          await command.func(argv, ctx, passedOptions);
+          await command.func(argv, rest[0] as Config, passedOptions);
         }
       } catch (error) {
         handleError(error);
       }
     });
 
+  if (command.description) {
+    cmd.description(command.description);
+  }
+
   cmd.helpInformation = printHelpInformation.bind(
     cmd,
     command.examples,
-    // $FlowFixMe - we know pkg may be missing...
     command.pkg,
   );
 
-  options.forEach(opt =>
+  for (const opt of command.options || []) {
     cmd.option(
       opt.name,
       opt.description,
-      opt.parse || defaultOptParser,
-      typeof opt.default === 'function' ? opt.default(ctx) : opt.default,
-    ),
-  );
-};
+      opt.parse || ((val: any) => val),
+      typeof opt.default === 'function'
+        ? opt.default(rest[0] as Config)
+        : opt.default,
+    );
+  }
+}
 
 async function run() {
   try {
@@ -173,7 +191,9 @@ async function setupAndRun() {
     }
   }
 
-  detachedCommands.forEach(addCommand);
+  for (const command of detachedCommands) {
+    attachCommand(command);
+  }
 
   try {
     // when we run `config`, we don't want to output anything to the console. We
@@ -186,9 +206,9 @@ async function setupAndRun() {
 
     logger.enable();
 
-    [...projectCommands, ...ctx.commands].forEach(command =>
-      addCommand(command, ctx),
-    );
+    for (const command of [...projectCommands, ...ctx.commands]) {
+      attachCommand(command, ctx);
+    }
   } catch (e) {
     logger.enable();
     logger.debug(e.message);
@@ -211,10 +231,4 @@ async function setupAndRun() {
   }
 }
 
-export default {
-  run,
-  init,
-  loadConfig,
-};
-
-export {run, init, loadConfig};
+export {run, init};

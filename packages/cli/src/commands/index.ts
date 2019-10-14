@@ -1,4 +1,4 @@
-import {DetachedCommand, Command} from '@react-native-community/cli-types';
+import {Command, DetachedCommand} from '@react-native-community/cli-types';
 
 // @ts-ignore - JS file
 import server from './server/server';

@@ -86,7 +86,6 @@ jobs:
     steps:
       - install-dependencies
       - run-lint
-      - run-typecheck
       - run-unit-tests
       # TODO: figure out why e2e tests fail even though not interfering with
       # other tests
@@ -97,9 +96,6 @@ workflows:
     jobs:
       - setup
       - lint:
-          requires:
-            - setup
-      - typecheck:
           requires:
             - setup
       - unit-tests:

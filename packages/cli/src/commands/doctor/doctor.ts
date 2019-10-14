@@ -36,33 +36,22 @@ const printIssue = ({
       : chalk.yellow('●')
     : chalk.green('✓');
 
-  const descriptionToShow = description ? description : '';
+  const descriptionToShow = description ? `- ${description}` : '';
+
+  logger.log(` ${symbol} ${label}${descriptionToShow}`);
 
   if (needsToBeFixed && versionRange) {
     const versionToShow = version && version !== 'Not Found' ? version : 'N/A';
     const cleanedVersionRange = semver.valid(semver.coerce(versionRange)!);
 
     if (cleanedVersionRange) {
-      logger.log(
-        ` ${symbol} ${label} ${chalk.dim(
-          `(${chalk.yellow(versionToShow)} →  ${chalk.green(
-            cleanedVersionRange,
-          )})`,
-        )}`,
+      logMessage(`- Version found: ${chalk.red(versionToShow)}`);
+      logMessage(
+        `- Minimum version required: ${chalk.green(cleanedVersionRange)}`,
       );
-
-      if (descriptionToShow) {
-        logMessage(descriptionToShow);
-      }
 
       return;
     }
-  }
-
-  logger.log(` ${symbol} ${label}`);
-
-  if (descriptionToShow) {
-    logMessage(descriptionToShow);
   }
 };
 

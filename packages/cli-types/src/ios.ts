@@ -17,7 +17,7 @@ export interface IOSDependencyParams {
 
 export interface IOSProjectConfig {
   sourceDir: string;
-  podfile: string;
+  podfile?: string;
   scriptPhases?: Array<any>;
 }
 

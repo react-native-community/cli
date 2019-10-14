@@ -39,15 +39,6 @@ export function projectConfig(
   const sourceDir = path.dirname(projectPath);
   const podfile = path.join(sourceDir, 'Podfile');
 
-  if (!fs.existsSync(podfile)) {
-    throw new CLIError(`
-      No Podfile found. CLI requires your project uses CocoaPods for managing
-      iOS dependencies.
-
-      Please integrate CocoaPods with your project.
-    `);
-  }
-
   return {
     sourceDir,
     podfile,

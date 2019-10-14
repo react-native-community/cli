@@ -69,10 +69,6 @@ jobs:
     executor: node8
     steps:
       - run-lint
-  typecheck:
-    executor: node8
-    steps:
-      - run-typecheck
   cocoa-pods:
     executor: noderuby
     steps:

@@ -41,11 +41,6 @@ commands:
       - attach_workspace:
           at: ~/react-native-cli
       - run: yarn lint
-  run-typecheck:
-    steps:
-      - attach_workspace:
-          at: ~/react-native-cli
-      - run: yarn flow-check
   run-cocoa-pods-tests:
     steps:
       - attach_workspace:

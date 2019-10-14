@@ -77,7 +77,6 @@ function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   }
 
   const devices = parseIOSDevicesList(
-    // $FlowExpectedError https://github.com/facebook/flow/issues/5675
     child_process.execFileSync('xcrun', ['instruments', '-s'], {
       encoding: 'utf8',
     }),
@@ -156,7 +155,6 @@ async function runOnSimulator(
    */
   const activeDeveloperDir = child_process
     .execFileSync('xcode-select', ['-p'], {encoding: 'utf8'})
-    // $FlowExpectedError https://github.com/facebook/flow/issues/5675
     .trim();
 
   child_process.execFileSync('open', [
@@ -193,7 +191,6 @@ async function runOnSimulator(
       ['-c', 'Print:CFBundleIdentifier', path.join(appPath, 'Info.plist')],
       {encoding: 'utf8'},
     )
-    // $FlowExpectedError https://github.com/facebook/flow/issues/5675
     .trim();
 
   logger.info(`Launching "${chalk.bold(bundleID)}"`);

@@ -46,9 +46,23 @@ function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   } = ctx;
 
   if (!xcodeProject) {
-    throw new CLIError(
-      'iOS project not found. Are you sure this is a React Native project?',
-    );
+    throw new CLIError(`
+      iOS project not found. Are you sure this is a React Native project?
+
+      If your project contains iOS files, it means that the CLI has failed to detect
+      them automatically.
+
+      In this case, consider setting an explicit path to your iOS project by defining
+      the following :
+      {
+        "react-native": {
+          "ios": {
+            "project": "./path-to-my/Project.xcodeproj"
+          }
+        }
+      }
+      in your \`package.json\`. 
+    `);
   }
 
   warnAboutManuallyLinkedLibs(ctx);

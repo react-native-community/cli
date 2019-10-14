@@ -1,5 +1,5 @@
 #!/usr/bin/env node
 
-import {run} from './cliEntry';
+import {run} from './';
 
 run();

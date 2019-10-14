@@ -488,10 +488,6 @@ export default {
       cmd: 'react-native run-ios --simulator "iPhone 5"',
     },
     {
-      desc: 'Pass a non-standard location of iOS directory',
-      cmd: 'react-native run-ios --project-path "./app/ios"',
-    },
-    {
       desc: "Run on a connected device, e.g. Max's iPhone",
       cmd: 'react-native run-ios --device "Max\'s iPhone"',
     },

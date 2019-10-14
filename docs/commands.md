@@ -403,10 +403,6 @@ Explicitly set the scheme configuration to use default: 'Debug'.
 
 Explicitly set Xcode scheme to use.
 
-#### `--project-path [string]`
-
-Path relative to project root where the Xcode project (.xcodeproj) lives. default: 'ios'.
-
 #### `--device [string]`
 
 Explicitly set device to use by name. The value is not required if you have a single device connected.

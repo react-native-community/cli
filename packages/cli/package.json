@@ -3,7 +3,7 @@
   "version": "3.0.0-alpha.2",
   "description": "React Native CLI",
   "license": "MIT",
-  "main": "build/cliEntry.js",
+  "main": "build/index.js",
   "bin": {
     "react-native": "build/bin.js"
   },

@@ -56,7 +56,6 @@ test('init --template', () => {
   expect(fs.readdirSync(DIR)).toEqual(['TestInit']);
 
   let dirFiles = fs.readdirSync(path.join(DIR, 'TestInit'));
-  console.log(dirFiles);
   expect(dirFiles.length).toEqual(templateFiles.length);
 
   for (const templateFile of templateFiles) {

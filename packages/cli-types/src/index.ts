@@ -49,7 +49,9 @@ export type Command<IsDetached extends boolean = false> = {
     ? DetachedCommandFunction<Object>
     : CommandFunction<Object>;
   options?: Array<
-    IsDetached extends true ? CommandOption<() => OptionValue> : CommandOption[]
+    CommandOption<
+      IsDetached extends true ? () => OptionValue : (ctx: Config) => OptionValue
+    >
   >;
 };
 

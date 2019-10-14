@@ -23,6 +23,6 @@ export interface IOSProjectConfig {
 
 export interface IOSDependencyConfig {
   sourceDir: string;
-  podspecPath: string;
+  podspecPath?: string;
   scriptPhases?: Array<any>;
 }

@@ -129,9 +129,9 @@ function attachCommand<IsDetached extends boolean>(
       try {
         assertRequiredOptions(options, passedOptions);
         if (isDetachedCommand(command)) {
-          await command.func(argv, options);
+          await command.func(argv, passedOptions);
         } else {
-          await command.func(argv, rest[0] as Config, options);
+          await command.func(argv, rest[0] as Config, passedOptions);
         }
       } catch (error) {
         handleError(error);

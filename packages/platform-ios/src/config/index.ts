@@ -17,7 +17,6 @@ import {
   IOSDependencyParams,
 } from '@react-native-community/cli-types';
 import fs from 'fs';
-import {CLIError} from '@react-native-community/cli-tools/src';
 
 const memoizedFindProject = memoize(findProject);
 
@@ -41,7 +40,7 @@ export function projectConfig(
 
   return {
     sourceDir,
-    podfile,
+    podfile: fs.existsSync(podfile) ? podfile : undefined,
     scriptPhases: userConfig.scriptPhases || [],
   };
 }
@@ -70,7 +69,8 @@ export function dependencyConfig(
       // podspecs are usually placed in the root dir of the library or in the
       // iOS project path
       findPodspec(folder) ||
-      findPodspec(sourceDir),
+      findPodspec(sourceDir) ||
+      undefined,
     scriptPhases: userConfig.scriptPhases || [],
   };
 }

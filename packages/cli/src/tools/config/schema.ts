@@ -45,6 +45,7 @@ export const dependencyConfig = t
         platforms: map(t.string(), t.any())
           .keys({
             ios: t
+              // IOSDependencyParams
               .object({
                 project: t.string(),
                 podspecPath: t.string(),
@@ -52,11 +53,13 @@ export const dependencyConfig = t
               })
               .default({}),
             android: t
+              // AndroidDependencyParams
               .object({
                 sourceDir: t.string(),
                 manifestPath: t.string(),
                 packageImportPath: t.string(),
                 packageInstance: t.string(),
+                packageName: t.string(),
               })
               .default({}),
           })
@@ -106,6 +109,7 @@ export const projectConfig = t
           root: t.string(),
           platforms: map(t.string(), t.any()).keys({
             ios: t
+              // IOSDependencyConfig
               .object({
                 sourceDir: t.string(),
                 podspecPath: t.string(),
@@ -113,9 +117,10 @@ export const projectConfig = t
               })
               .allow(null),
             android: t
+              // AndroidDependencyConfig
               .object({
                 sourceDir: t.string(),
-                folder: t.string(),
+                packageName: t.string(),
                 packageImportPath: t.string(),
                 packageInstance: t.string(),
               })
@@ -137,22 +142,18 @@ export const projectConfig = t
     project: map(t.string(), t.any())
       .keys({
         ios: t
+          // IOSProjectParams
           .object({
             project: t.string(),
             scriptPhases: t.array().items(t.object()),
           })
           .default({}),
         android: t
+          // AndroidProjectParams
           .object({
             sourceDir: t.string(),
             manifestPath: t.string(),
             packageName: t.string(),
-            packageFolder: t.string(),
-            mainFilePath: t.string(),
-            stringsPath: t.string(),
-            settingsGradlePath: t.string(),
-            assetsPath: t.string(),
-            buildGradlePath: t.string(),
           })
           .default({}),
       })

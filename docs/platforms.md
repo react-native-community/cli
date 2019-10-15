@@ -37,10 +37,21 @@ At the end, a map of available platforms is passed to the bundler (Metro) to mak
 ## Platform interface
 
 ```ts
-type PlatformConfig<ProjectParams, ProjectConfig, DependencyConfig> = {
-  projectConfig: (string, ProjectParams) => ?ProjectConfig,
-  dependencyConfig: (string, ProjectParams) => ?DependencyConfig
-};
+interface PlatformConfig<
+  ProjectConfig,
+  ProjectParams,
+  DependencyConfig,
+  DependencyParams
+> {
+  projectConfig: (
+    projectRoot: string,
+    projectParams: ProjectParams | void,
+  ) => ProjectConfig | null;
+  dependencyConfig: (
+    dependency: string,
+    params: DependencyParams,
+  ) => DependencyConfig | null;
+}
 ```
 
 ### projectConfig

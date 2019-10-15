@@ -88,11 +88,6 @@ test('should merge project configuration with default values', () => {
   writeFiles(DIR, {
     'node_modules/react-native/package.json': '{}',
     'node_modules/react-native-test/package.json': '{}',
-    'node_modules/react-native-test/react-native.config.js': `module.exports = {
-      dependency: {
-        assets: ["foo", "baz"]
-      }
-    }`,
     'node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj':
       '',
     'package.json': `{
@@ -110,7 +105,6 @@ test('should merge project configuration with default values', () => {
               sourceDir: "./abc"
             }
           },
-          assets: ["foo"]
         }
       }
     }`,
@@ -154,6 +148,11 @@ test('should load commands from "react-native-foo" and "react-native-bar" packag
 
 test('should load an out-of-tree "windows" platform that ships with a dependency', () => {
   writeFiles(DIR, {
+    'package.json': `{
+      "dependencies": {
+        "react-native-windows": "*"
+      }
+    }`,
     'node_modules/react-native-windows/package.json': '{}',
     'node_modules/react-native-windows/react-native.config.js': `
       module.exports = {

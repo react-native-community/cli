@@ -64,21 +64,6 @@ export const dependencyConfig = t
               .default({}),
           })
           .default(),
-        assets: t
-          .array()
-          .items(t.string())
-          .default([]),
-        hooks: map(t.string(), t.string()).default({}),
-        params: t
-          .array()
-          .items(
-            t.object({
-              name: t.string(),
-              type: t.string(),
-              message: t.string(),
-            }),
-          )
-          .default([]),
       })
       .default(),
     platforms: map(
@@ -128,15 +113,6 @@ export const projectConfig = t
               })
               .allow(null),
           }),
-          assets: t.array().items(t.string()),
-          hooks: map(t.string(), t.string()),
-          params: t.array().items(
-            t.object({
-              name: t.string(),
-              type: t.string(),
-              message: t.string(),
-            }),
-          ),
         })
         .allow(null),
     ).default({}),
@@ -160,10 +136,6 @@ export const projectConfig = t
           .default({}),
       })
       .default(),
-    assets: t
-      .array()
-      .items(t.string())
-      .default([]),
     commands: t
       .array()
       .items(command)

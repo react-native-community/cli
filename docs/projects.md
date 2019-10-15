@@ -4,36 +4,37 @@ A project is an app that contains React code and has a dependency on `react-nati
 
 Projects can provide additional properties to alter the CLI behavior, such as custom location of React Native files (this is useful when running RNTester from source) or a non-standard location of a project (useful when working in a brownfield app).
 
-## How does it work?
-
-A project can define a `react-native.config.js` at the root with custom configuration to be picked up by the CLI.
-
-For example, below configuration informs CLI of the additional assets to link and about a custom project location.
-
-```js
-module.exports = {
-  project: {
-    ios: {
-      project: './CustomProject.xcodeproj',
-    },
-  },
-  assets: ['./assets'],
-};
-```
-
-You can check all available options below.
-
-## Project interface
+## Interface
 
 ```ts
+interface Config = {
+  reactNativePath: string;
+  project: ProjectConfig;
+  dependencies: {[key: string]: Dependency};
+  platforms: {
+    android: PlatformConfig<
+      AndroidProjectConfig,
+      AndroidProjectParams,
+      AndroidDependencyConfig,
+      AndroidDependencyParams
+    >;
+    ios: PlatformConfig<
+      IOSProjectConfig,
+      IOSProjectParams,
+      IOSDependencyConfig,
+      IOSDependencyParams
+    >;
+    [name: string]: PlatformConfig<any, any, any, any>;
+  };
+  commands: Command[];
+}
 type ProjectConfigT = {
   reactNativePath: ?string,
   project: {
-    android?: ProjectParamsAndroidT,
-    ios?: ProjectParamsIOST,
-    [key: string]: any,
-  },
-  assets: string[],
+    android?: AndroidProjectParams;
+    ios?: IOSProjectParams;
+    [key: string]: any;
+  };
   platforms: PlatformT,
   dependencies: {
     [key: string]: {
@@ -42,10 +43,6 @@ type ProjectConfigT = {
       platforms: {
         [key: string]: PlatformSettingsT
       },
-      assets: string[],
-      hooks: {
-        [key: string]: string
-      }
     },
   },
   commands: CommandT[]

@@ -49,9 +49,6 @@ function getDependencyConfig(
         },
         {} as Config['platforms'],
       ),
-      assets: findAssets(root, config.dependency.assets),
-      hooks: config.dependency.hooks,
-      params: config.dependency.params,
     },
     userConfig.dependencies[dependencyName] || {},
   ) as Dependency;

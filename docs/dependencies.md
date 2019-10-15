@@ -6,44 +6,21 @@ For example, `lodash` is a dependency that doesn't have any native code to link.
 
 By default, CLI analyses the folder structure inside the dependency and looks for assets and native files to link. This simple heuristic works in most of the cases.
 
-At the same time, a dependency can explicitly set its configuration in case CLI cannot infer it properly. A dependency can also define additional settings, such as a script to run after linking, in order to support some advanced use-cases.
+At the same time, a dependency can explicitly set its configuration in case CLI cannot infer it properly.
 
-## How does it work?
-
-A dependency can define the following `react-native.config.js` at the root:
-
-```js
-module.exports = {
-  dependency: {
-    platforms: {
-      ios: {
-        project: './Custom.xcodeproj'
-      }
-    }
-    assets: ['./assets']
-  }
-};
-```
-
-> The above configuration informs CLI of the additional assets to link and about a custom project location.
-
-## Dependency interface
+## Interface
 
 The following type describes the configuration of a dependency that can be set under `dependency` key inside `react-native.config.js`.
 
 ```ts
-type DependencyConfigT = {
+interface Dependency = {
   platforms: {
+    ios?: IOSDependencyParams | null;
+    android?: AndroidDependencyParams | null;
     [key: string]: any;
-  };
-  assets: string[];
-  hooks: {
-    [key: string]: string;
   };
 };
 ```
-
-> Note: This interface is subject to breaking changes. We may consider renaming some keys to simplify the configuration further. If you are going to use it, be prepared to update before we ship a stable 0.60.0 release.
 
 ### platforms
 

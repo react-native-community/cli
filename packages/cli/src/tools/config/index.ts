@@ -101,8 +101,6 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
     },
   };
 
-  let depsWithWarnings: Array<[string, string]> = [];
-
   const finalConfig = Array.from(
     new Set([
       ...Object.keys(userConfig.dependencies),
@@ -118,15 +116,7 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
       root =
         localDependencyRoot ||
         resolveNodeModuleDir(projectRoot, dependencyName);
-      const output = readDependencyConfigFromDisk(root);
-      config = output.config;
-
-      if (output.legacy && !localDependencyRoot) {
-        const pkg = require(path.join(root, 'package.json'));
-        const link =
-          pkg.homepage || `https://npmjs.com/package/${dependencyName}`;
-        depsWithWarnings.push([dependencyName, link]);
-      }
+      config = readDependencyConfigFromDisk(root);
     } catch (error) {
       logger.warn(
         inlineString(`
@@ -156,13 +146,7 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
 
     const isPlatform = Object.keys(config.platforms).length > 0;
 
-    /**
-     * Legacy `rnpm` config required `haste` to be defined. With new config,
-     * we do it automatically.
-     *
-     * @todo: Remove this once `rnpm` config is deprecated and all major RN libs are converted.
-     */
-    const haste = config.haste || {
+    const haste = {
       providesModuleNodeModules: isPlatform ? [dependencyName] : [],
       platforms: Object.keys(config.platforms),
     };
@@ -194,21 +178,6 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
       },
     }) as Config;
   }, initialConfig);
-
-  if (depsWithWarnings.length) {
-    logger.warn(
-      `The following packages use deprecated "rnpm" config that will stop working from next release:\n${depsWithWarnings
-        .map(
-          ([name, link]) =>
-            `  - ${chalk.bold(name)}: ${chalk.dim(chalk.underline(link))}`,
-        )
-        .join(
-          '\n',
-        )}\nPlease notify their maintainers about it. You can find more details at ${chalk.dim.underline(
-        'https://github.com/react-native-community/cli/blob/master/docs/configuration.md#migration-guide',
-      )}.`,
-    );
-  }
 
   return finalConfig;
 }

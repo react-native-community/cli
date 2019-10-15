@@ -86,7 +86,9 @@ export const dependencyConfig = t
       t.object({
         dependencyConfig: t.func(),
         projectConfig: t.func(),
-        linkConfig: t.func(),
+
+        // Leaving so that 3rd party platforms don't fail. To be removed in 5.x
+        linkConfig: t.any(),
       }),
     ).default({}),
     commands: t
@@ -171,7 +173,6 @@ export const projectConfig = t
       t.object({
         dependencyConfig: t.func(),
         projectConfig: t.func(),
-        linkConfig: t.func(),
       }),
     ).default({}),
   })

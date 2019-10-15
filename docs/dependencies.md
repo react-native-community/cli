@@ -54,18 +54,20 @@ In most cases, as a library author, you should not need to define any of these.
 The following settings are available on iOS and Android:
 
 ```ts
-type DependencyParamsIOST = {
+interface IOSDependencyParams {
   project?: string;
   podspecPath?: string;
-  sharedLibraries?: string[];
-};
+  scriptPhases?: Array<any>;
+}
 
-type DependencyParamsAndroidT = {
+interface AndroidDependencyParams {
+  packageName?: string;
   sourceDir?: string;
   manifestPath?: string;
+
   packageImportPath?: string;
   packageInstance?: string;
-};
+}
 ```
 
 #### platforms.ios.project
@@ -75,10 +77,6 @@ Custom path to `.xcodeproj`.
 #### platforms.ios.podspecPath
 
 Custom path to `.podspec` file to use when auto-linking. Example: `node_modules/react-native-module/ios/module.podspec`.
-
-#### platforms.ios.sharedLibraries
-
-An array of shared iOS libraries to link with the dependency. E.g. `libc++`. This is mostly a requirement of the native code that a dependency ships with.
 
 #### platforms.ios.scriptPhases
 
@@ -91,7 +89,7 @@ An array of iOS script phases to add to the project. Specifying a `path` propert
 module.exports = {
   dependency: {
     platforms: {
-     ios: {
+      ios: {
         scriptPhases: [
           {
             name: '[MY DEPENDENCY] My Script',
@@ -111,6 +109,10 @@ See [`script_phase` options](https://www.rubydoc.info/gems/cocoapods-core/Pod/Po
 
 A relative path to a folder with source files. E.g. `custom-android`, or `custom-android/app`. By default, CLI searches for `android` and `android/app` as source dirs.
 
+#### platforms.android.packageName
+
+Custom package name, unless the default one present under `AndroidManifest.xml` is wrong
+
 #### platforms.android.manifestPath
 
 Path to a custom `AndroidManifest.xml`
@@ -124,63 +126,3 @@ Custom package import. For example: `import com.acme.AwesomePackage;`.
 Custom syntax to instantiate a package. By default, it's a `new AwesomePackage()`. It can be useful when your package requires additional arguments while initializing.
 
 For settings applicable on other platforms, please consult their respective documentation.
-
-### assets
-
-An array of assets folders to glob for files to link.
-
-### hooks
-
-A map where key is the name of a hook and value is the path to a file to execute.
-
-For example, `link` command supports `prelink` and `postlink` hooks to run before and after linking is done.
-
-These are the only ones supported by CLI at the moment. Depending on the packages used in your project, you may find other hooks supported to.
-
-> Note: This has nothing to do with React Hooks.
-
-## Migrating from `rnpm` configuration
-
-The changes are mostly cosmetic so the migration should be pretty straight-forward.
-
-> Note: We read `rnpm` configuration to remain backwards-compatible. Dependency maintainers should update their configuration in the nearest future.
-
-### Changing the configuration
-
-Properties were renamed. Look at the following example for the differences.
-
-```json
-{
-  "rnpm": {
-    "ios": {},
-    "android": {},
-    "assets": ["./path-to-assets"],
-    "hooks": {
-      "prelink": "./path-to-a-prelink-hook"
-    }
-  }
-}
-```
-
-to a `react-native.config.js`
-
-```js
-module.exports = {
-  dependency: {
-    platforms: {
-      ios: {},
-      android: {},
-    },
-    assets: ['./path-to-assets'],
-    hooks: {
-      prelink: './path-to-a-prelink-hook',
-    },
-  },
-};
-```
-
-### Asking for params while linking has been removed
-
-If your library needs it, do not upgrade over to the new config format.
-
-If you want to ask users for additional settings, consider setting a custom `postlink` hook, just like [`react-native-code-push`](https://github.com/Microsoft/react-native-code-push/blob/master/package.json#L53).

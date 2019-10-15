@@ -178,11 +178,6 @@ export type UserDependencyConfig = {
   commands: Command[];
   // An array of extra platforms to load
   platforms: Config['platforms'];
-  // Haste config defined by legacy `rnpm`
-  haste?: {
-    platforms: string[];
-    providesModuleNodeModules: string[];
-  };
 };
 
 export {

@@ -17,12 +17,14 @@ export interface IOSDependencyParams {
 
 export interface IOSProjectConfig {
   sourceDir: string;
+  scriptPhases: Array<any>;
+
   podfile?: string;
-  scriptPhases?: Array<any>;
 }
 
 export interface IOSDependencyConfig {
   sourceDir: string;
+  scriptPhases: Array<any>;
+
   podspecPath?: string;
-  scriptPhases?: Array<any>;
 }

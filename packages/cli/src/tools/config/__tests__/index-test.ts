@@ -344,16 +344,8 @@ module.exports = {
       "platforms": Object {
         "android": null,
         "ios": Object {
-          "folder": "<<REPLACED>>/native-libs/local-lib",
-          "libraryFolder": "Libraries",
-          "pbxprojPath": "<<REPLACED>>/native-libs/local-lib/ios/LocalRNLibrary.xcodeproj/project.pbxproj",
-          "plist": Array [],
-          "podfile": null,
           "podspecPath": "custom-path",
-          "projectName": "LocalRNLibrary.xcodeproj",
-          "projectPath": "<<REPLACED>>/native-libs/local-lib/ios/LocalRNLibrary.xcodeproj",
           "scriptPhases": Array [],
-          "sharedLibraries": Array [],
           "sourceDir": "<<REPLACED>>/native-libs/local-lib/ios",
         },
       },

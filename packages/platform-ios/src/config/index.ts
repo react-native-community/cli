@@ -69,8 +69,7 @@ export function dependencyConfig(
       // podspecs are usually placed in the root dir of the library or in the
       // iOS project path
       findPodspec(folder) ||
-      findPodspec(sourceDir) ||
-      undefined,
+      findPodspec(sourceDir),
     scriptPhases: userConfig.scriptPhases || [],
   };
 }

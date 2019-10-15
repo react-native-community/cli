@@ -1,7 +1,7 @@
 import glob from 'glob';
 import path from 'path';
 
-export default function findPodspec(folder: string): string | void {
+export default function findPodspec(folder: string): string | undefined {
   const podspecs = glob.sync('*.podspec', {cwd: folder});
 
   if (podspecs.length === 0) {

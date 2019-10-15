@@ -19,10 +19,6 @@ import {XmlDocument} from 'xmldoc';
 
 const getPackageName = (manifest: XmlDocument) => manifest.attr.package;
 
-/**
- * Gets android project config by analyzing given folder and taking some
- * defaults specified by user into consideration
- */
 export function projectConfig(
   folder: string,
   userConfig: AndroidProjectParams = {},
@@ -34,7 +30,6 @@ export function projectConfig(
   }
 
   const sourceDir = path.join(folder, src);
-  const isFlat = sourceDir.indexOf('app') === -1;
   const manifestPath = userConfig.manifestPath
     ? path.join(sourceDir, userConfig.manifestPath)
     : findManifest(sourceDir);
@@ -51,54 +46,12 @@ export function projectConfig(
     throw new Error(`Package name not found in ${manifestPath}`);
   }
 
-  const packageFolder =
-    userConfig.packageFolder || packageName.replace(/\./g, path.sep);
-
-  const mainFilePath = path.join(
-    sourceDir,
-    userConfig.mainFilePath ||
-      `src/main/java/${packageFolder}/MainApplication.java`,
-  );
-
-  const stringsPath = path.join(
-    sourceDir,
-    userConfig.stringsPath || 'src/main/res/values/strings.xml',
-  );
-
-  const settingsGradlePath = path.join(
-    folder,
-    'android',
-    userConfig.settingsGradlePath || 'settings.gradle',
-  );
-
-  const assetsPath = path.join(
-    sourceDir,
-    userConfig.assetsPath || 'src/main/assets',
-  );
-
-  const buildGradlePath = path.join(
-    sourceDir,
-    userConfig.buildGradlePath || 'build.gradle',
-  );
-
   return {
     sourceDir,
-    isFlat,
-    folder,
-    stringsPath,
-    manifestPath,
-    buildGradlePath,
-    settingsGradlePath,
-    assetsPath,
-    mainFilePath,
     packageName,
   };
 }
 
-/**
- * Same as projectConfigAndroid except it returns
- * different config that applies to packages only
- */
 export function dependencyConfig(
   folder: string,
   userConfig: AndroidDependencyParams = {},
@@ -136,5 +89,5 @@ export function dependencyConfig(
   const packageInstance =
     userConfig.packageInstance || `new ${packageClassName}()`;
 
-  return {sourceDir, folder, packageImportPath, packageInstance};
+  return {sourceDir, packageName, packageImportPath, packageInstance};
 }

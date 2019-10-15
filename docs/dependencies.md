@@ -88,7 +88,7 @@ A relative path to a folder with source files. E.g. `custom-android`, or `custom
 
 #### platforms.android.packageName
 
-Custom package name, unless the default one present under `AndroidManifest.xml` is wrong
+Custom package name, unless the default one present under `AndroidManifest.xml` is wrong.
 
 #### platforms.android.manifestPath
 

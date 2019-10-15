@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/cli-platform-ios",
-  "version": "3.0.0-alpha.3",
+  "version": "3.0.0-alpha.4",
   "license": "MIT",
   "main": "build/index.js",
   "dependencies": {
@@ -10,7 +10,7 @@
     "xcode": "^2.0.0"
   },
   "devDependencies": {
-    "@react-native-community/cli-types": "^3.0.0-alpha.3",
+    "@react-native-community/cli-types": "^3.0.0-alpha.4",
     "@types/js-yaml": "^3.12.1",
     "@types/plist": "^3.0.2"
   },

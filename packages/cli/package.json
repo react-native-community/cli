@@ -4,6 +4,9 @@
   "description": "React Native CLI",
   "license": "MIT",
   "main": "build/index.js",
+  "publishConfig": {
+    "access": "public"
+  },
   "bin": {
     "react-native": "build/bin.js"
   },

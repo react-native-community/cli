@@ -59,12 +59,7 @@ Array [
 
 exports[`should merge project configuration with default values: snapshoting \`react-native-test\` config 1`] = `
 Object {
-  "assets": Array [
-    "foo",
-  ],
-  "hooks": Object {},
   "name": "react-native-test",
-  "params": Array [],
   "platforms": Object {
     "android": null,
     "ios": Object {
@@ -87,10 +82,7 @@ Array [
 
 exports[`should read a config of a dependency and use it to load other settings 1`] = `
 Object {
-  "assets": Array [],
-  "hooks": Object {},
   "name": "react-native-test",
-  "params": Array [],
   "platforms": Object {
     "android": null,
     "ios": Object {
@@ -106,10 +98,7 @@ Object {
 exports[`should return dependencies from package.json 1`] = `
 Object {
   "react-native": Object {
-    "assets": Array [],
-    "hooks": Object {},
     "name": "react-native",
-    "params": Array [],
     "platforms": Object {
       "android": null,
       "ios": null,
@@ -117,10 +106,7 @@ Object {
     "root": "<<REPLACED>>/node_modules/react-native",
   },
   "react-native-test": Object {
-    "assets": Array [],
-    "hooks": Object {},
     "name": "react-native-test",
-    "params": Array [],
     "platforms": Object {
       "android": null,
       "ios": Object {

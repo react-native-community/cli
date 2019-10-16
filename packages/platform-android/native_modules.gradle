@@ -1,5 +1,6 @@
 import groovy.json.JsonSlurper
 import org.gradle.initialization.DefaultSettings
+import org.apache.tools.ant.taskdefs.condition.Os
 
 def generatedFileName = "PackageList.java"
 def generatedFilePackage = "com.facebook.react"
@@ -76,7 +77,7 @@ class ReactNativeModules {
 
   ReactNativeModules(Logger logger) {
     this.logger = logger
-   
+
     def (nativeModules, packageName) = this.getReactNativeConfig()
     this.reactNativeModules = nativeModules
     this.packageName = packageName
@@ -150,7 +151,8 @@ class ReactNativeModules {
     ArrayList<HashMap<String, String>> reactNativeModules = new ArrayList<HashMap<String, String>>()
 
     def cmdProcess
-    def command = "npx --quiet react-native config"
+    def npx = Os.isFamily(Os.FAMILY_WINDOWS) ? "npx.cmd" : "npx"
+    def command = "${npx} --quiet react-native config"
     def reactNativeConfigOutput = ""
 
     try {

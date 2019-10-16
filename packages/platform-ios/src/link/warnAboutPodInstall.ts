@@ -11,7 +11,7 @@ export default function warnAboutPodInstall(config: Config) {
   const podDeps = Object.keys(config.dependencies)
     .map(depName => {
       const dependency = config.dependencies[depName].platforms.ios;
-      return dependency
+      return dependency && dependency.podspecPath
         ? path.basename(dependency.podspecPath).replace(/\.podspec/, '')
         : '';
     })

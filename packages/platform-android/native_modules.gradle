@@ -151,7 +151,7 @@ class ReactNativeModules {
     ArrayList<HashMap<String, String>> reactNativeModules = new ArrayList<HashMap<String, String>>()
 
     def cmdProcess
-    def npx = Os.isFamily(Os.FAMILY_WINDOWS) ? "npx.exe" : "npx"
+    def npx = Os.isFamily(Os.FAMILY_WINDOWS) ? "npx.cmd" : "npx"
     def command = "${npx} --quiet react-native config"
     def reactNativeConfigOutput = ""
 

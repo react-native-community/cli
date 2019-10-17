@@ -42,10 +42,12 @@ export interface Flags {
 async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
   const androidProject = config.project.android;
   if (!androidProject) {
-    logger.error(
-      'Android project not found. Are you sure this is a React Native project?',
-    );
-    return;
+    throw new CLIError(`
+  Android project not found. Are you sure this is a React Native project?
+
+  If your Android files are located in a non-standard location (e.g. not inside \'android\' folder), consider setting
+  \`project.android.sourceDir\` option to point to a new location.
+`);
   }
 
   if (args.jetifier) {

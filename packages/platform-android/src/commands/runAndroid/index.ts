@@ -115,11 +115,12 @@ function buildAndRun(args: Flags, config: Config) {
     return;
   }
   process.chdir(androidConfig.sourceDir);
-  const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
-  const {appFolder} = args;
+
+  const gradlew = process.platform === 'win32' ? 'gradlew.bat' : './gradlew';
+
   // @ts-ignore
   const packageName = fs
-    .readFileSync(`${appFolder}/src/main/AndroidManifest.xml`, 'utf8')
+    .readFileSync(`${args.appFolder}/src/main/AndroidManifest.xml`, 'utf8')
     .match(/package="(.+?)"/)[1];
 
   const packageNameWithSuffix = getPackageNameWithSuffix(
@@ -131,7 +132,7 @@ function buildAndRun(args: Flags, config: Config) {
   if (args.deviceId) {
     return runOnSpecificDevice(
       args,
-      cmd,
+      gradlew,
       packageNameWithSuffix,
       packageName,
       adbPath,
@@ -139,7 +140,7 @@ function buildAndRun(args: Flags, config: Config) {
   } else {
     return runOnAllDevices(
       args,
-      cmd,
+      gradlew,
       packageNameWithSuffix,
       packageName,
       adbPath,

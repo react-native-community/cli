@@ -6,7 +6,7 @@ Projects can provide additional properties to alter the CLI behavior, such as cu
 
 ## How does it work?
 
-A dependency can define the following `react-native.config.js` at the root:
+A project can define the following `react-native.config.js` at the root:
 
 ```js
 module.exports = {

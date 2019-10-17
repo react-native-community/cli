@@ -70,7 +70,7 @@ export function dependencyConfig(
   if (!manifestPath) {
     return null;
   }
-  console.log(manifestPath);
+
   const manifest = readManifest(manifestPath);
   const packageName = userConfig.packageName || getPackageName(manifest);
   const packageClassName = findPackageClassName(sourceDir);

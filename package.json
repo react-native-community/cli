@@ -16,6 +16,8 @@
     "lint": "eslint --ext .js,.ts . --cache --report-unused-disable-directives",
     "test:ci:cocoapods": "ruby packages/platform-ios/native_modules.rb",
     "postinstall": "yarn build",
+    "link-packages": "PACKAGES=('tools' 'platform-ios' 'platform-android' 'cli' 'cli-types' 'global-cli') && cd packages && for PACKAGE in \"${PACKAGES[@]}\"; do cd $PACKAGE && yarn link && cd ..; done",
+    "unlink-packages": "PACKAGES=('tools' 'platform-ios' 'platform-android' 'cli' 'cli-types' 'global-cli') && cd packages && for PACKAGE in \"${PACKAGES[@]}\"; do cd $PACKAGE && yarn unlink && cd ..; done",
     "publish": "yarn build-clean-all && yarn install && lerna publish"
   },
   "dependencies": {

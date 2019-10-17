@@ -20,11 +20,19 @@ Repository is splitted into two packages:
 
 ## Testing your changes
 
-You can test your changes by calling `cli.js` directly from the cloned repository. You need to make sure the version of React Native matches the one present in devDependencies of the CLI. Otherwise, you may get unexpected errors.
+Thanks to the modular nature of the cli, when you modify it, you only need to link the changed "sub-package". For example, if I change the `run-android` command, all I need to do to test it in a fresh project is:
 
 ```sh
-node /path/to/cloned/project/packages/cli/build/index.js
+cd /path/to/cloned/project/
+yarn link-packages
+
+cd /my/new/react-native/project/
+yarn link "@react-native-community/cli-platform-ios" "@react-native-community/cli-platform-android" "@react-native-community/cli" "@react-native-community/cli-types" "@react-native-community/cli-tools" "react-native-cli"
+
+npx react-native run-android
 ```
+
+Once you're done, you just need to unlink packages with `yarn unlink-packages` in the cli folder and `yarn` in your project's folder.
 
 ## Testing `init` command
 

@@ -18,6 +18,7 @@ _Note: CLI has been extracted from core `react-native` as a part of "[Lean Core]
   - [Using global CLI (_legacy_)](#using-global-cli-legacy)
 - [Usage in an existing React Native project](#usage-in-an-existing-react-native-project)
 - [Updating the CLI](#updating-the-cli)
+- [Contributing](./CONTRIBUTING.md)
 - [Maintainers](#maintainers)
 - [License](#license)
 

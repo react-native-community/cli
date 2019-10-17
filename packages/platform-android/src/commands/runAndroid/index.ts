@@ -40,7 +40,8 @@ export interface Flags {
  * Starts the app on a connected Android emulator or device.
  */
 async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
-  if (!config.project.android) {
+  const androidProject = config.project.android;
+  if (!androidProject) {
     logger.error(
       'Android project not found. Are you sure this is a React Native project?',
     );
@@ -64,7 +65,7 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
   }
 
   if (!args.packager) {
-    return buildAndRun(args, config);
+    return buildAndRun(args, androidProject);
   }
 
   return isPackagerRunning(args.port).then(result => {
@@ -89,7 +90,7 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
         );
       }
     }
-    return buildAndRun(args, config);
+    return buildAndRun(args, androidProject);
   });
 }
 
@@ -109,11 +110,10 @@ function getPackageNameWithSuffix(
 }
 
 // Builds the app and runs it on a connected emulator / device.
-function buildAndRun(args: Flags, config: Config) {
-  const androidConfig = config.project.android;
-  if (!androidConfig) {
-    return;
-  }
+function buildAndRun(
+  args: Flags,
+  androidConfig: NonNullable<Config['project']['android']>,
+) {
   process.chdir(androidConfig.sourceDir);
 
   const gradlew = process.platform === 'win32' ? 'gradlew.bat' : './gradlew';

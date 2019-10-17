@@ -28,25 +28,6 @@ interface Config = {
   };
   commands: Command[];
 }
-type ProjectConfigT = {
-  reactNativePath: ?string,
-  project: {
-    android?: AndroidProjectParams;
-    ios?: IOSProjectParams;
-    [key: string]: any;
-  };
-  platforms: PlatformT,
-  dependencies: {
-    [key: string]: {
-      name: string,
-      root: string,
-      platforms: {
-        [key: string]: PlatformSettingsT
-      },
-    },
-  },
-  commands: CommandT[]
-};
 ```
 
 ### reactNativePath

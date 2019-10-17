@@ -4,7 +4,25 @@ A project is an app that contains React code and has a dependency on `react-nati
 
 Projects can provide additional properties to alter the CLI behavior, such as custom location of React Native files (this is useful when running RNTester from source) or a non-standard location of a project (useful when working in a brownfield app).
 
-## Interface
+## How does it work?
+
+A dependency can define the following `react-native.config.js` at the root:
+
+```js
+module.exports = {
+  project: {
+    platforms: {
+      ios: {
+        project: './Custom.xcodeproj',
+      },
+    },
+  },
+};
+```
+
+> The above configuration informs CLI about a custom project location.
+
+## Project interface
 
 ```ts
 interface Config = {

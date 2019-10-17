@@ -8,7 +8,25 @@ By default, CLI analyses the folder structure inside the dependency and looks fo
 
 At the same time, a dependency can explicitly set its configuration in case CLI cannot infer it properly.
 
-## Interface
+## How does it work?
+
+A dependency can define the following `react-native.config.js` at the root:
+
+```js
+module.exports = {
+  dependency: {
+    platforms: {
+      ios: {
+        project: './Custom.xcodeproj',
+      },
+    },
+  },
+};
+```
+
+> The above configuration informs CLI about a custom project location.
+
+## Dependency interface
 
 The following type describes the configuration of a dependency that can be set under `dependency` key inside `react-native.config.js`.
 

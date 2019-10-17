@@ -40,23 +40,6 @@ test('should have a valid structure by default', () => {
   expect(removeString(config, DIR)).toMatchSnapshot();
 });
 
-test('should handle deprecated "rnpm" in project root', () => {
-  writeFiles(DIR, {
-    'package.json': `{
-      "rnpm": {
-        "assets": ["./fonts"]
-      }
-    }`,
-    'fonts/SampleFont.ttf': '',
-  });
-  const config = loadConfig(DIR);
-
-  expect(removeString(config, DIR)).toMatchSnapshot('returns valid config');
-  expect(logger.warn).toBeCalledWith(
-    expect.stringMatching(/Your project is using deprecated/),
-  );
-});
-
 test('should return dependencies from package.json', () => {
   writeFiles(DIR, {
     'node_modules/react-native/package.json': '{}',
@@ -105,11 +88,6 @@ test('should merge project configuration with default values', () => {
   writeFiles(DIR, {
     'node_modules/react-native/package.json': '{}',
     'node_modules/react-native-test/package.json': '{}',
-    'node_modules/react-native-test/react-native.config.js': `module.exports = {
-      dependency: {
-        assets: ["foo", "baz"]
-      }
-    }`,
     'node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj':
       '',
     'package.json': `{
@@ -127,7 +105,6 @@ test('should merge project configuration with default values', () => {
               sourceDir: "./abc"
             }
           },
-          assets: ["foo"]
         }
       }
     }`,
@@ -136,35 +113,6 @@ test('should merge project configuration with default values', () => {
   expect(removeString(dependencies['react-native-test'], DIR)).toMatchSnapshot(
     'snapshoting `react-native-test` config',
   );
-});
-
-test('should read `rnpm` config from a dependency and transform it to a new format', () => {
-  writeFiles(DIR, {
-    'node_modules/react-native/package.json': '{}',
-    'node_modules/react-native-foo/package.json': `{
-      "name": "react-native-foo",
-      "rnpm": {
-        "ios": {
-          "project": "./customLocation/customProject.xcodeproj"
-        },
-        "haste": {
-          "platforms": ["dummy"],
-          "providesModuleNodeModules": ["react-native-dummy"]
-        }
-      }
-    }`,
-    'package.json': `{
-      "dependencies": {
-        "react-native": "0.0.1",
-        "react-native-foo": "0.0.1"
-      }
-    }`,
-  });
-  const {dependencies, haste} = loadConfig(DIR);
-  expect(removeString(dependencies['react-native-foo'], DIR)).toMatchSnapshot(
-    'foo config',
-  );
-  expect(haste).toMatchSnapshot('haste config');
 });
 
 test('should load commands from "react-native-foo" and "react-native-bar" packages', () => {
@@ -200,32 +148,22 @@ test('should load commands from "react-native-foo" and "react-native-bar" packag
 
 test('should load an out-of-tree "windows" platform that ships with a dependency', () => {
   writeFiles(DIR, {
-    'node_modules/react-native-windows/platform.js': `
-      module.exports = {"windows": {}};
-    `,
-    'node_modules/react-native-windows/plugin.js': `
-      module.exports = [];
-    `,
-    'node_modules/react-native-windows/package.json': `{
-      "name": "react-native-windows",
-      "rnpm": {
-        "haste": {
-          "platforms": [
-            "windows"
-          ],
-          "providesModuleNodeModules": [
-            "react-native-windows"
-          ]
-        },
-        "plugin": "./plugin.js",
-        "platform": "./platform.js"
-      }
-    }`,
     'package.json': `{
       "dependencies": {
-        "react-native-windows": "0.0.1"
+        "react-native-windows": "*"
       }
     }`,
+    'node_modules/react-native-windows/package.json': '{}',
+    'node_modules/react-native-windows/react-native.config.js': `
+      module.exports = {
+        platforms: {
+          windows: {
+            projectConfig: () => {},
+            dependencyConfig: () => {}
+          },
+        },
+      };
+    `,
   });
   const {haste, platforms} = loadConfig(DIR);
   expect(removeString({haste, platforms}, DIR)).toMatchSnapshot();
@@ -337,23 +275,12 @@ module.exports = {
   const {dependencies} = loadConfig(DIR);
   expect(removeString(dependencies['local-lib'], DIR)).toMatchInlineSnapshot(`
     Object {
-      "assets": Array [],
-      "hooks": Object {},
       "name": "local-lib",
-      "params": Array [],
       "platforms": Object {
         "android": null,
         "ios": Object {
-          "folder": "<<REPLACED>>/native-libs/local-lib",
-          "libraryFolder": "Libraries",
-          "pbxprojPath": "<<REPLACED>>/native-libs/local-lib/ios/LocalRNLibrary.xcodeproj/project.pbxproj",
-          "plist": Array [],
-          "podfile": null,
           "podspecPath": "custom-path",
-          "projectName": "LocalRNLibrary.xcodeproj",
-          "projectPath": "<<REPLACED>>/native-libs/local-lib/ios/LocalRNLibrary.xcodeproj",
           "scriptPhases": Array [],
-          "sharedLibraries": Array [],
           "sourceDir": "<<REPLACED>>/native-libs/local-lib/ios",
         },
       },

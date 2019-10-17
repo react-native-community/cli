@@ -6,50 +6,46 @@ Projects can provide additional properties to alter the CLI behavior, such as cu
 
 ## How does it work?
 
-A project can define a `react-native.config.js` at the root with custom configuration to be picked up by the CLI.
-
-For example, below configuration informs CLI of the additional assets to link and about a custom project location.
+A project can define the following `react-native.config.js` at the root:
 
 ```js
 module.exports = {
   project: {
-    ios: {
-      project: './CustomProject.xcodeproj',
+    platforms: {
+      ios: {
+        project: './Custom.xcodeproj',
+      },
     },
   },
-  assets: ['./assets'],
 };
 ```
 
-You can check all available options below.
+> The above configuration informs CLI about a custom project location.
 
 ## Project interface
 
 ```ts
-type ProjectConfigT = {
-  reactNativePath: ?string,
-  project: {
-    android?: ProjectParamsAndroidT,
-    ios?: ProjectParamsIOST,
-    [key: string]: any,
-  },
-  assets: string[],
-  platforms: PlatformT,
-  dependencies: {
-    [key: string]: {
-      name: string,
-      root: string,
-      platforms: {
-        [key: string]: PlatformSettingsT
-      },
-      assets: string[],
-      hooks: {
-        [key: string]: string
-      }
-    },
-  },
-  commands: CommandT[]
-};
+interface Config = {
+  reactNativePath: string;
+  project: ProjectConfig;
+  dependencies: {[key: string]: Dependency};
+  platforms: {
+    android: PlatformConfig<
+      AndroidProjectConfig,
+      AndroidProjectParams,
+      AndroidDependencyConfig,
+      AndroidDependencyParams
+    >;
+    ios: PlatformConfig<
+      IOSProjectConfig,
+      IOSProjectParams,
+      IOSDependencyConfig,
+      IOSDependencyParams
+    >;
+    [name: string]: PlatformConfig<any, any, any, any>;
+  };
+  commands: Command[];
+}
 ```
 
 ### reactNativePath
@@ -66,30 +62,17 @@ In most cases, as a React Native developer, you should not need to define any of
 The following settings are available on iOS and Android:
 
 ```ts
-type ProjectParamsAndroidT = {
+interface AndroidProjectParams {
   sourceDir?: string;
   manifestPath?: string;
   packageName?: string;
-  packageFolder?: string;
-  mainFilePath?: string;
-  stringsPath?: string;
-  settingsGradlePath?: string;
-  assetsPath?: string;
-  buildGradlePath?: string;
-};
+}
 
-type ProjectParamsIOST = {
+interface IOSProjectParams {
   project?: string;
-  podspecPath?: string;
-  sharedLibraries?: string[];
-  libraryFolder?: string;
-  plist: any[];
-};
+  scriptPhases?: Array<any>;
+}
 ```
-
-### assets
-
-An array of folders to check for project assets
 
 ### platforms
 
@@ -135,32 +118,6 @@ The object provided here is deep merged with the dependency config. Check [`proj
 
 > Note: This is an advanced feature and you should not need to use it mos of the time.
 
-## Migrating from `rnpm` configuration
+## Migrating from `rnpm`
 
-The changes are mostly cosmetic so the migration should be pretty straight-forward.
-
-### Changing the configuration
-
-Properties `ios` and `android` were moved under `project`. Take a look at the following example for the differences.
-
-```json
-{
-  "rnpm": {
-    "ios": {},
-    "android": {},
-    "assets": ["./path-to-assets"]
-  }
-}
-```
-
-to a `react-native.config.js`
-
-```js
-module.exports = {
-  project: {
-    ios: {},
-    android: {},
-  },
-  assets: ['./path-to-assets'],
-};
-```
+Support for `rnpm` has been removed with the 4.x release of the CLI. If your project or library still uses `rnpm` for altering the behaviour of the CLI, please check [documentation of the older CLI release](https://github.com/react-native-community/cli/blob/3.x/docs/projects.md#migrating-from-rnpm-configuration) for steps on how to migrate.

@@ -99,3 +99,7 @@ module.exports = {
 The object provided here is deep merged with the dependency config. Check [`projectConfig`](platforms.md#projectconfig) and [`dependencyConfig`](platforms.md#dependencyConfig) return values for a full list of properties that you can override.
 
 > Note: This is an advanced feature and you should not need to use it mos of the time.
+
+## Migrating from `rnpm`
+
+Support for `rnpm` has been removed with the 4.x release of the CLI. If your project or library still uses `rnpm` for altering the behaviour of the CLI, please check [documentation of the older CLI release](https://github.com/react-native-community/cli/blob/3.x/docs/projects.md#migrating-from-rnpm-configuration) for steps on how to migrate.

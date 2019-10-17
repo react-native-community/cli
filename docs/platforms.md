@@ -126,3 +126,7 @@ interface AndroidDependencyConfig {
   packageInstance: string;
 }
 ```
+
+## Migrating from `rnpm`
+
+Support for `rnpm` has been removed with the 4.x release of the CLI. If your project or library still uses `rnpm` for altering the behaviour of the CLI, please check [documentation of the older CLI release](https://github.com/react-native-community/cli/blob/3.x/docs/platforms.md#migrating-from-rnpm-configuration) for steps on how to migrate.

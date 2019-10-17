@@ -107,3 +107,7 @@ Custom package import. For example: `import com.acme.AwesomePackage;`.
 Custom syntax to instantiate a package. By default, it's a `new AwesomePackage()`. It can be useful when your package requires additional arguments while initializing.
 
 For settings applicable on other platforms, please consult their respective documentation.
+
+## Migrating from `rnpm`
+
+Support for `rnpm` has been removed with the 4.x release of the CLI. If your project or library still uses `rnpm` for altering the behaviour of the CLI, please check [documentation of the older CLI release](https://github.com/react-native-community/cli/blob/3.x/docs/dependencies.md#migrating-from-rnpm-configuration) for steps on how to migrate.

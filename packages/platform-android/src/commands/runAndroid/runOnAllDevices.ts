@@ -10,8 +10,6 @@ import chalk from 'chalk';
 import {execFileSync} from 'child_process';
 import {logger, CLIError} from '@react-native-community/cli-tools';
 import adb from './adb';
-// @ts-ignore untyped
-import inquirer from 'inquirer';
 import tryRunAdbReverse from './tryRunAdbReverse';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
 import tryLaunchEmulator from './tryLaunchEmulator';
@@ -36,9 +34,8 @@ async function runOnAllDevices(
   packageNameWithSuffix: string,
   packageName: string,
   adbPath: string,
+  devices: Array<string | void>,
 ) {
-  let devices = adb.getDevices(adbPath);
-
   if (devices.length === 0) {
     logger.info('Launching emulator(s)...');
     const result = await tryLaunchEmulator(adbPath, args.interactive);
@@ -73,14 +70,11 @@ async function runOnAllDevices(
     throw createInstallError(error);
   }
 
-  if (devices && devices.length > 1 && devices.filter(Boolean).length > 1 && args.interactive) {
-    devices = await chooseDevice(devices);
-  }
-
-  (devices.length > 0 ? devices : [undefined]).forEach(
-    (device: string | void) => {
+  if (devices.length > 0) {
+    for (let i = 0; i < devices.length; i++) {
+      const device = devices[i];
       tryRunAdbReverse(args.port, device);
-      tryLaunchAppOnDevice(
+      await tryLaunchAppOnDevice(
         device,
         packageNameWithSuffix,
         packageName,
@@ -88,30 +82,18 @@ async function runOnAllDevices(
         args.mainActivity,
         args.interactive,
       );
-    },
-  );
-}
-
-async function chooseDevice(
-  devices: Array<string | void>
-) {
-  const {chosenDevice} = await inquirer.prompt([
-    {
-      type: 'list',
-      name: 'chosenDevice',
-      message: 'On which device would you like to launch the app?\n(This behaviour can be avoided using the --no-interactive flag)',
-      choices: [
-        ...devices,
-        'All of them',
-      ]
-    },
-  ]);
-
-  if (chosenDevice === 'All of them') {
-    return devices;
+    }
+  } else {
+    tryRunAdbReverse(args.port, undefined);
+    tryLaunchAppOnDevice(
+      undefined,
+      packageNameWithSuffix,
+      packageName,
+      adbPath,
+      args.mainActivity,
+      args.interactive,
+    );
   }
-
-  return [chosenDevice];
 }
 
 function createInstallError(error: Error & {stderr: string}) {

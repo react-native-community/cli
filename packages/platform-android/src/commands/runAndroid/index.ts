@@ -10,6 +10,8 @@ import execa from 'execa';
 import chalk from 'chalk';
 import fs from 'fs';
 import {Config} from '@react-native-community/cli-types';
+// @ts-ignore untyped
+import inquirer from 'inquirer';
 import adb from './adb';
 import runOnAllDevices from './runOnAllDevices';
 import tryRunAdbReverse from './tryRunAdbReverse';
@@ -74,33 +76,34 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
   }
 
   if (!args.packager) {
-    return buildAndRun(args);
+    return await buildAndRun(args);
   }
 
-  return isPackagerRunning(args.port).then(result => {
-    if (result === 'running') {
-      logger.info('JS server already running.');
-    } else if (result === 'unrecognized') {
-      logger.warn('JS server not recognized, continuing with build...');
-    } else {
-      // result == 'not_running'
-      logger.info('Starting JS server...');
-      try {
-        startServerInNewWindow(
-          args.port,
-          args.terminal,
-          config.reactNativePath,
-        );
-      } catch (error) {
-        logger.warn(
-          `Failed to automatically start the packager server. Please run "react-native start" manually. Error details: ${
-            error.message
-          }`,
-        );
-      }
+  const result = await isPackagerRunning(args.port);
+
+  if (result === 'running') {
+    logger.info('JS server already running.');
+  } else if (result === 'unrecognized') {
+    logger.warn('JS server not recognized, continuing with build...');
+  } else {
+    // result == 'not_running'
+    logger.info('Starting JS server...');
+    try {
+      startServerInNewWindow(
+        args.port,
+        args.terminal,
+        config.reactNativePath,
+      );
+    } catch (error) {
+      logger.warn(
+        `Failed to automatically start the packager server. Please run "react-native start" manually. Error details: ${
+        error.message
+        }`,
+      );
     }
-    return buildAndRun(args);
-  });
+  }
+
+  return await buildAndRun(args);
 }
 
 function getPackageNameWithSuffix(
@@ -119,7 +122,7 @@ function getPackageNameWithSuffix(
 }
 
 // Builds the app and runs it on a connected emulator / device.
-function buildAndRun(args: Flags) {
+async function buildAndRun(args: Flags) {
   process.chdir(path.join(args.root, 'android'));
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
 
@@ -136,13 +139,24 @@ function buildAndRun(args: Flags) {
     packageName,
   );
   const adbPath = getAdbPath();
-  if (args.deviceId) {
+  let devices;
+
+  if (!args.deviceId) {
+    devices = adb.getDevices(adbPath);
+  }
+
+  if (devices && devices.length > 1 && devices.filter(Boolean).length > 1 && args.interactive) {
+    devices = await chooseDevice(devices);
+  }
+
+  if (args.deviceId || devices.length === 1) {
     return runOnSpecificDevice(
       args,
       cmd,
       packageNameWithSuffix,
       packageName,
       adbPath,
+      devices,
     );
   } else {
     return runOnAllDevices(
@@ -151,8 +165,31 @@ function buildAndRun(args: Flags) {
       packageNameWithSuffix,
       packageName,
       adbPath,
+      devices,
     );
   }
+}
+
+async function chooseDevice(
+  devices: Array<string>
+) {
+  const {chosenDevice} = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'chosenDevice',
+      message: 'On which device would you like to launch the app?\n(This behaviour can be avoided using the --no-interactive flag)',
+      choices: [
+        ...devices,
+        'All of them',
+      ]
+    },
+  ]);
+
+  if (chosenDevice === 'All of them') {
+    return devices;
+  }
+
+  return [chosenDevice];
 }
 
 function runOnSpecificDevice(
@@ -161,9 +198,10 @@ function runOnSpecificDevice(
   packageNameWithSuffix: string,
   packageName: string,
   adbPath: string,
+  devices: Array<string>,
 ) {
-  const devices = adb.getDevices(adbPath);
   const {deviceId} = args;
+
   if (devices.length > 0 && deviceId) {
     if (devices.indexOf(deviceId) !== -1) {
       buildApk(gradlew);
@@ -180,6 +218,15 @@ function runOnSpecificDevice(
         ...devices,
       );
     }
+  } else if (devices.length === 1) {
+    buildApk(gradlew);
+    installAndLaunchOnDevice(
+      args,
+      devices[0],
+      packageNameWithSuffix,
+      packageName,
+      adbPath,
+    );
   } else {
     logger.error('No Android devices connected.');
   }

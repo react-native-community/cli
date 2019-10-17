@@ -22,7 +22,7 @@ function parseDevicesResult(result: string): Array<string> {
   for (let i = 0; i < lines.length; i++) {
     const words = lines[i].split(/[ ,\t]+/).filter(w => w !== '');
 
-    if (words[1] === 'device') {
+    if (words[1] === 'device' && words[0] !== '') {
       devices.push(words[0]);
     }
   }

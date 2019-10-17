@@ -4,30 +4,36 @@
  *
  * See UserDependencyConfigT and UserConfigT for details
  */
+type ScriptPhase = {
+  name: string;
+  path: string;
+  execution_position: string;
+};
+
 export interface IOSProjectParams {
   project?: string;
-  podspecPath?: string;
-  sharedLibraries?: string[];
-  libraryFolder?: string;
-  plist: Array<any>;
-  scriptPhases?: Array<any>;
+  scriptPhases?: Array<ScriptPhase>;
 }
 
-export interface IOSDependencyParams extends IOSProjectParams {}
+export interface IOSDependencyParams {
+  project?: string;
+  podspecPath?: string;
+  scriptPhases?: Array<ScriptPhase>;
+}
 
-// The following types are used in untyped-parts of the codebase, so I am leaving them
-// until we actually need them.
 export interface IOSProjectConfig {
   sourceDir: string;
-  folder: string;
-  pbxprojPath: string;
-  podfile: string;
-  podspecPath: string;
-  projectPath: string;
-  projectName: string;
-  libraryFolder: string;
-  sharedLibraries: Array<any>;
-  plist: Array<any>;
+  scriptPhases: Array<ScriptPhase>;
+
+  podfile: string | null;
 }
 
-export interface IOSDependencyConfig extends IOSProjectConfig {}
+export interface IOSDependencyConfig {
+  sourceDir: string;
+  scriptPhases: Array<{
+    name: string;
+    path: string;
+    execution_position: string;
+  }>;
+  podspecPath: string | null;
+}

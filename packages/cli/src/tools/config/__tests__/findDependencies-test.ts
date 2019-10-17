@@ -20,8 +20,8 @@ test('returns plugins from both dependencies and dev dependencies', () => {
   writeFiles(DIR, {
     'package.json': `
       {
-        "dependencies": {"rnpm-plugin-test": "*"},
-        "devDependencies": {"rnpm-plugin-test-2": "*"}
+        "dependencies": {"a-plugin-test": "*"},
+        "devDependencies": {"b-plugin-test-2": "*"}
       }
     `,
   });

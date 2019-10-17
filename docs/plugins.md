@@ -107,48 +107,6 @@ String that describes this particular usage.
 
 A command with arguments and options (if applicable) that can be run in order to achieve the desired goal.
 
-## Migrating from `rnpm` configuration
+## Migrating from `rnpm`
 
-The changes are mostly cosmetic so the migration should be pretty straight-forward.
-
-### Changing the configuration
-
-A `plugin` property should be renamed to `commands`.
-
-For example, the following `rnpm` configuration inside `package.json`:
-
-```json
-{
-  "rnpm": {
-    "plugin": "./path-to-commands.js"
-  }
-}
-```
-
-should be moved to a `react-native.config.js`:
-
-```js
-module.exports = {
-  commands: require('./path-to-commands.js'),
-};
-```
-
-provided that `./path-to-commands.js` returns an array of commands.
-
-### Renaming command options
-
-If your command accepts options, rename `command` property of each of them to `name`.
-
-```diff
- module.exports = {
-   name: 'foo',
-   func: () => console.log('My work'),
-   options: [
-     {
--      command: '--reset-cache, --resetCache',
-+      name: '--reset-cache, --resetCache',
-       description: 'Removes cached files',
-     }
-   ]
- }
-```
+Support for `rnpm` has been removed with the 4.x release of the CLI. If your project or library still uses `rnpm` for altering the behaviour of the CLI, please check [documentation of the older CLI release](https://github.com/react-native-community/cli/blob/3.x/docs/plugins.md#migrating-from-rnpm-configuration) for steps on how to migrate.

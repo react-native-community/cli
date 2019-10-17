@@ -21,7 +21,6 @@ import {
   getDefaultUserTerminal,
   CLIError,
 } from '@react-native-community/cli-tools';
-import warnAboutManuallyLinkedLibs from '../../link/warnAboutManuallyLinkedLibs';
 
 // Verifies this is an Android project
 function checkAndroid(root: string) {
@@ -53,8 +52,6 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
     );
     return;
   }
-
-  warnAboutManuallyLinkedLibs(config);
 
   if (args.jetifier) {
     logger.info(

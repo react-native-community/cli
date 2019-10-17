@@ -45,39 +45,25 @@ export const dependencyConfig = t
         platforms: map(t.string(), t.any())
           .keys({
             ios: t
+              // IOSDependencyParams
               .object({
                 project: t.string(),
                 podspecPath: t.string(),
-                sharedLibraries: t.array().items(t.string()),
-                libraryFolder: t.string(),
                 scriptPhases: t.array().items(t.object()),
               })
               .default({}),
             android: t
+              // AndroidDependencyParams
               .object({
                 sourceDir: t.string(),
                 manifestPath: t.string(),
                 packageImportPath: t.string(),
                 packageInstance: t.string(),
+                packageName: t.string(),
               })
               .default({}),
           })
           .default(),
-        assets: t
-          .array()
-          .items(t.string())
-          .default([]),
-        hooks: map(t.string(), t.string()).default({}),
-        params: t
-          .array()
-          .items(
-            t.object({
-              name: t.string(),
-              type: t.string(),
-              message: t.string(),
-            }),
-          )
-          .default([]),
       })
       .default(),
     platforms: map(
@@ -85,7 +71,9 @@ export const dependencyConfig = t
       t.object({
         dependencyConfig: t.func(),
         projectConfig: t.func(),
-        linkConfig: t.func(),
+
+        // Leaving so that 3rd party platforms don't fail. To be removed in 5.x
+        linkConfig: t.any(),
       }),
     ).default({}),
     commands: t
@@ -108,36 +96,23 @@ export const projectConfig = t
           root: t.string(),
           platforms: map(t.string(), t.any()).keys({
             ios: t
+              // IOSDependencyConfig
               .object({
                 sourceDir: t.string(),
-                folder: t.string(),
-                pbxprojPath: t.string(),
-                podfile: t.string(),
                 podspecPath: t.string(),
-                projectPath: t.string(),
-                projectName: t.string(),
-                libraryFolder: t.string(),
-                sharedLibraries: t.array().items(t.string()),
+                scriptPhases: t.array().items(t.object()),
               })
               .allow(null),
             android: t
+              // AndroidDependencyConfig
               .object({
                 sourceDir: t.string(),
-                folder: t.string(),
+                packageName: t.string(),
                 packageImportPath: t.string(),
                 packageInstance: t.string(),
               })
               .allow(null),
           }),
-          assets: t.array().items(t.string()),
-          hooks: map(t.string(), t.string()),
-          params: t.array().items(
-            t.object({
-              name: t.string(),
-              type: t.string(),
-              message: t.string(),
-            }),
-          ),
         })
         .allow(null),
     ).default({}),
@@ -145,31 +120,22 @@ export const projectConfig = t
     project: map(t.string(), t.any())
       .keys({
         ios: t
+          // IOSProjectParams
           .object({
             project: t.string(),
-            sharedLibraries: t.array().items(t.string()),
-            libraryFolder: t.string(),
+            scriptPhases: t.array().items(t.object()),
           })
           .default({}),
         android: t
+          // AndroidProjectParams
           .object({
             sourceDir: t.string(),
             manifestPath: t.string(),
             packageName: t.string(),
-            packageFolder: t.string(),
-            mainFilePath: t.string(),
-            stringsPath: t.string(),
-            settingsGradlePath: t.string(),
-            assetsPath: t.string(),
-            buildGradlePath: t.string(),
           })
           .default({}),
       })
       .default(),
-    assets: t
-      .array()
-      .items(t.string())
-      .default([]),
     commands: t
       .array()
       .items(command)
@@ -179,7 +145,6 @@ export const projectConfig = t
       t.object({
         dependencyConfig: t.func(),
         projectConfig: t.func(),
-        linkConfig: t.func(),
       }),
     ).default({}),
   })

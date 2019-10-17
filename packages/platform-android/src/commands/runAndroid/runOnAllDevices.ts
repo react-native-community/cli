@@ -7,7 +7,7 @@
  */
 
 import chalk from 'chalk';
-import {execFileSync} from 'child_process';
+import execa from 'execa';
 import {logger, CLIError} from '@react-native-community/cli-tools';
 import adb from './adb';
 import tryRunAdbReverse from './tryRunAdbReverse';
@@ -34,6 +34,7 @@ async function runOnAllDevices(
   packageNameWithSuffix: string,
   packageName: string,
   adbPath: string,
+  sourceDir: string,
 ) {
   let devices = adb.getDevices(adbPath);
   if (devices.length === 0) {
@@ -65,7 +66,10 @@ async function runOnAllDevices(
       `Running command "cd android && ${cmd} ${gradleArgs.join(' ')}"`,
     );
 
-    execFileSync(cmd, gradleArgs, {stdio: ['inherit', 'inherit', 'pipe']});
+    await execa(cmd, gradleArgs, {
+      stdio: ['inherit', 'inherit', 'pipe'],
+      cwd: sourceDir,
+    });
   } catch (error) {
     throw createInstallError(error);
   }

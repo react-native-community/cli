@@ -65,7 +65,7 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
   }
 
   if (!args.packager) {
-    return buildAndRun(args, androidProject);
+    return buildAndRun(args, androidProject.sourceDir);
   }
 
   return isPackagerRunning(args.port).then(result => {
@@ -90,7 +90,7 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
         );
       }
     }
-    return buildAndRun(args, androidProject);
+    return buildAndRun(args, androidProject.sourceDir);
   });
 }
 
@@ -110,17 +110,15 @@ function getPackageNameWithSuffix(
 }
 
 // Builds the app and runs it on a connected emulator / device.
-function buildAndRun(
-  args: Flags,
-  androidConfig: NonNullable<Config['project']['android']>,
-) {
-  process.chdir(androidConfig.sourceDir);
-
+function buildAndRun(args: Flags, sourceDir: string) {
   const gradlew = process.platform === 'win32' ? 'gradlew.bat' : './gradlew';
 
   // @ts-ignore
   const packageName = fs
-    .readFileSync(`${args.appFolder}/src/main/AndroidManifest.xml`, 'utf8')
+    .readFileSync(
+      `${sourceDir}/${args.appFolder}/src/main/AndroidManifest.xml`,
+      'utf8',
+    )
     .match(/package="(.+?)"/)[1];
 
   const packageNameWithSuffix = getPackageNameWithSuffix(
@@ -136,6 +134,7 @@ function buildAndRun(
       packageNameWithSuffix,
       packageName,
       adbPath,
+      sourceDir,
     );
   } else {
     return runOnAllDevices(
@@ -144,6 +143,7 @@ function buildAndRun(
       packageNameWithSuffix,
       packageName,
       adbPath,
+      sourceDir,
     );
   }
 }
@@ -154,18 +154,20 @@ function runOnSpecificDevice(
   packageNameWithSuffix: string,
   packageName: string,
   adbPath: string,
+  sourceDir: string,
 ) {
   const devices = adb.getDevices(adbPath);
   const {deviceId} = args;
   if (devices.length > 0 && deviceId) {
     if (devices.indexOf(deviceId) !== -1) {
-      buildApk(gradlew);
+      buildApk(gradlew, sourceDir);
       installAndLaunchOnDevice(
         args,
         deviceId,
         packageNameWithSuffix,
         packageName,
         adbPath,
+        sourceDir,
       );
     } else {
       logger.error(
@@ -178,24 +180,29 @@ function runOnSpecificDevice(
   }
 }
 
-function buildApk(gradlew: string) {
+function buildApk(gradlew: string, sourceDir: string) {
   try {
     // using '-x lint' in order to ignore linting errors while building the apk
     const gradleArgs = ['build', '-x', 'lint'];
     logger.info('Building the app...');
     logger.debug(`Running command "${gradlew} ${gradleArgs.join(' ')}"`);
-    execa.sync(gradlew, gradleArgs, {stdio: 'inherit'});
+    execa.sync(gradlew, gradleArgs, {stdio: 'inherit', cwd: sourceDir});
   } catch (error) {
     throw new CLIError('Failed to build the app.', error);
   }
 }
 
-function tryInstallAppOnDevice(args: Flags, adbPath: string, device: string) {
+function tryInstallAppOnDevice(
+  args: Flags,
+  adbPath: string,
+  device: string,
+  sourceDir: string,
+) {
   try {
     // "app" is usually the default value for Android apps with only 1 app
     const {appFolder} = args;
     const variant = args.variant.toLowerCase();
-    const buildDirectory = `${appFolder}/build/outputs/apk/${variant}`;
+    const buildDirectory = `${sourceDir}/${appFolder}/build/outputs/apk/${variant}`;
     const apkFile = getInstallApkName(
       appFolder,
       adbPath,
@@ -248,9 +255,10 @@ function installAndLaunchOnDevice(
   packageNameWithSuffix: string,
   packageName: string,
   adbPath: string,
+  sourceDir: string,
 ) {
   tryRunAdbReverse(args.port, selectedDevice);
-  tryInstallAppOnDevice(args, adbPath, selectedDevice);
+  tryInstallAppOnDevice(args, adbPath, selectedDevice, sourceDir);
   tryLaunchAppOnDevice(
     selectedDevice,
     packageNameWithSuffix,
@@ -260,7 +268,6 @@ function installAndLaunchOnDevice(
   );
 }
 
-// @ts-ignore
 function startServerInNewWindow(
   port: number,
   terminal: string,
@@ -269,7 +276,7 @@ function startServerInNewWindow(
   /**
    * Set up OS-specific filenames and commands
    */
-  const isWindows = /^win/.test(process.platform);
+  const isWindows = process.platform === 'win32';
   const scriptFile = isWindows
     ? 'launchPackager.bat'
     : 'launchPackager.command';
@@ -359,6 +366,7 @@ function startServerInNewWindow(
   logger.error(
     `Cannot start the packager. Unknown platform ${process.platform}`,
   );
+  return;
 }
 
 export default {

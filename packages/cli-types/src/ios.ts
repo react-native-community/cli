@@ -25,7 +25,7 @@ export interface IOSProjectConfig {
   sourceDir: string;
   scriptPhases: Array<ScriptPhase>;
 
-  podfile: string | undefined;
+  podfile: string | null;
 }
 
 export interface IOSDependencyConfig {
@@ -35,5 +35,5 @@ export interface IOSDependencyConfig {
     path: string;
     execution_position: string;
   }>;
-  podspecPath: string | undefined;
+  podspecPath: string | null;
 }

@@ -80,7 +80,7 @@ interface IOSProjectConfig {
     path: string;
     execution_position: string;
   }>;
-  podfile: string | undefined;
+  podfile: string | null;
 }
 
 interface AndroidProjectConfig {
@@ -115,7 +115,7 @@ interface IOSDependencyConfig {
     path: string;
     execution_position: string;
   }>;
-  podspecPath: string | undefined;
+  podspecPath: string | null;
 }
 
 interface AndroidDependencyConfig {

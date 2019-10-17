@@ -40,7 +40,7 @@ export function projectConfig(
 
   return {
     sourceDir,
-    podfile: fs.existsSync(podfile) ? podfile : undefined,
+    podfile: fs.existsSync(podfile) ? podfile : null,
     scriptPhases: userConfig.scriptPhases || [],
   };
 }

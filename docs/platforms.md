@@ -75,7 +75,11 @@ On Android and iOS, this function returns:
 ```ts
 interface IOSProjectConfig {
   sourceDir: string;
-  scriptPhases: Array<any>;
+  scriptPhases: Array<{
+    name: string;
+    path: string;
+    execution_position: string;
+  }>;
 
   podfile?: string;
 }
@@ -107,7 +111,11 @@ On Android and iOS, this function returns:
 ```ts
 interface IOSDependencyConfig {
   sourceDir: string;
-  scriptPhases: Array<any>;
+  scriptPhases: Array<{
+    name: string;
+    path: string;
+    execution_position: string;
+  }>;
 
   podspecPath?: string;
 }

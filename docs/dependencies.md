@@ -34,7 +34,11 @@ The following settings are available on iOS and Android:
 interface IOSDependencyParams {
   project?: string;
   podspecPath?: string;
-  scriptPhases?: Array<any>;
+  scriptPhases?: Array<{
+    name: string;
+    path: string;
+    execution_position: string;
+  }>;
 }
 
 interface AndroidDependencyParams {

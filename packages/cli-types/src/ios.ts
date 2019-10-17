@@ -4,27 +4,36 @@
  *
  * See UserDependencyConfigT and UserConfigT for details
  */
+type ScriptPhase = {
+  name: string;
+  path: string;
+  execution_position: string;
+};
+
 export interface IOSProjectParams {
   project?: string;
-  scriptPhases?: Array<any>;
+  scriptPhases?: Array<ScriptPhase>;
 }
 
 export interface IOSDependencyParams {
   project?: string;
   podspecPath?: string;
-  scriptPhases?: Array<any>;
+  scriptPhases?: Array<ScriptPhase>;
 }
 
 export interface IOSProjectConfig {
   sourceDir: string;
-  scriptPhases: Array<any>;
+  scriptPhases: Array<ScriptPhase>;
 
   podfile?: string;
 }
 
 export interface IOSDependencyConfig {
   sourceDir: string;
-  scriptPhases: Array<any>;
-
+  scriptPhases: Array<{
+    name: string;
+    path: string;
+    execution_position: string;
+  }>;
   podspecPath?: string;
 }

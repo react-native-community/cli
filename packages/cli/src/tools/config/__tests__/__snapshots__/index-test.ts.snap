@@ -63,6 +63,7 @@ Object {
   "platforms": Object {
     "android": null,
     "ios": Object {
+      "podspecPath": null,
       "scriptPhases": Array [],
       "sourceDir": "./abc",
     },
@@ -110,6 +111,7 @@ Object {
     "platforms": Object {
       "android": null,
       "ios": Object {
+        "podspecPath": null,
         "scriptPhases": Array [],
         "sourceDir": "<<REPLACED>>/node_modules/react-native-test/ios",
       },

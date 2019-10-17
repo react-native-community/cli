@@ -18,23 +18,17 @@ describe('android::findAndroidAppFolder', () => {
   beforeAll(() => {
     fs.__setMockFilesystem({
       empty: {},
-      nested: {
-        android: {
-          app: mocks.valid,
-        },
-      },
       flat: {
         android: mocks.valid,
       },
     });
   });
 
-  it('returns an android app folder if it exists in the given folder', () => {
+  it('returns an android folder if it exists in the given folder', () => {
     expect(findAndroidAppFolder('/flat')).toBe('android');
-    expect(findAndroidAppFolder('/nested')).toBe('android/app');
   });
 
-  it('returns `null` if there is no android app folder', () => {
+  it('returns null if there is no android folder', () => {
     expect(findAndroidAppFolder('/empty')).toBeNull();
   });
 });

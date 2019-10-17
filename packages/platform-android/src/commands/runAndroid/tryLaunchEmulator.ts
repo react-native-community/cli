@@ -1,4 +1,6 @@
 import execa from 'execa';
+// @ts-ignore untyped
+import inquirer from 'inquirer';
 import Adb from './adb';
 
 const emulatorCommand = process.env.ANDROID_HOME
@@ -53,13 +55,50 @@ const launchEmulator = async (emulatorName: string, adbPath: string) => {
   });
 };
 
+async function chooseEmulator(
+  emulators: Array<string>
+) {
+  const {chosenEmulator} = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'chosenEmulator',
+      message: 'Which emulator would you like to launch?\n(This behaviour can be avoided using the --no-interactive flag)',
+      choices: [
+        ...emulators,
+        'All of them'
+      ],
+    },
+  ]);
+
+  if (chosenEmulator === 'All of them') {
+    return emulators;
+  }
+
+  return chosenEmulator;
+}
+
 export default async function tryLaunchEmulator(
   adbPath: string,
+  interactive: boolean,
 ): Promise<{success: boolean; error?: string}> {
   const emulators = getEmulators();
   if (emulators.length > 0) {
     try {
-      await launchEmulator(emulators[0], adbPath);
+      // Default value
+      let emulatorOrEmulators = emulators[0];
+
+      if (emulators.length > 1 && interactive) {
+        emulatorOrEmulators = await chooseEmulator(emulators);
+      }
+
+      if (Array.isArray(emulatorOrEmulators)) {
+        const promises = emulatorOrEmulators.map((emulator) => launchEmulator(emulator, adbPath));
+
+        await Promise.all(promises);
+      } else {
+        await launchEmulator(emulatorOrEmulators, adbPath);
+      }
+
       return {success: true};
     } catch (error) {
       return {success: false, error};

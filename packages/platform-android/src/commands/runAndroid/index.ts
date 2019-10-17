@@ -41,6 +41,7 @@ export interface Flags {
   port: number;
   terminal: string;
   jetifier: boolean;
+  interactive: boolean;
 }
 
 /**
@@ -263,6 +264,7 @@ function installAndLaunchOnDevice(
     packageName,
     adbPath,
     args.mainActivity,
+    args.interactive,
   );
 }
 
@@ -435,6 +437,12 @@ export default {
       name: '--no-jetifier',
       description:
         'Do not run "jetifier" – the AndroidX transition tool. By default it runs before Gradle to ease working with libraries that don\'t support AndroidX yet. See more at: https://www.npmjs.com/package/jetifier.',
+      default: false,
+    },
+    {
+      name: '--no-interactive',
+      description:
+        'Do not prompt the user for choices if applicable, choose the default value.',
       default: false,
     },
   ],

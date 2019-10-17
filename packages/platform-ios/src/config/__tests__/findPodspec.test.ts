@@ -15,9 +15,9 @@ jest.mock('fs');
 const fs = require('fs');
 
 describe('ios::findPodspec', () => {
-  it('returns undefined if there is not podspec file', () => {
+  it('returns null if there is not podspec file', () => {
     fs.__setMockFilesystem(projects.flat);
-    expect(findPodspec('')).toBeUndefined();
+    expect(findPodspec('')).toBeNull();
   });
 
   it('returns podspec name if only one exists', () => {

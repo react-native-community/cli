@@ -114,14 +114,30 @@ function getPackageNameWithSuffix(
 // Builds the app and runs it on a connected emulator / device.
 function buildAndRun(args: Flags, sourceDir: string) {
   const gradlew = process.platform === 'win32' ? 'gradlew.bat' : './gradlew';
+  const manifestPath = `${sourceDir}/${
+    args.appFolder
+  }/src/main/AndroidManifest.xml`;
+  let packageName;
+  let manifestContent;
 
-  // @ts-ignore
-  const packageName = fs
-    .readFileSync(
-      `${sourceDir}/${args.appFolder}/src/main/AndroidManifest.xml`,
-      'utf8',
-    )
-    .match(/package="(.+?)"/)[1];
+  try {
+    manifestContent = fs.readFileSync(manifestPath, 'utf8');
+  } catch (error) {
+    throw new CLIError(
+      "Failed to read AndroidManifest.xml. Maybe it's in a different Gradle project? If your project uses custom Android app directory, try `--appFolder` flag.",
+      error,
+    );
+  }
+
+  const packageMatch = manifestContent.match(/package="(.+?)"/);
+
+  if (packageMatch) {
+    packageName = packageMatch[1];
+  } else {
+    throw new CLIError(
+      "Couldn't determine the package name of your Android project. Make sure it's present in your app's AndroidManifest.xml",
+    );
+  }
 
   const packageNameWithSuffix = getPackageNameWithSuffix(
     args.appId,
@@ -351,7 +367,7 @@ function startServerInNewWindow(
       return execa.sync('sh', [launchPackagerScript], procConfig);
     }
   }
-  if (/^win/.test(process.platform)) {
+  if (process.platform === 'win32') {
     //Temporary fix for #484. See comment on line 254
     fs.writeFileSync(launchPackagerScript, launchPackagerScriptContent, {
       encoding: 'utf8',

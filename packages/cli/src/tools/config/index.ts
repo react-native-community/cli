@@ -77,10 +77,6 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
       return findAssets(projectRoot, userConfig.assets);
     },
     platforms: userConfig.platforms,
-    haste: {
-      providesModuleNodeModules: [],
-      platforms: Object.keys(userConfig.platforms),
-    },
     get project() {
       if (lazyProject) {
         return lazyProject;
@@ -156,17 +152,6 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
 
     const isPlatform = Object.keys(config.platforms).length > 0;
 
-    /**
-     * Legacy `rnpm` config required `haste` to be defined. With new config,
-     * we do it automatically.
-     *
-     * @todo: Remove this once `rnpm` config is deprecated and all major RN libs are converted.
-     */
-    const haste = config.haste || {
-      providesModuleNodeModules: isPlatform ? [dependencyName] : [],
-      platforms: Object.keys(config.platforms),
-    };
-
     return assign({}, acc, {
       dependencies: assign({}, acc.dependencies, {
         get [dependencyName](): Dependency {
@@ -184,13 +169,6 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
       platforms: {
         ...acc.platforms,
         ...config.platforms,
-      },
-      haste: {
-        providesModuleNodeModules: [
-          ...acc.haste.providesModuleNodeModules,
-          ...haste.providesModuleNodeModules,
-        ],
-        platforms: [...acc.haste.platforms, ...haste.platforms],
       },
     }) as Config;
   }, initialConfig);

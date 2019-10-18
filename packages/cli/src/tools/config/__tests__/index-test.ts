@@ -160,11 +160,10 @@ test('should read `rnpm` config from a dependency and transform it to a new form
       }
     }`,
   });
-  const {dependencies, haste} = loadConfig(DIR);
+  const {dependencies} = loadConfig(DIR);
   expect(removeString(dependencies['react-native-foo'], DIR)).toMatchSnapshot(
     'foo config',
   );
-  expect(haste).toMatchSnapshot('haste config');
 });
 
 test('should load commands from "react-native-foo" and "react-native-bar" packages', () => {
@@ -227,11 +226,11 @@ test('should load an out-of-tree "windows" platform that ships with a dependency
       }
     }`,
   });
-  const {haste, platforms} = loadConfig(DIR);
-  expect(removeString({haste, platforms}, DIR)).toMatchSnapshot();
+  const {platforms} = loadConfig(DIR);
+  expect(removeString({platforms}, DIR)).toMatchSnapshot();
 });
 
-test('should automatically put "react-native" into haste config', () => {
+test('should automatically add "react-native" as a platform', () => {
   writeFiles(DIR, {
     'node_modules/react-native/package.json': '{}',
     'package.json': `{
@@ -240,8 +239,8 @@ test('should automatically put "react-native" into haste config', () => {
       }
     }`,
   });
-  const {haste} = loadConfig(DIR);
-  expect(haste).toMatchSnapshot();
+  const {platforms} = loadConfig(DIR);
+  expect(platforms).toMatchSnapshot();
 });
 
 test('should not add default React Native config when one present', () => {

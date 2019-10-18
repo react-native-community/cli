@@ -22,12 +22,12 @@ import releaseChecker from '../../tools/releaseChecker';
 export type Args = {
   cert?: string;
   customLogReporterPath?: string;
-  key?: string;
-  config?: string;
   host?: string;
   https?: boolean;
+  key?: string;
   resetCache?: boolean;
   verbose?: boolean;
+  config?: string;
 };
 
 async function runServer(_argv: Array<string>, ctx: Config, args: Args) {

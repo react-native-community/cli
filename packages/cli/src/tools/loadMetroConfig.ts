@@ -9,7 +9,6 @@ import {loadConfig} from 'metro-config';
 import {existsSync} from 'fs';
 import {Config} from '@react-native-community/cli-types';
 import findSymlinkedModules from './findSymlinkedModules';
-import {options} from '@hapi/joi';
 
 function resolveSymlinksForRoots(roots: string[]): string[] {
   return roots.reduce<string[]>(

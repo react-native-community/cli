@@ -20,15 +20,13 @@ import loadMetroConfig from '../../tools/loadMetroConfig';
 import releaseChecker from '../../tools/releaseChecker';
 
 export type Args = {
-  customLogReporterPath?: string;
-  config?: string;
-
   cert?: string;
+  customLogReporterPath?: string;
   key?: string;
+  config?: string;
   host?: string;
   https?: boolean;
   resetCache?: boolean;
-
   verbose?: boolean;
 };
 
@@ -38,8 +36,8 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
   const reporter = new ReporterImpl(terminal);
 
   const metroConfig = await loadMetroConfig(ctx, {
-    resetCache: args.resetCache,
     config: args.config,
+    resetCache: args.resetCache,
     reporter,
   });
 

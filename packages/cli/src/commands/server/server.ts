@@ -48,7 +48,7 @@ export default {
     },
     {
       name: '--config [string]',
-      description: 'Path to the CLI configuration file',
+      description: 'Path to a custom Metro configuration file',
       parse: (val: string) => path.resolve(val),
     },
   ],

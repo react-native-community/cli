@@ -240,7 +240,7 @@ test('should automatically add "react-native" as a platform', () => {
     }`,
   });
   const {platforms} = loadConfig(DIR);
-  expect(platforms).toMatchSnapshot();
+  expect(Object.keys(platforms)).toEqual(['ios', 'android']);
 });
 
 test('should not add default React Native config when one present', () => {

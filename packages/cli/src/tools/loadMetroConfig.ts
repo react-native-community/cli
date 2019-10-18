@@ -9,6 +9,7 @@ import {loadConfig} from 'metro-config';
 import {existsSync} from 'fs';
 import {Config} from '@react-native-community/cli-types';
 import findSymlinkedModules from './findSymlinkedModules';
+import {options} from '@hapi/joi';
 
 function resolveSymlinksForRoots(roots: string[]): string[] {
   return roots.reduce<string[]>(
@@ -62,13 +63,22 @@ export interface MetroConfig {
   reporter?: any;
 }
 
+export interface ConfigOptions {
+  resetCache?: boolean;
+  config?: string;
+  reporter?: any;
+}
+
 /**
  * Default configuration
  *
  * @todo(grabbou): As a separate PR, haste.platforms should be added before "native".
  * Otherwise, a.native.js will not load on Windows or other platforms
  */
-export const getDefaultConfig = (ctx: Config): MetroConfig => {
+export const getDefaultConfig = (
+  ctx: Config,
+  opts: ConfigOptions,
+): MetroConfig => {
   const hasteImplPath = path.join(ctx.reactNativePath, 'jest/hasteImpl.js');
   return {
     resolver: {
@@ -110,19 +120,9 @@ export const getDefaultConfig = (ctx: Config): MetroConfig => {
       ),
     },
     watchFolders: getWatchFolders(),
+    reporter: opts.reporter,
   };
 };
-
-export interface ConfigOptionsT {
-  maxWorkers?: number;
-  port?: number;
-  projectRoot?: string;
-  resetCache?: boolean;
-  watchFolders?: string[];
-  sourceExts?: string[];
-  reporter?: any;
-  config?: string;
-}
 
 /**
  * Loads Metro Config and applies `options` on top of the resolved config.
@@ -131,11 +131,11 @@ export interface ConfigOptionsT {
  */
 export default function load(
   ctx: Config,
-  options?: ConfigOptionsT,
+  opts: ConfigOptions = {},
 ): Promise<MetroConfig> {
-  const defaultConfig = getDefaultConfig(ctx);
-  if (options && options.reporter) {
-    defaultConfig.reporter = options.reporter;
-  }
-  return loadConfig({cwd: ctx.root, ...options}, defaultConfig);
+  const defaultConfig = getDefaultConfig(ctx, opts);
+  return loadConfig(
+    {cwd: ctx.root, resetCache: opts.resetCache, config: opts.config},
+    defaultConfig,
+  );
 }

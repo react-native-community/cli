@@ -20,22 +20,16 @@ import loadMetroConfig from '../../tools/loadMetroConfig';
 import releaseChecker from '../../tools/releaseChecker';
 
 export type Args = {
-  assetPlugins?: string[];
-  cert?: string;
   customLogReporterPath?: string;
+  config?: string;
+
+  cert?: string;
+  key?: string;
   host?: string;
   https?: boolean;
-  maxWorkers?: number;
-  key?: string;
-  platforms?: string[];
-  port?: number;
   resetCache?: boolean;
-  sourceExts?: string[];
-  transformer?: string;
+
   verbose?: boolean;
-  watchFolders?: string[];
-  config?: string;
-  projectRoot?: string;
 };
 
 async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
@@ -44,21 +38,10 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
   const reporter = new ReporterImpl(terminal);
 
   const metroConfig = await loadMetroConfig(ctx, {
-    config: args.config,
-    maxWorkers: args.maxWorkers,
-    port: args.port,
     resetCache: args.resetCache,
-    watchFolders: args.watchFolders,
-    projectRoot: args.projectRoot,
-    sourceExts: args.sourceExts,
+    config: args.config,
     reporter,
   });
-
-  if (args.assetPlugins) {
-    metroConfig.transformer.assetPlugins = args.assetPlugins.map(plugin =>
-      require.resolve(plugin),
-    );
-  }
 
   const middlewareManager = new MiddlewareManager({
     host: args.host,

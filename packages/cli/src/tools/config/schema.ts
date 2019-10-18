@@ -56,6 +56,7 @@ export const dependencyConfig = t
               // AndroidDependencyParams
               .object({
                 sourceDir: t.string(),
+                appName: t.string(),
                 manifestPath: t.string(),
                 packageImportPath: t.string(),
                 packageInstance: t.string(),
@@ -130,6 +131,7 @@ export const projectConfig = t
           // AndroidProjectParams
           .object({
             sourceDir: t.string(),
+            appName: t.string(),
             manifestPath: t.string(),
             packageName: t.string(),
           })

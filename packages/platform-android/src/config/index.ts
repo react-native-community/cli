@@ -7,7 +7,7 @@
  */
 
 import path from 'path';
-import findAndroidAppFolder from './findAndroidAppFolder';
+import findAndroidDir from './findAndroidDir';
 import findManifest from './findManifest';
 import findPackageClassName from './findPackageClassName';
 import readManifest from './readManifest';
@@ -24,16 +24,17 @@ export function projectConfig(
   root: string,
   userConfig: AndroidProjectParams = {},
 ): AndroidProjectConfig | null {
-  const src = userConfig.sourceDir || findAndroidAppFolder(root);
+  const src = userConfig.sourceDir || findAndroidDir(root);
 
   if (!src) {
     return null;
   }
 
   const sourceDir = path.join(root, src);
+  const appName = userConfig.appName || 'app';
   const manifestPath = userConfig.manifestPath
     ? path.join(sourceDir, userConfig.manifestPath)
-    : findManifest(sourceDir);
+    : findManifest(path.join(sourceDir, appName));
 
   if (!manifestPath) {
     return null;
@@ -49,6 +50,7 @@ export function projectConfig(
 
   return {
     sourceDir,
+    appName,
     packageName,
     manifestPath,
   };
@@ -58,16 +60,17 @@ export function dependencyConfig(
   root: string,
   userConfig: AndroidDependencyParams = {},
 ) {
-  const src = userConfig.sourceDir || findAndroidAppFolder(root);
+  const src = userConfig.sourceDir || findAndroidDir(root);
 
   if (!src) {
     return null;
   }
 
   const sourceDir = path.join(root, src);
+  const appName = userConfig.appName || 'app';
   const manifestPath = userConfig.manifestPath
     ? path.join(sourceDir, userConfig.manifestPath)
-    : findManifest(sourceDir);
+    : findManifest(path.join(sourceDir, appName));
 
   if (!manifestPath) {
     return null;
@@ -91,5 +94,5 @@ export function dependencyConfig(
   const packageInstance =
     userConfig.packageInstance || `new ${packageClassName}()`;
 
-  return {sourceDir, packageName, packageImportPath, packageInstance};
+  return {sourceDir, appName, packageName, packageImportPath, packageInstance};
 }

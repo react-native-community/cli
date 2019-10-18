@@ -8,21 +8,25 @@
 
 import {logger, CLIError} from '@react-native-community/cli-tools';
 import execa from 'execa';
+import {Flags} from '.';
 
 function tryLaunchAppOnDevice(
   device: string | void,
-  packageNameWithSuffix: string,
   packageName: string,
   adbPath: string,
-  mainActivity: string,
+  args: Flags,
 ) {
+  const packageNameWithSuffix = args.appIdSuffix
+    ? `${packageName}.${args.appIdSuffix}`
+    : packageName;
+
   try {
     const adbArgs = [
       'shell',
       'am',
       'start',
       '-n',
-      `${packageNameWithSuffix}/${packageName}.${mainActivity}`,
+      `${packageNameWithSuffix}/${packageName}.${args.mainActivity}`,
     ];
     if (device) {
       adbArgs.unshift('-s', device);

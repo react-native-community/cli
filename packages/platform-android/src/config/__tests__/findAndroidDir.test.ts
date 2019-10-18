@@ -6,7 +6,7 @@
  *
  */
 
-import findAndroidAppFolder from '../findAndroidAppFolder';
+import findAndroidDir from '../findAndroidDir';
 import * as mocks from '../__fixtures__/android';
 
 jest.mock('path');
@@ -14,7 +14,7 @@ jest.mock('fs');
 
 const fs = require('fs');
 
-describe('android::findAndroidAppFolder', () => {
+describe('android::findAndroidDir', () => {
   beforeAll(() => {
     fs.__setMockFilesystem({
       empty: {},
@@ -25,10 +25,10 @@ describe('android::findAndroidAppFolder', () => {
   });
 
   it('returns an android folder if it exists in the given folder', () => {
-    expect(findAndroidAppFolder('/flat')).toBe('android');
+    expect(findAndroidDir('/flat')).toBe('android');
   });
 
   it('returns null if there is no android folder', () => {
-    expect(findAndroidAppFolder('/empty')).toBeNull();
+    expect(findAndroidDir('/empty')).toBeNull();
   });
 });

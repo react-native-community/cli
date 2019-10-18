@@ -64,6 +64,7 @@ The following settings are available on iOS and Android:
 ```ts
 interface AndroidProjectParams {
   sourceDir?: string;
+  appName?: string;
   manifestPath?: string;
   packageName?: string;
 }

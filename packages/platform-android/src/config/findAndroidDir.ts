@@ -9,7 +9,7 @@
 import fs from 'fs';
 import path from 'path';
 
-export default function findAndroidAppFolder(root: string) {
+export default function findAndroidDir(root: string) {
   if (fs.existsSync(path.join(root, 'android'))) {
     return 'android';
   }

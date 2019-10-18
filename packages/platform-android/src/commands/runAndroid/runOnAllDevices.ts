@@ -9,32 +9,29 @@
 import chalk from 'chalk';
 import execa from 'execa';
 import {logger, CLIError} from '@react-native-community/cli-tools';
+import {Config} from '@react-native-community/cli-types';
 import adb from './adb';
 import tryRunAdbReverse from './tryRunAdbReverse';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
 import tryLaunchEmulator from './tryLaunchEmulator';
 import {Flags} from '.';
 
-function getTaskNames(
-  appFolder: string,
-  commands: Array<string>,
-): Array<string> {
-  return appFolder
-    ? commands.map(command => `${appFolder}:${command}`)
-    : commands;
+function getTaskNames(appName: string, commands: Array<string>): Array<string> {
+  return appName ? commands.map(command => `${appName}:${command}`) : commands;
 }
 
 function toPascalCase(value: string) {
-  return value[0].toUpperCase() + value.slice(1);
+  return value !== '' ? value[0].toUpperCase() + value.slice(1) : value;
 }
+
+type AndroidProject = NonNullable<Config['project']['android']>;
 
 async function runOnAllDevices(
   args: Flags,
   cmd: string,
-  packageNameWithSuffix: string,
   packageName: string,
   adbPath: string,
-  sourceDir: string,
+  androidProject: AndroidProject,
 ) {
   let devices = adb.getDevices(adbPath);
   if (devices.length === 0) {
@@ -54,8 +51,10 @@ async function runOnAllDevices(
   }
 
   try {
-    const tasks = args.tasks || ['install' + toPascalCase(args.variant)];
-    const gradleArgs = getTaskNames(args.appFolder, tasks);
+    const tasks = args.tasks || [
+      'install' + toPascalCase(args.appIdSuffix) + toPascalCase(args.variant),
+    ];
+    const gradleArgs = getTaskNames(androidProject.appName, tasks);
 
     if (args.port != null) {
       gradleArgs.push('-PreactNativeDevServerPort=' + args.port);
@@ -68,22 +67,16 @@ async function runOnAllDevices(
 
     await execa(cmd, gradleArgs, {
       stdio: ['inherit', 'inherit', 'pipe'],
-      cwd: sourceDir,
+      cwd: androidProject.sourceDir,
     });
   } catch (error) {
     throw createInstallError(error);
   }
 
   (devices.length > 0 ? devices : [undefined]).forEach(
-    (device: string | void) => {
+    async (device: string | void) => {
       tryRunAdbReverse(args.port, device);
-      tryLaunchAppOnDevice(
-        device,
-        packageNameWithSuffix,
-        packageName,
-        adbPath,
-        args.mainActivity,
-      );
+      await tryLaunchAppOnDevice(device, packageName, adbPath, args);
     },
   );
 }

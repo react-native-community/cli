@@ -7,15 +7,11 @@
  */
 
 import runOnAllDevices from '../runOnAllDevices';
+import execa from 'execa';
 
-jest.mock('child_process', () => ({
-  execFileSync: jest.fn(),
-  spawnSync: jest.fn(),
-}));
-
+jest.mock('execa');
 jest.mock('../getAdbPath');
 jest.mock('../tryLaunchEmulator');
-const {execFileSync} = require('child_process');
 
 describe('--appFolder', () => {
   beforeEach(() => {
@@ -27,7 +23,9 @@ describe('--appFolder', () => {
     await runOnAllDevices({
       variant: 'debug',
     });
-    expect(execFileSync.mock.calls[0][1]).toContain('installDebug');
+    expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toContain(
+      'installDebug',
+    );
   });
 
   it('uses appFolder and default variant', async () => {
@@ -37,7 +35,9 @@ describe('--appFolder', () => {
       variant: 'debug',
     });
 
-    expect(execFileSync.mock.calls[0][1]).toContain('someApp:installDebug');
+    expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toContain(
+      'someApp:installDebug',
+    );
   });
 
   it('uses appFolder and custom variant', async () => {
@@ -47,7 +47,7 @@ describe('--appFolder', () => {
       variant: 'staging',
     });
 
-    expect(execFileSync.mock.calls[0][1]).toContain(
+    expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toContain(
       'anotherApp:installStaging',
     );
   });
@@ -59,7 +59,9 @@ describe('--appFolder', () => {
       variant: 'debug',
     });
 
-    expect(execFileSync.mock.calls[0][1]).toContain('someTask');
+    expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toContain(
+      'someTask',
+    );
   });
 
   it('uses appFolder and custom task argument', async () => {
@@ -70,7 +72,9 @@ describe('--appFolder', () => {
       variant: 'debug',
     });
 
-    expect(execFileSync.mock.calls[0][1]).toContain('anotherApp:someTask');
+    expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toContain(
+      'anotherApp:someTask',
+    );
   });
 
   it('uses multiple tasks', async () => {
@@ -80,7 +84,7 @@ describe('--appFolder', () => {
       tasks: ['clean', 'someTask'],
     });
 
-    expect(execFileSync.mock.calls[0][1]).toContain(
+    expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toContain(
       'app:clean',
       // @ts-ignore
       'app:someTask',

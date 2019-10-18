@@ -6,8 +6,8 @@
  *
  */
 
-import {spawnSync} from 'child_process';
 import {logger, CLIError} from '@react-native-community/cli-tools';
+import execa from 'execa';
 
 function tryLaunchAppOnDevice(
   device: string | void,
@@ -31,7 +31,7 @@ function tryLaunchAppOnDevice(
       logger.info('Starting the app...');
     }
     logger.debug(`Running command "${adbPath} ${adbArgs.join(' ')}"`);
-    spawnSync(adbPath, adbArgs, {stdio: 'inherit'});
+    execa.sync(adbPath, adbArgs, {stdio: 'inherit'});
   } catch (error) {
     throw new CLIError('Failed to start the app.', error);
   }

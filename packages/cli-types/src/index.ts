@@ -126,7 +126,6 @@ export type ProjectConfig = {
  * @property dependencies - Map of the dependencies that are present in the project
  * @property platforms - Map of available platforms (build-ins and dynamically loaded)
  * @property commands - An array of commands that are present in 3rd party packages
- * @property haste - Haste configuration resolved based on available plugins
  */
 export type Config = {
   root: string;
@@ -150,10 +149,6 @@ export type Config = {
     [name: string]: PlatformConfig<any, any, any, any>;
   };
   commands: Command[];
-  haste: {
-    platforms: Array<string>;
-    providesModuleNodeModules: Array<string>;
-  };
 };
 
 /**

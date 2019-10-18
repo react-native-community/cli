@@ -70,7 +70,7 @@ export const getDefaultConfig = (ctx: Config): MetroConfig => {
     resolver: {
       resolverMainFields: ['react-native', 'browser', 'main'],
       blacklistRE: getBlacklistRE(),
-      platforms: [...ctx.haste.platforms, 'native'],
+      platforms: [...Object.keys(ctx.platforms), 'native'],
     },
     serializer: {
       getModulesRunBeforeMainModule: () => [

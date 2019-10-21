@@ -149,7 +149,7 @@ async function buildAndRun(args: Flags) {
     devices = await chooseDevice(devices);
   }
 
-  if (args.deviceId || devices.length === 1) {
+  if (args.deviceId || devices && devices.length === 1) {
     return runOnSpecificDevice(
       args,
       cmd,
@@ -158,7 +158,7 @@ async function buildAndRun(args: Flags) {
       adbPath,
       devices,
     );
-  } else {
+  } else if (devices && devices.length > 1) {
     return runOnAllDevices(
       args,
       cmd,
@@ -198,9 +198,13 @@ function runOnSpecificDevice(
   packageNameWithSuffix: string,
   packageName: string,
   adbPath: string,
-  devices: Array<string>,
+  devices: Array<string> | undefined,
 ) {
   const {deviceId} = args;
+
+  if (!devices) {
+    devices = [];
+  }
 
   if (devices.length > 0 && deviceId) {
     if (devices.indexOf(deviceId) !== -1) {

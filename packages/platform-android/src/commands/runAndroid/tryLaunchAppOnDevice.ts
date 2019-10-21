@@ -78,7 +78,7 @@ function checkUsers(
     let end = false;
 
     while (!end && stdout) {
-      const result = regex.exec(stdout);
+      const result = regex.exec(stdout.toString());
 
       if (!result) {
         end = true;

@@ -34,7 +34,7 @@ async function runOnAllDevices(
   packageNameWithSuffix: string,
   packageName: string,
   adbPath: string,
-  devices: Array<string | void>,
+  devices: Array<string>,
 ) {
   if (devices.length === 0) {
     logger.info('Launching emulator(s)...');

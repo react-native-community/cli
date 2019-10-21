@@ -89,15 +89,11 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
     // result == 'not_running'
     logger.info('Starting JS server...');
     try {
-      startServerInNewWindow(
-        args.port,
-        args.terminal,
-        config.reactNativePath,
-      );
+      startServerInNewWindow(args.port, args.terminal, config.reactNativePath);
     } catch (error) {
       logger.warn(
         `Failed to automatically start the packager server. Please run "react-native start" manually. Error details: ${
-        error.message
+          error.message
         }`,
       );
     }
@@ -145,11 +141,16 @@ async function buildAndRun(args: Flags) {
     devices = adb.getDevices(adbPath);
   }
 
-  if (devices && devices.length > 1 && devices.filter(Boolean).length > 1 && args.interactive) {
+  if (
+    devices &&
+    devices.length > 1 &&
+    devices.filter(Boolean).length > 1 &&
+    args.interactive
+  ) {
     devices = await chooseDevice(devices);
   }
 
-  if (args.deviceId || devices && devices.length === 1) {
+  if (args.deviceId || (devices && devices.length === 1)) {
     return runOnSpecificDevice(
       args,
       cmd,
@@ -170,18 +171,14 @@ async function buildAndRun(args: Flags) {
   }
 }
 
-async function chooseDevice(
-  devices: Array<string>
-) {
+async function chooseDevice(devices: Array<string>) {
   const {chosenDevice} = await inquirer.prompt([
     {
       type: 'list',
       name: 'chosenDevice',
-      message: 'On which device would you like to launch the app?\n(This behaviour can be avoided using the --no-interactive flag)',
-      choices: [
-        ...devices,
-        'All of them',
-      ]
+      message:
+        'On which device would you like to launch the app?\n(This behaviour can be avoided using the --no-interactive flag)',
+      choices: [...devices, 'All of them'],
     },
   ]);
 

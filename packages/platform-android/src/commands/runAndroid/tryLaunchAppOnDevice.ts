@@ -55,17 +55,9 @@ async function tryLaunchAppOnDevice(
   }
 }
 
-function checkUsers(
-  device: string | void,
-  adbPath: string,
-) {
+function checkUsers(device: string | void, adbPath: string) {
   try {
-    const adbArgs = [
-      'shell',
-      'pm',
-      'list',
-      'users',
-    ];
+    const adbArgs = ['shell', 'pm', 'list', 'users'];
 
     if (device) {
       adbArgs.splice(0, 0, '-s', device);
@@ -91,7 +83,11 @@ function checkUsers(
     }
 
     if (users.length > 1) {
-      logger.info(`Available users are:\n${users.map((user) => `${user.name} - ${user.id}`).join('\n')}`);
+      logger.info(
+        `Available users are:\n${users
+          .map(user => `${user.name} - ${user.id}`)
+          .join('\n')}`,
+      );
     }
 
     return users;
@@ -101,18 +97,17 @@ function checkUsers(
   }
 }
 
-async function chooseUser(
-  users: Array<{id: string, name: string}>
-) {
+async function chooseUser(users: Array<{id: string; name: string}>) {
   const {chosenUserName} = await inquirer.prompt([
     {
       type: 'list',
       name: 'chosenUserName',
-      message: 'Which profile would you like to launch your app into?\n(This behaviour can be avoided using the --no-interactive flag)',
+      message:
+        'Which profile would you like to launch your app into?\n(This behaviour can be avoided using the --no-interactive flag)',
       choices: users,
     },
   ]);
-  const chosenUser = users.find((user) => user.name === chosenUserName);
+  const chosenUser = users.find(user => user.name === chosenUserName);
 
   return chosenUser && chosenUser.id;
 }

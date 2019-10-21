@@ -55,18 +55,14 @@ const launchEmulator = async (emulatorName: string, adbPath: string) => {
   });
 };
 
-async function chooseEmulator(
-  emulators: Array<string>
-) {
+async function chooseEmulator(emulators: Array<string>) {
   const {chosenEmulator} = await inquirer.prompt([
     {
       type: 'list',
       name: 'chosenEmulator',
-      message: 'Which emulator would you like to launch?\n(This behaviour can be avoided using the --no-interactive flag)',
-      choices: [
-        ...emulators,
-        'All of them'
-      ],
+      message:
+        'Which emulator would you like to launch?\n(This behaviour can be avoided using the --no-interactive flag)',
+      choices: [...emulators, 'All of them'],
     },
   ]);
 
@@ -92,7 +88,9 @@ export default async function tryLaunchEmulator(
       }
 
       if (Array.isArray(emulatorOrEmulators)) {
-        const promises = emulatorOrEmulators.map((emulator) => launchEmulator(emulator, adbPath));
+        const promises = emulatorOrEmulators.map(emulator =>
+          launchEmulator(emulator, adbPath),
+        );
 
         await Promise.all(promises);
       } else {

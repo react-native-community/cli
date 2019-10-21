@@ -36,7 +36,7 @@ async function runOnAllDevices(
   adbPath: string,
   devices: Array<string>,
 ) {
-  if (devices.length === 0) {
+  if (devices && devices.length === 0) {
     logger.info('Launching emulator(s)...');
     const result = await tryLaunchEmulator(adbPath, args.interactive);
     if (result.success) {
@@ -70,7 +70,7 @@ async function runOnAllDevices(
     throw createInstallError(error);
   }
 
-  if (devices.length > 0) {
+  if (devices && devices.length > 0) {
     for (let i = 0; i < devices.length; i++) {
       const device = devices[i];
       tryRunAdbReverse(args.port, device);

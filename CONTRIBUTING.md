@@ -20,7 +20,9 @@ Repository is splitted into two packages:
 
 ## Testing your changes
 
-Thanks to the modular nature of the cli, when you modify it, you only need to link the changed "sub-package". For example, if I change the `run-android` command, all I need to do to test it in a fresh project is:
+> Please make sure the version of React Native matches the one present in devDependencies of the CLI. Otherwise, you may get unexpected errors.
+	
+Because of a modular design of the CLI, we recommend developing using symbolic links to its packages. This way you can use it seamlessly in the tested project, as you'd use the locally installed CLI. Here's what you need to run in the terminal:
 
 ```sh
 cd /path/to/cloned/project/

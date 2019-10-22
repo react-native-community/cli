@@ -26,14 +26,14 @@ function printRunInstructions(projectDir: string, projectName: string) {
 
   logger.log(`
   ${chalk.cyan(`Run instructions for ${chalk.bold('iOS')}`)}:
-    • cd ${projectDir} && react-native run-ios
+    • cd ${projectDir} && npx react-native run-ios
     ${chalk.dim('- or -')}
     • Open ${relativeXcodeProjectPath} in Xcode or run "xed -b ios"
     • Hit the Run button
 
   ${chalk.green(`Run instructions for ${chalk.bold('Android')}`)}:
     • Have an Android emulator running (quickest way to get started), or a device connected.
-    • cd ${projectDir} && react-native run-android
+    • cd ${projectDir} && npx react-native run-android
 `);
 }
 

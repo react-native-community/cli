@@ -29,7 +29,7 @@ cd /path/to/cloned/project/
 yarn link-packages
 
 cd /my/new/react-native/project/
-yarn link "@react-native-community/cli-platform-ios" "@react-native-community/cli-platform-android" "@react-native-community/cli" "@react-native-community/cli-types" "@react-native-community/cli-tools" "react-native-cli"
+yarn link "@react-native-community/cli-platform-ios" "@react-native-community/cli-platform-android" "@react-native-community/cli" "@react-native-community/cli-types" "@react-native-community/cli-tools"
 
 npx react-native run-android
 ```

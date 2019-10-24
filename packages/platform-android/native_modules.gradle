@@ -2,6 +2,7 @@ import groovy.json.JsonSlurper
 import org.gradle.initialization.DefaultSettings
 import org.apache.tools.ant.taskdefs.condition.Os
 
+def jsAppDir = buildscript.getProperties().get("sourceFile").toString().split("node_modules/@react-native-community/cli-platform-android/native_modules.gradle")[0]
 def generatedFileName = "PackageList.java"
 def generatedFilePackage = "com.facebook.react"
 def generatedFileContentsTemplate = """
@@ -71,12 +72,14 @@ public class PackageList {
 class ReactNativeModules {
   private Logger logger
   private String packageName
+  private String jsAppDir
   private ArrayList<HashMap<String, String>> reactNativeModules
 
   private static String LOG_PREFIX = ":ReactNative:"
 
-  ReactNativeModules(Logger logger) {
+  ReactNativeModules(Logger logger, String jsAppDir) {
     this.logger = logger
+    this.jsAppDir = jsAppDir
 
     def (nativeModules, packageName) = this.getReactNativeConfig()
     this.reactNativeModules = nativeModules
@@ -150,13 +153,13 @@ class ReactNativeModules {
     if (this.reactNativeModules != null) return this.reactNativeModules
     ArrayList<HashMap<String, String>> reactNativeModules = new ArrayList<HashMap<String, String>>()
 
-    def cmdProcess
     def npx = Os.isFamily(Os.FAMILY_WINDOWS) ? "npx.cmd" : "npx"
-    def command = "${npx} --quiet react-native config"
+    def command = "${npx} --quiet --no-install react-native config"
     def reactNativeConfigOutput = ""
 
     try {
-      cmdProcess = Runtime.getRuntime().exec(command)
+      // When running Gradle from CWD that's outside of JS project, it's necessary to pass a CWD that's close to JS app,// so that npx can resolve to correct local CLI, instead of possibly installed global, corrupting config output
+      def cmdProcess = Runtime.getRuntime().exec(command, null, new File(this.jsAppDir))
       def bufferedReader = new BufferedReader(new InputStreamReader(cmdProcess.getInputStream()))
       def buff = ""
       def readBuffer = new StringBuffer()
@@ -164,23 +167,28 @@ class ReactNativeModules {
           readBuffer.append(buff)
       }
       reactNativeConfigOutput = readBuffer.toString()
-    } catch (Exception exception) {
-      this.logger.warn("${LOG_PREFIX}${exception.message}")
-      this.logger.warn("${LOG_PREFIX}Automatic import of native modules failed.")
 
-      def bufferedErrorReader = new BufferedReader(new InputStreamReader(cmdProcess.getErrorStream()))
-      def buff = ""
-      def readBuffer = new StringBuffer()
-      while ((buff = bufferedErrorReader.readLine()) != null){
-          readBuffer.append(buff)
+      if (!reactNativeConfigOutput) {
+        def bufferedErrorReader = new BufferedReader(new InputStreamReader(cmdProcess.getErrorStream()))
+        def errBuff = ""
+        def readErrorBuffer = new StringBuffer()
+        while ((errBuff = bufferedErrorReader.readLine()) != null){
+            readErrorBuffer.append(errBuff)
+        }
+        throw new Exception(readErrorBuffer.toString())
       }
-      this.logger.warn("${LOG_PREFIX}${readBuffer.toString()}")
-
-      return reactNativeModules
+    } catch (Exception exception) {
+      this.logger.error("${LOG_PREFIX}Automatic import of native modules failed.")
+      throw exception
     }
 
     def json = new JsonSlurper().parseText(reactNativeConfigOutput)
     def dependencies = json["dependencies"]
+    def project = json["project"]["android"]
+
+    if (project == null) {
+      throw new Exception("React Native CLI failed to determine Android project configuration. This is likely due to misconfiguration. Config output:\n${json.toMapString()}")
+    }
 
     dependencies.each { name, value ->
       def platformsConfig = value["platforms"];
@@ -211,7 +219,7 @@ class ReactNativeModules {
  *    Exported Extensions
  * ------------------------ */
 
-def autoModules = new ReactNativeModules(logger)
+def autoModules = new ReactNativeModules(logger, jsAppDir)
 
 ext.applyNativeModulesSettingsGradle = { DefaultSettings defaultSettings, String root = null ->
   if (root != null) {

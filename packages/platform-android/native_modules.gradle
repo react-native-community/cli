@@ -158,7 +158,9 @@ class ReactNativeModules {
     def reactNativeConfigOutput = ""
 
     try {
-      // When running Gradle from CWD that's outside of JS project, it's necessary to pass a CWD that's close to JS app,// so that npx can resolve to correct local CLI, instead of possibly installed global, corrupting config output
+      // Running npx from the directory of the JS app which holds this script in its node_modules.
+      // We do so, because Gradle may be ran from a different directory, that's outside of JS project,
+      // in which case npx wouldn't resolve correct `react-native` binary
       def cmdProcess = Runtime.getRuntime().exec(command, null, new File(this.jsAppDir))
       def bufferedReader = new BufferedReader(new InputStreamReader(cmdProcess.getInputStream()))
       def buff = ""

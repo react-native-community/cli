@@ -10,7 +10,7 @@ import {exec} from 'child_process';
 import launchDebugger from '../launchDebugger';
 
 function launchDefaultDebugger(host: string, port: number, args = '') {
-  const hostname = host || "localhost";
+  const hostname = host || 'localhost';
   const debuggerURL = `http://${hostname}:${port}/debugger-ui${args}`;
   logger.info('Launching Dev Tools...');
   launchDebugger(debuggerURL);
@@ -21,7 +21,11 @@ function escapePath(pathname: string) {
   return `"${pathname}"`;
 }
 
-type LaunchDevToolsOptions = {host: string, port: number; watchFolders: Array<string>};
+type LaunchDevToolsOptions = {
+  host: string;
+  port: number;
+  watchFolders: Array<string>;
+};
 
 function launchDevTools(
   {host, port, watchFolders}: LaunchDevToolsOptions,

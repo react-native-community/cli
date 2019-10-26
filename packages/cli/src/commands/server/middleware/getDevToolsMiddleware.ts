@@ -9,8 +9,9 @@ import {logger} from '@react-native-community/cli-tools';
 import {exec} from 'child_process';
 import launchDebugger from '../launchDebugger';
 
-function launchDefaultDebugger(port: number, args = '') {
-  const debuggerURL = `http://localhost:${port}/debugger-ui${args}`;
+function launchDefaultDebugger(host: string, port: number, args = '') {
+  const hostname = host || 'localhost';
+  const debuggerURL = `http://${hostname}:${port}/debugger-ui${args}`;
   logger.info('Launching Dev Tools...');
   launchDebugger(debuggerURL);
 }
@@ -20,10 +21,14 @@ function escapePath(pathname: string) {
   return `"${pathname}"`;
 }
 
-type LaunchDevToolsOptions = {port: number; watchFolders: Array<string>};
+type LaunchDevToolsOptions = {
+  host: string;
+  port: number;
+  watchFolders: Array<string>;
+};
 
 function launchDevTools(
-  {port, watchFolders}: LaunchDevToolsOptions,
+  {host, port, watchFolders}: LaunchDevToolsOptions,
   isDebuggerConnected: () => boolean,
 ) {
   // Explicit config always wins
@@ -32,7 +37,7 @@ function launchDevTools(
     startCustomDebugger({watchFolders, customDebugger});
   } else if (!isDebuggerConnected()) {
     // Debugger is not yet open; we need to open a session
-    launchDefaultDebugger(port);
+    launchDefaultDebugger(host, port);
   }
 }
 

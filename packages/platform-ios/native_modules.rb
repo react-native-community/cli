@@ -17,7 +17,7 @@ def use_native_modules!(config = nil)
   if (!config)
     json = []
 
-    IO.popen("npx --quiet react-native config") do |data|
+    IO.popen('cd "../" ; npx --quiet react-native config') do |data|
       while line = data.gets
         json << line
       end

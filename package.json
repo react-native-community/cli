@@ -5,8 +5,9 @@
   ],
   "scripts": {
     "prebuild": "yarn build:ts",
-    "build": "node ./scripts/build.js",
+    "build": "node ./scripts/build.js && yarn build:debugger",
     "build:ts": "node ./scripts/buildTs.js",
+    "build:debugger": "yarn workspace @react-native-community/debugger-ui build",
     "build-clean": "rm -rf ./packages/*/build",
     "build-clean-all": "rm -rf ./packages/*/build ./packages/*/tsconfig.tsbuildinfo",
     "watch": "node ./scripts/watch.js",
@@ -47,6 +48,7 @@
     "typescript": "^3.6.2"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.5.5"
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-transform-runtime": "^7.6.2"
   }
 }

@@ -31,6 +31,7 @@
     "@react-native-community/cli-platform-ios": "^3.0.0-alpha.7",
     "@react-native-community/cli-tools": "^3.0.0-alpha.7",
     "@react-native-community/cli-types": "^3.0.0-alpha.7",
+    "@react-native-community/debugger-ui": "^3.0.0-alpha.7",
     "@types/mkdirp": "^0.5.2",
     "@types/node-notifier": "^5.4.0",
     "@types/semver": "^6.0.2",

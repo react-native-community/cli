@@ -47,7 +47,7 @@ export default {
       description: 'Path to custom SSL cert',
     },
     {
-      name: '--config [string]',
+      name: '--metroConfig [string]',
       description: 'Path to a custom Metro configuration file',
       parse: (val: string) => path.resolve(val),
     },

@@ -28,7 +28,7 @@ export type Args = {
   port?: number;
   resetCache?: boolean;
   verbose?: boolean;
-  config?: string;
+  metroConfig?: string;
 };
 
 async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
@@ -37,7 +37,8 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
   const reporter = new ReporterImpl(terminal);
 
   const metroConfig = await loadMetroConfig(ctx, {
-    config: args.config,
+    config: args.metroConfig,
+    port: args.port,
     resetCache: args.resetCache,
     reporter,
   });

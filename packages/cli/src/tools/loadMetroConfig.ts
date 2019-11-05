@@ -62,11 +62,25 @@ export interface MetroConfig {
   reporter?: any;
 }
 
-export interface ConfigOptions {
+/**
+ * Options that can be used to tweak the default configuration
+ * that is later passed to Metro
+ */
+type DefaultConfigOptions = {
+  port?: number;
+  reporter?: any;
+};
+
+/**
+ * Options that change the behaviour of Metro built-in `loadConfig`
+ * function
+ *
+ * Details here: https://github.com/facebook/metro/blob/master/packages/metro-config/src/loadConfig.js#L28-L45
+ */
+export type ConfigOptions = DefaultConfigOptions & {
   resetCache?: boolean;
   config?: string;
-  reporter?: any;
-}
+};
 
 /**
  * Default configuration
@@ -76,7 +90,7 @@ export interface ConfigOptions {
  */
 export const getDefaultConfig = (
   ctx: Config,
-  opts: ConfigOptions,
+  opts: DefaultConfigOptions,
 ): MetroConfig => {
   const hasteImplPath = path.join(ctx.reactNativePath, 'jest/hasteImpl.js');
   return {
@@ -99,7 +113,7 @@ export const getDefaultConfig = (
         require(path.join(ctx.reactNativePath, 'rn-get-polyfills'))(),
     },
     server: {
-      port: Number(process.env.RCT_METRO_PORT) || 8081,
+      port: Number(process.env.RCT_METRO_PORT) || opts.port || 8081,
     },
     symbolicator: {
       customizeFrame: (frame: {file: string | null}) => {

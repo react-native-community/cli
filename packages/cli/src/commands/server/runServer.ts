@@ -25,6 +25,7 @@ export type Args = {
   host?: string;
   https?: boolean;
   key?: string;
+  port?: number;
   resetCache?: boolean;
   verbose?: boolean;
   config?: string;

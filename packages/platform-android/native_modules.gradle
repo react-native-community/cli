@@ -2,7 +2,7 @@ import groovy.json.JsonSlurper
 import org.gradle.initialization.DefaultSettings
 import org.apache.tools.ant.taskdefs.condition.Os
 
-def jsAppDir = buildscript.getProperties().get("sourceFile").toString().split("node_modules/@react-native-community/cli-platform-android/native_modules.gradle")[0]
+def jsAppDir = buildscript.sourceFile.toString().split("node_modules/@react-native-community/cli-platform-android/native_modules.gradle")[0]
 def generatedFileName = "PackageList.java"
 def generatedFilePackage = "com.facebook.react"
 def generatedFileContentsTemplate = """

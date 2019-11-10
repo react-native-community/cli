@@ -160,7 +160,7 @@ class ReactNativeModules {
       }
       output = readBuffer.toString()
       if (!output) {
-        this.logger.error("${LOG_PREFIX}Unexpected empty result of running '${command}' command.")
+        this.logger.error("${LOG_PREFIX}Unexpected empty result of running '${command}' command from '${directory}' directory.")
         def bufferedErrorReader = new BufferedReader(new InputStreamReader(cmdProcess.getErrorStream()))
         def errBuff = ""
         def readErrorBuffer = new StringBuffer()
@@ -171,7 +171,7 @@ class ReactNativeModules {
       }
       return output
     } catch (Exception exception) {
-      this.logger.error("${LOG_PREFIX}Running '${command}' command failed.")
+      this.logger.error("${LOG_PREFIX}Running '${command}' command from '${directory}' directory failed.")
       throw exception
     }
   }
@@ -190,7 +190,13 @@ class ReactNativeModules {
     // in which case npx wouldn't resolve correct `react-native` binary
     def dir = new File(this.jsAppDir)
     def reactNativeConfigOutput = this.getCommandOutput(command, dir)
-    def json = new JsonSlurper().parseText(reactNativeConfigOutput)
+    def json
+    try {
+      json = new JsonSlurper().parseText(reactNativeConfigOutput)
+    } catch (Exception exception) {
+      this.logger.error("${LOG_PREFIX}Failed to parse React Native CLI configuration: ${exception.toString()}")
+      throw new Exception("Failed to parse React Native CLI configuration. Expected running '${command}' command from '${dir}' directory to output valid JSON, but it didn't. This may be caused by npx resolving to a legacy global react-native binary. Please make sure to uninstall any global 'react-native' binaries: 'npm uninstall -g react-native react-native-cli' and try again")
+    }
     def dependencies = json["dependencies"]
     def project = json["project"]["android"]
 

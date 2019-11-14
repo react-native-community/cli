@@ -61,9 +61,6 @@ export interface MetroConfig {
 
 /**
  * Default configuration
- *
- * @todo(grabbou): As a separate PR, haste.platforms should be added before "native".
- * Otherwise, a.native.js will not load on Windows or other platforms
  */
 export const getDefaultConfig = (ctx: Config): MetroConfig => {
   return {

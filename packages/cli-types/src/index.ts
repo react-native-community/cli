@@ -66,32 +66,11 @@ interface PlatformConfig<
   projectConfig: (
     projectRoot: string,
     projectParams: ProjectParams | void,
-  ) => ProjectConfig | void;
+  ) => ProjectConfig | null;
   dependencyConfig: (
     dependency: string,
     params: DependencyParams,
-  ) => DependencyConfig | void;
-  linkConfig: () => {
-    isInstalled: (
-      projectConfig: ProjectConfig,
-      packageName: string,
-      dependencyConfig: DependencyConfig,
-    ) => boolean;
-    register: (
-      name: string,
-      dependencyConfig: DependencyConfig,
-      params: Object,
-      projectConfig: ProjectConfig,
-    ) => void;
-    unregister: (
-      name: string,
-      dependencyConfig: DependencyConfig,
-      projectConfig: ProjectConfig,
-      otherDependencies: Array<DependencyConfig>,
-    ) => void;
-    copyAssets: (assets: string[], projectConfig: ProjectConfig) => void;
-    unlinkAssets: (assets: string[], projectConfig: ProjectConfig) => void;
-  };
+  ) => DependencyConfig | null;
 }
 
 export interface Dependency {
@@ -102,14 +81,6 @@ export interface Dependency {
     ios?: IOSDependencyConfig | null;
     [key: string]: any;
   };
-  assets: string[];
-  hooks: {
-    prelink?: string;
-    postlink?: string;
-    preunlink?: string;
-    postunlink?: string;
-  };
-  params: InquirerPrompt[];
 }
 
 export type ProjectConfig = {
@@ -131,7 +102,6 @@ export type Config = {
   root: string;
   reactNativePath: string;
   project: ProjectConfig;
-  assets: string[];
   dependencies: {[key: string]: Dependency};
   platforms: {
     android: PlatformConfig<
@@ -152,11 +122,11 @@ export type Config = {
 };
 
 /**
- * Shares some structure with Config, except that haste and root
- * are calculated and can't be defined
+ * Shares some structure with Config, except that root
+ * is calculated and can't be defined
  */
 
-export type UserConfig = Omit<Config, 'root' | 'haste'> & {
+export type UserConfig = Omit<Config, 'root'> & {
   reactNativePath: string | void;
   // Additional project settings
   project: {
@@ -173,11 +143,6 @@ export type UserDependencyConfig = {
   commands: Command[];
   // An array of extra platforms to load
   platforms: Config['platforms'];
-  // Haste config defined by legacy `rnpm`
-  haste?: {
-    platforms: string[];
-    providesModuleNodeModules: string[];
-  };
 };
 
 export {

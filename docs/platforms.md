@@ -17,12 +17,10 @@ const android = require('@react-native-community/cli-platform-android');
 module.exports = {
   platforms: {
     ios: {
-      linkConfig: ios.linkConfig,
       projectConfig: ios.projectConfig,
       dependencyConfig: ios.dependencyConfig,
     },
     android: {
-      linkConfig: android.linkConfig,
       projectConfig: android.projectConfig,
       dependencyConfig: android.dependencyConfig,
     },
@@ -39,31 +37,28 @@ At the end, a map of available platforms is passed to the bundler (Metro) to mak
 ## Platform interface
 
 ```ts
-type PlatformConfig<ProjectParams, ProjectConfig, DependencyConfig> = {
-  projectConfig: (string, ProjectParams) => ?ProjectConfig,
-  dependencyConfig: (string, ProjectParams) => ?DependencyConfig,
-  linkConfig: () => {
-    isInstalled: (ProjectConfig, string, DependencyConfig) => boolean,
-    register: (string, DependencyConfig, Object, ProjectConfig) => void,
-    unregister: (
-      string,
-      DependencyConfig,
-      ProjectConfig,
-      Array<DependencyConfig>,
-    ) => void,
-    copyAssets: (string[], ProjectConfig) => void,
-    unlinkAssets: (string[], ProjectConfig) => void,
-  },
-};
+interface PlatformConfig<
+  ProjectConfig,
+  ProjectParams,
+  DependencyConfig,
+  DependencyParams
+> {
+  projectConfig: (
+    projectRoot: string,
+    projectParams: ProjectParams | void,
+  ) => ProjectConfig | null;
+  dependencyConfig: (
+    dependency: string,
+    params: DependencyParams,
+  ) => DependencyConfig | null;
+}
 ```
 
 ### projectConfig
 
-Returns a project configuration for a given platform or `null`, when no project found. This is later used inside `linkConfig` to perform linking and unlinking.
+Returns a project configuration for a given platform or `null`, when no project found.
 
-First argument is a root folder where the project is located.
-
-Second argument is everything that users defined under:
+First argument is a root folder where the project is located. Second argument is everything that users defined under:
 
 ```js
 module.exports = {
@@ -78,34 +73,21 @@ module.exports = {
 On Android and iOS, this function returns:
 
 ```ts
-type ProjectConfigIOST = {
+interface IOSProjectConfig {
   sourceDir: string;
-  folder: string;
-  pbxprojPath: string;
-  podfile: null;
-  podspecPath: null;
-  projectPath: string;
-  projectName: string;
-  libraryFolder: string;
-  sharedLibraries: Array<any>;
-  plist: Array<any>;
-};
+  scriptPhases: Array<{
+    name: string;
+    path: string;
+    execution_position: string;
+  }>;
+  podfile: string | null;
+}
 
-type ProjectConfigAndroidT = {
+interface AndroidProjectConfig {
   sourceDir: string;
-  isFlat: boolean;
-  folder: string;
-  stringsPath: string;
-  manifestPath: string;
-  buildGradlePath: string;
-  settingsGradlePath: string;
-  assetsPath: string;
-  mainFilePath: string;
   packageName: string;
-};
+}
 ```
-
-We suggest performing all side-effects inside this function (such as resolving paths to native files) and making `linkConfig` functions pure, operating on provided data.
 
 ### dependencyConfig
 
@@ -126,134 +108,25 @@ module.exports = {
 On Android and iOS, this function returns:
 
 ```ts
-type DependencyConfigIOST = ProjectConfigIOST;
-
-type DependencyConfigAndroidT = {
+interface IOSDependencyConfig {
   sourceDir: string;
-  folder: string;
+  scriptPhases: Array<{
+    name: string;
+    path: string;
+    execution_position: string;
+  }>;
+  podspecPath: string | null;
+}
+
+interface AndroidDependencyConfig {
+  sourceDir: string;
+  packageName: string;
+
   packageImportPath: string;
   packageInstance: string;
-};
-```
-
-### linkConfig
-
-Returns an object with utilities that are run by the CLI while linking.
-
-> Note: The following is deprecated and will stop working in the future. Consider providing a [`autolinking`](./autolinking.md) support.
-
-#### linkConfig.isInstalled
-
-Returns true if a library is already linked to a given project. False otherwise.
-
-#### linkConfig.register
-
-Performs platform-specific steps in order to link a library.
-
-#### linkConfig.unregister
-
-Performs platform-specific steps in order to unlink a library.
-
-#### linkConfig.copyAssets
-
-Performs platform-specific steps in order to copy assets of a library to a project.
-
-#### linkConfig.unlinkAssets
-
-Performs platform-specific steps in order to unlink assets of a library from a project.
-
-## Migrating from `rnpm` configuration
-
-The changes are mostly cosmetic so the migration should be pretty straight-forward.
-
-### Changing the configuration for a platform
-
-A `platform` property would need to be renamed to `platforms`. `haste` is no longer supported - we are able to infer that automatically.
-
-For example:
-
-```json
-{
-  "rnpm": {
-    "haste": {
-      "platforms": ["windows"],
-      "providesModuleNodeModules": ["react-native-windows"]
-    },
-    "platform": "./local-cli/platform.js"
-  }
 }
 ```
 
-to `react-native.config.js`
+## Migrating from `rnpm`
 
-```js
-module.exports = {
-  platforms: {
-    windows: require('./local-cli/platform.js').windows,
-  },
-};
-```
-
-> The above configuration is taken from `react-native-windows` and adds support for `windows` platform.
-
-### Changing platform configuration for a [`dependency`](./dependencies.md)
-
-Platform keys are now under `dependency.platforms`.
-
-For example:
-
-```json
-{
-  "rnpm": {
-    "ios": {
-      "project": "PathToCustomProject.xcodeproj"
-    }
-  }
-}
-```
-
-to `react-native.config.js`
-
-```js
-module.exports = {
-  dependency: {
-    platforms: {
-      ios: {
-        project: 'PathToCustomProject.xcodeproj',
-      },
-    },
-  },
-};
-```
-
-> The above is a configuration of a dependency that explicitly sets a path to `.xcodeproj`.
-
-### Changing platform configuration for a [`project`](./projects.md)
-
-Platform keys are now under `project.platforms`.
-
-For example:
-
-```json
-{
-  "rnpm": {
-    "ios": {
-      "project": "PathToCustomProject.xcodeproj"
-    }
-  }
-}
-```
-
-to `react-native.config.js`
-
-```js
-module.exports = {
-  project: {
-    ios: {
-      project: 'PathToCustomProject.xcodeproj',
-    },
-  },
-};
-```
-
-> The above is a configuration of a project that explicitly sets its main `.xcodeproj` project.
+Support for `rnpm` has been removed with the 4.x release of the CLI. If your project or library still uses `rnpm` for altering the behaviour of the CLI, please check [documentation of the older CLI release](https://github.com/react-native-community/cli/blob/3.x/docs/platforms.md#migrating-from-rnpm-configuration) for steps on how to migrate.

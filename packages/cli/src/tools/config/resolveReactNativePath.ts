@@ -11,16 +11,14 @@ export default function resolveReactNativePath(root: string) {
     return resolveNodeModuleDir(root, 'react-native');
   } catch (_ignored) {
     throw new CLIError(`
-      Unable to find React Native files. Make sure "react-native" module is installed
+      Unable to find React Native files looking up from ${root}. Make sure "react-native" module is installed
       in your project dependencies.
 
       If you are using React Native from a non-standard location, consider setting:
       {
-        "react-native": {
-          "reactNativePath": "./path/to/react-native"
-        }
+        reactNativePath: "./path/to/react-native"
       }
-      in your \`package.json\`.
+      in your \`react-native.config.js\`.
     `);
   }
 }

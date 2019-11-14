@@ -191,8 +191,8 @@ test('should load an out-of-tree "windows" platform that ships with a dependency
       };
     `,
   });
-  const {haste, platforms} = loadConfig(DIR);
-  expect(removeString({haste, platforms}, DIR)).toMatchSnapshot();
+  const {platforms} = loadConfig(DIR);
+  expect(removeString({platforms}, DIR)).toMatchSnapshot();
 });
 
 // @todo: figure out why this test is so flaky

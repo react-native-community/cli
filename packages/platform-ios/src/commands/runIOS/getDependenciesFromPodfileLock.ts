@@ -3,8 +3,6 @@ import chalk from 'chalk';
 import {logger} from '@react-native-community/cli-tools';
 import {safeLoad} from 'js-yaml';
 
-const CHECKSUM_KEY = 'SPEC CHECKSUMS';
-
 export default function getDependenciesFromPodfileLock(
   podfileLockPath: string,
 ) {
@@ -20,11 +18,5 @@ export default function getDependenciesFromPodfileLock(
     );
     return [];
   }
-
-  // Previous portions of the lock file could be invalid yaml.
-  // Only parse parts that are valid
-  const tail = fileContent.split(CHECKSUM_KEY).slice(1);
-  const checksumTail = CHECKSUM_KEY + tail;
-
-  return Object.keys(safeLoad(checksumTail)[CHECKSUM_KEY] || {});
+  return Object.keys(safeLoad(fileContent)['SPEC CHECKSUMS'] || {});
 }

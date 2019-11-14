@@ -70,6 +70,9 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
     },
     dependencies: userConfig.dependencies,
     commands: userConfig.commands,
+    get assets() {
+      return findAssets(projectRoot, userConfig.assets);
+    },
     platforms: userConfig.platforms,
     get project() {
       if (lazyProject) {

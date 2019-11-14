@@ -6,16 +6,12 @@ React Native CLI comes with following commands:
 - [`config`](#config)
 - [`init`](#init)
 - [`info`](#info)
-- [`install`](#install)
-- [`link`](#link)
 - [`log-android`](#log-android)
 - [`log-ios`](#log-ios)
 - [`ram-bundle`](#ram-bundle)
 - [`run-android`](#run-android)
 - [`run-ios`](#run-ios)
 - [`start`](#start)
-- [`uninstall`](#uninstall)
-- [`unlink`](#unlink)
 - [`upgrade`](#upgrade)
 
 ### `bundle`
@@ -220,38 +216,6 @@ react-native info
 ```
 
 Get relevant version info about OS, toolchain and libraries. Useful when sending bug reports.
-
-### `install`
-
-Usage:
-
-```sh
-react-native install <packageName>
-```
-
-Installs single package from npm and then links native dependencies. If `install` detects `yarn.lock` in your project, it will use Yarn as package manager. Otherwise `npm` will be used.
-
-### `link`
-
-> Will be replaced by [autolinking](./autolinking.md) soon.
-
-Usage:
-
-```sh
-react-native link [packageName]
-```
-
-Links assets and optionally native modules.
-
-#### Options
-
-#### `--all`
-
-Link all native modules and assets.
-
-#### `--platforms [list]`
-
-Pass comma-separated list of platforms to scope `link` to.
 
 ### `log-android`
 
@@ -472,34 +436,6 @@ Path to custom SSL cert
 #### `--metroConfig [string]`
 
 Path to the Metro configuration file (to overwrite the one detected automatically)
-
-### `uninstall`
-
-Usage:
-
-```sh
-react-native uninstall <packageName>
-```
-
-Unlinks single package native dependencies and then uninstalls it from `package.json`. If `uninstall` detects `yarn.lock` in your project, it will use Yarn as package manager. Otherwise `npm` will be used.
-
-### `unlink`
-
-> Will be replaced by [autolinking](./autolinking.md) soon.
-
-Usage:
-
-```
-react-native unlink <packageName> [options]
-```
-
-Unlink native dependency linked with the `link` command.
-
-#### Options
-
-#### `--platforms [list]`
-
-Scope unlinking to specified platforms
 
 ### `upgrade`
 

@@ -5,8 +5,9 @@
   ],
   "scripts": {
     "prebuild": "yarn build:ts",
-    "build": "node ./scripts/build.js",
+    "build": "node ./scripts/build.js && yarn build:debugger",
     "build:ts": "node ./scripts/buildTs.js",
+    "build:debugger": "yarn workspace @react-native-community/debugger-ui build",
     "build-clean": "rm -rf ./packages/*/build",
     "build-clean-all": "rm -rf ./packages/*/build ./packages/*/tsconfig.tsbuildinfo",
     "watch": "node ./scripts/watch.js",
@@ -16,7 +17,7 @@
     "lint": "eslint --ext .js,.ts . --cache --report-unused-disable-directives",
     "test:ci:cocoapods": "ruby packages/platform-ios/native_modules.rb",
     "postinstall": "yarn build",
-    "link-packages": "PACKAGES=('tools' 'platform-ios' 'platform-android' 'cli' 'cli-types' 'global-cli') && cd packages && for PACKAGE in \"${PACKAGES[@]}\"; do cd $PACKAGE && yarn link && cd ..; done",
+    "link-packages": "PACKAGES=('tools' 'platform-ios' 'platform-android' 'cli' 'cli-types' 'global-cli' 'debugger-ui') && cd packages && for PACKAGE in \"${PACKAGES[@]}\"; do cd $PACKAGE && yarn link && cd ..; done",
     "publish": "yarn build-clean-all && yarn install && lerna publish"
   },
   "dependencies": {
@@ -47,6 +48,7 @@
     "typescript": "^3.7.0"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.5.5"
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-transform-runtime": "^7.6.2"
   }
 }

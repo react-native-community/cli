@@ -27,8 +27,6 @@
   },
   "dependencies": {
     "@hapi/joi": "^15.0.3",
-    "@react-native-community/cli-platform-android": "^3.0.0-alpha.7",
-    "@react-native-community/cli-platform-ios": "^3.0.0-alpha.7",
     "@react-native-community/cli-tools": "^3.0.0-alpha.7",
     "@react-native-community/cli-types": "^3.0.0-alpha.7",
     "@react-native-community/cli-debugger-ui": "^3.0.0-alpha.7",

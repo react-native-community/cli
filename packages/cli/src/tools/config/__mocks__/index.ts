@@ -13,9 +13,5 @@ export default function mockedLoadConfig() {
     },
     dependencies: {},
     assets: [],
-    haste: {
-      providesModuleNodeModules: [],
-      platforms: [],
-    },
   };
 }

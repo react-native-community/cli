@@ -10,13 +10,6 @@
     <meta charset="utf-8" />
     <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
     <title>React Native Debugger</title>
-    <script>
-      function onReloadClicked() {
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', `${window.location.origin}/reload`, true);
-        xhr.send();
-      }
-    </script>
     <script src="./index.js"></script>
   </head>
   <body>
@@ -52,7 +45,7 @@
         to inspect the React component hierarchy, their props, and state.
       </p>
       <p>Status: <span id="status">Loading...</span></p>
-      <button class="reload-btn" onclick="onReloadClicked()">
+      <button class="reload-btn" onclick="window.onReloadClicked()">
         Reload app
       </button>
     </div>

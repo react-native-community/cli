@@ -445,38 +445,6 @@ Starts the server that communicates with connected devices
 
 Specify port to listen on
 
-#### `--projectRoot [path]`
-
-Path to a custom project root
-
-#### `--watchFolders [list]`
-
-Specify any additional folders to be added to the watch list
-
-#### `--assetExts [list]`
-
-Specify any additional asset extensions to be used by the packager
-
-#### `--sourceExts [list]`
-
-Specify any additional source extensions to be used by the packager
-
-#### `--platforms [list]`
-
-Specify any additional platforms to be used by the packager
-
-#### `--providesModuleNodeModules [list]`
-
-Specify any npm packages that import dependencies with providesModule
-
-#### `--max-workers [number]`
-
-Specifies the maximum number of workers the worker-pool will spawn for transforming files. This defaults to the number of the cores available on your machine
-
-#### `--transformer [string]`
-
-Specify a custom transformer to be used
-
 #### `--reset-cache, --resetCache`
 
 Removes cached files
@@ -501,9 +469,9 @@ Path to custom SSL key
 
 Path to custom SSL cert
 
-#### `--config [string]`
+#### `--metroConfig [string]`
 
-Path to the CLI configuration file
+Path to the Metro configuration file (to overwrite the one detected automatically)
 
 ### `uninstall`
 

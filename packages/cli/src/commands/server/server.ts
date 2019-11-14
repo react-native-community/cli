@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-
 import path from 'path';
 import runServer from './runServer';
 
@@ -21,60 +20,6 @@ export default {
     {
       name: '--host [string]',
       default: '',
-    },
-    {
-      name: '--projectRoot [path]',
-      description: 'Path to a custom project root',
-      parse: (val: string) => path.resolve(val),
-    },
-    {
-      name: '--watchFolders [list]',
-      description:
-        'Specify any additional folders to be added to the watch list',
-      parse: (val: string) =>
-        val.split(',').map<string>((folder: string) => path.resolve(folder)),
-    },
-    {
-      name: '--assetPlugins [list]',
-      description:
-        'Specify any additional asset plugins to be used by the packager by full filepath',
-      parse: (val: string) => val.split(','),
-    },
-    {
-      name: '--assetExts [list]',
-      description:
-        'Specify any additional asset extensions to be used by the packager',
-      parse: (val: string) => val.split(','),
-    },
-    {
-      name: '--sourceExts [list]',
-      description:
-        'Specify any additional source extensions to be used by the packager',
-      parse: (val: string) => val.split(','),
-    },
-    {
-      name: '--platforms [list]',
-      description:
-        'Specify any additional platforms to be used by the packager',
-      parse: (val: string) => val.split(','),
-    },
-    {
-      name: '--providesModuleNodeModules [list]',
-      description:
-        'Specify any npm packages that import dependencies with providesModule',
-      parse: (val: string) => val.split(','),
-    },
-    {
-      name: '--max-workers [number]',
-      description:
-        'Specifies the maximum number of workers the worker-pool ' +
-        'will spawn for transforming files. This defaults to the number of the ' +
-        'cores available on your machine.',
-      parse: (workers: string) => Number(workers),
-    },
-    {
-      name: '--transformer [string]',
-      description: 'Specify a custom transformer to be used',
     },
     {
       name: '--reset-cache, --resetCache',
@@ -102,8 +47,8 @@ export default {
       description: 'Path to custom SSL cert',
     },
     {
-      name: '--config [string]',
-      description: 'Path to the CLI configuration file',
+      name: '--metroConfig [string]',
+      description: 'Path to a custom Metro configuration file',
       parse: (val: string) => path.resolve(val),
     },
   ],

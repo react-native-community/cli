@@ -60,9 +60,32 @@ export interface MetroConfig {
 }
 
 /**
+ * Options that can be used to tweak the default configuration
+ * that is later passed to Metro
+ */
+type DefaultConfigOptions = {
+  port?: number;
+  reporter?: any;
+};
+
+/**
+ * Options that change the behaviour of Metro built-in `loadConfig`
+ * function
+ *
+ * Details here: https://github.com/facebook/metro/blob/master/packages/metro-config/src/loadConfig.js#L28-L45
+ */
+export type ConfigOptions = DefaultConfigOptions & {
+  resetCache?: boolean;
+  config?: string;
+};
+
+/**
  * Default configuration
  */
-export const getDefaultConfig = (ctx: Config): MetroConfig => {
+export const getDefaultConfig = (
+  ctx: Config,
+  opts: DefaultConfigOptions,
+): MetroConfig => {
   return {
     resolver: {
       resolverMainFields: ['react-native', 'browser', 'main'],
@@ -79,7 +102,7 @@ export const getDefaultConfig = (ctx: Config): MetroConfig => {
         require(path.join(ctx.reactNativePath, 'rn-get-polyfills'))(),
     },
     server: {
-      port: Number(process.env.RCT_METRO_PORT) || 8081,
+      port: Number(process.env.RCT_METRO_PORT) || opts.port || 8081,
     },
     symbolicator: {
       customizeFrame: (frame: {file: string | null}) => {
@@ -99,19 +122,9 @@ export const getDefaultConfig = (ctx: Config): MetroConfig => {
       ),
     },
     watchFolders: getWatchFolders(),
+    reporter: opts.reporter,
   };
 };
-
-export interface ConfigOptionsT {
-  maxWorkers?: number;
-  port?: number;
-  projectRoot?: string;
-  resetCache?: boolean;
-  watchFolders?: string[];
-  sourceExts?: string[];
-  reporter?: any;
-  config?: string;
-}
 
 /**
  * Loads Metro Config and applies `options` on top of the resolved config.
@@ -120,11 +133,11 @@ export interface ConfigOptionsT {
  */
 export default function load(
   ctx: Config,
-  options?: ConfigOptionsT,
+  opts: ConfigOptions = {},
 ): Promise<MetroConfig> {
-  const defaultConfig = getDefaultConfig(ctx);
-  if (options && options.reporter) {
-    defaultConfig.reporter = options.reporter;
-  }
-  return loadConfig({cwd: ctx.root, ...options}, defaultConfig);
+  const defaultConfig = getDefaultConfig(ctx, opts);
+  return loadConfig(
+    {cwd: ctx.root, resetCache: opts.resetCache, config: opts.config},
+    defaultConfig,
+  );
 }

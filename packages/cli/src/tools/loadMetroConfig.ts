@@ -86,7 +86,6 @@ export const getDefaultConfig = (
   ctx: Config,
   opts: DefaultConfigOptions,
 ): MetroConfig => {
-  const hasteImplPath = path.join(ctx.reactNativePath, 'jest/hasteImpl.js');
   return {
     resolver: {
       resolverMainFields: ['react-native', 'browser', 'main'],

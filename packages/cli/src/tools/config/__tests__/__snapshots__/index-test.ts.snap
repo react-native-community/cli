@@ -1,17 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`should automatically put "react-native" into haste config 1`] = `
-Object {
-  "platforms": Array [
-    "ios",
-    "android",
-  ],
-  "providesModuleNodeModules": Array [
-    "react-native",
-  ],
-}
-`;
-
 exports[`should handle deprecated "rnpm" in project root: returns valid config 1`] = `
 Object {
   "assets": Array [
@@ -101,15 +89,6 @@ Object {
   },
   "root": "<<REPLACED>>/node_modules/react-native-test",
 }
-`;
-
-exports[`should not add default React Native config when one present 1`] = `
-Array [
-  Object {
-    "func": [Function],
-    "name": "test",
-  },
-]
 `;
 
 exports[`should read \`rnpm\` config from a dependency and transform it to a new format: foo config 1`] = `

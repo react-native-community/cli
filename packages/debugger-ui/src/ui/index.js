@@ -21,6 +21,12 @@ window.onload = function() {
   Page.render();
 };
 
+window.onReloadClicked = function() {
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', `${window.location.origin}/reload`, true);
+  xhr.send();
+};
+
 const Page = (window.Page = {
   state: {
     isDark:

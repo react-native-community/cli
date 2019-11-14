@@ -10,7 +10,7 @@ import connect from 'connect';
 import errorhandler from 'errorhandler';
 import {Server as WebSocketServer} from 'ws';
 import serveStatic from 'serve-static';
-import {debuggerUIMiddleware} from '@react-native-community/debugger-ui';
+import {debuggerUIMiddleware} from '@react-native-community/cli-debugger-ui';
 
 import indexPageMiddleware from './indexPage';
 import copyToClipBoardMiddleware from './copyToClipBoardMiddleware';

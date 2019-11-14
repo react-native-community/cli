@@ -8,7 +8,6 @@
   "editor.formatOnSave": true,
   "flow.useNPMPackagedFlow": true,
   "javascript.validate.enable": false,
-  "prettier.eslintIntegration": true,
   "eslint.validate": [
     "javascript",
     "javascriptreact",

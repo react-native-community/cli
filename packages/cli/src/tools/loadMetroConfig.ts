@@ -48,6 +48,7 @@ export interface MetroConfig {
   };
   server: {
     port: number;
+    enhanceMiddleware?: Function;
   };
   symbolicator: {
     customizeFrame: (frame: {file: string | null}) => {collapse: boolean};
@@ -55,6 +56,7 @@ export interface MetroConfig {
   transformer: {
     babelTransformerPath: string;
     assetRegistryPath: string;
+    assetPlugins?: Array<string>;
   };
   watchFolders: string[];
   reporter?: any;
@@ -133,16 +135,6 @@ export default function load(
 ): Promise<MetroConfig> {
   const defaultConfig = getDefaultConfig(ctx);
   if (options && options.reporter) {
-    /**
-     * $FlowIssue: Metro doesn't accept `reporter` to be passed along other options
-     * and will ignore the value, if provided.
-     *
-     * We explicitly read `reporter` value and set it on a default configuration. Note
-     * that all other options described in the `ConfigOptionsT` are handled by Metro
-     * automatically.
-     *
-     * This is a temporary workaround.
-     */
     defaultConfig.reporter = options.reporter;
   }
   return loadConfig({cwd: ctx.root, ...options}, defaultConfig);

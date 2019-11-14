@@ -7,15 +7,19 @@ import {EnvironmentInfo, HealthCheckInterface} from '../types';
 
 export default {
   label: 'Android NDK',
-  description: 'required for building React Native from the source',
+  description: 'Required for building React Native from the source',
   getDiagnostics: async ({SDKs}: EnvironmentInfo) => {
     const androidSdk = SDKs['Android SDK'];
+    const version =
+      androidSdk === 'Not Found' ? androidSdk : androidSdk['Android NDK'];
+
     return {
       needsToBeFixed: doesSoftwareNeedToBeFixed({
-        version:
-          androidSdk === 'Not Found' ? androidSdk : androidSdk['Android NDK'],
+        version,
         versionRange: versionRanges.ANDROID_NDK,
       }),
+      version,
+      versionRange: versionRanges.ANDROID_NDK,
     };
   },
   runAutomaticFix: async ({

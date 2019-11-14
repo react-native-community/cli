@@ -1,7 +1,3 @@
-/**
- * @flow
- */
-
 jest.mock('@react-native-community/cli-tools', () => {
   return {
     ...jest.requireActual('@react-native-community/cli-tools'),

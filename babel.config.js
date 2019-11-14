@@ -2,10 +2,6 @@ module.exports = {
   babelrcRoots: ['packages/*'],
   overrides: [
     {
-      presets: ['@babel/preset-flow'],
-      test: '**/*.js',
-    },
-    {
       presets: ['@babel/preset-typescript'],
       test: '**/*.ts',
     },

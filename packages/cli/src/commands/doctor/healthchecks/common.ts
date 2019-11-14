@@ -104,4 +104,4 @@ function removeMessage(message: string) {
   readline.clearScreenDown(process.stdout);
 }
 
-export {logManualInstallation, logError, removeMessage};
+export {logMessage, logManualInstallation, logError, removeMessage};

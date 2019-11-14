@@ -1,4 +1,3 @@
-// @flow
 import info from '../info';
 import {logger} from '@react-native-community/cli-tools';
 import loadConfig from '../../../tools/config';

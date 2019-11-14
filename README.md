@@ -18,6 +18,7 @@ _Note: CLI has been extracted from core `react-native` as a part of "[Lean Core]
   - [Using global CLI (_legacy_)](#using-global-cli-legacy)
 - [Usage in an existing React Native project](#usage-in-an-existing-react-native-project)
 - [Updating the CLI](#updating-the-cli)
+- [Contributing](./CONTRIBUTING.md)
 - [Maintainers](#maintainers)
 - [License](#license)
 
@@ -27,6 +28,7 @@ Our release cycle is independent of `react-native`. We follow semver and here is
 
 | `@react-native-community/cli`                                    | `react-native` |
 | ---------------------------------------------------------------- | -------------- |
+| ^3.0.0                                                           | ^0.61.0        |
 | ^2.0.0                                                           | ^0.60.0        |
 | [^1.0.0](https://github.com/react-native-community/cli/tree/1.x) | ^0.59.0        |
 

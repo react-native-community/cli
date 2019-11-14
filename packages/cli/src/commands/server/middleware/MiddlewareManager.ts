@@ -3,9 +3,6 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
- *
- * @strict
- * @flow
  */
 
 import compression from 'compression';
@@ -26,19 +23,18 @@ import systraceProfileMiddleware from './systraceProfileMiddleware';
 import getDevToolsMiddleware from './getDevToolsMiddleware';
 
 type Options = {
-  +watchFolders: $ReadOnlyArray<string>,
-  +host?: string,
+  host?: string;
+  watchFolders: Array<string>;
+  port: number;
 };
 
 type WebSocketProxy = {
-  server: WebSocketServer,
-  isDebuggerConnected: () => boolean,
+  server?: WebSocketServer;
+  isDebuggerConnected: () => boolean;
 };
 
-type Connect = $Call<connect>;
-
 export default class MiddlewareManager {
-  app: Connect;
+  app: connect.Server;
 
   options: Options;
 
@@ -49,6 +45,7 @@ export default class MiddlewareManager {
     this.app = connect()
       .use(getSecurityHeadersMiddleware)
       .use(loadRawBodyMiddleware)
+      // @ts-ignore compression and connect types mismatch
       .use(compression())
       .use('/debugger-ui', serveStatic(debuggerUIFolder))
       .use(openStackFrameInEditorMiddleware(this.options))
@@ -61,6 +58,7 @@ export default class MiddlewareManager {
   }
 
   serveStatic(folder: string) {
+    // @ts-ignore serveStatic and connect types mismatch
     this.app.use(serveStatic(folder));
   }
 

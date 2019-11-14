@@ -22,11 +22,12 @@ const packageManager = (() => {
 const yarn: HealthCheckInterface = {
   label: 'yarn',
   getDiagnostics: async ({Binaries}) => ({
-    version: Binaries.Node.version,
     needsToBeFixed: doesSoftwareNeedToBeFixed({
       version: Binaries.Yarn.version,
       versionRange: versionRanges.YARN,
     }),
+    version: Binaries.Yarn.version,
+    versionRange: versionRanges.YARN,
   }),
   // Only show `yarn` if there's a `yarn.lock` file in the current directory
   // or if we can't identify that the user uses yarn or npm
@@ -48,6 +49,8 @@ const npm: HealthCheckInterface = {
       version: Binaries.npm.version,
       versionRange: versionRanges.NPM,
     }),
+    version: Binaries.npm.version,
+    versionRange: versionRanges.NPM,
   }),
   // Only show `yarn` if there's a `package-lock.json` file in the current directory
   // or if we can't identify that the user uses yarn or npm

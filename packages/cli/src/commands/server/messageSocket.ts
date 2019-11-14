@@ -250,7 +250,8 @@ function attachToServer(server: Server, path: string) {
   });
 
   return {
-    broadcast: (method: string, params: Record<string, any>) => {
+    isDebuggerConnected: () => true,
+    broadcast: (method: string, params?: Record<string, any>) => {
       handleSendBroadcast(null, {method, params});
     },
   };

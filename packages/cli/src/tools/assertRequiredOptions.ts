@@ -8,9 +8,8 @@
  */
 import {Option} from 'commander';
 import {camelCase} from 'lodash';
-import {Command} from '@react-native-community/cli-types';
+import {CommandOption} from '@react-native-community/cli-types';
 
-type Options = NonNullable<Command['options']>;
 type PassedOptions = {
   [key: string]: unknown;
 };
@@ -19,7 +18,7 @@ type PassedOptions = {
 // for options. Until that gets merged, we run the checks manually
 // https://github.com/tj/commander.js/issues/230
 export default function assertRequiredOptions(
-  options: Options,
+  options: CommandOption<any>[],
   passedOptions: PassedOptions,
 ) {
   options.forEach(opt => {

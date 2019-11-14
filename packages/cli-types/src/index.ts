@@ -19,35 +19,43 @@ export type CommandFunction<Args = Object> = (
   args: Args,
 ) => Promise<void> | void;
 
-export interface Command<Args = Object> {
+export type OptionValue = string | boolean | number;
+
+export type CommandOption<T = (ctx: Config) => OptionValue> = {
   name: string;
   description?: string;
-  func: CommandFunction<Args>;
-  options?: Array<{
-    name: string;
-    description?: string;
-    parse?: (val: string) => any;
-    default?:
-      | string
-      | boolean
-      | number
-      | ((ctx: Config) => string | boolean | number);
-  }>;
+  parse?: (val: string) => any;
+  default?: OptionValue | T;
+};
+
+export type DetachedCommandFunction<Args = Object> = (
+  argv: string[],
+  args: Args,
+) => Promise<void> | void;
+
+export type Command<IsDetached extends boolean = false> = {
+  name: string;
+  description?: string;
+  detached?: IsDetached;
   examples?: Array<{
     desc: string;
     cmd: string;
   }>;
-}
-
-export type DetachedCommandFunction<Args = Object> = (
-  argv: Array<string>,
-  args: Args,
-) => Promise<void> | void;
-
-export type DetachedCommand<Args = Object> = Command<Args> & {
-  detached: true;
-  func: DetachedCommandFunction<Args>;
+  pkg?: {
+    name: string;
+    version: string;
+  };
+  func: IsDetached extends true
+    ? DetachedCommandFunction<Object>
+    : CommandFunction<Object>;
+  options?: Array<
+    CommandOption<
+      IsDetached extends true ? () => OptionValue : (ctx: Config) => OptionValue
+    >
+  >;
 };
+
+export type DetachedCommand = Command<true>;
 
 interface PlatformConfig<
   ProjectConfig,

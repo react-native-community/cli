@@ -11,7 +11,7 @@ const installMessage = `Read more about how to update Android SDK at ${chalk.dim
 
 export default {
   label: 'Android SDK',
-  description: 'required for building and installing your app on Android',
+  description: 'Required for building and installing your app on Android',
   getDiagnostics: async ({SDKs}) => {
     let sdks = SDKs['Android SDK'];
 
@@ -20,7 +20,6 @@ export default {
     // See the PR: https://github.com/tabrindle/envinfo/pull/119
     if (sdks === 'Not Found' && process.platform !== 'darwin') {
       try {
-        // $FlowFixMe bad execa types
         const {stdout} = await execa(
           process.env.ANDROID_HOME
             ? `${process.env.ANDROID_HOME}/tools/bin/sdkmanager`
@@ -47,11 +46,15 @@ export default {
       } catch {}
     }
 
+    const version = sdks === 'Not Found' ? sdks : sdks['Build Tools'][0];
+
     return {
+      version,
+      versionRange: versionRanges.ANDROID_SDK,
       needsToBeFixed:
         sdks === 'Not Found' ||
         doesSoftwareNeedToBeFixed({
-          version: sdks['Build Tools'][0],
+          version,
           versionRange: versionRanges.ANDROID_SDK,
         }),
     };

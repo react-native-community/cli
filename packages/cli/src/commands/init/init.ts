@@ -4,6 +4,7 @@ import fs from 'fs-extra';
 import minimist from 'minimist';
 import ora from 'ora';
 import semver from 'semver';
+import camelCase from 'lodash/camelCase';
 // @ts-ignore untyped
 import inquirer from 'inquirer';
 import mkdirp from 'mkdirp';
@@ -201,8 +202,9 @@ async function createProject(
     );
   }
 
+  const projectNameInCamelCase = camelCase(projectName);
   return createFromTemplate({
-    projectName,
+    projectName: projectNameInCamelCase,
     templateName,
     npm: options.npm,
     directory,
@@ -217,7 +219,6 @@ export default (async function initialize(
   const root = process.cwd();
 
   validateProjectName(projectName);
-
   /**
    * Commander is stripping `version` from options automatically.
    * We have to use `minimist` to take that directly from `process.argv`

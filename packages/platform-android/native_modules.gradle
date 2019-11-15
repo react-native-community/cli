@@ -191,7 +191,7 @@ class ReactNativeModules {
      * (e.g. when running with -p flag), in which case npx wouldn't resolve correct `react-native` binary.
      */
     def dir = new File(this.jsAppDir)
-    def reactNativeConfigOutput = this.getCommandOutput(command, dir)
+    def reactNativeConfigOutput = this.getCommandOutput(command, /* dir */) // Temporary disable changing dir, as it introduces regressions
     def json
     try {
       json = new JsonSlurper().parseText(reactNativeConfigOutput)

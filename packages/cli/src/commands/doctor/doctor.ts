@@ -36,7 +36,7 @@ const printIssue = ({
       : chalk.yellow('●')
     : chalk.green('✓');
 
-  const descriptionToShow = description ? `- ${description}` : '';
+  const descriptionToShow = description ? ` - ${description}` : '';
 
   logger.log(` ${symbol} ${label}${descriptionToShow}`);
 
@@ -46,9 +46,7 @@ const printIssue = ({
 
     if (cleanedVersionRange) {
       logMessage(`- Version found: ${chalk.red(versionToShow)}`);
-      logMessage(
-        `- Minimum version required: ${chalk.green(cleanedVersionRange)}`,
-      );
+      logMessage(`- Version supported: ${chalk.green(cleanedVersionRange)}`);
 
       return;
     }

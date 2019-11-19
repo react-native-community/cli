@@ -8,5 +8,5 @@ export default {
   ANDROID_SDK: '>= 26.x',
   ANDROID_NDK: '>= 19.x',
   // iOS
-  XCODE: '10.x',
+  XCODE: '11.x',
 };

@@ -1,6 +1,5 @@
 import chalk from 'chalk';
 import {logger} from '@react-native-community/cli-tools';
-import semver from 'semver';
 import {getHealthchecks, HEALTHCHECK_TYPES} from './healthchecks';
 import {getLoader} from '../../tools/loader';
 import printFixOptions, {KEYS} from './printFixOptions';
@@ -42,14 +41,11 @@ const printIssue = ({
 
   if (needsToBeFixed && versionRange) {
     const versionToShow = version && version !== 'Not Found' ? version : 'N/A';
-    const cleanedVersionRange = semver.valid(semver.coerce(versionRange)!);
 
-    if (cleanedVersionRange) {
-      logMessage(`- Version found: ${chalk.red(versionToShow)}`);
-      logMessage(`- Version supported: ${chalk.green(cleanedVersionRange)}`);
+    logMessage(`- Version found: ${chalk.red(versionToShow)}`);
+    logMessage(`- Version supported: ${chalk.green(versionRange)}`);
 
-      return;
-    }
+    return;
   }
 };
 

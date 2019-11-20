@@ -39,7 +39,6 @@ describe('runOnAllDevices', () => {
     await runOnAllDevices(
       {...args, variant: 'debug'},
       './gradlew',
-      'com.test',
       'adb',
       androidProject,
     );
@@ -49,13 +48,10 @@ describe('runOnAllDevices', () => {
   });
 
   it('uses appName and default variant', async () => {
-    await runOnAllDevices(
-      {...args, variant: 'debug'},
-      './gradlew',
-      'com.test',
-      'adb',
-      {...androidProject, appName: 'someApp'},
-    );
+    await runOnAllDevices({...args, variant: 'debug'}, './gradlew', 'adb', {
+      ...androidProject,
+      appName: 'someApp',
+    });
 
     expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toContain(
       'someApp:installDebug',
@@ -63,13 +59,10 @@ describe('runOnAllDevices', () => {
   });
 
   it('uses appName and custom variant', async () => {
-    await runOnAllDevices(
-      {...args, variant: 'staging'},
-      './gradlew',
-      'com.test',
-      'adb',
-      {...androidProject, appName: 'anotherApp'},
-    );
+    await runOnAllDevices({...args, variant: 'staging'}, './gradlew', 'adb', {
+      ...androidProject,
+      appName: 'anotherApp',
+    });
 
     expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toContain(
       'anotherApp:installStaging',
@@ -80,7 +73,6 @@ describe('runOnAllDevices', () => {
     await runOnAllDevices(
       {...args, tasks: ['someTask']},
       './gradlew',
-      'com.test',
       'adb',
       androidProject,
     );
@@ -91,13 +83,10 @@ describe('runOnAllDevices', () => {
   });
 
   it('uses appName and custom task argument', async () => {
-    await runOnAllDevices(
-      {...args, tasks: ['someTask']},
-      './gradlew',
-      'com.test',
-      'adb',
-      {...androidProject, appName: 'anotherApp'},
-    );
+    await runOnAllDevices({...args, tasks: ['someTask']}, './gradlew', 'adb', {
+      ...androidProject,
+      appName: 'anotherApp',
+    });
 
     expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toContain(
       'anotherApp:someTask',
@@ -108,15 +97,14 @@ describe('runOnAllDevices', () => {
     await runOnAllDevices(
       {...args, tasks: ['clean', 'someTask']},
       './gradlew',
-      'com.test',
       'adb',
       androidProject,
     );
 
-    expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toContain(
+    expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toEqual([
       'app:clean',
-      // @ts-ignore
       'app:someTask',
-    );
+      '-PreactNativeDevServerPort=8081',
+    ]);
   });
 });

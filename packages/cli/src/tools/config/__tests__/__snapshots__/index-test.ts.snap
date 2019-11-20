@@ -48,15 +48,6 @@ Object {
 }
 `;
 
-exports[`should not add default React Native config when one present 1`] = `
-Array [
-  Object {
-    "func": [Function],
-    "name": "test",
-  },
-]
-`;
-
 exports[`should read a config of a dependency and use it to load other settings 1`] = `
 Object {
   "name": "react-native-test",

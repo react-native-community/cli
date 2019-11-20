@@ -5,9 +5,7 @@
     "**/node_modules": true,
     "**/build": true
   },
-  "editor.formatOnSave": true,
-  "flow.useNPMPackagedFlow": true,
-  "javascript.validate.enable": false,
+  "eslint.autoFixOnSave": true,
   "eslint.validate": [
     "javascript",
     "javascriptreact",

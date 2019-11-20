@@ -86,9 +86,7 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
         );
       } catch (error) {
         logger.warn(
-          `Failed to automatically start the packager server. Please run "react-native start" manually. Error details: ${
-            error.message
-          }`,
+          `Failed to automatically start the packager server. Please run "react-native start" manually. Error details: ${error.message}`,
         );
       }
     }
@@ -102,28 +100,15 @@ function buildAndRun(args: Flags, androidProject: AndroidProject) {
 
   const adbPath = getAdbPath();
   if (args.deviceId) {
-    return runOnSpecificDevice(
-      args,
-      gradlew,
-      androidProject.packageName,
-      adbPath,
-      androidProject,
-    );
+    return runOnSpecificDevice(args, gradlew, adbPath, androidProject);
   } else {
-    return runOnAllDevices(
-      args,
-      gradlew,
-      androidProject.packageName,
-      adbPath,
-      androidProject,
-    );
+    return runOnAllDevices(args, gradlew, adbPath, androidProject);
   }
 }
 
 function runOnSpecificDevice(
   args: Flags,
   gradlew: 'gradlew.bat' | './gradlew',
-  packageName: string,
   adbPath: string,
   androidProject: AndroidProject,
 ) {
@@ -132,13 +117,7 @@ function runOnSpecificDevice(
   if (devices.length > 0 && deviceId) {
     if (devices.indexOf(deviceId) !== -1) {
       buildApk(gradlew, androidProject.sourceDir);
-      installAndLaunchOnDevice(
-        args,
-        deviceId,
-        packageName,
-        adbPath,
-        androidProject,
-      );
+      installAndLaunchOnDevice(args, deviceId, adbPath, androidProject);
     } else {
       logger.error(
         `Could not find device with the id: "${deviceId}". Please choose one of the following:`,
@@ -222,13 +201,17 @@ function getInstallApkName(
 function installAndLaunchOnDevice(
   args: Flags,
   selectedDevice: string,
-  packageName: string,
   adbPath: string,
   androidProject: AndroidProject,
 ) {
   tryRunAdbReverse(args.port, selectedDevice);
   tryInstallAppOnDevice(args, adbPath, selectedDevice, androidProject);
-  tryLaunchAppOnDevice(selectedDevice, packageName, adbPath, args);
+  tryLaunchAppOnDevice(
+    selectedDevice,
+    androidProject.packageName,
+    adbPath,
+    args,
+  );
 }
 
 function startServerInNewWindow(

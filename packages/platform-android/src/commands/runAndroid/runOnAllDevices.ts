@@ -29,7 +29,6 @@ type AndroidProject = NonNullable<Config['project']['android']>;
 async function runOnAllDevices(
   args: Flags,
   cmd: string,
-  packageName: string,
   adbPath: string,
   androidProject: AndroidProject,
 ) {
@@ -74,9 +73,9 @@ async function runOnAllDevices(
   }
 
   (devices.length > 0 ? devices : [undefined]).forEach(
-    async (device: string | void) => {
+    (device: string | void) => {
       tryRunAdbReverse(args.port, device);
-      await tryLaunchAppOnDevice(device, packageName, adbPath, args);
+      tryLaunchAppOnDevice(device, androidProject.packageName, adbPath, args);
     },
   );
 }

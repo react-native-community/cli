@@ -7,6 +7,7 @@
  */
 
 import path from 'path';
+import fs from 'fs';
 import findAndroidDir from './findAndroidDir';
 import findManifest from './findManifest';
 import findPackageClassName from './findPackageClassName';
@@ -31,7 +32,8 @@ export function projectConfig(
   }
 
   const sourceDir = path.join(root, src);
-  const appName = userConfig.appName || 'app';
+  const appName = getAppName(sourceDir, userConfig.appName);
+
   const manifestPath = userConfig.manifestPath
     ? path.join(sourceDir, userConfig.manifestPath)
     : findManifest(path.join(sourceDir, appName));
@@ -54,6 +56,19 @@ export function projectConfig(
     packageName,
     manifestPath,
   };
+}
+
+function getAppName(sourceDir: string, userConfigAppName: string | undefined) {
+  let appName = '';
+  if (
+    typeof userConfigAppName === 'string' &&
+    fs.existsSync(path.join(sourceDir, userConfigAppName))
+  ) {
+    appName = userConfigAppName;
+  } else if (fs.existsSync(path.join(sourceDir, 'app'))) {
+    appName = 'app';
+  }
+  return appName;
 }
 
 export function dependencyConfig(

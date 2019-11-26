@@ -4,6 +4,7 @@
 # imports those into your current target.
 #
 require 'pathname'
+require 'cocoapods'
 
 def use_native_modules!(config = nil)
   if (config.is_a? String)

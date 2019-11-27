@@ -107,27 +107,6 @@ if $0 == __FILE__
   require "minitest/spec"
   require "minitest/autorun"
 
-  # Define this here, because we’re not actually loading this code.
-  module Pod
-    class Specification
-    end
-
-    module UI
-    end
-  end
-
-  # CocoaPods loads ActiveSupport, but we’re not doing that here just for the test.
-  class Array
-    def to_sentence
-      size == 1 ? self[0] : "#{self[0..-2].join(", ")}, and #{self[-1]}"
-    end
-  end
-  class String
-    def pluralize(count)
-      count == 1 ? self : "#{self}s"
-    end
-  end
-
   describe "use_native_modules!" do
     before do
       @script_phase = {

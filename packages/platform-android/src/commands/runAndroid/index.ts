@@ -14,7 +14,7 @@ import adb from './adb';
 import runOnAllDevices from './runOnAllDevices';
 import tryRunAdbReverse from './tryRunAdbReverse';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
-import getAdbPath, {checkAdbPath, checkAndroidSDKPath} from './getAdbPath';
+import getAdbPath from './getAdbPath';
 import {
   isPackagerRunning,
   logger,
@@ -39,8 +39,6 @@ function performChecks(config: Config, args: Flags) {
       'Android project not found. Are you sure this is a React Native project?',
     );
   }
-  checkAndroidSDKPath();
-  checkAdbPath();
 
   // warn after we have done basic system checks
   warnAboutManuallyLinkedLibs(config);

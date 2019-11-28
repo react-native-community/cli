@@ -6,10 +6,10 @@ const ABS_RN_PATH = '/path/to/react-native';
 const ABS_RN_PATH_WINDOWS = 'path/to/react-native';
 
 test('supports file protocol with absolute path', async () => {
-  jest.spyOn(fs, 'existsSync').mockImplementation(() => true);
+  jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
   jest
     .spyOn(fs, 'readFileSync')
-    .mockImplementation(() => JSON.stringify({name: 'react-native'}));
+    .mockImplementationOnce(() => JSON.stringify({name: 'react-native'}));
   expect(await processTemplateName(`file://${ABS_RN_PATH}`)).toEqual({
     uri: process.platform === 'win32' ? ABS_RN_PATH_WINDOWS : ABS_RN_PATH,
     name: RN_NPM_PACKAGE,

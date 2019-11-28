@@ -43,7 +43,7 @@ test('getTemplateConfig', () => {
     },
   );
   jest.spyOn(path, 'resolve').mockImplementationOnce((...e) => e.join('/'));
-  jest.spyOn(fs, 'existsSync').mockImplementation(() => true);
+  jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
   expect(getTemplateConfig(TEMPLATE_NAME, TEMPLATE_SOURCE_DIR)).toEqual({
     placeholderName: 'someName',
     templateDir: 'someDir',

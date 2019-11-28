@@ -19,10 +19,6 @@ const isConnected = (output: string): boolean => {
   return !output.includes('the host is inaccessible');
 };
 
-const hasErrors = (output: string): boolean => output.includes('npm ERR');
-
-const hasWarnings = (output: string): boolean => output.includes('npm WARN');
-
 const checkForErrors = (output: string): void => {
   if (!output) {
     return;
@@ -33,11 +29,11 @@ const checkForErrors = (output: string): void => {
     );
   }
 
-  if (hasErrors(output)) {
+  if (output.includes('npm ERR')) {
     throw new CLIError(`Upgrade failed with the following errors:\n${output}`);
   }
 
-  if (hasWarnings(output)) {
+  if (output.includes('npm WARN')) {
     logger.warn(output);
   }
 };

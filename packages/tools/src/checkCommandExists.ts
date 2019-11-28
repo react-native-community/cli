@@ -25,7 +25,9 @@ function commandExistsWindowsSync(commandName: string) {
 }
 
 function checkCommandExists(commandName: string) {
-  if (!commandName) return false;
+  if (!commandName) {
+    return false;
+  }
   switch (process.platform) {
     case 'win32':
       return commandExistsWindowsSync(commandName);

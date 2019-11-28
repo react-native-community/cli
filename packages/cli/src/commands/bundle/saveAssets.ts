@@ -31,7 +31,9 @@ function saveAssets(
   }
 
   if (!fs.existsSync(assetsDest)) {
-    throw new CLIError(`The specified assets destination folder "${assetsDest}" does not exist.`);
+    throw new CLIError(
+      `The specified assets destination folder "${assetsDest}" does not exist.`,
+    );
   }
 
   const getAssetDestPath =

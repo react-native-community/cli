@@ -218,7 +218,7 @@ if $0 == __FILE__
       })
       @printed_messages.must_equal [
         "Detected React Native module pod for ios-dep",
-        "Detected React Native module pods for ios-dep, and ios-dep"
+        "Detected React Native module pods for ios-dep and ios-dep"
       ]
     end
 

@@ -24,12 +24,14 @@ export default function registerNativeAndroidModule(
   params: AndroidProjectParams,
   projectConfig: AndroidProjectConfig,
 ) {
+  const buildPatch = makeBuildPatch(name);
+
   applyPatch(
     projectConfig.settingsGradlePath,
     makeSettingsPatch(name, androidConfig, projectConfig),
   );
 
-  applyPatch(projectConfig.buildGradlePath, makeBuildPatch(name));
+  applyPatch(projectConfig.buildGradlePath, buildPatch);
   applyPatch(projectConfig.stringsPath, makeStringsPatch(params, name));
 
   applyPatch(

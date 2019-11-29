@@ -91,7 +91,7 @@ An array of iOS script phases to add to the project. Specifying a `path` propert
 module.exports = {
   dependency: {
     platforms: {
-     ios: {
+      ios: {
         scriptPhases: [
           {
             name: '[MY DEPENDENCY] My Script',
@@ -119,9 +119,15 @@ Path to a custom `AndroidManifest.xml`
 
 Custom package import. For example: `import com.acme.AwesomePackage;`.
 
+`{{ packageName }}` will be replaced with the package of `MainApplication`, so you can eg.
+import application's `BuildConfig` class by writing `import {{ packageName }}.BuildConfig;`.
+
 #### platforms.android.packageInstance
 
 Custom syntax to instantiate a package. By default, it's a `new AwesomePackage()`. It can be useful when your package requires additional arguments while initializing.
+
+`{{ packageName }}` will be replaced with the package of `MainApplication`, so you can eg.
+import application's `R` class by writing `new AwesomePackage({{ packageName }}.R.string.key)`.
 
 For settings applicable on other platforms, please consult their respective documentation.
 

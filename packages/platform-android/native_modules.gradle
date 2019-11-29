@@ -132,7 +132,9 @@ class ReactNativeModules {
       packageImports = packageImports + packages.collect {
         "// ${it.name}\n${interpolateDynamicValues(it.packageImportPath)}"
       }.join('\n')
-      packageClassInstances = ",\n      " + packages.collect { it.packageInstance }.join(",\n      ")
+      packageClassInstances = ",\n      " + packages.collect {
+        interpolateDynamicValues(it.packageInstance)
+      }.join(",\n      ")
     }
 
     String generatedFileContents = generatedFileContentsTemplate

@@ -1,6 +1,5 @@
 import chalk from 'chalk';
 import fs from 'fs';
-import execa from 'execa';
 import {logManualInstallation} from './common';
 import versionRanges from '../versionRanges';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
@@ -38,7 +37,7 @@ const installMessage = `Read more about how to update Android SDK at ${chalk.dim
 export default {
   label: 'Android SDK',
   description: 'Required for building and installing your app on Android',
-  getDiagnostics: async ({SDKs}) => {
+  getDiagnostics: async ({}) => {
     // TODO: also check if this version is contained within `SDKs['Android SDK']['Build Tools']
     const version = getBuildToolsVersion();
 

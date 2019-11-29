@@ -21,11 +21,9 @@ const getBuildToolsVersion = (): string => {
     // Get only the portion of the declaration of `buildToolsVersion`
     .substring(buildToolsVersionIndex)
     .split('\n')[0]
-    // Split the value to only get the version number
-    .split('=')[1]
-    // Clean up
-    .replace(/\"/g, '')
-    .trim();
+    // Get only the the value of `buildToolsVersion`
+    .match(/\d|\../g)
+    .join('');
 
   return buildToolsVersion;
 };
@@ -40,7 +38,7 @@ export default {
   getDiagnostics: async ({}) => {
     // TODO: also check if this version is contained within `SDKs['Android SDK']['Build Tools']
     const version = getBuildToolsVersion();
-
+    console.log(version);
     return {
       version,
       versionRange: versionRanges.ANDROID_SDK,

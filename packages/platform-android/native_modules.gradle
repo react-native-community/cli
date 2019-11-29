@@ -129,7 +129,7 @@ class ReactNativeModules {
       def interpolateDynamicValues = {
         it.replace("{{ packageName }}", packageName)
       }
-      packageImports = packageImports + packages.collect {
+       packageImports = packages.collect {
         "// ${it.name}\n${interpolateDynamicValues(it.packageImportPath)}"
       }.join('\n')
       packageClassInstances = ",\n      " + packages.collect {

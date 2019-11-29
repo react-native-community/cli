@@ -1,9 +1,35 @@
 import chalk from 'chalk';
+import fs from 'fs';
+import execa from 'execa';
 import {logManualInstallation} from './common';
 import versionRanges from '../versionRanges';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
-import execa from 'execa';
 import {HealthCheckInterface} from '../types';
+
+const getBuildToolsVersion = (): string => {
+  // TODO: get relative path, first search for where the `package.json` is
+  const gradleBuildFilePath = 'android/build.gradle';
+  const buildToolsVersionEntry = 'buildToolsVersion';
+
+  // Read the content of the `build.gradle` file
+  const gradleBuildFile = fs.readFileSync(gradleBuildFilePath, 'utf-8');
+
+  const buildToolsVersionIndex = gradleBuildFile.indexOf(
+    buildToolsVersionEntry,
+  );
+
+  const buildToolsVersion = gradleBuildFile
+    // Get only the portion of the declaration of `buildToolsVersion`
+    .substring(buildToolsVersionIndex)
+    .split('\n')[0]
+    // Split the value to only get the version number
+    .split('=')[1]
+    // Clean up
+    .replace(/\"/g, '')
+    .trim();
+
+  return buildToolsVersion;
+};
 
 const installMessage = `Read more about how to update Android SDK at ${chalk.dim(
   'https://developer.android.com/studio',
@@ -13,46 +39,14 @@ export default {
   label: 'Android SDK',
   description: 'Required for building and installing your app on Android',
   getDiagnostics: async ({SDKs}) => {
-    let sdks = SDKs['Android SDK'];
-
-    // This is a workaround for envinfo's Android SDK check not working on
-    // Windows. This can be removed when envinfo fixes it.
-    // See the PR: https://github.com/tabrindle/envinfo/pull/119
-    if (sdks === 'Not Found' && process.platform !== 'darwin') {
-      try {
-        const {stdout} = await execa(
-          process.env.ANDROID_HOME
-            ? `${process.env.ANDROID_HOME}/tools/bin/sdkmanager`
-            : 'sdkmanager',
-          ['--list'],
-        );
-
-        const matches = [];
-        const regex = /build-tools;([\d|.]+)[\S\s]/g;
-        let match = null;
-        while ((match = regex.exec(stdout)) !== null) {
-          if (match) {
-            matches.push(match[1]);
-          }
-        }
-        if (matches.length > 0) {
-          sdks = {
-            'Build Tools': matches,
-            'API Levels': 'Not Found',
-            'Android NDK': 'Not Found',
-            'System Images': 'Not Found',
-          };
-        }
-      } catch {}
-    }
-
-    const version = sdks === 'Not Found' ? sdks : sdks['Build Tools'][0];
+    // TODO: also check if this version is contained within `SDKs['Android SDK']['Build Tools']
+    const version = getBuildToolsVersion();
 
     return {
       version,
       versionRange: versionRanges.ANDROID_SDK,
       needsToBeFixed:
-        sdks === 'Not Found' ||
+        version === 'Not Found' ||
         doesSoftwareNeedToBeFixed({
           version,
           versionRange: versionRanges.ANDROID_SDK,

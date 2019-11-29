@@ -36,6 +36,13 @@ commands:
           root: .
           paths:
             - .
+
+  install-cocoapods:
+    steps:
+      - attach_workspace:
+           at: ~/react-native-cli
+      - run: gem install cocoapods
+
   run-lint:
     steps:
       - attach_workspace:
@@ -72,6 +79,7 @@ jobs:
   cocoa-pods:
     executor: noderuby
     steps:
+      - install-cocoapods
       - run-cocoa-pods-tests
   unit-tests:
     executor: node8

@@ -59,6 +59,7 @@ export interface MetroConfig {
     assetPlugins?: Array<string>;
   };
   watchFolders: string[];
+  watch: boolean;
   reporter?: any;
 }
 
@@ -110,6 +111,7 @@ export const getDefaultConfig = (ctx: Config): MetroConfig => {
       ),
     },
     watchFolders: getWatchFolders(),
+    watch: true,
   };
 };
 
@@ -122,6 +124,7 @@ export interface ConfigOptionsT {
   sourceExts?: string[];
   reporter?: any;
   config?: string;
+  watch?: boolean;
 }
 
 /**

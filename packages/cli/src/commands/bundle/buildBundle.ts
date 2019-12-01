@@ -50,6 +50,9 @@ async function buildBundle(
     config: args.config,
   });
 
+  // Don't need file watcher for building offline bundle
+  config.watch = false;
+
   if (config.resolver.platforms.indexOf(args.platform) === -1) {
     logger.error(
       `Invalid platform ${

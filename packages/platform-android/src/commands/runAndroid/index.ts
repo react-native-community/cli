@@ -140,7 +140,7 @@ function buildAndRun(args: Flags) {
   );
 
   let packageNameMatchArray = androidManifest.match(/package="(.+?)"/);
-  if (!packageNameMatchArray || packageNameMatchArray.length <= 0) {
+  if (!packageNameMatchArray || packageNameMatchArray.length === 0) {
     throw new CLIError(
       `Failed to build the app: No package name found. Found errors in ${chalk.underline.dim(
         `${appFolder}/src/main/AndroidManifest.xml`,

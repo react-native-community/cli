@@ -183,8 +183,7 @@ class ReactNativeModules {
     if (this.reactNativeModules != null) return this.reactNativeModules
 
     ArrayList<HashMap<String, String>> reactNativeModules = new ArrayList<HashMap<String, String>>()
-    def npx = Os.isFamily(Os.FAMILY_WINDOWS) ? "npx.cmd" : "npx"
-    def command = "${npx} --quiet --no-install react-native config"
+    def command = "yarn react-native config --silent"
     /**
      * Running npx from the directory of the JS app which holds this script in its node_modules.
      * We do so, because Gradle may be ran with a different directory as CWD, that's outside of JS project

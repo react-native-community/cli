@@ -91,6 +91,7 @@ export type HealthCheckInterface = {
     environmentInfo: EnvironmentInfo,
   ) => Promise<{
     version?: string;
+    versions?: [string];
     versionRange?: string;
     needsToBeFixed: boolean | string;
   }>;
@@ -101,6 +102,7 @@ export type HealthCheckResult = {
   label: string;
   needsToBeFixed: boolean;
   version?: 'Not Found' | string;
+  versions?: [string];
   versionRange?: string;
   description: string | undefined;
   runAutomaticFix: RunAutomaticFix;

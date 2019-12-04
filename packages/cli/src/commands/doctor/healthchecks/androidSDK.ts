@@ -47,12 +47,18 @@ export default {
       };
     }
 
-    const isRequiredVersionInstalled = SDKs['Android SDK'][
-      'Build Tools'
-    ].includes(requiredVersion);
+    const isAndroidSDKInstalled = Array.isArray(
+      SDKs['Android SDK']['Build Tools'],
+    );
+
+    const isRequiredVersionInstalled = isAndroidSDKInstalled
+      ? SDKs['Android SDK']['Build Tools'].includes(requiredVersion)
+      : false;
 
     return {
-      versions: SDKs['Android SDK']['Build Tools'],
+      versions: isAndroidSDKInstalled
+        ? SDKs['Android SDK']['Build Tools']
+        : SDKs['Android SDK'],
       versionRange: requiredVersion,
       needsToBeFixed: !isRequiredVersionInstalled,
     };

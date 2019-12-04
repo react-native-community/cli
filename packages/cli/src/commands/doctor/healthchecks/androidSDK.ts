@@ -1,13 +1,14 @@
 import chalk from 'chalk';
 import fs from 'fs';
+import path from 'path';
 import {logManualInstallation} from './common';
-import versionRanges from '../versionRanges';
-import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
 import {HealthCheckInterface} from '../types';
+import findProjectRoot from '../../../tools/config/findProjectRoot';
 
 const getBuildToolsVersion = (): string => {
-  // TODO: get relative path, first search for where the `package.json` is
-  const gradleBuildFilePath = 'android/build.gradle';
+  const projectRoot = findProjectRoot();
+  const gradleBuildFilePath = path.join(projectRoot, 'android/build.gradle');
+
   const buildToolsVersionEntry = 'buildToolsVersion';
 
   // Read the content of the `build.gradle` file
@@ -35,19 +36,25 @@ const installMessage = `Read more about how to update Android SDK at ${chalk.dim
 export default {
   label: 'Android SDK',
   description: 'Required for building and installing your app on Android',
-  getDiagnostics: async ({}) => {
-    // TODO: also check if this version is contained within `SDKs['Android SDK']['Build Tools']
-    const version = getBuildToolsVersion();
-    console.log(version);
+  getDiagnostics: async ({SDKs}) => {
+    const requiredVersion = getBuildToolsVersion();
+
+    if (!requiredVersion) {
+      return {
+        versions: SDKs['Android SDK']['Build Tools'],
+        versionRange: undefined,
+        needsToBeFixed: true,
+      };
+    }
+
+    const isRequiredVersionInstalled = SDKs['Android SDK'][
+      'Build Tools'
+    ].includes(requiredVersion);
+
     return {
-      version,
-      versionRange: versionRanges.ANDROID_SDK,
-      needsToBeFixed:
-        version === 'Not Found' ||
-        doesSoftwareNeedToBeFixed({
-          version,
-          versionRange: versionRanges.ANDROID_SDK,
-        }),
+      versions: SDKs['Android SDK']['Build Tools'],
+      versionRange: requiredVersion,
+      needsToBeFixed: !isRequiredVersionInstalled,
     };
   },
   runAutomaticFix: async ({loader, environmentInfo}) => {

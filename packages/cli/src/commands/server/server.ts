@@ -107,8 +107,8 @@ export default {
       parse: (val: string) => path.resolve(val),
     },
     {
-      name: '--disableWatchMode',
-      description: 'Disables watch mode',
+      name: '--interactive',
+      description: 'Disables interactive mode',
     },
   ],
 };

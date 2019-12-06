@@ -37,6 +37,7 @@ export type Args = {
   watchFolders?: string[];
   config?: string;
   projectRoot?: string;
+  interactiveMode?: boolean;
 };
 
 async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
@@ -109,7 +110,7 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
   middlewareManager.attachDevToolsSocket(wsProxy);
   middlewareManager.attachDevToolsSocket(ms);
 
-  if (!args.disableWatchMode) {
+  if (!args.interactiveMode) {
     enableWatchMode(ms);
   }
 

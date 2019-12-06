@@ -21,7 +21,7 @@ function enableWatchMode(messageSocket: any) {
 
   // We need to set this to true to catch key presses individually.
   // As a result we have to implement our own method for exiting
-  // and other commands.
+  // and other commands (e.g. ctrl+c & ctrl+z)
   stdin.setRawMode(true);
 
   // We have no way of knowing when the dependency graph is done loading
@@ -35,8 +35,14 @@ function enableWatchMode(messageSocket: any) {
 
   stdin.on('keypress', (key, data) => {
     const {ctrl, name} = data;
-    if (ctrl === true && name === 'c') {
-      process.exit();
+    if (ctrl === true) {
+      switch (name) {
+        case 'c':
+          process.exit();
+        case 'z':
+          process.emit('SIGTSTP');
+          break;
+      }
     } else if (name === 'r') {
       messageSocket.broadcast('reload', null);
       logger.info('Reloading app...');

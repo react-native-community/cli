@@ -6,8 +6,8 @@
  *
  */
 import readline from 'readline';
-import logger from '../../tools/logger';
 import hookStdout from '../../tools/hookStdout';
+import {logger} from '@react-native-community/cli-tools';
 
 function printWatchModeInstructions() {
   logger.log(
@@ -15,7 +15,7 @@ function printWatchModeInstructions() {
   );
 }
 
-function enableWatchMode(messageSocket) {
+function enableWatchMode(messageSocket: any) {
   const {stdin} = process;
   readline.emitKeypressEvents(stdin);
 

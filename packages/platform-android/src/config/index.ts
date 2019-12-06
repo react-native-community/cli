@@ -11,7 +11,10 @@ import findAndroidAppFolder from './findAndroidAppFolder';
 import findManifest from './findManifest';
 import findPackageClassName from './findPackageClassName';
 import readManifest from './readManifest';
-import {ProjectParamsAndroid, DependencyParamsAndroid} from '../types';
+import {
+  AndroidProjectParams,
+  AndroidDependencyParams,
+} from '@react-native-community/cli-types';
 import {XmlDocument} from 'xmldoc';
 
 const getPackageName = (manifest: XmlDocument) => manifest.attr.package;
@@ -22,7 +25,7 @@ const getPackageName = (manifest: XmlDocument) => manifest.attr.package;
  */
 export function projectConfig(
   folder: string,
-  userConfig: ProjectParamsAndroid = {},
+  userConfig: AndroidProjectParams = {},
 ) {
   const src = userConfig.sourceDir || findAndroidAppFolder(folder);
 
@@ -98,7 +101,7 @@ export function projectConfig(
  */
 export function dependencyConfig(
   folder: string,
-  userConfig: DependencyParamsAndroid = {},
+  userConfig: AndroidDependencyParams = {},
 ) {
   const src = userConfig.sourceDir || findAndroidAppFolder(folder);
 

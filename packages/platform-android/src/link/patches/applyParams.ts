@@ -7,11 +7,11 @@
  */
 
 import {camelCase as toCamelCase} from 'lodash';
-import {ProjectParamsAndroid} from '../../types';
+import {AndroidProjectParams} from '@react-native-community/cli-types';
 
 export default function applyParams(
   str: string,
-  params: ProjectParamsAndroid,
+  params: AndroidProjectParams,
   prefix: string,
 ) {
   return str.replace(/\$\{(\w+)\}/g, (_pattern: string, param: string) => {

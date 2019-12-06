@@ -5,12 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-
 import path from 'path';
 import execa from 'execa';
 import chalk from 'chalk';
 import fs from 'fs';
-import {Config} from '../../types';
+import {Config} from '@react-native-community/cli-types';
 import adb from './adb';
 import runOnAllDevices from './runOnAllDevices';
 import tryRunAdbReverse from './tryRunAdbReverse';
@@ -135,7 +134,6 @@ function buildAndRun(args: Flags) {
     args.appIdSuffix,
     packageName,
   );
-
   const adbPath = getAdbPath();
   if (args.deviceId) {
     return runOnSpecificDevice(
@@ -356,7 +354,9 @@ function startServerInNewWindow(
       encoding: 'utf8',
       flag: 'w',
     });
-    return execa.sync('cmd.exe', ['/C', launchPackagerScript], {
+
+    // Awaiting this causes the CLI to hang indefinitely, so this must execute without await.
+    return execa('cmd.exe', ['/C', launchPackagerScript], {
       ...procConfig,
       detached: true,
       stdio: 'ignore',

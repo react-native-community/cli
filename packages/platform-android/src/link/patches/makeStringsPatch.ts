@@ -7,10 +7,10 @@
  */
 
 import {camelCase as toCamelCase} from 'lodash';
-import {ProjectParamsAndroid} from '../../types';
+import {AndroidProjectParams} from '@react-native-community/cli-types';
 
 export default function makeStringsPatch(
-  params: ProjectParamsAndroid,
+  params: AndroidProjectParams,
   prefix: string,
 ) {
   const values = Object.keys(params).map(param => {

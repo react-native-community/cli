@@ -1,6 +1,8 @@
 import groovy.json.JsonSlurper
 import org.gradle.initialization.DefaultSettings
+import org.apache.tools.ant.taskdefs.condition.Os
 
+def jsAppDir = buildscript.sourceFile.toString().split("node_modules(/|\\\\)@react-native-community(/|\\\\)cli-platform-android")[0]
 def generatedFileName = "PackageList.java"
 def generatedFilePackage = "com.facebook.react"
 def generatedFileContentsTemplate = """
@@ -11,6 +13,7 @@ import android.content.Context;
 import android.content.res.Resources;
 
 import com.facebook.react.ReactPackage;
+import com.facebook.react.shell.MainPackageConfig;
 import com.facebook.react.shell.MainReactPackage;
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -20,13 +23,25 @@ import java.util.ArrayList;
 public class PackageList {
   private Application application;
   private ReactNativeHost reactNativeHost;
+  private MainPackageConfig mConfig;
+
   public PackageList(ReactNativeHost reactNativeHost) {
-    this.reactNativeHost = reactNativeHost;
+    this(reactNativeHost, null);
   }
 
   public PackageList(Application application) {
+    this(application, null);
+  }
+
+  public PackageList(ReactNativeHost reactNativeHost, MainPackageConfig config) {
+    this.reactNativeHost = reactNativeHost;
+    mConfig = config;
+  }
+
+  public PackageList(Application application, MainPackageConfig config) {
     this.reactNativeHost = null;
     this.application = application;
+    mConfig = config;
   }
 
   private ReactNativeHost getReactNativeHost() {
@@ -48,7 +63,7 @@ public class PackageList {
 
   public ArrayList<ReactPackage> getPackages() {
     return new ArrayList<>(Arrays.<ReactPackage>asList(
-      new MainReactPackage(){{ packageClassInstances }}
+      new MainReactPackage(mConfig){{ packageClassInstances }}
     ));
   }
 }
@@ -56,38 +71,25 @@ public class PackageList {
 
 class ReactNativeModules {
   private Logger logger
-  private Project project
   private String packageName
-  private DefaultSettings defaultSettings
-  private String root
+  private String jsAppDir
   private ArrayList<HashMap<String, String>> reactNativeModules
 
   private static String LOG_PREFIX = ":ReactNative:"
 
-  ReactNativeModules(Logger logger) {
+  ReactNativeModules(Logger logger, String jsAppDir) {
     this.logger = logger
-  }
+    this.jsAppDir = jsAppDir
 
-  void applySettingsGradle(DefaultSettings defaultSettings, String root) {
-    this.defaultSettings = defaultSettings
-    this.root = root
-    this.reactNativeModules = this.getReactNativeConfig()
-
-    addReactNativeModuleProjects()
-  }
-
-  void applyBuildGradle(Project project, String root) {
-    this.project = project
-    this.root = root
-    this.reactNativeModules = this.getReactNativeConfig()
-
-    addReactNativeModuleDependencies()
+    def (nativeModules, packageName) = this.getReactNativeConfig()
+    this.reactNativeModules = nativeModules
+    this.packageName = packageName
   }
 
   /**
    * Include the react native modules android projects and specify their project directory
    */
-  void addReactNativeModuleProjects() {
+  void addReactNativeModuleProjects(DefaultSettings defaultSettings) {
     reactNativeModules.forEach { reactNativeModule ->
       String nameCleansed = reactNativeModule["nameCleansed"]
       String androidSourceDir = reactNativeModule["androidSourceDir"]
@@ -99,31 +101,14 @@ class ReactNativeModules {
   /**
    * Adds the react native modules as dependencies to the users `app` project
    */
-  void addReactNativeModuleDependencies() {
+  void addReactNativeModuleDependencies(Project appProject) {
     reactNativeModules.forEach { reactNativeModule ->
       def nameCleansed = reactNativeModule["nameCleansed"]
-      project.dependencies {
+      appProject.dependencies {
         // TODO(salakar): are other dependency scope methods such as `api` required?
         implementation project(path: ":${nameCleansed}")
       }
     }
-  }
-
-  /**
-   * Returns the user's project root (i.e. where the node_modules dir is located).
-   */
-  File getReactNativeProjectRoot() {
-    File androidRoot
-
-    if (this.project) {
-      androidRoot = this.project.rootProject.projectDir
-    } else {
-      androidRoot = this.defaultSettings.rootProject.projectDir
-    }
-
-    File rnRoot = new File(androidRoot, this.root)
-    this.logger.debug("${LOG_PREFIX}Using React Native project root path '${rnRoot.toString()}'")
-    return rnRoot
   }
 
   /**
@@ -160,37 +145,66 @@ class ReactNativeModules {
   }
 
   /**
-   * Runs a process to call the React Native CLI Config command and parses the output
-   *
-   * @return ArrayList < HashMap < String , String > >
+   * Runs a specified command using Runtime exec() in a specified directory.
+   * Throws when the command result is empty.
    */
-  ArrayList<HashMap<String, String>> getReactNativeConfig() {
-    if (this.reactNativeModules != null) return this.reactNativeModules
-    ArrayList<HashMap<String, String>> reactNativeModules = new ArrayList<HashMap<String, String>>()
-
-    def cmdProcess
-    def root = getReactNativeProjectRoot()
-    def command = "node ./node_modules/react-native/cli.js config"
-    def reactNativeConfigOutput = ""
-
+  String getCommandOutput(String command, File directory = null) {
     try {
-      cmdProcess = Runtime.getRuntime().exec(command, null, root)
+      def output = ""
+      def cmdProcess = Runtime.getRuntime().exec(command, null, directory)
       def bufferedReader = new BufferedReader(new InputStreamReader(cmdProcess.getInputStream()))
       def buff = ""
       def readBuffer = new StringBuffer()
-      while ((buff = bufferedReader.readLine()) != null){
-          readBuffer.append(buff)
+      while ((buff = bufferedReader.readLine()) != null) {
+        readBuffer.append(buff)
       }
-      reactNativeConfigOutput = readBuffer.toString()
+      output = readBuffer.toString()
+      if (!output) {
+        this.logger.error("${LOG_PREFIX}Unexpected empty result of running '${command}' command from '${directory}' directory.")
+        def bufferedErrorReader = new BufferedReader(new InputStreamReader(cmdProcess.getErrorStream()))
+        def errBuff = ""
+        def readErrorBuffer = new StringBuffer()
+        while ((errBuff = bufferedErrorReader.readLine()) != null) {
+          readErrorBuffer.append(errBuff)
+        }
+        throw new Exception(readErrorBuffer.toString())
+      }
+      return output
     } catch (Exception exception) {
-      this.logger.warn("${LOG_PREFIX}${exception.message}")
-      this.logger.warn("${LOG_PREFIX}Automatic import of native modules failed.")
-      return reactNativeModules
+      this.logger.error("${LOG_PREFIX}Running '${command}' command from '${directory}' directory failed.")
+      throw exception
     }
+  }
 
-    def json = new JsonSlurper().parseText(reactNativeConfigOutput)
-    this.packageName = json["project"]["android"]["packageName"]
+  /**
+   * Runs a process to call the React Native CLI Config command and parses the output
+   */
+  ArrayList<HashMap<String, String>> getReactNativeConfig() {
+    if (this.reactNativeModules != null) return this.reactNativeModules
+
+    ArrayList<HashMap<String, String>> reactNativeModules = new ArrayList<HashMap<String, String>>()
+    def npx = Os.isFamily(Os.FAMILY_WINDOWS) ? "npx.cmd" : "npx"
+    def command = "${npx} --quiet --no-install react-native config"
+    /**
+     * Running npx from the directory of the JS app which holds this script in its node_modules.
+     * We do so, because Gradle may be ran with a different directory as CWD, that's outside of JS project
+     * (e.g. when running with -p flag), in which case npx wouldn't resolve correct `react-native` binary.
+     */
+    def dir = new File(this.jsAppDir)
+    def reactNativeConfigOutput = this.getCommandOutput(command, /* dir */) // Temporary disable changing dir, as it introduces regressions
+    def json
+    try {
+      json = new JsonSlurper().parseText(reactNativeConfigOutput)
+    } catch (Exception exception) {
+      this.logger.error("${LOG_PREFIX}Failed to parse React Native CLI configuration: ${exception.toString()}")
+      throw new Exception("Failed to parse React Native CLI configuration. Expected running '${command}' command from '${dir}' directory to output valid JSON, but it didn't. This may be caused by npx resolving to a legacy global react-native binary. Please make sure to uninstall any global 'react-native' binaries: 'npm uninstall -g react-native react-native-cli' and try again")
+    }
     def dependencies = json["dependencies"]
+    def project = json["project"]["android"]
+
+    if (project == null) {
+      throw new Exception("React Native CLI failed to determine Android project configuration. This is likely due to misconfiguration. Config output:\n${json.toMapString()}")
+    }
 
     dependencies.each { name, value ->
       def platformsConfig = value["platforms"];
@@ -213,7 +227,7 @@ class ReactNativeModules {
       }
     }
 
-    return reactNativeModules
+    return [reactNativeModules, json["project"]["android"]["packageName"]];
   }
 }
 
@@ -221,14 +235,22 @@ class ReactNativeModules {
  *    Exported Extensions
  * ------------------------ */
 
-def autoModules = new ReactNativeModules(logger)
+def autoModules = new ReactNativeModules(logger, jsAppDir)
 
-ext.applyNativeModulesSettingsGradle = { DefaultSettings defaultSettings, String root = ".." ->
-  autoModules.applySettingsGradle(defaultSettings, root)
+ext.applyNativeModulesSettingsGradle = { DefaultSettings defaultSettings, String root = null ->
+  if (root != null) {
+    logger.warn("${ReactNativeModules.LOG_PREFIX}Passing custom root is deprecated. CLI detects root automatically now.");
+    logger.warn("${ReactNativeModules.LOG_PREFIX}Please remove second argument to `applyNativeModulesSettingsGradle`.");
+  }
+  autoModules.addReactNativeModuleProjects(defaultSettings)
 }
 
-ext.applyNativeModulesAppBuildGradle = { Project project, String root = ".." ->
-  autoModules.applyBuildGradle(project, root)
+ext.applyNativeModulesAppBuildGradle = { Project project, String root = null ->
+  if (root != null) {
+    logger.warn("${ReactNativeModules.LOG_PREFIX}Passing custom root is deprecated. CLI detects root automatically now");
+    logger.warn("${ReactNativeModules.LOG_PREFIX}Please remove second argument to `applyNativeModulesAppBuildGradle`.");
+  }
+  autoModules.addReactNativeModuleDependencies(project)
 
   def generatedSrcDir = new File(buildDir, "generated/rncli/src/main/java")
   def generatedCodeDir = new File(generatedSrcDir, generatedFilePackage.replace('.', '/'))

@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import {logger} from '@react-native-community/cli-tools';
 import getLinkConfig from './index';
-import {Config} from '../types';
+import {Config} from '@react-native-community/cli-types';
 
 // TODO: move to cli-tools once platform-ios and platform-android are migrated
 // to TS and unify with iOS implementation

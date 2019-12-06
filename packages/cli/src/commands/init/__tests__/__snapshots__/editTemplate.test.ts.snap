@@ -1,0 +1,78 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should edit template 1`] = `
+"Snapshot Diff:
+- First value
++ Second value
+
+@@ -12,3 +12,3 @@
+    RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
+-                                             moduleName:@\\"PlaceholderName\\"
++                                             moduleName:@\\"ProjectName\\"
+                                              initialProperties:nil];"
+`;
+
+exports[`should edit template 2`] = `
+"Snapshot Diff:
+- First value
++ Second value
+
+@@ -1,2 +1,2 @@
+- com.placeholdername;
++ com.projectname;
+  
+@@ -4,4 +4,4 @@
+    public static void run() {
+-     String name = \\"PlaceholderName\\";
+-     String title = \\"Hello App Display Name\\";
++     String name = \\"ProjectName\\";
++     String title = \\"ProjectName\\";
+    }"
+`;
+
+exports[`should edit template 3`] = `
+"Snapshot Diff:
+- First value
++ Second value
+
+@@ -4,12 +4,12 @@
+    \\"/android/com\\",
+-   \\"/android/com/placeholdername\\",
+-   \\"/android/com/placeholdername/Main.java\\",
+-   \\"/android/com/placeholdername/PlaceholderName.java\\",
++   \\"/android/com/projectname\\",
++   \\"/android/com/projectname/Main.java\\",
++   \\"/android/com/projectname/ProjectName.java\\",
+    \\"/ios\\",
+-   \\"/ios/PlaceholderName\\",
+-   \\"/ios/PlaceholderName/AppDelegate.m\\",
+-   \\"/ios/PlaceholderName-tvOS\\",
+-   \\"/ios/PlaceholderName-tvOS/.gitkeep\\",
+-   \\"/ios/PlaceholderNameTests\\",
+-   \\"/ios/PlaceholderNameTests/.gitkeep\\",
++   \\"/ios/ProjectName\\",
++   \\"/ios/ProjectName/AppDelegate.m\\",
++   \\"/ios/ProjectName-tvOS\\",
++   \\"/ios/ProjectName-tvOS/.gitkeep\\",
++   \\"/ios/ProjectNameTests\\",
++   \\"/ios/ProjectNameTests/.gitkeep\\",
+    \\"/node_modules\\","
+`;
+
+exports[`should edit template with custom title 1`] = `
+"Snapshot Diff:
+- First value
++ Second value
+
+@@ -1,2 +1,2 @@
+- com.placeholdername;
++ com.projectname;
+  
+@@ -4,4 +4,4 @@
+    public static void run() {
+-     String name = \\"PlaceholderName\\";
+-     String title = \\"Hello App Display Name\\";
++     String name = \\"ProjectName\\";
++     String title = \\"ProjectTitle\\";
+    }"
+`;

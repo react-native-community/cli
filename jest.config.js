@@ -6,7 +6,7 @@ module.exports = {
       ...common,
       displayName: 'e2e',
       setupFiles: ['<rootDir>/jest/setupE2eTests.js'],
-      testMatch: ['<rootDir>/**/__e2e__/*{.,-}test.js'],
+      testMatch: ['<rootDir>/**/__e2e__/*{.,-}test.[jt]s'],
     },
     {
       ...common,

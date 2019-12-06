@@ -15,12 +15,15 @@ import makeBuildPatch from './patches/makeBuildPatch';
 import makeStringsPatch from './patches/makeStringsPatch';
 import makeImportPatch from './patches/makeImportPatch';
 import makePackagePatch from './patches/makePackagePatch';
-import {ProjectConfigAndroid, DependencyConfigAndroid} from '../types';
+import {
+  AndroidProjectConfig,
+  AndroidDependencyConfig,
+} from '@react-native-community/cli-types';
 
 export default function unregisterNativeAndroidModule(
   name: string,
-  androidConfig: DependencyConfigAndroid,
-  projectConfig: ProjectConfigAndroid,
+  androidConfig: AndroidDependencyConfig,
+  projectConfig: AndroidProjectConfig,
 ) {
   const buildPatch = makeBuildPatch(name, projectConfig.buildGradlePath);
   const strings = fs.readFileSync(projectConfig.stringsPath, 'utf8');

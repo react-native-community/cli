@@ -56,6 +56,20 @@ Allows overriding whether bundle is minified. This defaults to false if dev is t
 
 File name where to store the resulting bundle, ex. `/tmp/groups.bundle`.
 
+If you are planning on building a debug APK, that will run without the packager, by invoking `./gradlew assembleDebug` you can simply set `bundleInDebug: true` in your app/build.gradle file, inside the `project.ext.react` map.
+
+<details>
+Alternatively if you want to run <code>react-native bundle</code> manually and then create the APK with <code>./gradlew assembleDebug</code> you have to make sure to put the bundle into the right directory and give it the right name, so that gradle can find it.
+
+For react-native versions 0.57 and above the bundle output path should be:
+<code>android/app/build/generated/assets/react/debug/index.android.js</code>
+
+To find out the correct path for previous react-native versions, take a look at the <code>react.gradle</code> file here: https://github.com/facebook/react-native/blob/0.57-stable/react.gradle or inside your <code>node_modules/react-native</code> directory.
+
+The expected path for the js bundle can be found on the line that starts with <code>jsBundleDir = </code>.
+
+</details>
+
 #### `--bundle-encoding [string]`
 
 > default: utf8
@@ -83,6 +97,18 @@ Report SourceMapURL using its full path.
 #### `--assets-dest [string]`
 
 Directory name where to store assets referenced in the bundle.
+
+If you are planning on building a debug APK that will run without the packager, see ([--bundle-output](https://github.com/react-native-community/cli/blob/master/docs/commands.md#--bundle-output-string))
+
+<details>
+  Alternatively if you want to run <code>react-native bundle</code> manually and then create the APK with <code>./gradlew assembleDebug</code> you have to make sure to put the assets into the right directory, so that gradle can find them.
+
+For react-native versions 0.57 and above the <code>--assets-dest</code> path should be:
+<code>android/app/build/generated/res/react/debug</code>
+
+The expected path for the assets can be found in the react.gradle file on the line that starts with <code>resourcesDir =</code>
+
+</details>
 
 #### `--reset-cache`
 
@@ -134,6 +160,10 @@ Uses a valid semver version of React Native as a template.
 
 Uses a custom directory instead of `<projectName>`.
 
+### `--title [string]`
+
+Uses a custom app title instead of `<projectName>`.
+
 #### `--template [string]`
 
 Uses a custom template. Accepts following template sources:
@@ -146,12 +176,11 @@ Example:
 
 ```sh
 npx react-native init MyApp --template react-native-custom-template
-npx react-native init MyApp --template typescript
 npx react-native init MyApp --template file:///Users/name/template-path
 npx react-native init MyApp --template file:///Users/name/template-name-1.0.0.tgz
 ```
 
-A template is any directory or npm package that contains a `template.config.js` file in the root with following of the following type:
+A template is any directory or npm package that contains a `template.config.js` file in the root with the following type:
 
 ```ts
 type Template = {
@@ -162,6 +191,8 @@ type Template = {
   templateDir: string;
   // Path to script, which will be executed after init
   postInitScript?: string;
+  // Placeholder used to rename app title inside values.xml and Info.plist
+  titlePlaceholder?: string;
 };
 ```
 
@@ -170,6 +201,7 @@ Example `template.config.js`:
 ```js
 module.exports = {
   placeholderName: 'ProjectName',
+  titlePlaceholder: 'Project Display Name',
   templateDir: './template',
   postInitScript: './script.js',
 };
@@ -346,9 +378,14 @@ Builds your app and starts it on iOS simulator.
 
 #### `--simulator [simulator_name]`
 
+> default: iPhone 11
+
 Explicitly set the simulator to use. Optionally include iOS version between parenthesis at the end to match an exact version, e.g. `"iPhone 6 (10.0)"`.
 
-Default: `"iPhone X"`
+Notes: If selected simulator does not exist, cli will try to run fallback simulators in following order:
+
+- `iPhone X`
+- `iPhone 8`
 
 Notes: `simulator_name` must be a valid iOS simulator name. If in doubt, open your AwesomeApp/ios/AwesomeApp.xcodeproj folder on XCode and unroll the dropdown menu containing the simulator list. The dropdown menu is situated on the right hand side of the play button (top left corner).
 
@@ -408,7 +445,7 @@ Starts the server that communicates with connected devices
 
 Specify port to listen on
 
-#### `--projectRoot [list]`
+#### `--projectRoot [path]`
 
 Path to a custom project root
 

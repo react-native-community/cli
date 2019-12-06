@@ -2,9 +2,9 @@
 
 Command line tools that ship with [`react-native`](https://github.com/facebook/react-native) in form of the `@react-native-community/cli` package.
 
-> It exposes `react-native` binary, so your can call `yarn react-native` or `npx react-native` directly from your project.
+> It exposes `react-native` binary, so you can call `yarn react-native` or `npx react-native` directly from your project.
 
-[![Build Status][build-badge]][build] [![Version][version-badge]][package] [![MIT License][license-badge]][license] [![PRs Welcome][prs-welcome-badge]][prs-welcome]
+[![Build Status][build-badge]][build] [![Version][version-badge]][package] [![MIT License][license-badge]][license] [![PRs Welcome][prs-welcome-badge]][prs-welcome] [![Lean Core Extracted][lean-core-badge]][lean-core]
 
 _Note: CLI has been extracted from core `react-native` as a part of "[Lean Core](https://github.com/facebook/react-native/issues/23313)" effort. Please read [this blog post](https://blog.callstack.io/the-react-native-cli-has-a-new-home-79b63838f0e6) for more details._
 
@@ -18,6 +18,7 @@ _Note: CLI has been extracted from core `react-native` as a part of "[Lean Core]
   - [Using global CLI (_legacy_)](#using-global-cli-legacy)
 - [Usage in an existing React Native project](#usage-in-an-existing-react-native-project)
 - [Updating the CLI](#updating-the-cli)
+- [Contributing](./CONTRIBUTING.md)
 - [Maintainers](#maintainers)
 - [License](#license)
 
@@ -25,10 +26,12 @@ _Note: CLI has been extracted from core `react-native` as a part of "[Lean Core]
 
 Our release cycle is independent of `react-native`. We follow semver and here is the compatibility table:
 
-| `@react-native-community/cli`                                    | `react-native` |
-| ---------------------------------------------------------------- | -------------- |
-| ^2.0.0                                                           | ^0.60.0        |
-| [^1.0.0](https://github.com/react-native-community/cli/tree/1.x) | ^0.59.0        |
+| `@react-native-community/cli`                                    | `react-native`   |
+| ---------------------------------------------------------------- | ---------------- |
+| ^4.0.0 (`next`)                                                  | ^0.63.0          |
+| ^3.0.0                                                           | ^0.61.0, ^0.62.0 |
+| [^2.0.0](https://github.com/react-native-community/cli/tree/2.x) | ^0.60.0          |
+| [^1.0.0](https://github.com/react-native-community/cli/tree/1.x) | ^0.59.0          |
 
 ## Documentation
 
@@ -127,3 +130,5 @@ Everything inside this repository is [MIT licensed](./LICENSE).
 [license]: https://opensource.org/licenses/MIT
 [prs-welcome-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square
 [prs-welcome]: http://makeapullrequest.com
+[lean-core-badge]: https://img.shields.io/badge/Lean%20Core-Extracted-brightgreen.svg?style=flat-square
+[lean-core]: https://github.com/facebook/react-native/issues/23313

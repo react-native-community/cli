@@ -5,6 +5,14 @@ const FILE_PROTOCOL = /file:/;
 const TARBALL = /\.tgz$/;
 const VERSION_POSTFIX = /(.*)(-\d+\.\d+\.\d+)/;
 const VERSIONED_PACKAGE = /(@?.+)(@)(.+)/;
+const NPM_PROTOCOL = /react-native@npm:(.+)/;
+
+function handleNpmProtocol(npmString: string) {
+  return {
+    uri: npmString,
+    name: 'react-native'
+  };
+}
 
 function handleFileProtocol(filePath: string) {
   let uri = new URL(filePath).pathname;
@@ -47,6 +55,9 @@ function handleVersionedPackage(versionedPackage: string) {
 }
 
 export async function processTemplateName(templateName: string) {
+  if (templateName.match(NPM_PROTOCOL) {
+    return handleNpmProtocol(templateName);
+  }
   if (templateName.match(TARBALL)) {
     return handleTarball(templateName);
   }

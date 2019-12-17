@@ -33,6 +33,7 @@ const INTERNAL_CALLSITES_REGEX = new RegExp(
     '/Libraries/LogBox/.+\\.js$',
     '/Libraries/Core/Timers/.+\\.js$',
     '/node_modules/react-devtools-core/.+\\.js$',
+    '/node_modules/react-refresh/.+\\.js$',
     '/node_modules/scheduler/.+\\.js$',
   ].join('|'),
 );

@@ -30,7 +30,10 @@ const INTERNAL_CALLSITES_REGEX = new RegExp(
     '/Libraries/Renderer/implementations/.+\\.js$',
     '/Libraries/BatchedBridge/MessageQueue\\.js$',
     '/Libraries/YellowBox/.+\\.js$',
+    '/Libraries/LogBox/.+\\.js$',
+    '/Libraries/Core/Timers/.+\\.js$',
     '/node_modules/react-devtools-core/.+\\.js$',
+    '/node_modules/scheduler/.+\\.js$',
   ].join('|'),
 );
 

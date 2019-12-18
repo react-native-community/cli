@@ -5,12 +5,13 @@ const FILE_PROTOCOL = /file:/;
 const TARBALL = /\.tgz$/;
 const VERSION_POSTFIX = /(.*)(-\d+\.\d+\.\d+)/;
 const VERSIONED_PACKAGE = /(@?.+)(@)(.+)/;
-const NPM_PROTOCOL = /react-native@npm:(.+)/;
+const NPM_PROTOCOL = /(.*?)@npm:(.+)/;
 
 function handleNpmProtocol(npmString: string) {
+  const npmProtocolMatch = npmString.match(NPM_PROTOCOL);
   return {
     uri: npmString,
-    name: 'react-native'
+    name: npmProtocolMatch[1]
   };
 }
 

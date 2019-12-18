@@ -56,7 +56,7 @@ function handleVersionedPackage(versionedPackage: string) {
 }
 
 export async function processTemplateName(templateName: string) {
-  if (templateName.match(NPM_PROTOCOL) {
+  if (templateName.match(NPM_PROTOCOL)) {
     return handleNpmProtocol(templateName);
   }
   if (templateName.match(TARBALL)) {

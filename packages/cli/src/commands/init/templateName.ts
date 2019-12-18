@@ -11,7 +11,7 @@ function handleNpmProtocol(npmString: string) {
   const npmProtocolMatch = npmString.match(NPM_PROTOCOL);
   return {
     uri: npmString,
-    name: npmProtocolMatch[1]
+    name: npmProtocolMatch[1],
   };
 }
 

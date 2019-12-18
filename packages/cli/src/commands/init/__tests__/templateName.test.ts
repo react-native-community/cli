@@ -32,7 +32,7 @@ test('supports npm packages as template names', async () => {
 test('supports forked npm package as template name', async () => {
   expect(await processTemplateName(RN_NPM_TVOS_PACKAGE)).toEqual({
     uri: RN_NPM_TVOS_PACKAGE,
-    name: RN_NPM_PACKAGE
+    name: RN_NPM_PACKAGE,
   });
 });
 

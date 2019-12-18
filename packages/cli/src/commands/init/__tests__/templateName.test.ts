@@ -2,6 +2,7 @@ import {processTemplateName} from '../templateName';
 
 const RN_NPM_PACKAGE = 'react-native';
 const ABS_RN_PATH = '/path/to/react-native';
+const RN_NPM_TVOS_PACKAGE = 'react-native@npm:react-native-tvos@latest';
 
 test('supports file protocol with absolute path', async () => {
   if (process.platform === 'win32') {
@@ -25,6 +26,13 @@ test('supports npm packages as template names', async () => {
   expect(await processTemplateName(RN_NPM_PACKAGE)).toEqual({
     uri: RN_NPM_PACKAGE,
     name: RN_NPM_PACKAGE,
+  });
+});
+
+test('supports forked npm package as template name', async () => {
+  expect(await processTemplateName(RN_NPM_TVOS_PACKAGE)).toEqual({
+    uri: RN_NPM_TVOS_PACKAGE,
+    name: RN_NPM_PACKAGE
   });
 });
 

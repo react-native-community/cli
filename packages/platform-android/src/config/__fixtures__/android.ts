@@ -15,6 +15,9 @@ const manifest = fs.readFileSync(
 const mainJavaClass = fs.readFileSync(
   path.join(__dirname, './files/Main.java'),
 );
+const oneActivityManifest = fs.readFileSync(
+  path.join(__dirname, './files/AndroidManifest-one-activity.xml'),
+);
 
 function generateValidFileStructure(classFileName: string) {
   return {
@@ -232,3 +235,9 @@ export const findPackagesClassNameJavaNotValid = [
   }
   `,
 ];
+
+export const oneActivity = {
+  src: {
+    'AndroidManifest.xml': oneActivityManifest,
+  },
+};

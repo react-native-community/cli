@@ -24,11 +24,26 @@ describe('android::readManifest', () => {
           app: mocks.valid,
         },
       },
+      one: {
+        android: {
+          app: mocks.oneActivity,
+        },
+      },
     });
   });
 
   it('returns manifest content if file exists in the folder', () => {
     const manifestPath = findManifest('/nested');
+    const manifest = readManifest(manifestPath);
+    expect(manifest).not.toBeNull();
+    expect(typeof manifest).toBe('object');
+    expect(manifest.packageName).toBe('com.some.example');
+    expect(manifest.mainActivity).toBe('.MainActivity');
+    expect(manifest.name).toBe('.MainApplication');
+  });
+
+  it('returns manifest content if only one activity in manifest', () => {
+    const manifestPath = findManifest('/one');
     const manifest = readManifest(manifestPath);
     expect(manifest).not.toBeNull();
     expect(typeof manifest).toBe('object');

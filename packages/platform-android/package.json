@@ -15,8 +15,7 @@
     "gradle-to-js": "^2.0.0",
     "jetifier": "^1.6.2",
     "logkitty": "^0.6.0",
-    "slash": "^3.0.0",
-    "xmldoc": "^1.1.2"
+    "slash": "^3.0.0"
   },
   "files": [
     "build",
@@ -27,7 +26,6 @@
     "@types/execa": "^0.9.0",
     "@types/flat": "^0.0.28",
     "@types/fs-extra": "^8.0.0",
-    "@types/glob": "^7.1.1",
-    "@types/xmldoc": "^1.1.4"
+    "@types/glob": "^7.1.1"
   }
 }

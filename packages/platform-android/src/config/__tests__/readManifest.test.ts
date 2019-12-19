@@ -29,8 +29,12 @@ describe('android::readManifest', () => {
 
   it('returns manifest content if file exists in the folder', () => {
     const manifestPath = findManifest('/nested');
-    expect(readManifest(manifestPath)).not.toBeNull();
-    expect(typeof readManifest(manifestPath)).toBe('object');
+    const manifest = readManifest(manifestPath);
+    expect(manifest).not.toBeNull();
+    expect(typeof manifest).toBe('object');
+    expect(manifest.packageName).toBe('com.some.example');
+    expect(manifest.mainActivity).toBe('.MainActivity');
+    expect(manifest.name).toBe('.MainApplication');
   });
 
   it('throws an error if there is no manifest in the folder', () => {

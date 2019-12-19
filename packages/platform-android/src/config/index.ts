@@ -15,9 +15,6 @@ import {
   AndroidProjectParams,
   AndroidDependencyParams,
 } from '@react-native-community/cli-types';
-import {XmlDocument} from 'xmldoc';
-
-const getPackageName = (manifest: XmlDocument) => manifest.attr.package;
 
 /**
  * Gets android project config by analyzing given folder and taking some
@@ -45,7 +42,7 @@ export function projectConfig(
 
   const manifest = readManifest(manifestPath);
 
-  const packageName = userConfig.packageName || getPackageName(manifest);
+  const packageName = userConfig.packageName || manifest.packageName;
 
   if (!packageName) {
     throw new Error(`Package name not found in ${manifestPath}`);
@@ -119,7 +116,7 @@ export function dependencyConfig(
   }
 
   const manifest = readManifest(manifestPath);
-  const packageName = userConfig.packageName || getPackageName(manifest);
+  const packageName = userConfig.packageName || manifest.packageName;
   const packageClassName = findPackageClassName(sourceDir);
 
   /**

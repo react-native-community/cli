@@ -22,6 +22,7 @@ import {
   CLIError,
 } from '@react-native-community/cli-tools';
 import warnAboutManuallyLinkedLibs from '../../link/warnAboutManuallyLinkedLibs';
+import {getApp} from './getApp';
 
 // Verifies this is an Android project
 function checkAndroid(root: string) {
@@ -118,16 +119,32 @@ function getPackageNameWithSuffix(
 }
 
 // Builds the app and runs it on a connected emulator / device.
-function buildAndRun(args: Flags) {
+async function buildAndRun(args: Flags) {
   process.chdir(path.join(args.root, 'android'));
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
 
   // "app" is usually the default value for Android apps with only 1 app
   const {appFolder} = args;
-  // @ts-ignore
-  const packageName = fs
-    .readFileSync(`${appFolder}/src/main/AndroidManifest.xml`, 'utf8')
-    .match(/package="(.+?)"/)[1];
+  const app = await getApp(appFolder);
+
+  const {packageName, mainActivity, variants} = app;
+
+  if (!args.mainActivity) {
+    // `mainActivity` start with `.`, remove it
+    args.mainActivity = mainActivity.replace('.', '');
+  }
+
+  if (!args.appId) {
+    if (args.variant) {
+      // variant always end with `Debug` or `Release`
+      const flavor = args.variant.replace(/Debug$/, '').replace(/Release$/, '');
+      const appId = variants[flavor] || variants.defaultConfig;
+
+      if (appId) {
+        args.appId = appId;
+      }
+    }
+  }
 
   const packageNameWithSuffix = getPackageNameWithSuffix(
     args.appId,
@@ -403,7 +420,7 @@ export default {
     {
       name: '--main-activity [string]',
       description: 'Name of the activity to start',
-      default: 'MainActivity',
+      default: '',
     },
     {
       name: '--deviceId [string]',

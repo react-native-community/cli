@@ -52,7 +52,7 @@
     "metro-react-native-babel-transformer": "^0.56.0",
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
-    "morgan": "^1.9.0",
+    "morgan": "^1.9.1",
     "node-notifier": "^5.2.1",
     "open": "^6.2.0",
     "ora": "^3.4.0",

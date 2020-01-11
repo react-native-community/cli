@@ -8,12 +8,17 @@
  */
 
 import {spawn} from 'child_process';
+import {logger} from '@react-native-community/cli-tools';
 
 import path from 'path';
 import fs from 'fs';
 
 const xsel = path.join(__dirname, 'external/xsel');
-fs.chmodSync(xsel, '0755');
+try {
+  fs.chmodSync(xsel, '0755');
+} catch (e) {
+  logger.warn(`Failed to chmod xsel: ${e.message}`);
+}
 
 /**
  * Copy the content to host system clipboard.

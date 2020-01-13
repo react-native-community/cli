@@ -90,7 +90,7 @@ function printUnknownCommand(cmdName: string) {
   const suggestion = didYouMean(cmdName, commander.commands.map(cmd => cmd._name));
   let errorMsg = `Unrecognized command "${chalk.bold(cmdName)}".`;
   if (suggestion) {
-    errorMsg += `Did you mean ${suggestion}?`;
+    errorMsg += ` Did you mean "${suggestion}"?`;
   }
   if (cmdName) {
     logger.error(errorMsg);

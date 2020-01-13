@@ -18,12 +18,10 @@ commander
   .option('--version', 'Print CLI version')
   .option('--verbose', 'Increase logging verbosity');
 
-commander
-  .arguments('<command>')
-  .action((cmd) => {
-    printUnknownCommand(cmd);
-    process.exit(1);
-  })
+commander.arguments('<command>').action(cmd => {
+  printUnknownCommand(cmd);
+  process.exit(1);
+});
 
 const handleError = (err: Error) => {
   if (commander.verbose) {
@@ -87,7 +85,10 @@ function printHelpInformation(
 }
 
 function printUnknownCommand(cmdName: string) {
-  const suggestion = didYouMean(cmdName, commander.commands.map(cmd => cmd._name));
+  const suggestion = didYouMean(
+    cmdName,
+    commander.commands.map(cmd => cmd._name),
+  );
   let errorMsg = `Unrecognized command "${chalk.bold(cmdName)}".`;
   if (suggestion) {
     errorMsg += ` Did you mean "${suggestion}"?`;

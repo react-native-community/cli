@@ -22,10 +22,7 @@ commander
   .arguments('<command>')
   .action((cmd) => {
     printUnknownCommand(cmd);
-    const suggestion = didYouMean(cmd, commander.commands.map(cmd => cmd._name));
-    if (suggestion) {
-  	  logger.warn(`\n\nDid you mean ${suggestion}?`)
-    }
+    suggestCommands(cmd);
     process.exit(1);
   })
 
@@ -101,6 +98,13 @@ function printUnknownCommand(cmdName: string) {
   } else {
     commander.outputHelp();
   }
+}
+
+function suggestCommands(cmd: string) {
+  const suggestion = didYouMean(cmd, commander.commands.map(cmd => cmd._name));
+    if (suggestion) {
+  	  logger.warn(`\n\nDid you mean ${suggestion}?`)
+    }
 }
 
 /**

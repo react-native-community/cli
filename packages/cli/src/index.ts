@@ -103,7 +103,7 @@ function printUnknownCommand(cmdName: string) {
 function suggestCommands(cmd: string) {
   const suggestion = didYouMean(cmd, commander.commands.map(cmd => cmd._name));
     if (suggestion) {
-  	  logger.warn(`\n\nDid you mean ${suggestion}?`)
+  	  logger.warn(`Did you mean ${suggestion}?`)
     }
 }
 

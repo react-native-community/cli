@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import childProcess from 'child_process';
 import commander from 'commander';
+import didYouMean from 'didyoumean';
 import path from 'path';
 
 import {Command, Config} from '@react-native-community/cli-types';
@@ -17,10 +18,16 @@ commander
   .option('--version', 'Print CLI version')
   .option('--verbose', 'Increase logging verbosity');
 
-commander.on('command:*', () => {
-  printUnknownCommand(commander.args.join(' '));
-  process.exit(1);
-});
+commander
+  .arguments('<command>')
+  .action((cmd) => {
+    printUnknownCommand(cmd);
+    const suggestion = didYouMean(cmd, commander.commands.map(cmd => cmd._name));
+    if (suggestion) {
+  	  logger.warn(`\n\nDid you mean ${suggestion}?`)
+    }
+    process.exit(1);
+  })
 
 const handleError = (err: Error) => {
   if (commander.verbose) {

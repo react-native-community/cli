@@ -22,7 +22,6 @@ commander
   .arguments('<command>')
   .action((cmd) => {
     printUnknownCommand(cmd);
-    suggestCommands(cmd);
     process.exit(1);
   })
 
@@ -88,8 +87,13 @@ function printHelpInformation(
 }
 
 function printUnknownCommand(cmdName: string) {
+  const suggestion = didYouMean(cmdName, commander.commands.map(cmd => cmd._name));
+  let errorMsg = `Unrecognized command "${chalk.bold(cmdName)}".`;
+  if (suggestion) {
+    errorMsg += `Did you mean ${suggestion}?`;
+  }
   if (cmdName) {
-    logger.error(`Unrecognized command "${chalk.bold(cmdName)}".`);
+    logger.error(errorMsg);
     logger.info(
       `Run ${chalk.bold(
         '"react-native --help"',
@@ -98,13 +102,6 @@ function printUnknownCommand(cmdName: string) {
   } else {
     commander.outputHelp();
   }
-}
-
-function suggestCommands(cmd: string) {
-  const suggestion = didYouMean(cmd, commander.commands.map(cmd => cmd._name));
-    if (suggestion) {
-  	  logger.warn(`Did you mean ${suggestion}?`)
-    }
 }
 
 /**

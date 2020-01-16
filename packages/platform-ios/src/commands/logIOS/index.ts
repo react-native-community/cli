@@ -15,7 +15,7 @@ import {Device} from '../../types';
 function findAvailableDevice(devices: {[index: string]: Array<Device>}) {
   for (const key of Object.keys(devices)) {
     for (const device of devices[key]) {
-      if (device.availability === '(available)' && device.state === 'Booted') {
+      if ((device.availability === '(available)' || device.isAvailable) && device.state === 'Booted') {
         return device;
       }
     }
@@ -38,7 +38,7 @@ async function logIOS() {
   };
 
   const device = findAvailableDevice(devices);
-  if (device === null) {
+  if (!device) {
     logger.error('No active iOS device found');
     return;
   }

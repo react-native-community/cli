@@ -160,7 +160,7 @@ Uses a valid semver version of React Native as a template.
 
 Uses a custom directory instead of `<projectName>`.
 
-### `--title [string]`
+#### `--title [string]`
 
 Uses a custom app title instead of `<projectName>`.
 

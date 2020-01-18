@@ -98,7 +98,7 @@ test('init --template with custom project path', () => {
   const projectName = 'TestInit';
   const customPath = 'custom-path';
 
-  run(DIR, [
+  const {stdout} = run(DIR, [
     'init',
     '--template',
     'react-native-new-template',
@@ -106,6 +106,9 @@ test('init --template with custom project path', () => {
     '--directory',
     'custom-path',
   ]);
+
+  // make sure --directory option is used in run instructions
+  expect(stdout).toContain(customPath);
 
   // make sure we don't leave garbage
   expect(fs.readdirSync(DIR)).toEqual([customPath]);

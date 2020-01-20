@@ -3,9 +3,9 @@
  */
 import path from 'path';
 // @ts-ignore - no typed definition for the package
-import {createBlacklist} from 'metro';
-// @ts-ignore - no typed definition for the package
 import {loadConfig} from 'metro-config';
+// @ts-ignore - no typed definition for the package
+import blacklist from 'metro-config/src/defaults/blacklist';
 import {existsSync} from 'fs';
 import {Config} from '@react-native-community/cli-types';
 import findSymlinkedModules from './findSymlinkedModules';
@@ -22,8 +22,7 @@ function getWatchFolders(): string[] {
   return root ? resolveSymlinksForRoots([path.resolve(root)]) : [];
 }
 
-const getBlacklistRE: () => RegExp = () =>
-  createBlacklist([/.*\/__fixtures__\/.*/]);
+const getBlacklistRE: () => RegExp = () => blacklist([/.*\/__fixtures__\/.*/]);
 
 const INTERNAL_CALLSITES_REGEX = new RegExp(
   [

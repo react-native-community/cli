@@ -15,8 +15,9 @@ def use_native_modules!(config = nil)
     config = nil;
   end
 
-  cli_resolve_script = "require('@react-native-community/cli-tools').printCLIPath();"
+  cli_resolve_script = "console.log(require('@react-native-community/cli').bin);"
   cli_bin = Pod::Executable.execute_command("node", ["-e", cli_resolve_script], true).strip
+  Pod::UI.warn(cli_bin)
 
   if (!config)
     json = []

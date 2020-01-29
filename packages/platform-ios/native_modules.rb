@@ -15,10 +15,13 @@ def use_native_modules!(config = nil)
     config = nil;
   end
 
+  cli_resolve_script = "console.log(require.resolve('@react-native-community/cli/' + require('@react-native-community/cli/package.json').bin[\'react-native\']));"
+  cli_bin = Pod::Executable.execute_command("node", ["-e", cli_resolve_script], true).strip
+
   if (!config)
     json = []
 
-    IO.popen("npx --quiet react-native config") do |data|
+    IO.popen("#{cli_bin} config") do |data|
       while line = data.gets
         json << line
       end

@@ -11,6 +11,9 @@ export default function findProjectRoot(cwd = process.cwd()): string {
   /**
    * It is possible that `package.json` doesn't exist
    * in the tree. In that case, we want to throw an error.
+   *
+   * When executing via `npx`, this will never happen as `npm`
+   * requires that file to be present in order to run.
    */
   if (!packageLocation) {
     throw new CLIError(`

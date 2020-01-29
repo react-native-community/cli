@@ -231,4 +231,6 @@ async function setupAndRun() {
   }
 }
 
-export {run, init};
+const bin = require.resolve('./bin');
+
+export {run, init, bin};

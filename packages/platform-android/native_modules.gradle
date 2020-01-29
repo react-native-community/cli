@@ -148,10 +148,10 @@ class ReactNativeModules {
    * Runs a specified command using Runtime exec() in a specified directory.
    * Throws when the command result is empty.
    */
-  String getCommandOutput(String command, File directory = null) {
+  String getCommandOutput(String command) {
     try {
       def output = ""
-      def cmdProcess = Runtime.getRuntime().exec(command, null, directory)
+      def cmdProcess = Runtime.getRuntime().exec(command)
       def bufferedReader = new BufferedReader(new InputStreamReader(cmdProcess.getInputStream()))
       def buff = ""
       def readBuffer = new StringBuffer()
@@ -160,7 +160,7 @@ class ReactNativeModules {
       }
       output = readBuffer.toString()
       if (!output) {
-        this.logger.error("${LOG_PREFIX}Unexpected empty result of running '${command}' command from '${directory}' directory.")
+        this.logger.error("${LOG_PREFIX}Unexpected empty result of running '${command}' command.")
         def bufferedErrorReader = new BufferedReader(new InputStreamReader(cmdProcess.getErrorStream()))
         def errBuff = ""
         def readErrorBuffer = new StringBuffer()
@@ -171,7 +171,7 @@ class ReactNativeModules {
       }
       return output
     } catch (Exception exception) {
-      this.logger.error("${LOG_PREFIX}Running '${command}' command from '${directory}' directory failed.")
+      this.logger.error("${LOG_PREFIX}Running '${command}' command failed.")
       throw exception
     }
   }
@@ -183,21 +183,27 @@ class ReactNativeModules {
     if (this.reactNativeModules != null) return this.reactNativeModules
 
     ArrayList<HashMap<String, String>> reactNativeModules = new ArrayList<HashMap<String, String>>()
-    def npx = Os.isFamily(Os.FAMILY_WINDOWS) ? "npx.cmd" : "npx"
-    def command = "${npx} --quiet --no-install react-native config"
+
     /**
-     * Running npx from the directory of the JS app which holds this script in its node_modules.
-     * We do so, because Gradle may be ran with a different directory as CWD, that's outside of JS project
-     * (e.g. when running with -p flag), in which case npx wouldn't resolve correct `react-native` binary.
+     * Resolve the CLI location from Gradle file
+     *
+     * @todo: Sometimes Gradle can be called outside of the JavaScript hierarchy (-p flag) which
+     * will fail to resolve the script and the dependencies. We should resolve this soon.
+     *
+     * @todo: `fastlane` has been reported to not work too.
      */
-    def dir = new File(this.jsAppDir)
-    def reactNativeConfigOutput = this.getCommandOutput(command, /* dir */) // Temporary disable changing dir, as it introduces regressions
+    def cliResolveScript = "console.log(require('@react-native-community/cli').bin);"
+    def cliPath = this.getCommandOutput("node -e ${cliResolveScript}")
+
+    def reactNativeConfigCommand = "${cliPath} config"
+
+    def reactNativeConfigOutput = this.getCommandOutput(reactNativeConfigCommand)
+    
     def json
     try {
       json = new JsonSlurper().parseText(reactNativeConfigOutput)
     } catch (Exception exception) {
-      this.logger.error("${LOG_PREFIX}Failed to parse React Native CLI configuration: ${exception.toString()}")
-      throw new Exception("Failed to parse React Native CLI configuration. Expected running '${command}' command from '${dir}' directory to output valid JSON, but it didn't. This may be caused by npx resolving to a legacy global react-native binary. Please make sure to uninstall any global 'react-native' binaries: 'npm uninstall -g react-native react-native-cli' and try again")
+      throw new Exception("Calling `${reactNativeConfigCommand}` finished with an exception. Error message: ${exception.toString()}. Output: ${reactNativeConfigOutput}");
     }
     def dependencies = json["dependencies"]
     def project = json["project"]["android"]

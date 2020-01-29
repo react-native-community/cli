@@ -229,7 +229,7 @@ export default (async function initialize(
   try {
     await createProject(projectName, directoryName, version, options);
 
-    const projectFolder = path.join(root, projectName);
+    const projectFolder = path.join(root, directoryName);
     printRunInstructions(projectFolder, projectName);
   } catch (e) {
     logger.error(e.message);

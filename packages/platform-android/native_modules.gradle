@@ -195,14 +195,15 @@ class ReactNativeModules {
     def cliResolveScript = "console.log(require('@react-native-community/cli').bin);"
     def cliPath = this.getCommandOutput("node -e ${cliResolveScript}")
 
-    def reactNativeConfigOutput = this.getCommandOutput("${cliPath} config")
+    def reactNativeConfigCommand = "${cliPath} config"
+
+    def reactNativeConfigOutput = this.getCommandOutput(reactNativeConfigCommand)
     
     def json
     try {
       json = new JsonSlurper().parseText(reactNativeConfigOutput)
     } catch (Exception exception) {
-      this.logger.error("${LOG_PREFIX}Failed to parse React Native CLI configuration: ${exception.toString()}")
-      throw new Exception("Failed to parse React Native CLI configuration. Expected running '${command}' command from '${dir}' directory to output valid JSON, but it didn't. This may be caused by npx resolving to a legacy global react-native binary. Please make sure to uninstall any global 'react-native' binaries: 'npm uninstall -g react-native react-native-cli' and try again")
+      throw new Exception("Calling `${reactNativeConfigCommand}` finished with an exception. Details: ${exception.toString()}");
     }
     def dependencies = json["dependencies"]
     def project = json["project"]["android"]

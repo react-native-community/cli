@@ -203,7 +203,7 @@ class ReactNativeModules {
     try {
       json = new JsonSlurper().parseText(reactNativeConfigOutput)
     } catch (Exception exception) {
-      throw new Exception("Calling `${reactNativeConfigCommand}` finished with an exception. Details: ${exception.toString()}");
+      throw new Exception("Calling `${reactNativeConfigCommand}` finished with an exception. Error message: ${exception.toString()}. Output: ${reactNativeConfigOutput}");
     }
     def dependencies = json["dependencies"]
     def project = json["project"]["android"]

@@ -188,8 +188,9 @@ class ReactNativeModules {
      * Resolve the CLI location from Gradle file
      *
      * @todo: Sometimes Gradle can be called outside of the JavaScript hierarchy (-p flag) which
-     * will fail to resolve the script and the dependencies. 
-     * We should resolve this soon.
+     * will fail to resolve the script and the dependencies. We should resolve this soon.
+     *
+     * @todo: `fastlane` has been reported to not work too.
      */
     def cliResolveScript = "require('@react-native-community/cli-tools').printCLIPath();"
     def cliPath = Runtime.getRuntime().exec("node -e ${cliResolveScript}")

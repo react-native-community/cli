@@ -18,7 +18,8 @@
     "test:ci:cocoapods": "ruby packages/platform-ios/native_modules.rb",
     "postinstall": "yarn build",
     "link-packages": "PACKAGES=('tools' 'platform-ios' 'platform-android' 'cli' 'cli-types' 'debugger-ui') && cd packages && for PACKAGE in \"${PACKAGES[@]}\"; do cd $PACKAGE && yarn link && cd ..; done",
-    "publish": "yarn build-clean-all && yarn install && lerna publish"
+    "publish": "yarn build-clean-all && yarn install && lerna publish",
+    "publish:next": "yarn build-clean-all && yarn install && lerna publish --dist-tag next"
   },
   "dependencies": {
     "@babel/core": "^7.0.0",

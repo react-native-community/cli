@@ -21,10 +21,29 @@ const printCategory = ({label, key}: {label: string; key: number}) => {
   logger.log(chalk.dim(label));
 };
 
+const printVersions = ({version, versions, versionRange}) => {
+  if (versions) {
+    const versionsToShow = versions.join(', ');
+
+    logMessage(`- Versions found: ${chalk.red(versionsToShow)}`);
+    logMessage(`- Version supported: ${chalk.green(versionRange)}`);
+
+    return;
+  }
+
+  const versionsToShow = version && version !== 'Not Found' ? version : 'N/A';
+
+  logMessage(`- Version found: ${chalk.red(versionsToShow)}`);
+  logMessage(`- Version supported: ${chalk.green(versionRange)}`);
+
+  return;
+};
+
 const printIssue = ({
   label,
   needsToBeFixed,
   version,
+  versions,
   versionRange,
   isRequired,
   description,
@@ -40,12 +59,7 @@ const printIssue = ({
   logger.log(` ${symbol} ${label}${descriptionToShow}`);
 
   if (needsToBeFixed && versionRange) {
-    const versionToShow = version && version !== 'Not Found' ? version : 'N/A';
-
-    logMessage(`- Version found: ${chalk.red(versionToShow)}`);
-    logMessage(`- Version supported: ${chalk.green(versionRange)}`);
-
-    return;
+    return printVersions({version, versions, versionRange});
   }
 };
 
@@ -87,6 +101,7 @@ export default (async (_, __, options) => {
         const {
           needsToBeFixed,
           version,
+          versions,
           versionRange,
         } = await healthcheck.getDiagnostics(environmentInfo);
 
@@ -98,6 +113,7 @@ export default (async (_, __, options) => {
           label: healthcheck.label,
           needsToBeFixed: Boolean(needsToBeFixed),
           version,
+          versions,
           versionRange,
           description: healthcheck.description,
           runAutomaticFix: healthcheck.runAutomaticFix,

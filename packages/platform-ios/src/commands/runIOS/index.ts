@@ -178,7 +178,13 @@ async function runOnSimulator(
     args,
   );
 
-  const appPath = getBuildPath(args.configuration, appName, false, scheme);
+  const appPath = getBuildPath(
+    xcodeProject,
+    args.configuration,
+    appName,
+    false,
+    scheme,
+  );
 
   logger.info(`Installing "${chalk.bold(appPath)}"`);
 
@@ -241,7 +247,7 @@ async function runOnDevice(
 
   const iosDeployInstallArgs = [
     '--bundle',
-    getBuildPath(args.configuration, appName, true, scheme),
+    getBuildPath(xcodeProject, args.configuration, appName, true, scheme),
     '--id',
     selectedDevice.udid,
     '--justlaunch',
@@ -282,8 +288,6 @@ function buildProject(
       scheme,
       '-destination',
       `id=${udid}`,
-      '-derivedDataPath',
-      `build/${scheme}`,
     ];
     logger.info(
       `Building ${chalk.dim(
@@ -362,7 +366,15 @@ function bootSimulator(selectedSimulator: Device) {
   }
 }
 
+function getTargetBuildDir(buildSettings: string) {
+  const targetBuildMatch = /TARGET_BUILD_DIR = (.+)$/m.exec(buildSettings);
+  return targetBuildMatch && targetBuildMatch[1]
+    ? targetBuildMatch[1].trim()
+    : null;
+}
+
 function getBuildPath(
+  xcodeProject: ProjectInfo,
   configuration: string,
   appName: string,
   isDevice: boolean,
@@ -378,13 +390,27 @@ function getBuildPath(
     device = 'iphonesimulator';
   }
 
-  let buildPath = `build/${scheme}/Build/Products/${configuration}-${device}/${appName}.app`;
-  // Check wether app file exist, sometimes `-derivedDataPath` option of `xcodebuild` not works as expected.
-  if (!fs.existsSync(path.join(buildPath))) {
-    return `DerivedData/Build/Products/${configuration}-${device}/${appName}.app`;
+  const buildSettings = child_process.execFileSync(
+    'xcodebuild',
+    [
+      xcodeProject.isWorkspace ? '-workspace' : '-project',
+      xcodeProject.name,
+      '-scheme',
+      scheme,
+      '-sdk',
+      device,
+      '-configuration',
+      configuration,
+      '-showBuildSettings',
+    ],
+    {encoding: 'utf8'},
+  );
+  const targetBuildDir = getTargetBuildDir(buildSettings);
+  if (!targetBuildDir) {
+    throw new CLIError('Failed to get the target build directory.');
   }
 
-  return buildPath;
+  return `${targetBuildDir}/${appName}.app`;
 }
 
 function getProductName(buildOutput: string) {

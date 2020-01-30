@@ -89,14 +89,6 @@ react-native init --version ${RN_VERSION}
 npm config set registry https://registry.npmjs.org/
 ```
 
-## Running `start` command
-
-In order for symlinks to work correctly when running `start` locally, set REACT_NATIVE_APP_ROOT as the root folder of your cli project:
-
-```
-REACT_NATIVE_APP_ROOT=path/to/cli node path/to/cli/packages/cli/build/bin.js start
-```
-
 ## Running CLI with React Native from the source
 
 First make sure you have RN repo checked out and CLI repo checked out and built. Then you can start a new RN project with local version of CLI and RN without publishing or proxy:

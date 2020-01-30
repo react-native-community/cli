@@ -1,9 +1,9 @@
 import execa from 'execa';
+import {cleanup, writeFiles} from '../../../../../../../jest/helpers';
 import androidSDK from '../androidSDK';
 import getEnvironmentInfo from '../../../../tools/envinfo';
 import {EnvironmentInfo} from '../../types';
 import {NoopLoader} from '../../../../tools/loader';
-
 import * as common from '../common';
 
 const logSpy = jest.spyOn(common, 'logManualInstallation');
@@ -11,6 +11,23 @@ const logSpy = jest.spyOn(common, 'logManualInstallation');
 jest.mock('execa', () => jest.fn());
 
 describe('androidSDK', () => {
+  beforeEach(() => {
+    writeFiles('', {
+      'android/build.gradle': `
+        buildscript {
+          ext {
+              buildToolsVersion = "28.0.3"
+              minSdkVersion = 16
+              compileSdkVersion = 28
+              targetSdkVersion = 28
+          }
+        }
+      `,
+    });
+  });
+
+  afterAll(() => cleanup('android/build.gradle'));
+
   let initialEnvironmentInfo: EnvironmentInfo;
   let environmentInfo: EnvironmentInfo;
 
@@ -37,10 +54,10 @@ describe('androidSDK', () => {
     // To avoid having to provide fake versions for all the Android SDK tools
     // @ts-ignore
     environmentInfo.SDKs['Android SDK'] = {
-      'Build Tools': [25],
+      'Build Tools': ['25.0.3'],
     };
     ((execa as unknown) as jest.Mock).mockResolvedValue({
-      stdout: 'build-tools;25.0',
+      stdout: 'build-tools;25.0.3',
     });
     const diagnostics = await androidSDK.getDiagnostics(environmentInfo);
     expect(diagnostics.needsToBeFixed).toBe(true);
@@ -50,10 +67,10 @@ describe('androidSDK', () => {
     // To avoid having to provide fake versions for all the Android SDK tools
     // @ts-ignore
     environmentInfo.SDKs['Android SDK'] = {
-      'Build Tools': ['26.0'],
+      'Build Tools': ['28.0.3'],
     };
     ((execa as unknown) as jest.Mock).mockResolvedValue({
-      stdout: 'build-tools;26.0',
+      stdout: 'build-tools;28.0.3',
     });
     const diagnostics = await androidSDK.getDiagnostics(environmentInfo);
     expect(diagnostics.needsToBeFixed).toBe(false);

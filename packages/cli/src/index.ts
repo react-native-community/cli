@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import childProcess from 'child_process';
 import commander from 'commander';
+import didYouMean from 'didyoumean';
 import path from 'path';
 
 import {Command, Config} from '@react-native-community/cli-types';
@@ -17,8 +18,8 @@ commander
   .option('--version', 'Print CLI version')
   .option('--verbose', 'Increase logging verbosity');
 
-commander.on('command:*', () => {
-  printUnknownCommand(commander.args.join(' '));
+commander.arguments('<command>').action(cmd => {
+  printUnknownCommand(cmd);
   process.exit(1);
 });
 
@@ -84,8 +85,16 @@ function printHelpInformation(
 }
 
 function printUnknownCommand(cmdName: string) {
+  const suggestion = didYouMean(
+    cmdName,
+    commander.commands.map(cmd => cmd._name),
+  );
+  let errorMsg = `Unrecognized command "${chalk.bold(cmdName)}".`;
+  if (suggestion) {
+    errorMsg += ` Did you mean "${suggestion}"?`;
+  }
   if (cmdName) {
-    logger.error(`Unrecognized command "${chalk.bold(cmdName)}".`);
+    logger.error(errorMsg);
     logger.info(
       `Run ${chalk.bold(
         '"react-native --help"',

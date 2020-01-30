@@ -50,8 +50,6 @@ export interface Flags {
   root: string;
   variant: string;
   appFolder: string;
-  appId: string;
-  appIdSuffix: string;
   mainActivity: string;
   deviceId?: string;
   packager: boolean;
@@ -396,16 +394,6 @@ export default {
       description:
         'Specify a different application folder name for the android source. If not, we assume is "app"',
       default: 'app',
-    },
-    {
-      name: '--appId [string]',
-      description: 'Specify an applicationId to launch after build.',
-      default: '',
-    },
-    {
-      name: '--appIdSuffix [string]',
-      description: 'Specify an applicationIdSuffix to launch after build.',
-      default: '',
     },
     {
       name: '--main-activity [string]',

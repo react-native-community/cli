@@ -3,8 +3,6 @@
  */
 import path from 'path';
 // @ts-ignore - no typed definition for the package
-import {createBlacklist} from 'metro';
-// @ts-ignore - no typed definition for the package
 import {loadConfig} from 'metro-config';
 import {existsSync} from 'fs';
 import {Config} from '@react-native-community/cli-types';
@@ -22,9 +20,6 @@ function getWatchFolders(): string[] {
   return root ? resolveSymlinksForRoots([path.resolve(root)]) : [];
 }
 
-const getBlacklistRE: () => RegExp = () =>
-  createBlacklist([/.*\/__fixtures__\/.*/]);
-
 const INTERNAL_CALLSITES_REGEX = new RegExp(
   [
     '/Libraries/Renderer/implementations/.+\\.js$',
@@ -41,7 +36,6 @@ const INTERNAL_CALLSITES_REGEX = new RegExp(
 export interface MetroConfig {
   resolver: {
     resolverMainFields: string[];
-    blacklistRE: RegExp;
     platforms: string[];
     providesModuleNodeModules: string[];
     hasteImplModulePath: string | undefined;
@@ -77,7 +71,6 @@ export const getDefaultConfig = (ctx: Config): MetroConfig => {
   return {
     resolver: {
       resolverMainFields: ['react-native', 'browser', 'main'],
-      blacklistRE: getBlacklistRE(),
       platforms: [...ctx.haste.platforms, 'native'],
       providesModuleNodeModules: ctx.haste.providesModuleNodeModules,
       hasteImplModulePath: existsSync(hasteImplPath)

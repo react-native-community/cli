@@ -3,7 +3,7 @@ import fs from 'fs';
 jest.mock('fs');
 jest.mock('path');
 
-export function createBuildGradleMocks(useFlavor) {
+export function createBuildGradleMocks(useFlavor: boolean) {
   const actualFs = jest.requireActual('fs');
   const actualPath = jest.requireActual('path');
 

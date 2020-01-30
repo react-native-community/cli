@@ -505,9 +505,9 @@ Path to custom SSL cert
 
 Path to the CLI configuration file
 
-#### `--disableWatchMode [string]`
+#### `--no-interactive`
 
-Disables watch mode
+Disables interactive mode
 
 ### `uninstall`
 

@@ -108,7 +108,7 @@ export default {
     },
     {
       name: '--interactive',
-      description: 'Disables interactive mode',
+      description: 'Enables interactive mode',
     },
   ],
 };

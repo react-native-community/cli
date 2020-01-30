@@ -110,7 +110,7 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
   middlewareManager.attachDevToolsSocket(wsProxy);
   middlewareManager.attachDevToolsSocket(ms);
 
-  if (!args.interactiveMode) {
+  if (args.interactiveMode) {
     enableWatchMode(ms);
   }
 

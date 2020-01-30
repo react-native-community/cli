@@ -25,11 +25,11 @@ commands:
           at: ~/react-native-cli
       - restore_cache:
           keys:
-            - v2-dependencies-{{ checksum "package.json" }}
-            - v2-dependencies-
+            - v3-dependencies-{{ checksum "package.json" }}
+            - v3-dependencies-
       - run: yarn --frozen-lockfile
       - save_cache:
-          key: v2-dependencies-{{ checksum "package.json" }}
+          key: v3-dependencies-{{ checksum "package.json" }}
           paths:
             - node_modules
       - persist_to_workspace:
@@ -40,7 +40,7 @@ commands:
   install-cocoapods:
     steps:
       - attach_workspace:
-           at: ~/react-native-cli
+          at: ~/react-native-cli
       - run: gem install cocoapods
 
   run-lint:

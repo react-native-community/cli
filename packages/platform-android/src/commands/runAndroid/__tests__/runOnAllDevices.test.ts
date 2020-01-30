@@ -7,6 +7,7 @@
  */
 
 import runOnAllDevices from '../runOnAllDevices';
+import {createBuildGradleMocks} from './testHelpers';
 
 jest.mock('child_process', () => ({
   execFileSync: jest.fn(),
@@ -20,6 +21,8 @@ const {execFileSync} = require('child_process');
 describe('--appFolder', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+
+    createBuildGradleMocks(false);
   });
 
   it('uses task "install[Variant]" as default task', async () => {

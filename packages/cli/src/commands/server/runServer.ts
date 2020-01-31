@@ -10,6 +10,7 @@ import Metro from 'metro';
 // @ts-ignore untyped metro
 import {Terminal} from 'metro-core';
 import morgan from 'morgan';
+import http from 'http';
 import path from 'path';
 import {logger} from '@react-native-community/cli-tools';
 import {Config} from '@react-native-community/cli-types';
@@ -37,7 +38,7 @@ export type Args = {
   watchFolders?: string[];
   config?: string;
   projectRoot?: string;
-  interactiveMode?: boolean;
+  interactive: boolean;
 };
 
 async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
@@ -110,14 +111,16 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
   middlewareManager.attachDevToolsSocket(wsProxy);
   middlewareManager.attachDevToolsSocket(ms);
 
-  if (args.interactiveMode) {
+  if (args.interactive) {
     enableWatchMode(ms);
   }
 
-  middlewareManager.getConnectInstance().use('/reload', (req, res) => {
-    ms.broadcast('reload', null);
-    res.end('OK');
-  });
+  middlewareManager
+    .getConnectInstance()
+    .use('/reload', (_req: http.IncomingMessage, res: http.ServerResponse) => {
+      ms.broadcast('reload');
+      res.end('OK');
+    });
 
   // In Node 8, the default keep-alive for an HTTP connection is 5 seconds. In
   // early versions of Node 8, this was implemented in a buggy way which caused

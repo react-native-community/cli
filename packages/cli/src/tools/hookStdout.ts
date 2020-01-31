@@ -1,5 +1,7 @@
 // https://gist.github.com/pguillory/729616
+
 function hookStdout(callback: Function) {
+  // @ts-ignore
   process.stdout.write = ((write: any) => (output: any) => {
     write.apply(process.stdout, arguments);
     callback(output);

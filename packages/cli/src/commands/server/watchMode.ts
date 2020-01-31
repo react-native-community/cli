@@ -25,10 +25,10 @@ function enableWatchMode(messageSocket: any) {
   // except by hooking into stdout itself. We want to print instructions
   // right after its done loading.
   const restore = hookStdout((output: string) => {
-    if (output.includes('Loading dependency graph, done.')) {
+    if (output.includes('Learn once, write anywhere')) {
       printWatchModeInstructions();
+      restore();
     }
-    restore();
   });
 
   process.stdin.on('keypress', (_key, data) => {

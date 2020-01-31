@@ -24,11 +24,12 @@ function enableWatchMode(messageSocket: any) {
   // We have no way of knowing when the dependency graph is done loading
   // except by hooking into stdout itself. We want to print instructions
   // right after its done loading.
-  hookStdout(
-    (output: string) =>
-      output.includes('Loading dependency graph, done.') &&
-      printWatchModeInstructions(),
-  );
+  const restore = hookStdout((output: string) => {
+    if (output.includes('Loading dependency graph, done.')) {
+      printWatchModeInstructions();
+    }
+    restore();
+  });
 
   process.stdin.on('keypress', (_key, data) => {
     const {ctrl, name} = data;

@@ -107,8 +107,8 @@ export default {
       parse: (val: string) => path.resolve(val),
     },
     {
-      name: '--interactive',
-      description: 'Enables interactive mode',
+      name: '--no-interactive',
+      description: 'Disables interactive mode',
     },
   ],
 };

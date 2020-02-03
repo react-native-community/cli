@@ -127,7 +127,29 @@ class ReactNativeModules {
 
     if (packages.size() > 0) {
       def interpolateDynamicValues = {
-        it.replace("{{ packageName }}", packageName)
+        it
+                // Before adding the {{ packageName }} replacement mechanism,
+                // BuildConfig and R classes were imported automatically
+                // into the scope of the file. In order to be backwards-compatible
+                // let's prefix all non-FQDN references to those classes with
+                // the package name.
+                //
+                // We want to match:
+                //  - new Package(R.string…),
+                //  - Module.configure(BuildConfig);
+                //    ^ hence including (BuildConfig|R)
+                // but we don't want to match:
+                //  - new Package(getResources…),
+                //  - new PackageR…,
+                //  - new Royal…,
+                //    ^ hence excluding \w before and after matches
+                //  - Module.configure({{ packageName }}.BuildConfig);
+                //    ^ hence excluding . before the match.
+                .replaceAll(~/([^.\w])(BuildConfig|R)([^\w])/, {
+                  wholeString, prefix, className, suffix ->
+                    "${prefix}{{ packageName }}.${className}${suffix}"
+                })
+                .replace("{{ packageName }}", packageName)
       }
       packageImports = packages.collect {
         "// ${it.name}\n${interpolateDynamicValues(it.packageImportPath)}"

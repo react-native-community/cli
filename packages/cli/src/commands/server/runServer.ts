@@ -10,6 +10,7 @@ import Metro from 'metro';
 // @ts-ignore untyped metro
 import {Terminal} from 'metro-core';
 import morgan from 'morgan';
+import http from 'http';
 import path from 'path';
 import {logger} from '@react-native-community/cli-tools';
 import {Config} from '@react-native-community/cli-types';
@@ -18,6 +19,7 @@ import webSocketProxy from './webSocketProxy';
 import MiddlewareManager from './middleware/MiddlewareManager';
 import loadMetroConfig from '../../tools/loadMetroConfig';
 import releaseChecker from '../../tools/releaseChecker';
+import enableWatchMode from './watchMode';
 
 export type Args = {
   assetPlugins?: string[];
@@ -36,6 +38,7 @@ export type Args = {
   watchFolders?: string[];
   config?: string;
   projectRoot?: string;
+  interactive: boolean;
 };
 
 async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
@@ -108,9 +111,13 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
   middlewareManager.attachDevToolsSocket(wsProxy);
   middlewareManager.attachDevToolsSocket(ms);
 
+  if (args.interactive) {
+    enableWatchMode(ms);
+  }
+
   middlewareManager
     .getConnectInstance()
-    .use('/reload', (_req: unknown, res: any) => {
+    .use('/reload', (_req: http.IncomingMessage, res: http.ServerResponse) => {
       ms.broadcast('reload');
       res.end('OK');
     });

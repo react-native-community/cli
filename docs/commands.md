@@ -505,6 +505,10 @@ Path to custom SSL cert
 
 Path to the CLI configuration file
 
+#### `--no-interactive`
+
+Disables interactive mode
+
 ### `uninstall`
 
 Usage:

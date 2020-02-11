@@ -94,7 +94,7 @@ npm config set registry https://registry.npmjs.org/
 In order for symlinks to work correctly when running `start` locally, set REACT_NATIVE_APP_ROOT as the root folder of your cli project:
 
 ```
-REACT_NATIVE_APP_ROOT=path/to/cli node path/to/cli/packages/cli/build/index.js start
+REACT_NATIVE_APP_ROOT=path/to/cli node path/to/cli/packages/cli/build/bin.js start
 ```
 
 ## Running CLI with React Native from the source

@@ -41,6 +41,28 @@ const templateFiles = [
   'yarn.lock',
 ];
 
+// Files expected in the --version tests
+const versionFiles = [
+  '.buckconfig',
+  '.eslintrc.js',
+  '.flowconfig',
+  '.gitattributes',
+  '.gitignore',
+  '.prettierrc.js',
+  '.watchmanconfig',
+  'App.js',
+  '__tests__',
+  'android',
+  'app.json',
+  'babel.config.js',
+  'index.js',
+  'ios',
+  'metro.config.js',
+  'node_modules',
+  'package.json',
+  'yarn.lock',
+];
+
 test('init --template', () => {
   const {stdout} = run(DIR, [
     'init',
@@ -118,5 +140,44 @@ test('init --template with custom project path', () => {
 
   for (const templateFile of templateFiles) {
     expect(dirFiles.includes(templateFile)).toBe(true);
+  }
+});
+
+test('init --version with version number', () => {
+  const {stdout} = run(DIR, ['init', 'TestInit', '--version', '0.61.5']);
+
+  expect(stdout).toContain('Welcome to React Native!');
+  expect(stdout).toContain('Run instructions');
+
+  // make sure we don't leave garbage
+  expect(fs.readdirSync(DIR)).toEqual(['TestInit']);
+
+  let dirFiles = fs.readdirSync(path.join(DIR, 'TestInit'));
+  expect(dirFiles.length).toEqual(versionFiles.length);
+
+  for (const versionFile of versionFiles) {
+    expect(dirFiles.includes(versionFile)).toBe(true);
+  }
+});
+
+test('init --version with GitHub repo', () => {
+  const {stdout} = run(DIR, [
+    'init',
+    'TestInit',
+    '--version',
+    'https://github.com/facebook/react-native#7bd1abec35f0aff0dddf0c1a68f79da29e00acdb',
+  ]);
+
+  expect(stdout).toContain('Welcome to React Native!');
+  expect(stdout).toContain('Run instructions');
+
+  // make sure we don't leave garbage
+  expect(fs.readdirSync(DIR)).toEqual(['TestInit']);
+
+  let dirFiles = fs.readdirSync(path.join(DIR, 'TestInit'));
+  expect(dirFiles.length).toEqual(versionFiles.length);
+
+  for (const versionFile of versionFiles) {
+    expect(dirFiles.includes(versionFile)).toBe(true);
   }
 });

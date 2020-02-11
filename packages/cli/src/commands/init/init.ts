@@ -17,7 +17,10 @@ import {
   copyTemplate,
   executePostInitScript,
 } from './template';
-import {changePlaceholderInTemplate} from './editTemplate';
+import {
+  changePlaceholderInTemplate,
+  changeReactNativeVersionInTemplate,
+} from './editTemplate';
 import * as PackageManager from '../../tools/packageManager';
 import installPods from '../../tools/installPods';
 import {processTemplateName} from './templateName';
@@ -25,6 +28,7 @@ import banner from './banner';
 import {getLoader} from '../../tools/loader';
 
 const DEFAULT_VERSION = 'latest';
+const DEVELOPMENT_VERSION = /^(file|http|https|git|git\+ssh|git\+file|github|bitbucket)\:/;
 
 type Options = {
   template?: string;
@@ -40,6 +44,7 @@ interface TemplateOptions {
   npm?: boolean;
   directory: string;
   projectTitle?: string;
+  developmentVersion?: string;
 }
 
 function doesDirectoryExist(dir: string) {
@@ -99,6 +104,7 @@ async function createFromTemplate({
   npm,
   directory,
   projectTitle,
+  developmentVersion,
 }: TemplateOptions) {
   logger.debug('Initializing new project');
   logger.log(banner);
@@ -133,6 +139,10 @@ async function createFromTemplate({
       placeholderName: templateConfig.placeholderName,
       placeholderTitle: templateConfig.titlePlaceholder,
     });
+
+    if (developmentVersion) {
+      changeReactNativeVersionInTemplate(developmentVersion);
+    }
 
     loader.succeed();
     const {postInitScript} = templateConfig;
@@ -207,6 +217,7 @@ async function createProject(
     npm: options.npm,
     directory,
     projectTitle: options.title,
+    developmentVersion: DEVELOPMENT_VERSION.test(version) ? version : null,
   });
 }
 

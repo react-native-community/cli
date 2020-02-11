@@ -30,7 +30,7 @@ Our release cycle is independent of `react-native`. We follow semver and here is
 | --------------------------------------------------------------------------- | ---------------- |
 | [^5.0.0 (`next`)](https://github.com/react-native-community/cli/tree/next)  | master           |
 | [^4.0.0 (`master`)](https://github.com/react-native-community/cli/)         | ^0.62.0          |
-| [^3.0.0](https://github.com/react-native-community/cli/tree/2.x)            | ^0.61.0          |
+| [^3.0.0](https://github.com/react-native-community/cli/tree/3.x)            | ^0.61.0          |
 | [^2.0.0](https://github.com/react-native-community/cli/tree/2.x)            | ^0.60.0          |
 | [^1.0.0](https://github.com/react-native-community/cli/tree/1.x)            | ^0.59.0          |
 

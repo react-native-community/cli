@@ -37,6 +37,7 @@ type FlagsT = {
   verbose: boolean;
   port: number;
   terminal: string | undefined;
+  enableFlipper: boolean;
 };
 
 function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
@@ -272,6 +273,11 @@ async function runOnDevice(
   return logger.success('Installed the app on the device.');
 }
 
+function shellescapeArg(arg: string): string {
+  const [key, ...value] = arg.replace('$', '\\$').split('=');
+  return value.length ? `${key}="${value.join('=')}"` : key;
+}
+
 function buildProject(
   xcodeProject: ProjectInfo,
   udid: string | undefined,
@@ -289,9 +295,16 @@ function buildProject(
       '-destination',
       `id=${udid}`,
     ];
+    if (args.enableFlipper) {
+      // TODO: Once Flipper has entirely lost FB_SONARKIT_ENABLED from its
+      //       codebase, it can be removed here too.
+      xcodebuildArgs.push(
+        'GCC_PREPROCESSOR_DEFINITIONS=$(inherited) FB_SONARKIT_ENABLED=1 FB_FLIPPER_ENABLED=1',
+      );
+    }
     logger.info(
       `Building ${chalk.dim(
-        `(using "xcodebuild ${xcodebuildArgs.join(' ')}")`,
+        `(using 'xcodebuild ${xcodebuildArgs.map(shellescapeArg).join(' ')}')`,
       )}`,
     );
     let xcpretty: ChildProcess | any;
@@ -573,6 +586,11 @@ export default {
       description:
         'Launches the Metro Bundler in a new window using the specified terminal path.',
       default: getDefaultUserTerminal,
+    },
+    {
+      name: '--enable-flipper',
+      description: 'Enables the Flipper client',
+      default: false,
     },
   ],
 };

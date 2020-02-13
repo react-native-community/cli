@@ -3,9 +3,6 @@
   "version": "3.0.5-alpha.1",
   "license": "MIT",
   "main": "build/index.js",
-  "publishConfig": {
-    "access": "public"
-  },
   "dependencies": {
     "@react-native-community/cli-tools": "^3.0.0",
     "chalk": "^2.4.2",
@@ -14,6 +11,9 @@
     "logkitty": "^0.6.0",
     "slash": "^3.0.0",
     "xmldoc": "^1.1.2"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "files": [
     "build",

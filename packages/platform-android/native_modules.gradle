@@ -195,9 +195,7 @@ class ReactNativeModules {
     def cliResolveScript = "console.log(require('@react-native-community/cli').bin);"
     def cliPath = this.getCommandOutput("node -e ${cliResolveScript}")
 
-    def reactNativeConfigCommand = "node ${cliPath} config"
-
-    def reactNativeConfigOutput = this.getCommandOutput(reactNativeConfigCommand)
+    def reactNativeConfigOutput = this.getCommandOutput("node ${cliPath} config")
     
     def json
     try {

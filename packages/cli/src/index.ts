@@ -87,7 +87,7 @@ function printHelpInformation(
 function printUnknownCommand(cmdName: string) {
   const availableCommands = commander.commands.map(cmd => cmd._name);
   const suggestion = availableCommands.find(cmd => {
-  	return leven(cmd, cmdName) < 3;
+    return leven(cmd, cmdName) < 3;
   });
   let errorMsg = `Unrecognized command "${chalk.bold(cmdName)}".`;
   if (suggestion) {

@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import childProcess from 'child_process';
 import commander from 'commander';
-import didYouMean from 'didyoumean';
+import leven from 'leven';
 import path from 'path';
 
 import {Command, Config} from '@react-native-community/cli-types';
@@ -85,10 +85,10 @@ function printHelpInformation(
 }
 
 function printUnknownCommand(cmdName: string) {
-  const suggestion = didYouMean(
-    cmdName,
-    commander.commands.map(cmd => cmd._name),
-  );
+  const availableCommands = commander.commands.map(cmd => cmd._name);
+  const suggestion = availableCommands.find(cmd => {
+  	return leven(cmd, cmdName) < 3;
+  });
   let errorMsg = `Unrecognized command "${chalk.bold(cmdName)}".`;
   if (suggestion) {
     errorMsg += ` Did you mean "${suggestion}"?`;

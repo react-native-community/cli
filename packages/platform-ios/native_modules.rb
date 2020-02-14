@@ -15,7 +15,8 @@ def use_native_modules!(config = nil)
     config = nil;
   end
 
-  cli_resolve_script = "console.log(require('react-native/cli').bin);"
+  # Resolving the path the RN CLI. The `@react-native-community/cli` module may not be there for certain package managers, so we fall back to resolving it through `react-native` package, that's always present in RN projects
+  cli_resolve_script = "try {console.log(require('@react-native-community/cli').bin);} catch (e) {console.log(require('react-native/cli').bin);}"
   cli_bin = Pod::Executable.execute_command("node", ["-e", cli_resolve_script], true).strip
 
   if (!config)

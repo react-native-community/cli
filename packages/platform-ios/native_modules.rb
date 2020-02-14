@@ -21,7 +21,7 @@ def use_native_modules!(config = nil)
   if (!config)
     json = []
 
-    IO.popen("#{cli_bin} config") do |data|
+    IO.popen(["node", cli_bin, "config"]) do |data|
       while line = data.gets
         json << line
       end
@@ -67,7 +67,7 @@ def use_native_modules!(config = nil)
     end
 
     podspec_dir_path = Pathname.new(File.dirname(podspec_path))
-    
+
     relative_path = podspec_dir_path.relative_path_from project_root
 
     pod spec.name, :path => relative_path.to_path

@@ -148,7 +148,7 @@ class ReactNativeModules {
    * Runs a specified command using Runtime exec() in a specified directory.
    * Throws when the command result is empty.
    */
-  String getCommandOutput(String command) {
+  String getCommandOutput(String[] command) {
     try {
       def output = ""
       def cmdProcess = Runtime.getRuntime().exec(command)
@@ -193,12 +193,12 @@ class ReactNativeModules {
      * @todo: `fastlane` has been reported to not work too.
      */
     def cliResolveScript = "console.log(require('@react-native-community/cli').bin);"
-    def cliPath = this.getCommandOutput("node -e ${cliResolveScript}")
+    String[] nodeCommand = ["node", "-e", cliResolveScript]
+    def cliPath = this.getCommandOutput(nodeCommand)
 
-    def reactNativeConfigCommand = "node ${cliPath} config"
-
+    String[] reactNativeConfigCommand = ["node", cliPath, "config"]
     def reactNativeConfigOutput = this.getCommandOutput(reactNativeConfigCommand)
-    
+
     def json
     try {
       json = new JsonSlurper().parseText(reactNativeConfigOutput)

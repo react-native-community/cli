@@ -132,7 +132,7 @@ React Native CLI is a dependency of `react-native`, which makes it a transitive 
     -    chalk "^2.4.2"
     ```
 2. If you don't use lock files – remove `node_modules` and run `yarn install` / `npm install` again.
-3. Run `yarn list @react-native-community/cli` or `npm list @react-native-community/cli` and verify you're on the latest version.
+3. Run `yarn list --pattern @react-native-community/cli` or `npm list @react-native-community/cli` and verify you're on the latest version.
 
 After performing these steps you should be on the latest CLI version. Feel free to do it once in a while, because we release often.
 

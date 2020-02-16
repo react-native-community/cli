@@ -184,6 +184,10 @@ if $0 == __FILE__
       target_definition.singleton_class.send(:define_method, :dependencies) do
         current_target_definition_dependencies
       end
+      
+      target_definition.singleton_class.send(:define_method, :abstract?) do
+        false
+      end
 
       podfile.singleton_class.send(:define_method, :current_target_definition) do
         target_definition

@@ -102,7 +102,7 @@ export type HealthCheckResult = {
   label: string;
   needsToBeFixed: boolean;
   version?: 'Not Found' | string;
-  versions?: [string];
+  versions?: [string] | string;
   versionRange?: string;
   description: string | undefined;
   runAutomaticFix: RunAutomaticFix;

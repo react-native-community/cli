@@ -23,7 +23,9 @@ const printCategory = ({label, key}: {label: string; key: number}) => {
 
 const printVersions = ({version, versions, versionRange}) => {
   if (versions) {
-    const versionsToShow = versions.join(', ');
+    const versionsToShow = Array.isArray(versions)
+      ? versions.join(', ')
+      : 'N/A';
 
     logMessage(`- Versions found: ${chalk.red(versionsToShow)}`);
     logMessage(`- Version supported: ${chalk.green(versionRange)}`);

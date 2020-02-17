@@ -64,6 +64,12 @@ export type EnvironmentInfo = {
       path: string;
     };
   };
+  Languages: {
+    Python: {
+      version: string;
+      path: string;
+    };
+  };
 };
 
 export type HealthCheckCategory = {
@@ -83,6 +89,7 @@ export type RunAutomaticFix = (args: {
 }) => Promise<void> | void;
 
 export type HealthCheckInterface = {
+  [key: string]: any;
   label: string;
   visible?: boolean | void;
   isRequired?: boolean;
@@ -95,6 +102,9 @@ export type HealthCheckInterface = {
     versionRange?: string;
     needsToBeFixed: boolean | string;
   }>;
+  win32AutomaticFix?: RunAutomaticFix;
+  darwinAutomaticFix?: RunAutomaticFix;
+  linuxAutomaticFix?: RunAutomaticFix;
   runAutomaticFix: RunAutomaticFix;
 };
 

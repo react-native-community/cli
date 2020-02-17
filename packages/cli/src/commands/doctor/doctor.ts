@@ -118,6 +118,10 @@ export default (async (_, __, options) => {
         // Assume that it's required unless specified otherwise
         const isRequired = healthcheck.isRequired !== false;
         const isWarning = needsToBeFixed && !isRequired;
+        const platformFixMethodName = `${process.platform}AutomaticFix`;
+        const fix = healthcheck[platformFixMethodName]
+          ? healthcheck[platformFixMethodName]
+          : healthcheck.runAutomaticFix;
 
         return {
           label: healthcheck.label,
@@ -126,7 +130,7 @@ export default (async (_, __, options) => {
           versions,
           versionRange,
           description: healthcheck.description,
-          runAutomaticFix: healthcheck.runAutomaticFix,
+          runAutomaticFix: fix,
           isRequired,
           type: needsToBeFixed
             ? isWarning

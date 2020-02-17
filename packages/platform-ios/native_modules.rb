@@ -73,7 +73,7 @@ def use_native_modules!(config = nil)
 
     pod spec.name, :path => relative_path.to_path
 
-    if package_config["scriptPhases"]
+    if package_config["scriptPhases"] && !this_target.abstract?
       # Can be either an object, or an array of objects
       Array(package_config["scriptPhases"]).each do |phase|
         # see https://www.rubydoc.info/gems/cocoapods-core/Pod/Podfile/DSL#script_phase-instance_method
@@ -183,6 +183,10 @@ if $0 == __FILE__
 
       target_definition.singleton_class.send(:define_method, :dependencies) do
         current_target_definition_dependencies
+      end
+      
+      target_definition.singleton_class.send(:define_method, :abstract?) do
+        false
       end
 
       podfile.singleton_class.send(:define_method, :current_target_definition) do

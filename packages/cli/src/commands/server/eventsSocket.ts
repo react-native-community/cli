@@ -7,7 +7,7 @@ import messageSocketModule from './messageSocket';
 
 /**
  * The eventsSocket websocket listens at the 'events/` for websocket
- * connections, on which all metro reports will be emitted.
+ * connections, on which all Metro reports will be emitted.
  *
  * This is mostly useful for developer tools (clients) that wants to monitor Metro,
  * and the apps connected to Metro.

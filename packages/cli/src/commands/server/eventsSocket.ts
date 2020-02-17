@@ -6,7 +6,7 @@ import {Server as HttpsServer} from 'https';
 import messageSocketModule from './messageSocket';
 
 /**
- * The eventsSocket websocket listens a the 'events/` for websocket
+ * The eventsSocket websocket listens at the 'events/` for websocket
  * connections, on which all metro reports will be emitted.
  *
  * This is mostly useful for developer tools (clients) that wants to monitor Metro,

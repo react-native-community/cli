@@ -125,7 +125,7 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
     '/events',
     ms,
   );
-  logger.log('Created events socket');
+
   middlewareManager.attachDevToolsSocket(wsProxy);
   middlewareManager.attachDevToolsSocket(ms);
 

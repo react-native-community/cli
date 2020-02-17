@@ -9,3 +9,4 @@ build/
 !packages/cli/src/commands/init/__fixtures__/editTemplate/node_modules
 *.tsbuildinfo
 .cache
+.watchmanconfig

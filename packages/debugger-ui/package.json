@@ -6,7 +6,8 @@
   "scripts": {
     "build": "yarn build:ui && yarn build:middleware",
     "build:ui": "parcel build src/ui/index.html --out-dir build/ui --public-url '/debugger-ui'",
-    "build:middleware": "tsc"
+    "build:middleware": "tsc",
+    "link-package": "yarn link"
   },
   "files": [
     "build"

@@ -20,5 +20,8 @@
   "files": [
     "build",
     "native_modules.rb"
-  ]
+  ],
+  "scripts": {
+    "link-package": "yarn link"
+  }
 }

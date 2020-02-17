@@ -19,5 +19,8 @@
   },
   "files": [
     "build"
-  ]
+  ],
+  "scripts": {
+    "link-package": "yarn link"
+  }
 }

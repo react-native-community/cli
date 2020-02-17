@@ -15,6 +15,7 @@ import path from 'path';
 import {logger} from '@react-native-community/cli-tools';
 import {Config} from '@react-native-community/cli-types';
 import messageSocket from './messageSocket';
+import eventsSocketModule from './eventsSocket';
 import webSocketProxy from './webSocketProxy';
 import MiddlewareManager from './middleware/MiddlewareManager';
 import loadMetroConfig from '../../tools/loadMetroConfig';
@@ -42,9 +43,20 @@ export type Args = {
 };
 
 async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
+  let eventsSocket:
+    | ReturnType<typeof eventsSocketModule.attachToServer>
+    | undefined;
   const terminal = new Terminal(process.stdout);
   const ReporterImpl = getReporterImpl(args.customLogReporterPath);
-  const reporter = new ReporterImpl(terminal);
+  const terminalReporter = new ReporterImpl(terminal);
+  const reporter = {
+    update(event: any) {
+      terminalReporter.update(event);
+      if (eventsSocket) {
+        eventsSocket.reportEvent(event);
+      }
+    },
+  };
 
   const metroConfig = await loadMetroConfig(ctx, {
     config: args.config,
@@ -108,6 +120,12 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
     '/debugger-proxy',
   );
   const ms = messageSocket.attachToServer(serverInstance, '/message');
+  eventsSocket = eventsSocketModule.attachToServer(
+    serverInstance,
+    '/events',
+    ms,
+  );
+
   middlewareManager.attachDevToolsSocket(wsProxy);
   middlewareManager.attachDevToolsSocket(ms);
 
@@ -137,7 +155,7 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
   await releaseChecker(ctx.root);
 }
 
-function getReporterImpl(customLogReporterPath: string | void) {
+function getReporterImpl(customLogReporterPath: string | undefined) {
   if (customLogReporterPath === undefined) {
     return require('metro/src/lib/TerminalReporter');
   }

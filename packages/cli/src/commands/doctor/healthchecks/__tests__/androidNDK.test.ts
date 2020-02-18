@@ -8,16 +8,11 @@ import * as common from '../common';
 const logSpy = jest.spyOn(common, 'logManualInstallation');
 
 describe('androidNDK', () => {
-  let initialEnvironmentInfo: EnvironmentInfo;
   let environmentInfo: EnvironmentInfo;
 
   beforeAll(async () => {
-    initialEnvironmentInfo = await getEnvironmentInfo();
-  });
-
-  beforeEach(() => {
-    environmentInfo = initialEnvironmentInfo;
-  });
+    environmentInfo = await getEnvironmentInfo();
+  }, 15000);
 
   afterEach(() => {
     jest.resetAllMocks();

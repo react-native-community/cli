@@ -28,16 +28,11 @@ describe('androidSDK', () => {
 
   afterAll(() => cleanup('android/build.gradle'));
 
-  let initialEnvironmentInfo: EnvironmentInfo;
   let environmentInfo: EnvironmentInfo;
 
   beforeAll(async () => {
-    initialEnvironmentInfo = await getEnvironmentInfo();
-  });
-
-  beforeEach(() => {
-    environmentInfo = initialEnvironmentInfo;
-  });
+    environmentInfo = await getEnvironmentInfo();
+  }, 15000);
 
   afterEach(() => {
     jest.resetAllMocks();

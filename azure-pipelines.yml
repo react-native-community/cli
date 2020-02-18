@@ -4,17 +4,29 @@ trigger:
 pool:
   vmImage: 'windows-2019'
 
+variables:
+  YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
+
 steps:
+  - task: Cache@2
+    inputs:
+      key: 'yarn | "$(Agent.OS)" | yarn.lock'
+      restoreKeys: |
+        yarn | "$(Agent.OS)"
+        yarn
+      path: $(YARN_CACHE_FOLDER)
+    displayName: Cache Yarn packages
+
   - task: NodeTool@0
     inputs:
-      versionSpec: '10.x'
-    displayName: 'Install Node.js'
+      versionSpec: '13.x'
+    displayName: Install Node.js
 
-  - script: yarn install
-    displayName: 'Install dependencies'
+  - script: yarn --frozen-lockfile
+    displayName: Install dependencies
 
   - script: yarn test:ci:unit
-    displayName: 'Unit tests'
+    displayName: Unit tests
 
   - script: yarn test:ci:e2e
-    displayName: 'E2E tests'
+    displayName: E2E tests

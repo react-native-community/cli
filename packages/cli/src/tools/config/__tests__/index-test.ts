@@ -12,15 +12,18 @@ jest.mock('../resolveNodeModuleDir');
 
 const DIR = getTempDirectory('resolve_config_path_test');
 
+const iosPath = slash(
+  require.resolve('@react-native-community/cli-platform-ios'),
+);
+const androidPath = slash(
+  require.resolve('@react-native-community/cli-platform-android'),
+);
+
 const REACT_NATIVE_MOCK = {
   'node_modules/react-native/package.json': '{}',
   'node_modules/react-native/react-native.config.js': `
-    const ios = require("${require.resolve(
-      '@react-native-community/cli-platform-ios',
-    )}");
-    const android = require("${require.resolve(
-      '@react-native-community/cli-platform-android',
-    )}");
+    const ios = require("${iosPath}");
+    const android = require("${androidPath}");
     module.exports = {
       platforms: {
         ios: {

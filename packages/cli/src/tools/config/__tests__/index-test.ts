@@ -8,7 +8,12 @@ import {
   getTempDirectory,
 } from '../../../../../../jest/helpers';
 
-jest.mock('../resolveNodeModuleDir');
+jest.mock(
+  '../resolveNodeModuleDir',
+  () => (root: string, packageName: string) => {
+    return require('path').join(root, 'node_modules', packageName);
+  },
+);
 
 const DIR = getTempDirectory('resolve_config_path_test');
 

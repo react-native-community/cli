@@ -10,16 +10,19 @@ const logSpy = jest.spyOn(common, 'logManualInstallation');
 
 jest.mock('execa', () => jest.fn());
 
+// TODO remove when androidSDK starts getting gradle.build path from config
+jest.mock('../../../../tools/config/findProjectRoot', () => () => '.');
+
 describe('androidSDK', () => {
   beforeEach(() => {
     writeFiles('', {
       'android/build.gradle': `
         buildscript {
           ext {
-              buildToolsVersion = "28.0.3"
-              minSdkVersion = 16
-              compileSdkVersion = 28
-              targetSdkVersion = 28
+            buildToolsVersion = "28.0.3"
+            minSdkVersion = 16
+            compileSdkVersion = 28
+            targetSdkVersion = 28
           }
         }
       `,

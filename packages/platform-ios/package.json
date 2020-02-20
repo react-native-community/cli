@@ -19,6 +19,7 @@
   },
   "files": [
     "build",
+    "!build/**/*.map",
     "native_modules.rb"
   ]
 }

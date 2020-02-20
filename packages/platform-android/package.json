@@ -17,6 +17,7 @@
   },
   "files": [
     "build",
+    "!build/**/*.map",
     "native_modules.gradle"
   ],
   "devDependencies": {

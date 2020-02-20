@@ -15,5 +15,8 @@ module.exports = {
       testMatch: ['<rootDir>/**/__tests__/*{.,-}test.[jt]s'],
     },
   ],
-  collectCoverageFrom: ['packages/**/src/**/*.ts'],
+  collectCoverageFrom: [
+    '<rootDir>/packages/**/src/**/*.ts',
+    '<rootDir>/!packages/cli-types/src/**/*.ts',
+  ],
 };

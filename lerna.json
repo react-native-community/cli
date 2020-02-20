@@ -3,7 +3,7 @@
   "npmClient": "yarn",
   "command": {
     "publish": {
-      "ignoreChanges": ["global-cli"]
+      "ignoreChanges": ["**/global-cli/**"]
     }
   },
   "useWorkspaces": true

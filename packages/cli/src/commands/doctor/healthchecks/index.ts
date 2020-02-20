@@ -7,6 +7,7 @@ import androidNDK from './androidNDK';
 import xcode from './xcode';
 import cocoaPods from './cocoaPods';
 import iosDeploy from './iosDeploy';
+import reactNativeGlobal from './reactNativeGlobal';
 import {Healthchecks} from '../types';
 
 export const HEALTHCHECK_TYPES = {
@@ -26,6 +27,7 @@ export const getHealthchecks = ({contributor}: Options): Healthchecks => ({
       nodeJS,
       yarn,
       npm,
+      reactNativeGlobal,
       ...(process.platform === 'darwin' ? [watchman] : []),
     ],
   },

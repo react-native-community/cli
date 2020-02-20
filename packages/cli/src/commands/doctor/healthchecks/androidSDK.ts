@@ -6,6 +6,7 @@ import {HealthCheckInterface} from '../types';
 import findProjectRoot from '../../../tools/config/findProjectRoot';
 
 const getBuildToolsVersion = (): string => {
+  // TODO use config
   const projectRoot = findProjectRoot();
   const gradleBuildFilePath = path.join(projectRoot, 'android/build.gradle');
 

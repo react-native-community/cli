@@ -1,5 +1,10 @@
 {
   "version": "4.1.0",
   "npmClient": "yarn",
+  "command": {
+    "publish": {
+      "ignoreChanges": ["**/global-cli/**"]
+    }
+  },
   "useWorkspaces": true
 }

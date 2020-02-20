@@ -87,5 +87,8 @@
     "@types/ws": "^6.0.3",
     "slash": "^3.0.0",
     "snapshot-diff": "^0.5.0"
+  },
+  "scripts": {
+    "link-package": "yarn link"
   }
 }

@@ -49,6 +49,8 @@ export interface Flags {
   root: string;
   variant: string;
   appFolder: string;
+  appId: string;
+  appIdSuffix: string;
   mainActivity: string;
   deviceId?: string;
   packager: boolean;

@@ -1,21 +1,18 @@
 import {HealthCheckInterface} from '../types';
 import fs from 'fs';
-import isInstalledGlobally from 'is-installed-globally';
+
 import resolveGlobal from 'resolve-global';
 
 const label = 'react-native-cli';
 
 const checkGlobalInstall = (): boolean => {
-  return isInstalledGlobally('react-native-cli');
+  const reactNativeCLIGlobal = resolveGlobal('react-native-cli');
+  const reactNativeGlobal = resolveGlobal('react-native');
+  return !!((reactNativeCLIGlobal || reactNativeGlobal) && true);
 };
 
 const automaticFix = () => {
-  const reactNativeGlobalPath = resolveGlobal('react-native-cli');
-  fs.unlink(reactNativeGlobalPath, error => {
-    if (error) {
-      // Do something with error
-    }
-  });
+  
 };
 
 export default {

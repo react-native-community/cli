@@ -15,7 +15,6 @@ import runOnAllDevices from './runOnAllDevices';
 import tryRunAdbReverse from './tryRunAdbReverse';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
 import getAdbPath from './getAdbPath';
-import getLaunchPackageName from './getLaunchPackageName';
 import {
   isPackagerRunning,
   logger,
@@ -110,6 +109,21 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
   });
 }
 
+function getPackageNameWithSuffix(
+  appId: string,
+  appIdSuffix: string,
+  packageName: string,
+) {
+  if (appId) {
+    return appId;
+  }
+  if (appIdSuffix) {
+    return `${packageName}.${appIdSuffix}`;
+  }
+
+  return packageName;
+}
+
 // Builds the app and runs it on a connected emulator / device.
 function buildAndRun(args: Flags) {
   process.chdir(path.join(args.root, 'android'));
@@ -144,25 +158,35 @@ function buildAndRun(args: Flags) {
     ); // we can also directly add the package naming rules here
   }
 
-  const launchPackageName = getLaunchPackageName(args.variant);
+  const packageNameWithSuffix = getPackageNameWithSuffix(
+    args.appId,
+    args.appIdSuffix,
+    packageName,
+  );
   const adbPath = getAdbPath();
   if (args.deviceId) {
     return runOnSpecificDevice(
       args,
       cmd,
-      launchPackageName,
+      packageNameWithSuffix,
       packageName,
       adbPath,
     );
   } else {
-    return runOnAllDevices(args, cmd, launchPackageName, packageName, adbPath);
+    return runOnAllDevices(
+      args,
+      cmd,
+      packageNameWithSuffix,
+      packageName,
+      adbPath,
+    );
   }
 }
 
 function runOnSpecificDevice(
   args: Flags,
   gradlew: 'gradlew.bat' | './gradlew',
-  launchPackageName: string,
+  packageNameWithSuffix: string,
   packageName: string,
   adbPath: string,
 ) {
@@ -174,7 +198,7 @@ function runOnSpecificDevice(
       installAndLaunchOnDevice(
         args,
         deviceId,
-        launchPackageName,
+        packageNameWithSuffix,
         packageName,
         adbPath,
       );
@@ -256,7 +280,7 @@ function getInstallApkName(
 function installAndLaunchOnDevice(
   args: Flags,
   selectedDevice: string,
-  launchPackageName: string,
+  packageNameWithSuffix: string,
   packageName: string,
   adbPath: string,
 ) {
@@ -264,7 +288,7 @@ function installAndLaunchOnDevice(
   tryInstallAppOnDevice(args, adbPath, selectedDevice);
   tryLaunchAppOnDevice(
     selectedDevice,
-    launchPackageName,
+    packageNameWithSuffix,
     packageName,
     adbPath,
     args.mainActivity,

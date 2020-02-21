@@ -11,7 +11,7 @@ import {logger, CLIError} from '@react-native-community/cli-tools';
 
 function tryLaunchAppOnDevice(
   device: string | void,
-  launchPackageName: string,
+  packageNameWithSuffix: string,
   packageName: string,
   adbPath: string,
   mainActivity: string,
@@ -22,7 +22,7 @@ function tryLaunchAppOnDevice(
       'am',
       'start',
       '-n',
-      `${launchPackageName}/${packageName}.${mainActivity}`,
+      `${packageNameWithSuffix}/${packageName}.${mainActivity}`,
     ];
     if (device) {
       adbArgs.unshift('-s', device);

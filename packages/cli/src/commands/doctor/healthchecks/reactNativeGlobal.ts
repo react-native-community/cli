@@ -9,7 +9,7 @@ const checkGlobalInstall = (): boolean => {
   return isInstalledGlobally('react-native-cli');
 };
 
-const automaticFix = async () => {
+const automaticFix = () => {
   const reactNativeGlobalPath = resolveGlobal('react-native-cli');
   fs.unlink(reactNativeGlobalPath, error => {
     if (error) {

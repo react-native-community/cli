@@ -60,6 +60,7 @@
     "ora": "^3.4.0",
     "plist": "^3.0.0",
     "pretty-format": "^25.1.0",
+    "resolve-global": "^1.0.0",
     "semver": "^6.3.0",
     "serve-static": "^1.13.1",
     "shell-quote": "1.6.1",

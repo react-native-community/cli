@@ -1,4 +1,3 @@
-import {logger} from '@react-native-community/cli-tools';
 import {HealthCheckInterface} from '../types';
 import fs from 'fs';
 import isInstalledGlobally from 'is-installed-globally';
@@ -12,7 +11,11 @@ const checkGlobalInstall = (): boolean => {
 
 const automaticFix = async () => {
   const reactNativeGlobalPath = resolveGlobal('react-native-cli');
-  fs.unlink(reactNativeGlobalPath, () => {});
+  fs.unlink(reactNativeGlobalPath, error => {
+    if (error) {
+      // Do something with error
+    }
+  });
 };
 
 export default {

@@ -17,7 +17,7 @@
     "lint": "eslint --ext .js,.ts . --cache --report-unused-disable-directives",
     "test:ci:cocoapods": "ruby packages/platform-ios/native_modules.rb",
     "postinstall": "yarn build",
-    "link-packages": "yarn workspaces run link-package",
+    "link-packages": "node ./scripts/linkPackages.js",
     "publish": "yarn build-clean-all && yarn install && lerna publish",
     "publish:next": "yarn build-clean-all && yarn install && lerna publish --dist-tag next"
   },

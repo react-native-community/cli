@@ -6,8 +6,5 @@
     "access": "public"
   },
   "types": "build/index.d.ts",
-  "license": "MIT",
-  "scripts": {
-    "link-package": "yarn link"
-  }
+  "license": "MIT"
 }

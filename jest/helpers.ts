@@ -4,7 +4,6 @@ import path from 'path';
 import {createDirectory} from 'jest-util';
 // @ts-ignore jsfile
 import rimraf from 'rimraf';
-// @ts-ignore jsfile
 import execa from 'execa';
 import chalk from 'chalk';
 // @ts-ignore jsfile

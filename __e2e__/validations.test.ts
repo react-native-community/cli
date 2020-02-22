@@ -1,5 +1,3 @@
-import fs from 'fs';
-import path from 'path';
 import {run, getTempDirectory, cleanup, writeFiles} from '../jest/helpers';
 
 const DIR = getTempDirectory('command-validations');
@@ -13,10 +11,8 @@ afterEach(() => {
 });
 
 test('suggests matching command', () => {
-  const {stderr} = run(
-    DIR,
-    ['ini'],
-    {expectedFailure: true},
+  const {stderr} = run(DIR, ['ini'], {expectedFailure: true});
+  expect(stderr).toContain(
+    'error Unrecognized command "ini". Did you mean "init"?',
   );
-  expect(stderr).toContain('error Unrecognized command \"ini\". Did you mean \"init\"?');
 });

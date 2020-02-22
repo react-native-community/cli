@@ -2,8 +2,7 @@ import fs from 'fs';
 import execa from 'execa';
 import chalk from 'chalk';
 import ora from 'ora';
-// @ts-ignore untyped
-import inquirer from 'inquirer';
+import enquirer from 'enquirer';
 import {logger} from '@react-native-community/cli-tools';
 import {NoopLoader} from './loader';
 // @ts-ignore untyped
@@ -96,7 +95,7 @@ async function promptCocoaPodsInstallationQuestion(): Promise<
   const installWithGem = 'Yes, with gem (may require sudo)';
   const installWithHomebrew = 'Yes, with Homebrew';
 
-  const {shouldInstallCocoaPods} = await inquirer.prompt([
+  const {shouldInstallCocoaPods} = await enquirer.prompt([
     {
       type: 'list',
       name: 'shouldInstallCocoaPods',

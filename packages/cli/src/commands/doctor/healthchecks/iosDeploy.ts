@@ -1,7 +1,6 @@
 import execa from 'execa';
 import chalk from 'chalk';
-// @ts-ignore untyped
-import inquirer from 'inquirer';
+import enquirer from 'enquirer';
 import {isSoftwareNotInstalled, PACKAGE_MANAGERS} from '../checkInstallation';
 import {packageManager} from './packageManagers';
 import {logError, removeMessage} from './common';
@@ -76,7 +75,7 @@ export default {
       const installWithNpm = 'npm';
       const skipInstallation = 'Skip installation';
 
-      const {chosenPackageManager} = await inquirer.prompt([
+      const {chosenPackageManager} = await enquirer.prompt([
         {
           type: 'list',
           name: 'chosenPackageManager',

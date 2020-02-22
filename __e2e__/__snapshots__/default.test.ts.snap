@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`shows up help information without passing  any args 1`] = `
+"Usage: bin [options] [command] <command>
+
+Options:
+  --version                     Print CLI version
+  --verbose                     Increase logging verbosity
+  -h, --help                    output usage information
+
+Commands:
+  init [options] <projectName>  Initialize a new React Native project named <projectName> in a directory of the same name."
+`;

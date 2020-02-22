@@ -19,15 +19,16 @@ const getBuildToolsVersion = (): string => {
     buildToolsVersionEntry,
   );
 
-  const buildToolsVersion = gradleBuildFile
-    // Get only the portion of the declaration of `buildToolsVersion`
-    .substring(buildToolsVersionIndex)
-    .split('\n')[0]
-    // Get only the the value of `buildToolsVersion`
-    .match(/\d|\../g)
-    .join('');
+  const buildToolsVersion = (
+    gradleBuildFile
+      // Get only the portion of the declaration of `buildToolsVersion`
+      .substring(buildToolsVersionIndex)
+      .split('\n')[0]
+      // Get only the the value of `buildToolsVersion`
+      .match(/\d|\../g) || []
+  ).join('');
 
-  return buildToolsVersion;
+  return buildToolsVersion || 'Not Found';
 };
 
 const installMessage = `Read more about how to update Android SDK at ${chalk.dim(
@@ -39,27 +40,27 @@ export default {
   description: 'Required for building and installing your app on Android',
   getDiagnostics: async ({SDKs}) => {
     const requiredVersion = getBuildToolsVersion();
+    const buildTools =
+      typeof SDKs['Android SDK'] === 'string'
+        ? SDKs['Android SDK']
+        : SDKs['Android SDK']['Build Tools'];
 
     if (!requiredVersion) {
       return {
-        versions: SDKs['Android SDK']['Build Tools'],
+        versions: buildTools,
         versionRange: undefined,
         needsToBeFixed: true,
       };
     }
 
-    const isAndroidSDKInstalled = Array.isArray(
-      SDKs['Android SDK']['Build Tools'],
-    );
+    const isAndroidSDKInstalled = Array.isArray(buildTools);
 
     const isRequiredVersionInstalled = isAndroidSDKInstalled
-      ? SDKs['Android SDK']['Build Tools'].includes(requiredVersion)
+      ? buildTools.includes(requiredVersion)
       : false;
 
     return {
-      versions: isAndroidSDKInstalled
-        ? SDKs['Android SDK']['Build Tools']
-        : SDKs['Android SDK'],
+      versions: isAndroidSDKInstalled ? buildTools : SDKs['Android SDK'],
       versionRange: requiredVersion,
       needsToBeFixed: !isRequiredVersionInstalled,
     };

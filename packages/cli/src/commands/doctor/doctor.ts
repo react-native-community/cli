@@ -21,7 +21,15 @@ const printCategory = ({label, key}: {label: string; key: number}) => {
   logger.log(chalk.dim(label));
 };
 
-const printVersions = ({version, versions, versionRange}) => {
+const printVersions = ({
+  version,
+  versions,
+  versionRange,
+}: {
+  version?: 'Not Found' | string;
+  versions?: [string] | string;
+  versionRange: string;
+}) => {
   if (versions) {
     const versionsToShow = Array.isArray(versions)
       ? versions.join(', ')

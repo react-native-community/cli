@@ -177,6 +177,7 @@ function readLegacyDependencyConfigFromDisk(
         params: [],
       },
       commands: [],
+      // @ts-ignore
       platforms: {},
     };
   }

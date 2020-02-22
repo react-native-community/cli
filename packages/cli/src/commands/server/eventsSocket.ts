@@ -169,7 +169,7 @@ function attachToServer(
     };
 
     clientWs.onmessage = event => {
-      const message: Command = parseMessage(event.data.toString());
+      const message: Command | undefined = parseMessage(event.data.toString());
       if (message == null) {
         return;
       }

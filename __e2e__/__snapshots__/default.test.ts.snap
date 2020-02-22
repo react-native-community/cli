@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`shows up help information without passing  any args 1`] = `
+exports[`shows up help information without passing in any args 1`] = `
 "Usage: bin [options] [command] <command>
 
 Options:

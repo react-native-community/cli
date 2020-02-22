@@ -7,7 +7,6 @@
 
 import url from 'url';
 import {Server as WebSocketServer} from 'ws';
-import notifier from 'node-notifier';
 import {logger} from '@react-native-community/cli-tools';
 import {Server as HttpServer} from 'http';
 import {Server as HttpsServer} from 'https';
@@ -100,13 +99,11 @@ function attachToServer(server: Server, path: string) {
       params: message.params,
     };
     if (clients.size === 0) {
-      notifier.notify({
-        title: 'React Native: No apps connected',
-        message:
-          `Sending '${message.method}' to all React Native apps ` +
-          'failed. Make sure your app is running in the simulator ' +
-          'or on a phone connected via USB.',
-      });
+      logger.warn(
+        `No apps connected. Sending "${
+          message.method
+        }" to all React Native apps failed. Make sure your app is running in the simulator or on a phone connected via USB.`,
+      );
     }
     for (const [otherId, otherWs] of clients) {
       if (otherId !== broadcasterId) {

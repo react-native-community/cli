@@ -79,7 +79,7 @@ export type Healthchecks = {
 
 export type RunAutomaticFix = (args: {
   loader: Ora;
-  environmentInfo?: EnvironmentInfo;
+  environmentInfo: EnvironmentInfo;
 }) => Promise<void> | void;
 
 export type HealthCheckInterface = {
@@ -88,7 +88,7 @@ export type HealthCheckInterface = {
   isRequired?: boolean;
   description?: string;
   getDiagnostics: (
-    environmentInfo?: EnvironmentInfo,
+    environmentInfo: EnvironmentInfo,
   ) => Promise<{
     version?: string;
     versions?: [string];

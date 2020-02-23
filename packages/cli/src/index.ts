@@ -12,7 +12,7 @@ import init from './commands/init/initCompat';
 import assertRequiredOptions from './tools/assertRequiredOptions';
 import loadConfig from './tools/config';
 
-import pkgJson from '../package.json';
+const pkgJson = require('../package.json');
 
 commander
   .option('--version', 'Print CLI version')
@@ -85,8 +85,8 @@ function printHelpInformation(
 }
 
 function printUnknownCommand(cmdName: string) {
-  const availableCommands = commander.commands.map(cmd => cmd._name);
-  const suggestion = availableCommands.find(cmd => {
+  const availableCommands = commander.commands.map((cmd: any) => cmd._name);
+  const suggestion = availableCommands.find((cmd: string) => {
     return leven(cmd, cmdName) < cmd.length * 0.4;
   });
   let errorMsg = `Unrecognized command "${chalk.bold(cmdName)}".`;

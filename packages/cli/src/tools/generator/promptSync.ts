@@ -43,13 +43,13 @@ function create() {
     const echo = opts.echo;
     const masked = 'echo' in opts;
 
-    /*eslint-disable prettier/prettier*/
-    const fd =
-      process.platform === 'win32'
-        // @ts-ignore
-        ? process.stdin.fd
-        : fs.openSync('/dev/tty', 'rs');
-    /*eslint-enable prettier/prettier*/
+    let fd;
+    if (process.platform === 'win32') {
+      // @ts-ignore
+      fd = process.stdin.fd;
+    } else {
+      fd = fs.openSync('/dev/tty', 'rs');
+    }
 
     const wasRaw = process.stdin.isRaw;
     if (!wasRaw && process.stdin.setRawMode) {
@@ -91,7 +91,7 @@ function create() {
         fs.closeSync(fd);
         process.exit(130);
         if (process.stdin.setRawMode) {
-          process.stdin.setRawMode(!!wasRaw);
+          process.stdin.setRawMode!(!!wasRaw);
         }
         return null;
       }

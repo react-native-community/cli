@@ -8,6 +8,5 @@
     {"path": "../tools"},
     {"path": "../cli-types"},
     {"path": "../debugger-ui"}
-  ],
-  "include": ["../package.json"]
+  ]
 }

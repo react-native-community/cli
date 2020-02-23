@@ -7,7 +7,7 @@
     "access": "public"
   },
   "dependencies": {
-    "chalk": "^2.4.2",
+    "chalk": "^3.0.0",
     "lodash": "^4.17.5",
     "mime": "^2.4.1",
     "node-fetch": "^2.5.0"

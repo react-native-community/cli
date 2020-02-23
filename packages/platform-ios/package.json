@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@react-native-community/cli-tools": "^3.0.0",
-    "chalk": "^2.4.2",
+    "chalk": "^3.0.0",
     "js-yaml": "^3.13.1",
     "xcode": "^2.0.0"
   },

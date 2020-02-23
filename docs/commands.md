@@ -370,12 +370,13 @@ Builds your app and starts it on iOS simulator.
 
 #### `--simulator [simulator_name]`
 
-> default: iPhone 11
+> default: iPhone 11 Pro Max
 
 Explicitly set the simulator to use. Optionally include iOS version between parenthesis at the end to match an exact version, e.g. `"iPhone 6 (10.0)"`.
 
 Notes: If selected simulator does not exist, cli will try to run fallback simulators in following order:
 
+- `iPhone 11`
 - `iPhone X`
 - `iPhone 8`
 

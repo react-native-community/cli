@@ -77,7 +77,7 @@ export default {
 
       const {chosenPackageManager} = await enquirer.prompt([
         {
-          type: 'list',
+          type: 'select',
           name: 'chosenPackageManager',
           message: promptQuestion,
           choices: [installWithYarn, installWithNpm, skipInstallation],

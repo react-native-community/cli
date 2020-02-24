@@ -15,6 +15,7 @@ import loadConfig from './tools/config';
 const pkgJson = require('../package.json');
 
 commander
+  .usage('<command> [options]')
   .option('--version', 'Print CLI version')
   .option('--verbose', 'Increase logging verbosity');
 

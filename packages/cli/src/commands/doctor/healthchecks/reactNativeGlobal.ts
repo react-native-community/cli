@@ -21,46 +21,10 @@ const checkGlobalInstall = (): boolean => {
 };
 
 const removeNodePackage = (packageName, packageManager) => {
-  logger.log("*********Removing package: " + packageName)
+  logger.log('*********Removing package: ' + packageName);
   packageManager === 'yarn'
     ? execa(`yarn global remove ${packageName}`)
     : execa(`npm uninstall -g ${packageName}`);
-};
-
-const automaticFix = () => {
-  let reactNativePath = '';
-  let reactNativeCLIPath = '';
-
-  try {
-    reactNativePath = resolveGlobal('react-native-cli');
-    reactNativeCLIPath = resolveGlobal('react-native');
-  } catch {}
-
-  if (isPathInside(reactNativePath, globalDirectories.yarn.packages)) {
-    removeNodePackage(reactNativePath, 'yarn');
-  }
-
-  if (
-    isPathInside(
-      reactNativePath,
-      fs.realpathSync(globalDirectories.npm.packages),
-    )
-  ) {
-    removeNodePackage(reactNativePath, 'npm');
-  }
-
-  if (isPathInside(reactNativeCLIPath, globalDirectories.yarn.packages)) {
-    removeNodePackage(reactNativeCLIPath, 'yarn');
-  }
-
-  if (
-    isPathInside(
-      reactNativeCLIPath,
-      fs.realpathSync(globalDirectories.npm.packages),
-    )
-  ) {
-    removeNodePackage(reactNativeCLIPath, 'npm');
-  }
 };
 
 export default {
@@ -68,5 +32,39 @@ export default {
   getDiagnostics: async () => ({
     needsToBeFixed: checkGlobalInstall(),
   }),
-  runAutomaticFix: automaticFix(),
+  runAutomaticFix: () => {
+    let reactNativePath = '';
+    let reactNativeCLIPath = '';
+
+    try {
+      reactNativePath = resolveGlobal('react-native-cli');
+      reactNativeCLIPath = resolveGlobal('react-native');
+    } catch {}
+
+    if (isPathInside(reactNativePath, globalDirectories.yarn.packages)) {
+      removeNodePackage(reactNativePath, 'yarn');
+    }
+
+    if (
+      isPathInside(
+        reactNativePath,
+        fs.realpathSync(globalDirectories.npm.packages),
+      )
+    ) {
+      removeNodePackage(reactNativePath, 'npm');
+    }
+
+    if (isPathInside(reactNativeCLIPath, globalDirectories.yarn.packages)) {
+      removeNodePackage(reactNativeCLIPath, 'yarn');
+    }
+
+    if (
+      isPathInside(
+        reactNativeCLIPath,
+        fs.realpathSync(globalDirectories.npm.packages),
+      )
+    ) {
+      removeNodePackage(reactNativeCLIPath, 'npm');
+    }
+  },
 } as HealthCheckInterface;

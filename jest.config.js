@@ -16,7 +16,9 @@ module.exports = {
     },
   ],
   collectCoverageFrom: [
-    '<rootDir>/packages/**/src/**/*.ts',
-    '<rootDir>/!packages/cli-types/src/**/*.ts',
+    '**/packages/*/**/*.ts',
+    '!**/__mocks__/**',
+    '!**/__tests__/**',
+    '!**/build/**',
   ],
 };

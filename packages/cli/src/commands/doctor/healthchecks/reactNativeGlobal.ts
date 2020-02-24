@@ -6,6 +6,7 @@ import resolveGlobal from 'resolve-global';
 import globalDirectories from 'global-dirs';
 import isPathInside from 'is-path-inside';
 import {logger} from '@react-native-community/cli-tools';
+import {removeMessage, logError} from './common';
 
 const label = 'react-native-cli';
 
@@ -20,11 +21,24 @@ const checkGlobalInstall = (): boolean => {
   return !!((reactNativeCLIGlobal || reactNativeGlobal) && true);
 };
 
-const removeNodePackage = (packageName, packageManager) => {
+const removeNodePackage = (packageName, packageManager, loader) => {
   logger.log('*********Removing package: ' + packageName);
-  packageManager === 'yarn'
-    ? execa(`yarn global remove ${packageName}`)
-    : execa(`npm uninstall -g ${packageName}`);
+
+  try {
+    packageManager === 'yarn'
+      ? execa('yarn global remove', [`${packageName}`])
+      : execa('npm uninstall -g', [`${packageName}`]);
+  } catch (error) {
+    const message = `Failed to uninstall ${packageName}, please try to uninstall the global ${packageName} package manually.`;
+
+    logError({
+      healthcheck: label,
+      loader,
+      error,
+      message,
+      command: 'sudo gem install cocoapods',
+    });
+  }
 };
 
 export default {
@@ -32,9 +46,13 @@ export default {
   getDiagnostics: async () => ({
     needsToBeFixed: checkGlobalInstall(),
   }),
-  runAutomaticFix: () => {
+  runAutomaticFix: ({loader}) => {
+    loader.stop();
+
     let reactNativePath = '';
     let reactNativeCLIPath = '';
+    const reactNative = 'reat-native';
+    const reactNativeCLI = 'react-native-cli';
 
     try {
       reactNativePath = resolveGlobal('react-native-cli');
@@ -42,7 +60,7 @@ export default {
     } catch {}
 
     if (isPathInside(reactNativePath, globalDirectories.yarn.packages)) {
-      removeNodePackage(reactNativePath, 'yarn');
+      removeNodePackage(reactNative, 'yarn', loader);
     }
 
     if (
@@ -51,11 +69,11 @@ export default {
         fs.realpathSync(globalDirectories.npm.packages),
       )
     ) {
-      removeNodePackage(reactNativePath, 'npm');
+      removeNodePackage(reactNative, 'npm', loader);
     }
 
     if (isPathInside(reactNativeCLIPath, globalDirectories.yarn.packages)) {
-      removeNodePackage(reactNativeCLIPath, 'yarn');
+      removeNodePackage(reactNativeCLI, 'yarn', loader);
     }
 
     if (
@@ -64,7 +82,7 @@ export default {
         fs.realpathSync(globalDirectories.npm.packages),
       )
     ) {
-      removeNodePackage(reactNativeCLIPath, 'npm');
+      removeNodePackage(reactNativeCLI, 'npm', loader);
     }
   },
 } as HealthCheckInterface;

@@ -10,11 +10,9 @@ afterEach(() => {
   cleanup(DIR);
 });
 
-test('warn for unknown commands', () => {
+test('warn for passing in unknown commands', () => {
   const {stderr} = run(DIR, ['unknown'], {expectedFailure: true});
-  expect(stderr).toContain(
-    'error Unrecognized command "unknown".',
-  );
+  expect(stderr).toContain('error Unrecognized command "unknown".');
 });
 
 test('suggest matching command', () => {

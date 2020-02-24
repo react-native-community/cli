@@ -5,24 +5,36 @@ import execa from 'execa';
 import resolveGlobal from 'resolve-global';
 import globalDirectories from 'global-dirs';
 import isPathInside from 'is-path-inside';
+import {logger} from '@react-native-community/cli-tools';
 
 const label = 'react-native-cli';
 
 const checkGlobalInstall = (): boolean => {
-  const reactNativeCLIGlobal = resolveGlobal('react-native-cli');
-  const reactNativeGlobal = resolveGlobal('react-native');
+  let reactNativeCLIGlobal;
+  let reactNativeGlobal;
+
+  try {
+    reactNativeCLIGlobal = resolveGlobal('react-native-cli');
+    reactNativeGlobal = resolveGlobal('react-native');
+  } catch {}
   return !!((reactNativeCLIGlobal || reactNativeGlobal) && true);
 };
 
 const removeNodePackage = (packageName, packageManager) => {
+  logger.log("*********Removing package: " + packageName)
   packageManager === 'yarn'
     ? execa(`yarn global remove ${packageName}`)
     : execa(`npm uninstall -g ${packageName}`);
 };
 
 const automaticFix = () => {
-  const reactNativePath = globalDirectories('react-native-cli');
-  const reactNativeCLIPath = globalDirectories('react-native');
+  let reactNativePath = '';
+  let reactNativeCLIPath = '';
+
+  try {
+    reactNativePath = resolveGlobal('react-native-cli');
+    reactNativeCLIPath = resolveGlobal('react-native');
+  } catch {}
 
   if (isPathInside(reactNativePath, globalDirectories.yarn.packages)) {
     removeNodePackage(reactNativePath, 'yarn');

@@ -20,8 +20,5 @@
   "files": [
     "build",
     "!build/**/*.map"
-  ],
-  "scripts": {
-    "link-package": "yarn link"
-  }
+  ]
 }

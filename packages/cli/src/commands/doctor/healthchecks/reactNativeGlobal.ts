@@ -26,9 +26,11 @@ const removeNodePackage = async (packageName, packageManager, loader) => {
 
   try {
     packageManager === 'yarn'
-      ? await execa('yarn global remove', [`${packageName}`])
-      : await execa('npm uninstall -g', [`${packageName}`]);
+      ? await execa('yarn', ['global', 'remove', packageName])
+      : await execa('npm', ['uninstall', '-g', packageName]);
   } catch (error) {
+    console.log(error);
+
     const message = `Failed to uninstall ${packageName}, please try to uninstall the global ${packageName} package manually.`;
 
     logError({

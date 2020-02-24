@@ -9,10 +9,8 @@
 import Metro from 'metro';
 // @ts-ignore untyped metro
 import {Terminal} from 'metro-core';
-import morgan from 'morgan';
 import http from 'http';
 import path from 'path';
-import {logger} from '@react-native-community/cli-tools';
 import {Config} from '@react-native-community/cli-types';
 import messageSocket from './messageSocket';
 import eventsSocketModule from './eventsSocket';
@@ -80,18 +78,6 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
     port: metroConfig.server.port,
     watchFolders: metroConfig.watchFolders,
   });
-
-  middlewareManager.getConnectInstance().use(
-    // @ts-ignore morgan and connect types mismatch
-    morgan(
-      'combined',
-      !logger.isVerbose()
-        ? {
-            skip: (_req, res) => res.statusCode < 400,
-          }
-        : undefined,
-    ),
-  );
 
   metroConfig.watchFolders.forEach(
     middlewareManager.serveStatic.bind(middlewareManager),

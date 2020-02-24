@@ -36,7 +36,7 @@ const removeNodePackage = (packageName, packageManager, loader) => {
       loader,
       error,
       message,
-      command: 'sudo gem install cocoapods',
+      command: '',
     });
   }
 };

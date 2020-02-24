@@ -18,6 +18,7 @@
     "@types/node-fetch": "^2.3.3"
   },
   "files": [
-    "build"
+    "build",
+    "!build/**/*.map"
   ]
 }

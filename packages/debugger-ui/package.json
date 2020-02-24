@@ -9,7 +9,8 @@
     "build:middleware": "tsc"
   },
   "files": [
-    "build"
+    "build",
+    "!build/**/*.map"
   ],
   "devDependencies": {
     "@babel/core": "^7.6.4",

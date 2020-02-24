@@ -15,4 +15,10 @@ module.exports = {
       testMatch: ['<rootDir>/**/__tests__/*{.,-}test.[jt]s'],
     },
   ],
+  collectCoverageFrom: [
+    '**/packages/*/**/*.ts',
+    '!**/__mocks__/**',
+    '!**/__tests__/**',
+    '!**/build/**',
+  ],
 };

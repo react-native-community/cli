@@ -93,9 +93,17 @@ function buildFile(file, silent) {
       );
   } else {
     const options = Object.assign({}, transformOptions);
-    const transformed = babel.transformFileSync(file, options).code;
+    const filename = path.basename(destPath);
 
-    fs.writeFileSync(destPath, transformed);
+    let {code, map} = babel.transformFileSync(file, options);
+
+    if (!file.endsWith('.d.ts') && map.sources.length > 0) {
+      code = `${code}\n\n//# sourceMappingURL=${filename}.map`;
+      map.sources = [path.relative(path.dirname(destPath), file)];
+      fs.writeFileSync(`${destPath}.map`, JSON.stringify(map));
+    }
+
+    fs.writeFileSync(destPath, code);
 
     silent ||
       process.stdout.write(

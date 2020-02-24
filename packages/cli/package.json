@@ -12,6 +12,7 @@
   },
   "files": [
     "build",
+    "!build/**/*.map",
     "setup_env.sh"
   ],
   "engineStrict": true,

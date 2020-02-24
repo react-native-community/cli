@@ -5,6 +5,10 @@
   "publishConfig": {
     "access": "public"
   },
+  "files": [
+    "build",
+    "!build/**/*.map"
+  ],
   "types": "build/index.d.ts",
   "license": "MIT"
 }

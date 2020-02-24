@@ -21,13 +21,13 @@ const checkGlobalInstall = (): boolean => {
   return !!((reactNativeCLIGlobal || reactNativeGlobal) && true);
 };
 
-const removeNodePackage = (packageName, packageManager, loader) => {
+const removeNodePackage = async (packageName, packageManager, loader) => {
   logger.log('*********Removing package: ' + packageName);
 
   try {
     packageManager === 'yarn'
-      ? execa('yarn global remove', [`${packageName}`])
-      : execa('npm uninstall -g', [`${packageName}`]);
+      ? await execa('yarn global remove', [`${packageName}`])
+      : await execa('npm uninstall -g', [`${packageName}`]);
   } catch (error) {
     const message = `Failed to uninstall ${packageName}, please try to uninstall the global ${packageName} package manually.`;
 
@@ -36,7 +36,10 @@ const removeNodePackage = (packageName, packageManager, loader) => {
       loader,
       error,
       message,
-      command: '',
+      command:
+        packageManager === 'yarn'
+          ? `yarn global remove ${packageName}`
+          : `npm uninstall -g ${packageName}`,
     });
   }
 };
@@ -46,7 +49,7 @@ export default {
   getDiagnostics: async () => ({
     needsToBeFixed: checkGlobalInstall(),
   }),
-  runAutomaticFix: ({loader}) => {
+  runAutomaticFix: async ({loader}) => {
     loader.stop();
 
     let reactNativePath = '';
@@ -60,7 +63,7 @@ export default {
     } catch {}
 
     if (isPathInside(reactNativePath, globalDirectories.yarn.packages)) {
-      removeNodePackage(reactNative, 'yarn', loader);
+      await removeNodePackage(reactNative, 'yarn', loader);
     }
 
     if (
@@ -69,11 +72,11 @@ export default {
         fs.realpathSync(globalDirectories.npm.packages),
       )
     ) {
-      removeNodePackage(reactNative, 'npm', loader);
+      await removeNodePackage(reactNative, 'npm', loader);
     }
 
     if (isPathInside(reactNativeCLIPath, globalDirectories.yarn.packages)) {
-      removeNodePackage(reactNativeCLI, 'yarn', loader);
+      await removeNodePackage(reactNativeCLI, 'yarn', loader);
     }
 
     if (
@@ -82,7 +85,7 @@ export default {
         fs.realpathSync(globalDirectories.npm.packages),
       )
     ) {
-      removeNodePackage(reactNativeCLI, 'npm', loader);
+      await removeNodePackage(reactNativeCLI, 'npm', loader);
     }
   },
 } as HealthCheckInterface;

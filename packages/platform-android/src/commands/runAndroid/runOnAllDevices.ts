@@ -87,7 +87,7 @@ async function runOnAllDevices(
 function createInstallError(error: Error & {stderr: string}) {
   const stderr = (error.stderr || '').toString();
   const docs =
-    'https://facebook.github.io/react-native/docs/getting-started.html#android-development-environment';
+    'https://reactnative.dev/docs/getting-started.html#android-development-environment';
   let message = `Make sure you have the Android development environment set up: ${chalk.underline.dim(
     docs,
   )}`;

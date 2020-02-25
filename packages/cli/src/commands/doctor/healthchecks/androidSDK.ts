@@ -79,7 +79,7 @@ export default {
 
     return logManualInstallation({
       healthcheck: 'Android SDK',
-      url: 'https://facebook.github.io/react-native/docs/getting-started',
+      url: 'https://reactnative.dev/docs/getting-started',
     });
   },
 } as HealthCheckInterface;

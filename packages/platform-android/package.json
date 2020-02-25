@@ -10,6 +10,7 @@
     "@react-native-community/cli-tools": "^4.2.1",
     "chalk": "^3.0.0",
     "execa": "^1.0.0",
+    "fs-extra": "^8.1.0",
     "jetifier": "^1.6.2",
     "logkitty": "^0.6.0",
     "slash": "^3.0.0",

@@ -12,7 +12,8 @@
   },
   "files": [
     "build",
-    "!build/**/*.map",
+    "!*.d.ts",
+    "!*.map",
     "setup_env.sh"
   ],
   "engineStrict": true,

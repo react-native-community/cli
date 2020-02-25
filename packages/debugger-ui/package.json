@@ -10,7 +10,8 @@
   },
   "files": [
     "build",
-    "!build/**/*.map"
+    "!*.d.ts",
+    "!*.map"
   ],
   "devDependencies": {
     "@babel/core": "^7.6.4",

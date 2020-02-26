@@ -12,6 +12,10 @@ const getBuildToolsVersion = (): string => {
 
   const buildToolsVersionEntry = 'buildToolsVersion';
 
+  if (!fs.existsSync(gradleBuildFilePath)) {
+    return 'Not Found';
+  }
+
   // Read the content of the `build.gradle` file
   const gradleBuildFile = fs.readFileSync(gradleBuildFilePath, 'utf-8');
 
@@ -44,14 +48,6 @@ export default {
       typeof SDKs['Android SDK'] === 'string'
         ? SDKs['Android SDK']
         : SDKs['Android SDK']['Build Tools'];
-
-    if (!requiredVersion) {
-      return {
-        versions: buildTools,
-        versionRange: undefined,
-        needsToBeFixed: true,
-      };
-    }
 
     const isAndroidSDKInstalled = Array.isArray(buildTools);
 

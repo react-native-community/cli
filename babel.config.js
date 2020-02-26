@@ -12,6 +12,7 @@ module.exports = {
       {
         targets: {node: 8},
         useBuiltIns: 'entry',
+        corejs: '2.x',
       },
     ],
   ],

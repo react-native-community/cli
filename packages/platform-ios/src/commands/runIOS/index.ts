@@ -8,6 +8,7 @@
 
 import child_process, {
   ChildProcess,
+  // @ts-ignore
   SpawnOptionsWithoutStdio,
 } from 'child_process';
 import fs from 'fs';

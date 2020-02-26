@@ -8,8 +8,8 @@
     "build": "node ./scripts/build.js && yarn build:debugger",
     "build:ts": "node ./scripts/buildTs.js",
     "build:debugger": "yarn workspace @react-native-community/cli-debugger-ui build",
-    "build-clean": "rm -rf ./packages/*/build",
-    "build-clean-all": "rm -rf ./packages/*/build ./packages/*/tsconfig.tsbuildinfo",
+    "build-clean": "rimraf ./packages/*/build",
+    "build-clean-all": "rimraf ./packages/*/build ./packages/*/tsconfig.tsbuildinfo",
     "watch": "node ./scripts/watch.js",
     "test": "jest",
     "test:ci:unit": "jest packages --ci --coverage",
@@ -30,7 +30,9 @@
     "@babel/preset-env": "^7.0.0",
     "@babel/preset-typescript": "^7.3.3",
     "@react-native-community/eslint-config": "^0.0.5",
+    "@types/glob": "^7.1.1",
     "@types/jest": "^24.0.11",
+    "@types/mkdirp": "^0.5.2",
     "@types/node": "8",
     "@types/node-fetch": "^2.3.7",
     "babel-jest": "^24.6.0",
@@ -48,6 +50,7 @@
     "metro-memory-fs": "^0.57.0",
     "micromatch": "^3.1.10",
     "mkdirp": "^0.5.1",
+    "rimraf": "^3.0.2",
     "string-length": "^2.0.0",
     "typescript": "^3.8.0"
   }

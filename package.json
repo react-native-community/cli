@@ -33,12 +33,13 @@
     "@types/glob": "^7.1.1",
     "@types/jest": "^24.0.11",
     "@types/mkdirp": "^0.5.2",
-    "@types/node": "8",
+    "@types/node": "^8.0.0",
     "@types/node-fetch": "^2.3.7",
     "babel-jest": "^24.6.0",
     "babel-plugin-module-resolver": "^3.2.0",
     "chalk": "^3.0.0",
     "chokidar": "^3.3.1",
+    "core-js": "^2.0.0",
     "eslint": "^5.10.0",
     "eslint-import-resolver-alias": "^1.1.2",
     "eslint-import-resolver-typescript": "^1.1.1",
@@ -53,5 +54,9 @@
     "rimraf": "^3.0.2",
     "string-length": "^2.0.0",
     "typescript": "^3.8.0"
+  },
+  "resolutions": {
+    "mkdirp": "^0.5.1",
+    "@types/node": "^8.0.0"
   }
 }

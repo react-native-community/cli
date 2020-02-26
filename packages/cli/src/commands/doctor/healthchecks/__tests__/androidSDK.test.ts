@@ -79,4 +79,20 @@ describe('androidSDK', () => {
     androidSDK.runAutomaticFix({loader, environmentInfo});
     expect(logSpy).toHaveBeenCalledTimes(1);
   });
+
+  it('returns true if a build.gradle is not found', async () => {
+    // To avoid having to provide fake versions for all the Android SDK tools
+    // @ts-ignore
+    environmentInfo.SDKs['Android SDK'] = {
+      'Build Tools': ['28.0.3'],
+    };
+    ((execa as unknown) as jest.Mock).mockResolvedValue({
+      stdout: 'build-tools;28.0.3',
+    });
+
+    cleanup('android/build.gradle');
+
+    const diagnostics = await androidSDK.getDiagnostics(environmentInfo);
+    expect(diagnostics.needsToBeFixed).toBe(true);
+  });
 });

@@ -53,5 +53,8 @@
     "rimraf": "^3.0.2",
     "string-length": "^2.0.0",
     "typescript": "^3.8.0"
+  },
+  "resolutions": {
+    "mkdirp": "^0.5.1"
   }
 }

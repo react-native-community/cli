@@ -312,7 +312,7 @@ function checkNodeVersion() {
     console.error(
       'You are currently running Node %s but React Native requires %s. ' +
         'Please use a supported version of Node.\n' +
-        'See https://facebook.github.io/react-native/docs/getting-started.html',
+        'See https://reactnative.dev/docs/getting-started.html',
       process.version,
       packageJson.engines.node,
     );

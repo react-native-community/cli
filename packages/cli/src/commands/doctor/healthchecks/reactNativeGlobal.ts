@@ -65,7 +65,6 @@ const removeNodePackage = async (packageName, packageManager, loader) => {
       ? await execa('yarn', ['global', 'remove', packageName])
       : await execa('npm', ['uninstall', '--global', packageName]);
   } catch (error) {
-
     const message = `Failed to uninstall ${packageName}, please try to uninstall the global ${packageName} package manually.`;
 
     logError({
@@ -118,7 +117,7 @@ export default {
     try {
       reactNativeCLINpmPath = resolveGlobalNpmPackage('react-native-cli');
     } catch (error) {
-      return null
+      return null;
     }
 
     //----Check if paths are in global directories; if so, remove---

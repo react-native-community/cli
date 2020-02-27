@@ -15,10 +15,8 @@ const resolveGlobalYarnPackage = moduleId => {
     const modulePath = require.resolve(
       path.join(globalDirectories.yarn.packages, moduleId),
     );
-    console.log('Global yarn path: ' + modulePath);
     return modulePath;
   } catch (error) {
-    console.log('Error resolving global yarn package: ' + error);
     return '';
   }
 };
@@ -28,10 +26,8 @@ const resolveGlobalNpmPackage = moduleId => {
     const modulePath = require.resolve(
       path.join(globalDirectories.npm.packages, moduleId),
     );
-    console.log('Global yarn path: ' + modulePath);
     return modulePath;
   } catch (error) {
-    console.log('Error resolving global yarn package: ' + error);
     return '';
   }
 };
@@ -49,33 +45,26 @@ const checkGlobalInstall = () => {
 
   try {
     reactNativeGlobal = checkGlobalPaths('react-native');
-    logger.log('******Found r-n: ' + reactNativeGlobal);
   } catch (error) {
-    console.log('Error, couldnt find r-n: ' + error);
+    return null;
   }
 
   try {
     reactNativeCLIGlobal = checkGlobalPaths('react-native-cli');
     logger.log('******Found r-n-cli: ' + reactNativeCLIGlobal);
   } catch (error) {
-    console.log('Error, couldnt find r-n-cli: ' + error);
+    return null;
   }
 
   return !!((reactNativeCLIGlobal || reactNativeGlobal) && true);
 };
 
 const removeNodePackage = async (packageName, packageManager, loader) => {
-  logger.log(
-    '*********Removing package: ' + packageName + ' from: ' + packageManager,
-  );
-
   try {
     packageManager === 'yarn'
       ? await execa('yarn', ['global', 'remove', packageName])
       : await execa('npm', ['uninstall', '--global', packageName]);
-    logger.log('!!!!!!Successfully Removed package: ' + packageName);
   } catch (error) {
-    console.log(error);
 
     const message = `Failed to uninstall ${packageName}, please try to uninstall the global ${packageName} package manually.`;
 
@@ -110,30 +99,26 @@ export default {
     //-----Get global paths for both yarn and npm-------
     try {
       reactNativeYarnPath = resolveGlobalYarnPackage('react-native');
-      logger.log('******Found r-nPath: ' + reactNativeYarnPath);
     } catch (error) {
-      console.log('Error, couldnt find r-n: ' + error);
+      return null;
     }
 
     try {
       reactNativeCLIYarnPath = resolveGlobalYarnPackage('react-native-cli');
-      logger.log('******Found r-nCLIPath: ' + reactNativeCLIYarnPath);
     } catch (error) {
-      console.log('Error, couldnt find r-n-cli: ' + error);
+      return null;
     }
 
     try {
       reactNativeNpmPath = resolveGlobalNpmPackage('react-native');
-      logger.log('******Found r-nPath: ' + reactNativeYarnPath);
     } catch (error) {
-      console.log('Error, couldnt find r-n: ' + error);
+      return null;
     }
 
     try {
       reactNativeCLINpmPath = resolveGlobalNpmPackage('react-native-cli');
-      logger.log('******Found r-nCLIPath: ' + reactNativeCLIYarnPath);
     } catch (error) {
-      console.log('Error, couldnt find r-n-cli: ' + error);
+      return null
     }
 
     //----Check if paths are in global directories; if so, remove---
@@ -141,8 +126,6 @@ export default {
     // RN yarn and npm
 
     if (isPathInside(reactNativeYarnPath, globalDirectories.yarn.packages)) {
-      console.log('******rnPath is inside yarn global directory, removing...');
-      console.log('rnPath is: ' + reactNativeYarnPath);
       await removeNodePackage(reactNative, 'yarn', loader);
     }
 
@@ -152,16 +135,12 @@ export default {
         fs.realpathSync(globalDirectories.npm.packages),
       )
     ) {
-      console.log('******rnPath is inside npm directory, removing...');
-      console.log('rnPath is: ' + reactNativeNpmPath);
       await removeNodePackage(reactNative, 'npm', loader);
     }
 
     // RNcli yarn and npm
 
     if (isPathInside(reactNativeCLIYarnPath, globalDirectories.yarn.packages)) {
-      console.log('******rnCLIPath is inside yarn directory, removing...');
-      console.log('rnCLIPath is: ' + reactNativeCLIYarnPath);
       await removeNodePackage(reactNativeCLI, 'yarn', loader);
     }
 
@@ -171,8 +150,6 @@ export default {
         fs.realpathSync(globalDirectories.npm.packages),
       )
     ) {
-      console.log('******rnCLIPath is inside npm directory, removing...');
-      console.log('rnCLIPath is: ' + reactNativeCLINpmPath);
       await removeNodePackage(reactNativeCLI, 'npm', loader);
     }
   },

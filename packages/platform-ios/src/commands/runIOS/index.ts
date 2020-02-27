@@ -83,7 +83,8 @@ function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     }),
   );
 
-  if (devices.length === 1) {
+  // first device is usually a host Mac
+  if (devices.length <= 1) {
     return logger.error('No iOS devices connected.');
   }
 

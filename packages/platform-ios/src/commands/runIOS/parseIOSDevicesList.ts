@@ -9,6 +9,10 @@ import {Device} from '../../types';
 
 /**
  * Parses the output of `xcrun simctl list devices` command
+ * Expected text looks roughly like this:
+ * Known Devices:
+ * this-mac-device [ID]
+ * Some Apple Simulator (Version) [ID]
  */
 function parseIOSDevicesList(text: string): Array<Device> {
   const devices: Array<Device> = [];

@@ -8,7 +8,7 @@ import {logger} from '@react-native-community/cli-tools';
 import {logError} from './common';
 import path from 'path';
 
-const label = 'react-native-cli';
+const label = 'react-native/react-native-cli globally installed';
 
 const resolveGlobalYarnPackage = moduleId => {
   try {

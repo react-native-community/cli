@@ -84,6 +84,9 @@ function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   );
 
   if (devices.length === 0) {
+    return logger.error('No Mac or iOS devices connected.'); // which should never happen when running on Mac
+  }
+  if (devices.length === 1) {
     return logger.error('No iOS devices connected.');
   }
 

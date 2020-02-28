@@ -9,15 +9,15 @@ function printWatchModeInstructions() {
 }
 
 function enableWatchMode(messageSocket: any) {
-  readline.emitKeypressEvents(process.stdin);
-
   // We need to set this to true to catch key presses individually.
   // As a result we have to implement our own method for exiting
   // and other commands (e.g. ctrl+c & ctrl+z)
   if (!process.stdin.setRawMode) {
-    logger.log('Watch mode is not supported in this environment');
+    logger.debug('Watch mode is not supported in this environment');
     return;
   }
+
+  readline.emitKeypressEvents(process.stdin);
 
   process.stdin.setRawMode(true);
 

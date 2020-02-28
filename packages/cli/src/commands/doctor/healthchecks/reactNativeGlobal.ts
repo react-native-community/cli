@@ -8,23 +8,17 @@ import {logger} from '@react-native-community/cli-tools';
 import {logError} from './common';
 import path from 'path';
 
-const label = 'react-native/react-native-cli globally installed';
+const label = 'react-native global installation';
 
-const resolveGlobalYarnPackage = moduleId => {
-  try {
-    const modulePath = require.resolve(
-      path.join(globalDirectories.yarn.packages, moduleId),
-    );
-    return modulePath;
-  } catch (error) {
-    return '';
-  }
+const packageManagers = {
+  yarn: 'yarn',
+  npm: 'npm',
 };
 
-const resolveGlobalNpmPackage = moduleId => {
+const findGlobalPackage = (packageManager, moduleId) => {
   try {
     const modulePath = require.resolve(
-      path.join(globalDirectories.npm.packages, moduleId),
+      path.join(globalDirectories[packageManager].packages, moduleId),
     );
     return modulePath;
   } catch (error) {
@@ -34,7 +28,8 @@ const resolveGlobalNpmPackage = moduleId => {
 
 const checkGlobalPaths = moduleId => {
   return !!(
-    (resolveGlobalYarnPackage(moduleId) || resolveGlobalNpmPackage(moduleId)) &&
+    (findGlobalPackage(packageManagers.yarn, moduleId) ||
+      findGlobalPackage(packageManagers.npm, moduleId)) &&
     true
   );
 };
@@ -97,25 +92,34 @@ export default {
 
     //-----Get global paths for both yarn and npm-------
     try {
-      reactNativeYarnPath = resolveGlobalYarnPackage('react-native');
+      reactNativeYarnPath = findGlobalPackage(
+        packageManagers.yarn,
+        reactNative,
+      );
     } catch (error) {
       return null;
     }
 
     try {
-      reactNativeCLIYarnPath = resolveGlobalYarnPackage('react-native-cli');
+      reactNativeCLIYarnPath = findGlobalPackage(
+        packageManagers.yarn,
+        reactNativeCLI,
+      );
     } catch (error) {
       return null;
     }
 
     try {
-      reactNativeNpmPath = resolveGlobalNpmPackage('react-native');
+      reactNativeNpmPath = findGlobalPackage(packageManagers.npm, reactNative);
     } catch (error) {
       return null;
     }
 
     try {
-      reactNativeCLINpmPath = resolveGlobalNpmPackage('react-native-cli');
+      reactNativeCLINpmPath = findGlobalPackage(
+        packageManagers.npm,
+        reactNativeCLI,
+      );
     } catch (error) {
       return null;
     }

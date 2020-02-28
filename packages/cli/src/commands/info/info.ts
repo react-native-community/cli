@@ -6,7 +6,7 @@
  */
 
 // @ts-ignore untyped
-import envinfo from 'envinfo';
+import getEnvironmentInfo from '../../tools/envinfo';
 import {logger} from '@react-native-community/cli-tools';
 import {Config} from '@react-native-community/cli-types';
 import releaseChecker from '../../tools/releaseChecker';
@@ -14,15 +14,8 @@ import releaseChecker from '../../tools/releaseChecker';
 const info = async function getInfo(_argv: Array<string>, ctx: Config) {
   try {
     logger.info('Fetching system and libraries information...');
-    const output = await envinfo.run({
-      System: ['OS', 'CPU', 'Memory', 'Shell'],
-      Binaries: ['Node', 'Yarn', 'npm', 'Watchman'],
-      IDEs: ['Xcode', 'Android Studio'],
-      SDKs: ['iOS SDK', 'Android SDK'],
-      npmPackages: ['react', 'react-native', '@react-native-community/cli'],
-      npmGlobalPackages: '*react-native*',
-    });
-    logger.log(output.trim());
+    const output = await getEnvironmentInfo(false);
+    logger.log(output);
   } catch (err) {
     logger.error(`Unable to print environment info.\n${err}`);
   } finally {

@@ -15,6 +15,11 @@ const packageManagers = {
   npm: 'npm',
 };
 
+const packages = {
+  reactNative: 'react-native',
+  reactNativeCLI: 'react-native-cli',
+};
+
 const findGlobalPackage = (packageManager, moduleId) => {
   try {
     const modulePath = require.resolve(
@@ -26,32 +31,35 @@ const findGlobalPackage = (packageManager, moduleId) => {
   }
 };
 
-const checkGlobalPaths = moduleId => {
-  return !!(
-    (findGlobalPackage(packageManagers.yarn, moduleId) ||
-      findGlobalPackage(packageManagers.npm, moduleId)) &&
-    true
+const checkGlobalInstallalations = () => {
+  //Returns an array of globally installed paths for rn and rncli both in yarn and npm
+  const librariesGloballyInstalled = Object.keys(packages).map(packageKey =>
+    Object.keys(packageManagers).map(packageManagerKey =>
+      findGlobalPackage(
+        packageManagers[packageManagerKey],
+        packages[packageKey],
+      ),
+    ),
   );
-};
 
-const checkGlobalInstall = () => {
-  let reactNativeCLIGlobal;
-  let reactNativeGlobal;
+  console.log('!!!!!!!!! libGLobInst: ' + librariesGloballyInstalled);
 
-  try {
-    reactNativeGlobal = checkGlobalPaths('react-native');
-  } catch (error) {
-    return null;
-  }
+  // try {
+  //   reactNativeGlobal = checkGlobalPaths(packages.reactNative);
+  // } catch (error) {
+  //   return null;
+  // }
 
-  try {
-    reactNativeCLIGlobal = checkGlobalPaths('react-native-cli');
-    logger.log('******Found r-n-cli: ' + reactNativeCLIGlobal);
-  } catch (error) {
-    return null;
-  }
+  // try {
+  //   reactNativeCLIGlobal = checkGlobalPaths(packages.reactNativeCLI);
+  //   logger.log('******Found r-n-cli: ' + reactNativeCLIGlobal);
+  // } catch (error) {
+  //   return null;
+  // }
 
-  return !!((reactNativeCLIGlobal || reactNativeGlobal) && true);
+  return librariesGloballyInstalled || false;
+
+  // return !!((reactNativeCLIGlobal || reactNativeGlobal) && true);
 };
 
 const removeNodePackage = async (packageName, packageManager, loader) => {
@@ -78,7 +86,7 @@ const removeNodePackage = async (packageName, packageManager, loader) => {
 export default {
   label: label,
   getDiagnostics: async () => ({
-    needsToBeFixed: checkGlobalInstall(),
+    needsToBeFixed: checkGlobalInstallalations(),
   }),
   runAutomaticFix: async ({loader}) => {
     loader.stop();
@@ -87,14 +95,21 @@ export default {
     let reactNativeCLIYarnPath = '';
     let reactNativeNpmPath = '';
     let reactNativeCLINpmPath = '';
-    const reactNative = 'react-native';
-    const reactNativeCLI = 'react-native-cli';
 
     //-----Get global paths for both yarn and npm-------
+
+    const globalPaths = checkGlobalInstallalations();
+
+    globalPaths.forEach(path => {
+      if (path.includes("node/") && path.includes("react-native/")) {
+
+      }
+    })
+
     try {
       reactNativeYarnPath = findGlobalPackage(
         packageManagers.yarn,
-        reactNative,
+        packages.reactNative,
       );
     } catch (error) {
       return null;
@@ -103,14 +118,17 @@ export default {
     try {
       reactNativeCLIYarnPath = findGlobalPackage(
         packageManagers.yarn,
-        reactNativeCLI,
+        packages.reactNativeCLI,
       );
     } catch (error) {
       return null;
     }
 
     try {
-      reactNativeNpmPath = findGlobalPackage(packageManagers.npm, reactNative);
+      reactNativeNpmPath = findGlobalPackage(
+        packageManagers.npm,
+        packages.reactNative,
+      );
     } catch (error) {
       return null;
     }
@@ -118,7 +136,7 @@ export default {
     try {
       reactNativeCLINpmPath = findGlobalPackage(
         packageManagers.npm,
-        reactNativeCLI,
+        packages.reactNativeCLI,
       );
     } catch (error) {
       return null;
@@ -129,7 +147,7 @@ export default {
     // RN yarn and npm
 
     if (isPathInside(reactNativeYarnPath, globalDirectories.yarn.packages)) {
-      await removeNodePackage(reactNative, 'yarn', loader);
+      await removeNodePackage(packages.reactNative, 'yarn', loader);
     }
 
     if (
@@ -138,13 +156,13 @@ export default {
         fs.realpathSync(globalDirectories.npm.packages),
       )
     ) {
-      await removeNodePackage(reactNative, 'npm', loader);
+      await removeNodePackage(packages.reactNative, 'npm', loader);
     }
 
     // RNcli yarn and npm
 
     if (isPathInside(reactNativeCLIYarnPath, globalDirectories.yarn.packages)) {
-      await removeNodePackage(reactNativeCLI, 'yarn', loader);
+      await removeNodePackage(packages.reactNativeCLI, 'yarn', loader);
     }
 
     if (
@@ -153,7 +171,7 @@ export default {
         fs.realpathSync(globalDirectories.npm.packages),
       )
     ) {
-      await removeNodePackage(reactNativeCLI, 'npm', loader);
+      await removeNodePackage(packages.reactNativeCLI, 'npm', loader);
     }
   },
 } as HealthCheckInterface;

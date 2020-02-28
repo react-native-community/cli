@@ -5,7 +5,9 @@
     "**/node_modules": true,
     "**/build": true
   },
-  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
   "flow.useNPMPackagedFlow": true,
   "javascript.validate.enable": false,
   "eslint.validate": [

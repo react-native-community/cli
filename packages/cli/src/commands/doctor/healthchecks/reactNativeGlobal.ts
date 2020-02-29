@@ -1,5 +1,4 @@
 import {HealthCheckInterface} from '../types';
-import fs from 'fs';
 import execa from 'execa';
 
 import globalDirectories from 'global-dirs';
@@ -33,42 +32,45 @@ const findGlobalPackage = (packageManager, moduleId) => {
 
 const checkGlobalInstallalations = () => {
   //Returns an array of globally installed paths for rn and rncli both in yarn and npm
-  const librariesGloballyInstalled = Object.keys(packages).map(packageKey =>
-    Object.keys(packageManagers).map(packageManagerKey =>
-      findGlobalPackage(
-        packageManagers[packageManagerKey],
-        packages[packageKey],
+  const librariesGloballyInstalled = Object.keys(packages)
+    .map(packageKey =>
+      Object.keys(packageManagers).map(packageManagerKey =>
+        findGlobalPackage(
+          packageManagers[packageManagerKey],
+          packages[packageKey],
+        ),
       ),
-    ),
-  );
+    )
+    .filter(e => e != null);
 
-  console.log('!!!!!!!!! libGLobInst: ' + librariesGloballyInstalled);
+  //Cant's use flat() in ts...? This is an alternative
+  const flattenedArray = [].concat.apply([], librariesGloballyInstalled);
 
-  // try {
-  //   reactNativeGlobal = checkGlobalPaths(packages.reactNative);
-  // } catch (error) {
-  //   return null;
-  // }
+  console.log('!!!!!! ' + flattenedArray);
 
-  // try {
-  //   reactNativeCLIGlobal = checkGlobalPaths(packages.reactNativeCLI);
-  //   logger.log('******Found r-n-cli: ' + reactNativeCLIGlobal);
-  // } catch (error) {
-  //   return null;
-  // }
-
-  return librariesGloballyInstalled || false;
-
-  // return !!((reactNativeCLIGlobal || reactNativeGlobal) && true);
+  return flattenedArray;
 };
 
-const removeNodePackage = async (packageName, packageManager, loader) => {
+const removeNodePackage = async (packagePath, loader) => {
+  console.log('******removing ' + packagePath);
+
+  const packageManager = packagePath.includes('yarn') ? 'yarn' : 'npm';
+  const packageName = packagePath.includes('react-native/')
+    ? 'react-native'
+    : 'react-native-cli';
+
+  console.log('******* pM: ' + packageManager + ' pN: ' + packageName);
+
   try {
+    // For some reason the execa statement is not being executed, but no error is thrown?
     packageManager === 'yarn'
       ? await execa('yarn', ['global', 'remove', packageName])
       : await execa('npm', ['uninstall', '--global', packageName]);
   } catch (error) {
+    console.log('Failed to remove package: ' + error);
     const message = `Failed to uninstall ${packageName}, please try to uninstall the global ${packageName} package manually.`;
+
+    console.log(error);
 
     logError({
       healthcheck: label,
@@ -86,92 +88,17 @@ const removeNodePackage = async (packageName, packageManager, loader) => {
 export default {
   label: label,
   getDiagnostics: async () => ({
-    needsToBeFixed: checkGlobalInstallalations(),
+    needsToBeFixed: !!checkGlobalInstallalations(),
   }),
   runAutomaticFix: async ({loader}) => {
     loader.stop();
 
-    let reactNativeYarnPath = '';
-    let reactNativeCLIYarnPath = '';
-    let reactNativeNpmPath = '';
-    let reactNativeCLINpmPath = '';
-
-    //-----Get global paths for both yarn and npm-------
-
     const globalPaths = checkGlobalInstallalations();
 
-    globalPaths.forEach(path => {
-      if (path.includes("node/") && path.includes("react-native/")) {
+    console.log('Global paths: ' + globalPaths);
 
-      }
-    })
-
-    try {
-      reactNativeYarnPath = findGlobalPackage(
-        packageManagers.yarn,
-        packages.reactNative,
-      );
-    } catch (error) {
-      return null;
-    }
-
-    try {
-      reactNativeCLIYarnPath = findGlobalPackage(
-        packageManagers.yarn,
-        packages.reactNativeCLI,
-      );
-    } catch (error) {
-      return null;
-    }
-
-    try {
-      reactNativeNpmPath = findGlobalPackage(
-        packageManagers.npm,
-        packages.reactNative,
-      );
-    } catch (error) {
-      return null;
-    }
-
-    try {
-      reactNativeCLINpmPath = findGlobalPackage(
-        packageManagers.npm,
-        packages.reactNativeCLI,
-      );
-    } catch (error) {
-      return null;
-    }
-
-    //----Check if paths are in global directories; if so, remove---
-
-    // RN yarn and npm
-
-    if (isPathInside(reactNativeYarnPath, globalDirectories.yarn.packages)) {
-      await removeNodePackage(packages.reactNative, 'yarn', loader);
-    }
-
-    if (
-      isPathInside(
-        reactNativeNpmPath,
-        fs.realpathSync(globalDirectories.npm.packages),
-      )
-    ) {
-      await removeNodePackage(packages.reactNative, 'npm', loader);
-    }
-
-    // RNcli yarn and npm
-
-    if (isPathInside(reactNativeCLIYarnPath, globalDirectories.yarn.packages)) {
-      await removeNodePackage(packages.reactNativeCLI, 'yarn', loader);
-    }
-
-    if (
-      isPathInside(
-        reactNativeCLINpmPath,
-        fs.realpathSync(globalDirectories.npm.packages),
-      )
-    ) {
-      await removeNodePackage(packages.reactNativeCLI, 'npm', loader);
-    }
+    await globalPaths.map(
+      async packagePath => await removeNodePackage(packagePath, loader),
+    );
   },
 } as HealthCheckInterface;

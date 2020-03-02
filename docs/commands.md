@@ -305,6 +305,8 @@ Builds your app and starts it on a connected Android emulator or device.
 
 #### `--root [string]`
 
+> **DEPRECATED** – root is discovered automatically
+
 Override the root directory for the Android build (which contains the android directory)'.
 
 #### `--variant [string]`
@@ -315,11 +317,15 @@ Specify your app's build variant.
 
 #### `--appFolder [string]`
 
+> **DEPRECATED** – use "platforms.android.appName" in react-native.config.js
+
 > default: 'app'
 
 Specify a different application folder name for the Android source. If not, we assume is "app".
 
 #### `--appId [string]`
+
+> **DEPRECATED** – use "platforms.android.appName" in react-native.config.js
 
 Specify an `applicationId` to launch after build.
 

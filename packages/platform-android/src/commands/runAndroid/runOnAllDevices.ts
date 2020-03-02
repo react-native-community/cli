@@ -7,7 +7,8 @@
  */
 
 import chalk from 'chalk';
-import {execFileSync} from 'child_process';
+import execa from 'execa';
+import {Config} from '@react-native-community/cli-types';
 import {logger, CLIError} from '@react-native-community/cli-tools';
 import adb from './adb';
 import tryRunAdbReverse from './tryRunAdbReverse';
@@ -15,25 +16,22 @@ import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
 import tryLaunchEmulator from './tryLaunchEmulator';
 import {Flags} from '.';
 
-function getTaskNames(
-  appFolder: string,
-  commands: Array<string>,
-): Array<string> {
-  return appFolder
-    ? commands.map(command => `${appFolder}:${command}`)
-    : commands;
+function getTaskNames(appName: string, commands: Array<string>): Array<string> {
+  return appName ? commands.map(command => `${appName}:${command}`) : commands;
 }
 
 function toPascalCase(value: string) {
-  return value[0].toUpperCase() + value.slice(1);
+  return value !== '' ? value[0].toUpperCase() + value.slice(1) : value;
 }
+
+type AndroidProject = NonNullable<Config['project']['android']>;
 
 async function runOnAllDevices(
   args: Flags,
   cmd: string,
-  packageNameWithSuffix: string,
   packageName: string,
   adbPath: string,
+  androidProject: AndroidProject,
 ) {
   let devices = adb.getDevices(adbPath);
   if (devices.length === 0) {
@@ -53,8 +51,13 @@ async function runOnAllDevices(
   }
 
   try {
-    const tasks = args.tasks || ['install' + toPascalCase(args.variant)];
-    const gradleArgs = getTaskNames(args.appFolder, tasks);
+    const tasks = args.tasks || [
+      'install' + toPascalCase(args.appIdSuffix) + toPascalCase(args.variant),
+    ];
+    const gradleArgs = getTaskNames(
+      args.appFolder || androidProject.appName,
+      tasks,
+    );
 
     if (args.port != null) {
       gradleArgs.push('-PreactNativeDevServerPort=' + args.port);
@@ -65,7 +68,10 @@ async function runOnAllDevices(
       `Running command "cd android && ${cmd} ${gradleArgs.join(' ')}"`,
     );
 
-    execFileSync(cmd, gradleArgs, {stdio: ['inherit', 'inherit', 'pipe']});
+    await execa(cmd, gradleArgs, {
+      stdio: ['inherit', 'inherit', 'pipe'],
+      cwd: androidProject.sourceDir,
+    });
   } catch (error) {
     throw createInstallError(error);
   }
@@ -73,13 +79,7 @@ async function runOnAllDevices(
   (devices.length > 0 ? devices : [undefined]).forEach(
     (device: string | void) => {
       tryRunAdbReverse(args.port, device);
-      tryLaunchAppOnDevice(
-        device,
-        packageNameWithSuffix,
-        packageName,
-        adbPath,
-        args.mainActivity,
-      );
+      tryLaunchAppOnDevice(device, packageName, adbPath, args);
     },
   );
 }

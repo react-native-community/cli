@@ -7,83 +7,169 @@
  */
 
 import runOnAllDevices from '../runOnAllDevices';
+import execa from 'execa';
 
-jest.mock('child_process', () => ({
-  execFileSync: jest.fn(),
-  spawnSync: jest.fn(),
-}));
-
+jest.mock('execa');
 jest.mock('../getAdbPath');
 jest.mock('../tryLaunchEmulator');
-const {execFileSync} = require('child_process');
 
 describe('--appFolder', () => {
+  const args = {
+    root: '/root',
+    appFolder: undefined,
+    appId: '',
+    tasks: undefined,
+    variant: 'debug',
+    appIdSuffix: '',
+    mainActivity: 'MainActivity',
+    deviceId: undefined,
+    packager: true,
+    port: 8081,
+    terminal: 'iTerm2',
+    jetifier: true,
+  };
+  const androidProject = {
+    manifestPath: '/android/app/src/main/AndroidManifest.xml',
+    appName: 'app',
+    packageName: 'com.test',
+    sourceDir: '/android',
+    isFlat: false,
+    folder: '',
+    stringsPath: '',
+    buildGradlePath: '',
+    settingsGradlePath: '',
+    assetsPath: '',
+    mainFilePath: '',
+    packageFolder: '',
+  };
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it('uses task "install[Variant]" as default task', async () => {
-    // @ts-ignore
-    await runOnAllDevices({
-      variant: 'debug',
-    });
-    expect(execFileSync.mock.calls[0][1]).toContain('installDebug');
+    await runOnAllDevices(
+      {...args, variant: 'debug'},
+      './gradlew',
+      'com.testapp',
+      'adb',
+      androidProject,
+    );
+    expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toContain(
+      'app:installDebug',
+    );
+  });
+
+  it('uses appName and default variant', async () => {
+    await runOnAllDevices(
+      {...args, variant: 'debug'},
+      './gradlew',
+      'com.testapp',
+      'adb',
+      {...androidProject, appName: 'someApp'},
+    );
+
+    expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toContain(
+      'someApp:installDebug',
+    );
+  });
+
+  it('uses appName and custom variant', async () => {
+    await runOnAllDevices(
+      {...args, variant: 'staging'},
+      './gradlew',
+      'com.testapp',
+      'adb',
+      {...androidProject, appName: 'anotherApp'},
+    );
+
+    expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toContain(
+      'anotherApp:installStaging',
+    );
   });
 
   it('uses appFolder and default variant', async () => {
-    // @ts-ignore
-    await runOnAllDevices({
-      appFolder: 'someApp',
-      variant: 'debug',
-    });
+    await runOnAllDevices(
+      {...args, appFolder: 'someApp', variant: 'debug'},
+      './gradlew',
+      'com.testapp',
+      'adb',
+      androidProject,
+    );
 
-    expect(execFileSync.mock.calls[0][1]).toContain('someApp:installDebug');
+    expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toContain(
+      'someApp:installDebug',
+    );
   });
 
   it('uses appFolder and custom variant', async () => {
-    // @ts-ignore
-    await runOnAllDevices({
-      appFolder: 'anotherApp',
-      variant: 'staging',
-    });
+    await runOnAllDevices(
+      {...args, appFolder: 'anotherApp', variant: 'staging'},
+      './gradlew',
+      'com.testapp',
+      'adb',
+      androidProject,
+    );
 
-    expect(execFileSync.mock.calls[0][1]).toContain(
+    expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toContain(
       'anotherApp:installStaging',
     );
   });
 
   it('uses only task argument', async () => {
-    // @ts-ignore
-    await runOnAllDevices({
-      tasks: ['someTask'],
-      variant: 'debug',
-    });
+    await runOnAllDevices(
+      {...args, tasks: ['someTask']},
+      './gradlew',
+      'com.testapp',
+      'adb',
+      androidProject,
+    );
 
-    expect(execFileSync.mock.calls[0][1]).toContain('someTask');
+    expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toContain(
+      'app:someTask',
+    );
+  });
+
+  it('uses appName and custom task argument', async () => {
+    await runOnAllDevices(
+      {...args, tasks: ['someTask']},
+      './gradlew',
+      'com.testapp',
+      'adb',
+      {...androidProject, appName: 'anotherApp'},
+    );
+
+    expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toContain(
+      'anotherApp:someTask',
+    );
   });
 
   it('uses appFolder and custom task argument', async () => {
-    // @ts-ignore
-    await runOnAllDevices({
-      appFolder: 'anotherApp',
-      tasks: ['someTask'],
-      variant: 'debug',
-    });
+    await runOnAllDevices(
+      {...args, appFolder: 'anotherApp', tasks: ['someTask'], variant: 'debug'},
+      './gradlew',
+      'com.testapp',
+      'adb',
+      {...androidProject, appName: 'anotherApp'},
+    );
 
-    expect(execFileSync.mock.calls[0][1]).toContain('anotherApp:someTask');
+    expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toContain(
+      'anotherApp:someTask',
+    );
   });
 
   it('uses multiple tasks', async () => {
-    // @ts-ignore
-    await runOnAllDevices({
-      appFolder: 'app',
-      tasks: ['clean', 'someTask'],
-    });
-
-    expect(execFileSync.mock.calls[0][1]).toContain(
-      'app:clean',
-      // @ts-ignore
-      'app:someTask',
+    await runOnAllDevices(
+      {...args, tasks: ['clean', 'someTask']},
+      './gradlew',
+      'com.testapp',
+      'adb',
+      androidProject,
     );
+
+    expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toEqual([
+      'app:clean',
+      'app:someTask',
+      '-PreactNativeDevServerPort=8081',
+    ]);
   });
 });

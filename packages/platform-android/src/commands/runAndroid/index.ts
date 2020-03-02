@@ -23,25 +23,9 @@ import {
 } from '@react-native-community/cli-tools';
 import warnAboutManuallyLinkedLibs from '../../link/warnAboutManuallyLinkedLibs';
 
-// Verifies this is an Android project
-function checkAndroid(root: string) {
-  return fs.existsSync(path.join(root, 'android/gradlew'));
-}
-
 // Validates that the package name is correct
 function validatePackageName(packageName: string) {
   return /^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/.test(packageName);
-}
-
-function performChecks(config: Config, args: Flags) {
-  if (!checkAndroid(args.root)) {
-    throw new CLIError(
-      'Android project not found. Are you sure this is a React Native project?',
-    );
-  }
-
-  // warn after we have done basic system checks
-  warnAboutManuallyLinkedLibs(config);
 }
 
 export interface Flags {
@@ -59,11 +43,22 @@ export interface Flags {
   jetifier: boolean;
 }
 
+type AndroidProject = NonNullable<Config['project']['android']>;
+
 /**
  * Starts the app on a connected Android emulator or device.
  */
 async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
-  performChecks(config, args);
+  warnAboutManuallyLinkedLibs(config);
+  const androidProject = config.project.android;
+
+  if (!androidProject) {
+    throw new CLIError(`
+  Android project not found. Are you sure this is a React Native project?
+  If your Android files are located in a non-standard location (e.g. not inside \'android\' folder), consider setting
+  \`project.android.sourceDir\` option to point to a new location.
+`);
+  }
 
   if (args.jetifier) {
     logger.info(
@@ -82,7 +77,7 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
   }
 
   if (!args.packager) {
-    return buildAndRun(args);
+    return buildAndRun(args, androidProject);
   }
 
   return isPackagerRunning(args.port).then((result: string) => {
@@ -107,35 +102,21 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
         );
       }
     }
-    return buildAndRun(args);
+    return buildAndRun(args, androidProject);
   });
 }
 
-function getPackageNameWithSuffix(
-  appId: string,
-  appIdSuffix: string,
-  packageName: string,
-) {
-  if (appId) {
-    return appId;
-  }
-  if (appIdSuffix) {
-    return `${packageName}.${appIdSuffix}`;
-  }
-
-  return packageName;
-}
-
 // Builds the app and runs it on a connected emulator / device.
-function buildAndRun(args: Flags) {
+function buildAndRun(args: Flags, androidProject: AndroidProject) {
   process.chdir(path.join(args.root, 'android'));
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
 
   // "app" is usually the default value for Android apps with only 1 app
+  const {appName} = androidProject;
   const {appFolder} = args;
   // @ts-ignore
   const androidManifest = fs.readFileSync(
-    `${appFolder}/src/main/AndroidManifest.xml`,
+    `${appFolder || appName}/src/main/AndroidManifest.xml`,
     'utf8',
   );
 
@@ -143,7 +124,7 @@ function buildAndRun(args: Flags) {
   if (!packageNameMatchArray || packageNameMatchArray.length === 0) {
     throw new CLIError(
       `Failed to build the app: No package name found. Found errors in ${chalk.underline.dim(
-        `${appFolder}/src/main/AndroidManifest.xml`,
+        `${appFolder || appName}/src/main/AndroidManifest.xml`,
       )}`,
     );
   }
@@ -160,49 +141,32 @@ function buildAndRun(args: Flags) {
     ); // we can also directly add the package naming rules here
   }
 
-  const packageNameWithSuffix = getPackageNameWithSuffix(
-    args.appId,
-    args.appIdSuffix,
-    packageName,
-  );
   const adbPath = getAdbPath();
   if (args.deviceId) {
-    return runOnSpecificDevice(
-      args,
-      cmd,
-      packageNameWithSuffix,
-      packageName,
-      adbPath,
-    );
+    return runOnSpecificDevice(args, cmd, packageName, adbPath, androidProject);
   } else {
-    return runOnAllDevices(
-      args,
-      cmd,
-      packageNameWithSuffix,
-      packageName,
-      adbPath,
-    );
+    return runOnAllDevices(args, cmd, packageName, adbPath, androidProject);
   }
 }
 
 function runOnSpecificDevice(
   args: Flags,
   gradlew: 'gradlew.bat' | './gradlew',
-  packageNameWithSuffix: string,
   packageName: string,
   adbPath: string,
+  androidProject: AndroidProject,
 ) {
   const devices = adb.getDevices(adbPath);
   const {deviceId} = args;
   if (devices.length > 0 && deviceId) {
     if (devices.indexOf(deviceId) !== -1) {
-      buildApk(gradlew);
+      buildApk(gradlew, androidProject.sourceDir);
       installAndLaunchOnDevice(
         args,
         deviceId,
-        packageNameWithSuffix,
         packageName,
         adbPath,
+        androidProject,
       );
     } else {
       logger.error(
@@ -215,26 +179,32 @@ function runOnSpecificDevice(
   }
 }
 
-function buildApk(gradlew: string) {
+function buildApk(gradlew: string, sourceDir: string) {
   try {
     // using '-x lint' in order to ignore linting errors while building the apk
     const gradleArgs = ['build', '-x', 'lint'];
     logger.info('Building the app...');
     logger.debug(`Running command "${gradlew} ${gradleArgs.join(' ')}"`);
-    execa.sync(gradlew, gradleArgs, {stdio: 'inherit'});
+    execa.sync(gradlew, gradleArgs, {stdio: 'inherit', cwd: sourceDir});
   } catch (error) {
     throw new CLIError('Failed to build the app.', error);
   }
 }
 
-function tryInstallAppOnDevice(args: Flags, adbPath: string, device: string) {
+function tryInstallAppOnDevice(
+  args: Flags,
+  adbPath: string,
+  device: string,
+  androidProject: AndroidProject,
+) {
   try {
     // "app" is usually the default value for Android apps with only 1 app
+    const {appName, sourceDir} = androidProject;
     const {appFolder} = args;
     const variant = args.variant.toLowerCase();
-    const buildDirectory = `${appFolder}/build/outputs/apk/${variant}`;
+    const buildDirectory = `${sourceDir}/${appName}/build/outputs/apk/${variant}`;
     const apkFile = getInstallApkName(
-      appFolder,
+      appFolder || appName, // TODO: remove appFolder
       adbPath,
       variant,
       device,
@@ -254,7 +224,7 @@ function tryInstallAppOnDevice(args: Flags, adbPath: string, device: string) {
 }
 
 function getInstallApkName(
-  appFolder: string,
+  appName: string,
   adbPath: string,
   variant: string,
   device: string,
@@ -264,14 +234,14 @@ function getInstallApkName(
 
   // check if there is an apk file like app-armeabi-v7a-debug.apk
   for (const availableCPU of availableCPUs.concat('universal')) {
-    const apkName = `${appFolder}-${availableCPU}-${variant}.apk`;
+    const apkName = `${appName}-${availableCPU}-${variant}.apk`;
     if (fs.existsSync(`${buildDirectory}/${apkName}`)) {
       return apkName;
     }
   }
 
   // check if there is a default file like app-debug.apk
-  const apkName = `${appFolder}-${variant}.apk`;
+  const apkName = `${appName}-${variant}.apk`;
   if (fs.existsSync(`${buildDirectory}/${apkName}`)) {
     return apkName;
   }
@@ -282,22 +252,15 @@ function getInstallApkName(
 function installAndLaunchOnDevice(
   args: Flags,
   selectedDevice: string,
-  packageNameWithSuffix: string,
   packageName: string,
   adbPath: string,
+  androidProject: AndroidProject,
 ) {
   tryRunAdbReverse(args.port, selectedDevice);
-  tryInstallAppOnDevice(args, adbPath, selectedDevice);
-  tryLaunchAppOnDevice(
-    selectedDevice,
-    packageNameWithSuffix,
-    packageName,
-    adbPath,
-    args.mainActivity,
-  );
+  tryInstallAppOnDevice(args, adbPath, selectedDevice, androidProject);
+  tryLaunchAppOnDevice(selectedDevice, packageName, adbPath, args);
 }
 
-// @ts-ignore
 function startServerInNewWindow(
   port: number,
   terminal: string,
@@ -396,6 +359,7 @@ function startServerInNewWindow(
   logger.error(
     `Cannot start the packager. Unknown platform ${process.platform}`,
   );
+  return;
 }
 
 export default {
@@ -407,7 +371,7 @@ export default {
     {
       name: '--root [string]',
       description:
-        'Override the root directory for the android build (which contains the android directory)',
+        '[DEPRECATED - root is discovered automatically] Override the root directory for the android build (which contains the android directory)',
       default: '',
     },
     {
@@ -418,12 +382,12 @@ export default {
     {
       name: '--appFolder [string]',
       description:
-        'Specify a different application folder name for the android source. If not, we assume is "app"',
-      default: 'app',
+        '[DEPRECATED – use "platforms.android.appName" in react-native.config.js] Specify a different application folder name for the android source. If not, we assume is "app"',
     },
     {
       name: '--appId [string]',
-      description: 'Specify an applicationId to launch after build.',
+      description:
+        '[DEPRECATED – use "platforms.android.appName" in react-native.config.js] Specify an applicationId to launch after build.',
       default: '',
     },
     {

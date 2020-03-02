@@ -7,13 +7,15 @@
  */
 
 import path from 'path';
-import findAndroidAppFolder from './findAndroidAppFolder';
+import fs from 'fs';
+import findAndroidDir from './findAndroidDir';
 import findManifest from './findManifest';
 import findPackageClassName from './findPackageClassName';
 import readManifest from './readManifest';
 import {
   AndroidProjectParams,
   AndroidDependencyParams,
+  AndroidProjectConfig,
 } from '@react-native-community/cli-types';
 import {XmlDocument} from 'xmldoc';
 
@@ -24,20 +26,21 @@ const getPackageName = (manifest: XmlDocument) => manifest.attr.package;
  * defaults specified by user into consideration
  */
 export function projectConfig(
-  folder: string,
+  root: string,
   userConfig: AndroidProjectParams = {},
-) {
-  const src = userConfig.sourceDir || findAndroidAppFolder(folder);
+): AndroidProjectConfig | null {
+  const src = userConfig.sourceDir || findAndroidDir(root);
 
   if (!src) {
     return null;
   }
 
-  const sourceDir = path.join(folder, src);
+  const sourceDir = path.join(root, src);
+  const appName = getAppName(sourceDir, userConfig.appName);
   const isFlat = sourceDir.indexOf('app') === -1;
   const manifestPath = userConfig.manifestPath
     ? path.join(sourceDir, userConfig.manifestPath)
-    : findManifest(sourceDir);
+    : findManifest(path.join(sourceDir, appName));
 
   if (!manifestPath) {
     return null;
@@ -66,7 +69,7 @@ export function projectConfig(
   );
 
   const settingsGradlePath = path.join(
-    folder,
+    root,
     'android',
     userConfig.settingsGradlePath || 'settings.gradle',
   );
@@ -84,7 +87,7 @@ export function projectConfig(
   return {
     sourceDir,
     isFlat,
-    folder,
+    folder: root,
     stringsPath,
     manifestPath,
     buildGradlePath,
@@ -92,7 +95,22 @@ export function projectConfig(
     assetsPath,
     mainFilePath,
     packageName,
+    packageFolder: '',
+    appName,
   };
+}
+
+function getAppName(sourceDir: string, userConfigAppName: string | undefined) {
+  let appName = '';
+  if (
+    typeof userConfigAppName === 'string' &&
+    fs.existsSync(path.join(sourceDir, userConfigAppName))
+  ) {
+    appName = userConfigAppName;
+  } else if (fs.existsSync(path.join(sourceDir, 'app'))) {
+    appName = 'app';
+  }
+  return appName;
 }
 
 /**
@@ -100,19 +118,20 @@ export function projectConfig(
  * different config that applies to packages only
  */
 export function dependencyConfig(
-  folder: string,
+  root: string,
   userConfig: AndroidDependencyParams = {},
 ) {
-  const src = userConfig.sourceDir || findAndroidAppFolder(folder);
+  const src = userConfig.sourceDir || findAndroidDir(root);
 
   if (!src) {
     return null;
   }
 
-  const sourceDir = path.join(folder, src);
+  const sourceDir = path.join(root, src);
+  const appName = userConfig.appName || 'app';
   const manifestPath = userConfig.manifestPath
     ? path.join(sourceDir, userConfig.manifestPath)
-    : findManifest(sourceDir);
+    : findManifest(path.join(sourceDir, appName));
 
   if (!manifestPath) {
     return null;
@@ -136,5 +155,5 @@ export function dependencyConfig(
   const packageInstance =
     userConfig.packageInstance || `new ${packageClassName}()`;
 
-  return {sourceDir, folder, packageImportPath, packageInstance};
+  return {sourceDir, appName, folder: root, packageImportPath, packageInstance};
 }

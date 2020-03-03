@@ -28,6 +28,25 @@ function validatePackageName(packageName: string) {
   return /^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/.test(packageName);
 }
 
+function displayWarnings(config: Config, args: Flags) {
+  warnAboutManuallyLinkedLibs(config);
+  if (args.appId) {
+    logger.warn(
+      'Using deprecated "--appId" flag. Use "platforms.android.appName" in react-native.config.js instead.',
+    );
+  }
+  if (args.appFolder) {
+    logger.warn(
+      'Using deprecated "--appFolder" flag. Use "platforms.android.appName" in react-native.config.js instead.',
+    );
+  }
+  if (args.root) {
+    logger.warn(
+      'Using deprecated "--root" flag. App root is discovered automatically.',
+    );
+  }
+}
+
 export interface Flags {
   tasks?: Array<string>;
   root: string;
@@ -49,7 +68,7 @@ type AndroidProject = NonNullable<Config['project']['android']>;
  * Starts the app on a connected Android emulator or device.
  */
 async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
-  warnAboutManuallyLinkedLibs(config);
+  displayWarnings(config, args);
   const androidProject = config.project.android;
 
   if (!androidProject) {

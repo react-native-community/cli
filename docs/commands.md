@@ -311,13 +311,21 @@ Override the root directory for the Android build (which contains the android di
 
 > default: 'debug'
 
-Specify your app's build variant to launch after build.
+Specify your app's build variant.
 
 #### `--appFolder [string]`
 
 > default: 'app'
 
 Specify a different application folder name for the Android source. If not, we assume is "app".
+
+#### `--appId [string]`
+
+Specify an `applicationId` to launch after build.
+
+#### `--appIdSuffix [string]`
+
+Specify an `applicationIdSuffix` to launch after build.
 
 #### `--main-activity [string]`
 

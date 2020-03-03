@@ -422,6 +422,16 @@ export default {
       default: 'app',
     },
     {
+      name: '--appId [string]',
+      description: 'Specify an applicationId to launch after build.',
+      default: '',
+    },
+    {
+      name: '--appIdSuffix [string]',
+      description: 'Specify an applicationIdSuffix to launch after build.',
+      default: '',
+    },
+    {
       name: '--main-activity [string]',
       description: 'Name of the activity to start',
       default: 'MainActivity',

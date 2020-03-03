@@ -370,9 +370,15 @@ function bootSimulator(selectedSimulator: Device) {
 function getTargetBuildDir(buildSettings: string) {
   const settings = JSON.parse(buildSettings);
 
-  return settings.length > 0
-    ? settings[1].buildSettings.TARGET_BUILD_DIR
-    : settings[0].buildSettings.TARGET_BUILD_DIR;
+  // Find app in all building settings - look for WRAPPER_EXTENSION: 'app',
+  for (const i in settings) {
+    const wrapperExtension = settings[i].buildSettings.WRAPPER_EXTENSION;
+    if (wrapperExtension === 'app') {
+      return settings[i].buildSettings.TARGET_BUILD_DIR;
+    }
+  }
+
+  return null;
 }
 
 function getBuildPath(

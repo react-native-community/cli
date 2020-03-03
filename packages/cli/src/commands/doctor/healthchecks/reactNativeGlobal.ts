@@ -9,15 +9,9 @@ import path from 'path';
 
 const label = 'react-native global installation';
 
-const packageManagers = {
-  yarn: 'yarn',
-  npm: 'npm',
-};
+const packageManagers = ['yarn', 'npm'];
 
-const packages = {
-  reactNative: 'react-native',
-  reactNativeCLI: 'react-native-cli',
-};
+const packages = ['react-native', 'react-native-cli'];
 
 const findGlobalPackage = (packageManager, moduleId) => {
   try {
@@ -32,16 +26,13 @@ const findGlobalPackage = (packageManager, moduleId) => {
 
 const checkGlobalInstallalations = () => {
   //Returns an array of globally installed paths for rn and rncli both in yarn and npm
-  const librariesGloballyInstalled = Object.keys(packages)
-    .map(packageKey =>
-      Object.keys(packageManagers).map(packageManagerKey =>
-        findGlobalPackage(
-          packageManagers[packageManagerKey],
-          packages[packageKey],
-        ),
+  const librariesGloballyInstalled = packages
+    .map(moduleId =>
+      packageManagers.map(packageManager =>
+        findGlobalPackage(packageManager, moduleId),
       ),
     )
-    .filter(e => e != null);
+    .filter(Boolean);
 
   //Cant's use flat() in ts...? This is an alternative
   const flattenedArray = [].concat.apply([], librariesGloballyInstalled);

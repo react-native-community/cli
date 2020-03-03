@@ -368,10 +368,11 @@ function bootSimulator(selectedSimulator: Device) {
 }
 
 function getTargetBuildDir(buildSettings: string) {
-  const targetBuildMatch = /TARGET_BUILD_DIR = (.+)$/m.exec(buildSettings);
-  return targetBuildMatch && targetBuildMatch[1]
-    ? targetBuildMatch[1].trim()
-    : null;
+  const settings = JSON.parse(buildSettings);
+
+  return settings.length > 0
+    ? settings[1].buildSettings.TARGET_BUILD_DIR
+    : settings[0].buildSettings.TARGET_BUILD_DIR;
 }
 
 function getBuildPath(
@@ -403,6 +404,7 @@ function getBuildPath(
       '-configuration',
       configuration,
       '-showBuildSettings',
+      '-json',
     ],
     {encoding: 'utf8'},
   );

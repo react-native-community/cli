@@ -4,8 +4,6 @@ import fs from 'fs-extra';
 import minimist from 'minimist';
 import ora from 'ora';
 import semver from 'semver';
-// @ts-ignore untyped
-import inquirer from 'inquirer';
 import mkdirp from 'mkdirp';
 import {validateProjectName} from './validate';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
@@ -42,8 +40,8 @@ interface TemplateOptions {
   projectTitle?: string;
 }
 
-function doesDirectoryExist(path: string) {
-  return fs.existsSync(path);
+function doesDirectoryExist(dir: string) {
+  return fs.existsSync(dir);
 }
 
 async function setProjectDirectory(projectPath: string) {
@@ -56,7 +54,7 @@ async function setProjectDirectory(projectPath: string) {
     process.chdir(projectPath);
   } catch (error) {
     throw new CLIError(
-      `Error occurred while trying to create project directory.`,
+      'Error occurred while trying to create project directory.',
       error,
     );
   }

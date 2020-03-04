@@ -4,8 +4,6 @@ import fs from 'fs-extra';
 import minimist from 'minimist';
 import ora from 'ora';
 import semver from 'semver';
-// @ts-ignore untyped
-import inquirer from 'inquirer';
 import mkdirp from 'mkdirp';
 import {validateProjectName} from './validate';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
@@ -47,22 +45,8 @@ function doesDirectoryExist(dir: string) {
 }
 
 async function setProjectDirectory(directory: string) {
-  const directoryExists = doesDirectoryExist(directory);
-  if (directoryExists) {
-    const {shouldReplaceprojectDirectory} = await inquirer.prompt([
-      {
-        type: 'confirm',
-        name: 'shouldReplaceprojectDirectory',
-        message: `Directory "${directory}" already exists, do you want to replace it?`,
-        default: false,
-      },
-    ]);
-
-    if (!shouldReplaceprojectDirectory) {
-      throw new DirectoryAlreadyExistsError(directory);
-    }
-
-    fs.emptyDirSync(directory);
+  if (doesDirectoryExist(directory)) {
+    throw new DirectoryAlreadyExistsError(directory);
   }
 
   try {
@@ -70,9 +54,7 @@ async function setProjectDirectory(directory: string) {
     process.chdir(directory);
   } catch (error) {
     throw new CLIError(
-      `Error occurred while trying to ${
-        directoryExists ? 'replace' : 'create'
-      } project directory.`,
+      'Error occurred while trying to create project directory.',
       error,
     );
   }

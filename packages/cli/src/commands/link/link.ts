@@ -33,7 +33,6 @@ async function link(
   ctx: Config,
   opts: FlagsType,
 ) {
-  printDeprecationWarning('link');
   let platforms = ctx.platforms;
   let project = ctx.project;
 
@@ -54,6 +53,8 @@ async function link(
     logger.debug('No package name provided, will link all possible assets.');
     return linkAll(ctx, {linkDeps: opts.all, linkAssets: true});
   }
+
+  printDeprecationWarning('react-native link [packageName]');
 
   // Trim the version / tag out of the package name (eg. package@latest)
   const packageName = rawPackageName.replace(/^(.+?)(@.+?)$/gi, '$1');

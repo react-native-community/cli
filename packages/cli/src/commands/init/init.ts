@@ -206,12 +206,13 @@ export default (async function initialize(
    */
   const version: string = minimist(process.argv).version || DEFAULT_VERSION;
 
-  const projectPath = path.resolve(root, options.directory || projectName);
+  const directoryName = path.relative(root, options.directory || projectName);
 
   try {
-    await createProject(projectName, projectPath, version, options);
+    await createProject(projectName, directoryName, version, options);
 
-    printRunInstructions(projectPath, projectName);
+    const projectFolder = path.join(root, directoryName);
+    printRunInstructions(projectFolder, projectName);
   } catch (e) {
     logger.error(e.message);
   }

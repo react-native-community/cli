@@ -44,14 +44,14 @@ function doesDirectoryExist(dir: string) {
   return fs.existsSync(dir);
 }
 
-async function setProjectDirectory(projectPath: string) {
-  if (doesDirectoryExist(projectPath)) {
-    throw new DirectoryAlreadyExistsError(projectPath);
+async function setProjectDirectory(directory: string) {
+  if (doesDirectoryExist(directory)) {
+    throw new DirectoryAlreadyExistsError(directory);
   }
 
   try {
-    mkdirp.sync(projectPath);
-    process.chdir(projectPath);
+    mkdirp.sync(directory);
+    process.chdir(directory);
   } catch (error) {
     throw new CLIError(
       'Error occurred while trying to create project directory.',

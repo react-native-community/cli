@@ -17,6 +17,7 @@ import {
 } from '@react-native-community/cli-types';
 import getPlatformName from './getPlatformName';
 import makeHook from './makeHook';
+import printDeprecationWarning from './printDeprecationWarning';
 
 type Flags = {
   platforms?: Array<string>;
@@ -29,6 +30,7 @@ const unlinkDependency = (
   packageName: string,
   otherDependencies: Array<Dependency>,
 ) => {
+  printDeprecationWarning('unlink');
   Object.keys(platforms || {}).forEach(platform => {
     const projectConfig: AndroidProjectConfig | IOSProjectConfig =
       project[platform];

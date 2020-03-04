@@ -42,37 +42,21 @@ interface TemplateOptions {
   projectTitle?: string;
 }
 
-function doesDirectoryExist(dir: string) {
-  return fs.existsSync(dir);
+function doesDirectoryExist(path: string) {
+  return fs.existsSync(path);
 }
 
-async function setProjectDirectory(directory: string) {
-  const directoryExists = doesDirectoryExist(directory);
-  if (directoryExists) {
-    const {shouldReplaceprojectDirectory} = await inquirer.prompt([
-      {
-        type: 'confirm',
-        name: 'shouldReplaceprojectDirectory',
-        message: `Directory "${directory}" already exists, do you want to replace it?`,
-        default: false,
-      },
-    ]);
-
-    if (!shouldReplaceprojectDirectory) {
-      throw new DirectoryAlreadyExistsError(directory);
-    }
-
-    fs.emptyDirSync(directory);
+async function setProjectDirectory(projectPath: string) {
+  if (doesDirectoryExist(projectPath)) {
+    throw new DirectoryAlreadyExistsError(projectPath);
   }
 
   try {
-    mkdirp.sync(directory);
-    process.chdir(directory);
+    mkdirp.sync(projectPath);
+    process.chdir(projectPath);
   } catch (error) {
     throw new CLIError(
-      `Error occurred while trying to ${
-        directoryExists ? 'replace' : 'create'
-      } project directory.`,
+      `Error occurred while trying to create project directory.`,
       error,
     );
   }
@@ -224,13 +208,12 @@ export default (async function initialize(
    */
   const version: string = minimist(process.argv).version || DEFAULT_VERSION;
 
-  const directoryName = path.resolve(root, options.directory || projectName);
+  const projectPath = path.resolve(root, options.directory || projectName);
 
   try {
-    await createProject(projectName, directoryName, version, options);
+    await createProject(projectName, projectPath, version, options);
 
-    const projectFolder = path.join(root, directoryName);
-    printRunInstructions(projectFolder, projectName);
+    printRunInstructions(projectPath, projectName);
   } catch (e) {
     logger.error(e.message);
   }

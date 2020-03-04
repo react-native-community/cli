@@ -367,10 +367,17 @@ function bootSimulator(selectedSimulator: Device) {
 }
 
 function getTargetBuildDir(buildSettings: string) {
-  const targetBuildMatch = /TARGET_BUILD_DIR = (.+)$/m.exec(buildSettings);
-  return targetBuildMatch && targetBuildMatch[1]
-    ? targetBuildMatch[1].trim()
-    : null;
+  const settings = JSON.parse(buildSettings);
+
+  // Find app in all building settings - look for WRAPPER_EXTENSION: 'app',
+  for (const i in settings) {
+    const wrapperExtension = settings[i].buildSettings.WRAPPER_EXTENSION;
+    if (wrapperExtension === 'app') {
+      return settings[i].buildSettings.TARGET_BUILD_DIR;
+    }
+  }
+
+  return null;
 }
 
 function getBuildPath(
@@ -402,6 +409,7 @@ function getBuildPath(
       '-configuration',
       configuration,
       '-showBuildSettings',
+      '-json',
     ],
     {encoding: 'utf8'},
   );

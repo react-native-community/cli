@@ -4,7 +4,6 @@
 import path from 'path';
 // @ts-ignore - no typed definition for the package
 import {loadConfig} from 'metro-config';
-import {existsSync} from 'fs';
 import {Config} from '@react-native-community/cli-types';
 import findSymlinkedModules from './findSymlinkedModules';
 
@@ -38,7 +37,6 @@ export interface MetroConfig {
     resolverMainFields: string[];
     platforms: string[];
     providesModuleNodeModules: string[];
-    hasteImplModulePath: string | undefined;
   };
   serializer: {
     getModulesRunBeforeMainModule: () => string[];
@@ -67,15 +65,11 @@ export interface MetroConfig {
  * Otherwise, a.native.js will not load on Windows or other platforms
  */
 export const getDefaultConfig = (ctx: Config): MetroConfig => {
-  const hasteImplPath = path.join(ctx.reactNativePath, 'jest/hasteImpl.js');
   return {
     resolver: {
       resolverMainFields: ['react-native', 'browser', 'main'],
       platforms: [...ctx.haste.platforms, 'native'],
       providesModuleNodeModules: ctx.haste.providesModuleNodeModules,
-      hasteImplModulePath: existsSync(hasteImplPath)
-        ? hasteImplPath
-        : undefined,
     },
     serializer: {
       getModulesRunBeforeMainModule: () => [

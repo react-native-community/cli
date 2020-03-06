@@ -1,5 +1,8 @@
 import {executeCommand} from './executeWinCommand';
 
+/**
+ * Creates a new variable in the user's environment
+ */
 const setEnvironment = async (variable: string, value: string) => {
   // https://superuser.com/a/601034
   const command = `setx ${variable} "${value}"`;
@@ -7,7 +10,7 @@ const setEnvironment = async (variable: string, value: string) => {
 };
 
 /**
- * Prepends the given `value` to the user environment `variable`.
+ * Prepends the given `value` to the user's environment `variable`.
  * @param {string} variable The environment variable to modify
  * @param {string} value The value to add to the variable
  * @returns {Promise<void>}

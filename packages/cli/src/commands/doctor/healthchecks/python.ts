@@ -1,10 +1,10 @@
+import {fetchToTemp} from '@react-native-community/cli-tools';
 import versionRanges from '../versionRanges';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
 import {logManualInstallation} from './common';
 import {HealthCheckInterface} from '../types';
 
-import {downloader} from '../../../tools/downloader';
-import {updateEnvironment} from '../../../tools/variables';
+import {updateEnvironment} from '../../../tools/environmentVariables';
 import {join} from 'path';
 import {Ora} from 'ora';
 import {executeCommand} from '../../../tools/executeWinCommand';
@@ -28,7 +28,7 @@ export default {
 
       loader.start(`Downloading Python installer from "${installerUrl}"`);
 
-      const installer = await downloader(installerUrl);
+      const installer = await fetchToTemp(installerUrl);
 
       loader.text = `Installing Python in "${installPath}"`;
       const command = `msiexec.exe /i "${installer}" TARGETDIR="${installPath}" /qn /L*P "python-log.txt"`;

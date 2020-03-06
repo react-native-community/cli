@@ -89,7 +89,6 @@ export type RunAutomaticFix = (args: {
 }) => Promise<void> | void;
 
 export type HealthCheckInterface = {
-  [key: string]: any;
   label: string;
   visible?: boolean | void;
   isRequired?: boolean;

@@ -9,6 +9,7 @@ import nodeFetch, {
   Headers,
 } from 'node-fetch';
 import {CLIError} from './errors';
+import logger from './logger';
 
 async function unwrapFetchResult(response: Response) {
   const data = await response.text();
@@ -46,7 +47,7 @@ const fetchToTemp = (url: string) => {
       });
     });
   } catch (e) {
-    console.error(e);
+    logger.error(e);
     throw e;
   }
 };

@@ -4,7 +4,7 @@ export default {
   YARN: '>= 1.10.x',
   NPM: '>= 4.x',
   WATCHMAN: '4.x',
-  PYTHON: '>= 2.x', // Is there a way to force it <= 3 ?
+  PYTHON: '>= 2.x <= 3',
   // Android
   ANDROID_SDK: '>= 26.x',
   ANDROID_NDK: '>= 19.x',

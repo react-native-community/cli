@@ -41,7 +41,6 @@ const drawableFileTypes = new Set<string>([
   'jpeg',
   'jpg',
   'png',
-  'svg',
   'webp',
   'xml',
 ]);

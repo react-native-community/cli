@@ -75,10 +75,6 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
       return findAssets(projectRoot, userConfig.assets);
     },
     platforms: userConfig.platforms,
-    haste: {
-      providesModuleNodeModules: [],
-      platforms: Object.keys(userConfig.platforms),
-    },
     get project() {
       if (lazyProject) {
         return lazyProject;
@@ -99,8 +95,6 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
     },
   };
 
-  let depsWithWarnings: Array<[string, string]> = [];
-
   const finalConfig = Array.from(
     new Set([
       ...Object.keys(userConfig.dependencies),
@@ -116,15 +110,7 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
       root =
         localDependencyRoot ||
         resolveNodeModuleDir(projectRoot, dependencyName);
-      const output = readDependencyConfigFromDisk(root);
-      config = output.config;
-
-      if (output.legacy && !localDependencyRoot) {
-        const pkg = require(path.join(root, 'package.json'));
-        const link =
-          pkg.homepage || `https://npmjs.com/package/${dependencyName}`;
-        depsWithWarnings.push([dependencyName, link]);
-      }
+      config = readDependencyConfigFromDisk(root);
     } catch (error) {
       logger.warn(
         inlineString(`
@@ -138,17 +124,6 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
     }
 
     const isPlatform = Object.keys(config.platforms).length > 0;
-
-    /**
-     * Legacy `rnpm` config required `haste` to be defined. With new config,
-     * we do it automatically.
-     *
-     * @todo: Remove this once `rnpm` config is deprecated and all major RN libs are converted.
-     */
-    const haste = config.haste || {
-      providesModuleNodeModules: isPlatform ? [dependencyName] : [],
-      platforms: Object.keys(config.platforms),
-    };
 
     return assign({}, acc, {
       dependencies: assign({}, acc.dependencies, {
@@ -168,30 +143,8 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
         ...acc.platforms,
         ...config.platforms,
       },
-      haste: {
-        providesModuleNodeModules: [
-          ...acc.haste.providesModuleNodeModules,
-          ...haste.providesModuleNodeModules,
-        ],
-        platforms: [...acc.haste.platforms, ...haste.platforms],
-      },
     }) as Config;
   }, initialConfig);
-
-  if (depsWithWarnings.length) {
-    logger.warn(
-      `The following packages use deprecated "rnpm" config that will stop working from next release:\n${depsWithWarnings
-        .map(
-          ([name, link]) =>
-            `  - ${chalk.bold(name)}: ${chalk.dim(chalk.underline(link))}`,
-        )
-        .join(
-          '\n',
-        )}\nPlease notify their maintainers about it. You can find more details at ${chalk.dim.underline(
-        'https://github.com/react-native-community/cli/blob/master/docs/configuration.md#migration-guide',
-      )}.`,
-    );
-  }
 
   return finalConfig;
 }

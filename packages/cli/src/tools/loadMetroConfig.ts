@@ -36,7 +36,6 @@ export interface MetroConfig {
   resolver: {
     resolverMainFields: string[];
     platforms: string[];
-    providesModuleNodeModules: string[];
   };
   serializer: {
     getModulesRunBeforeMainModule: () => string[];
@@ -60,16 +59,12 @@ export interface MetroConfig {
 
 /**
  * Default configuration
- *
- * @todo(grabbou): As a separate PR, haste.platforms should be added before "native".
- * Otherwise, a.native.js will not load on Windows or other platforms
  */
 export const getDefaultConfig = (ctx: Config): MetroConfig => {
   return {
     resolver: {
       resolverMainFields: ['react-native', 'browser', 'main'],
-      platforms: [...ctx.haste.platforms, 'native'],
-      providesModuleNodeModules: ctx.haste.providesModuleNodeModules,
+      platforms: [...Object.keys(ctx.platforms), 'native'],
     },
     serializer: {
       getModulesRunBeforeMainModule: () => [

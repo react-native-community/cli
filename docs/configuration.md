@@ -17,7 +17,7 @@ to learn more about different types of configuration and features available.
 
 ## Migration guide
 
-`"rnpm"` is deprecated and support for it will be removed in next major version of the CLI.
+`"rnpm"` is deprecated and support for it is removed since v4.x of the CLI.
 
 > **Important**: Proceed further only if your project uses `"rnpm"` in `package.json`.
 

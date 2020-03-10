@@ -2220,7 +2220,7 @@
   dependencies:
     "@types/node" "*"
 
-"@types/node-fetch@^2.3.7", "@types/node-fetch@^2.6.0":
+"@types/node-fetch@^2.3.7", "@types/node-fetch@^2.5.5":
   version "2.5.5"
   resolved "https://registry.yarnpkg.com/@types/node-fetch/-/node-fetch-2.5.5.tgz#cd264e20a81f4600a6c52864d38e7fef72485e92"
   integrity sha512-IWwjsyYjGw+em3xTvWVQi5MgYKbRs0du57klfTaZkv/B24AEQ/p/IopNeqIYNy3EsfHOpg8ieQSDomPcsYMHpA==

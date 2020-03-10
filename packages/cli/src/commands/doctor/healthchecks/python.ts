@@ -13,18 +13,24 @@ export default {
   label: 'Python',
   getDiagnostics: async ({Languages}) => ({
     needsToBeFixed: doesSoftwareNeedToBeFixed({
-      version: Languages.Python.version,
+      version:
+        typeof Languages.Python === 'string'
+          ? Languages.Python
+          : Languages.Python.version,
       versionRange: versionRanges.PYTHON,
     }),
 
-    version: Languages.Python.version,
+    version:
+      typeof Languages.Python === 'string'
+        ? Languages.Python
+        : Languages.Python.version,
     versionRange: versionRanges.PYTHON,
   }),
   win32AutomaticFix: async ({loader}: {loader: Ora}) => {
     try {
       const arch = process.arch === 'x64' ? 'amd64.' : '';
       const installerUrl = `https://www.python.org/ftp/python/2.7.9/python-2.7.9.${arch}msi`;
-      const installPath = join(process.env.LOCALAPPDATA!, 'python2');
+      const installPath = join(process.env.LOCALAPPDATA || '', 'python2');
 
       loader.start(`Downloading Python installer from "${installerUrl}"`);
 

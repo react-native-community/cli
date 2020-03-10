@@ -65,10 +65,12 @@ export type EnvironmentInfo = {
     };
   };
   Languages: {
-    Python: {
-      version: string;
-      path: string;
-    };
+    Python:
+      | {
+          version: string;
+          path: string;
+        }
+      | 'Not Found';
   };
 };
 

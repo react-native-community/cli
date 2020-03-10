@@ -11,9 +11,7 @@ import errorhandler from 'errorhandler';
 import {Server as WebSocketServer} from 'ws';
 import serveStatic from 'serve-static';
 import {debuggerUIMiddleware} from '@react-native-community/cli-debugger-ui';
-
 import indexPageMiddleware from './indexPage';
-import copyToClipBoardMiddleware from './copyToClipBoardMiddleware';
 import getSecurityHeadersMiddleware from './getSecurityHeadersMiddleware';
 import loadRawBodyMiddleware from './loadRawBodyMiddleware';
 import openStackFrameInEditorMiddleware from './openStackFrameInEditorMiddleware';
@@ -48,7 +46,6 @@ export default class MiddlewareManager {
       .use('/debugger-ui', debuggerUIMiddleware())
       .use(openStackFrameInEditorMiddleware(this.options))
       .use(openURLMiddleware)
-      .use(copyToClipBoardMiddleware)
       .use(statusPageMiddleware)
       .use(systraceProfileMiddleware)
       .use(indexPageMiddleware)

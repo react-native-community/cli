@@ -5,7 +5,7 @@ export default function printDeprecationWarning(command: string) {
   logger.warn(
     `Calling ${chalk.bold(
       command,
-    )} is deprecated in favor of autolinking feature and it will be removed in the next major release. You can find more information about it in the documentation: ${chalk.bold(
+    )} is deprecated in favor of autolinking. It will be removed in the next major release.\nAutolinking documentation: ${chalk.dim.underline(
       'https://github.com/react-native-community/cli/blob/master/docs/autolinking.md',
     )}`,
   );

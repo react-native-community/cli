@@ -5,14 +5,6 @@ import path from 'path';
 // @ts-ignore - no typed definition for the package
 import {loadConfig} from 'metro-config';
 import {Config} from '@react-native-community/cli-types';
-import findSymlinkedModules from './findSymlinkedModules';
-
-function resolveSymlinksForRoots(roots: string[]): string[] {
-  return roots.reduce<string[]>(
-    (arr, rootPath) => arr.concat(findSymlinkedModules(rootPath, roots)),
-    [...roots],
-  );
-}
 
 const INTERNAL_CALLSITES_REGEX = new RegExp(
   [
@@ -49,6 +41,7 @@ export interface MetroConfig {
     assetRegistryPath: string;
     assetPlugins?: Array<string>;
   };
+  watchFolders: string[];
   reporter?: any;
 }
 
@@ -94,6 +87,7 @@ export const getDefaultConfig = (ctx: Config): MetroConfig => {
         'Libraries/Image/AssetRegistry',
       ),
     },
+    watchFolders: [],
   };
 };
 

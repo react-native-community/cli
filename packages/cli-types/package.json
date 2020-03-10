@@ -7,7 +7,6 @@
   },
   "files": [
     "build",
-    "!*.d.ts",
     "!*.map"
   ],
   "types": "build/index.d.ts",

@@ -15,7 +15,6 @@ _Note: CLI has been extracted from core `react-native` as a part of "[Lean Core]
 - [About](#about)
 - [Creating a new React Native project](#creating-a-new-react-native-project)
   - [Using `npx` (_recommended_)](#using-npx-recommended)
-  - [Using global CLI (_legacy_)](#using-global-cli-legacy)
 - [Usage in an existing React Native project](#usage-in-an-existing-react-native-project)
 - [Updating the CLI](#updating-the-cli)
 - [Contributing](./CONTRIBUTING.md)
@@ -26,13 +25,13 @@ _Note: CLI has been extracted from core `react-native` as a part of "[Lean Core]
 
 Our release cycle is independent of `react-native`. We follow semver and here is the compatibility table:
 
-| `@react-native-community/cli`                                               | `react-native`   |
-| --------------------------------------------------------------------------- | ---------------- |
-| [^5.0.0 (`next`)](https://github.com/react-native-community/cli/tree/next)  | master           |
-| [^4.0.0 (`master`)](https://github.com/react-native-community/cli/)         | ^0.62.0          |
-| [^3.0.0](https://github.com/react-native-community/cli/tree/3.x)            | ^0.61.0          |
-| [^2.0.0](https://github.com/react-native-community/cli/tree/2.x)            | ^0.60.0          |
-| [^1.0.0](https://github.com/react-native-community/cli/tree/1.x)            | ^0.59.0          |
+| `@react-native-community/cli`                                              | `react-native` |
+| -------------------------------------------------------------------------- | -------------- |
+| [^5.0.0 (`next`)](https://github.com/react-native-community/cli/tree/next) | master         |
+| [^4.0.0 (`master`)](https://github.com/react-native-community/cli/)        | ^0.62.0        |
+| [^3.0.0](https://github.com/react-native-community/cli/tree/3.x)           | ^0.61.0        |
+| [^2.0.0](https://github.com/react-native-community/cli/tree/2.x)           | ^0.60.0        |
+| [^1.0.0](https://github.com/react-native-community/cli/tree/1.x)           | ^0.59.0        |
 
 ## Documentation
 
@@ -69,14 +68,6 @@ This method is preferred if you don't want to install global packages.
 npx react-native init MyApp
 ```
 
-### Using global CLI (_legacy_)
-
-You'll need to install a global module [`react-native-cli`](./packages/global-cli) and follow instructions there.
-
-> We strongly encourage you to **only use global `react-native-cli` for bootstrapping new projects**. Use local version for everything else.
-
-You can find out more about init command from the [documentation](./docs/init.md)
-
 ## Usage in an existing React Native project
 
 Once you're inside an existing project, a local `react-native` binary will be available for you to use. Feel free to use Yarn to call it directly.
@@ -105,32 +96,34 @@ You can also add npm scripts to call it with whichever package manager you use:
 
 React Native CLI is a dependency of `react-native`, which makes it a transitive dependency of your project. It happens that you may be locked on a version without fixes for bugs that may affect you. Here's how to get it sorted:
 
-1. If you use lock files (`yarn.lock` or `package-lock.json`) - find all the `@react-native-community/cli` prefixed entries, remove them, run `yarn install` / `npm install` once again. 
-    Here's an example using `yarn.lock`. Notice how _whole `@react-native-community/cli` entries_ are removed. Make sure to delete all of them:
-    ```diff
-    diff --git a/yarn.lock b/yarn.lock
-    index 073309f..0bb8c4b 100644
-    --- a/yarn.lock
-    +++ b/yarn.lock
-    @@ -843,26 +843,6 @@
-         "@types/istanbul-reports" "^1.1.1"
-         "@types/yargs" "^13.0.0"
+1. If you use lock files (`yarn.lock` or `package-lock.json`) - find all the `@react-native-community/cli` prefixed entries, remove them, run `yarn install` / `npm install` once again.
+   Here's an example using `yarn.lock`. Notice how _whole `@react-native-community/cli` entries_ are removed. Make sure to delete all of them:
 
-    -"@react-native-community/cli-debugger-ui@^3.0.0":
-    -  version "3.0.0"
-    -  resolved "https://registry.yarnpkg.com/@react-native-community/cli-debugger-ui/-/cli-debugger-ui-3.0.0.tgz#d01d08d1e5ddc1633d82c7d84d48fff07bd39416"
-    -  integrity sha512-m3X+iWLsK/H7/b7PpbNO33eQayR/+M26la4ZbYe1KRke5Umg4PIWsvg21O8Tw4uJcY8LA5hsP+rBi/syBkBf0g==
-    -  dependencies:
-    -    serve-static "^1.13.1"
-    -
-    -"@react-native-community/cli-platform-android@^3.0.0":
-    -  version "3.1.2"
-    -  resolved "https://registry.yarnpkg.com/@react-native-community/cli-platform-android/-/cli-platform-android-3.1.2.tgz#313644fba81b5d673cc803009e1eddc930b9618c"
-    -  integrity sha512-H30a00LLigsTh4eO0kc2YtaIkOJKrValWOU6n2VES3ZGS31qDx9GhZIwMCMcdzcSnypAyMAfauVatEmBSQZU7Q==
-    -  dependencies:
-    -    "@react-native-community/cli-tools" "^3.0.0"
-    -    chalk "^2.4.2"
-    ```
+   ```diff
+   diff --git a/yarn.lock b/yarn.lock
+   index 073309f..0bb8c4b 100644
+   --- a/yarn.lock
+   +++ b/yarn.lock
+   @@ -843,26 +843,6 @@
+        "@types/istanbul-reports" "^1.1.1"
+        "@types/yargs" "^13.0.0"
+
+   -"@react-native-community/cli-debugger-ui@^3.0.0":
+   -  version "3.0.0"
+   -  resolved "https://registry.yarnpkg.com/@react-native-community/cli-debugger-ui/-/cli-debugger-ui-3.0.0.tgz#d01d08d1e5ddc1633d82c7d84d48fff07bd39416"
+   -  integrity sha512-m3X+iWLsK/H7/b7PpbNO33eQayR/+M26la4ZbYe1KRke5Umg4PIWsvg21O8Tw4uJcY8LA5hsP+rBi/syBkBf0g==
+   -  dependencies:
+   -    serve-static "^1.13.1"
+   -
+   -"@react-native-community/cli-platform-android@^3.0.0":
+   -  version "3.1.2"
+   -  resolved "https://registry.yarnpkg.com/@react-native-community/cli-platform-android/-/cli-platform-android-3.1.2.tgz#313644fba81b5d673cc803009e1eddc930b9618c"
+   -  integrity sha512-H30a00LLigsTh4eO0kc2YtaIkOJKrValWOU6n2VES3ZGS31qDx9GhZIwMCMcdzcSnypAyMAfauVatEmBSQZU7Q==
+   -  dependencies:
+   -    "@react-native-community/cli-tools" "^3.0.0"
+   -    chalk "^2.4.2"
+   ```
+
 2. If you don't use lock files – remove `node_modules` and run `yarn install` / `npm install` again.
 3. Run `yarn list --pattern @react-native-community/cli` or `npm list @react-native-community/cli` and verify you're on the latest version.
 

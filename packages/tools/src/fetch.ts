@@ -25,7 +25,7 @@ async function unwrapFetchResult(response: Response) {
  * Downloads the given `url` to the OS's temp folder and
  * returns the path to it.
  */
-const fetchToTemp = (url: string) => {
+const fetchToTemp = (url: string): Promise<string> => {
   try {
     return new Promise((resolve, reject) => {
       const fileName = path.basename(url);

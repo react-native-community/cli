@@ -1,32 +1,25 @@
 import {Ora} from 'ora';
 
+type NotFound = 'Not Found';
+type AvailableInformation = {
+  version: string;
+  path: string;
+};
+
+type Information = AvailableInformation | NotFound;
+
 export type EnvironmentInfo = {
   System: {
     OS: string;
     CPU: string;
     Memory: string;
-    Shell: {
-      version: string;
-      path: string;
-    };
+    Shell: AvailableInformation;
   };
   Binaries: {
-    Node: {
-      version: string;
-      path: string;
-    };
-    Yarn: {
-      version: string;
-      path: string;
-    };
-    npm: {
-      version: string;
-      path: string;
-    };
-    Watchman: {
-      version: string;
-      path: string;
-    };
+    Node: AvailableInformation;
+    Yarn: AvailableInformation;
+    npm: AvailableInformation;
+    Watchman: AvailableInformation;
   };
   SDKs: {
     'iOS SDK': {
@@ -34,43 +27,24 @@ export type EnvironmentInfo = {
     };
     'Android SDK':
       | {
-          'API Levels': string[] | 'Not Found';
-          'Build Tools': string[] | 'Not Found';
-          'System Images': string[] | 'Not Found';
-          'Android NDK': string | 'Not Found';
+          'API Levels': string[] | NotFound;
+          'Build Tools': string[] | NotFound;
+          'System Images': string[] | NotFound;
+          'Android NDK': string | NotFound;
         }
-      | 'Not Found';
+      | NotFound;
   };
   IDEs: {
     'Android Studio': string;
-    Emacs: {
-      version: string;
-      path: string;
-    };
-    Nano: {
-      version: string;
-      path: string;
-    };
-    VSCode: {
-      version: string;
-      path: string;
-    };
-    Vim: {
-      version: string;
-      path: string;
-    };
-    Xcode: {
-      version: string;
-      path: string;
-    };
+    Emacs: AvailableInformation;
+    Nano: AvailableInformation;
+    VSCode: AvailableInformation;
+    Vim: AvailableInformation;
+    Xcode: AvailableInformation;
   };
   Languages: {
-    Python:
-      | {
-          version: string;
-          path: string;
-        }
-      | 'Not Found';
+    Java: Information;
+    Python: Information;
   };
 };
 
@@ -112,7 +86,7 @@ export type HealthCheckInterface = {
 export type HealthCheckResult = {
   label: string;
   needsToBeFixed: boolean;
-  version?: 'Not Found' | string;
+  version?: NotFound | string;
   versions?: [string] | string;
   versionRange?: string;
   description: string | undefined;

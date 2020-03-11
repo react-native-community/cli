@@ -461,14 +461,6 @@ Specify any additional asset extensions to be used by the packager
 
 Specify any additional source extensions to be used by the packager
 
-#### `--platforms [list]`
-
-Specify any additional platforms to be used by the packager
-
-#### `--providesModuleNodeModules [list]`
-
-Specify any npm packages that import dependencies with providesModule
-
 #### `--max-workers [number]`
 
 Specifies the maximum number of workers the worker-pool will spawn for transforming files. This defaults to the number of the cores available on your machine

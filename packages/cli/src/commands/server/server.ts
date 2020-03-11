@@ -53,18 +53,6 @@ export default {
       parse: (val: string) => val.split(','),
     },
     {
-      name: '--platforms [list]',
-      description:
-        'Specify any additional platforms to be used by the packager',
-      parse: (val: string) => val.split(','),
-    },
-    {
-      name: '--providesModuleNodeModules [list]',
-      description:
-        'Specify any npm packages that import dependencies with providesModule',
-      parse: (val: string) => val.split(','),
-    },
-    {
       name: '--max-workers [number]',
       description:
         'Specifies the maximum number of workers the worker-pool ' +

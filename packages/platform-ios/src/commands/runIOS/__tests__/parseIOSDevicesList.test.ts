@@ -30,6 +30,10 @@ describe('parseIOSDevicesList', () => {
 
     expect(devices).toEqual([
       {
+        name: 'Maxs MacBook Pro',
+        udid: '11111111-1111-1111-1111-111111111111',
+      },
+      {
         name: "Max's iPhone",
         udid: '11111111111111111111aaaaaaaaaaaaaaaaaaaa',
         version: '9.2',

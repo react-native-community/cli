@@ -9,13 +9,30 @@ import {Device} from '../../types';
 
 /**
  * Parses the output of `xcrun simctl list devices` command
+ * Expected text looks roughly like this:
+ * Known Devices:
+ * this-mac-device [ID]
+ * Some Apple Simulator (Version) [ID]
  */
 function parseIOSDevicesList(text: string): Array<Device> {
   const devices: Array<Device> = [];
 
-  text.split('\n').forEach(line => {
+  text.split('\n').forEach((line, index) => {
     const device = line.match(/(.*?) \((.*?)\) \[(.*?)\]/);
     const noSimulator = line.match(/(.*?) \((.*?)\) \[(.*?)\] \((.*?)\)/);
+
+    if (index === 1) {
+      const myMac = line.match(/(.*?) \[(.*?)\]/);
+      if (myMac) {
+        const name = myMac[1];
+        const udid = myMac[2];
+        devices.push({
+          udid,
+          name,
+        });
+      }
+    }
+
     if (device != null && noSimulator == null) {
       const name = device[1];
       const version = device[2];

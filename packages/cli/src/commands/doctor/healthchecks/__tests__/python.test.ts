@@ -1,25 +1,18 @@
 import execa from 'execa';
-import {cleanup} from '../../../../../../../jest/helpers';
 import python from '../python';
 import getEnvironmentInfo from '../../../../tools/envinfo';
 import {EnvironmentInfo} from '../../types';
 import {NoopLoader} from '../../../../tools/loader';
 import * as common from '../common';
 
-jest.mock('execa', () => jest.fn());
-
-const mockFetchToTemp = jest.fn();
-jest.mock('@react-native-community/cli-tools', () => {
-  return {
-    fetchToTemp: mockFetchToTemp,
-  };
-});
+jest.mock('execa');
+jest.mock('@react-native-community/cli-tools', () => ({
+  fetchToTemp: jest.fn(),
+}));
 
 const logSpy = jest.spyOn(common, 'logManualInstallation');
 
 describe('python', () => {
-  afterAll(() => cleanup('android/build.gradle'));
-
   let environmentInfo: EnvironmentInfo;
 
   beforeAll(async () => {

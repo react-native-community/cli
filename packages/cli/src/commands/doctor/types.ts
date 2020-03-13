@@ -64,6 +64,14 @@ export type EnvironmentInfo = {
       path: string;
     };
   };
+  Languages: {
+    Python:
+      | {
+          version: string;
+          path: string;
+        }
+      | 'Not Found';
+  };
 };
 
 export type HealthCheckCategory = {
@@ -95,6 +103,9 @@ export type HealthCheckInterface = {
     versionRange?: string;
     needsToBeFixed: boolean | string;
   }>;
+  win32AutomaticFix?: RunAutomaticFix;
+  darwinAutomaticFix?: RunAutomaticFix;
+  linuxAutomaticFix?: RunAutomaticFix;
   runAutomaticFix: RunAutomaticFix;
 };
 

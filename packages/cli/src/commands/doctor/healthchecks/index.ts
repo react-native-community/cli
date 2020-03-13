@@ -1,5 +1,6 @@
 import nodeJS from './nodeJS';
 import {yarn, npm} from './packageManagers';
+import python from './python';
 import watchman from './watchman';
 import androidHomeEnvVariable from './androidHomeEnvVariable';
 import androidSDK from './androidSDK';
@@ -27,6 +28,7 @@ export const getHealthchecks = ({contributor}: Options): Healthchecks => ({
       yarn,
       npm,
       ...(process.platform === 'darwin' ? [watchman] : []),
+      ...(process.platform === 'win32' ? [python] : []),
     ],
   },
   android: {

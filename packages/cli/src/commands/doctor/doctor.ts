@@ -9,6 +9,7 @@ import {
   HealthCheckCategory,
   HealthCheckCategoryResult,
   HealthCheckResult,
+  HealthCheckInterface,
 } from './types';
 import getEnvironmentInfo from '../../tools/envinfo';
 import {logMessage} from './healthchecks/common';
@@ -89,6 +90,26 @@ type FlagsT = {
   contributor: boolean | void;
 };
 
+/**
+ * Given a `healthcheck` and a `platform`, returns the specific fix for
+ * it or the fallback one if there is not one (`runAutomaticFix`).
+ */
+const getAutomaticFixForPlatform = (
+  healthcheck: HealthCheckInterface,
+  platform: NodeJS.Platform,
+) => {
+  switch (platform) {
+    case 'win32':
+      return healthcheck.win32AutomaticFix || healthcheck.runAutomaticFix;
+    case 'darwin':
+      return healthcheck.darwinAutomaticFix || healthcheck.runAutomaticFix;
+    case 'linux':
+      return healthcheck.linuxAutomaticFix || healthcheck.runAutomaticFix;
+    default:
+      return healthcheck.runAutomaticFix;
+  }
+};
+
 export default (async (_, __, options) => {
   const Loader = getLoader();
   const loader = new Loader();
@@ -126,7 +147,10 @@ export default (async (_, __, options) => {
           versions,
           versionRange,
           description: healthcheck.description,
-          runAutomaticFix: healthcheck.runAutomaticFix,
+          runAutomaticFix: getAutomaticFixForPlatform(
+            healthcheck,
+            process.platform,
+          ),
           isRequired,
           type: needsToBeFixed
             ? isWarning

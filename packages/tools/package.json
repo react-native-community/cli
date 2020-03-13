@@ -10,12 +10,12 @@
     "chalk": "^3.0.0",
     "lodash": "^4.17.15",
     "mime": "^2.4.1",
-    "node-fetch": "^2.5.0"
+    "node-fetch": "^2.6.0"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.149",
     "@types/mime": "^2.0.1",
-    "@types/node-fetch": "^2.3.3"
+    "@types/node-fetch": "^2.5.5"
   },
   "files": [
     "build",

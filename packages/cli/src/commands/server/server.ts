@@ -41,12 +41,6 @@ export default {
       parse: (val: string) => val.split(','),
     },
     {
-      name: '--assetExts [list]',
-      description:
-        'Specify any additional asset extensions to be used by the packager',
-      parse: (val: string) => val.split(','),
-    },
-    {
       name: '--sourceExts [list]',
       description:
         'Specify any additional source extensions to be used by the packager',

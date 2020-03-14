@@ -453,10 +453,6 @@ Path to a custom project root
 
 Specify any additional folders to be added to the watch list
 
-#### `--assetExts [list]`
-
-Specify any additional asset extensions to be used by the packager
-
 #### `--sourceExts [list]`
 
 Specify any additional source extensions to be used by the packager

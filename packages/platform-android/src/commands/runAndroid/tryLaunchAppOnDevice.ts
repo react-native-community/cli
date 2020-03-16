@@ -16,8 +16,10 @@ function tryLaunchAppOnDevice(
   adbPath: string,
   args: Flags,
 ) {
-  const appId = args.appId || args.appIdSuffix;
-  const packageNameWithSuffix = appId ? `${packageName}.${appId}` : packageName;
+  const {appId, appIdSuffix} = args;
+  const packageNameWithSuffix = [appId || packageName, appIdSuffix]
+    .filter(Boolean)
+    .join('.');
 
   try {
     const adbArgs = [

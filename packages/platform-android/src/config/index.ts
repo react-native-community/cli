@@ -131,7 +131,7 @@ export function dependencyConfig(
   const appName = userConfig.appName || 'app';
   const manifestPath = userConfig.manifestPath
     ? path.join(sourceDir, userConfig.manifestPath)
-    : findManifest(path.join(sourceDir, appName));
+    : findManifest(sourceDir);
 
   if (!manifestPath) {
     return null;

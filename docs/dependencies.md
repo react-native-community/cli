@@ -111,10 +111,6 @@ See [`script_phase` options](https://www.rubydoc.info/gems/cocoapods-core/Pod/Po
 
 A relative path to a folder with Android project (Gradle root project), e.g. `./path/to/custom-android`. By default, CLI searches for `./android` as source dir.
 
-#### platforms.android.appName
-
-A name of the app in the Android `sourceDir`, equivalent to Gradle project name. By default it's `app`.
-
 #### platforms.android.manifestPath
 
 Path to a custom `AndroidManifest.xml`

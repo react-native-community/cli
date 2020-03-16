@@ -59,7 +59,6 @@ export const dependencyConfig = t
                 manifestPath: t.string(),
                 packageImportPath: t.string(),
                 packageInstance: t.string(),
-                appName: t.string(),
               })
               .default({}),
           })
@@ -127,7 +126,6 @@ export const projectConfig = t
                 folder: t.string(),
                 packageImportPath: t.string(),
                 packageInstance: t.string(),
-                appName: t.string(),
               })
               .allow(null),
           }),
@@ -164,6 +162,7 @@ export const projectConfig = t
             settingsGradlePath: t.string(),
             assetsPath: t.string(),
             buildGradlePath: t.string(),
+            appName: t.string(),
           })
           .default({}),
       })

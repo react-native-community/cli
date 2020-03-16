@@ -6,23 +6,26 @@
  *
  */
 
-import {spawnSync} from 'child_process';
+import execa from 'execa';
+import {Flags} from '.';
 import {logger, CLIError} from '@react-native-community/cli-tools';
 
 function tryLaunchAppOnDevice(
   device: string | void,
-  packageNameWithSuffix: string,
   packageName: string,
   adbPath: string,
-  mainActivity: string,
+  args: Flags,
 ) {
+  const appId = args.appId || args.appIdSuffix;
+  const packageNameWithSuffix = appId ? `${packageName}.${appId}` : packageName;
+
   try {
     const adbArgs = [
       'shell',
       'am',
       'start',
       '-n',
-      `${packageNameWithSuffix}/${packageName}.${mainActivity}`,
+      `${packageNameWithSuffix}/${packageName}.${args.mainActivity}`,
     ];
     if (device) {
       adbArgs.unshift('-s', device);
@@ -31,7 +34,7 @@ function tryLaunchAppOnDevice(
       logger.info('Starting the app...');
     }
     logger.debug(`Running command "${adbPath} ${adbArgs.join(' ')}"`);
-    spawnSync(adbPath, adbArgs, {stdio: 'inherit'});
+    execa.sync(adbPath, adbArgs, {stdio: 'inherit'});
   } catch (error) {
     throw new CLIError('Failed to start the app.', error);
   }

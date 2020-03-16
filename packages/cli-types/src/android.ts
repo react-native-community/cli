@@ -20,7 +20,6 @@ export interface AndroidDependencyConfig {
   folder: string;
   packageImportPath: string;
   packageInstance: string;
-  appName: string;
   manifestPath: string;
   packageName: string;
 }

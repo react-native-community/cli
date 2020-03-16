@@ -128,10 +128,9 @@ export function dependencyConfig(
   }
 
   const sourceDir = path.join(root, src);
-  const appName = userConfig.appName || 'app';
   const manifestPath = userConfig.manifestPath
     ? path.join(sourceDir, userConfig.manifestPath)
-    : findManifest(path.join(sourceDir, appName));
+    : findManifest(sourceDir);
 
   if (!manifestPath) {
     return null;
@@ -155,5 +154,5 @@ export function dependencyConfig(
   const packageInstance =
     userConfig.packageInstance || `new ${packageClassName}()`;
 
-  return {sourceDir, appName, folder: root, packageImportPath, packageInstance};
+  return {sourceDir, folder: root, packageImportPath, packageInstance};
 }

@@ -2,7 +2,7 @@ import path from 'path';
 
 import {
   spawnScript,
-  runCli,
+  runCLI,
   getTempDirectory,
   cleanup,
   writeFiles,
@@ -23,17 +23,17 @@ beforeAll(() => {
   writeFiles(cwd, {});
 
   // Initialise React Native project
-  runCli(cwd, ['init', 'TestProject']);
+  runCLI(cwd, ['init', 'TestProject']);
 
   // Link CLI to the project
-  for (const pkg of [
+  const pkgs = [
     '@react-native-community/cli-platform-ios',
     '@react-native-community/cli-platform-android',
-  ]) {
-    spawnScript('yarn', ['link', pkg], {
-      cwd: path.join(cwd, 'TestProject'),
-    });
-  }
+  ];
+
+  spawnScript('yarn', ['link', ...pkgs], {
+    cwd: path.join(cwd, 'TestProject'),
+  });
 });
 
 afterAll(() => {

@@ -21,7 +21,7 @@ type RunOptions = {
 /**
  * Helper function to run CLI command in a given folder
  */
-export function runCli(
+export function runCLI(
   dir: string,
   args?: string[],
   options: RunOptions = {

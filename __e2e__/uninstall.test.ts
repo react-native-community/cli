@@ -1,4 +1,9 @@
-import {run, getTempDirectory, cleanup, writeFiles} from '../jest/helpers';
+import {
+  runCLICommand,
+  getTempDirectory,
+  cleanup,
+  writeFiles,
+} from '../jest/helpers';
 
 const DIR = getTempDirectory('command-uninstall-test');
 const pkg = 'react-native-config';
@@ -23,7 +28,9 @@ test('uninstall fails when package is not defined', () => {
       "dependencies": {}
     }`,
   });
-  const {stderr, code} = run(DIR, ['uninstall'], {expectedFailure: true});
+  const {stderr, code} = runCLICommand(DIR, ['uninstall'], {
+    expectedFailure: true,
+  });
 
   expect(stderr).toContain('missing required argument');
   expect(code).toBe(1);
@@ -35,7 +42,9 @@ test('uninstall fails when package is not installed', () => {
       "dependencies": {}
     }`,
   });
-  const {stderr, code} = run(DIR, ['uninstall', pkg], {expectedFailure: true});
+  const {stderr, code} = runCLICommand(DIR, ['uninstall', pkg], {
+    expectedFailure: true,
+  });
 
   expect(stderr).toContain(`Failed to unlink "${pkg}".`);
   expect(code).toBe(1);
@@ -45,7 +54,7 @@ test.each(['yarn', 'npm'])('uninstall module with %s', pm => {
   if (pm === 'yarn') {
     writeFiles(DIR, {'yarn.lock': ''});
   }
-  const {stdout, code} = run(DIR, ['uninstall', pkg]);
+  const {stdout, code} = runCLICommand(DIR, ['uninstall', pkg]);
 
   expect(stdout).toContain(`Unlinking "${pkg}"`);
   expect(stdout).toContain(`Uninstalling "${pkg}"`);

@@ -1,6 +1,11 @@
 import fs from 'fs';
 import path from 'path';
-import {run, getTempDirectory, cleanup, writeFiles} from '../jest/helpers';
+import {
+  runCLICommand,
+  getTempDirectory,
+  cleanup,
+  writeFiles,
+} from '../jest/helpers';
 
 const DIR = getTempDirectory('command-init');
 
@@ -35,7 +40,7 @@ afterEach(() => {
 });
 
 test('init --template fails without package name', () => {
-  const {stderr} = run(
+  const {stderr} = runCLICommand(
     DIR,
     ['init', '--template', 'react-native-new-template'],
     {expectedFailure: true},
@@ -50,7 +55,7 @@ test('init --template filepath', () => {
     templatePath = templatePath.split('\\').join('/');
   }
 
-  const {stdout} = run(DIR, [
+  const {stdout} = runCLICommand(DIR, [
     'init',
     '--template',
     `file://${templatePath}`,
@@ -76,7 +81,7 @@ test('init --template file with custom directory', () => {
     templatePath = templatePath.split('\\').join('/');
   }
 
-  const {stdout} = run(DIR, [
+  const {stdout} = runCLICommand(DIR, [
     'init',
     '--template',
     `file://${templatePath}`,

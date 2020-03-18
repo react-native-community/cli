@@ -11,27 +11,27 @@ import {Writable} from 'readable-stream';
 
 const CLI_PATH = path.resolve(__dirname, '../packages/cli/build/bin.js');
 
-type RunOptions = {
+type RunCLICommandOptions = {
   nodeOptions?: string;
   nodePath?: string;
   timeout?: number; // kill the process after X milliseconds
   expectedFailure?: boolean;
 };
 
-type CLIArgs = {
-  dir: string;
-  args: string[] | undefined;
-  options: RunOptions;
-};
-
-export function run(
+/**
+ * Helper function to run CLI command in a given folder
+ */
+export function runCLICommand(
   dir: string,
   args?: string[],
-  options: RunOptions = {
+  options: RunCLICommandOptions = {
     expectedFailure: false,
   },
 ) {
-  return spawnCli(dir, args, options);
+  return spawnScript(process.execPath, [CLI_PATH, ...(args || [])], {
+    ...options,
+    cwd: dir,
+  });
 }
 
 // Runs cli until a given output is achieved, then kills it with `SIGTERM`
@@ -39,11 +39,15 @@ export async function runUntil(
   dir: string,
   args: string[] | undefined,
   text: string,
-  options: RunOptions = {
+  options: RunCLICommandOptions = {
     expectedFailure: false,
   },
 ) {
-  const spawnPromise = spawnCliAsync(dir, args, {timeout: 30000, ...options});
+  const spawnPromise = spawnScriptAsync(dir, args || [], {
+    timeout: 30000,
+    cwd: dir,
+    ...options,
+  });
 
   spawnPromise.stderr.pipe(
     new Writable({
@@ -119,33 +123,45 @@ export const copyDir = (src: string, dest: string) => {
 export const getTempDirectory = (name: string) =>
   path.resolve(os.tmpdir(), name);
 
-function spawnCli(dir: string, args?: string[], options: RunOptions = {}) {
-  const {spawnArgs, spawnOptions} = getCliArguments({dir, args, options});
+type SpawnOptions = RunCLICommandOptions & {
+  cwd: string;
+};
 
-  const result = execa.sync(process.execPath, spawnArgs, spawnOptions);
+type SpawnFunction<T> = (
+  execPath: string,
+  args: string[],
+  options: SpawnOptions,
+) => T;
 
-  handleTestCliFailure(options, result, dir, args);
+export const spawnScript: SpawnFunction<execa.ExecaReturns> = (
+  execPath,
+  args,
+  options,
+) => {
+  const result = execa.sync(execPath, args, getExecaOptions(options));
+
+  handleTestFailure(options, result, args);
 
   return result;
-}
+};
 
-function spawnCliAsync(dir: string, args?: string[], options: RunOptions = {}) {
-  const {spawnArgs, spawnOptions} = getCliArguments({dir, args, options});
-
+const spawnScriptAsync: SpawnFunction<execa.ExecaChildProcess> = (
+  execPath,
+  args,
+  options,
+) => {
   try {
-    return execa(process.execPath, spawnArgs, spawnOptions);
+    return execa(execPath, args, getExecaOptions(options));
   } catch (result) {
-    handleTestCliFailure(options, result, dir, args);
+    handleTestFailure(options, result, args);
     return result;
   }
-}
+};
 
-function getCliArguments({dir, args, options}: CLIArgs) {
-  const isRelative = !path.isAbsolute(dir);
+function getExecaOptions(options: SpawnOptions) {
+  const isRelative = !path.isAbsolute(options.cwd);
 
-  if (isRelative) {
-    dir = path.resolve(__dirname, dir);
-  }
+  const cwd = isRelative ? path.resolve(__dirname, options.cwd) : options.cwd;
 
   const env = Object.assign({}, process.env, {FORCE_COLOR: '0'});
 
@@ -156,25 +172,22 @@ function getCliArguments({dir, args, options}: CLIArgs) {
     env.NODE_PATH = options.nodePath;
   }
 
-  const spawnArgs = [CLI_PATH, ...(args || [])];
-  const spawnOptions = {
-    cwd: dir,
+  return {
+    cwd,
     env,
     reject: false,
     timeout: options.timeout || 0,
   };
-  return {spawnArgs, spawnOptions};
 }
 
-function handleTestCliFailure(
+function handleTestFailure(
   options: RunOptions,
   result: {[key: string]: any},
-  dir: string,
   args: string[] | undefined,
 ) {
   if (!options.expectedFailure && result.code !== 0) {
-    console.log(`Running CLI failed for unexpected reason. Here's more info:
-${chalk.bold('dir:')}    ${dir}
+    console.log(`Running failed for unexpected reason. Here's more info:
+${chalk.bold('options:')}${options}
 ${chalk.bold('args:')}   ${(args || []).join(' ')}
 ${chalk.bold('stderr:')} ${result.stderr}
 ${chalk.bold('stdout:')} ${result.stdout}

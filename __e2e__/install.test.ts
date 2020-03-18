@@ -1,5 +1,10 @@
 import path from 'path';
-import {run, getTempDirectory, cleanup, writeFiles} from '../jest/helpers';
+import {
+  runCLICommand,
+  getTempDirectory,
+  cleanup,
+  writeFiles,
+} from '../jest/helpers';
 
 const DIR = getTempDirectory('command-install-test');
 const pkg = 'react-native-config';
@@ -17,7 +22,7 @@ test.each(['yarn', 'npm'])('install module with %s', pm => {
   if (pm === 'yarn') {
     writeFiles(DIR, {'yarn.lock': ''});
   }
-  const {stdout, code} = run(DIR, ['install', pkg]);
+  const {stdout, code} = runCLICommand(DIR, ['install', pkg]);
 
   expect(stdout).toContain(`Installing "${pkg}"`);
   expect(stdout).toContain(`Linking "${pkg}"`);

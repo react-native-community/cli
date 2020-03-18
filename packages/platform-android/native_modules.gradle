@@ -2,7 +2,6 @@ import groovy.json.JsonSlurper
 import org.gradle.initialization.DefaultSettings
 import org.apache.tools.ant.taskdefs.condition.Os
 
-def jsAppDir = buildscript.sourceFile.toString().split("node_modules(/|\\\\)@react-native-community(/|\\\\)cli-platform-android")[0]
 def generatedFileName = "PackageList.java"
 def generatedFilePackage = "com.facebook.react"
 def generatedFileContentsTemplate = """
@@ -72,14 +71,14 @@ public class PackageList {
 class ReactNativeModules {
   private Logger logger
   private String packageName
-  private String jsAppDir
+  private String root
   private ArrayList<HashMap<String, String>> reactNativeModules
 
   private static String LOG_PREFIX = ":ReactNative:"
 
-  ReactNativeModules(Logger logger, String jsAppDir) {
+  ReactNativeModules(Logger logger, String root) {
     this.logger = logger
-    this.jsAppDir = jsAppDir
+    this.root = root
 
     def (nativeModules, packageName) = this.getReactNativeConfig()
     this.reactNativeModules = nativeModules
@@ -148,10 +147,10 @@ class ReactNativeModules {
    * Runs a specified command using Runtime exec() in a specified directory.
    * Throws when the command result is empty.
    */
-  String getCommandOutput(String[] command) {
+  String getCommandOutput(String[] command, String directory) {
     try {
       def output = ""
-      def cmdProcess = Runtime.getRuntime().exec(command)
+      def cmdProcess = Runtime.getRuntime().exec(command, null, new File(directory))
       def bufferedReader = new BufferedReader(new InputStreamReader(cmdProcess.getInputStream()))
       def buff = ""
       def readBuffer = new StringBuffer()
@@ -194,10 +193,10 @@ class ReactNativeModules {
      */
     def cliResolveScript = "console.log(require('react-native/cli').bin);"
     String[] nodeCommand = ["node", "-e", cliResolveScript]
-    def cliPath = this.getCommandOutput(nodeCommand)
+    def cliPath = this.getCommandOutput(nodeCommand, this.root)
 
     String[] reactNativeConfigCommand = ["node", cliPath, "config"]
-    def reactNativeConfigOutput = this.getCommandOutput(reactNativeConfigCommand)
+    def reactNativeConfigOutput = this.getCommandOutput(reactNativeConfigCommand, this.root)
 
     def json
     try {
@@ -237,11 +236,18 @@ class ReactNativeModules {
   }
 }
 
+
+/*
+ * Sometimes Gradle can be called outside of JavaScript hierarchy. Detect the directory
+ * where build files of an active project are located.
+ */
+def projectRoot = rootProject.projectDir.toString()
+
+def autoModules = new ReactNativeModules(logger, projectRoot)
+
 /** -----------------------
  *    Exported Extensions
  * ------------------------ */
-
-def autoModules = new ReactNativeModules(logger, jsAppDir)
 
 ext.applyNativeModulesSettingsGradle = { DefaultSettings defaultSettings, String root = null ->
   if (root != null) {

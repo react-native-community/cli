@@ -11,7 +11,7 @@ import {Writable} from 'readable-stream';
 
 const CLI_PATH = path.resolve(__dirname, '../packages/cli/build/bin.js');
 
-type RunCLICommandOptions = {
+type RunCliOptions = {
   nodeOptions?: string;
   nodePath?: string;
   timeout?: number; // kill the process after X milliseconds
@@ -21,10 +21,10 @@ type RunCLICommandOptions = {
 /**
  * Helper function to run CLI command in a given folder
  */
-export function runCLICommand(
+export function runCli(
   dir: string,
   args?: string[],
-  options: RunCLICommandOptions = {
+  options: RunCliOptions = {
     expectedFailure: false,
   },
 ) {
@@ -39,7 +39,7 @@ export async function runUntil(
   dir: string,
   args: string[] | undefined,
   text: string,
-  options: RunCLICommandOptions = {
+  options: RunCliOptions = {
     expectedFailure: false,
   },
 ) {
@@ -123,7 +123,7 @@ export const copyDir = (src: string, dest: string) => {
 export const getTempDirectory = (name: string) =>
   path.resolve(os.tmpdir(), name);
 
-type SpawnOptions = RunCLICommandOptions & {
+type SpawnOptions = RunCliOptions & {
   cwd: string;
 };
 

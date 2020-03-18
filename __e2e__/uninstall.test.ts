@@ -1,9 +1,4 @@
-import {
-  runCLICommand,
-  getTempDirectory,
-  cleanup,
-  writeFiles,
-} from '../jest/helpers';
+import {runCli, getTempDirectory, cleanup, writeFiles} from '../jest/helpers';
 
 const DIR = getTempDirectory('command-uninstall-test');
 const pkg = 'react-native-config';
@@ -28,7 +23,7 @@ test('uninstall fails when package is not defined', () => {
       "dependencies": {}
     }`,
   });
-  const {stderr, code} = runCLICommand(DIR, ['uninstall'], {
+  const {stderr, code} = runCli(DIR, ['uninstall'], {
     expectedFailure: true,
   });
 
@@ -42,7 +37,7 @@ test('uninstall fails when package is not installed', () => {
       "dependencies": {}
     }`,
   });
-  const {stderr, code} = runCLICommand(DIR, ['uninstall', pkg], {
+  const {stderr, code} = runCli(DIR, ['uninstall', pkg], {
     expectedFailure: true,
   });
 
@@ -54,7 +49,7 @@ test.each(['yarn', 'npm'])('uninstall module with %s', pm => {
   if (pm === 'yarn') {
     writeFiles(DIR, {'yarn.lock': ''});
   }
-  const {stdout, code} = runCLICommand(DIR, ['uninstall', pkg]);
+  const {stdout, code} = runCli(DIR, ['uninstall', pkg]);
 
   expect(stdout).toContain(`Unlinking "${pkg}"`);
   expect(stdout).toContain(`Uninstalling "${pkg}"`);

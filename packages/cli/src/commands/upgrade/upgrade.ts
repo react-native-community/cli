@@ -135,9 +135,7 @@ const getVersionToUpgradeTo = async (
 
   if (!newVersion) {
     logger.error(
-      `Provided version "${
-        argv[0]
-      }" is not allowed. Please pass a valid semver version`,
+      `Provided version "${argv[0]}" is not allowed. Please pass a valid semver version`,
     );
     return null;
   }
@@ -194,10 +192,7 @@ const installDeps = async (root: string, newVersion: string) => {
   }
 };
 
-const installCocoaPodsDeps = async (
-  projectDir: string,
-  thirdPartyIOSDeps: Array<Config['dependencies'][string]>,
-) => {
+const installCocoaPodsDeps = async (projectDir: string) => {
   if (process.platform === 'darwin') {
     try {
       logger.info(
@@ -207,14 +202,11 @@ const installCocoaPodsDeps = async (
       );
       await installPods({
         projectName: projectDir.split('/').pop() || '',
-        shouldUpdatePods: thirdPartyIOSDeps.length > 0,
       });
     } catch (error) {
       if (error.stderr) {
         logger.debug(
-          `"pod install" or "pod repo update" failed. Error output:\n${
-            error.stderr
-          }`,
+          `"pod install" or "pod repo update" failed. Error output:\n${error.stderr}`,
         );
       }
       logger.error(
@@ -323,9 +315,6 @@ async function upgrade(argv: Array<string>, ctx: Config) {
     projectDir,
     'node_modules/react-native/package.json',
   ));
-  const thirdPartyIOSDeps = Object.values(ctx.dependencies).filter(
-    dependency => dependency.platforms.ios,
-  );
 
   const newVersion = await getVersionToUpgradeTo(
     argv,
@@ -346,7 +335,7 @@ async function upgrade(argv: Array<string>, ctx: Config) {
   if (patch === '') {
     logger.info('Diff has no changes to apply, proceeding further');
     await installDeps(projectDir, newVersion);
-    await installCocoaPodsDeps(projectDir, thirdPartyIOSDeps);
+    await installCocoaPodsDeps(projectDir);
 
     logger.success(
       `Upgraded React Native to v${newVersion} 🎉. Now you can review and commit the changes`,
@@ -382,7 +371,7 @@ async function upgrade(argv: Array<string>, ctx: Config) {
       }
     } else {
       await installDeps(projectDir, newVersion);
-      await installCocoaPodsDeps(projectDir, thirdPartyIOSDeps);
+      await installCocoaPodsDeps(projectDir);
       logger.info('Running "git status" to check what changed...');
       await execa('git', ['status'], {stdio: 'inherit'});
     }

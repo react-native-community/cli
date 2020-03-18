@@ -11,7 +11,7 @@ import {Writable} from 'readable-stream';
 
 const CLI_PATH = path.resolve(__dirname, '../packages/cli/build/bin.js');
 
-type RunCliOptions = {
+type RunOptions = {
   nodeOptions?: string;
   nodePath?: string;
   timeout?: number; // kill the process after X milliseconds
@@ -24,7 +24,7 @@ type RunCliOptions = {
 export function runCli(
   dir: string,
   args?: string[],
-  options: RunCliOptions = {
+  options: RunOptions = {
     expectedFailure: false,
   },
 ) {
@@ -39,7 +39,7 @@ export async function runUntil(
   dir: string,
   args: string[] | undefined,
   text: string,
-  options: RunCliOptions = {
+  options: RunOptions = {
     expectedFailure: false,
   },
 ) {
@@ -123,7 +123,7 @@ export const copyDir = (src: string, dest: string) => {
 export const getTempDirectory = (name: string) =>
   path.resolve(os.tmpdir(), name);
 
-type SpawnOptions = RunCliOptions & {
+type SpawnOptions = RunOptions & {
   cwd: string;
 };
 
@@ -188,11 +188,11 @@ function handleTestFailure(
 ) {
   if (!options.expectedFailure && result.code !== 0) {
     console.log(`Running ${cmd} command failed for unexpected reason. Here's more info:
-${chalk.bold('cmd:')}    ${cmd}    
-${chalk.bold('options:')}${JSON.stringify(options)}
-${chalk.bold('args:')}   ${(args || []).join(' ')}
-${chalk.bold('stderr:')} ${result.stderr}
-${chalk.bold('stdout:')} ${result.stdout}
-${chalk.bold('code:')}   ${result.code}`);
+${chalk.bold('cmd:')}     ${cmd}    
+${chalk.bold('options:')} ${JSON.stringify(options)}
+${chalk.bold('args:')}    ${(args || []).join(' ')}
+${chalk.bold('stderr:')}  ${result.stderr}
+${chalk.bold('stdout:')}  ${result.stdout}
+${chalk.bold('code:')}    ${result.code}`);
   }
 }

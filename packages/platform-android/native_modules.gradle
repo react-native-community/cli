@@ -71,12 +71,12 @@ public class PackageList {
 class ReactNativeModules {
   private Logger logger
   private String packageName
-  private String root
+  private File root
   private ArrayList<HashMap<String, String>> reactNativeModules
 
   private static String LOG_PREFIX = ":ReactNative:"
 
-  ReactNativeModules(Logger logger, String root) {
+  ReactNativeModules(Logger logger, File root) {
     this.logger = logger
     this.root = root
 
@@ -147,10 +147,10 @@ class ReactNativeModules {
    * Runs a specified command using Runtime exec() in a specified directory.
    * Throws when the command result is empty.
    */
-  String getCommandOutput(String[] command, String directory) {
+  String getCommandOutput(String[] command, File directory) {
     try {
       def output = ""
-      def cmdProcess = Runtime.getRuntime().exec(command, null, new File(directory))
+      def cmdProcess = Runtime.getRuntime().exec(command, null, directory)
       def bufferedReader = new BufferedReader(new InputStreamReader(cmdProcess.getInputStream()))
       def buff = ""
       def readBuffer = new StringBuffer()
@@ -241,7 +241,7 @@ class ReactNativeModules {
  * Sometimes Gradle can be called outside of JavaScript hierarchy. Detect the directory
  * where build files of an active project are located.
  */
-def projectRoot = rootProject.projectDir.toString()
+def projectRoot = rootProject.projectDir
 
 def autoModules = new ReactNativeModules(logger, projectRoot)
 

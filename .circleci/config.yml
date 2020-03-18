@@ -16,6 +16,10 @@ executors:
     <<: *defaults
     docker:
       - image: circleci/ruby:2.4-node
+  reactnative:
+    <<: *defaults
+    docker:
+      - image: reactnativecommunity/react-native-android
 
 commands:
   install-dependencies:
@@ -40,7 +44,7 @@ commands:
   install-cocoapods:
     steps:
       - attach_workspace:
-           at: ~/react-native-cli
+          at: ~/react-native-cli
       - run: gem install cocoapods
 
   run-lint:
@@ -86,7 +90,7 @@ jobs:
     steps:
       - run-unit-tests
   e2e-tests:
-    executor: node8
+    executor: reactnative
     steps:
       - run-e2e-tests
   lts-tests:

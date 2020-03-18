@@ -1,4 +1,4 @@
-import {run, getTempDirectory, cleanup, writeFiles} from '../jest/helpers';
+import {runCLI, getTempDirectory, cleanup, writeFiles} from '../jest/helpers';
 
 const DIR = getTempDirectory('test_default_behavior');
 
@@ -11,6 +11,6 @@ afterEach(() => {
 });
 
 test('shows up help information without passing in any args', () => {
-  const {stdout} = run(DIR);
+  const {stdout} = runCLI(DIR);
   expect(stdout).toMatchSnapshot();
 });

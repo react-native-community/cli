@@ -50,13 +50,13 @@
     "lerna": "^3.18.4",
     "metro-memory-fs": "^0.57.0",
     "micromatch": "^3.1.10",
-    "mkdirp": "^0.5.1",
+    "mkdirp": "^0.5.3",
     "rimraf": "^3.0.2",
     "string-length": "^2.0.0",
     "typescript": "^3.8.0"
   },
   "resolutions": {
-    "mkdirp": "^0.5.1",
+    "mkdirp": "^0.5.3",
     "@types/node": "^8.0.0"
   }
 }

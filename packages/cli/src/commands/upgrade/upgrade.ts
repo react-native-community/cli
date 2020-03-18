@@ -135,7 +135,9 @@ const getVersionToUpgradeTo = async (
 
   if (!newVersion) {
     logger.error(
-      `Provided version "${argv[0]}" is not allowed. Please pass a valid semver version`,
+      `Provided version "${
+        argv[0]
+      }" is not allowed. Please pass a valid semver version`,
     );
     return null;
   }
@@ -206,7 +208,9 @@ const installCocoaPodsDeps = async (projectDir: string) => {
     } catch (error) {
       if (error.stderr) {
         logger.debug(
-          `"pod install" or "pod repo update" failed. Error output:\n${error.stderr}`,
+          `"pod install" or "pod repo update" failed. Error output:\n${
+            error.stderr
+          }`,
         );
       }
       logger.error(

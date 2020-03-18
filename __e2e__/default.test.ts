@@ -12,5 +12,5 @@ afterEach(() => {
 
 test('shows up help information without passing in any args', () => {
   const {stdout} = runCli(DIR);
-  expect(stdout).toContain('BUILD SUCCESSFUL');
+  expect(stdout).toMatchSnapshot();
 });

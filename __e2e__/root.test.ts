@@ -38,9 +38,9 @@ beforeEach(() => {
   }
 });
 
-// afterEach(() => {
-//   cleanup(cwd);
-// });
+afterEach(() => {
+  cleanup(cwd);
+});
 
 test('works when Gradle is run outside of the project hierarchy', () => {
   /**
@@ -60,5 +60,5 @@ test('works when Gradle is run outside of the project hierarchy', () => {
     cwd: '/',
   });
 
-  expect(stdout).toMatchSnapshot();
+  expect(stdout).toContain('BUILD SUCCESSFUL');
 });

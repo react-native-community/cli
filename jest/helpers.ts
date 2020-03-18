@@ -140,7 +140,7 @@ export const spawnScript: SpawnFunction<execa.ExecaReturns> = (
 ) => {
   const result = execa.sync(execPath, args, getExecaOptions(options));
 
-  handleTestFailure(options, result, args);
+  handleTestFailure(execPath, options, result, args);
 
   return result;
 };
@@ -153,7 +153,7 @@ const spawnScriptAsync: SpawnFunction<execa.ExecaChildProcess> = (
   try {
     return execa(execPath, args, getExecaOptions(options));
   } catch (result) {
-    handleTestFailure(options, result, args);
+    handleTestFailure(execPath, options, result, args);
     return result;
   }
 };
@@ -181,13 +181,15 @@ function getExecaOptions(options: SpawnOptions) {
 }
 
 function handleTestFailure(
-  options: RunOptions,
+  cmd: string,
+  options: SpawnOptions,
   result: {[key: string]: any},
   args: string[] | undefined,
 ) {
   if (!options.expectedFailure && result.code !== 0) {
     console.log(`Running failed for unexpected reason. Here's more info:
-${chalk.bold('options:')}${options}
+${chalk.bold('cmd:')}    ${cmd}    
+${chalk.bold('options:')}${JSON.stringify(options)}
 ${chalk.bold('args:')}   ${(args || []).join(' ')}
 ${chalk.bold('stderr:')} ${result.stderr}
 ${chalk.bold('stdout:')} ${result.stdout}

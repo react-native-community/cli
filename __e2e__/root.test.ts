@@ -10,16 +10,14 @@ import {
 
 const cwd = getTempDirectory('test_different_roots');
 
-// Register all packages to be linked
 beforeAll(() => {
+  // Register all packages to be linked
   for (const pkg of ['platform-ios', 'platform-android']) {
     spawnScript('yarn', ['link'], {
       cwd: path.join(__dirname, `../packages/${pkg}`),
     });
   }
-});
 
-beforeEach(() => {
   // Clean up folder and re-create a new project
   cleanup(cwd);
   writeFiles(cwd, {});
@@ -38,7 +36,7 @@ beforeEach(() => {
   }
 });
 
-afterEach(() => {
+afterAll(() => {
   cleanup(cwd);
 });
 

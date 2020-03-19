@@ -134,22 +134,22 @@ class ReactNativeModules {
                 // let's prefix all non-FQDN references to those classes with
                 // the package name.
                 //
-                // We want to match:
+                // We want to match "R" or "BuildConfig":
                 //  - new Package(R.string…),
                 //  - Module.configure(BuildConfig);
                 //    ^ hence including (BuildConfig|R)
-                // but we don't want to match:
+                // but we don't want to match "R":
                 //  - new Package(getResources…),
                 //  - new PackageR…,
                 //  - new Royal…,
                 //    ^ hence excluding \w before and after matches
-                //  - Module.configure({{ packageName }}.BuildConfig);
+                // and "BuildConfig" that has FQDN reference:
+                //  - Module.configure(com.acme.BuildConfig);
                 //    ^ hence excluding . before the match.
                 .replaceAll(~/([^.\w])(BuildConfig|R)([^\w])/, {
                   wholeString, prefix, className, suffix ->
-                    "${prefix}{{ packageName }}.${className}${suffix}"
+                    "${prefix}packageName.${className}${suffix}"
                 })
-                .replace("{{ packageName }}", packageName)
       }
       packageImports = packages.collect {
         "// ${it.name}\n${interpolateDynamicValues(it.packageImportPath)}"

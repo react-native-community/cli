@@ -6,4 +6,6 @@ export interface Device {
   udid: string;
   version?: string;
   availabilityError?: string;
+  isSimulator?: boolean;
+  booted?: boolean;
 }

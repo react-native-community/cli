@@ -17,7 +17,7 @@ describe('findMatchingSimulator', () => {
       findMatchingSimulator(
         {
           devices: {
-            'iOS 9.2': [
+            'com.apple.CoreSimulator.SimRuntime.iOS-9-2': [
               {
                 state: 'Shutdown',
                 availability: '(available)',
@@ -51,7 +51,7 @@ describe('findMatchingSimulator', () => {
             ],
           },
         },
-        'iPhone 6',
+        {simulator: 'iPhone 6'},
       ),
     ).toEqual({
       udid: 'BA0D93BD-07E6-4182-9B0A-F60A2474139C',
@@ -66,7 +66,7 @@ describe('findMatchingSimulator', () => {
       findMatchingSimulator(
         {
           devices: {
-            'iOS 12.1': [
+            'com.apple.CoreSimulator.SimRuntime.iOS-12-1': [
               {
                 state: 'Shutdown',
                 isAvailable: true,
@@ -103,7 +103,7 @@ describe('findMatchingSimulator', () => {
             ],
           },
         },
-        'iPhone 6',
+        {simulator: 'iPhone 6'},
       ),
     ).toEqual({
       udid: 'BA0D93BD-07E6-4182-9B0A-F60A2474139C',
@@ -118,7 +118,7 @@ describe('findMatchingSimulator', () => {
       findMatchingSimulator(
         {
           devices: {
-            'iOS 9.2': [
+            'com.apple.CoreSimulator.SimRuntime.iOS-9-2': [
               {
                 state: 'Shutdown',
                 availability: '(unavailable, runtime profile not found)',
@@ -152,7 +152,7 @@ describe('findMatchingSimulator', () => {
             ],
           },
         },
-        'iPhone 6',
+        {simulator: 'iPhone 6'},
       ),
     ).toEqual(null);
   });
@@ -162,7 +162,7 @@ describe('findMatchingSimulator', () => {
       findMatchingSimulator(
         {
           devices: {
-            'iOS 9.2': [
+            'com.apple.CoreSimulator.SimRuntime.iOS-9-2': [
               {
                 state: 'Shutdown',
                 availability: '(unavailable, runtime profile not found)',
@@ -211,7 +211,7 @@ describe('findMatchingSimulator', () => {
       findMatchingSimulator(
         {
           devices: {
-            'iOS 9.2': [
+            'com.apple.CoreSimulator.SimRuntime.iOS-9-2': [
               {
                 state: 'Shutdown',
                 availability: '(unavailable, runtime profile not found)',
@@ -243,7 +243,7 @@ describe('findMatchingSimulator', () => {
                 udid: 'D0F29BE7-CC3C-4976-888D-C739B4F50508',
               },
             ],
-            'iOS 10.0': [
+            'com.apple.CoreSimulator.SimRuntime.iOS-10-0': [
               {
                 state: 'Shutdown',
                 availability: '(available)',
@@ -286,7 +286,7 @@ describe('findMatchingSimulator', () => {
       findMatchingSimulator(
         {
           devices: {
-            'iOS 9.2': [
+            'com.apple.CoreSimulator.SimRuntime.iOS-9-2': [
               {
                 state: 'Shutdown',
                 availability: '(unavailable, runtime profile not found)',
@@ -335,7 +335,7 @@ describe('findMatchingSimulator', () => {
       findMatchingSimulator(
         {
           devices: {
-            'iOS 9.2': [
+            'com.apple.CoreSimulator.SimRuntime.iOS-9-2': [
               {
                 state: 'Shutdown',
                 availability: '(unavailable, runtime profile not found)',
@@ -369,7 +369,7 @@ describe('findMatchingSimulator', () => {
             ],
           },
         },
-        'iPhone 6',
+        {simulator: 'iPhone 6'},
       ),
     ).toEqual({
       udid: 'BA0D93BD-07E6-4182-9B0A-F60A2474139C',
@@ -384,7 +384,7 @@ describe('findMatchingSimulator', () => {
       findMatchingSimulator(
         {
           devices: {
-            'iOS 9.2': [
+            'com.apple.CoreSimulator.SimRuntime.iOS-9-2': [
               {
                 state: 'Shutdown',
                 availability: '(unavailable, runtime profile not found)',
@@ -416,7 +416,7 @@ describe('findMatchingSimulator', () => {
                 udid: 'D0F29BE7-CC3C-4976-888D-C739B4F50508',
               },
             ],
-            'iOS 10.0': [
+            'com.apple.CoreSimulator.SimRuntime.iOS-10-0': [
               {
                 state: 'Shutdown',
                 availability: '(available)',
@@ -459,7 +459,7 @@ describe('findMatchingSimulator', () => {
       findMatchingSimulator(
         {
           devices: {
-            'iOS 9.2': [
+            'com.apple.CoreSimulator.SimRuntime.iOS-9-2': [
               {
                 state: 'Shutdown',
                 availability: '(unavailable, runtime profile not found)',
@@ -491,7 +491,7 @@ describe('findMatchingSimulator', () => {
                 udid: 'D0F29BE7-CC3C-4976-888D-C739B4F50508',
               },
             ],
-            'iOS 10.0': [
+            'com.apple.CoreSimulator.SimRuntime.iOS-10-0': [
               {
                 state: 'Shutdown',
                 availability: '(available)',
@@ -519,7 +519,7 @@ describe('findMatchingSimulator', () => {
             ],
           },
         },
-        'iPhone 6s',
+        {simulator: 'iPhone 6s'},
       ),
     ).toEqual({
       udid: 'D0F29BE7-CC3C-4976-888D-C739B4F50508',
@@ -534,7 +534,7 @@ describe('findMatchingSimulator', () => {
       findMatchingSimulator(
         {
           devices: {
-            'iOS 9.2': [
+            'com.apple.CoreSimulator.SimRuntime.iOS-9-2': [
               {
                 state: 'Shutdown',
                 availability: '(unavailable, runtime profile not found)',
@@ -566,7 +566,7 @@ describe('findMatchingSimulator', () => {
                 udid: 'D0F29BE7-CC3C-4976-888D-C739B4F50508',
               },
             ],
-            'iOS 10.0': [
+            'com.apple.CoreSimulator.SimRuntime.iOS-10-0': [
               {
                 state: 'Shutdown',
                 availability: '(available)',
@@ -594,7 +594,7 @@ describe('findMatchingSimulator', () => {
             ],
           },
         },
-        'iPhone 6s (10.0)',
+        {simulator: 'iPhone 6s (10.0)'},
       ),
     ).toEqual({
       udid: 'CBBB8FB8-77AB-49A9-8297-4CCFE3189C22',
@@ -609,7 +609,7 @@ describe('findMatchingSimulator', () => {
       findMatchingSimulator(
         {
           devices: {
-            'iOS 9.2': [
+            'com.apple.CoreSimulator.SimRuntime.iOS-9-2': [
               {
                 state: 'Shutdown',
                 availability: '(unavailable, runtime profile not found)',
@@ -641,7 +641,7 @@ describe('findMatchingSimulator', () => {
                 udid: 'D0F29BE7-CC3C-4976-888D-C739B4F50508',
               },
             ],
-            'iOS 10.0': [
+            'com.apple.CoreSimulator.SimRuntime.iOS-10-0': [
               {
                 state: 'Shutdown',
                 availability: '(available)',
@@ -663,7 +663,7 @@ describe('findMatchingSimulator', () => {
             ],
           },
         },
-        'iPhone 6s (10.0)',
+        {simulator: 'iPhone 6s (10.0)'},
       ),
     ).toEqual(null);
   });
@@ -673,7 +673,7 @@ describe('findMatchingSimulator', () => {
       findMatchingSimulator(
         {
           devices: {
-            'iOS 12.0': [
+            'com.apple.CoreSimulator.SimRuntime.iOS-12-0': [
               {
                 state: 'Shutdown',
                 availability: '(unavailable, runtime profile not found)',
@@ -711,7 +711,7 @@ describe('findMatchingSimulator', () => {
                 udid: 'B2141C1E-86B7-4A10-82A7-4956799526DF',
               },
             ],
-            'iOS 12.2': [
+            'com.apple.CoreSimulator.SimRuntime.iOS-12-2': [
               {
                 state: 'Shutdown',
                 availability: '(available)',
@@ -733,7 +733,7 @@ describe('findMatchingSimulator', () => {
             ],
           },
         },
-        'iPad Pro (9.7-inch)',
+        {simulator: 'iPad Pro (9.7-inch)'},
       ),
     ).toEqual({
       udid: 'B2141C1E-86B7-4A10-82A7-4956799526DF',
@@ -748,7 +748,7 @@ describe('findMatchingSimulator', () => {
       findMatchingSimulator(
         {
           devices: {
-            'iOS 12.0': [
+            'com.apple.CoreSimulator.SimRuntime.iOS-12-0': [
               {
                 state: 'Shutdown',
                 availability: '(unavailable, runtime profile not found)',
@@ -780,7 +780,7 @@ describe('findMatchingSimulator', () => {
                 udid: 'D0F29BE7-CC3C-4976-888D-C739B4F50508',
               },
             ],
-            'iOS 12.2': [
+            'com.apple.CoreSimulator.SimRuntime.iOS-12-2': [
               {
                 state: 'Shutdown',
                 availability: '(available)',
@@ -808,7 +808,7 @@ describe('findMatchingSimulator', () => {
             ],
           },
         },
-        'iPad Pro (9.7-inch) (12.2)',
+        {simulator: 'iPad Pro (9.7-inch) (12.2)'},
       ),
     ).toEqual({
       udid: 'B2141C1E-86B7-4A10-82A7-4956799526DF',
@@ -823,7 +823,7 @@ describe('findMatchingSimulator', () => {
       findMatchingSimulator(
         {
           devices: {
-            'iOS 12.0': [
+            'com.apple.CoreSimulator.SimRuntime.iOS-12-0': [
               {
                 state: 'Shutdown',
                 availability: '(unavailable, runtime profile not found)',
@@ -855,7 +855,7 @@ describe('findMatchingSimulator', () => {
                 udid: 'D0F29BE7-CC3C-4976-888D-C739B4F50508',
               },
             ],
-            'iOS 12.2': [
+            'com.apple.CoreSimulator.SimRuntime.iOS-12-2': [
               {
                 state: 'Shutdown',
                 availability: '(available)',
@@ -883,7 +883,7 @@ describe('findMatchingSimulator', () => {
             ],
           },
         },
-        'iPad Pro (9.7-inch) (12.0)',
+        {simulator: 'iPad Pro (9.7-inch) (12.0)'},
       ),
     ).toEqual(null);
   });
@@ -893,7 +893,7 @@ describe('findMatchingSimulator', () => {
       findMatchingSimulator(
         {
           devices: {
-            'tvOS 11.2': [
+            'com.apple.CoreSimulator.SimRuntime.tvOS-11-2': [
               {
                 state: 'Booted',
                 availability: '(available)',
@@ -915,13 +915,65 @@ describe('findMatchingSimulator', () => {
             ],
           },
         },
-        'Apple TV',
+        {simulator: 'Apple TV'},
       ),
     ).toEqual({
       udid: '816C30EA-38EA-41AC-BFDA-96FB632D522E',
       name: 'Apple TV',
       booted: true,
       version: 'tvOS 11.2',
+    });
+  });
+
+  it('should return a simulator by UDID', () => {
+    expect(
+      findMatchingSimulator(
+        {
+          devices: {
+            'com.apple.CoreSimulator.SimRuntime.iOS-12-1': [
+              {
+                state: 'Shutdown',
+                isAvailable: true,
+                name: 'iPhone 6s',
+                udid: 'D0F29BE7-CC3C-4976-888D-C739B4F50508',
+              },
+              {
+                state: 'Shutdown',
+                isAvailable: true,
+                name: 'iPhone 6',
+                udid: 'BA0D93BD-07E6-4182-9B0A-F60A2474139C',
+              },
+              {
+                state: 'Shutdown',
+                isAvailable: true,
+                name: 'iPhone XS Max',
+                udid: 'B9B5E161-416B-43C4-A78F-729CB96CC8C6',
+                availabilityError: '',
+              },
+              {
+                state: 'Shutdown',
+                isAvailable: true,
+                name: 'iPad Air',
+                udid: '1CCBBF8B-5773-4EA6-BD6F-C308C87A1ADB',
+                availabilityError: '',
+              },
+              {
+                state: 'Shutdown',
+                isAvailable: true,
+                name: 'iPad (5th generation)',
+                udid: '9564ABEE-9EC2-4B4A-B443-D3710929A45A',
+                availabilityError: '',
+              },
+            ],
+          },
+        },
+        {udid: 'BA0D93BD-07E6-4182-9B0A-F60A2474139C'},
+      ),
+    ).toEqual({
+      udid: 'BA0D93BD-07E6-4182-9B0A-F60A2474139C',
+      name: 'iPhone 6',
+      booted: false,
+      version: 'iOS 12.1',
     });
   });
 });

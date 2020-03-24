@@ -4,10 +4,10 @@ import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
 import {logManualInstallation} from './common';
 import {HealthCheckInterface} from '../types';
 
-import {updateEnvironment} from '../../../tools/environmentVariables';
+import {updateEnvironment} from '../../../tools/windows/environmentVariables';
 import {join} from 'path';
 import {Ora} from 'ora';
-import {executeCommand} from '../../../tools/executeWinCommand';
+import {executeCommand} from '../../../tools/windows/executeWinCommand';
 
 export default {
   label: 'Python',

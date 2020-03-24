@@ -4,6 +4,7 @@ import jdk from './jdk';
 import python from './python';
 import watchman from './watchman';
 import androidHomeEnvVariable from './androidHomeEnvVariable';
+import androidStudio from './androidStudio';
 import androidSDK from './androidSDK';
 import androidNDK from './androidNDK';
 import xcode from './xcode';
@@ -36,8 +37,9 @@ export const getHealthchecks = ({contributor}: Options): Healthchecks => ({
     label: 'Android',
     healthchecks: [
       jdk,
-      androidHomeEnvVariable,
+      androidStudio,
       androidSDK,
+      androidHomeEnvVariable,
       ...(contributor ? [androidNDK] : []),
     ],
   },

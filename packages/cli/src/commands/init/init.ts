@@ -3,7 +3,6 @@ import path from 'path';
 import fs from 'fs-extra';
 import minimist from 'minimist';
 import ora from 'ora';
-import semver from 'semver';
 import mkdirp from 'mkdirp';
 import {validateProjectName} from './validate';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
@@ -172,16 +171,6 @@ async function createProject(
   options: Options,
 ) {
   const templateName = options.template || `react-native@${version}`;
-
-  if (
-    version !== DEFAULT_VERSION &&
-    semver.valid(version) &&
-    !semver.gte(version, '0.60.0-rc.0')
-  ) {
-    throw new Error(
-      'Cannot use React Native CLI to initialize project with version lower than 0.60.0.',
-    );
-  }
 
   return createFromTemplate({
     projectName,

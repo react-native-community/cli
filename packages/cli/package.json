@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/cli",
-  "version": "4.3.0",
+  "version": "4.4.0",
   "description": "React Native CLI",
   "license": "MIT",
   "main": "build/index.js",
@@ -30,8 +30,8 @@
   "dependencies": {
     "@hapi/joi": "^15.0.3",
     "@react-native-community/cli-debugger-ui": "^4.2.1",
-    "@react-native-community/cli-tools": "^4.2.2",
-    "@react-native-community/cli-types": "^4.3.0",
+    "@react-native-community/cli-tools": "^4.4.0",
+    "@react-native-community/cli-types": "^4.4.0",
     "chalk": "^3.0.0",
     "command-exists": "^1.2.8",
     "commander": "^2.19.0",

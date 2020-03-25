@@ -97,25 +97,17 @@ function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
         )}". ${printFoundDevices(devices)}`,
       );
     }
-    if (device.isSimulator) {
+    if (device.type === 'simulator') {
       return runOnSimulator(xcodeProject, scheme, args);
     } else {
       return runOnDevice(device, scheme, xcodeProject, args);
     }
   } else {
-    const physicalDevices = devices.filter(d => !d.isSimulator);
-    if (physicalDevices.length === 0) {
-      return logger.error('No iOS devices connected.');
-    }
+    const physicalDevices = devices.filter(d => d.type !== 'simulator');
     const device = matchingDevice(physicalDevices, args.device);
-    if (!device) {
-      return logger.error(
-        `Could not find a device named: "${chalk.bold(
-          String(args.device),
-        )}". ${printFoundDevices(devices)}`,
-      );
+    if (device) {
+      return runOnDevice(device, scheme, xcodeProject, args);
     }
-    return runOnDevice(device, scheme, xcodeProject, args);
   }
 }
 
@@ -458,18 +450,32 @@ function matchingDevice(
   devices: Array<Device>,
   deviceName: string | true | undefined,
 ) {
-  if (deviceName === true && devices.length === 1) {
-    logger.info(
-      `Using first available device named "${chalk.bold(
-        devices[0].name,
-      )}" due to lack of name supplied.`,
-    );
-    return devices[0];
+  if (deviceName === true) {
+    const firstIOSDevice = devices.find(d => d.type === 'device')!;
+    if (firstIOSDevice) {
+      logger.info(
+        `Using first available device named "${chalk.bold(
+          firstIOSDevice.name,
+        )}" due to lack of name supplied.`,
+      );
+      return firstIOSDevice;
+    } else {
+      logger.error('No iOS devices connected.');
+      return undefined;
+    }
   }
-  return devices.find(
+  const deviceByName = devices.find(
     device =>
       device.name === deviceName || formattedDeviceName(device) === deviceName,
   );
+  if (!deviceByName) {
+    logger.error(
+      `Could not find a device named: "${chalk.bold(
+        String(deviceName),
+      )}". ${printFoundDevices(devices)}`,
+    );
+  }
+  return deviceByName;
 }
 
 function formattedDeviceName(simulator: Device) {

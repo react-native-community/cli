@@ -8,24 +8,36 @@
 import {Device} from '../../types';
 
 /**
- * Parses the output of `xcrun instruments -s` command
+ * Parses the output of the `xcrun instruments -s` command and returns metadata
+ * about available iOS simulators and physical devices, as well as host Mac for
+ * Catalyst purposes.
+ *
  * Expected text looks roughly like this:
  *
+ * ```
  * Known Devices:
  * this-mac-device [UDID]
  * A Physical Device (OS Version) [UDID]
  * A Simulator Device (OS Version) [UDID] (Simulator)
+ * ```
  */
 function parseIOSDevicesList(text: string): Array<Device> {
   const devices: Array<Device> = [];
 
   text.split('\n').forEach(line => {
     const device = line.match(
-      /(.*?) \(([0-9\.]+)\) \[([0-9A-F-]+)\]( \(Simulator\))?/,
+      /(.*?) (\(([0-9\.]+)\) )?\[([0-9A-F-]+)\]( \(Simulator\))?/,
     );
     if (device) {
-      const {[1]: name, [2]: version, [3]: udid, [4]: isSimulator} = device;
-      devices.push({name, version, udid, isSimulator: !!isSimulator});
+      const [, name, , version, udid, isSimulator] = device;
+      const metadata: Device = {name, udid};
+      if (version) {
+        metadata.version = version;
+        metadata.type = isSimulator ? 'simulator' : 'device';
+      } else {
+        metadata.type = 'catalyst';
+      }
+      devices.push(metadata);
     }
   });
 

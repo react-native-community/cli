@@ -19,7 +19,7 @@ exports[`fetches regular patch, adds remote, applies patch, installs deps, remov
 - +  package=\\"com.rndiffapp\\">
 + -    package=\\"com.testapp\\">
 + +  package=\\"com.testapp\\">
-  
+
 @@ -14,6 +14,6 @@
          android:name=\\".MainApplication\\"
 - diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.h b/RnDiffApp/ios/RnDiffApp/AppDelegate.h
@@ -39,7 +39,7 @@ exports[`fetches regular patch, adds remote, applies patch, installs deps, remov
 - +++ b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
 + --- a/TestApp/android/app/src/main/java/com/testapp/MainApplication.java
 + +++ b/TestApp/android/app/src/main/java/com/testapp/MainApplication.java
-  "
+"
 `;
 
 exports[`works with --name-ios and --name-android: RnDiffApp is replaced with app name (CustomIos and co.uk.customandroid.app) 1`] = `
@@ -61,7 +61,7 @@ exports[`works with --name-ios and --name-android: RnDiffApp is replaced with ap
 - +  package=\\"com.rndiffapp\\">
 + -    package=\\"co.uk.customandroid.app\\">
 + +  package=\\"co.uk.customandroid.app\\">
-  
+
 @@ -14,6 +14,6 @@
          android:name=\\".MainApplication\\"
 - diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.h b/RnDiffApp/ios/RnDiffApp/AppDelegate.h
@@ -81,5 +81,5 @@ exports[`works with --name-ios and --name-android: RnDiffApp is replaced with ap
 - +++ b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
 + --- a/CustomIos/android/app/src/main/java/co/uk/customandroid/app/MainApplication.java
 + +++ b/CustomIos/android/app/src/main/java/co/uk/customandroid/app/MainApplication.java
-  "
+"
 `;

@@ -57,7 +57,7 @@
     "mkdirp": "^0.5.1",
     "open": "^6.2.0",
     "ora": "^3.4.0",
-    "pretty-format": "^25.1.0",
+    "pretty-format": "^25.2.0",
     "semver": "^6.3.0",
     "serve-static": "^1.13.1",
     "shell-quote": "1.6.1",
@@ -86,6 +86,6 @@
     "@types/wcwidth": "^1.0.0",
     "@types/ws": "^6.0.3",
     "slash": "^3.0.0",
-    "snapshot-diff": "^0.5.0"
+    "snapshot-diff": "^0.7.0"
   }
 }

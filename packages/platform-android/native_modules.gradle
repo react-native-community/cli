@@ -217,7 +217,7 @@ class ReactNativeModules {
      *
      * @todo: `fastlane` has been reported to not work too.
      */
-    def cliResolveScript = "console.log(require('react-native/cli').bin);"
+    def cliResolveScript = "console.log(require.resolve('react-native/cli'));"
     String[] nodeCommand = ["node", "-e", cliResolveScript]
     def cliPath = this.getCommandOutput(nodeCommand, this.root)
 

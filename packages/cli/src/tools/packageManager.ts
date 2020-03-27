@@ -10,12 +10,14 @@ type Options = {
 
 const packageManagers = {
   yarn: {
+    init: ['init', '-y'],
     install: ['add'],
     installDev: ['add', '-D'],
     uninstall: ['remove'],
     installAll: ['install'],
   },
   npm: {
+    init: ['init', '-y'],
     install: ['install', '--save', '--save-exact'],
     installDev: ['install', '--save-dev', '--save-exact'],
     uninstall: ['uninstall', '--save'],
@@ -25,7 +27,7 @@ const packageManagers = {
 
 function configurePackageManager(
   packageNames: Array<string>,
-  action: 'install' | 'installDev' | 'installAll' | 'uninstall',
+  action: 'init' | 'install' | 'installDev' | 'installAll' | 'uninstall',
   options: Options,
 ) {
   const pm = shouldUseYarn(options) ? 'yarn' : 'npm';
@@ -51,6 +53,10 @@ function shouldUseYarn(options: Options) {
   }
 
   return isProjectUsingYarn(options.root) && getYarnVersionIfAvailable();
+}
+
+export function init(options: Options) {
+  return configurePackageManager([], 'init', options);
 }
 
 export function install(packageNames: Array<string>, options: Options) {

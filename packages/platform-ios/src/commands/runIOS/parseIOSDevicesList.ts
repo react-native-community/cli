@@ -26,7 +26,7 @@ function parseIOSDevicesList(text: string): Array<Device> {
 
   text.split('\n').forEach(line => {
     const device = line.match(
-      /(.*?) (\(([0-9\.]+)\) )?\[([0-9A-F-]+)\]( \(Simulator\))?/,
+      /(.*?) (\(([0-9\.]+)\) )?\[([0-9A-F-]+)\]( \(Simulator\))?/i,
     );
     if (device) {
       const [, name, , version, udid, isSimulator] = device;

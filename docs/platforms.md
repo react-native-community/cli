@@ -102,6 +102,8 @@ type ProjectConfigAndroidT = {
   assetsPath: string;
   mainFilePath: string;
   packageName: string;
+  packageFolder: string;
+  appName: string;
 };
 ```
 
@@ -133,6 +135,8 @@ type DependencyConfigAndroidT = {
   folder: string;
   packageImportPath: string;
   packageInstance: string;
+  manifestPath: string;
+  packageName: string;
 };
 ```
 

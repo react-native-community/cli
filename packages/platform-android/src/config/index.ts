@@ -60,23 +60,23 @@ export function projectConfig(
   const mainFilePath = path.join(
     sourceDir,
     userConfig.mainFilePath ||
-      `src/main/java/${packageFolder}/MainApplication.java`,
+      path.join(appName, `src/main/java/${packageFolder}/MainApplication.java`),
   );
 
   const stringsPath = path.join(
     sourceDir,
-    userConfig.stringsPath || 'src/main/res/values/strings.xml',
+    userConfig.stringsPath ||
+      path.join(appName, '/src/main/res/values/strings.xml'),
   );
 
   const settingsGradlePath = path.join(
-    root,
-    'android',
+    sourceDir,
     userConfig.settingsGradlePath || 'settings.gradle',
   );
 
   const assetsPath = path.join(
     sourceDir,
-    userConfig.assetsPath || 'src/main/assets',
+    userConfig.assetsPath || path.join(appName, '/src/main/assets'),
   );
 
   const buildGradlePath = path.join(
@@ -95,7 +95,7 @@ export function projectConfig(
     assetsPath,
     mainFilePath,
     packageName,
-    packageFolder: '',
+    packageFolder,
     appName,
   };
 }

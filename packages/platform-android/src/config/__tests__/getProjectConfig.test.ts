@@ -99,4 +99,14 @@ describe('android::getProjectConfig', () => {
 
     expect(getProjectConfig(folder, userConfig)).toBeNull();
   });
+
+  it('should correctly resolve mainFilePath', () => {
+    const userConfig = {};
+    const folder = '/nested';
+
+    const config = getProjectConfig(folder, userConfig);
+    expect(config.mainFilePath).toEqual(
+      '/nested/android/app/src/main/java/com/some/example/MainApplication.java',
+    );
+  });
 });

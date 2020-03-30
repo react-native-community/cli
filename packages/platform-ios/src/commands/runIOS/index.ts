@@ -28,7 +28,7 @@ import {
 import {Device} from '../../types';
 
 type FlagsT = {
-  simulator: string;
+  simulator?: string;
   configuration: string;
   scheme?: string;
   projectPath: string;
@@ -71,10 +71,15 @@ function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     } "${chalk.bold(xcodeProject.name)}"`,
   );
 
-  const {device, udid} = args;
-
-  if (!device && !udid) {
+  // No need to load all available devices
+  if (!args.device && !args.udid) {
     return runOnSimulator(xcodeProject, scheme, args);
+  }
+
+  if (args.device && args.udid) {
+    return logger.error(
+      'The `device` and `udid` options are mutually exclusive.',
+    );
   }
 
   const devices = parseIOSDevicesList(
@@ -83,31 +88,26 @@ function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     }),
   );
 
-  // first device is always the host Mac
-  if (devices.length <= 1) {
-    return logger.error('No iOS devices connected.');
-  }
-
-  const selectedDevice = matchingDevice(devices, device, udid);
-
-  if (selectedDevice) {
-    return runOnDevice(selectedDevice, scheme, xcodeProject, args);
-  }
-
-  if (device) {
-    return logger.error(
-      `Could not find a device named: "${chalk.bold(
-        String(device),
-      )}". ${printFoundDevices(devices)}`,
-    );
-  }
-
-  if (udid) {
-    return logger.error(
-      `Could not find a device with udid: "${chalk.bold(
-        udid,
-      )}". ${printFoundDevices(devices)}`,
-    );
+  if (args.udid) {
+    const device = devices.find(d => d.udid === args.udid);
+    if (!device) {
+      return logger.error(
+        `Could not find a device with udid: "${chalk.bold(
+          args.udid,
+        )}". ${printFoundDevices(devices)}`,
+      );
+    }
+    if (device.type === 'simulator') {
+      return runOnSimulator(xcodeProject, scheme, args);
+    } else {
+      return runOnDevice(device, scheme, xcodeProject, args);
+    }
+  } else {
+    const physicalDevices = devices.filter(d => d.type !== 'simulator');
+    const device = matchingDevice(physicalDevices, args.device);
+    if (device) {
+      return runOnDevice(device, scheme, xcodeProject, args);
+    }
   }
 }
 
@@ -137,14 +137,19 @@ async function runOnSimulator(
    * - iPhone X
    * - iPhone 8
    */
-
   const fallbackSimulators = ['iPhone X', 'iPhone 8'];
   const selectedSimulator = fallbackSimulators.reduce((simulator, fallback) => {
-    return simulator || findMatchingSimulator(simulators, fallback);
-  }, findMatchingSimulator(simulators, args.simulator));
+    return (
+      simulator || findMatchingSimulator(simulators, {simulator: fallback})
+    );
+  }, findMatchingSimulator(simulators, args));
 
   if (!selectedSimulator) {
-    throw new CLIError(`Could not find "${args.simulator}" simulator`);
+    throw new CLIError(
+      `No simulator available with ${
+        args.simulator ? `name "${args.simulator}"` : `udid "${args.udid}"`
+      }`,
+    );
   }
 
   /**
@@ -444,34 +449,39 @@ function xcprettyAvailable() {
 function matchingDevice(
   devices: Array<Device>,
   deviceName: string | true | undefined,
-  udid: string | undefined,
 ) {
-  if (udid) {
-    return matchingDeviceByUdid(devices, udid);
+  if (deviceName === true) {
+    const firstIOSDevice = devices.find(d => d.type === 'device')!;
+    if (firstIOSDevice) {
+      logger.info(
+        `Using first available device named "${chalk.bold(
+          firstIOSDevice.name,
+        )}" due to lack of name supplied.`,
+      );
+      return firstIOSDevice;
+    } else {
+      logger.error('No iOS devices connected.');
+      return undefined;
+    }
   }
-  if (deviceName === true && devices.length === 1) {
-    logger.info(
-      `Using first available device named "${chalk.bold(
-        devices[0].name,
-      )}" due to lack of name supplied.`,
-    );
-    return devices[0];
-  }
-  return devices.find(
+  const deviceByName = devices.find(
     device =>
       device.name === deviceName || formattedDeviceName(device) === deviceName,
   );
-}
-
-function matchingDeviceByUdid(
-  devices: Array<Device>,
-  udid: string | undefined,
-) {
-  return devices.find(device => device.udid === udid);
+  if (!deviceByName) {
+    logger.error(
+      `Could not find a device named: "${chalk.bold(
+        String(deviceName),
+      )}". ${printFoundDevices(devices)}`,
+    );
+  }
+  return deviceByName;
 }
 
 function formattedDeviceName(simulator: Device) {
-  return `${simulator.name} (${simulator.version})`;
+  return simulator.version
+    ? `${simulator.name} (${simulator.version})`
+    : simulator.name;
 }
 
 function printFoundDevices(devices: Array<Device>) {

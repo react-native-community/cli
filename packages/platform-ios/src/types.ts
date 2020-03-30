@@ -6,4 +6,6 @@ export interface Device {
   udid: string;
   version?: string;
   availabilityError?: string;
+  type?: 'simulator' | 'device' | 'catalyst';
+  booted?: boolean;
 }

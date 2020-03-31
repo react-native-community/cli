@@ -11,6 +11,7 @@ import {
 import {join} from 'path';
 import {Ora} from 'ora';
 import {unzip} from '../../../tools/unzip';
+import {deleteFile} from '../../../tools/deleteFile';
 
 export default {
   label: 'JDK',
@@ -37,7 +38,7 @@ export default {
       const installPath = process.env.LOCALAPPDATA || ''; // The zip is in a folder `jdk-11.02` so it can be unzipped directly there
 
       loader.start(
-        `Downloading JDK 11 from "${installerUrl}" (please be patient)`,
+        `Downloading JDK 11 from "${installerUrl}" (this may take a few minutes)`,
       );
 
       const installer = await fetchToTemp(installerUrl);
@@ -45,6 +46,8 @@ export default {
       loader.text = `Installing JDK in "${installPath}"`;
 
       await unzip(installer, installPath);
+
+      await deleteFile(installer);
 
       loader.text = 'Updating environment variables';
 
@@ -63,7 +66,7 @@ export default {
   runAutomaticFix: async () => {
     logManualInstallation({
       healthcheck: 'JDK',
-      url: 'http://jdk.java.net/11/',
+      url: 'https://openjdk.java.net/',
     });
   },
 } as HealthCheckInterface;

@@ -4,9 +4,13 @@ import getEnvironmentInfo from '../../../../tools/envinfo';
 import {EnvironmentInfo} from '../../types';
 import {NoopLoader} from '../../../../tools/loader';
 import * as common from '../common';
-import * as u from '../../../../tools/unzip';
+import * as unzip from '../../../../tools/unzip';
+import * as deleteFile from '../../../../tools/deleteFile';
 
 jest.mock('execa', () => jest.fn());
+jest
+  .spyOn(deleteFile, 'deleteFile')
+  .mockImplementation(() => Promise.resolve());
 
 const mockFetchToTemp = jest.fn();
 jest.mock('@react-native-community/cli-tools', () => {
@@ -66,7 +70,7 @@ describe('jdk', () => {
     const loaderSucceedSpy = jest.spyOn(loader, 'succeed');
     const loaderFailSpy = jest.spyOn(loader, 'fail');
     const unzipSpy = jest
-      .spyOn(u, 'unzip')
+      .spyOn(unzip, 'unzip')
       .mockImplementation(() => Promise.resolve());
 
     await jdk.win32AutomaticFix({loader, environmentInfo});

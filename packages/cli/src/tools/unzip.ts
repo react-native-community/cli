@@ -1,16 +1,23 @@
-import {createReadStream} from 'fs';
-import * as unzipper from 'unzipper';
+const StreamZip = require('node-stream-zip');
 
-/**
- * Unzips the contents of `source` into the `destination`
- * using streams to deal with large files.
- */
-const unzip = async (source: string, destination: string): Promise<void> => {
+const unzip = async (source: string, destination: string) => {
   return new Promise((resolve, reject) => {
-    createReadStream(source)
-      .pipe(unzipper.Extract({path: destination}))
-      .on('close', resolve)
-      .on('error', reject);
+    const zip = new StreamZip({
+      file: source,
+      storeEntries: true,
+    });
+
+    zip.on('ready', () => {
+      zip.extract(null, destination, (err: Error | null) => {
+        zip.close();
+
+        if (err) {
+          return reject(err);
+        }
+
+        resolve();
+      });
+    });
   });
 };
 

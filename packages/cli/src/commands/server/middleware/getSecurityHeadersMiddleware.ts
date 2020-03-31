@@ -17,7 +17,7 @@ export default function getSecurityHeadersMiddleware(
   // Block any cross origin request.
   if (
     req.headers.origin &&
-    req.headers.origin !== `http://localhost:${address.port}`
+    !req.headers.origin.match(/^https?:\/\/localhost:/)
   ) {
     next(
       new Error(

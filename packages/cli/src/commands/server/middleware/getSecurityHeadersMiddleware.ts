@@ -13,7 +13,7 @@ export default function getSecurityHeadersMiddleware(
 ) {
   // Block any cross origin request.
   if (
-    typeof req.headers.origin === "string" &&
+    typeof req.headers.origin === 'string' &&
     !req.headers.origin.match(/^https?:\/\/localhost:/)
   ) {
     next(

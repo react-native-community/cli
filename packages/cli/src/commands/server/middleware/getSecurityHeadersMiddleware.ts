@@ -11,12 +11,9 @@ export default function getSecurityHeadersMiddleware(
   res: http.ServerResponse,
   next: (err?: any) => void,
 ) {
-  // @ts-ignore Property 'client' does not exist on type 'IncomingMessage', verify
-  const address = req.client.server.address();
-
   // Block any cross origin request.
   if (
-    req.headers.origin &&
+    typeof req.headers.origin === "string" &&
     !req.headers.origin.match(/^https?:\/\/localhost:/)
   ) {
     next(

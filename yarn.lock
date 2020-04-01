@@ -2397,13 +2397,6 @@
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-1.0.1.tgz#0a851d3bd96498fa25c33ab7278ed3bd65f06c3e"
   integrity sha512-l42BggppR6zLmpfU6fq9HEa2oGPEI8yrSPL3GITjfRInppYFahObbIQOQK3UGxEnyQpltZLaPe75046NOZQikw==
 
-"@types/unzipper@^0.10.2":
-  version "0.10.2"
-  resolved "https://registry.yarnpkg.com/@types/unzipper/-/unzipper-0.10.2.tgz#35c2da714d406b2cd7ada5006e1e206bdd0eb2f4"
-  integrity sha512-VgYoNEyj8xkz9I+RTWD00iB9JVViK/RBteNDjOIV3/kdCUPaskka7xAZfFlIxRwKGSPf77F8yje5bJt2PefofQ==
-  dependencies:
-    "@types/node" "*"
-
 "@types/wcwidth@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@types/wcwidth/-/wcwidth-1.0.0.tgz#a58f4673050f98c46ae8f852340889343b21a1f5"

@@ -1,17 +1,15 @@
-import {fetchToTemp} from '@react-native-community/cli-tools';
+import {join} from 'path';
 import versionRanges from '../versionRanges';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
 import {logManualInstallation} from './common';
 import {HealthCheckInterface} from '../types';
 
+import {downloadAndUnzip} from '../../../tools/downloadAndUnzip';
 import {
   setEnvironment,
   updateEnvironment,
 } from '../../../tools/environmentVariables';
-import {join} from 'path';
 import {Ora} from 'ora';
-import {unzip} from '../../../tools/unzip';
-import {deleteFile} from '../../../tools/deleteFile';
 
 export default {
   label: 'JDK',
@@ -37,17 +35,12 @@ export default {
         'https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_windows-x64_bin.zip';
       const installPath = process.env.LOCALAPPDATA || ''; // The zip is in a folder `jdk-11.02` so it can be unzipped directly there
 
-      loader.start(
-        `Downloading JDK 11 from "${installerUrl}" (this may take a few minutes)`,
-      );
-
-      const installer = await fetchToTemp(installerUrl);
-
-      loader.text = `Installing JDK in "${installPath}"`;
-
-      await unzip(installer, installPath);
-
-      await deleteFile(installer);
+      await downloadAndUnzip({
+        loader,
+        downloadUrl: installerUrl,
+        component: 'JDK',
+        installPath,
+      });
 
       loader.text = 'Updating environment variables';
 

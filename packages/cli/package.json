@@ -84,7 +84,6 @@
     "@types/mkdirp": "^0.5.2",
     "@types/pretty-format": "^24.3.0",
     "@types/semver": "^6.0.2",
-    "@types/unzipper": "^0.10.2",
     "@types/wcwidth": "^1.0.0",
     "@types/ws": "^6.0.3",
     "slash": "^3.0.0",

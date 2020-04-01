@@ -26,7 +26,9 @@ export const downloadAndUnzip = async ({
   const installer = await fetchToTemp(downloadUrl);
 
   loader.text = `Installing ${component} in "${installPath}"`;
-  await unzip(installer, installPath);
-
-  await deleteFile(installer);
+  try {
+    await unzip(installer, installPath);
+  } finally {
+    await deleteFile(installer);
+  }
 };

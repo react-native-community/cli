@@ -22,7 +22,7 @@ async function getEnvironmentInfo(
       Binaries: ['Node', 'Yarn', 'npm', 'Watchman'],
       IDEs: ['Xcode', 'Android Studio'],
       Managers: ['CocoaPods'],
-      Languages: ['Python'],
+      Languages: ['Java', 'Python'],
       SDKs: ['iOS SDK', 'Android SDK'],
       npmPackages: ['react', 'react-native', '@react-native-community/cli'],
       npmGlobalPackages: ['*react-native*'],

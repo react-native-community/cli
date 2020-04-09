@@ -103,6 +103,8 @@ def use_native_modules!(config = nil)
     pods = found_pods.map { |p| p.name }.sort.to_sentence
     Pod::UI.puts "Detected React Native module #{"pod".pluralize(found_pods.size)} for #{pods}"
   end
+  
+  config
 end
 
 # You can run the tests for this file by running:

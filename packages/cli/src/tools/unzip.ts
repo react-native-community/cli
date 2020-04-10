@@ -1,3 +1,4 @@
+import {mkdirpSync} from 'fs-extra';
 const StreamZip = require('node-stream-zip');
 
 const unzip = async (source: string, destination: string) => {
@@ -6,6 +7,8 @@ const unzip = async (source: string, destination: string) => {
       file: source,
       storeEntries: true,
     });
+
+    mkdirpSync(destination);
 
     zip.on('ready', () => {
       zip.extract(null, destination, (err: Error | null) => {

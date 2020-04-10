@@ -45,11 +45,11 @@ export default {
     return missing;
   },
   win32AutomaticFix: async ({loader}) => {
+    // TODO: Create a GitHub action that checks and updates this periodically?
     const androidStudioUrl =
-      'https://redirector.gvt1.com/edgedl/android/studio/ide-zips/3.6.1.0/android-studio-ide-192.6241897-windows.zip';
+      'https://redirector.gvt1.com/edgedl/android/studio/ide-zips/3.6.2.0/android-studio-ide-192.6308749-windows.zip';
 
     const installPath = getUserAndroidPath();
-    // Maybe unzip just to Android instead of Android/Sdk?
     await downloadAndUnzip({
       loader,
       downloadUrl: androidStudioUrl,
@@ -66,7 +66,9 @@ export default {
       ico: join(binFolder, 'studio.ico'),
     });
 
-    loader.succeed(`Android Studio installed correctly in "${installPath}".`);
+    loader.succeed(
+      `Android Studio installed successfully in "${installPath}".`,
+    );
   },
   runAutomaticFix: async ({loader}) => {
     loader.fail();

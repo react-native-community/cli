@@ -67,9 +67,9 @@ export const installComponent = (component: string, androidSdkRoot: string) => {
  * For the given custom Hypervisor and the output of `emulator-check accel`
  * returns the preferred Hypervisor to use and its installation status.
  * The recommendation order is:
- * - WHPX
- * - HAXM if Intel
- * - AMDH if AMD
+ * 1. WHPX
+ * 2. HAXM if Intel
+ * 3. AMDH if AMD
  */
 const parseHypervisor = (
   status: string,
@@ -154,8 +154,9 @@ const getEmulatorAccelOutputInformation = async (androidSDKRoot: string) => {
 };
 
 /**
- * Returns what hypervisor should be installed for the Android emulators
- * using [Microsoft's official documentation](https://docs.microsoft.com/en-us/xamarin/android/get-started/installation/android-emulator/hardware-acceleration?pivots=windows)
+ * Returns what hypervisor should be installed for the Android emulator
+ * using [Microsoft's official
+ * documentation](https://docs.microsoft.com/en-us/xamarin/android/get-started/installation/android-emulator/hardware-acceleration?pivots=windows)
  * as a reference.
  */
 export const getBestHypervisor = async (
@@ -183,4 +184,61 @@ export const getBestHypervisor = async (
     hypervisor: 'none',
     installed: false,
   };
+};
+
+export const enableWHPX = () => {
+  // Need to prompt for UAC
+  return executeCommand(
+    'DISM /Quiet /NoRestart /Online /Enable-Feature /All /FeatureName:Microsoft-Hyper-V /FeatureName:HypervisorPlatform',
+    true,
+  );
+};
+
+export const enableHAXM = async (installPath: string) => {
+  // Install from sdkmanager
+  await installComponent(
+    'extras;intel;Hardware_Accelerated_Execution_Manager',
+    installPath,
+  );
+
+  /*
+    Do something with the return codes? From the docs:
+
+    In case of success:
+      Return 0 to caller
+    In case of fail:
+      Return 1 to caller
+    In case of HAXM is already installed:
+      HAXM will be upgraded automatically.
+    In case the machines needs to reboot after install/update:
+      Return 2 to caller.
+  */
+  await executeCommand(
+    join(
+      installPath,
+      'Sdk',
+      'extras',
+      'intel',
+      'Hardware_Accelerated_Execution_Manager',
+      'silent_install.bat',
+    ),
+  );
+};
+
+export const enableAMDH = async (installPath: string) => {
+  await installComponent(
+    'extras;google;Android_Emulator_Hypervisor_Driver',
+    installPath,
+  );
+
+  await executeCommand(
+    join(
+      installPath,
+      'Sdk',
+      'extras',
+      'google',
+      'Android_Emulator_Hypervisor_Driver',
+      'silent_install.bat',
+    ),
+  );
 };

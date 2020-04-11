@@ -26,6 +26,28 @@ const customTemplateCopiedFiles = [
   'yarn.lock',
 ];
 
+// Files expected in the --dev-version tests
+const devVersionFiles = [
+  '.buckconfig',
+  '.eslintrc.js',
+  '.flowconfig',
+  '.gitattributes',
+  '.gitignore',
+  '.prettierrc.js',
+  '.watchmanconfig',
+  'App.js',
+  '__tests__',
+  'android',
+  'app.json',
+  'babel.config.js',
+  'index.js',
+  'ios',
+  'metro.config.js',
+  'node_modules',
+  'package.json',
+  'yarn.lock',
+];
+
 beforeEach(() => {
   cleanup(DIR);
   writeFiles(DIR, {});
@@ -122,4 +144,64 @@ test('init skips installation of dependencies with --skip-install', () => {
       file => !['node_modules', 'yarn.lock'].includes(file),
     ),
   );
+});
+
+test('init --dev-version with Git commit', () => {
+  const rnVersion = 'https://github.com/facebook/react-native#4118d79';
+  const {stdout} = runCLI(DIR, [
+    'init',
+    '--dev-version',
+    rnVersion,
+    'TestInit',
+  ]);
+
+  expect(stdout).toContain('Run instructions');
+
+  const packageJson = JSON.parse(
+    fs.readFileSync(path.join(DIR, 'TestInit', 'package.json'), 'utf8'),
+  );
+
+  // make sure that the version of `react-native` was properly updated
+  expect(packageJson.dependencies['react-native']).toEqual(rnVersion);
+
+  // make sure we don't leave garbage
+  expect(fs.readdirSync(DIR)).toEqual(['TestInit']);
+
+  let dirFiles = fs.readdirSync(path.join(DIR, 'TestInit'));
+
+  expect(dirFiles).toEqual(devVersionFiles);
+});
+
+test('init --dev-version with Git commit and --template filepath', () => {
+  createCustomTemplateFiles();
+  let templatePath = path.resolve(DIR, 'custom', 'template');
+  if (process.platform === 'win32') {
+    templatePath = templatePath.split('\\').join('/');
+  }
+
+  const rnVersion = 'https://github.com/facebook/react-native#4118d79';
+  const {stdout} = runCLI(DIR, [
+    'init',
+    '--dev-version',
+    rnVersion,
+    '--template',
+    `file://${templatePath}`,
+    'TestInit',
+  ]);
+
+  expect(stdout).toContain('Run instructions');
+
+  const packageJson = JSON.parse(
+    fs.readFileSync(path.join(DIR, 'TestInit', 'package.json'), 'utf8'),
+  );
+
+  // make sure that the version of `react-native` was properly updated
+  expect(packageJson.dependencies['react-native']).toEqual(rnVersion);
+
+  // make sure we don't leave garbage
+  expect(fs.readdirSync(DIR)).toContain('custom');
+
+  let dirFiles = fs.readdirSync(path.join(DIR, 'TestInit'));
+
+  expect(dirFiles).toEqual(customTemplateCopiedFiles);
 });

@@ -32,5 +32,10 @@ export default {
       name: '--skip-install',
       description: 'Skips dependencies installation step',
     },
+    {
+      name: '--dev-version [string]',
+      description:
+        'Use a development version or fork of React Native. If no --template is provided, this will be used at the template as well.',
+    },
   ],
 };

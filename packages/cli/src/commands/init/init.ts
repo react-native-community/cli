@@ -6,6 +6,7 @@ import ora from 'ora';
 import mkdirp from 'mkdirp';
 import {validateProjectName} from './validate';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
+import VersionAndDevVersionSetError from './errors/VersionAndDevVersionSetError';
 import printRunInstructions from './printRunInstructions';
 import {CLIError, logger} from '@react-native-community/cli-tools';
 import {
@@ -14,7 +15,10 @@ import {
   copyTemplate,
   executePostInitScript,
 } from './template';
-import {changePlaceholderInTemplate} from './editTemplate';
+import {
+  changePlaceholderInTemplate,
+  changeReactNativeVersionInTemplate,
+} from './editTemplate';
 import * as PackageManager from '../../tools/packageManager';
 import installPods from '../../tools/installPods';
 import {processTemplateName} from './templateName';
@@ -30,6 +34,7 @@ type Options = {
   displayName?: string;
   title?: string;
   skipInstall?: boolean;
+  devVersion?: string;
 };
 
 interface TemplateOptions {
@@ -39,6 +44,7 @@ interface TemplateOptions {
   directory: string;
   projectTitle?: string;
   skipInstall?: boolean;
+  devVersion?: string;
 }
 
 function doesDirectoryExist(dir: string) {
@@ -83,6 +89,7 @@ async function createFromTemplate({
   directory,
   projectTitle,
   skipInstall,
+  devVersion,
 }: TemplateOptions) {
   logger.debug('Initializing new project');
   logger.log(banner);
@@ -117,6 +124,10 @@ async function createFromTemplate({
       placeholderName: templateConfig.placeholderName,
       placeholderTitle: templateConfig.titlePlaceholder,
     });
+
+    if (devVersion) {
+      changeReactNativeVersionInTemplate(devVersion);
+    }
 
     loader.succeed();
     const {postInitScript} = templateConfig;
@@ -177,7 +188,10 @@ async function createProject(
   version: string,
   options: Options,
 ) {
-  const templateName = options.template || `react-native@${version}`;
+  const templateName =
+    options.template ||
+    (options.devVersion && `react-native@${options.devVersion}`) ||
+    `react-native@${version}`;
 
   return createFromTemplate({
     projectName,
@@ -186,6 +200,7 @@ async function createProject(
     directory,
     projectTitle: options.title,
     skipInstall: options.skipInstall,
+    devVersion: options.devVersion,
   });
 }
 
@@ -201,6 +216,10 @@ export default (async function initialize(
    * Commander is stripping `version` from options automatically.
    * We have to use `minimist` to take that directly from `process.argv`
    */
+  if (minimist(process.argv).version && options.devVersion) {
+    throw new VersionAndDevVersionSetError();
+  }
+
   const version: string = minimist(process.argv).version || DEFAULT_VERSION;
 
   const directoryName = path.relative(root, options.directory || projectName);

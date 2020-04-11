@@ -106,3 +106,26 @@ export function changePlaceholderInTemplate({
       processDotfiles(filePath);
     });
 }
+
+export function changeReactNativeVersionInTemplate(newVersion: string) {
+  const packageJsonPath = path.join(process.cwd(), './package.json');
+  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+
+  if (!packageJson.dependencies) {
+    packageJson.dependencies = {};
+  }
+
+  const oldVersion = packageJson.dependencies['react-native'] || '{none}';
+
+  logger.debug(
+    `Changing React Native version in template from ${oldVersion} to ${newVersion}`,
+  );
+
+  packageJson.dependencies['react-native'] = newVersion;
+
+  fs.writeFileSync(
+    packageJsonPath,
+    `${JSON.stringify(packageJson, null, 2)}\n`,
+    'utf8',
+  );
+}

@@ -20,7 +20,10 @@ const setEnvironment = async (variable: string, value: string) => {
  */
 const updateEnvironment = async (variable: string, value: string) => {
   // Avoid adding the value multiple times to PATH
-  if ('PATH' == variable && process.env[variable]?.includes(`${value};`)) {
+  // Need to do the following to avoid TSLint complaining about possible
+  // undefined values even if I check before via `typeof` or another way
+  const envVariable = process.env[variable] || '';
+  if (variable === 'PATH' && envVariable.includes(`${value};`)) {
     return;
   }
   // https://superuser.com/a/601034

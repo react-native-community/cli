@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/cli-tools",
-  "version": "4.6.3",
+  "version": "4.7.0",
   "license": "MIT",
   "main": "build/index.js",
   "publishConfig": {

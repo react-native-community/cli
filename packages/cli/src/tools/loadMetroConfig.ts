@@ -5,6 +5,7 @@ import path from 'path';
 // @ts-ignore - no typed definition for the package
 import {loadConfig} from 'metro-config';
 import {Config} from '@react-native-community/cli-types';
+import {reactNativePlatformResolver} from './metroPlatformResolver';
 
 const INTERNAL_CALLSITES_REGEX = new RegExp(
   [
@@ -21,6 +22,12 @@ const INTERNAL_CALLSITES_REGEX = new RegExp(
 
 export interface MetroConfig {
   resolver: {
+    resolveRequest?: (
+      context: any,
+      realModuleName: string,
+      platform: string,
+      moduleName: string,
+    ) => any;
     resolverMainFields: string[];
     platforms: string[];
   };
@@ -50,6 +57,19 @@ export interface MetroConfig {
 export const getDefaultConfig = (ctx: Config): MetroConfig => {
   return {
     resolver: {
+      resolveRequest:
+        Object.keys(ctx.platforms).filter(
+          platform => ctx.platforms[platform].npmPackageName,
+        ).length === 0
+          ? undefined
+          : reactNativePlatformResolver(
+              Object.keys(ctx.platforms)
+                .filter(platform => ctx.platforms[platform].npmPackageName)
+                .reduce<{[platform: string]: string}>((result, platform) => {
+                  result[platform] = ctx.platforms[platform].npmPackageName!;
+                  return result;
+                }, {}),
+            ),
       resolverMainFields: ['react-native', 'browser', 'main'],
       platforms: [...Object.keys(ctx.platforms), 'native'],
     },
@@ -77,10 +97,7 @@ export const getDefaultConfig = (ctx: Config): MetroConfig => {
       babelTransformerPath: require.resolve(
         'metro-react-native-babel-transformer',
       ),
-      assetRegistryPath: path.join(
-        ctx.reactNativePath,
-        'Libraries/Image/AssetRegistry',
-      ),
+      assetRegistryPath: 'react-native/Libraries/Image/AssetRegistry',
     },
     watchFolders: [],
   };

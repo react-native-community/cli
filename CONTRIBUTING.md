@@ -25,7 +25,7 @@ Repository is splitted into two packages:
 Because of a modular design of the CLI, we recommend developing using symbolic links to its packages. This way you can use it seamlessly in the tested project, as you'd use the locally installed CLI. Here's what you need to run in the terminal:
 
 ```sh
-cd /path/to/cloned/project/
+cd /path/to/cloned/cli/
 yarn link-packages
 ```
 
@@ -35,8 +35,11 @@ And then:
 cd /my/new/react-native/project/
 yarn link "@react-native-community/cli-platform-ios" "@react-native-community/cli-platform-android" "@react-native-community/cli" "@react-native-community/cli-types" "@react-native-community/cli-tools" "@react-native-community/cli-debugger-ui"
 
+npx react-native start --watchFolders /path/to/cloned/cli/
 npx react-native run-android
 ```
+
+*Note: you must use the `--watchFolders` flag with the `start` command when testing the CLI with `yarn link` like this. Otherwise Metro can't find the symlinked folder and this may result in errors such as `ReferenceError: SHA-1 for file ... is not computed`.*
 
 Once you're done with testing and you'd like to get back to regular setup, run `yarn unlink` instead of `yarn link` from above command. Then `yarn install --force`.
 

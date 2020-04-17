@@ -126,7 +126,7 @@ async function createFromTemplate({
     });
 
     if (devVersion) {
-      changeReactNativeVersionInTemplate(devVersion);
+      changeReactNativeVersionInTemplate(devVersion, projectDirectory);
     }
 
     loader.succeed();
@@ -189,9 +189,7 @@ async function createProject(
   options: Options,
 ) {
   const templateName =
-    options.template ||
-    (options.devVersion && `react-native@${options.devVersion}`) ||
-    `react-native@${version}`;
+    options.template || `react-native@${options.devVersion || version}`;
 
   return createFromTemplate({
     projectName,

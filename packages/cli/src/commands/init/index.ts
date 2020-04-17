@@ -35,7 +35,7 @@ export default {
     {
       name: '--dev-version [string]',
       description:
-        'Use a development version or fork of React Native. If no --template is provided, this will be used at the template as well.',
+        'Replace the version of "react-native" dependency of the template with specified string. Useful for testing react-native or forks from the source.',
     },
   ],
 };

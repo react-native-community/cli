@@ -42,7 +42,7 @@ function displayWarnings(config: Config, args: Flags) {
   }
   if (args.root) {
     logger.warn(
-      'Using deprecated "--root" flag. App root is discovered automatically.',
+      'Using deprecated "--root" flag. App root is discovered automatically. Alternatively, set "project.android.sourceDir" in react-native.config.js.',
     );
   }
 }
@@ -127,7 +127,7 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
 
 // Builds the app and runs it on a connected emulator / device.
 function buildAndRun(args: Flags, androidProject: AndroidProject) {
-  process.chdir(path.join(args.root, 'android'));
+  process.chdir(androidProject.sourceDir);
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
 
   // "app" is usually the default value for Android apps with only 1 app

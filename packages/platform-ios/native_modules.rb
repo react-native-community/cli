@@ -1,8 +1,14 @@
 # This is a function which is used inside your Podfile.
-# It uses `react-native config` to grab a list of dependencies, and pulls out.all of the ones
-# which declare themselves to be iOS dependencies (via having a Podspec) and automatically
-# imports those into your current target.
 #
+# It uses `react-native config` to grab a list of dependencies, and pulls out
+# all of the ones which declare themselves to be iOS/macOS dependencies (by
+# virtue of having a Podspec) and automatically imports those into your current
+# target.
+#
+# See the `IOSNativeModulesConfig` interface in `cli-types/src/ios.ts` to
+# understand what the input data should look like. Be sure to update that file
+# in lock-step with additional data being used here.
+
 require 'pathname'
 require 'cocoapods'
 

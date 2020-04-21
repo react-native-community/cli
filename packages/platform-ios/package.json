@@ -20,7 +20,8 @@
     "@types/glob": "^7.1.1",
     "@types/js-yaml": "^3.12.1",
     "@types/lodash": "^4.14.149",
-    "@types/plist": "^3.0.2"
+    "@types/plist": "^3.0.2",
+    "jest-runner-minitest": "alloy/jest-runner-minitest#2b42164a37b14b6b5e956312977480d8ff32526d"
   },
   "files": [
     "build",

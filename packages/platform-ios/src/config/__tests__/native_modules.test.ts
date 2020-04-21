@@ -27,13 +27,13 @@ interface SerializedPodfile {
 interface RunInput {
   capture_stdout?: boolean;
   pods_activated_by_user?: string[];
-  ios: IOSNativeModulesConfig;
+  config: IOSNativeModulesConfig;
 }
 
-function run(config: RunInput) {
+function run(runInput: RunInput) {
   return new Promise<SerializedTargetDefinition | string>((resolve, reject) => {
     const child = spawn('ruby', [SCRIPT_PATH]);
-    child.stdin.write(JSON.stringify(config));
+    child.stdin.write(JSON.stringify(runInput));
     child.stdin.end();
     const stdoutData: Buffer[] = [];
     const stderrData: Buffer[] = [];
@@ -46,7 +46,7 @@ function run(config: RunInput) {
     child.on('close', code => {
       if (code === 0) {
         const data = Buffer.concat(stdoutData).toString();
-        if (config.capture_stdout) {
+        if (runInput.capture_stdout) {
           resolve(data.trimRight());
         } else {
           const podfile: SerializedPodfile = JSON.parse(data);
@@ -60,15 +60,15 @@ function run(config: RunInput) {
 }
 
 describe('native_modules.rb', () => {
-  let config: RunInput;
+  let runInput: RunInput;
 
   beforeEach(() => {
     const iosDepPodspecPath = path.join(
       FIXTURES_ROOT,
       'node_modules/ios-dep/ios-dep.podspec',
     );
-    config = {
-      ios: {
+    runInput = {
+      config: {
         project: {ios: {sourceDir: FIXTURES_ROOT}},
         dependencies: {
           'ios-dep': {
@@ -90,29 +90,117 @@ describe('native_modules.rb', () => {
     };
   });
 
-  it('activates iOS pods', () => {
-    return run(config).then(rootTargetDefinition => {
+  describe('concerning platform specificity', () => {
+    beforeEach(() => {
+      runInput.config.dependencies['macos-dep'] = {
+        root: path.join(FIXTURES_ROOT, 'node_modules/macos-dep'),
+        platforms: {
+          ios: {
+            podspecPath: path.join(
+              FIXTURES_ROOT,
+              'node_modules/macos-dep/macos-dep.podspec',
+            ),
+          },
+          android: null,
+        },
+      };
+      runInput.config.dependencies['ios-and-macos-dep'] = {
+        root: path.join(FIXTURES_ROOT, 'node_modules/ios-and-macos-dep'),
+        platforms: {
+          ios: {
+            podspecPath: path.join(
+              FIXTURES_ROOT,
+              'node_modules/ios-and-macos-dep/ios-and-macos-dep.podspec',
+            ),
+          },
+          android: null,
+        },
+      };
+    });
+
+    it('only activates pods that support iOS in targets that target `ios`', () => {
+      return run(runInput).then(
+        (rootTargetDefinition: SerializedTargetDefinition) => {
+          expect(
+            rootTargetDefinition.children.find(
+              target => target.name === 'iOS Target',
+            ).dependencies,
+          ).toMatchInlineSnapshot(`
+            Array [
+              Object {
+                "ios-dep": Array [
+                  Object {
+                    "path": "node_modules/ios-dep",
+                  },
+                ],
+              },
+              Object {
+                "ios-and-macos-dep": Array [
+                  Object {
+                    "path": "node_modules/ios-and-macos-dep",
+                  },
+                ],
+              },
+            ]
+          `);
+        },
+      );
+    });
+
+    it('only activates pods that support macOS in targets that target `osx`', () => {
+      return run(runInput).then(
+        (rootTargetDefinition: SerializedTargetDefinition) => {
+          expect(
+            rootTargetDefinition.children.find(
+              target => target.name === 'macOS Target',
+            ).dependencies,
+          ).toMatchInlineSnapshot(`
+            Array [
+              Object {
+                "macos-dep": Array [
+                  Object {
+                    "path": "node_modules/macos-dep",
+                  },
+                ],
+              },
+              Object {
+                "ios-and-macos-dep": Array [
+                  Object {
+                    "path": "node_modules/ios-and-macos-dep",
+                  },
+                ],
+              },
+            ]
+          `);
+        },
+      );
+    });
+  });
+
+  it('does not activate pods that were already activated previously (by the user in their Podfile)', () => {
+    return run({
+      pods_activated_by_user: ['ios-dep'],
+      ...runInput,
+    }).then(rootTargetDefinition => {
       expect(rootTargetDefinition).toMatchInlineSnapshot(`
         Object {
           "abstract": true,
           "children": Array [
             Object {
-              "dependencies": Array [
-                Object {
-                  "ios-dep": Array [
-                    Object {
-                      "path": "node_modules/ios-dep",
-                    },
-                  ],
-                },
-              ],
+              "dependencies": null,
               "inheritance": "complete",
-              "name": "ios",
+              "name": "iOS Target",
               "platform": "ios",
               "podspecs": null,
             },
+            Object {
+              "name": "macOS Target",
+              "platform": "osx",
+            },
           ],
-          "dependencies": null,
+          "dependencies": Array [
+            "ios-dep",
+          ],
           "name": "Pods",
           "platform": null,
           "podspecs": null,
@@ -121,59 +209,35 @@ describe('native_modules.rb', () => {
     });
   });
 
-  it('does not activate pods that were already activated previously (by the user in their Podfile)', () => {
-    return run({
-      pods_activated_by_user: ['ios-dep'],
-      ...config,
-    }).then(rootTargetDefinition => {
-      expect(rootTargetDefinition).toMatchInlineSnapshot(`
-          Object {
-            "abstract": true,
-            "children": Array [
-              Object {
-                "dependencies": null,
-                "inheritance": "complete",
-                "name": "ios",
-                "platform": "ios",
-                "podspecs": null,
-              },
-            ],
-            "dependencies": Array [
-              "ios-dep",
-            ],
-            "name": "Pods",
-            "platform": null,
-            "podspecs": null,
-          }
-        `);
-    });
-  });
-
   it('does not activate pods whose root spec were already activated previously (by the user in their Podfile)', () => {
     return run({
       pods_activated_by_user: ['ios-dep/foo/bar'],
-      ...config,
+      ...runInput,
     }).then(rootTargetDefinition => {
       expect(rootTargetDefinition).toMatchInlineSnapshot(`
-          Object {
-            "abstract": true,
-            "children": Array [
-              Object {
-                "dependencies": null,
-                "inheritance": "complete",
-                "name": "ios",
-                "platform": "ios",
-                "podspecs": null,
-              },
-            ],
-            "dependencies": Array [
-              "ios-dep/foo/bar",
-            ],
-            "name": "Pods",
-            "platform": null,
-            "podspecs": null,
-          }
-        `);
+        Object {
+          "abstract": true,
+          "children": Array [
+            Object {
+              "dependencies": null,
+              "inheritance": "complete",
+              "name": "iOS Target",
+              "platform": "ios",
+              "podspecs": null,
+            },
+            Object {
+              "name": "macOS Target",
+              "platform": "osx",
+            },
+          ],
+          "dependencies": Array [
+            "ios-dep/foo/bar",
+          ],
+          "name": "Pods",
+          "platform": null,
+          "podspecs": null,
+        }
+      `);
     });
   });
 
@@ -181,7 +245,7 @@ describe('native_modules.rb', () => {
   it('prints out the native module pods that were found', () => {
     return run({
       capture_stdout: true,
-      ...config,
+      ...runInput,
     }).then(stdout => {
       expect(stdout).toEqual('Detected React Native module pod for ios-dep');
     });
@@ -189,14 +253,14 @@ describe('native_modules.rb', () => {
 
   describe('concerning script_phases', () => {
     it('uses the options directly', () => {
-      config.ios.dependencies['ios-dep'].platforms.ios.scriptPhases = [
+      runInput.config.dependencies['ios-dep'].platforms.ios.scriptPhases = [
         {
           script: '123',
           name: 'My Name',
           execution_position: 'before_compile',
         },
       ];
-      return run(config).then(
+      return run(runInput).then(
         (rootTargetDefinition: SerializedTargetDefinition) => {
           expect(rootTargetDefinition.children[0].script_phases)
             .toMatchInlineSnapshot(`
@@ -213,14 +277,14 @@ describe('native_modules.rb', () => {
     });
 
     it('reads a script file relative to the package root', () => {
-      config.ios.dependencies['ios-dep'].platforms.ios.scriptPhases = [
+      runInput.config.dependencies['ios-dep'].platforms.ios.scriptPhases = [
         {
           path: './some_shell_script.sh',
           name: 'My Name',
           execution_position: 'before_compile',
         },
       ];
-      return run(config).then(
+      return run(runInput).then(
         (rootTargetDefinition: SerializedTargetDefinition) => {
           expect(rootTargetDefinition.children[0].script_phases)
             .toMatchInlineSnapshot(`

@@ -60,6 +60,16 @@ def use_native_modules!(config = nil)
 
     spec = Pod::Specification.from_file(podspec_path)
 
+    # Skip pods that do not support the platform of the current target.
+    if platform = current_target_definition.platform
+      next unless spec.supported_on_platform?(platform.name)
+    else
+      # TODO: In a future RN version we should update the Podfile template and
+      #       enable this assertion.
+      #
+      # raise Pod::Informative, "Cannot invoke `use_native_modules!` before defining the supported `platform`"
+    end
+
     # We want to do a look up inside the current CocoaPods target
     # to see if it's already included, this:
     #   1. Gives you the chance to define it beforehand
@@ -117,28 +127,29 @@ end
 # $ yarn jest packages/platform-ios/src/config/__tests__/native_modules.test.ts
 if $0 == __FILE__
   require "json"
-  targets = JSON.parse(ARGF.read)
+  runInput = JSON.parse(ARGF.read)
 
-  unless targets["capture_stdout"]
+  unless runInput["capture_stdout"]
     Pod::Config.instance.silent = true
   end
 
   podfile = Pod::Podfile.new do
-    if targets["pods_activated_by_user"]
-      targets["pods_activated_by_user"].each do |name|
+    if runInput["pods_activated_by_user"]
+      runInput["pods_activated_by_user"].each do |name|
         pod(name)
       end
     end
-    targets.each do |name, config|
-      next if ["capture_stdout", "pods_activated_by_user"].include?(name)
-      target(name) do
-        platform(name.to_sym)
-        use_native_modules!(config)
-      end
+    target 'iOS Target' do
+      platform :ios
+      use_native_modules!(runInput["config"])
+    end
+    target 'macOS Target' do
+      platform :osx
+      use_native_modules!(runInput["config"])
     end
   end
 
-  unless targets["capture_stdout"]
+  unless runInput["capture_stdout"]
     puts podfile.to_hash.to_json
   end
 end

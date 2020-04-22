@@ -1,6 +1,7 @@
-import {spawn} from 'child_process';
+import {spawn, spawnSync} from 'child_process';
 import path from 'path';
 import {IOSNativeModulesConfig} from '@react-native-community/cli-types';
+import hasbin from 'hasbin';
 
 const SCRIPT_PATH = path.resolve(__dirname, '../../../native_modules.rb');
 const FIXTURES_ROOT = path.resolve(__dirname, '../__fixtures__/native_modules');
@@ -59,7 +60,21 @@ function run(runInput: RunInput) {
   });
 }
 
-describe('native_modules.rb', () => {
+function describeIfSupportedEnv() {
+  if (hasbin.sync('ruby')) {
+    const result = spawnSync('ruby', ['-r', 'cocoapods', '-e', '']);
+    if (result.status === 0) {
+      return describe;
+    }
+  }
+  console.warn(
+    '[!] The `native_modules.rb` tests are disabled – ensure you have `ruby` ' +
+      'and the `cocoapods` gem installed in order to run them.',
+  );
+  return describe.skip;
+}
+
+describeIfSupportedEnv()('native_modules.rb', () => {
   let runInput: RunInput;
 
   beforeEach(() => {

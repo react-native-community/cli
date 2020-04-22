@@ -6802,10 +6802,6 @@ jest-resolve@^25.2.3:
     realpath-native "^2.0.0"
     resolve "^1.15.1"
 
-jest-runner-minitest@alloy/jest-runner-minitest#2b42164a37b14b6b5e956312977480d8ff32526d:
-  version "0.2.0"
-  resolved "https://codeload.github.com/alloy/jest-runner-minitest/tar.gz/2b42164a37b14b6b5e956312977480d8ff32526d"
-
 jest-runner@^25.2.4:
   version "25.2.4"
   resolved "https://registry.yarnpkg.com/jest-runner/-/jest-runner-25.2.4.tgz#d0daf7c56b4a83b6b675863d5cdcd502c960f9a1"

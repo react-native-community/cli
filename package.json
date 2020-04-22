@@ -14,7 +14,6 @@
     "test": "jest",
     "test:ci:unit": "jest packages --ci --coverage",
     "test:ci:e2e": "jest e2e --ci -i",
-    "test:ci:cocoapods": "jest --ci packages/platform-ios/native_modules.rb",
     "lint": "eslint --ext .js,.ts . --cache --report-unused-disable-directives",
     "postinstall": "yarn build",
     "link-packages": "node ./scripts/linkPackages.js",

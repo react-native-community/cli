@@ -114,157 +114,31 @@ def use_native_modules!(config = nil)
 end
 
 # You can run the tests for this file by running:
-# $ ruby packages/platform-ios/native_modules.rb
+# $ yarn jest packages/platform-ios/src/config/__tests__/native_modules.test.ts
 if $0 == __FILE__
-  require "minitest/spec"
-  require "minitest/autorun"
+  require "json"
+  targets = JSON.parse(ARGF.read)
 
-  describe "use_native_modules!" do
-    before do
-      @script_phase = {
-        "script" => "123",
-        "name" => "My Name",
-        "execution_position" => "before_compile",
-      }
-      @ios_package = ios_package = {
-        "root" => "/root/app/node_modules/react",
-        "platforms" => {
-          "ios" => {
-            "podspecPath" => "/root/app/node_modules/react/React.podspec",
-          },
-          "android" => nil,
-        },
-      }
-      @android_package = {
-        "root" => "/root/app/node_modules/react-native-google-play-game-services",
-        "platforms" => {
-          "ios" => nil,
-          "android" => {
-            # This is where normally more config would be
-          },
-        }
-      }
-      @project = {
-        "ios" => {
-          "sourceDir" => "/root/app/ios"
-        }
-      }
-      @config = {
-        "project" => @project,
-        "dependencies" => {
-          "ios-dep" => @ios_package,
-          "android-dep" => @android_package
-        }
-      }
-      
-      spec = Pod::Specification.new do |s|
-        s.name = "ios-dep"
-      end      
-      Pod::Specification.singleton_class.send(:define_method, :from_file) do |podspec_path|
-        podspec_path.must_equal ios_package["platforms"]["ios"]["podspecPath"]
-        spec
-      end
-      
-      @printed_messages = printed_messages = []
-      Pod::UI.singleton_class.send(:define_method, :puts) do |message|
-        printed_messages << message
+  unless targets["capture_stdout"]
+    Pod::Config.instance.silent = true
+  end
+
+  podfile = Pod::Podfile.new do
+    if targets["pods_activated_by_user"]
+      targets["pods_activated_by_user"].each do |name|
+        pod(name)
       end
     end
-
-    it "activates iOS pods" do
-      config = @config
-      podfile = Pod::Podfile.new do
+    targets.each do |name, config|
+      next if ["capture_stdout", "pods_activated_by_user"].include?(name)
+      target(name) do
+        platform(name.to_sym)
         use_native_modules!(config)
       end
-      podfile.dependencies.to_json.must_equal '["ios-dep (from `../node_modules/react`)"]'
     end
+  end
 
-    it "does not activate pods that were already activated previously (by the user in their Podfile)" do
-      config = @config
-      activated_pods_before = activated_pods_after = nil
-      podfile = Pod::Podfile.new do
-        pod "ios-dep"
-        activated_pods_before = self.dependencies.dup
-        use_native_modules!(config)
-        activated_pods_after = self.dependencies.dup
-      end
-      (activated_pods_after - activated_pods_before).must_equal []
-    end
-
-    it "does not activate pods whose root spec were already activated previously (by the user in their Podfile)" do
-      config = @config
-      activated_pods_before = activated_pods_after = nil
-      podfile = Pod::Podfile.new do
-        pod "ios-dep/foo/bar"
-        activated_pods_before = self.dependencies.dup
-        use_native_modules!(config)
-        activated_pods_after = self.dependencies.dup
-      end
-      (activated_pods_after - activated_pods_before).must_equal []
-    end
-
-    it "prints out the native module pods that were found" do
-      project, ios_package = @project, @ios_package
-      Pod::Podfile.new do
-        use_native_modules!({ "project" => project, "dependencies" => {} })
-      end
-      Pod::Podfile.new do
-        use_native_modules!({ "project" => project, "dependencies" => { "pkg-1" => ios_package }})
-      end
-      # Pod::Podfile.new do
-      #   use_native_modules!({
-      #     "project" => project, "dependencies" => { "pkg-1" => ios_package, "pkg-2" => ios_package }
-      #   })
-      # end
-      @printed_messages.must_equal [
-        "Detected React Native module pod for ios-dep",
-        # "Detected React Native module pods for ios-dep and ios-dep"
-      ]
-    end
-
-    describe "concerning script_phases" do
-      it "uses the options directly" do
-        @config["dependencies"]["ios-dep"]["platforms"]["ios"]["scriptPhases"] = [@script_phase]
-
-        config = @config
-        podfile = Pod::Podfile.new do
-          target "iOS" do
-            use_native_modules!(config)
-          end
-        end
-
-        podfile.to_hash["target_definitions"][0]["children"][0]["script_phases"].must_equal [{
-          :script => "123",
-          :name => "My Name",
-          :execution_position => :before_compile,
-        }]
-      end
-
-      it "reads a script file relative to the package root" do
-        @script_phase.delete("script")
-        @script_phase["path"] = "./some_shell_script.sh"
-        @config["dependencies"]["ios-dep"]["platforms"]["ios"]["scriptPhases"] = [@script_phase]
-
-        file_read_mock = MiniTest::Mock.new
-        file_read_mock.expect(:call, "contents from file", [File.join(@ios_package["root"], "some_shell_script.sh")])
-
-        podfile = File.stub(:read, file_read_mock) do
-          config = @config
-          Pod::Podfile.new do
-            target "iOS" do
-              use_native_modules!(config)
-            end
-          end
-        end
-
-        podfile.to_hash["target_definitions"][0]["children"][0]["script_phases"].must_equal [{
-          :script => "contents from file",
-          :name => "My Name",
-          :execution_position => :before_compile,
-        }]
-
-        file_read_mock.verify
-      end
-    end
+  unless targets["capture_stdout"]
+    puts podfile.to_hash.to_json
   end
 end

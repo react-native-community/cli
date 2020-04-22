@@ -14,12 +14,6 @@ module.exports = {
       setupFiles: ['<rootDir>/jest/setupUnitTests.js'],
       testMatch: ['<rootDir>/**/__tests__/*{.,-}test.[jt]s'],
     },
-    {
-      displayName: 'ruby',
-      runner: 'jest-runner-minitest',
-      moduleFileExtensions: ['rb'],
-      testMatch: ['<rootDir>/packages/platform-ios/native_modules.rb'],
-    },
   ],
   collectCoverageFrom: [
     '**/packages/*/**/*.ts',

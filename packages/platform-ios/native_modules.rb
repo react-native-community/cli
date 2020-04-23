@@ -129,27 +129,27 @@ if $0 == __FILE__
   require "json"
   runInput = JSON.parse(ARGF.read)
 
-  unless runInput["capture_stdout"]
+  unless runInput["captureStdout"]
     Pod::Config.instance.silent = true
   end
 
   podfile = Pod::Podfile.new do
-    if runInput["pods_activated_by_user"]
-      runInput["pods_activated_by_user"].each do |name|
+    if runInput["podsActivatedByUser"]
+      runInput["podsActivatedByUser"].each do |name|
         pod(name)
       end
     end
     target 'iOS Target' do
       platform :ios
-      use_native_modules!(runInput["config"])
+      use_native_modules!(runInput["dependencyConfig"])
     end
     target 'macOS Target' do
       platform :osx
-      use_native_modules!(runInput["config"])
+      use_native_modules!(runInput["dependencyConfig"])
     end
   end
 
-  unless runInput["capture_stdout"]
+  unless runInput["captureStdout"]
     puts podfile.to_hash.to_json
   end
 end

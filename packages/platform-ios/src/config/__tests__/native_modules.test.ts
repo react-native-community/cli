@@ -231,13 +231,14 @@ describeIfSupportedEnv()('native_modules.rb', () => {
     });
   });
 
-  // TODO: Add a second pod
   it('prints out the native module pods that were found', () => {
-    return run({
-      captureStdout: true,
-      ...runConfig,
-    }).then(stdout => {
-      expect(stdout).toEqual('Detected React Native module pod for ios-dep');
+    runConfig.captureStdout = true;
+    addDependency(runConfig, 'ios-and-macos-dep');
+    return run(runConfig).then(stdout => {
+      expect(stdout).toMatchInlineSnapshot(`
+        "Auto-linking React Native modules for target \`iOS Target\`: ios-and-macos-dep and ios-dep
+        Auto-linking React Native module for target \`macOS Target\`: ios-and-macos-dep"
+      `);
     });
   });
 

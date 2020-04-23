@@ -117,7 +117,7 @@ def use_native_modules!(config = nil)
 
   if found_pods.size > 0
     pods = found_pods.map { |p| p.name }.sort.to_sentence
-    Pod::UI.puts "Detected React Native module #{"pod".pluralize(found_pods.size)} for #{pods}"
+    Pod::UI.puts "Auto-linking React Native #{"module".pluralize(found_pods.size)} for target `#{current_target_definition.name}`: #{pods}"
   end
   
   config

@@ -180,6 +180,13 @@ async function run() {
 
 async function setupAndRun() {
   // Commander is not available yet
+
+  // when we run `config`, we don't want to output anything to the console. We
+  // expect it to return valid JSON
+  if (process.argv.includes('config')) {
+    logger.disable();
+  }
+
   logger.setVerbose(process.argv.includes('--verbose'));
 
   // We only have a setup script for UNIX envs currently
@@ -206,12 +213,6 @@ async function setupAndRun() {
   }
 
   try {
-    // when we run `config`, we don't want to output anything to the console. We
-    // expect it to return valid JSON
-    if (process.argv.includes('config')) {
-      logger.disable();
-    }
-
     const ctx = loadConfig();
 
     logger.enable();

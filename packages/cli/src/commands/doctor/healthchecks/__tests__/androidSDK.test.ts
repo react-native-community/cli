@@ -1,3 +1,5 @@
+import * as os from 'os';
+import {join} from 'path';
 import execa from 'execa';
 import {cleanup, writeFiles} from '../../../../../../../jest/helpers';
 import androidSDK from '../androidSDK';
@@ -10,12 +12,19 @@ const logSpy = jest.spyOn(common, 'logManualInstallation');
 
 jest.mock('execa', () => jest.fn());
 
+let mockWorkingDir = '';
+
 // TODO remove when androidSDK starts getting gradle.build path from config
-jest.mock('../../../../tools/config/findProjectRoot', () => () => '.');
+jest.mock('../../../../tools/config/findProjectRoot', () => () => {
+  return mockWorkingDir;
+});
 
 describe('androidSDK', () => {
   beforeEach(() => {
-    writeFiles('', {
+    const random = Math.floor(Math.random() * 10000);
+    mockWorkingDir = join(os.tmpdir(), `androidSdkTest-${random}`);
+
+    writeFiles(mockWorkingDir, {
       'android/build.gradle': `
         buildscript {
           ext {
@@ -29,7 +38,7 @@ describe('androidSDK', () => {
     });
   });
 
-  afterAll(() => cleanup('android/build.gradle'));
+  afterAll(() => cleanup(join(mockWorkingDir, 'android/build.gradle')));
 
   let environmentInfo: EnvironmentInfo;
 
@@ -90,7 +99,7 @@ describe('androidSDK', () => {
       stdout: 'build-tools;28.0.3',
     });
 
-    cleanup('android/build.gradle');
+    cleanup(join(mockWorkingDir, 'android/build.gradle'));
 
     const diagnostics = await androidSDK.getDiagnostics(environmentInfo);
     expect(diagnostics.needsToBeFixed).toBe(true);

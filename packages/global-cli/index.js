@@ -202,13 +202,13 @@ function createAfterConfirmation(name, options) {
   const property = {
     name: 'yesno',
     message: `Directory ${name} already exists. Continue?`,
-    validator: /y[es]*|n[o]?/,
+    validator: /y(es)?|no?/,
     warning: 'Must respond yes or no',
     default: 'no',
   };
 
   prompt.get(property, (err, result) => {
-    if (result.yesno[0] === 'y') {
+    if (/y(es)?/.test(result.yesno[0])) {
       createProject(name, options);
     } else {
       console.log('Project initialization canceled');

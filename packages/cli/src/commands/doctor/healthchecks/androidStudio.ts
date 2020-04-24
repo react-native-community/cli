@@ -5,7 +5,7 @@ import {HealthCheckInterface} from '../types';
 
 import {downloadAndUnzip} from '../../../tools/downloadAndUnzip';
 import {executeCommand} from '../../../tools/windows/executeWinCommand';
-import {getUserAndroidPath} from './androidWinHelpers';
+import {getUserAndroidPath} from '../../../tools/windows/androidWinHelpers';
 import {createShortcut} from '../../../tools/windows/create-shortcut';
 
 export default {

@@ -1,5 +1,6 @@
 import {join} from 'path';
-import {executeCommand} from '../../../tools/windows/executeWinCommand';
+import {executeCommand} from './executeWinCommand';
+import {getProcessorType} from '../processorType';
 
 type HypervisorStatus = {
   hypervisor: 'WHPX' | 'HAXM' | 'AMDH' | 'none';
@@ -163,9 +164,7 @@ export const getBestHypervisor = async (
   androidSDKRoot: string,
 ): Promise<HypervisorStatus> => {
   // Should be in the path? might want to pass the root before
-  const customHypervisor = process.env.PROCESSOR_IDENTIFIER!.includes('Intel')
-    ? 'HAXM'
-    : 'AMDH';
+  const customHypervisor = getProcessorType() === 'Intel' ? 'HAXM' : 'AMDH';
 
   const stdout = await getEmulatorAccelOutputInformation(androidSDKRoot);
 

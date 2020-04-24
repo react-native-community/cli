@@ -12,7 +12,7 @@ import {
   enableAMDH,
   enableHAXM,
   enableWHPX,
-} from './androidWinHelpers';
+} from '../../../tools/windows/androidWinHelpers';
 import {downloadAndUnzip} from '../../../tools/downloadAndUnzip';
 
 import {

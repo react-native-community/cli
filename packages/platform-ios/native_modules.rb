@@ -11,8 +11,8 @@ def use_native_modules!(config = nil)
     Pod::UI.warn("Passing custom root to use_native_modules! is deprecated.",
       [
         "CLI detects root of the project automatically. The \"#{config}\" argument was ignored.",
-      ]);
-    config = nil;
+      ])
+    config = nil
   end
 
   # Resolving the path the RN CLI. The `@react-native-community/cli` module may not be there for certain package managers, so we fall back to resolving it through `react-native` package, that's always present in RN projects
@@ -71,7 +71,11 @@ def use_native_modules!(config = nil)
 
     relative_path = podspec_dir_path.relative_path_from project_root
 
-    pod spec.name, :path => relative_path.to_path
+    if spec.configurations != :debug
+      pod spec.name, :path => relative_path.to_path
+    else
+      pod spec.name, :path => relative_path.to_path, :configurations => :debug
+    end
 
     if package_config["scriptPhases"] && !this_target.abstract?
       # Can be either an object, or an array of objects

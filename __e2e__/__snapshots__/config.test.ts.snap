@@ -1,62 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`shows up current config without unnecessary output 1`] = `
-"ctx:  {
-  root: '/private/var/folders/zt/917v0jxx6lg3p_zfh9s_02bm0000gn/T/test_root/TestProject',
-  reactNativePath: [Getter],
-  dependencies: {
-    react: [Getter],
-    'react-native': [Getter],
-    '@babel/core': [Getter],
-    '@babel/runtime': [Getter],
-    '@react-native-community/eslint-config': [Getter],
-    'babel-jest': [Getter],
-    eslint: [Getter],
-    jest: [Getter],
-    'metro-react-native-babel-preset': [Getter],
-    'react-test-renderer': [Getter]
-  },
-  commands: [
-    {
-      name: 'log-ios',
-      description: 'starts iOS device syslog tail',
-      func: [AsyncFunction: logIOS]
-    },
-    {
-      name: 'run-ios',
-      description: 'builds your app and starts it on iOS simulator',
-      func: [Function: runIOS],
-      examples: [Array],
-      options: [Array]
-    },
-    {
-      name: 'log-android',
-      description: 'starts logkitty',
-      func: [AsyncFunction: logAndroid]
-    },
-    {
-      name: 'run-android',
-      description: 'builds your app and starts it on a connected Android emulator or device',
-      func: [AsyncFunction: runAndroid],
-      options: [Array]
-    }
-  ],
-  assets: [Getter],
-  platforms: {
-    ios: {
-      linkConfig: [Function: getIOSLinkConfig],
-      projectConfig: [Function: projectConfig],
-      dependencyConfig: [Function: projectConfig]
-    },
-    android: {
-      linkConfig: [Function: getAndroidLinkConfig],
-      projectConfig: [Function: projectConfig],
-      dependencyConfig: [Function: dependencyConfig]
-    }
-  },
-  project: [Getter]
-}
-{
+"{
   \\"root\\": \\"/private/var/folders/zt/917v0jxx6lg3p_zfh9s_02bm0000gn/T/test_root/TestProject\\",
   \\"reactNativePath\\": \\"/private/var/folders/zt/917v0jxx6lg3p_zfh9s_02bm0000gn/T/test_root/TestProject/node_modules/react-native\\",
   \\"dependencies\\": {},

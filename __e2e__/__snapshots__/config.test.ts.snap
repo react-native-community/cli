@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`shows up current config without additional output 1`] = `
+exports[`shows up current config without unnecessary output 1`] = `
 "ctx:  {
   root: '/private/var/folders/zt/917v0jxx6lg3p_zfh9s_02bm0000gn/T/test_root/TestProject',
   reactNativePath: [Getter],

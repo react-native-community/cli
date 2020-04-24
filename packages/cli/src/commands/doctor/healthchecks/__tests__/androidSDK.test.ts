@@ -8,7 +8,7 @@ import * as downloadAndUnzip from '../../../../tools/downloadAndUnzip';
 import {EnvironmentInfo} from '../../types';
 import {NoopLoader} from '../../../../tools/loader';
 import * as common from '../common';
-import * as androidWinHelpers from '../androidWinHelpers';
+import * as androidWinHelpers from '../../../../tools/windows/androidWinHelpers';
 import * as environmentVariables from '../../../../tools/windows/environmentVariables';
 
 const logSpy = jest.spyOn(common, 'logManualInstallation');

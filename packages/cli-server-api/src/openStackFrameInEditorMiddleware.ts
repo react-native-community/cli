@@ -10,7 +10,7 @@ import connect from 'connect';
 import rawBodyMiddleware from './rawBodyMiddleware';
 
 type Options = {
-  watchFolders: Array<string>;
+  watchFolders: ReadonlyArray<string>;
 };
 
 function getOpenStackFrameInEditorMiddleware({watchFolders}: Options) {

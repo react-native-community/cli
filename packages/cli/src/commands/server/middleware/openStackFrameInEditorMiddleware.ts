@@ -10,7 +10,7 @@ import {launchEditor} from '@react-native-community/cli-tools';
 export default function getOpenStackFrameInEditorMiddleware({
   watchFolders,
 }: {
-  watchFolders: Array<string>;
+  watchFolders: ReadonlyArray<string>;
 }) {
   return (
     req: http.IncomingMessage & {rawBody: string},

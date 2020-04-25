@@ -40,7 +40,7 @@ export interface MetroConfig {
     assetRegistryPath: string;
     assetPlugins?: Array<string>;
   };
-  watchFolders: string[];
+  watchFolders: ReadonlyArray<string>;
   reporter?: any;
 }
 

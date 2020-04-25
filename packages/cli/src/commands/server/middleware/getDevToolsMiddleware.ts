@@ -27,7 +27,7 @@ function escapePath(pathname: string) {
 type LaunchDevToolsOptions = {
   host?: string;
   port: number;
-  watchFolders: Array<string>;
+  watchFolders: ReadonlyArray<string>;
 };
 
 function launchDevTools(
@@ -48,7 +48,7 @@ function startCustomDebugger({
   watchFolders,
   customDebugger,
 }: {
-  watchFolders: Array<string>;
+  watchFolders: ReadonlyArray<string>;
   customDebugger: string;
 }) {
   const folders = watchFolders.map(escapePath).join(' ');

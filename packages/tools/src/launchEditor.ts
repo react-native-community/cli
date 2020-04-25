@@ -153,7 +153,10 @@ function transformToAbsolutePathIfNeeded(pathName: string) {
   return pathName;
 }
 
-function findRootForFile(projectRoots: string[], fileName: string) {
+function findRootForFile(
+  projectRoots: ReadonlyArray<string>,
+  fileName: string,
+) {
   const absoluteFileName = transformToAbsolutePathIfNeeded(fileName);
   return projectRoots.find(root => {
     const absoluteRoot = transformToAbsolutePathIfNeeded(root);
@@ -165,7 +168,7 @@ let _childProcess: ChildProcess | null = null;
 function launchEditor(
   fileName: string,
   lineNumber: number,
-  projectRoots: string[],
+  projectRoots: ReadonlyArray<string>,
 ) {
   if (!fs.existsSync(fileName)) {
     return;

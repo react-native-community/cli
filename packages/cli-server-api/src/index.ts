@@ -35,7 +35,7 @@ export {messageSocketServer};
 
 type MiddlewareOptions = {
   host?: string;
-  watchFolders: Array<string>;
+  watchFolders: ReadonlyArray<string>;
   port: number;
 };
 

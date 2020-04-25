@@ -22,7 +22,7 @@ import getDevToolsMiddleware from './getDevToolsMiddleware';
 
 type Options = {
   host?: string;
-  watchFolders: Array<string>;
+  watchFolders: ReadonlyArray<string>;
   port: number;
 };
 

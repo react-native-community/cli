@@ -5,8 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 import http from 'http';
-import launchDefaultBrowser from '../launchDefaultBrowser';
-import {logger} from '@react-native-community/cli-tools';
+import {launchDefaultBrowser, logger} from '@react-native-community/cli-tools';
 
 /**
  * Handle request from JS to open an arbitrary URL in Chrome

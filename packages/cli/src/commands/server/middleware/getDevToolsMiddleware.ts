@@ -5,9 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 import http from 'http';
-import {logger} from '@react-native-community/cli-tools';
+import {launchDebugger, logger} from '@react-native-community/cli-tools';
 import {exec} from 'child_process';
-import launchDebugger from '../launchDebugger';
 
 function launchDefaultDebugger(
   host: string | undefined,

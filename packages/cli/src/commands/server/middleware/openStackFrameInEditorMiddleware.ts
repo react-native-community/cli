@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 import http from 'http';
-import launchEditor from '../launchEditor';
+import {launchEditor} from '@react-native-community/cli-tools';
 
 export default function getOpenStackFrameInEditorMiddleware({
   watchFolders,

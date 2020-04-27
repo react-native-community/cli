@@ -1,5 +1,6 @@
 import path from 'path';
 import fs from 'fs';
+import {wrap} from 'jest-snapshot-serializer-raw';
 import {
   runCLI,
   getTempDirectory,
@@ -71,7 +72,7 @@ test('shows up current config without unnecessary output', () => {
     stdout,
     'test_root',
   );
-  expect(configWithReplacedProjectRoots).toMatchSnapshot();
+  expect(wrap(configWithReplacedProjectRoots)).toMatchSnapshot();
 });
 
 test('should log only valid JSON config if setuping env throws an error', () => {

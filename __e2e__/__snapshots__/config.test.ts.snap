@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`shows up current config without unnecessary output 1`] = `
+exports[`should log only valid JSON config if setuping env throws an error 1`] = `
 "{
-  \\"root\\": \\"/private/var/folders/zt/917v0jxx6lg3p_zfh9s_02bm0000gn/T/test_root/TestProject\\",
-  \\"reactNativePath\\": \\"/private/var/folders/zt/917v0jxx6lg3p_zfh9s_02bm0000gn/T/test_root/TestProject/node_modules/react-native\\",
+  \\"root\\": \\"<<REPLACED_ROOT>>/test_root/TestProject\\",
+  \\"reactNativePath\\": \\"<<REPLACED_ROOT>>/test_root/TestProject/node_modules/react-native\\",
   \\"dependencies\\": {},
   \\"commands\\": [
     {
@@ -150,12 +150,12 @@ exports[`shows up current config without unnecessary output 1`] = `
   },
   \\"project\\": {
     \\"ios\\": {
-      \\"sourceDir\\": \\"/private/var/folders/zt/917v0jxx6lg3p_zfh9s_02bm0000gn/T/test_root/TestProject/ios\\",
-      \\"folder\\": \\"/private/var/folders/zt/917v0jxx6lg3p_zfh9s_02bm0000gn/T/test_root/TestProject\\",
-      \\"pbxprojPath\\": \\"/private/var/folders/zt/917v0jxx6lg3p_zfh9s_02bm0000gn/T/test_root/TestProject/ios/TestProject.xcodeproj/project.pbxproj\\",
-      \\"podfile\\": \\"/private/var/folders/zt/917v0jxx6lg3p_zfh9s_02bm0000gn/T/test_root/TestProject/ios/Podfile\\",
+      \\"sourceDir\\": \\"<<REPLACED_ROOT>>/test_root/TestProject/ios\\",
+      \\"folder\\": \\"<<REPLACED_ROOT>>/test_root/TestProject\\",
+      \\"pbxprojPath\\": \\"<<REPLACED_ROOT>>/test_root/TestProject/ios/TestProject.xcodeproj/project.pbxproj\\",
+      \\"podfile\\": \\"<<REPLACED_ROOT>>/test_root/TestProject/ios/Podfile\\",
       \\"podspecPath\\": null,
-      \\"projectPath\\": \\"/private/var/folders/zt/917v0jxx6lg3p_zfh9s_02bm0000gn/T/test_root/TestProject/ios/TestProject.xcodeproj\\",
+      \\"projectPath\\": \\"<<REPLACED_ROOT>>/test_root/TestProject/ios/TestProject.xcodeproj\\",
       \\"projectName\\": \\"TestProject.xcodeproj\\",
       \\"libraryFolder\\": \\"Libraries\\",
       \\"sharedLibraries\\": [],
@@ -163,15 +163,195 @@ exports[`shows up current config without unnecessary output 1`] = `
       \\"scriptPhases\\": []
     },
     \\"android\\": {
-      \\"sourceDir\\": \\"/private/var/folders/zt/917v0jxx6lg3p_zfh9s_02bm0000gn/T/test_root/TestProject/android\\",
+      \\"sourceDir\\": \\"<<REPLACED_ROOT>>/test_root/TestProject/android\\",
       \\"isFlat\\": true,
-      \\"folder\\": \\"/private/var/folders/zt/917v0jxx6lg3p_zfh9s_02bm0000gn/T/test_root/TestProject\\",
-      \\"stringsPath\\": \\"/private/var/folders/zt/917v0jxx6lg3p_zfh9s_02bm0000gn/T/test_root/TestProject/android/app/src/main/res/values/strings.xml\\",
-      \\"manifestPath\\": \\"/private/var/folders/zt/917v0jxx6lg3p_zfh9s_02bm0000gn/T/test_root/TestProject/android/app/src/main/AndroidManifest.xml\\",
-      \\"buildGradlePath\\": \\"/private/var/folders/zt/917v0jxx6lg3p_zfh9s_02bm0000gn/T/test_root/TestProject/android/build.gradle\\",
-      \\"settingsGradlePath\\": \\"/private/var/folders/zt/917v0jxx6lg3p_zfh9s_02bm0000gn/T/test_root/TestProject/android/settings.gradle\\",
-      \\"assetsPath\\": \\"/private/var/folders/zt/917v0jxx6lg3p_zfh9s_02bm0000gn/T/test_root/TestProject/android/app/src/main/assets\\",
-      \\"mainFilePath\\": \\"/private/var/folders/zt/917v0jxx6lg3p_zfh9s_02bm0000gn/T/test_root/TestProject/android/app/src/main/java/com/testproject/MainApplication.java\\",
+      \\"folder\\": \\"<<REPLACED_ROOT>>/test_root/TestProject\\",
+      \\"stringsPath\\": \\"<<REPLACED_ROOT>>/test_root/TestProject/android/app/src/main/res/values/strings.xml\\",
+      \\"manifestPath\\": \\"<<REPLACED_ROOT>>/test_root/TestProject/android/app/src/main/AndroidManifest.xml\\",
+      \\"buildGradlePath\\": \\"<<REPLACED_ROOT>>/test_root/TestProject/android/build.gradle\\",
+      \\"settingsGradlePath\\": \\"<<REPLACED_ROOT>>/test_root/TestProject/android/settings.gradle\\",
+      \\"assetsPath\\": \\"<<REPLACED_ROOT>>/test_root/TestProject/android/app/src/main/assets\\",
+      \\"mainFilePath\\": \\"<<REPLACED_ROOT>>/test_root/TestProject/android/app/src/main/java/com/testproject/MainApplication.java\\",
+      \\"packageName\\": \\"com.testproject\\",
+      \\"packageFolder\\": \\"com/testproject\\",
+      \\"appName\\": \\"app\\"
+    }
+  }
+}"
+`;
+
+exports[`shows up current config without unnecessary output 1`] = `
+"{
+  \\"root\\": \\"<<REPLACED_ROOT>>/test_root/TestProject\\",
+  \\"reactNativePath\\": \\"<<REPLACED_ROOT>>/test_root/TestProject/node_modules/react-native\\",
+  \\"dependencies\\": {},
+  \\"commands\\": [
+    {
+      \\"name\\": \\"log-ios\\",
+      \\"description\\": \\"starts iOS device syslog tail\\"
+    },
+    {
+      \\"name\\": \\"run-ios\\",
+      \\"description\\": \\"builds your app and starts it on iOS simulator\\",
+      \\"examples\\": [
+        {
+          \\"desc\\": \\"Run on a different simulator, e.g. iPhone 5\\",
+          \\"cmd\\": \\"react-native run-ios --simulator \\\\\\"iPhone 5\\\\\\"\\"
+        },
+        {
+          \\"desc\\": \\"Pass a non-standard location of iOS directory\\",
+          \\"cmd\\": \\"react-native run-ios --project-path \\\\\\"./app/ios\\\\\\"\\"
+        },
+        {
+          \\"desc\\": \\"Run on a connected device, e.g. Max's iPhone\\",
+          \\"cmd\\": \\"react-native run-ios --device \\\\\\"Max's iPhone\\\\\\"\\"
+        },
+        {
+          \\"desc\\": \\"Run on the AppleTV simulator\\",
+          \\"cmd\\": \\"react-native run-ios --simulator \\\\\\"Apple TV\\\\\\"  --scheme \\\\\\"helloworld-tvOS\\\\\\"\\"
+        }
+      ],
+      \\"options\\": [
+        {
+          \\"name\\": \\"--simulator [string]\\",
+          \\"description\\": \\"Explicitly set simulator to use. Optionally include iOS version betweenparenthesis at the end to match an exact version: \\\\\\"iPhone 6 (10.0)\\\\\\"\\",
+          \\"default\\": \\"iPhone 11\\"
+        },
+        {
+          \\"name\\": \\"--configuration [string]\\",
+          \\"description\\": \\"Explicitly set the scheme configuration to use\\",
+          \\"default\\": \\"Debug\\"
+        },
+        {
+          \\"name\\": \\"--scheme [string]\\",
+          \\"description\\": \\"Explicitly set Xcode scheme to use\\"
+        },
+        {
+          \\"name\\": \\"--project-path [string]\\",
+          \\"description\\": \\"Path relative to project root where the Xcode project (.xcodeproj) lives.\\",
+          \\"default\\": \\"ios\\"
+        },
+        {
+          \\"name\\": \\"--device [string]\\",
+          \\"description\\": \\"Explicitly set device to use by name.  The value is not required if you have a single device connected.\\"
+        },
+        {
+          \\"name\\": \\"--udid [string]\\",
+          \\"description\\": \\"Explicitly set device to use by udid\\"
+        },
+        {
+          \\"name\\": \\"--no-packager\\",
+          \\"description\\": \\"Do not launch packager while building\\"
+        },
+        {
+          \\"name\\": \\"--verbose\\",
+          \\"description\\": \\"Do not use xcpretty even if installed\\"
+        },
+        {
+          \\"name\\": \\"--port [number]\\",
+          \\"default\\": 8081
+        },
+        {
+          \\"name\\": \\"--terminal [string]\\",
+          \\"description\\": \\"Launches the Metro Bundler in a new window using the specified terminal path.\\"
+        }
+      ]
+    },
+    {
+      \\"name\\": \\"log-android\\",
+      \\"description\\": \\"starts logkitty\\"
+    },
+    {
+      \\"name\\": \\"run-android\\",
+      \\"description\\": \\"builds your app and starts it on a connected Android emulator or device\\",
+      \\"options\\": [
+        {
+          \\"name\\": \\"--root [string]\\",
+          \\"description\\": \\"[DEPRECATED - root is discovered automatically] Override the root directory for the android build (which contains the android directory)\\",
+          \\"default\\": \\"\\"
+        },
+        {
+          \\"name\\": \\"--variant [string]\\",
+          \\"description\\": \\"Specify your app's build variant\\",
+          \\"default\\": \\"debug\\"
+        },
+        {
+          \\"name\\": \\"--appFolder [string]\\",
+          \\"description\\": \\"[DEPRECATED – use \\\\\\"platforms.android.appName\\\\\\" in react-native.config.js] Specify a different application folder name for the android source. If not, we assume is \\\\\\"app\\\\\\"\\"
+        },
+        {
+          \\"name\\": \\"--appId [string]\\",
+          \\"description\\": \\"[DEPRECATED – use \\\\\\"platforms.android.appName\\\\\\" in react-native.config.js] Specify an applicationId to launch after build.\\",
+          \\"default\\": \\"\\"
+        },
+        {
+          \\"name\\": \\"--appIdSuffix [string]\\",
+          \\"description\\": \\"Specify an applicationIdSuffix to launch after build.\\",
+          \\"default\\": \\"\\"
+        },
+        {
+          \\"name\\": \\"--main-activity [string]\\",
+          \\"description\\": \\"Name of the activity to start\\",
+          \\"default\\": \\"MainActivity\\"
+        },
+        {
+          \\"name\\": \\"--deviceId [string]\\",
+          \\"description\\": \\"builds your app and starts it on a specific device/simulator with the given device id (listed by running \\\\\\"adb devices\\\\\\" on the command line).\\"
+        },
+        {
+          \\"name\\": \\"--no-packager\\",
+          \\"description\\": \\"Do not launch packager while building\\"
+        },
+        {
+          \\"name\\": \\"--port [number]\\",
+          \\"default\\": 8081
+        },
+        {
+          \\"name\\": \\"--terminal [string]\\",
+          \\"description\\": \\"Launches the Metro Bundler in a new window using the specified terminal path.\\",
+          \\"default\\": \\"vscode\\"
+        },
+        {
+          \\"name\\": \\"--tasks [list]\\",
+          \\"description\\": \\"Run custom Gradle tasks. By default it's \\\\\\"installDebug\\\\\\"\\"
+        },
+        {
+          \\"name\\": \\"--no-jetifier\\",
+          \\"description\\": \\"Do not run \\\\\\"jetifier\\\\\\" – the AndroidX transition tool. By default it runs before Gradle to ease working with libraries that don't support AndroidX yet. See more at: https://www.npmjs.com/package/jetifier.\\",
+          \\"default\\": false
+        }
+      ]
+    }
+  ],
+  \\"assets\\": [],
+  \\"platforms\\": {
+    \\"ios\\": {},
+    \\"android\\": {}
+  },
+  \\"project\\": {
+    \\"ios\\": {
+      \\"sourceDir\\": \\"<<REPLACED_ROOT>>/test_root/TestProject/ios\\",
+      \\"folder\\": \\"<<REPLACED_ROOT>>/test_root/TestProject\\",
+      \\"pbxprojPath\\": \\"<<REPLACED_ROOT>>/test_root/TestProject/ios/TestProject.xcodeproj/project.pbxproj\\",
+      \\"podfile\\": \\"<<REPLACED_ROOT>>/test_root/TestProject/ios/Podfile\\",
+      \\"podspecPath\\": null,
+      \\"projectPath\\": \\"<<REPLACED_ROOT>>/test_root/TestProject/ios/TestProject.xcodeproj\\",
+      \\"projectName\\": \\"TestProject.xcodeproj\\",
+      \\"libraryFolder\\": \\"Libraries\\",
+      \\"sharedLibraries\\": [],
+      \\"plist\\": [],
+      \\"scriptPhases\\": []
+    },
+    \\"android\\": {
+      \\"sourceDir\\": \\"<<REPLACED_ROOT>>/test_root/TestProject/android\\",
+      \\"isFlat\\": true,
+      \\"folder\\": \\"<<REPLACED_ROOT>>/test_root/TestProject\\",
+      \\"stringsPath\\": \\"<<REPLACED_ROOT>>/test_root/TestProject/android/app/src/main/res/values/strings.xml\\",
+      \\"manifestPath\\": \\"<<REPLACED_ROOT>>/test_root/TestProject/android/app/src/main/AndroidManifest.xml\\",
+      \\"buildGradlePath\\": \\"<<REPLACED_ROOT>>/test_root/TestProject/android/build.gradle\\",
+      \\"settingsGradlePath\\": \\"<<REPLACED_ROOT>>/test_root/TestProject/android/settings.gradle\\",
+      \\"assetsPath\\": \\"<<REPLACED_ROOT>>/test_root/TestProject/android/app/src/main/assets\\",
+      \\"mainFilePath\\": \\"<<REPLACED_ROOT>>/test_root/TestProject/android/app/src/main/java/com/testproject/MainApplication.java\\",
       \\"packageName\\": \\"com.testproject\\",
       \\"packageFolder\\": \\"com/testproject\\",
       \\"appName\\": \\"app\\"

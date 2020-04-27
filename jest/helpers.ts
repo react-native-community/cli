@@ -196,3 +196,10 @@ ${chalk.bold('stdout:')}  ${result.stdout}
 ${chalk.bold('code:')}    ${result.code}`);
   }
 }
+
+export function replaceProjectRootInOutput(output: string, testFolder: string) {
+  return output.replace(
+    new RegExp(`(:\\s")(.*)(\\/${testFolder}.*)`, 'g'),
+    '$1<<REPLACED_ROOT>>$3',
+  );
+}

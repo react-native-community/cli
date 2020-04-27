@@ -77,13 +77,8 @@ test('shows up current config without unnecessary output', () => {
 test('should log only valid JSON config if setuping env throws an error', () => {
   const restoreOriginalSetupEnvScript = createCorruptedSetupEnvScript();
   const {stdout, stderr} = runCLI(path.join(DIR, 'TestProject'), ['config']);
-  const configWithReplacedProjectRoots = replaceProjectRootInOutput(
-    stdout,
-    'test_root',
-  );
 
   restoreOriginalSetupEnvScript();
-  expect(isValidJSON(configWithReplacedProjectRoots)).toBe(true);
-  expect(configWithReplacedProjectRoots).toMatchSnapshot();
+  expect(isValidJSON(stdout)).toBe(true);
   expect(stderr).toBe('');
 });

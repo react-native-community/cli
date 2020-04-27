@@ -68,8 +68,16 @@ afterAll(() => {
 
 test('shows up current config without unnecessary output', () => {
   const {stdout} = runCLI(path.join(DIR, 'TestProject'), ['config']);
+  const parsedStdout = JSON.parse(stdout);
+  // Strip unnecessary parts
+  parsedStdout.commands = parsedStdout.commands.map((command: any) => ({
+    ...command,
+    examples: command.examples && ['<<REPLACED>>'],
+    options: command.options && ['<<REPLACED>>'],
+  }));
+
   const configWithReplacedProjectRoots = replaceProjectRootInOutput(
-    stdout,
+    JSON.stringify(parsedStdout, null, 2),
     'test_root',
   );
   expect(wrap(configWithReplacedProjectRoots)).toMatchSnapshot();

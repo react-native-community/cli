@@ -207,6 +207,10 @@ module.exports = {
 };
 ```
 
+#### `--skip-install`
+
+Skip dependencies installation
+
 #### `--npm`
 
 Force use of npm during initialization

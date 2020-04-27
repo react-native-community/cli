@@ -129,7 +129,7 @@ exports[`should log only valid JSON config if setuping env throws an error 1`] =
         {
           \\"name\\": \\"--terminal [string]\\",
           \\"description\\": \\"Launches the Metro Bundler in a new window using the specified terminal path.\\",
-          \\"default\\": \\"vscode\\"
+          \\"default\\": \\"\\"
         },
         {
           \\"name\\": \\"--tasks [list]\\",
@@ -309,7 +309,7 @@ exports[`shows up current config without unnecessary output 1`] = `
         {
           \\"name\\": \\"--terminal [string]\\",
           \\"description\\": \\"Launches the Metro Bundler in a new window using the specified terminal path.\\",
-          \\"default\\": \\"vscode\\"
+          \\"default\\": \\"\\"
         },
         {
           \\"name\\": \\"--tasks [list]\\",

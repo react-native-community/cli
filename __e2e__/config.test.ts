@@ -79,7 +79,7 @@ test('shows up current config without unnecessary output', () => {
 
   const configWithReplacedProjectRoots = replaceProjectRootInOutput(
     JSON.stringify(parsedStdout, null, 2),
-    DIR,
+    slash(DIR),
   );
   expect(wrap(configWithReplacedProjectRoots)).toMatchSnapshot();
 });

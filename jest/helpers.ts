@@ -6,6 +6,7 @@ import {createDirectory} from 'jest-util';
 import rimraf from 'rimraf';
 import execa from 'execa';
 import chalk from 'chalk';
+import slash from 'slash';
 // @ts-ignore jsfile
 import {Writable} from 'readable-stream';
 
@@ -198,6 +199,6 @@ ${chalk.bold('code:')}    ${result.code}`);
 }
 
 export function replaceProjectRootInOutput(output: string, testFolder: string) {
-  const regex = new RegExp(`(:\\s").*(${testFolder})`, 'g');
-  return output.replace(regex, '$1<<REPLACED_ROOT>>');
+  const regex = new RegExp(`(:\\s").*(${slash(testFolder)})`, 'g');
+  return slash(output).replace(regex, '$1<<REPLACED_ROOT>>');
 }

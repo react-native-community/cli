@@ -1,6 +1,5 @@
 import path from 'path';
 import fs from 'fs';
-import slash from 'slash';
 import {wrap} from 'jest-snapshot-serializer-raw';
 import {
   runCLI,
@@ -69,7 +68,7 @@ afterAll(() => {
 
 test('shows up current config without unnecessary output', () => {
   const {stdout} = runCLI(path.join(DIR, 'TestProject'), ['config']);
-  const parsedStdout = JSON.parse(slash(stdout));
+  const parsedStdout = JSON.parse(stdout);
   // Strip unnecessary parts
   parsedStdout.commands = parsedStdout.commands.map((command: any) => ({
     ...command,
@@ -78,8 +77,8 @@ test('shows up current config without unnecessary output', () => {
   }));
 
   const configWithReplacedProjectRoots = replaceProjectRootInOutput(
-    JSON.stringify(parsedStdout, null, 2),
-    slash(DIR),
+    JSON.stringify(parsedStdout, null, 2).replace(/\\\\/g, '\\'),
+    DIR,
   );
   expect(wrap(configWithReplacedProjectRoots)).toMatchSnapshot();
 });

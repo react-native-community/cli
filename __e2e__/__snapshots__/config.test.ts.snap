@@ -2,8 +2,8 @@
 
 exports[`shows up current config without unnecessary output 1`] = `
 {
-  "root": "<<REPLACED_ROOT>>/test_root/TestProject",
-  "reactNativePath": "<<REPLACED_ROOT>>/test_root/TestProject/node_modules/react-native",
+  "root": "<<REPLACED_ROOT>>/TestProject",
+  "reactNativePath": "<<REPLACED_ROOT>>/TestProject/node_modules/react-native",
   "dependencies": {},
   "commands": [
     {
@@ -39,12 +39,12 @@ exports[`shows up current config without unnecessary output 1`] = `
   },
   "project": {
     "ios": {
-      "sourceDir": "<<REPLACED_ROOT>>/test_root/TestProject/ios",
-      "folder": "<<REPLACED_ROOT>>/test_root/TestProject",
-      "pbxprojPath": "<<REPLACED_ROOT>>/test_root/TestProject/ios/TestProject.xcodeproj/project.pbxproj",
-      "podfile": "<<REPLACED_ROOT>>/test_root/TestProject/ios/Podfile",
+      "sourceDir": "<<REPLACED_ROOT>>/TestProject/ios",
+      "folder": "<<REPLACED_ROOT>>/TestProject",
+      "pbxprojPath": "<<REPLACED_ROOT>>/TestProject/ios/TestProject.xcodeproj/project.pbxproj",
+      "podfile": "<<REPLACED_ROOT>>/TestProject/ios/Podfile",
       "podspecPath": null,
-      "projectPath": "<<REPLACED_ROOT>>/test_root/TestProject/ios/TestProject.xcodeproj",
+      "projectPath": "<<REPLACED_ROOT>>/TestProject/ios/TestProject.xcodeproj",
       "projectName": "TestProject.xcodeproj",
       "libraryFolder": "Libraries",
       "sharedLibraries": [],
@@ -52,15 +52,15 @@ exports[`shows up current config without unnecessary output 1`] = `
       "scriptPhases": []
     },
     "android": {
-      "sourceDir": "<<REPLACED_ROOT>>/test_root/TestProject/android",
+      "sourceDir": "<<REPLACED_ROOT>>/TestProject/android",
       "isFlat": true,
-      "folder": "<<REPLACED_ROOT>>/test_root/TestProject",
-      "stringsPath": "<<REPLACED_ROOT>>/test_root/TestProject/android/app/src/main/res/values/strings.xml",
-      "manifestPath": "<<REPLACED_ROOT>>/test_root/TestProject/android/app/src/main/AndroidManifest.xml",
-      "buildGradlePath": "<<REPLACED_ROOT>>/test_root/TestProject/android/build.gradle",
-      "settingsGradlePath": "<<REPLACED_ROOT>>/test_root/TestProject/android/settings.gradle",
-      "assetsPath": "<<REPLACED_ROOT>>/test_root/TestProject/android/app/src/main/assets",
-      "mainFilePath": "<<REPLACED_ROOT>>/test_root/TestProject/android/app/src/main/java/com/testproject/MainApplication.java",
+      "folder": "<<REPLACED_ROOT>>/TestProject",
+      "stringsPath": "<<REPLACED_ROOT>>/TestProject/android/app/src/main/res/values/strings.xml",
+      "manifestPath": "<<REPLACED_ROOT>>/TestProject/android/app/src/main/AndroidManifest.xml",
+      "buildGradlePath": "<<REPLACED_ROOT>>/TestProject/android/build.gradle",
+      "settingsGradlePath": "<<REPLACED_ROOT>>/TestProject/android/settings.gradle",
+      "assetsPath": "<<REPLACED_ROOT>>/TestProject/android/app/src/main/assets",
+      "mainFilePath": "<<REPLACED_ROOT>>/TestProject/android/app/src/main/java/com/testproject/MainApplication.java",
       "packageName": "com.testproject",
       "packageFolder": "com/testproject",
       "appName": "app"

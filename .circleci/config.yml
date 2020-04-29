@@ -4,10 +4,10 @@ defaults: &defaults
   working_directory: ~/react-native-cli
 
 executors:
-  node8:
+  node10:
     <<: *defaults
     docker:
-      - image: circleci/node:8
+      - image: circleci/node:10
   nodelts:
     <<: *defaults
     docker:
@@ -73,11 +73,11 @@ commands:
 
 jobs:
   setup:
-    executor: node8
+    executor: node10
     steps:
       - install-dependencies
   lint:
-    executor: node8
+    executor: node10
     steps:
       - run-lint
   cocoa-pods:
@@ -86,7 +86,7 @@ jobs:
       - install-cocoapods
       - run-cocoa-pods-tests
   unit-tests:
-    executor: node8
+    executor: node10
     steps:
       - run-unit-tests
   e2e-tests:

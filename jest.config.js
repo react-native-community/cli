@@ -1,4 +1,7 @@
-const common = {testEnvironment: 'node'};
+const common = {
+  testEnvironment: 'node',
+  snapshotSerializers: [require.resolve('jest-snapshot-serializer-raw')],
+};
 
 module.exports = {
   projects: [

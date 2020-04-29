@@ -21,7 +21,7 @@ function isValidJSON(text: string) {
   }
 }
 
-//We have to check whether setup_env script fails if it does then we shouldn't log any info to the console
+// We have to check whether setup_env script fails, if it does then we shouldn't log any info to the console
 function createCorruptedSetupEnvScript() {
   const originalSetupEnvPath = path.join(
     __dirname,
@@ -83,7 +83,7 @@ test('shows up current config without unnecessary output', () => {
   expect(wrap(configWithReplacedProjectRoots)).toMatchSnapshot();
 });
 
-test('should log only valid JSON config if setuping env throws an error', () => {
+test('should log only valid JSON config if setting up env throws an error', () => {
   const restoreOriginalSetupEnvScript = createCorruptedSetupEnvScript();
   const {stdout, stderr} = runCLI(path.join(DIR, 'TestProject'), ['config']);
 

@@ -117,7 +117,7 @@ async function installTemplateDependencies(templatePath: string, root: string) {
     );
   }
   const dependenciesToInstall = Object.keys(dependencies).map(
-    depName => `${depName}@${dependencies[depName]}`,
+    (depName) => `${depName}@${dependencies[depName]}`,
   );
   await PackageManager.install(dependenciesToInstall, {root});
   logger.info("Linking native dependencies into the project's build files...");
@@ -150,7 +150,7 @@ async function installTemplateDevDependencies(
   }
 
   const dependenciesToInstall = Object.keys(dependencies).map(
-    depName => `${depName}@${dependencies[depName]}`,
+    (depName) => `${depName}@${dependencies[depName]}`,
   );
   await PackageManager.installDev(dependenciesToInstall, {root});
 }

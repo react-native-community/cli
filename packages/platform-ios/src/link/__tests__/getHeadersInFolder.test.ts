@@ -26,7 +26,7 @@ describe('ios::getHeadersInFolder', () => {
 
     expect(foundHeaders).toHaveLength(2);
 
-    getHeadersInFolder(process.cwd()).forEach(headerPath => {
+    getHeadersInFolder(process.cwd()).forEach((headerPath) => {
       expect(headerPath.includes(process.cwd())).toBe(true);
     });
   });

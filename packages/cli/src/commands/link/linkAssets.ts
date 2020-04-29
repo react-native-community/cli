@@ -11,7 +11,7 @@ export default function linkAssets(
     return;
   }
 
-  Object.keys(platforms || {}).forEach(platform => {
+  Object.keys(platforms || {}).forEach((platform) => {
     const linkConfig =
       platforms[platform] &&
       platforms[platform].linkConfig &&

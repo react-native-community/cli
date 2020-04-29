@@ -16,7 +16,7 @@ const {getPackages, adjustToTerminalWidth, OK} = require('./helpers');
 
 const packages = getPackages();
 
-const packagesWithTs = packages.filter(p =>
+const packagesWithTs = packages.filter((p) =>
   fs.existsSync(path.resolve(p, 'tsconfig.json')),
 );
 

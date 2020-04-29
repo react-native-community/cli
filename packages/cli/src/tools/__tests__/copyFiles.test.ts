@@ -28,7 +28,7 @@ test('copies text and binary files from source to destination', async () => {
     ]
   `);
 
-  ['binary.keystore', 'file1.js', 'file2.txt'].forEach(file => {
+  ['binary.keystore', 'file1.js', 'file2.txt'].forEach((file) => {
     expect(fs.readFileSync(path.join(src, file))).toEqual(
       fs.readFileSync(path.join(DIR, file)),
     );

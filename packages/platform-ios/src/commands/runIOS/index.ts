@@ -89,7 +89,7 @@ function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   );
 
   if (args.udid) {
-    const device = devices.find(d => d.udid === args.udid);
+    const device = devices.find((d) => d.udid === args.udid);
     if (!device) {
       return logger.error(
         `Could not find a device with udid: "${chalk.bold(
@@ -103,7 +103,7 @@ function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
       return runOnDevice(device, scheme, xcodeProject, args);
     }
   } else {
-    const physicalDevices = devices.filter(d => d.type !== 'simulator');
+    const physicalDevices = devices.filter((d) => d.type !== 'simulator');
     const device = matchingDevice(physicalDevices, args.device);
     if (device) {
       return runOnDevice(device, scheme, xcodeProject, args);
@@ -270,9 +270,7 @@ async function runOnDevice(
 
   if (iosDeployOutput.error) {
     throw new CLIError(
-      `Failed to install the app on the device. We've encountered an error in "ios-deploy" command: ${
-        iosDeployOutput.error.message
-      }`,
+      `Failed to install the app on the device. We've encountered an error in "ios-deploy" command: ${iosDeployOutput.error.message}`,
     );
   }
 
@@ -451,7 +449,7 @@ function matchingDevice(
   deviceName: string | true | undefined,
 ) {
   if (deviceName === true) {
-    const firstIOSDevice = devices.find(d => d.type === 'device')!;
+    const firstIOSDevice = devices.find((d) => d.type === 'device')!;
     if (firstIOSDevice) {
       logger.info(
         `Using first available device named "${chalk.bold(
@@ -465,7 +463,7 @@ function matchingDevice(
     }
   }
   const deviceByName = devices.find(
-    device =>
+    (device) =>
       device.name === deviceName || formattedDeviceName(device) === deviceName,
   );
   if (!deviceByName) {
@@ -487,7 +485,7 @@ function formattedDeviceName(simulator: Device) {
 function printFoundDevices(devices: Array<Device>) {
   return [
     'Available devices:',
-    ...devices.map(device => `  - ${device.name} (${device.udid})`),
+    ...devices.map((device) => `  - ${device.name} (${device.udid})`),
   ].join('\n');
 }
 

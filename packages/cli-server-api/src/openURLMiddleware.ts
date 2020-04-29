@@ -26,6 +26,4 @@ function openURLMiddleware(
   res.end('OK');
 }
 
-export default connect()
-  .use(rawBodyMiddleware)
-  .use(openURLMiddleware);
+export default connect().use(rawBodyMiddleware).use(openURLMiddleware);

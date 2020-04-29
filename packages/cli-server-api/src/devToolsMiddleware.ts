@@ -54,7 +54,7 @@ function startCustomDebugger({
   const folders = watchFolders.map(escapePath).join(' ');
   const command = `${customDebugger} ${folders}`;
   logger.info('Starting custom debugger by executing:', command);
-  exec(command, function(error) {
+  exec(command, function (error) {
     if (error !== null) {
       logger.error('Error while starting custom debugger:', error.stack || '');
     }

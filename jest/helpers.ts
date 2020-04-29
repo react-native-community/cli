@@ -94,7 +94,7 @@ export const writeFiles = (
   files: {[filename: string]: string},
 ) => {
   createDirectory(directory);
-  Object.keys(files).forEach(fileOrPath => {
+  Object.keys(files).forEach((fileOrPath) => {
     const dirname = path.dirname(fileOrPath);
 
     if (dirname !== '/') {
@@ -113,7 +113,7 @@ export const copyDir = (src: string, dest: string) => {
     if (!fs.existsSync(dest)) {
       fs.mkdirSync(dest);
     }
-    fs.readdirSync(src).map(filePath =>
+    fs.readdirSync(src).map((filePath) =>
       copyDir(path.join(src, filePath), path.join(dest, filePath)),
     );
   } else {

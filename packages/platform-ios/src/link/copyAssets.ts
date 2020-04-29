@@ -31,7 +31,7 @@ export default function linkAssetsIOS(
 
   function addResourceFile(f: Array<string>) {
     return (f || [])
-      .map(asset => {
+      .map((asset) => {
         logger.debug(`Linking asset ${asset}`);
         return project.addResourceFile(
           path.relative(projectConfig.sourceDir, asset),
@@ -39,7 +39,7 @@ export default function linkAssetsIOS(
         );
       })
       .filter(Boolean) // xcode returns false if file is already there
-      .map(file => file.basename);
+      .map((file) => file.basename);
   }
 
   addResourceFile(assets.image);

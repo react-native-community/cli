@@ -158,7 +158,7 @@ function findRootForFile(
   fileName: string,
 ) {
   const absoluteFileName = transformToAbsolutePathIfNeeded(fileName);
-  return projectRoots.find(root => {
+  return projectRoots.find((root) => {
     const absoluteRoot = transformToAbsolutePathIfNeeded(root);
     return absoluteFileName.startsWith(absoluteRoot + path.sep);
   });
@@ -233,7 +233,7 @@ function launchEditor(
   } else {
     _childProcess = spawn(editor, args, {stdio: 'inherit'});
   }
-  _childProcess.on('exit', errorCode => {
+  _childProcess.on('exit', (errorCode) => {
     _childProcess = null;
 
     if (errorCode) {
@@ -242,7 +242,7 @@ function launchEditor(
     }
   });
 
-  _childProcess.on('error', error => {
+  _childProcess.on('error', (error) => {
     logger.error(error.message);
     printInstructions('How to fix:');
   });

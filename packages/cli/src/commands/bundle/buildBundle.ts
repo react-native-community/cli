@@ -59,7 +59,7 @@ async function buildBundle(
 
     logger.info(
       `Available platforms are: ${config.resolver.platforms
-        .map(x => `"${chalk.bold(x)}"`)
+        .map((x) => `"${chalk.bold(x)}"`)
         .join(
           ', ',
         )}. If you are trying to bundle for an out-of-tree platform, it may not be installed.`,

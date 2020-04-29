@@ -47,7 +47,7 @@ describe('ios::createGroup', () => {
     const mainGroup = getGroup(project);
 
     expect(
-      mainGroup.children.filter(group => group.comment === 'Libraries'),
+      mainGroup.children.filter((group) => group.comment === 'Libraries'),
     ).toHaveLength(1);
     expect(last(outerGroup.children).comment).toBe(createdGroup.name);
   });

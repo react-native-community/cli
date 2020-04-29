@@ -24,7 +24,7 @@ async function copyFiles(
   return Promise.all(
     walk(srcPath).map(async (absoluteSrcFilePath: string) => {
       const exclude = options.exclude;
-      if (exclude && exclude.some(p => p.test(absoluteSrcFilePath))) {
+      if (exclude && exclude.some((p) => p.test(absoluteSrcFilePath))) {
         return;
       }
       const relativeFilePath = path.relative(srcPath, absoluteSrcFilePath);
@@ -49,7 +49,7 @@ function copyFile(srcPath: string, destPath: string) {
   }
 
   return new Promise((resolve, reject) => {
-    copyBinaryFile(srcPath, destPath, err => {
+    copyBinaryFile(srcPath, destPath, (err) => {
       if (err) {
         reject(err);
       }
@@ -70,10 +70,10 @@ function copyBinaryFile(
   const {mode} = fs.statSync(srcPath);
   const readStream = fs.createReadStream(srcPath);
   const writeStream = fs.createWriteStream(destPath);
-  readStream.on('error', err => {
+  readStream.on('error', (err) => {
     done(err);
   });
-  writeStream.on('error', err => {
+  writeStream.on('error', (err) => {
     done(err);
   });
   readStream.on('close', () => {

@@ -5,7 +5,7 @@ export class JoiError extends CLIError {
   constructor(joiError: ValidationError) {
     super(
       joiError.details
-        .map(error => {
+        .map((error) => {
           const name = error.path.join('.');
           switch (error.type) {
             case 'object.allowUnknown': {

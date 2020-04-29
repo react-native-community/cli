@@ -30,9 +30,7 @@ function tryRunAdbReverse(
     execFileSync(adbPath, adbArgs, {stdio: 'inherit'});
   } catch (e) {
     logger.warn(
-      `Failed to connect to development server using "adb reverse": ${
-        e.message
-      }`,
+      `Failed to connect to development server using "adb reverse": ${e.message}`,
     );
   }
 }

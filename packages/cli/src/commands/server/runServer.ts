@@ -68,7 +68,7 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
   });
 
   if (args.assetPlugins) {
-    metroConfig.transformer.assetPlugins = args.assetPlugins.map(plugin =>
+    metroConfig.transformer.assetPlugins = args.assetPlugins.map((plugin) =>
       require.resolve(plugin),
     );
   }

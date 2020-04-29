@@ -13,7 +13,7 @@ beforeEach(() => {
 });
 afterEach(() => cleanup(DIR));
 
-test.each(['yarn', 'npm'])('install module with %s', pm => {
+test.each(['yarn', 'npm'])('install module with %s', (pm) => {
   if (pm === 'yarn') {
     writeFiles(DIR, {'yarn.lock': ''});
   }

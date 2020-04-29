@@ -14,7 +14,7 @@ jest.mock('fs');
 
 const fs = require('fs');
 
-['posix', 'win32'].forEach(platform => {
+['posix', 'win32'].forEach((platform) => {
   let root;
   describe(`android::findPackageClassName (${platform})`, () => {
     beforeAll(() => {
@@ -58,9 +58,9 @@ describe('android:FindPackageClassNameRegex', () => {
   [
     mocks.findPackagesClassNameKotlinValid,
     mocks.findPackagesClassNameJavaValid,
-  ].forEach(files => {
+  ].forEach((files) => {
     it('returns the name of the kotlin/java class implementing ReactPackage', () => {
-      files.forEach(file => {
+      files.forEach((file) => {
         expect(matchClassName(file)[1]).toBe('SomeExampleKotlinPackage');
       });
     });
@@ -69,9 +69,9 @@ describe('android:FindPackageClassNameRegex', () => {
   [
     mocks.findPackagesClassNameKotlinNotValid,
     mocks.findPackagesClassNameJavaNotValid,
-  ].forEach(files => {
+  ].forEach((files) => {
     it('returns `null` if there are no matches for kotlin/java classes', () => {
-      files.forEach(file => {
+      files.forEach((file) => {
         expect(matchClassName(file)).toBeNull();
       });
     });

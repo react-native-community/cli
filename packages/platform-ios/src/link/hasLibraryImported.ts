@@ -16,7 +16,7 @@ export default function hasLibraryImported(
   packageName: string,
 ) {
   return (
-    libraries.children.filter(library => library.comment === packageName)
+    libraries.children.filter((library) => library.comment === packageName)
       .length > 0
   );
 }

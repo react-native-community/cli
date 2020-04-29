@@ -18,7 +18,7 @@ export default async function linkDependency(
 ) {
   const params = await pollParams(dependency.params);
 
-  Object.keys(platforms || {}).forEach(platform => {
+  Object.keys(platforms || {}).forEach((platform) => {
     const projectConfig: AndroidProjectConfig | IOSProjectConfig =
       project[platform];
     const dependencyConfig: AndroidDependencyConfig | IOSDependencyConfig =

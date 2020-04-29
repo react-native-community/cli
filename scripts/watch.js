@@ -20,10 +20,10 @@ const BUILD_CMD = `node ${path.resolve(__dirname, './build.js')}`;
 
 let filesToBuild = new Map();
 
-const rebuild = filename => filesToBuild.set(filename, true);
+const rebuild = (filename) => filesToBuild.set(filename, true);
 
-const onChange = srcDir => {
-  return filePath => {
+const onChange = (srcDir) => {
+  return (filePath) => {
     const filename = path.basename(filePath);
 
     console.log(chalk.green('->'), `change: ${filename}`);
@@ -31,8 +31,8 @@ const onChange = srcDir => {
   };
 };
 
-const onUnlink = srcDir => {
-  return filePath => {
+const onUnlink = (srcDir) => {
+  return (filePath) => {
     const buildFile = filePath
       .replace(`${path.sep}src${path.sep}`, `${path.sep}build${path.sep}`)
       .replace('.ts', '.js');
@@ -40,11 +40,10 @@ const onUnlink = srcDir => {
     try {
       fs.unlinkSync(buildFile);
       process.stdout.write(
-        `${chalk.red('  \u2022 ') +
-          path.relative(
-            path.resolve(srcDir, '..', '..'),
-            buildFile,
-          )} (deleted)\n`,
+        `${
+          chalk.red('  \u2022 ') +
+          path.relative(path.resolve(srcDir, '..', '..'), buildFile)
+        } (deleted)\n`,
       );
     } catch (e) {
       // omit
@@ -52,7 +51,7 @@ const onUnlink = srcDir => {
   };
 };
 
-getPackages().forEach(p => {
+getPackages().forEach((p) => {
   const srcDir = path.resolve(p, 'src');
 
   try {

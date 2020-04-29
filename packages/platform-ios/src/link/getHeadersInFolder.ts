@@ -27,5 +27,5 @@ export default function getHeadersInFolder(folder: string) {
       nodir: true,
       ignore: GLOB_EXCLUDE_PATTERN,
     })
-    .map(file => path.join(folder, file));
+    .map((file) => path.join(folder, file));
 }

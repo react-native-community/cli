@@ -123,59 +123,63 @@ export default (async (_, __, options) => {
     healthchecks,
   }: HealthCheckCategory): Promise<HealthCheckCategoryResult> => ({
     label,
-    healthchecks: (await Promise.all(
-      healthchecks.map(async healthcheck => {
-        if (healthcheck.visible === false) {
-          return;
-        }
+    healthchecks: (
+      await Promise.all(
+        healthchecks.map(async (healthcheck) => {
+          if (healthcheck.visible === false) {
+            return;
+          }
 
-        const {
-          needsToBeFixed,
-          version,
-          versions,
-          versionRange,
-        } = await healthcheck.getDiagnostics(environmentInfo);
+          const {
+            needsToBeFixed,
+            version,
+            versions,
+            versionRange,
+          } = await healthcheck.getDiagnostics(environmentInfo);
 
-        // Assume that it's required unless specified otherwise
-        const isRequired = healthcheck.isRequired !== false;
-        const isWarning = needsToBeFixed && !isRequired;
+          // Assume that it's required unless specified otherwise
+          const isRequired = healthcheck.isRequired !== false;
+          const isWarning = needsToBeFixed && !isRequired;
 
-        return {
-          label: healthcheck.label,
-          needsToBeFixed: Boolean(needsToBeFixed),
-          version,
-          versions,
-          versionRange,
-          description: healthcheck.description,
-          runAutomaticFix: getAutomaticFixForPlatform(
-            healthcheck,
-            process.platform,
-          ),
-          isRequired,
-          type: needsToBeFixed
-            ? isWarning
-              ? HEALTHCHECK_TYPES.WARNING
-              : HEALTHCHECK_TYPES.ERROR
-            : undefined,
-        };
-      }),
-    )).filter(healthcheck => healthcheck !== undefined) as HealthCheckResult[],
+          return {
+            label: healthcheck.label,
+            needsToBeFixed: Boolean(needsToBeFixed),
+            version,
+            versions,
+            versionRange,
+            description: healthcheck.description,
+            runAutomaticFix: getAutomaticFixForPlatform(
+              healthcheck,
+              process.platform,
+            ),
+            isRequired,
+            type: needsToBeFixed
+              ? isWarning
+                ? HEALTHCHECK_TYPES.WARNING
+                : HEALTHCHECK_TYPES.ERROR
+              : undefined,
+          };
+        }),
+      )
+    ).filter((healthcheck) => healthcheck !== undefined) as HealthCheckResult[],
   });
 
   // Remove all the categories that don't have any healthcheck with
   // `needsToBeFixed` so they don't show when the user taps to fix encountered
   // issues
   const removeFixedCategories = (categories: HealthCheckCategoryResult[]) =>
-    categories.filter(category =>
-      category.healthchecks.some(healthcheck => healthcheck.needsToBeFixed),
+    categories.filter((category) =>
+      category.healthchecks.some((healthcheck) => healthcheck.needsToBeFixed),
     );
 
   const iterateOverCategories = (categories: HealthCheckCategory[]) =>
     Promise.all(categories.map(iterateOverHealthChecks));
 
-  const healthchecksPerCategory = await iterateOverCategories(Object.values(
-    getHealthchecks(options),
-  ).filter(category => category !== undefined) as HealthCheckCategory[]);
+  const healthchecksPerCategory = await iterateOverCategories(
+    Object.values(getHealthchecks(options)).filter(
+      (category) => category !== undefined,
+    ) as HealthCheckCategory[],
+  );
 
   loader.stop();
 
@@ -187,7 +191,7 @@ export default (async (_, __, options) => {
   healthchecksPerCategory.forEach((issueCategory, key) => {
     printCategory({...issueCategory, key});
 
-    issueCategory.healthchecks.forEach(healthcheck => {
+    issueCategory.healthchecks.forEach((healthcheck) => {
       printIssue(healthcheck);
 
       if (healthcheck.type === HEALTHCHECK_TYPES.WARNING) {

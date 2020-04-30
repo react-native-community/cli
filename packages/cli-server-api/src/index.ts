@@ -55,6 +55,7 @@ export function createDevServerMiddleware(options: MiddlewareOptions) {
     .use('/open-stack-frame', openStackFrameInEditorMiddleware(options))
     .use('/open-url', openURLMiddleware)
     .use('/status', statusPageMiddleware)
+    .use('/symbolicate', rawBodyMiddleware)
     .use('/systrace', systraceProfileMiddleware)
     .use('/reload', (_req: http.IncomingMessage, res: http.ServerResponse) => {
       broadcast('reload');

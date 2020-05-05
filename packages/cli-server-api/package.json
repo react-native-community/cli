@@ -12,7 +12,7 @@
     "compression": "^1.7.1",
     "connect": "^3.6.5",
     "errorhandler": "^1.5.0",
-    "pretty-format": "^25.1.0",
+    "pretty-format": "^26.0.0",
     "serve-static": "^1.13.1",
     "ws": "^1.1.0"
   },

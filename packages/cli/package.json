@@ -57,7 +57,7 @@
     "mkdirp": "^0.5.1",
     "node-stream-zip": "^1.9.1",
     "ora": "^3.4.0",
-    "pretty-format": "^25.2.0",
+    "pretty-format": "^26.0.0",
     "semver": "^6.3.0",
     "serve-static": "^1.13.1",
     "strip-ansi": "^5.2.0",

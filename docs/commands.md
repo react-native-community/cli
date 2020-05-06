@@ -325,7 +325,7 @@ Specify a different application folder name for the Android source. If not, we a
 
 #### `--appId [string]`
 
-> **DEPRECATED** – use "project.android.appName" in react-native.config.js
+> **DEPRECATED** – use --appIdSuffix instead.
 
 Specify an `applicationId` to launch after build.
 

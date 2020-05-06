@@ -76,7 +76,7 @@ type AndroidProjectParams = {
   settingsGradlePath?: string;
   assetsPath?: string;
   buildGradlePath?: string;
-  appName?: string;
+  appName?: string; // A name of the app in the Android `sourceDir`, equivalent to Gradle project name. By default it's `app`.
 };
 
 type IOSProjectParams = {

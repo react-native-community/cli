@@ -31,9 +31,7 @@ function validatePackageName(packageName: string) {
 function displayWarnings(config: Config, args: Flags) {
   warnAboutManuallyLinkedLibs(config);
   if (args.appId) {
-    logger.warn(
-      'Using deprecated "--appId" flag. Use "project.android.appName" in react-native.config.js instead.',
-    );
+    logger.warn('Using deprecated "--appId" flag. Use --appIdSuffix instead.');
   }
   if (args.appFolder) {
     logger.warn(

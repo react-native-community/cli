@@ -13,7 +13,7 @@ import path from 'path';
 import {execSync, spawn, ChildProcess} from 'child_process';
 // @ts-ignore @types not installed
 import shellQuote from 'shell-quote';
-import {logger} from '@react-native-community/cli-tools';
+import logger from './logger';
 
 function isTerminalEditor(editor: string) {
   switch (editor) {
@@ -153,7 +153,10 @@ function transformToAbsolutePathIfNeeded(pathName: string) {
   return pathName;
 }
 
-function findRootForFile(projectRoots: string[], fileName: string) {
+function findRootForFile(
+  projectRoots: ReadonlyArray<string>,
+  fileName: string,
+) {
   const absoluteFileName = transformToAbsolutePathIfNeeded(fileName);
   return projectRoots.find(root => {
     const absoluteRoot = transformToAbsolutePathIfNeeded(root);
@@ -165,7 +168,7 @@ let _childProcess: ChildProcess | null = null;
 function launchEditor(
   fileName: string,
   lineNumber: number,
-  projectRoots: string[],
+  projectRoots: ReadonlyArray<string>,
 ) {
   if (!fs.existsSync(fileName)) {
     return;

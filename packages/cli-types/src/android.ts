@@ -9,31 +9,19 @@ export interface AndroidProjectConfig {
   assetsPath: string;
   mainFilePath: string;
   packageName: string;
+  packageFolder: string;
+  appName: string;
 }
 
-export interface AndroidProjectParams {
-  sourceDir?: string;
-  manifestPath?: string;
-  packageName?: string;
-  packageFolder?: string;
-  mainFilePath?: string;
-  stringsPath?: string;
-  settingsGradlePath?: string;
-  assetsPath?: string;
-  buildGradlePath?: string;
-}
+export type AndroidProjectParams = Partial<AndroidProjectConfig>;
 
 export interface AndroidDependencyConfig {
   sourceDir: string;
   folder: string;
   packageImportPath: string;
   packageInstance: string;
+  manifestPath: string;
+  packageName: string;
 }
 
-export interface AndroidDependencyParams {
-  packageName?: string;
-  sourceDir?: string;
-  manifestPath?: string;
-  packageImportPath?: string;
-  packageInstance?: string;
-}
+export type AndroidDependencyParams = Partial<AndroidDependencyConfig>;

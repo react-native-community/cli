@@ -6,7 +6,7 @@
  *
  */
 
-import fetch from './fetch';
+import {fetch} from './fetch';
 
 /**
  * Indicates whether or not the packager is running. It returns a promise that

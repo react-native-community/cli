@@ -3,44 +3,26 @@
  */
 import path from 'path';
 // @ts-ignore - no typed definition for the package
-import {createBlacklist} from 'metro';
-// @ts-ignore - no typed definition for the package
 import {loadConfig} from 'metro-config';
-import {existsSync} from 'fs';
 import {Config} from '@react-native-community/cli-types';
-import findSymlinkedModules from './findSymlinkedModules';
-
-function resolveSymlinksForRoots(roots: string[]): string[] {
-  return roots.reduce<string[]>(
-    (arr, rootPath) => arr.concat(findSymlinkedModules(rootPath, roots)),
-    [...roots],
-  );
-}
-
-function getWatchFolders(): string[] {
-  const root = process.env.REACT_NATIVE_APP_ROOT;
-  return root ? resolveSymlinksForRoots([path.resolve(root)]) : [];
-}
-
-const getBlacklistRE: () => RegExp = () =>
-  createBlacklist([/.*\/__fixtures__\/.*/]);
 
 const INTERNAL_CALLSITES_REGEX = new RegExp(
   [
     '/Libraries/Renderer/implementations/.+\\.js$',
     '/Libraries/BatchedBridge/MessageQueue\\.js$',
     '/Libraries/YellowBox/.+\\.js$',
+    '/Libraries/LogBox/.+\\.js$',
+    '/Libraries/Core/Timers/.+\\.js$',
     '/node_modules/react-devtools-core/.+\\.js$',
+    '/node_modules/react-refresh/.+\\.js$',
+    '/node_modules/scheduler/.+\\.js$',
   ].join('|'),
 );
 
 export interface MetroConfig {
   resolver: {
     resolverMainFields: string[];
-    blacklistRE: RegExp;
     platforms: string[];
-    providesModuleNodeModules: string[];
-    hasteImplModulePath: string | undefined;
   };
   serializer: {
     getModulesRunBeforeMainModule: () => string[];
@@ -58,27 +40,18 @@ export interface MetroConfig {
     assetRegistryPath: string;
     assetPlugins?: Array<string>;
   };
-  watchFolders: string[];
+  watchFolders: ReadonlyArray<string>;
   reporter?: any;
 }
 
 /**
  * Default configuration
- *
- * @todo(grabbou): As a separate PR, haste.platforms should be added before "native".
- * Otherwise, a.native.js will not load on Windows or other platforms
  */
 export const getDefaultConfig = (ctx: Config): MetroConfig => {
-  const hasteImplPath = path.join(ctx.reactNativePath, 'jest/hasteImpl.js');
   return {
     resolver: {
       resolverMainFields: ['react-native', 'browser', 'main'],
-      blacklistRE: getBlacklistRE(),
-      platforms: [...ctx.haste.platforms, 'native'],
-      providesModuleNodeModules: ctx.haste.providesModuleNodeModules,
-      hasteImplModulePath: existsSync(hasteImplPath)
-        ? hasteImplPath
-        : undefined,
+      platforms: [...Object.keys(ctx.platforms), 'native'],
     },
     serializer: {
       getModulesRunBeforeMainModule: () => [
@@ -109,7 +82,7 @@ export const getDefaultConfig = (ctx: Config): MetroConfig => {
         'Libraries/Image/AssetRegistry',
       ),
     },
-    watchFolders: getWatchFolders(),
+    watchFolders: [],
   };
 };
 

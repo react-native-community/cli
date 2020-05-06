@@ -55,16 +55,26 @@ describe('android::getProjectConfig', () => {
       const userConfig = {};
       const folder = '/nested';
 
-      expect(getProjectConfig(folder, userConfig)).not.toBeNull();
-      expect(typeof getProjectConfig(folder, userConfig)).toBe('object');
+      const config = getProjectConfig(folder, userConfig);
+      expect(config).toMatchObject({
+        sourceDir: '/nested/android',
+        appName: 'app',
+        packageName: 'com.some.example',
+        manifestPath: '/nested/android/app/src/AndroidManifest.xml',
+      });
     });
 
     it('flat structure', () => {
       const userConfig = {};
       const folder = '/flat';
 
-      expect(getProjectConfig(folder, userConfig)).not.toBeNull();
-      expect(typeof getProjectConfig(folder, userConfig)).toBe('object');
+      const config = getProjectConfig(folder, userConfig);
+      expect(config).toMatchObject({
+        sourceDir: '/flat/android',
+        appName: '',
+        packageName: 'com.some.example',
+        manifestPath: '/flat/android/src/AndroidManifest.xml',
+      });
     });
 
     it('multiple', () => {
@@ -73,8 +83,13 @@ describe('android::getProjectConfig', () => {
       };
       const folder = '/multiple';
 
-      expect(getProjectConfig(folder, userConfig)).not.toBeNull();
-      expect(typeof getProjectConfig(folder, userConfig)).toBe('object');
+      const config = getProjectConfig(folder, userConfig);
+      expect(config).toMatchObject({
+        sourceDir: '/multiple/android',
+        appName: '',
+        packageName: 'com.some.example',
+        manifestPath: '/multiple/android/src/main/AndroidManifest.xml',
+      });
     });
   });
 
@@ -83,5 +98,15 @@ describe('android::getProjectConfig', () => {
     const folder = '/empty';
 
     expect(getProjectConfig(folder, userConfig)).toBeNull();
+  });
+
+  it('should correctly resolve mainFilePath', () => {
+    const userConfig = {};
+    const folder = '/nested';
+
+    const config = getProjectConfig(folder, userConfig);
+    expect(config.mainFilePath).toEqual(
+      '/nested/android/app/src/main/java/com/some/example/MainApplication.java',
+    );
   });
 });

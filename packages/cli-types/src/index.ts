@@ -126,7 +126,6 @@ export type ProjectConfig = {
  * @property dependencies - Map of the dependencies that are present in the project
  * @property platforms - Map of available platforms (build-ins and dynamically loaded)
  * @property commands - An array of commands that are present in 3rd party packages
- * @property haste - Haste configuration resolved based on available plugins
  */
 export type Config = {
   root: string;
@@ -150,18 +149,14 @@ export type Config = {
     [name: string]: PlatformConfig<any, any, any, any>;
   };
   commands: Command[];
-  haste: {
-    platforms: Array<string>;
-    providesModuleNodeModules: Array<string>;
-  };
 };
 
 /**
- * Shares some structure with Config, except that haste and root
- * are calculated and can't be defined
+ * Shares some structure with Config, except that root is calculated and can't
+ * be defined
  */
 
-export type UserConfig = Omit<Config, 'root' | 'haste'> & {
+export type UserConfig = Omit<Config, 'root'> & {
   reactNativePath: string | void;
   // Additional project settings
   project: {
@@ -178,11 +173,6 @@ export type UserDependencyConfig = {
   commands: Command[];
   // An array of extra platforms to load
   platforms: Config['platforms'];
-  // Haste config defined by legacy `rnpm`
-  haste?: {
-    platforms: string[];
-    providesModuleNodeModules: string[];
-  };
 };
 
 export {

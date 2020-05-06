@@ -1,6 +1,5 @@
 import chalk from 'chalk';
 import {logger} from '@react-native-community/cli-tools';
-import semver from 'semver';
 import {getHealthchecks, HEALTHCHECK_TYPES} from './healthchecks';
 import {getLoader} from '../../tools/loader';
 import printFixOptions, {KEYS} from './printFixOptions';
@@ -10,6 +9,7 @@ import {
   HealthCheckCategory,
   HealthCheckCategoryResult,
   HealthCheckResult,
+  HealthCheckInterface,
 } from './types';
 import getEnvironmentInfo from '../../tools/envinfo';
 import {logMessage} from './healthchecks/common';
@@ -22,10 +22,39 @@ const printCategory = ({label, key}: {label: string; key: number}) => {
   logger.log(chalk.dim(label));
 };
 
+const printVersions = ({
+  version,
+  versions,
+  versionRange,
+}: {
+  version?: 'Not Found' | string;
+  versions?: [string] | string;
+  versionRange: string;
+}) => {
+  if (versions) {
+    const versionsToShow = Array.isArray(versions)
+      ? versions.join(', ')
+      : 'N/A';
+
+    logMessage(`- Versions found: ${chalk.red(versionsToShow)}`);
+    logMessage(`- Version supported: ${chalk.green(versionRange)}`);
+
+    return;
+  }
+
+  const versionsToShow = version && version !== 'Not Found' ? version : 'N/A';
+
+  logMessage(`- Version found: ${chalk.red(versionsToShow)}`);
+  logMessage(`- Version supported: ${chalk.green(versionRange)}`);
+
+  return;
+};
+
 const printIssue = ({
   label,
   needsToBeFixed,
   version,
+  versions,
   versionRange,
   isRequired,
   description,
@@ -36,22 +65,12 @@ const printIssue = ({
       : chalk.yellow('●')
     : chalk.green('✓');
 
-  const descriptionToShow = description ? `- ${description}` : '';
+  const descriptionToShow = description ? ` - ${description}` : '';
 
   logger.log(` ${symbol} ${label}${descriptionToShow}`);
 
   if (needsToBeFixed && versionRange) {
-    const versionToShow = version && version !== 'Not Found' ? version : 'N/A';
-    const cleanedVersionRange = semver.valid(semver.coerce(versionRange)!);
-
-    if (cleanedVersionRange) {
-      logMessage(`- Version found: ${chalk.red(versionToShow)}`);
-      logMessage(
-        `- Minimum version required: ${chalk.green(cleanedVersionRange)}`,
-      );
-
-      return;
-    }
+    return printVersions({version, versions, versionRange});
   }
 };
 
@@ -69,6 +88,26 @@ const printOverallStats = ({
 type FlagsT = {
   fix: boolean | void;
   contributor: boolean | void;
+};
+
+/**
+ * Given a `healthcheck` and a `platform`, returns the specific fix for
+ * it or the fallback one if there is not one (`runAutomaticFix`).
+ */
+const getAutomaticFixForPlatform = (
+  healthcheck: HealthCheckInterface,
+  platform: NodeJS.Platform,
+) => {
+  switch (platform) {
+    case 'win32':
+      return healthcheck.win32AutomaticFix || healthcheck.runAutomaticFix;
+    case 'darwin':
+      return healthcheck.darwinAutomaticFix || healthcheck.runAutomaticFix;
+    case 'linux':
+      return healthcheck.linuxAutomaticFix || healthcheck.runAutomaticFix;
+    default:
+      return healthcheck.runAutomaticFix;
+  }
 };
 
 export default (async (_, __, options) => {
@@ -93,6 +132,7 @@ export default (async (_, __, options) => {
         const {
           needsToBeFixed,
           version,
+          versions,
           versionRange,
         } = await healthcheck.getDiagnostics(environmentInfo);
 
@@ -104,9 +144,13 @@ export default (async (_, __, options) => {
           label: healthcheck.label,
           needsToBeFixed: Boolean(needsToBeFixed),
           version,
+          versions,
           versionRange,
           description: healthcheck.description,
-          runAutomaticFix: healthcheck.runAutomaticFix,
+          runAutomaticFix: getAutomaticFixForPlatform(
+            healthcheck,
+            process.platform,
+          ),
           isRequired,
           type: needsToBeFixed
             ? isWarning

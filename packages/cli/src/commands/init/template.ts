@@ -1,9 +1,11 @@
 import execa from 'execa';
 import path from 'path';
-import {logger} from '@react-native-community/cli-tools';
+import {logger, CLIError} from '@react-native-community/cli-tools';
 import * as PackageManager from '../../tools/packageManager';
 import copyFiles from '../../tools/copyFiles';
 import replacePathSepForRegex from '../../tools/replacePathSepForRegex';
+import fs from 'fs';
+import chalk from 'chalk';
 
 export type TemplateConfig = {
   placeholderName: string;
@@ -12,12 +14,19 @@ export type TemplateConfig = {
   titlePlaceholder?: string;
 };
 
-export function installTemplatePackage(
+export async function installTemplatePackage(
   templateName: string,
   root: string,
   npm?: boolean,
 ) {
   logger.debug(`Installing template from ${templateName}`);
+
+  await PackageManager.init({
+    preferYarn: !npm,
+    silent: true,
+    root,
+  });
+
   return PackageManager.install([templateName], {
     preferYarn: !npm,
     silent: true,
@@ -33,11 +42,18 @@ export function getTemplateConfig(
     templateSourceDir,
     'node_modules',
     templateName,
-    'template.config',
+    'template.config.js',
   );
 
-  logger.debug(`Getting config from ${configFilePath}.js`);
-
+  logger.debug(`Getting config from ${configFilePath}`);
+  if (!fs.existsSync(configFilePath)) {
+    throw new CLIError(
+      `Couldn't find the "${configFilePath} file inside "${templateName}" template. Please make sure the template is valid.
+      Read more: ${chalk.underline.dim(
+        'https://github.com/react-native-community/cli/blob/master/docs/init.md#creating-custom-template',
+      )}`,
+    );
+  }
   return require(configFilePath);
 }
 

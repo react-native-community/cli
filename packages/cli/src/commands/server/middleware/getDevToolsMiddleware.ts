@@ -5,11 +5,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 import http from 'http';
-import {logger} from '@react-native-community/cli-tools';
+import {launchDebugger, logger} from '@react-native-community/cli-tools';
 import {exec} from 'child_process';
-import launchDebugger from '../launchDebugger';
 
-function launchDefaultDebugger(host: string, port: number, args = '') {
+function launchDefaultDebugger(
+  host: string | undefined,
+  port: number,
+  args = '',
+) {
   const hostname = host || 'localhost';
   const debuggerURL = `http://${hostname}:${port}/debugger-ui${args}`;
   logger.info('Launching Dev Tools...');
@@ -22,9 +25,9 @@ function escapePath(pathname: string) {
 }
 
 type LaunchDevToolsOptions = {
-  host: string;
+  host?: string;
   port: number;
-  watchFolders: Array<string>;
+  watchFolders: ReadonlyArray<string>;
 };
 
 function launchDevTools(
@@ -45,7 +48,7 @@ function startCustomDebugger({
   watchFolders,
   customDebugger,
 }: {
-  watchFolders: Array<string>;
+  watchFolders: ReadonlyArray<string>;
   customDebugger: string;
 }) {
   const folders = watchFolders.map(escapePath).join(' ');

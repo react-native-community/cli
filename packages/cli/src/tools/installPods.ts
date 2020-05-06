@@ -15,7 +15,44 @@ type PromptCocoaPodsInstallation = {
   promptQuestion: string;
 };
 
-async function updatePods(loader: ora.Ora) {
+async function runPodInstall(
+  loader: ora.Ora,
+  projectName: string,
+  shouldHandleRepoUpdate: boolean = true,
+) {
+  try {
+    loader.start(
+      `Installing CocoaPods dependencies ${chalk.dim(
+        '(this may take a few minutes)',
+      )}`,
+    );
+    await execa('pod', ['install']);
+  } catch (error) {
+    // "pod" command outputs errors to stdout (at least some of them)
+    const stderr = error.stderr || error.stdout;
+
+    /**
+     * If CocoaPods failed due to repo being out of date, it will
+     * include the update command in the error message.
+     *
+     * `shouldHandleRepoUpdate` will be set to `false` to
+     * prevent infinite loop (unlikely scenario)
+     */
+    if (stderr.includes('pod repo update') && shouldHandleRepoUpdate) {
+      await runPodUpdate(loader);
+      await runPodInstall(loader, projectName, false);
+    } else {
+      loader.fail();
+      throw new Error(
+        `Failed to install CocoaPods dependencies for iOS project, which is required by this template.\nPlease try again manually: "cd ./${projectName}/ios && pod install".\nCocoaPods documentation: ${chalk.dim.underline(
+          'https://cocoapods.org/',
+        )}`,
+      );
+    }
+  }
+}
+
+async function runPodUpdate(loader: ora.Ora) {
   try {
     loader.start(
       `Updating CocoaPods repositories ${chalk.dim(
@@ -38,7 +75,7 @@ async function updatePods(loader: ora.Ora) {
 
 function runSudo(command: string): Promise<void> {
   return new Promise((resolve, reject) => {
-    sudo.exec(command, (error: Error) => {
+    sudo.exec(command, {name: 'React Native CLI'}, error => {
       if (error) {
         reject(error);
       }
@@ -127,11 +164,9 @@ async function installCocoaPods(loader: ora.Ora) {
 async function installPods({
   projectName,
   loader,
-  shouldUpdatePods,
 }: {
   projectName: string;
   loader?: ora.Ora;
-  shouldUpdatePods?: boolean;
 }) {
   loader = loader || new NoopLoader();
   try {
@@ -157,27 +192,7 @@ async function installPods({
       await installCocoaPods(loader);
     }
 
-    if (shouldUpdatePods) {
-      await updatePods(loader);
-    }
-
-    try {
-      loader.start(
-        `Installing CocoaPods dependencies ${chalk.dim(
-          '(this may take a few minutes)',
-        )}`,
-      );
-      await execa('pod', ['install']);
-    } catch (error) {
-      // "pod" command outputs errors to stdout (at least some of them)
-      logger.log(error.stderr || error.stdout);
-
-      throw new Error(
-        `Failed to install CocoaPods dependencies for iOS project, which is required by this template.\nPlease try again manually: "cd ./${projectName}/ios && pod install".\nCocoaPods documentation: ${chalk.dim.underline(
-          'https://cocoapods.org/',
-        )}`,
-      );
-    }
+    await runPodInstall(loader, projectName);
   } catch (error) {
     throw error;
   } finally {

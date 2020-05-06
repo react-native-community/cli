@@ -41,27 +41,9 @@ export default {
       parse: (val: string) => val.split(','),
     },
     {
-      name: '--assetExts [list]',
-      description:
-        'Specify any additional asset extensions to be used by the packager',
-      parse: (val: string) => val.split(','),
-    },
-    {
       name: '--sourceExts [list]',
       description:
         'Specify any additional source extensions to be used by the packager',
-      parse: (val: string) => val.split(','),
-    },
-    {
-      name: '--platforms [list]',
-      description:
-        'Specify any additional platforms to be used by the packager',
-      parse: (val: string) => val.split(','),
-    },
-    {
-      name: '--providesModuleNodeModules [list]',
-      description:
-        'Specify any npm packages that import dependencies with providesModule',
       parse: (val: string) => val.split(','),
     },
     {
@@ -105,6 +87,10 @@ export default {
       name: '--config [string]',
       description: 'Path to the CLI configuration file',
       parse: (val: string) => path.resolve(val),
+    },
+    {
+      name: '--no-interactive',
+      description: 'Disables interactive mode',
     },
   ],
 };

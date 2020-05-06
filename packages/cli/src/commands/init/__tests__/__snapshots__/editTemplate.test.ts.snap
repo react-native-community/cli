@@ -20,7 +20,7 @@ exports[`should edit template 2`] = `
 @@ -1,2 +1,2 @@
 - com.placeholdername;
 + com.projectname;
-  
+
 @@ -4,4 +4,4 @@
     public static void run() {
 -     String name = \\"PlaceholderName\\";
@@ -67,7 +67,7 @@ exports[`should edit template with custom title 1`] = `
 @@ -1,2 +1,2 @@
 - com.placeholdername;
 + com.projectname;
-  
+
 @@ -4,4 +4,4 @@
     public static void run() {
 -     String name = \\"PlaceholderName\\";

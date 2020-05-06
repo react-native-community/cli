@@ -4,6 +4,7 @@
 # imports those into your current target.
 #
 require 'pathname'
+require 'cocoapods'
 
 def use_native_modules!(config = nil)
   if (config.is_a? String)
@@ -14,10 +15,14 @@ def use_native_modules!(config = nil)
     config = nil;
   end
 
+  # Resolving the path the RN CLI. The `@react-native-community/cli` module may not be there for certain package managers, so we fall back to resolving it through `react-native` package, that's always present in RN projects
+  cli_resolve_script = "try {console.log(require('@react-native-community/cli').bin);} catch (e) {console.log(require('react-native/cli').bin);}"
+  cli_bin = Pod::Executable.execute_command("node", ["-e", cli_resolve_script], true).strip
+
   if (!config)
     json = []
 
-    IO.popen("npx --quiet react-native config") do |data|
+    IO.popen(["node", cli_bin, "config"]) do |data|
       while line = data.gets
         json << line
       end
@@ -63,12 +68,12 @@ def use_native_modules!(config = nil)
     end
 
     podspec_dir_path = Pathname.new(File.dirname(podspec_path))
-    
+
     relative_path = podspec_dir_path.relative_path_from project_root
 
     pod spec.name, :path => relative_path.to_path
 
-    if package_config["scriptPhases"]
+    if package_config["scriptPhases"] && !this_target.abstract?
       # Can be either an object, or an array of objects
       Array(package_config["scriptPhases"]).each do |phase|
         # see https://www.rubydoc.info/gems/cocoapods-core/Pod/Podfile/DSL#script_phase-instance_method
@@ -98,6 +103,8 @@ def use_native_modules!(config = nil)
     pods = found_pods.map { |p| p.name }.sort.to_sentence
     Pod::UI.puts "Detected React Native module #{"pod".pluralize(found_pods.size)} for #{pods}"
   end
+  
+  config
 end
 
 # You can run the tests for this file by running:
@@ -105,27 +112,6 @@ end
 if $0 == __FILE__
   require "minitest/spec"
   require "minitest/autorun"
-
-  # Define this here, because we’re not actually loading this code.
-  module Pod
-    class Specification
-    end
-
-    module UI
-    end
-  end
-
-  # CocoaPods loads ActiveSupport, but we’re not doing that here just for the test.
-  class Array
-    def to_sentence
-      size == 1 ? self[0] : "#{self[0..-2].join(", ")}, and #{self[-1]}"
-    end
-  end
-  class String
-    def pluralize(count)
-      count == 1 ? self : "#{self}s"
-    end
-  end
 
   describe "use_native_modules!" do
     before do
@@ -200,6 +186,10 @@ if $0 == __FILE__
       target_definition.singleton_class.send(:define_method, :dependencies) do
         current_target_definition_dependencies
       end
+      
+      target_definition.singleton_class.send(:define_method, :abstract?) do
+        false
+      end
 
       podfile.singleton_class.send(:define_method, :current_target_definition) do
         target_definition
@@ -238,7 +228,7 @@ if $0 == __FILE__
       })
       @printed_messages.must_equal [
         "Detected React Native module pod for ios-dep",
-        "Detected React Native module pods for ios-dep, and ios-dep"
+        "Detected React Native module pods for ios-dep and ios-dep"
       ]
     end
 

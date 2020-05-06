@@ -160,7 +160,7 @@ Uses a valid semver version of React Native as a template.
 
 Uses a custom directory instead of `<projectName>`.
 
-### `--title [string]`
+#### `--title [string]`
 
 Uses a custom app title instead of `<projectName>`.
 
@@ -305,6 +305,8 @@ Builds your app and starts it on a connected Android emulator or device.
 
 #### `--root [string]`
 
+> **DEPRECATED** – root is discovered automatically
+
 Override the root directory for the Android build (which contains the android directory)'.
 
 #### `--variant [string]`
@@ -315,11 +317,15 @@ Specify your app's build variant.
 
 #### `--appFolder [string]`
 
+> **DEPRECATED** – use "platforms.android.appName" in react-native.config.js
+
 > default: 'app'
 
 Specify a different application folder name for the Android source. If not, we assume is "app".
 
 #### `--appId [string]`
+
+> **DEPRECATED** – use "platforms.android.appName" in react-native.config.js
 
 Specify an `applicationId` to launch after build.
 
@@ -453,21 +459,9 @@ Path to a custom project root
 
 Specify any additional folders to be added to the watch list
 
-#### `--assetExts [list]`
-
-Specify any additional asset extensions to be used by the packager
-
 #### `--sourceExts [list]`
 
 Specify any additional source extensions to be used by the packager
-
-#### `--platforms [list]`
-
-Specify any additional platforms to be used by the packager
-
-#### `--providesModuleNodeModules [list]`
-
-Specify any npm packages that import dependencies with providesModule
 
 #### `--max-workers [number]`
 
@@ -504,6 +498,10 @@ Path to custom SSL cert
 #### `--config [string]`
 
 Path to the CLI configuration file
+
+#### `--no-interactive`
+
+Disables interactive mode
 
 ### `uninstall`
 

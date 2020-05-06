@@ -14,7 +14,9 @@ afterEach(() => {
   cleanup(DIR);
 });
 
-test('legacy init through react-native-cli', () => {
+// We skip this test, because it's flaky and we don't really update
+// `react-native-cli` package anymore
+test.skip('legacy init through react-native-cli', () => {
   const templateFiles = [
     '.buckconfig',
     '.eslintrc.js',

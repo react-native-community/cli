@@ -91,7 +91,7 @@ An array of iOS script phases to add to the project. Specifying a `path` propert
 module.exports = {
   dependency: {
     platforms: {
-     ios: {
+      ios: {
         scriptPhases: [
           {
             name: '[MY DEPENDENCY] My Script',
@@ -109,7 +109,7 @@ See [`script_phase` options](https://www.rubydoc.info/gems/cocoapods-core/Pod/Po
 
 #### platforms.android.sourceDir
 
-A relative path to a folder with source files. E.g. `custom-android`, or `custom-android/app`. By default, CLI searches for `android` and `android/app` as source dirs.
+A relative path to a folder with Android project (Gradle root project), e.g. `./path/to/custom-android`. By default, CLI searches for `./android` as source dir.
 
 #### platforms.android.manifestPath
 

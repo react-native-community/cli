@@ -1,4 +1,7 @@
-const common = {testEnvironment: 'node'};
+const common = {
+  testEnvironment: 'node',
+  snapshotSerializers: [require.resolve('jest-snapshot-serializer-raw')],
+};
 
 module.exports = {
   projects: [
@@ -14,5 +17,11 @@ module.exports = {
       setupFiles: ['<rootDir>/jest/setupUnitTests.js'],
       testMatch: ['<rootDir>/**/__tests__/*{.,-}test.[jt]s'],
     },
+  ],
+  collectCoverageFrom: [
+    '**/packages/*/**/*.ts',
+    '!**/__mocks__/**',
+    '!**/__tests__/**',
+    '!**/build/**',
   ],
 };

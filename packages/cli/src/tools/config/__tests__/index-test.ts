@@ -12,6 +12,35 @@ jest.mock('../resolveNodeModuleDir');
 
 const DIR = getTempDirectory('resolve_config_path_test');
 
+const iosPath = slash(
+  require.resolve('@react-native-community/cli-platform-ios'),
+);
+const androidPath = slash(
+  require.resolve('@react-native-community/cli-platform-android'),
+);
+
+const REACT_NATIVE_MOCK = {
+  'node_modules/react-native/package.json': '{}',
+  'node_modules/react-native/react-native.config.js': `
+    const ios = require("${iosPath}");
+    const android = require("${androidPath}");
+    module.exports = {
+      platforms: {
+        ios: {
+          linkConfig: ios.linkConfig,
+          projectConfig: ios.projectConfig,
+          dependencyConfig: ios.dependencyConfig,
+        },
+        android: {
+          linkConfig: android.linkConfig,
+          projectConfig: android.projectConfig,
+          dependencyConfig: android.dependencyConfig,
+        },
+      },
+    };
+  `,
+};
+
 // Removes string from all key/values within an object
 const removeString = (config, str) =>
   JSON.parse(
@@ -40,26 +69,9 @@ test('should have a valid structure by default', () => {
   expect(removeString(config, DIR)).toMatchSnapshot();
 });
 
-test('should handle deprecated "rnpm" in project root', () => {
-  writeFiles(DIR, {
-    'package.json': `{
-      "rnpm": {
-        "assets": ["./fonts"]
-      }
-    }`,
-    'fonts/SampleFont.ttf': '',
-  });
-  const config = loadConfig(DIR);
-
-  expect(removeString(config, DIR)).toMatchSnapshot('returns valid config');
-  expect(logger.warn).toBeCalledWith(
-    expect.stringMatching(/Your project is using deprecated/),
-  );
-});
-
 test('should return dependencies from package.json', () => {
   writeFiles(DIR, {
-    'node_modules/react-native/package.json': '{}',
+    ...REACT_NATIVE_MOCK,
     'node_modules/react-native-test/package.json': '{}',
     'node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj':
       '',
@@ -76,7 +88,7 @@ test('should return dependencies from package.json', () => {
 
 test('should read a config of a dependency and use it to load other settings', () => {
   writeFiles(DIR, {
-    'node_modules/react-native/package.json': '{}',
+    ...REACT_NATIVE_MOCK,
     'node_modules/react-native-test/package.json': '{}',
     'node_modules/react-native-test/ReactNativeTest.podspec': '',
     'node_modules/react-native-test/react-native.config.js': `module.exports = {
@@ -103,7 +115,7 @@ test('should read a config of a dependency and use it to load other settings', (
 
 test('should merge project configuration with default values', () => {
   writeFiles(DIR, {
-    'node_modules/react-native/package.json': '{}',
+    ...REACT_NATIVE_MOCK,
     'node_modules/react-native-test/package.json': '{}',
     'node_modules/react-native-test/react-native.config.js': `module.exports = {
       dependency: {
@@ -138,35 +150,6 @@ test('should merge project configuration with default values', () => {
   );
 });
 
-test('should read `rnpm` config from a dependency and transform it to a new format', () => {
-  writeFiles(DIR, {
-    'node_modules/react-native/package.json': '{}',
-    'node_modules/react-native-foo/package.json': `{
-      "name": "react-native-foo",
-      "rnpm": {
-        "ios": {
-          "project": "./customLocation/customProject.xcodeproj"
-        },
-        "haste": {
-          "platforms": ["dummy"],
-          "providesModuleNodeModules": ["react-native-dummy"]
-        }
-      }
-    }`,
-    'package.json': `{
-      "dependencies": {
-        "react-native": "0.0.1",
-        "react-native-foo": "0.0.1"
-      }
-    }`,
-  });
-  const {dependencies, haste} = loadConfig(DIR);
-  expect(removeString(dependencies['react-native-foo'], DIR)).toMatchSnapshot(
-    'foo config',
-  );
-  expect(haste).toMatchSnapshot('haste config');
-});
-
 test('should load commands from "react-native-foo" and "react-native-bar" packages', () => {
   writeFiles(DIR, {
     'node_modules/react-native-foo/package.json': '{}',
@@ -191,71 +174,6 @@ test('should load commands from "react-native-foo" and "react-native-bar" packag
       "dependencies": {
         "react-native-foo": "0.0.1",
         "react-native-bar": "0.0.1"
-      }
-    }`,
-  });
-  const {commands} = loadConfig(DIR);
-  expect(commands).toMatchSnapshot();
-});
-
-test('should load an out-of-tree "windows" platform that ships with a dependency', () => {
-  writeFiles(DIR, {
-    'node_modules/react-native-windows/platform.js': `
-      module.exports = {"windows": {}};
-    `,
-    'node_modules/react-native-windows/plugin.js': `
-      module.exports = [];
-    `,
-    'node_modules/react-native-windows/package.json': `{
-      "name": "react-native-windows",
-      "rnpm": {
-        "haste": {
-          "platforms": [
-            "windows"
-          ],
-          "providesModuleNodeModules": [
-            "react-native-windows"
-          ]
-        },
-        "plugin": "./plugin.js",
-        "platform": "./platform.js"
-      }
-    }`,
-    'package.json': `{
-      "dependencies": {
-        "react-native-windows": "0.0.1"
-      }
-    }`,
-  });
-  const {haste, platforms} = loadConfig(DIR);
-  expect(removeString({haste, platforms}, DIR)).toMatchSnapshot();
-});
-
-test('should automatically put "react-native" into haste config', () => {
-  writeFiles(DIR, {
-    'node_modules/react-native/package.json': '{}',
-    'package.json': `{
-      "dependencies": {
-        "react-native": "0.0.1"
-      }
-    }`,
-  });
-  const {haste} = loadConfig(DIR);
-  expect(haste).toMatchSnapshot();
-});
-
-test('should not add default React Native config when one present', () => {
-  writeFiles(DIR, {
-    'node_modules/react-native/package.json': '{}',
-    'node_modules/react-native/react-native.config.js': `module.exports = {
-      commands: [{
-        name: 'test',
-        func: () => {},
-      }]
-    }`,
-    'package.json': `{
-      "dependencies": {
-        "react-native": "0.0.1"
       }
     }`,
   });
@@ -307,7 +225,7 @@ test('supports dependencies from user configuration with custom root and propert
     path.sep === '\\' ? value.replace(/(\/|\\)/g, '\\\\') : value;
 
   writeFiles(DIR, {
-    'node_modules/react-native/package.json': '{}',
+    ...REACT_NATIVE_MOCK,
     'native-libs/local-lib/ios/LocalRNLibrary.xcodeproj/project.pbxproj': '',
     'react-native.config.js': `
 const path = require('path');

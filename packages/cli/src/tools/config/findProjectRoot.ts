@@ -7,7 +7,6 @@ import {CLIError} from '@react-native-community/cli-tools';
  */
 export default function findProjectRoot(cwd = process.cwd()): string {
   const packageLocation = findUp.sync('package.json', {cwd});
-
   /**
    * It is possible that `package.json` doesn't exist
    * in the tree. In that case, we want to throw an error.

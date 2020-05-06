@@ -1,7 +1,11 @@
 import {func as link} from '../link';
 import loadConfig from '../../../tools/config';
 import makeHook from '../makeHook';
-jest.mock('chalk', () => ({grey: str => str, bold: str => str}));
+jest.mock('chalk', () => ({
+  grey: jest.fn(),
+  bold: jest.fn(),
+  dim: {underline: jest.fn()},
+}));
 jest.mock('../../../tools/config');
 jest.mock('../makeHook', () => {
   return jest.fn(() => {

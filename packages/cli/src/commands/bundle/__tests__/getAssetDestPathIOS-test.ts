@@ -41,4 +41,16 @@ describe('getAssetDestPathIOS', () => {
       path.normalize('assets/test/icon@3x.png'),
     );
   });
+
+  it('should handle assets with a relative path outside of root', () => {
+    const asset = {
+      name: 'icon',
+      type: 'png',
+      httpServerLocation: '/assets/../../test',
+    };
+
+    expect(getAssetDestPathIOS(asset, 1)).toBe(
+      path.normalize('assets/__test/icon.png'),
+    );
+  });
 });

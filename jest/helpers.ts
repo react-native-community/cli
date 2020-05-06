@@ -4,9 +4,9 @@ import path from 'path';
 import {createDirectory} from 'jest-util';
 // @ts-ignore jsfile
 import rimraf from 'rimraf';
-// @ts-ignore jsfile
 import execa from 'execa';
 import chalk from 'chalk';
+import slash from 'slash';
 // @ts-ignore jsfile
 import {Writable} from 'readable-stream';
 
@@ -19,20 +19,20 @@ type RunOptions = {
   expectedFailure?: boolean;
 };
 
-type CLIArgs = {
-  dir: string;
-  args: string[] | undefined;
-  options: RunOptions;
-};
-
-export function run(
+/**
+ * Helper function to run CLI command in a given folder
+ */
+export function runCLI(
   dir: string,
   args?: string[],
   options: RunOptions = {
     expectedFailure: false,
   },
 ) {
-  return spawnCli(dir, args, options);
+  return spawnScript(process.execPath, [CLI_PATH, ...(args || [])], {
+    ...options,
+    cwd: dir,
+  });
 }
 
 // Runs cli until a given output is achieved, then kills it with `SIGTERM`
@@ -44,7 +44,11 @@ export async function runUntil(
     expectedFailure: false,
   },
 ) {
-  const spawnPromise = spawnCliAsync(dir, args, {timeout: 30000, ...options});
+  const spawnPromise = spawnScriptAsync(dir, args || [], {
+    timeout: 30000,
+    cwd: dir,
+    ...options,
+  });
 
   spawnPromise.stderr.pipe(
     new Writable({
@@ -120,33 +124,45 @@ export const copyDir = (src: string, dest: string) => {
 export const getTempDirectory = (name: string) =>
   path.resolve(os.tmpdir(), name);
 
-function spawnCli(dir: string, args?: string[], options: RunOptions = {}) {
-  const {spawnArgs, spawnOptions} = getCliArguments({dir, args, options});
+type SpawnOptions = RunOptions & {
+  cwd: string;
+};
 
-  const result = execa.sync(process.execPath, spawnArgs, spawnOptions);
+type SpawnFunction<T> = (
+  execPath: string,
+  args: string[],
+  options: SpawnOptions,
+) => T;
 
-  handleTestCliFailure(options, result, dir, args);
+export const spawnScript: SpawnFunction<execa.ExecaReturns> = (
+  execPath,
+  args,
+  options,
+) => {
+  const result = execa.sync(execPath, args, getExecaOptions(options));
+
+  handleTestFailure(execPath, options, result, args);
 
   return result;
-}
+};
 
-function spawnCliAsync(dir: string, args?: string[], options: RunOptions = {}) {
-  const {spawnArgs, spawnOptions} = getCliArguments({dir, args, options});
-
+const spawnScriptAsync: SpawnFunction<execa.ExecaChildProcess> = (
+  execPath,
+  args,
+  options,
+) => {
   try {
-    return execa(process.execPath, spawnArgs, spawnOptions);
+    return execa(execPath, args, getExecaOptions(options));
   } catch (result) {
-    handleTestCliFailure(options, result, dir, args);
+    handleTestFailure(execPath, options, result, args);
     return result;
   }
-}
+};
 
-function getCliArguments({dir, args, options}: CLIArgs) {
-  const isRelative = !path.isAbsolute(dir);
+function getExecaOptions(options: SpawnOptions) {
+  const isRelative = !path.isAbsolute(options.cwd);
 
-  if (isRelative) {
-    dir = path.resolve(__dirname, dir);
-  }
+  const cwd = isRelative ? path.resolve(__dirname, options.cwd) : options.cwd;
 
   const env = Object.assign({}, process.env, {FORCE_COLOR: '0'});
 
@@ -157,28 +173,32 @@ function getCliArguments({dir, args, options}: CLIArgs) {
     env.NODE_PATH = options.nodePath;
   }
 
-  const spawnArgs = [CLI_PATH, ...(args || [])];
-  const spawnOptions = {
-    cwd: dir,
+  return {
+    cwd,
     env,
     reject: false,
     timeout: options.timeout || 0,
   };
-  return {spawnArgs, spawnOptions};
 }
 
-function handleTestCliFailure(
-  options: RunOptions,
+function handleTestFailure(
+  cmd: string,
+  options: SpawnOptions,
   result: {[key: string]: any},
-  dir: string,
   args: string[] | undefined,
 ) {
   if (!options.expectedFailure && result.code !== 0) {
-    console.log(`Running CLI failed for unexpected reason. Here's more info:
-${chalk.bold('dir:')}    ${dir}
-${chalk.bold('args:')}   ${(args || []).join(' ')}
-${chalk.bold('stderr:')} ${result.stderr}
-${chalk.bold('stdout:')} ${result.stdout}
-${chalk.bold('code:')}   ${result.code}`);
+    console.log(`Running ${cmd} command failed for unexpected reason. Here's more info:
+${chalk.bold('cmd:')}     ${cmd}    
+${chalk.bold('options:')} ${JSON.stringify(options)}
+${chalk.bold('args:')}    ${(args || []).join(' ')}
+${chalk.bold('stderr:')}  ${result.stderr}
+${chalk.bold('stdout:')}  ${result.stdout}
+${chalk.bold('code:')}    ${result.code}`);
   }
+}
+
+export function replaceProjectRootInOutput(output: string, testFolder: string) {
+  const regex = new RegExp(`(:\\s").*(${slash(testFolder)})`, 'g');
+  return slash(output).replace(regex, '$1<<REPLACED_ROOT>>');
 }

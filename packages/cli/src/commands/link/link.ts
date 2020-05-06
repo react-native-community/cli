@@ -15,6 +15,7 @@ import linkDependency from './linkDependency';
 import linkAssets from './linkAssets';
 import linkAll from './linkAll';
 import makeHook from './makeHook';
+import printDeprecationWarning from './printDeprecationWarning';
 
 type FlagsType = {
   platforms?: Array<string>;
@@ -49,9 +50,11 @@ async function link(
   );
 
   if (rawPackageName === undefined) {
-    logger.debug('No package name provided, will linking all possible assets.');
+    logger.debug('No package name provided, will link all possible assets.');
     return linkAll(ctx, {linkDeps: opts.all, linkAssets: true});
   }
+
+  printDeprecationWarning('react-native link [packageName]');
 
   // Trim the version / tag out of the package name (eg. package@latest)
   const packageName = rawPackageName.replace(/^(.+?)(@.+?)$/gi, '$1');

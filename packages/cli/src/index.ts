@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import childProcess from 'child_process';
 import commander from 'commander';
+import leven from 'leven';
 import path from 'path';
 
 import {Command, Config} from '@react-native-community/cli-types';
@@ -11,14 +12,15 @@ import init from './commands/init/initCompat';
 import assertRequiredOptions from './tools/assertRequiredOptions';
 import loadConfig from './tools/config';
 
-import pkgJson from '../package.json';
+const pkgJson = require('../package.json');
 
 commander
+  .usage('<command> [options]')
   .option('--version', 'Print CLI version')
   .option('--verbose', 'Increase logging verbosity');
 
-commander.on('command:*', () => {
-  printUnknownCommand(commander.args.join(' '));
+commander.arguments('<command>').action(cmd => {
+  printUnknownCommand(cmd);
   process.exit(1);
 });
 
@@ -84,8 +86,16 @@ function printHelpInformation(
 }
 
 function printUnknownCommand(cmdName: string) {
+  const availableCommands = commander.commands.map((cmd: any) => cmd._name);
+  const suggestion = availableCommands.find((cmd: string) => {
+    return leven(cmd, cmdName) < cmd.length * 0.4;
+  });
+  let errorMsg = `Unrecognized command "${chalk.bold(cmdName)}".`;
+  if (suggestion) {
+    errorMsg += ` Did you mean "${suggestion}"?`;
+  }
   if (cmdName) {
-    logger.error(`Unrecognized command "${chalk.bold(cmdName)}".`);
+    logger.error(errorMsg);
     logger.info(
       `Run ${chalk.bold(
         '"react-native --help"',
@@ -170,6 +180,13 @@ async function run() {
 
 async function setupAndRun() {
   // Commander is not available yet
+
+  // when we run `config`, we don't want to output anything to the console. We
+  // expect it to return valid JSON
+  if (process.argv.includes('config')) {
+    logger.disable();
+  }
+
   logger.setVerbose(process.argv.includes('--verbose'));
 
   // We only have a setup script for UNIX envs currently
@@ -196,12 +213,6 @@ async function setupAndRun() {
   }
 
   try {
-    // when we run `config`, we don't want to output anything to the console. We
-    // expect it to return valid JSON
-    if (process.argv.includes('config')) {
-      logger.disable();
-    }
-
     const ctx = loadConfig();
 
     logger.enable();
@@ -231,4 +242,6 @@ async function setupAndRun() {
   }
 }
 
-export {run, init};
+const bin = require.resolve('./bin');
+
+export {run, init, bin};

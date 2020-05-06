@@ -71,12 +71,14 @@ public class PackageList {
 class ReactNativeModules {
   private Logger logger
   private String packageName
+  private File root
   private ArrayList<HashMap<String, String>> reactNativeModules
 
   private static String LOG_PREFIX = ":ReactNative:"
 
-  ReactNativeModules(Logger logger) {
+  ReactNativeModules(Logger logger, File root) {
     this.logger = logger
+    this.root = root
 
     def (nativeModules, packageName) = this.getReactNativeConfig()
     this.reactNativeModules = nativeModules
@@ -123,11 +125,37 @@ class ReactNativeModules {
     String packageClassInstances = ""
 
     if (packages.size() > 0) {
-      packageImports = "import ${packageName}.BuildConfig;\nimport ${packageName}.R;\n\n"
-      packageImports = packageImports + packages.collect {
-        "// ${it.name}\n${it.packageImportPath}"
+      def interpolateDynamicValues = {
+        it
+                // Before adding the package replacement mechanism,
+                // BuildConfig and R classes were imported automatically
+                // into the scope of the file. We want to replace all
+                // non-FQDN references to those classes with the package name 
+                // of the MainApplication.
+                //
+                // We want to match "R" or "BuildConfig":
+                //  - new Package(R.string…),
+                //  - Module.configure(BuildConfig);
+                //    ^ hence including (BuildConfig|R)
+                // but we don't want to match "R":
+                //  - new Package(getResources…),
+                //  - new PackageR…,
+                //  - new Royal…,
+                //    ^ hence excluding \w before and after matches
+                // and "BuildConfig" that has FQDN reference:
+                //  - Module.configure(com.acme.BuildConfig);
+                //    ^ hence excluding . before the match.
+                .replaceAll(~/([^.\w])(BuildConfig|R)([^\w])/, {
+                  wholeString, prefix, className, suffix ->
+                    "${prefix}${packageName}.${className}${suffix}"
+                })
+      }
+      packageImports = packages.collect {
+        "// ${it.name}\n${interpolateDynamicValues(it.packageImportPath)}"
       }.join('\n')
-      packageClassInstances = ",\n      " + packages.collect { it.packageInstance }.join(",\n      ")
+      packageClassInstances = ",\n      " + packages.collect {
+        interpolateDynamicValues(it.packageInstance)
+      }.join(",\n      ")
     }
 
     String generatedFileContents = generatedFileContentsTemplate
@@ -142,45 +170,72 @@ class ReactNativeModules {
   }
 
   /**
-   * Runs a process to call the React Native CLI Config command and parses the output
-   *
-   * @return ArrayList < HashMap < String , String > >
+   * Runs a specified command using Runtime exec() in a specified directory.
+   * Throws when the command result is empty.
    */
-  ArrayList<HashMap<String, String>> getReactNativeConfig() {
-    if (this.reactNativeModules != null) return this.reactNativeModules
-    ArrayList<HashMap<String, String>> reactNativeModules = new ArrayList<HashMap<String, String>>()
-
-    def cmdProcess
-    def npx = Os.isFamily(Os.FAMILY_WINDOWS) ? "npx.cmd" : "npx"
-    def command = "${npx} --quiet react-native config"
-    def reactNativeConfigOutput = ""
-
+  String getCommandOutput(String[] command, File directory) {
     try {
-      cmdProcess = Runtime.getRuntime().exec(command)
+      def output = ""
+      def cmdProcess = Runtime.getRuntime().exec(command, null, directory)
       def bufferedReader = new BufferedReader(new InputStreamReader(cmdProcess.getInputStream()))
       def buff = ""
       def readBuffer = new StringBuffer()
-      while ((buff = bufferedReader.readLine()) != null){
-          readBuffer.append(buff)
+      while ((buff = bufferedReader.readLine()) != null) {
+        readBuffer.append(buff)
       }
-      reactNativeConfigOutput = readBuffer.toString()
+      output = readBuffer.toString()
+      if (!output) {
+        this.logger.error("${LOG_PREFIX}Unexpected empty result of running '${command}' command.")
+        def bufferedErrorReader = new BufferedReader(new InputStreamReader(cmdProcess.getErrorStream()))
+        def errBuff = ""
+        def readErrorBuffer = new StringBuffer()
+        while ((errBuff = bufferedErrorReader.readLine()) != null) {
+          readErrorBuffer.append(errBuff)
+        }
+        throw new Exception(readErrorBuffer.toString())
+      }
+      return output
     } catch (Exception exception) {
-      this.logger.warn("${LOG_PREFIX}${exception.message}")
-      this.logger.warn("${LOG_PREFIX}Automatic import of native modules failed.")
-
-      def bufferedErrorReader = new BufferedReader(new InputStreamReader(cmdProcess.getErrorStream()))
-      def buff = ""
-      def readBuffer = new StringBuffer()
-      while ((buff = bufferedErrorReader.readLine()) != null){
-          readBuffer.append(buff)
-      }
-      this.logger.warn("${LOG_PREFIX}${readBuffer.toString()}")
-
-      return reactNativeModules
+      this.logger.error("${LOG_PREFIX}Running '${command}' command failed.")
+      throw exception
     }
+  }
 
-    def json = new JsonSlurper().parseText(reactNativeConfigOutput)
+  /**
+   * Runs a process to call the React Native CLI Config command and parses the output
+   */
+  ArrayList<HashMap<String, String>> getReactNativeConfig() {
+    if (this.reactNativeModules != null) return this.reactNativeModules
+
+    ArrayList<HashMap<String, String>> reactNativeModules = new ArrayList<HashMap<String, String>>()
+
+    /**
+     * Resolve the CLI location from Gradle file
+     *
+     * @todo: Sometimes Gradle can be called outside of the JavaScript hierarchy (-p flag) which
+     * will fail to resolve the script and the dependencies. We should resolve this soon.
+     *
+     * @todo: `fastlane` has been reported to not work too.
+     */
+    def cliResolveScript = "console.log(require('react-native/cli').bin);"
+    String[] nodeCommand = ["node", "-e", cliResolveScript]
+    def cliPath = this.getCommandOutput(nodeCommand, this.root)
+
+    String[] reactNativeConfigCommand = ["node", cliPath, "config"]
+    def reactNativeConfigOutput = this.getCommandOutput(reactNativeConfigCommand, this.root)
+
+    def json
+    try {
+      json = new JsonSlurper().parseText(reactNativeConfigOutput)
+    } catch (Exception exception) {
+      throw new Exception("Calling `${reactNativeConfigCommand}` finished with an exception. Error message: ${exception.toString()}. Output: ${reactNativeConfigOutput}");
+    }
     def dependencies = json["dependencies"]
+    def project = json["project"]["android"]
+
+    if (project == null) {
+      throw new Exception("React Native CLI failed to determine Android project configuration. This is likely due to misconfiguration. Config output:\n${json.toMapString()}")
+    }
 
     dependencies.each { name, value ->
       def platformsConfig = value["platforms"];
@@ -191,7 +246,7 @@ class ReactNativeModules {
 
         HashMap reactNativeModuleConfig = new HashMap<String, String>()
         reactNativeModuleConfig.put("name", name)
-        reactNativeModuleConfig.put("nameCleansed", name.replaceAll('/', '_'))
+        reactNativeModuleConfig.put("nameCleansed", name.replaceAll('[~*!\'()]+', '_').replaceAll('^@([\\w-.]+)/', '$1_'))
         reactNativeModuleConfig.put("androidSourceDir", androidConfig["sourceDir"])
         reactNativeModuleConfig.put("packageInstance", androidConfig["packageInstance"])
         reactNativeModuleConfig.put("packageImportPath", androidConfig["packageImportPath"])
@@ -207,11 +262,18 @@ class ReactNativeModules {
   }
 }
 
+
+/*
+ * Sometimes Gradle can be called outside of JavaScript hierarchy. Detect the directory
+ * where build files of an active project are located.
+ */
+def projectRoot = rootProject.projectDir
+
+def autoModules = new ReactNativeModules(logger, projectRoot)
+
 /** -----------------------
  *    Exported Extensions
  * ------------------------ */
-
-def autoModules = new ReactNativeModules(logger)
 
 ext.applyNativeModulesSettingsGradle = { DefaultSettings defaultSettings, String root = null ->
   if (root != null) {

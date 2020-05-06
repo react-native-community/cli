@@ -8,7 +8,7 @@
  */
 
 import open from 'open';
-import {logger} from '@react-native-community/cli-tools';
+import logger from './logger';
 
 async function launchDefaultBrowser(url: string) {
   try {

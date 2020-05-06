@@ -6,6 +6,7 @@ import {Config} from '@react-native-community/cli-types';
 import linkAssets from './linkAssets';
 import linkDependency from './linkDependency';
 import makeHook from './makeHook';
+import printDeprecationWarning from './printDeprecationWarning';
 
 const dedupeAssets = (assets: Array<string>): Array<string> =>
   uniqBy(assets, asset => path.basename(asset));
@@ -17,16 +18,8 @@ type Options = {
 
 async function linkAll(config: Config, options: Options) {
   if (options.linkDeps) {
+    printDeprecationWarning('react-native link --all');
     logger.debug('Linking all dependencies');
-    logger.info(
-      `Linking dependencies using "${chalk.bold(
-        'link',
-      )}" command is now legacy and likely unnecessary. We encourage you to try ${chalk.bold(
-        'autolinking',
-      )} that comes with React Native v0.60 default template. Autolinking happens at build time – during CocoaPods install or Gradle install phase. More information: ${chalk.dim.underline(
-        'https://github.com/react-native-community/cli/blob/master/docs/autolinking.md',
-      )}`,
-    );
 
     for (let key in config.dependencies) {
       const dependency = config.dependencies[key];

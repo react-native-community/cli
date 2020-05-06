@@ -7,8 +7,6 @@
   "references": [
     {"path": "../tools"},
     {"path": "../cli-types"},
-    {"path": "../platform-ios"},
-    {"path": "../platform-android"}
-  ],
-  "include": ["../package.json"]
+    {"path": "../debugger-ui"}
+  ]
 }

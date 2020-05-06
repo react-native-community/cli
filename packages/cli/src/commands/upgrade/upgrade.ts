@@ -13,22 +13,52 @@ const webDiffUrl = 'https://react-native-community.github.io/upgrade-helper';
 const rawDiffUrl =
   'https://raw.githubusercontent.com/react-native-community/rn-diff-purge/diffs/diffs';
 
+const isConnected = (output: string): boolean => {
+  // there is no reliable way of checking for internet connectivity, so we should just
+  // read the output from npm (to check for connectivity errors) which is faster and relatively more reliable.
+  return !output.includes('the host is inaccessible');
+};
+
+const checkForErrors = (output: string): void => {
+  if (!output) {
+    return;
+  }
+  if (!isConnected(output)) {
+    throw new CLIError(
+      'Upgrade failed. You do not seem to have an internet connection.',
+    );
+  }
+
+  if (output.includes('npm ERR')) {
+    throw new CLIError(`Upgrade failed with the following errors:\n${output}`);
+  }
+
+  if (output.includes('npm WARN')) {
+    logger.warn(output);
+  }
+};
+
 const getLatestRNVersion = async (): Promise<string> => {
   logger.info('No version passed. Fetching latest...');
-  const {stdout} = await execa('npm', ['info', 'react-native', 'version']);
+  const {stdout, stderr} = await execa('npm', [
+    'info',
+    'react-native',
+    'version',
+  ]);
+  checkForErrors(stderr);
   return stdout;
 };
 
 const getRNPeerDeps = async (
   version: string,
 ): Promise<{[key: string]: string}> => {
-  const {stdout} = await execa('npm', [
+  const {stdout, stderr} = await execa('npm', [
     'info',
     `react-native@${version}`,
     'peerDependencies',
     '--json',
   ]);
-
+  checkForErrors(stderr);
   return JSON.parse(stdout);
 };
 
@@ -164,10 +194,7 @@ const installDeps = async (root: string, newVersion: string) => {
   }
 };
 
-const installCocoaPodsDeps = async (
-  projectDir: string,
-  thirdPartyIOSDeps: Array<Config['dependencies'][string]>,
-) => {
+const installCocoaPodsDeps = async (projectDir: string) => {
   if (process.platform === 'darwin') {
     try {
       logger.info(
@@ -177,7 +204,6 @@ const installCocoaPodsDeps = async (
       );
       await installPods({
         projectName: projectDir.split('/').pop() || '',
-        shouldUpdatePods: thirdPartyIOSDeps.length > 0,
       });
     } catch (error) {
       if (error.stderr) {
@@ -293,9 +319,6 @@ async function upgrade(argv: Array<string>, ctx: Config) {
     projectDir,
     'node_modules/react-native/package.json',
   ));
-  const thirdPartyIOSDeps = Object.values(ctx.dependencies).filter(
-    dependency => dependency.platforms.ios,
-  );
 
   const newVersion = await getVersionToUpgradeTo(
     argv,
@@ -316,7 +339,7 @@ async function upgrade(argv: Array<string>, ctx: Config) {
   if (patch === '') {
     logger.info('Diff has no changes to apply, proceeding further');
     await installDeps(projectDir, newVersion);
-    await installCocoaPodsDeps(projectDir, thirdPartyIOSDeps);
+    await installCocoaPodsDeps(projectDir);
 
     logger.success(
       `Upgraded React Native to v${newVersion} 🎉. Now you can review and commit the changes`,
@@ -352,7 +375,7 @@ async function upgrade(argv: Array<string>, ctx: Config) {
       }
     } else {
       await installDeps(projectDir, newVersion);
-      await installCocoaPodsDeps(projectDir, thirdPartyIOSDeps);
+      await installCocoaPodsDeps(projectDir);
       logger.info('Running "git status" to check what changed...');
       await execa('git', ['status'], {stdio: 'inherit'});
     }

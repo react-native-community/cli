@@ -13,47 +13,56 @@ const fs = require('fs');
 const {execSync} = require('child_process');
 const path = require('path');
 const chalk = require('chalk');
+const chokidar = require('chokidar');
 const {getPackages} = require('./helpers');
 
 const BUILD_CMD = `node ${path.resolve(__dirname, './build.js')}`;
 
 let filesToBuild = new Map();
 
-const exists = filename => {
-  try {
-    return fs.statSync(filename).isFile();
-  } catch (e) {
-    // omit
-  }
-  return false;
-};
 const rebuild = filename => filesToBuild.set(filename, true);
+
+const onChange = srcDir => {
+  return filePath => {
+    const filename = path.basename(filePath);
+
+    console.log(chalk.green('->'), `change: ${filename}`);
+    rebuild(filePath);
+  };
+};
+
+const onUnlink = srcDir => {
+  return filePath => {
+    const buildFile = filePath
+      .replace(`${path.sep}src${path.sep}`, `${path.sep}build${path.sep}`)
+      .replace('.ts', '.js');
+
+    try {
+      fs.unlinkSync(buildFile);
+      process.stdout.write(
+        `${chalk.red('  \u2022 ') +
+          path.relative(
+            path.resolve(srcDir, '..', '..'),
+            buildFile,
+          )} (deleted)\n`,
+      );
+    } catch (e) {
+      // omit
+    }
+  };
+};
 
 getPackages().forEach(p => {
   const srcDir = path.resolve(p, 'src');
+
   try {
     fs.accessSync(srcDir, fs.F_OK);
-    fs.watch(path.resolve(p, 'src'), {recursive: true}, (event, filename) => {
-      const filePath = path.resolve(srcDir, filename);
+    const watcher = chokidar.watch(srcDir);
 
-      if ((event === 'change' || event === 'rename') && exists(filePath)) {
-        console.log(chalk.green('->'), `${event}: ${filename}`);
-        rebuild(filePath);
-      } else {
-        const buildFile = path.resolve(srcDir, '..', 'build', filename);
-        try {
-          fs.unlinkSync(buildFile);
-          process.stdout.write(
-            `${chalk.red('  \u2022 ') +
-              path.relative(
-                path.resolve(srcDir, '..', '..'),
-                buildFile,
-              )} (deleted)\n`,
-          );
-        } catch (e) {
-          // omit
-        }
-      }
+    watcher.on('ready', () => {
+      watcher.on('change', onChange(srcDir));
+      watcher.on('add', onChange(srcDir));
+      watcher.on('unlink', onUnlink(srcDir));
     });
   } catch (e) {
     // doesn't exist

@@ -9,7 +9,7 @@
 
 import open from 'open';
 import {execSync} from 'child_process';
-import {logger} from '@react-native-community/cli-tools';
+import logger from './logger';
 import launchDefaultBrowser from './launchDefaultBrowser';
 import chalk from 'chalk';
 

@@ -70,4 +70,16 @@ describe('getAssetDestPathAndroid', () => {
       path.normalize('raw/app_test_video.mp4'),
     );
   });
+
+  it('should handle assets with a relative path outside of root', () => {
+    const asset = {
+      name: 'icon',
+      type: 'png',
+      httpServerLocation: '/assets/../../test',
+    };
+
+    expect(getAssetDestPathAndroid(asset, 1)).toBe(
+      path.normalize('drawable-mdpi/__test_icon.png'),
+    );
+  });
 });

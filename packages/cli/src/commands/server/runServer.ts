@@ -9,15 +9,16 @@
 import Metro from 'metro';
 // @ts-ignore untyped metro
 import {Terminal} from 'metro-core';
-import morgan from 'morgan';
+import http from 'http';
 import path from 'path';
-import {logger} from '@react-native-community/cli-tools';
 import {Config} from '@react-native-community/cli-types';
 import messageSocket from './messageSocket';
+import eventsSocketModule from './eventsSocket';
 import webSocketProxy from './webSocketProxy';
 import MiddlewareManager from './middleware/MiddlewareManager';
 import loadMetroConfig from '../../tools/loadMetroConfig';
 import releaseChecker from '../../tools/releaseChecker';
+import enableWatchMode from './watchMode';
 
 export type Args = {
   assetPlugins?: string[];
@@ -36,12 +37,24 @@ export type Args = {
   watchFolders?: string[];
   config?: string;
   projectRoot?: string;
+  interactive: boolean;
 };
 
 async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
+  let eventsSocket:
+    | ReturnType<typeof eventsSocketModule.attachToServer>
+    | undefined;
   const terminal = new Terminal(process.stdout);
   const ReporterImpl = getReporterImpl(args.customLogReporterPath);
-  const reporter = new ReporterImpl(terminal);
+  const terminalReporter = new ReporterImpl(terminal);
+  const reporter = {
+    update(event: any) {
+      terminalReporter.update(event);
+      if (eventsSocket) {
+        eventsSocket.reportEvent(event);
+      }
+    },
+  };
 
   const metroConfig = await loadMetroConfig(ctx, {
     config: args.config,
@@ -65,18 +78,6 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
     port: metroConfig.server.port,
     watchFolders: metroConfig.watchFolders,
   });
-
-  middlewareManager.getConnectInstance().use(
-    // @ts-ignore morgan and connect types mismatch
-    morgan(
-      'combined',
-      !logger.isVerbose()
-        ? {
-            skip: (_req, res) => res.statusCode < 400,
-          }
-        : undefined,
-    ),
-  );
 
   metroConfig.watchFolders.forEach(
     middlewareManager.serveStatic.bind(middlewareManager),
@@ -105,12 +106,22 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
     '/debugger-proxy',
   );
   const ms = messageSocket.attachToServer(serverInstance, '/message');
+  eventsSocket = eventsSocketModule.attachToServer(
+    serverInstance,
+    '/events',
+    ms,
+  );
+
   middlewareManager.attachDevToolsSocket(wsProxy);
   middlewareManager.attachDevToolsSocket(ms);
 
+  if (args.interactive) {
+    enableWatchMode(ms);
+  }
+
   middlewareManager
     .getConnectInstance()
-    .use('/reload', (_req: unknown, res: any) => {
+    .use('/reload', (_req: http.IncomingMessage, res: http.ServerResponse) => {
       ms.broadcast('reload');
       res.end('OK');
     });
@@ -130,7 +141,7 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
   await releaseChecker(ctx.root);
 }
 
-function getReporterImpl(customLogReporterPath: string | void) {
+function getReporterImpl(customLogReporterPath: string | undefined) {
   if (customLogReporterPath === undefined) {
     return require('metro/src/lib/TerminalReporter');
   }

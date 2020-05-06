@@ -1,10 +1,14 @@
 {
   "name": "@react-native-community/cli-types",
-  "version": "3.0.0-alpha.7",
+  "version": "4.8.0",
   "main": "build",
   "publishConfig": {
     "access": "public"
   },
+  "files": [
+    "build",
+    "!*.map"
+  ],
   "types": "build/index.d.ts",
   "license": "MIT"
 }

@@ -1,3 +1,4 @@
+import os from 'os';
 import execa from 'execa';
 import Adb from './adb';
 
@@ -8,7 +9,7 @@ const emulatorCommand = process.env.ANDROID_HOME
 const getEmulators = () => {
   try {
     const emulatorsOutput = execa.sync(emulatorCommand, ['-list-avds']).stdout;
-    return emulatorsOutput.split('\n').filter(name => name !== '');
+    return emulatorsOutput.split(os.EOL).filter(name => name !== '');
   } catch {
     return [];
   }

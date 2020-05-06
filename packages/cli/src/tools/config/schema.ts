@@ -162,6 +162,7 @@ export const projectConfig = t
             settingsGradlePath: t.string(),
             assetsPath: t.string(),
             buildGradlePath: t.string(),
+            appName: t.string(),
           })
           .default({}),
       })

@@ -39,7 +39,7 @@ function printRunInstructions(projectDir: string, projectName: string) {
     `Run instructions for ${chalk.bold('Windows')} and ${chalk.bold('macOS')}`,
   )}:
     • See ${chalk.underline(
-      'http://aka.ms/ReactNative',
+      'https://aka.ms/ReactNative',
     )} for the latest up-to-date instructions.
 `);
 }

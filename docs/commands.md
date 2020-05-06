@@ -325,9 +325,7 @@ Specify a different application folder name for the Android source. If not, we a
 
 #### `--appId [string]`
 
-> **DEPRECATED** – use --appIdSuffix instead.
-
-Specify an `applicationId` to launch after build.
+Specify an `applicationId` to launch after build. If not specified, `package` from AndroidManifest.xml will be used.
 
 #### `--appIdSuffix [string]`
 

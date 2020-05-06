@@ -34,6 +34,9 @@ function printRunInstructions(projectDir: string, projectName: string) {
   ${chalk.green(`Run instructions for ${chalk.bold('Android')}`)}:
     • Have an Android emulator running (quickest way to get started), or a device connected.
     • cd "${projectDir}" && npx react-native run-android
+
+  ${chalk.magenta(`Run instructions for ${chalk.bold('Windows')} and ${chalk.bold('mac OS')}`)}:
+    • See ${chalk.underline('http://aka.ms/ReactNative')} for the latest up-to-date instructions.
 `);
 }
 

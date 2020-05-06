@@ -30,7 +30,7 @@ type ProjectConfigT = {
   reactNativePath: ?string,
   project: {
     android?: ProjectParamsAndroidT,
-    ios?: ProjectParamsIOST,
+    ios?: IOSProjectParams,
     [key: string]: any,
   },
   assets: string[],
@@ -66,7 +66,7 @@ In most cases, as a React Native developer, you should not need to define any of
 The following settings are available on iOS and Android:
 
 ```ts
-type ProjectParamsAndroidT = {
+type AndroidProjectParams = {
   sourceDir?: string;
   manifestPath?: string;
   packageName?: string;
@@ -76,14 +76,16 @@ type ProjectParamsAndroidT = {
   settingsGradlePath?: string;
   assetsPath?: string;
   buildGradlePath?: string;
+  appName?: string;
 };
 
-type ProjectParamsIOST = {
+type IOSProjectParams = {
   project?: string;
   podspecPath?: string;
   sharedLibraries?: string[];
   libraryFolder?: string;
-  plist: any[];
+  plist: Array<any>;
+  scriptPhases?: Array<any>;
 };
 ```
 

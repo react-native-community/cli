@@ -36,7 +36,7 @@ function printRunInstructions(projectDir: string, projectName: string) {
     • cd "${projectDir}" && npx react-native run-android
 
   ${chalk.magenta(
-    `Run instructions for ${chalk.bold('Windows')} and ${chalk.bold('mac OS')}`,
+    `Run instructions for ${chalk.bold('Windows')} and ${chalk.bold('macOS')}`,
   )}:
     • See ${chalk.underline(
       'http://aka.ms/ReactNative',

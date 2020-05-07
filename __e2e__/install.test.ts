@@ -4,14 +4,14 @@ import {runCLI, getTempDirectory, cleanup, writeFiles} from '../jest/helpers';
 const DIR = getTempDirectory('command-install-test');
 const pkg = 'react-native-config';
 
-beforeEach(() => {
-  cleanup(DIR);
+beforeEach(async () => {
+  await cleanup(DIR);
   writeFiles(DIR, {
     'node_modules/react-native/package.json': '{}',
     'package.json': '{}',
   });
 });
-afterEach(() => cleanup(DIR));
+afterEach(async () => await cleanup(DIR));
 
 test.each(['yarn', 'npm'])('install module with %s', pm => {
   if (pm === 'yarn') {

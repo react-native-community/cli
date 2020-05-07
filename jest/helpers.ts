@@ -80,7 +80,13 @@ export const makeTemplate = (
     return values[number - 1];
   });
 
-export const cleanup = (directory: string) => rimrafAsync(directory);
+export const cleanup = (directory: string, async = true) => {
+  if (!async) {
+    return rimraf.sync(directory);
+  } else {
+    return rimrafAsync(directory);
+  }
+};
 
 /**
  * Creates a nested directory with files and their contents

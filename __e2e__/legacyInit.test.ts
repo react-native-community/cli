@@ -6,12 +6,12 @@ import {getTempDirectory, cleanup, writeFiles} from '../jest/helpers';
 
 const DIR = getTempDirectory('command-legacy-init');
 
-beforeEach(async () => {
-  await cleanup(DIR);
+beforeEach(() => {
+  cleanup(DIR, false);
   writeFiles(DIR, {});
 });
-afterEach(async () => {
-  await cleanup(DIR);
+afterEach(() => {
+  cleanup(DIR, false);
 });
 
 // We skip this test, because it's flaky and we don't really update

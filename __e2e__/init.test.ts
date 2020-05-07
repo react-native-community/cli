@@ -26,12 +26,12 @@ const customTemplateCopiedFiles = [
   'yarn.lock',
 ];
 
-beforeEach(async () => {
-  await cleanup(DIR);
+beforeEach(() => {
+  cleanup(DIR, false);
   writeFiles(DIR, {});
 });
-afterEach(async () => {
-  await cleanup(DIR);
+afterEach(() => {
+  cleanup(DIR, false);
 });
 
 test('init --template fails without package name', () => {

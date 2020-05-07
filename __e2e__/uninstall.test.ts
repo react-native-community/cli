@@ -3,8 +3,8 @@ import {runCLI, getTempDirectory, cleanup, writeFiles} from '../jest/helpers';
 const DIR = getTempDirectory('command-uninstall-test');
 const pkg = 'react-native-config';
 
-beforeEach(async () => {
-  await cleanup(DIR);
+beforeEach(() => {
+  cleanup(DIR, false);
   writeFiles(DIR, {
     'node_modules/react-native/package.json': '{}',
     'node_modules/react-native-config/package.json': '{}',
@@ -15,7 +15,7 @@ beforeEach(async () => {
     }`,
   });
 });
-afterEach(async () => await cleanup(DIR));
+afterEach(() => cleanup(DIR, false));
 
 test('uninstall fails when package is not defined', () => {
   writeFiles(DIR, {

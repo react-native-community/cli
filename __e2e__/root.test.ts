@@ -10,7 +10,7 @@ import {
 
 const cwd = getTempDirectory('test_different_roots');
 
-beforeAll(async () => {
+beforeAll(() => {
   // Register all packages to be linked
   for (const pkg of ['platform-ios', 'platform-android']) {
     spawnScript('yarn', ['link'], {
@@ -19,7 +19,7 @@ beforeAll(async () => {
   }
 
   // Clean up folder and re-create a new project
-  await cleanup(cwd);
+  cleanup(cwd, false);
   writeFiles(cwd, {});
 
   // Initialise React Native project
@@ -36,8 +36,8 @@ beforeAll(async () => {
   });
 });
 
-afterAll(async () => {
-  await cleanup(cwd);
+afterAll(() => {
+  cleanup(cwd, false);
 });
 
 test('works when Gradle is run outside of the project hierarchy', () => {

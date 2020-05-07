@@ -35,7 +35,7 @@ function createCorruptedSetupEnvScript() {
   };
 }
 
-beforeAll(async () => {
+beforeAll(() => {
   // Register all packages to be linked
   for (const pkg of ['platform-ios', 'platform-android']) {
     spawnScript('yarn', ['link'], {
@@ -44,7 +44,7 @@ beforeAll(async () => {
   }
 
   // Clean up folder and re-create a new project
-  await cleanup(DIR);
+  cleanup(DIR, false);
   writeFiles(DIR, {});
 
   // Initialise React Native project
@@ -62,8 +62,8 @@ beforeAll(async () => {
   });
 });
 
-afterAll(async () => {
-  await cleanup(DIR);
+afterAll(() => {
+  cleanup(DIR, false);
 });
 
 test('shows up current config without unnecessary output', () => {

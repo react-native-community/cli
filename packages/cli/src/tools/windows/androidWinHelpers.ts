@@ -1,6 +1,11 @@
+import {readFile, writeFile} from 'fs';
 import {join} from 'path';
 import {executeCommand} from './executeWinCommand';
 import {getProcessorType} from '../processorType';
+import {promisify} from 'util';
+
+const readFileAsync = promisify(readFile);
+const writeFileAsync = promisify(writeFile);
 
 type HypervisorStatus = {
   hypervisor: 'WHPX' | 'HAXM' | 'AMDH' | 'none';
@@ -77,9 +82,11 @@ const parseHypervisor = (
   customHypervisor: 'HAXM' | 'AMDH',
 ): HypervisorStatus | null => {
   /**
-   * Messages (haven't checked with AMD devices):
+   * Messages:
+   * Android Emulator requires an Intel processor with VT-x and NX support.  Your CPU: 'AuthenticAMD'
    * HAXM is not installed, but Windows Hypervisor Platform is available.
    * WHPX (10.0.19041) is installed and usable.
+   * * This message outputs for WHPX and when the AMD Hypervisor is installed
    * HAXM version 6.2.1 (4) is installed and usable.
    * HAXM is not installed on this machine
    */
@@ -106,6 +113,13 @@ const parseHypervisor = (
     return {
       hypervisor: customHypervisor,
       installed: true,
+    };
+  }
+
+  if (status.includes("Your CPU: 'AuthenticAMD'")) {
+    return {
+      hypervisor: customHypervisor,
+      installed: false,
     };
   }
 
@@ -151,6 +165,50 @@ const getEmulatorAccelOutputInformation = async (androidSDKRoot: string) => {
     const {stdout} = e;
 
     return stdout;
+  }
+};
+
+/**
+ * Creates a new Android Virtual Device in the default folder with the
+ * name, device and system image passed by parameter.
+ */
+export const createAVD = async (
+  androidSDKRoot: string,
+  name: string,
+  device: string,
+  image: string,
+) => {
+  try {
+    const abi = image.includes('x86_64') ? 'x86_64' : 'x86';
+    const tag = image.includes('google_apis') ? 'google_apis' : 'generic';
+    const avdmanager = join(androidSDKRoot, 'tools', 'bin', 'avdmanager.bat');
+
+    const {stdout} = await executeCommand(
+      `${avdmanager} -s create avd --force --name "${name}" --device "${device}" --package "${image}" --tag "${tag}" --abi "${abi}"`,
+    );
+
+    // For some reason `image.sysdir.1` in `config.ini` points to the wrong location and needs to be updated
+    const configPath = join(
+      process.env.HOMEPATH || '',
+      '.android',
+      'avd',
+      `${name}.avd`,
+      'config.ini',
+    );
+
+    const content = await readFileAsync(configPath, 'utf-8');
+    const updatedContent = content.replace(
+      /Sdk\\system-images/g,
+      'system-images',
+    );
+
+    await writeFileAsync(configPath, updatedContent, 'utf-8');
+
+    return stdout;
+  } catch (e) {
+    const {stderr} = e;
+
+    return stderr;
   }
 };
 

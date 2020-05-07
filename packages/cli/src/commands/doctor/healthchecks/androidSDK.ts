@@ -12,6 +12,7 @@ import {
   enableAMDH,
   enableHAXM,
   enableWHPX,
+  createAVD,
 } from '../../../tools/windows/androidWinHelpers';
 import {downloadAndUnzip} from '../../../tools/downloadAndUnzip';
 
@@ -86,6 +87,7 @@ export default {
     const cliToolsUrl =
       'https://dl.google.com/android/repository/commandlinetools-win-6200805_latest.zip';
 
+    const systemImage = 'system-images;android-28;google_apis;x86_64';
     // Installing 29 as well so Android Studio does not complain on first boot
     const componentsToInstall = [
       'platform-tools',
@@ -95,7 +97,7 @@ export default {
       'build-tools;28.0.3',
       'platforms;android-28',
       'emulator',
-      'system-images;android-28;google_apis;x86_64',
+      systemImage,
       '--licenses', // Accept any pending licenses at the end
     ];
 
@@ -109,7 +111,7 @@ export default {
     });
 
     for (const component of componentsToInstall) {
-      loader.text = `Installing ${component}`;
+      loader.text = `Installing "${component}" (this may take a few minutes)`;
 
       try {
         await installComponent(component, androidSDKRoot);
@@ -120,6 +122,8 @@ export default {
 
     loader.text = 'Updating environment variables';
 
+    // Required for the emulator to work from the CLI
+    await setEnvironment('ANDROID_SDK_ROOT', androidSDKRoot);
     await setEnvironment('ANDROID_HOME', androidSDKRoot);
     await updateEnvironment('PATH', path.join(androidSDKRoot, 'tools'));
     await updateEnvironment(
@@ -149,9 +153,12 @@ export default {
       }
     }
 
-    // TODO: Create AVD
+    loader.text = 'Creating AVD';
+    await createAVD(androidSDKRoot, 'pixel_9.0', 'pixel', systemImage);
 
-    loader.succeed('Android SDK configured');
+    loader.succeed(
+      'Android SDK configured. You might have to start a new shell for things to work properly.',
+    );
   },
   runAutomaticFix: async ({loader, environmentInfo}) => {
     loader.fail();

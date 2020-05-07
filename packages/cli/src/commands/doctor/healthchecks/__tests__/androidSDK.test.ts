@@ -146,7 +146,9 @@ describe('androidSDK', () => {
     expect(loaderFailSpy).toHaveBeenCalledTimes(0);
     expect(logSpy).toHaveBeenCalledTimes(0);
 
-    expect(loaderSucceedSpy).toBeCalledWith('Android SDK configured');
+    expect(loaderSucceedSpy).toBeCalledWith(
+      'Android SDK configured. You might have to start a new shell for things to work properly.',
+    );
   });
 
   it('returns true if a build.gradle is not found', async () => {

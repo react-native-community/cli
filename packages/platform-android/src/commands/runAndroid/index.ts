@@ -30,14 +30,9 @@ function validatePackageName(packageName: string) {
 
 function displayWarnings(config: Config, args: Flags) {
   warnAboutManuallyLinkedLibs(config);
-  if (args.appId) {
-    logger.warn(
-      'Using deprecated "--appId" flag. Use "platforms.android.appName" in react-native.config.js instead.',
-    );
-  }
   if (args.appFolder) {
     logger.warn(
-      'Using deprecated "--appFolder" flag. Use "platforms.android.appName" in react-native.config.js instead.',
+      'Using deprecated "--appFolder" flag. Use "project.android.appName" in react-native.config.js instead.',
     );
   }
   if (args.root) {
@@ -377,12 +372,12 @@ export default {
     {
       name: '--appFolder [string]',
       description:
-        '[DEPRECATED – use "platforms.android.appName" in react-native.config.js] Specify a different application folder name for the android source. If not, we assume is "app"',
+        '[DEPRECATED – use "project.android.appName" in react-native.config.js] Specify a different application folder name for the android source. If not, we assume is "app"',
     },
     {
       name: '--appId [string]',
       description:
-        '[DEPRECATED – use "platforms.android.appName" in react-native.config.js] Specify an applicationId to launch after build.',
+        'Specify an applicationId to launch after build. If not specified, `package` from AndroidManifest.xml will be used.',
       default: '',
     },
     {

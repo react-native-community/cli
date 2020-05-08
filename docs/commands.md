@@ -321,7 +321,7 @@ Specify your app's build variant.
 
 #### `--appFolder [string]`
 
-> **DEPRECATED** – use "platforms.android.appName" in react-native.config.js
+> **DEPRECATED** – use "project.android.appName" in react-native.config.js
 
 > default: 'app'
 
@@ -329,9 +329,7 @@ Specify a different application folder name for the Android source. If not, we a
 
 #### `--appId [string]`
 
-> **DEPRECATED** – use "platforms.android.appName" in react-native.config.js
-
-Specify an `applicationId` to launch after build.
+Specify an `applicationId` to launch after build. If not specified, `package` from AndroidManifest.xml will be used.
 
 #### `--appIdSuffix [string]`
 

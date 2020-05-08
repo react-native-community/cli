@@ -28,5 +28,9 @@ export default {
       name: '--title [string]',
       description: 'Uses a custom app title name for application',
     },
+    {
+      name: '--skip-install',
+      description: 'Skips dependencies installation step',
+    },
   ],
 };

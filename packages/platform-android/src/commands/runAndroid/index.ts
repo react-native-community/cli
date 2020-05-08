@@ -126,11 +126,12 @@ function buildAndRun(args: Flags, androidProject: AndroidProject) {
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
 
   // "app" is usually the default value for Android apps with only 1 app
-  const {appName} = androidProject;
+  const {appName, manifestPath} = androidProject;
   const {appFolder} = args;
-  // @ts-ignore
+  const fallbackManifestPath = `${appFolder ||
+    appName}/src/main/AndroidManifest.xml`;
   const androidManifest = fs.readFileSync(
-    `${appFolder || appName}/src/main/AndroidManifest.xml`,
+    manifestPath || fallbackManifestPath,
     'utf8',
   );
 

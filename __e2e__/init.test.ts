@@ -94,3 +94,32 @@ test('init --template file with custom directory', () => {
   let dirFiles = fs.readdirSync(path.join(DIR, customPath));
   expect(dirFiles).toEqual(customTemplateCopiedFiles);
 });
+
+test('init skips installation of dependencies with --skip-install', () => {
+  createCustomTemplateFiles();
+  let templatePath = path.resolve(DIR, 'custom', 'template');
+  if (process.platform === 'win32') {
+    templatePath = templatePath.split('\\').join('/');
+  }
+
+  const {stdout} = runCLI(DIR, [
+    'init',
+    '--template',
+    `file://${templatePath}`,
+    'TestInit',
+    '--skip-install',
+  ]);
+
+  expect(stdout).toContain('Run instructions');
+
+  // make sure we don't leave garbage
+  expect(fs.readdirSync(DIR)).toContain('custom');
+
+  let dirFiles = fs.readdirSync(path.join(DIR, 'TestInit'));
+
+  expect(dirFiles).toEqual(
+    customTemplateCopiedFiles.filter(
+      file => !['node_modules', 'yarn.lock'].includes(file),
+    ),
+  );
+});

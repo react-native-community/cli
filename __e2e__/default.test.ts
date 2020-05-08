@@ -7,7 +7,7 @@ import {
 
 const DIR = getTempDirectory('test_default_behavior');
 
-beforeEach(async () => {
+beforeEach(() => {
   cleanupSync(DIR);
   writeFiles(DIR, {});
 });

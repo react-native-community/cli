@@ -79,6 +79,7 @@ export function createDevServerMiddleware(options: MiddlewareOptions) {
         '/message',
       );
       broadcast = messageSocket.broadcast;
+      isDebuggerConnected = debuggerProxy.isDebuggerConnected;
       const eventsSocket = eventsSocketServer.attachToServer(
         server,
         '/events',

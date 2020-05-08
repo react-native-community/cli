@@ -1,7 +1,7 @@
 import {Command, DetachedCommand} from '@react-native-community/cli-types';
 
 // @ts-ignore - JS file
-import server from './server/server';
+import start from './start/start';
 import bundle from './bundle/bundle';
 import ramBundle from './bundle/ramBundle';
 import link from './link/link';
@@ -16,7 +16,7 @@ import init from './init';
 import doctor from './doctor';
 
 export const projectCommands = [
-  server,
+  start,
   bundle,
   ramBundle,
   link,

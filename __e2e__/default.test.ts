@@ -11,7 +11,7 @@ beforeEach(() => {
   cleanupSync(DIR);
   writeFiles(DIR, {});
 });
-afterEach(async () => {
+afterEach(() => {
   cleanupSync(DIR);
 });
 

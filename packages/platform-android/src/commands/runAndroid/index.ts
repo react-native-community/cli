@@ -128,12 +128,7 @@ function buildAndRun(args: Flags, androidProject: AndroidProject) {
   // "app" is usually the default value for Android apps with only 1 app
   const {appName, manifestPath} = androidProject;
   const {appFolder} = args;
-  const fallbackManifestPath = `${appFolder ||
-    appName}/src/main/AndroidManifest.xml`;
-  const androidManifest = fs.readFileSync(
-    manifestPath || fallbackManifestPath,
-    'utf8',
-  );
+  const androidManifest = fs.readFileSync(manifestPath, 'utf8');
 
   let packageNameMatchArray = androidManifest.match(/package="(.+?)"/);
   if (!packageNameMatchArray || packageNameMatchArray.length === 0) {

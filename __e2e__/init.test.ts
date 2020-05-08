@@ -1,6 +1,11 @@
 import fs from 'fs';
 import path from 'path';
-import {runCLI, getTempDirectory, cleanup, writeFiles} from '../jest/helpers';
+import {
+  runCLI,
+  getTempDirectory,
+  cleanupSync,
+  writeFiles,
+} from '../jest/helpers';
 
 const DIR = getTempDirectory('command-init');
 
@@ -27,11 +32,11 @@ const customTemplateCopiedFiles = [
 ];
 
 beforeEach(() => {
-  cleanup(DIR, false);
+  cleanupSync(DIR);
   writeFiles(DIR, {});
 });
 afterEach(() => {
-  cleanup(DIR, false);
+  cleanupSync(DIR);
 });
 
 test('init --template fails without package name', () => {

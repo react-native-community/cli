@@ -2,16 +2,16 @@ import fs from 'fs';
 import path from 'path';
 // @ts-ignore
 import execa from 'execa';
-import {getTempDirectory, cleanup, writeFiles} from '../jest/helpers';
+import {getTempDirectory, cleanupSync, writeFiles} from '../jest/helpers';
 
 const DIR = getTempDirectory('command-legacy-init');
 
 beforeEach(() => {
-  cleanup(DIR, false);
+  cleanupSync(DIR);
   writeFiles(DIR, {});
 });
 afterEach(() => {
-  cleanup(DIR, false);
+  cleanupSync(DIR);
 });
 
 // We skip this test, because it's flaky and we don't really update

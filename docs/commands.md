@@ -211,6 +211,10 @@ module.exports = {
 
 Skip dependencies installation
 
+#### `--dev-version [string]`
+
+Replace the version of "react-native" dependency of the template with specified string. Useful for testing react-native or forks from the source.
+
 #### `--npm`
 
 Force use of npm during initialization

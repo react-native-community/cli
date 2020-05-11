@@ -46,3 +46,11 @@ test('supports path to tgz archives', () => {
     name: 'react-native',
   });
 });
+
+test('supports user/repo format as template name', () => {
+  const GH_REPO_FORMAT_PATH = 'Esemesek/react-native-new-template';
+  expect(processTemplateName(GH_REPO_FORMAT_PATH)).toEqual({
+    uri: `https://github.com/${GH_REPO_FORMAT_PATH}`,
+    name: 'react-native-new-template',
+  });
+});

@@ -7,6 +7,7 @@ const FILE_PROTOCOL = /file:/;
 const TARBALL = /\.tgz$/;
 const VERSION_POSTFIX = /(.*)(-\d+\.\d+\.\d+)/;
 const VERSIONED_PACKAGE = /(@?.+)(@)(.+)/;
+const GIT_REPO = /\//;
 
 function handleFileProtocol(filePath: string) {
   let uri = new URL(filePath).pathname;
@@ -77,6 +78,19 @@ function handleVersionedPackage(versionedPackage: string) {
   };
 }
 
+function handleGitHubRepo(templateName: string) {
+  if (['github', '@'].some(str => templateName.includes(str))) {
+    return {
+      uri: templateName,
+      name: templateName,
+    };
+  }
+  return {
+    uri: `https://github.com/${templateName}`,
+    name: templateName.split('/')[1],
+  };
+}
+
 export function processTemplateName(templateName: string) {
   if (templateName.match(TARBALL)) {
     return handleTarball(templateName);
@@ -86,6 +100,9 @@ export function processTemplateName(templateName: string) {
   }
   if (templateName.match(VERSIONED_PACKAGE)) {
     return handleVersionedPackage(templateName);
+  }
+  if (templateName.match(GIT_REPO)) {
+    return handleGitHubRepo(templateName);
   }
 
   return {

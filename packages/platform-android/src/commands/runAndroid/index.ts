@@ -25,7 +25,7 @@ import warnAboutManuallyLinkedLibs from '../../link/warnAboutManuallyLinkedLibs'
 
 // Validates that the package name is correct
 function validatePackageName(packageName: string) {
-  return /^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/.test(packageName);
+  return /^[a-zA-Z][a-zA-Z0-9_]*(\.[a-zA-Z][a-zA-Z0-9_]*)+$/.test(packageName);
 }
 
 function displayWarnings(config: Config, args: Flags) {

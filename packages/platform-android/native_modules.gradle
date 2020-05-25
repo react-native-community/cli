@@ -100,12 +100,15 @@ class ReactNativeModules {
   /**
    * Adds the react native modules as dependencies to the users `app` project
    */
-  void addReactNativeModuleDependencies(Project appProject) {
+  void addReactNativeModuleDependencies(Project appProject, String scopeMethod, String configuration) {
     reactNativeModules.forEach { reactNativeModule ->
       def nameCleansed = reactNativeModule["nameCleansed"]
       appProject.dependencies {
-        // TODO(salakar): are other dependency scope methods such as `api` required?
-        implementation project(path: ":${nameCleansed}")
+        if (configuration != null) {
+          "${scopeMethod}" project(path: ":${nameCleansed}", configuration: "${configuration}")
+        } else {
+          "${scopeMethod}" project(path: ":${nameCleansed}")
+        }
       }
     }
   }
@@ -283,12 +286,12 @@ ext.applyNativeModulesSettingsGradle = { DefaultSettings defaultSettings, String
   autoModules.addReactNativeModuleProjects(defaultSettings)
 }
 
-ext.applyNativeModulesAppBuildGradle = { Project project, String root = null ->
+ext.applyNativeModulesAppBuildGradle = { Project project, String root = null, String scopeMethod = "implementation", String configuration = null ->
   if (root != null) {
     logger.warn("${ReactNativeModules.LOG_PREFIX}Passing custom root is deprecated. CLI detects root automatically now");
     logger.warn("${ReactNativeModules.LOG_PREFIX}Please remove second argument to `applyNativeModulesAppBuildGradle`.");
   }
-  autoModules.addReactNativeModuleDependencies(project)
+  autoModules.addReactNativeModuleDependencies(project, scopeMethod, configuration)
 
   def generatedSrcDir = new File(buildDir, "generated/rncli/src/main/java")
   def generatedCodeDir = new File(generatedSrcDir, generatedFilePackage.replace('.', '/'))

@@ -107,6 +107,10 @@ describe('androidSDK', () => {
       .mockImplementation(() => Promise.resolve());
 
     jest
+      .spyOn(androidWinHelpers, 'getAndroidSdkRootInstallation')
+      .mockImplementation(() => '/Android/Sdk/Root');
+
+    jest
       .spyOn(environmentVariables, 'setEnvironment')
       .mockImplementation(() => Promise.resolve());
     jest

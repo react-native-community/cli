@@ -10,7 +10,7 @@ type LnkOptions = {
 };
 
 /**
- * Creates a script in the users's Startup menu
+ * Creates a script in the user's Startup menu
  */
 export const createShortcut = async ({path, name, ico}: LnkOptions) => {
   // prettier-ignore

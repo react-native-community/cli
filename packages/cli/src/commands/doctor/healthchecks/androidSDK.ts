@@ -157,7 +157,7 @@ export default {
     await createAVD(androidSDKRoot, 'pixel_9.0', 'pixel', systemImage);
 
     loader.succeed(
-      'Android SDK configured. You might have to start a new shell for things to work properly.',
+      'Android SDK configured. Start a new shell for the configuration to take effect.',
     );
   },
   runAutomaticFix: async ({loader, environmentInfo}) => {

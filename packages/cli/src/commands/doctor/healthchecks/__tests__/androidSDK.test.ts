@@ -94,7 +94,7 @@ describe('androidSDK', () => {
     expect(logSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('it installs the SDK if it is missing on Windows', async () => {
+  it('installs the SDK if it is missing on Windows', async () => {
     const loader = new NoopLoader();
     const loaderSucceedSpy = jest.spyOn(loader, 'succeed');
     const loaderFailSpy = jest.spyOn(loader, 'fail');
@@ -122,7 +122,7 @@ describe('androidSDK', () => {
 
     await androidSDK.win32AutomaticFix({loader, environmentInfo});
 
-    // 1. Download and un zip the SDK
+    // 1. Download and unzip the SDK
     expect(downloadAndUnzipSpy).toBeCalledTimes(1);
     // 2. Install all required components
     const requiredComponents = [

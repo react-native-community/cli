@@ -29,7 +29,7 @@ describe('androidStudio', () => {
     expect(diagnostics.needsToBeFixed).toBe(true);
   });
 
-  it('returns false is Android Studio is installed', async () => {
+  it('returns false if Android Studio is installed', async () => {
     // @ts-ignore
     environmentInfo.IDEs['Android Studio'] = {
       version: '3.6.0.0',

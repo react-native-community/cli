@@ -83,7 +83,7 @@ export default {
     };
   },
   win32AutomaticFix: async ({loader}) => {
-    // TODO: Create a GitHub action that checks and updates this periodically?
+    // Need a GitHub action to update automatically. See #1180
     const cliToolsUrl =
       'https://dl.google.com/android/repository/commandlinetools-win-6200805_latest.zip';
 
@@ -102,6 +102,12 @@ export default {
     ];
 
     const androidSDKRoot = getAndroidSdkRootInstallation();
+
+    if (androidSDKRoot === '') {
+      loader.fail('There was an error finding the Android SDK root');
+
+      return;
+    }
 
     await downloadAndUnzip({
       loader,
@@ -157,7 +163,7 @@ export default {
     await createAVD(androidSDKRoot, 'pixel_9.0', 'pixel', systemImage);
 
     loader.succeed(
-      'Android SDK configured. Start a new shell for the configuration to take effect.',
+      'Android SDK configured. You might need to restart your PC for all changes to take effect.',
     );
   },
   runAutomaticFix: async ({loader, environmentInfo}) => {

@@ -147,7 +147,7 @@ describe('androidSDK', () => {
     expect(logSpy).toHaveBeenCalledTimes(0);
 
     expect(loaderSucceedSpy).toBeCalledWith(
-      'Android SDK configured. You might have to start a new shell for things to work properly.',
+      'Android SDK configured. You might need to restart your PC for all changes to take effect.',
     );
   });
 

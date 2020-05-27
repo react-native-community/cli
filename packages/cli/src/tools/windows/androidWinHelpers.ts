@@ -1,11 +1,7 @@
-import {readFile, writeFile} from 'fs';
+import {readFile, writeFile, pathExistsSync} from 'fs-extra';
 import {join} from 'path';
 import {executeCommand} from './executeWinCommand';
 import {getProcessorType} from '../processorType';
-import {promisify} from 'util';
-
-const readFileAsync = promisify(readFile);
-const writeFileAsync = promisify(writeFile);
 
 type HypervisorStatus = {
   hypervisor: 'WHPX' | 'HAXM' | 'AMDH' | 'none';
@@ -24,7 +20,6 @@ export const getUserAndroidPath = () => {
  * Deals with ANDROID_HOME, ANDROID_SDK_ROOT or generates a new one
  */
 export const getAndroidSdkRootInstallation = () => {
-  // TODO: Check if the path exists?
   const env = process.env.ANDROID_SDK_ROOT || process.env.ANDROID_HOME;
   const installPath = env
     ? // Happens if previous installations or not fully completed
@@ -32,7 +27,11 @@ export const getAndroidSdkRootInstallation = () => {
     : // All Android zip files have a root folder, using `Android` as the common place
       join(getUserAndroidPath(), 'Sdk');
 
-  return installPath;
+  if (pathExistsSync(installPath)) {
+    return installPath;
+  } else {
+    return '';
+  }
 };
 
 /**
@@ -58,8 +57,8 @@ export const installComponent = (component: string, androidSdkRoot: string) => {
       stderr += data.toString('utf-8');
     });
 
-    child.on('close', data => {
-      if (data === 0) {
+    child.on('close', exitStatus => {
+      if (exitStatus === 0) {
         done();
       } else {
         error({stderr});
@@ -196,13 +195,13 @@ export const createAVD = async (
       'config.ini',
     );
 
-    const content = await readFileAsync(configPath, 'utf-8');
+    const content = await readFile(configPath, 'utf-8');
     const updatedContent = content.replace(
       /Sdk\\system-images/g,
       'system-images',
     );
 
-    await writeFileAsync(configPath, updatedContent, 'utf-8');
+    await writeFile(configPath, updatedContent, 'utf-8');
 
     return stdout;
   } catch (e) {
@@ -221,7 +220,6 @@ export const createAVD = async (
 export const getBestHypervisor = async (
   androidSDKRoot: string,
 ): Promise<HypervisorStatus> => {
-  // Should be in the path? might want to pass the root before
   const customHypervisor = getProcessorType() === 'Intel' ? 'HAXM' : 'AMDH';
 
   const stdout = await getEmulatorAccelOutputInformation(androidSDKRoot);
@@ -243,36 +241,31 @@ export const getBestHypervisor = async (
   };
 };
 
+/**
+ * Enables the Windows HypervisorPlatform and Hyper-V features.
+ * Will prompt the User Account Control (UAC)
+ */
 export const enableWHPX = () => {
-  // Need to prompt for UAC
   return executeCommand(
     'DISM /Quiet /NoRestart /Online /Enable-Feature /All /FeatureName:Microsoft-Hyper-V /FeatureName:HypervisorPlatform',
     true,
   );
 };
 
-export const enableHAXM = async (installPath: string) => {
-  // Install from sdkmanager
+/**
+ * Installs and enables the [HAXM](https://github.com/intel/haxm)
+ * version available through the Android SDK manager.
+ * @param androidSdkInstallPath The path to the Android SDK installation
+ */
+export const enableHAXM = async (androidSdkInstallPath: string) => {
   await installComponent(
     'extras;intel;Hardware_Accelerated_Execution_Manager',
-    installPath,
+    androidSdkInstallPath,
   );
 
-  /*
-    Do something with the return codes? From the docs:
-
-    In case of success:
-      Return 0 to caller
-    In case of fail:
-      Return 1 to caller
-    In case of HAXM is already installed:
-      HAXM will be upgraded automatically.
-    In case the machines needs to reboot after install/update:
-      Return 2 to caller.
-  */
   await executeCommand(
     join(
-      installPath,
+      androidSdkInstallPath,
       'Sdk',
       'extras',
       'intel',
@@ -282,15 +275,21 @@ export const enableHAXM = async (installPath: string) => {
   );
 };
 
-export const enableAMDH = async (installPath: string) => {
+/**
+ * Installs and enables the
+ * [Hypervisor Driver for AMD Processors](https://androidstudio.googleblog.com/2019/10/android-emulator-hypervisor-driver-for.html)
+ * version available through the Android SDK manager.
+ * @param androidSdkInstallPath The path to the Android SDK installation
+ */
+export const enableAMDH = async (androidSdkInstallPath: string) => {
   await installComponent(
     'extras;google;Android_Emulator_Hypervisor_Driver',
-    installPath,
+    androidSdkInstallPath,
   );
 
   await executeCommand(
     join(
-      installPath,
+      androidSdkInstallPath,
       'Sdk',
       'extras',
       'google',

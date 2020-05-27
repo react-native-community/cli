@@ -2,7 +2,6 @@ import * as androidWinHelpers from '../androidWinHelpers';
 import * as executeWinCommand from '../executeWinCommand';
 import * as processorType from '../../processorType';
 import {ExecaChildProcess} from 'execa';
-// Something to get the processor information
 
 describe('androidWinHelpers', () => {
   afterEach(() => {
@@ -23,6 +22,19 @@ accel`,
       processor: 'Intel',
     };
 
+    const notInstalledAndAvailableAMDH = {
+      output: `
+accel:
+0
+Android Emulator requires an Intel processor with VT-x and NX support.  Your CPU: 'AuthenticAMD'
+accel`,
+      expectedResult: {
+        hypervisor: 'AMDH',
+        installed: false,
+      },
+      processor: 'AMD',
+    };
+
     const installedAndUsable = {
       output: `
 accel:
@@ -34,20 +46,6 @@ accel`,
         installed: true,
       },
       processor: 'Intel',
-    };
-
-    // TODO: Need to validate the output is correct
-    const customInstalledAndUsableAMDH = {
-      output: `
-accel:
-0
-AMDH version 6.2.1 (4) is installed and usable.
-accel`,
-      expectedResult: {
-        hypervisor: 'AMDH',
-        installed: true,
-      },
-      processor: 'AMD',
     };
 
     const customInstalledAndUsableHAXM = {
@@ -78,8 +76,8 @@ accel`,
 
     const hyperVisorScenarios = [
       notInstalledAndAvailable,
+      notInstalledAndAvailableAMDH,
       installedAndUsable,
-      customInstalledAndUsableAMDH,
       customInstalledAndUsableHAXM,
       notInstalledNotUsable,
     ];

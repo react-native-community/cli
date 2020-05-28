@@ -9,5 +9,6 @@ Options:
   -h, --help                    output usage information
 
 Commands:
-  init [options] <projectName>  Initialize a new React Native project named <projectName> in a directory of the same name."
+  init [options] <projectName>  Initialize a new React Native project named <projectName> in a directory of the same name.
+  doctor [options]              [EXPERIMENTAL] Diagnose and fix common Node.js, iOS, Android & React Native issues."
 `;

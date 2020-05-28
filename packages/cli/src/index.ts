@@ -5,7 +5,7 @@ import leven from 'leven';
 import path from 'path';
 
 import {Command, Config} from '@react-native-community/cli-types';
-import {logger} from '@react-native-community/cli-tools';
+import {logger, CLIError} from '@react-native-community/cli-tools';
 
 import {detachedCommands, projectCommands} from './commands';
 import init from './commands/init/initCompat';

@@ -9,8 +9,7 @@ export class CLIError extends Error {
       this.stack =
         typeof originalError === 'string'
           ? originalError
-          : originalError.stack ||
-            ''
+          : (originalError.stack || '')
               .split('\n')
               .slice(0, 2)
               .join('\n');

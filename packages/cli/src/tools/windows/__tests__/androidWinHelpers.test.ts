@@ -1,6 +1,6 @@
 import * as androidWinHelpers from '../androidWinHelpers';
 import * as executeWinCommand from '../executeWinCommand';
-import * as processorType from '../../processorType';
+import * as processorType from '../processorType';
 import {ExecaChildProcess} from 'execa';
 
 describe('androidWinHelpers', () => {

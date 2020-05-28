@@ -1,7 +1,7 @@
 import {readFile, writeFile, pathExistsSync} from 'fs-extra';
 import {join} from 'path';
 import {executeCommand} from './executeWinCommand';
-import {getProcessorType} from '../processorType';
+import {getProcessorType} from './processorType';
 
 type HypervisorStatus = {
   hypervisor: 'WHPX' | 'HAXM' | 'AMDH' | 'none';

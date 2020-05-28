@@ -221,7 +221,6 @@ async function setupAndRun() {
       attachCommand(command, ctx);
     }
   } catch (e) {
-    logger.enable();
     throw new CLIError(
       'Failed to load configuration of your project. Only a subset of commands will be available.',
       e,

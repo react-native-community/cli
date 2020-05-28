@@ -212,10 +212,8 @@ async function setupAndRun() {
     attachCommand(command);
   }
 
-  let config: Config;
-
   try {
-    config = loadConfig();
+    const config = loadConfig();
 
     logger.enable();
 

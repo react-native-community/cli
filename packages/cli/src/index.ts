@@ -212,19 +212,29 @@ async function setupAndRun() {
     attachCommand(command);
   }
 
+  let config: Config;
+
   try {
-    const ctx = loadConfig();
+    config = loadConfig();
 
     logger.enable();
 
-    for (const command of [...projectCommands, ...ctx.commands]) {
-      attachCommand(command, ctx);
+    for (const command of [...projectCommands, ...config.commands]) {
+      attachCommand(command, config);
     }
-  } catch (e) {
-    throw new CLIError(
-      'Failed to load configuration of your project. Only a subset of commands will be available.',
-      e,
-    );
+  } catch (error) {
+    if (error.message.includes("We couldn't find a package.json")) {
+      logger.enable();
+      logger.debug(error.message);
+      logger.debug(
+        'Failed to load configuration of your project. Only a subset of commands will be available.',
+      );
+    } else {
+      throw new CLIError(
+        'Failed to load configuration of your project.',
+        error,
+      );
+    }
   }
 
   commander.parse(process.argv);

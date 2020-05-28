@@ -222,10 +222,7 @@ async function setupAndRun() {
     }
   } catch (e) {
     logger.enable();
-    logger.debug(e.message);
-    logger.debug(
-      'Failed to load configuration of your project. Only a subset of commands will be available.',
-    );
+    throw new CLIError('Failed to load configuration of your project. Only a subset of commands will be available.', e);
   }
 
   commander.parse(process.argv);

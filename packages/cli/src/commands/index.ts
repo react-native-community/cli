@@ -23,6 +23,7 @@ export const projectCommands = [
   upgrade,
   info,
   config,
+  doctor,
 ] as Command[];
 
 export const detachedCommands = [init, doctor] as DetachedCommand[];

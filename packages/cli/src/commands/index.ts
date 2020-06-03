@@ -1,6 +1,4 @@
 import {Command, DetachedCommand} from '@react-native-community/cli-types';
-
-// @ts-ignore - JS file
 import start from './start/start';
 import bundle from './bundle/bundle';
 import ramBundle from './bundle/ramBundle';
@@ -12,7 +10,6 @@ import upgrade from './upgrade/upgrade';
 import info from './info/info';
 import config from './config/config';
 import init from './init';
-// @ts-ignore - JS file
 import doctor from './doctor';
 
 export const projectCommands = [
@@ -29,4 +26,4 @@ export const projectCommands = [
   doctor,
 ] as Command[];
 
-export const detachedCommands = [init] as DetachedCommand[];
+export const detachedCommands = [init, doctor] as DetachedCommand[];

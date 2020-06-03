@@ -1,9 +1,25 @@
 import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
+
 import {logManualInstallation} from './common';
-import {HealthCheckInterface} from '../types';
+import {HealthCheckInterface, EnvironmentInfo} from '../types';
 import findProjectRoot from '../../../tools/config/findProjectRoot';
+import {
+  getAndroidSdkRootInstallation,
+  installComponent,
+  getBestHypervisor,
+  enableAMDH,
+  enableHAXM,
+  enableWHPX,
+  createAVD,
+} from '../../../tools/windows/androidWinHelpers';
+import {downloadAndUnzip} from '../../../tools/downloadAndUnzip';
+
+import {
+  setEnvironment,
+  updateEnvironment,
+} from '../../../tools/windows/environmentVariables';
 
 const getBuildToolsVersion = (): string => {
   // TODO use config
@@ -39,6 +55,11 @@ const installMessage = `Read more about how to update Android SDK at ${chalk.dim
   'https://developer.android.com/studio',
 )}`;
 
+const isSDKInstalled = (environmentInfo: EnvironmentInfo) => {
+  const version = environmentInfo.SDKs['Android SDK'];
+  return version !== 'Not Found';
+};
+
 export default {
   label: 'Android SDK',
   description: 'Required for building and installing your app on Android',
@@ -61,13 +82,94 @@ export default {
       needsToBeFixed: !isRequiredVersionInstalled,
     };
   },
-  runAutomaticFix: async ({loader, environmentInfo}) => {
-    const version = environmentInfo.SDKs['Android SDK'];
-    const isSDKInstalled = version !== 'Not Found';
+  win32AutomaticFix: async ({loader}) => {
+    // Need a GitHub action to update automatically. See #1180
+    const cliToolsUrl =
+      'https://dl.google.com/android/repository/commandlinetools-win-6200805_latest.zip';
 
+    const systemImage = 'system-images;android-28;google_apis;x86_64';
+    // Installing 29 as well so Android Studio does not complain on first boot
+    const componentsToInstall = [
+      'platform-tools',
+      'build-tools;29.0.3',
+      'platforms;android-29',
+      // Is 28 still needed?
+      'build-tools;28.0.3',
+      'platforms;android-28',
+      'emulator',
+      systemImage,
+      '--licenses', // Accept any pending licenses at the end
+    ];
+
+    const androidSDKRoot = getAndroidSdkRootInstallation();
+
+    if (androidSDKRoot === '') {
+      loader.fail('There was an error finding the Android SDK root');
+
+      return;
+    }
+
+    await downloadAndUnzip({
+      loader,
+      downloadUrl: cliToolsUrl,
+      component: 'Android Command Line Tools',
+      installPath: androidSDKRoot,
+    });
+
+    for (const component of componentsToInstall) {
+      loader.text = `Installing "${component}" (this may take a few minutes)`;
+
+      try {
+        await installComponent(component, androidSDKRoot);
+      } catch (e) {
+        // Is there a way to persist a line in loader and continue the execution?
+      }
+    }
+
+    loader.text = 'Updating environment variables';
+
+    // Required for the emulator to work from the CLI
+    await setEnvironment('ANDROID_SDK_ROOT', androidSDKRoot);
+    await setEnvironment('ANDROID_HOME', androidSDKRoot);
+    await updateEnvironment('PATH', path.join(androidSDKRoot, 'tools'));
+    await updateEnvironment(
+      'PATH',
+      path.join(androidSDKRoot, 'platform-tools'),
+    );
+
+    loader.text =
+      'Configuring Hypervisor for faster emulation, this might prompt UAC';
+
+    const {hypervisor, installed} = await getBestHypervisor(androidSDKRoot);
+
+    if (!installed) {
+      if (hypervisor === 'none') {
+        loader.warn(
+          'Android SDK configured but virtualization could not be enabled.',
+        );
+        return;
+      }
+
+      if (hypervisor === 'AMDH') {
+        await enableAMDH(androidSDKRoot);
+      } else if (hypervisor === 'HAXM') {
+        await enableHAXM(androidSDKRoot);
+      } else if (hypervisor === 'WHPX') {
+        await enableWHPX();
+      }
+    }
+
+    loader.text = 'Creating AVD';
+    await createAVD(androidSDKRoot, 'pixel_9.0', 'pixel', systemImage);
+
+    loader.succeed(
+      'Android SDK configured. You might need to restart your PC for all changes to take effect.',
+    );
+  },
+  runAutomaticFix: async ({loader, environmentInfo}) => {
     loader.fail();
 
-    if (isSDKInstalled) {
+    if (isSDKInstalled(environmentInfo)) {
       return logManualInstallation({
         message: installMessage,
       });

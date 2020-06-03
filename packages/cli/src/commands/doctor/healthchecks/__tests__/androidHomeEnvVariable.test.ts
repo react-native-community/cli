@@ -29,6 +29,7 @@ describe('androidHomeEnvVariables', () => {
 
   it('logs manual installation steps to the screen', async () => {
     const loader = new NoopLoader();
+    delete process.env.ANDROID_HOME;
 
     androidHomeEnvVariables.runAutomaticFix({loader});
 

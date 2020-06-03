@@ -546,7 +546,7 @@ export default {
     {
       name: '--simulator [string]',
       description:
-        'Explicitly set simulator to use. Optionally include iOS version between' +
+        'Explicitly set simulator to use. Optionally include iOS version between ' +
         'parenthesis at the end to match an exact version: "iPhone 6 (10.0)"',
       default: 'iPhone 11',
     },

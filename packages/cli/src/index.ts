@@ -12,6 +12,18 @@ import init from './commands/init/initCompat';
 import assertRequiredOptions from './tools/assertRequiredOptions';
 import loadConfig from './tools/config';
 
+import assetPathUtils from './commands/bundle/assetPathUtils';
+import filterPlatformAssetScales from './commands/bundle/filterPlatformAssetScales';
+import getAssetDestPathAndroid from './commands/bundle/getAssetDestPathAndroid';
+import getAssetDestPathIOS from './commands/bundle/getAssetDestPathIOS';
+
+const AssetUtils = {
+  ...assetPathUtils,
+  filterPlatformAssetScales,
+  getAssetDestPathAndroid,
+  getAssetDestPathIOS,
+};
+
 const pkgJson = require('../package.json');
 
 commander
@@ -244,4 +256,4 @@ async function setupAndRun() {
 
 const bin = require.resolve('./bin');
 
-export {run, init, bin};
+export {run, init, bin, AssetUtils};

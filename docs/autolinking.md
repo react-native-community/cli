@@ -15,7 +15,7 @@ yarn react-native run-android
 
 That's it. No more editing build config files to use native code.
 
-> Autolinking is a replacement for react-native link. If you have been using React Native before version 0.60, please `unlink` native dependencies if you have any from a previous install.
+> Autolinking is a replacement for [react-native link](https://github.com/react-native-community/cli/blob/master/docs/commands.md#link). If you have been using React Native before version 0.60, please `unlink` native dependencies if you have any from a previous install.
 
 ## How does it work
 

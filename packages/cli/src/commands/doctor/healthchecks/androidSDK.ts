@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
+import {logger} from '@react-native-community/cli-tools';
 
 import {logManualInstallation} from './common';
 import {HealthCheckInterface, EnvironmentInfo} from '../types';
@@ -22,8 +23,16 @@ import {
 } from '../../../tools/windows/environmentVariables';
 
 const getBuildToolsVersion = (): string => {
-  // TODO use config
-  const projectRoot = findProjectRoot();
+  let projectRoot = '';
+  try {
+    // doctor is a detached command, so we may not be in a RN project.
+    projectRoot = findProjectRoot();
+  } catch {
+    logger.log(); // for extra space
+    logger.warn(
+      "We couldn't find a package.json in this directory. Android SDK checks may fail. Doctor works best in a React Native project root.",
+    );
+  }
   const gradleBuildFilePath = path.join(projectRoot, 'android/build.gradle');
 
   const buildToolsVersionEntry = 'buildToolsVersion';

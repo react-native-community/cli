@@ -39,6 +39,7 @@ def use_native_modules!(config = nil)
   packages.each do |package_name, package|
     next unless package_config = package["platforms"]["ios"]
 
+    package_root_path = package["root"]
     podspec_path = package_config["podspecPath"]
 
     # Add a warning to the queue and continue to the next dependency if the podspec_path is nil/empty
@@ -52,6 +53,7 @@ def use_native_modules!(config = nil)
     end
     next if podspec_path.nil? || podspec_path.empty?
 
+    podspec_path = File.expand_path(podspec_path, package_root_path)
     spec = Pod::Specification.from_file(podspec_path)
 
     # We want to do a look up inside the current CocoaPods target

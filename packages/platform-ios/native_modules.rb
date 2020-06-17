@@ -120,7 +120,9 @@ def use_native_modules!(config = nil)
     Pod::UI.puts "Auto-linking React Native #{"module".pluralize(found_pods.size)} for target `#{current_target_definition.name}`: #{pods}"
   end
   
-  config
+  absolute_react_native_path = Pathname.new(config["reactNativePath"])
+
+  { :reactNativePath => absolute_react_native_path.relative_path_from(project_root).to_s }
 end
 
 # You can run the tests for this file by running:

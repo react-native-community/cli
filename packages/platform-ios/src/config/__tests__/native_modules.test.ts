@@ -86,7 +86,7 @@ function describeIfSupportedEnv() {
   }
   console.warn(
     '[!] The `native_modules.rb` tests are disabled – ensure you have `ruby` ' +
-      'and the `cocoapods` gem installed in order to run them.',
+    'and the `cocoapods` gem installed in order to run them.',
   );
   return describe.skip;
 }
@@ -97,6 +97,7 @@ describeIfSupportedEnv()('native_modules.rb', () => {
   beforeEach(() => {
     runConfig = {
       dependencyConfig: {
+        reactNativePath: '/root/app/node_modules/react_native',
         project: {ios: {sourceDir: FIXTURES_ROOT}},
         dependencies: {
           'android-dep': {
@@ -247,12 +248,12 @@ describeIfSupportedEnv()('native_modules.rb', () => {
       runConfig.dependencyConfig.dependencies[
         'ios-dep'
       ].platforms.ios.scriptPhases = [
-        {
-          script: '123',
-          name: 'My Name',
-          execution_position: 'before_compile',
-        },
-      ];
+          {
+            script: '123',
+            name: 'My Name',
+            execution_position: 'before_compile',
+          },
+        ];
       return run(runConfig).then((rootTargetDefinition: TargetDefinition) => {
         expect(rootTargetDefinition.children[0].script_phases)
           .toMatchInlineSnapshot(`
@@ -271,12 +272,12 @@ describeIfSupportedEnv()('native_modules.rb', () => {
       runConfig.dependencyConfig.dependencies[
         'ios-dep'
       ].platforms.ios.scriptPhases = [
-        {
-          path: './some_shell_script.sh',
-          name: 'My Name',
-          execution_position: 'before_compile',
-        },
-      ];
+          {
+            path: './some_shell_script.sh',
+            name: 'My Name',
+            execution_position: 'before_compile',
+          },
+        ];
       return run(runConfig).then((rootTargetDefinition: TargetDefinition) => {
         expect(rootTargetDefinition.children[0].script_phases)
           .toMatchInlineSnapshot(`

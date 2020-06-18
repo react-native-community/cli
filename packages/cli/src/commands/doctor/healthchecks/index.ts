@@ -22,7 +22,7 @@ type Options = {
   contributor: boolean | void;
 };
 
-export const getHealthchecks = ({contributor}: Options): Healthchecks => ({
+export const getHealthchecks = (options: Options): Healthchecks => ({
   common: {
     label: 'Common',
     healthchecks: [
@@ -40,7 +40,7 @@ export const getHealthchecks = ({contributor}: Options): Healthchecks => ({
       androidStudio,
       androidSDK,
       androidHomeEnvVariable,
-      ...(contributor ? [androidNDK] : []),
+      ...((options && options.contributor) ? [androidNDK] : []),
     ],
   },
   ...(process.platform === 'darwin'

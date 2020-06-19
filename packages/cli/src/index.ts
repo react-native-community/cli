@@ -221,6 +221,10 @@ async function setupAndRun() {
       attachCommand(command, config);
     }
   } catch (error) {
+    /**
+     * When there is no `package.json` found, the CLI will enter `detached` mode and a subset
+     * of commands will be available. That's why we don't throw on such kind of error.
+     */
     if (error.message.includes("We couldn't find a package.json")) {
       logger.enable();
       logger.debug(error.message);

@@ -135,6 +135,8 @@ if $0 == __FILE__
     Pod::Config.instance.silent = true
   end
 
+  return_values = []
+
   podfile = Pod::Podfile.new do
     if runInput["podsActivatedByUser"]
       runInput["podsActivatedByUser"].each do |name|
@@ -143,15 +145,15 @@ if $0 == __FILE__
     end
     target 'iOS Target' do
       platform :ios
-      use_native_modules!(runInput["dependencyConfig"])
+      return_values[0] = use_native_modules!(runInput["dependencyConfig"])
     end
     target 'macOS Target' do
       platform :osx
-      use_native_modules!(runInput["dependencyConfig"])
+      return_values[1] = use_native_modules!(runInput["dependencyConfig"])
     end
   end
 
   unless runInput["captureStdout"]
-    puts podfile.to_hash.to_json
+    puts podfile.to_hash.merge({ "return_values": return_values }).to_json
   end
 end

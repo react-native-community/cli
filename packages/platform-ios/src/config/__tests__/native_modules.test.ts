@@ -5,7 +5,7 @@ import hasbin from 'hasbin';
 
 const SCRIPT_PATH = path.resolve(__dirname, '../../../native_modules.rb');
 const FIXTURES_ROOT = path.resolve(__dirname, '../__fixtures__/native_modules');
-const REACT_NATIVE_ROOT = '/root/app/node_modules/react_native';
+const REACT_NATIVE_ROOT = '/root/app/node_modules/react-native';
 
 interface Dependency {
   path: string;
@@ -114,7 +114,7 @@ describeIfSupportedEnv()('native_modules.rb', () => {
   beforeEach(() => {
     runConfig = {
       dependencyConfig: {
-        reactNativePath: '/root/app/node_modules/react_native',
+        reactNativePath: REACT_NATIVE_ROOT,
         project: {ios: {sourceDir: FIXTURES_ROOT}},
         dependencies: {
           'android-dep': {

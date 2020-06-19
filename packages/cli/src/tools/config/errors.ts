@@ -31,5 +31,9 @@ export class JoiError extends CLIError {
         })
         .join(),
     );
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, JoiError);
+    }
   }
 }

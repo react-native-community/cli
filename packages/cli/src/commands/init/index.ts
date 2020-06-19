@@ -9,7 +9,7 @@ export default {
   options: [
     {
       name: '--version [string]',
-      description: 'Uses a valid semver version of React Native as a template',
+      description: 'Shortcut for `--template react-native@version`',
     },
     {
       name: '--template [string]',

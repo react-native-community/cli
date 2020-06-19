@@ -120,7 +120,9 @@ def use_native_modules!(config = nil)
     Pod::UI.puts "Auto-linking React Native #{"module".pluralize(found_pods.size)} for target `#{current_target_definition.name}`: #{pods}"
   end
   
-  config
+  absolute_react_native_path = Pathname.new(config["reactNativePath"])
+
+  { :reactNativePath => absolute_react_native_path.relative_path_from(project_root).to_s }
 end
 
 # You can run the tests for this file by running:
@@ -133,6 +135,8 @@ if $0 == __FILE__
     Pod::Config.instance.silent = true
   end
 
+  return_values = []
+
   podfile = Pod::Podfile.new do
     if runInput["podsActivatedByUser"]
       runInput["podsActivatedByUser"].each do |name|
@@ -141,15 +145,15 @@ if $0 == __FILE__
     end
     target 'iOS Target' do
       platform :ios
-      use_native_modules!(runInput["dependencyConfig"])
+      return_values[0] = use_native_modules!(runInput["dependencyConfig"])
     end
     target 'macOS Target' do
       platform :osx
-      use_native_modules!(runInput["dependencyConfig"])
+      return_values[1] = use_native_modules!(runInput["dependencyConfig"])
     end
   end
 
   unless runInput["captureStdout"]
-    puts podfile.to_hash.to_json
+    puts podfile.to_hash.merge({ "return_values": return_values }).to_json
   end
 end

@@ -5,9 +5,14 @@ import hasbin from 'hasbin';
 
 const SCRIPT_PATH = path.resolve(__dirname, '../../../native_modules.rb');
 const FIXTURES_ROOT = path.resolve(__dirname, '../__fixtures__/native_modules');
+const REACT_NATIVE_ROOT = '/root/app/node_modules/react-native';
 
 interface Dependency {
   path: string;
+}
+
+interface NativeModulesReturnValue {
+  reactNativePath: string;
 }
 
 interface TargetDefinition {
@@ -21,8 +26,9 @@ interface TargetDefinition {
   script_phases?: unknown[];
 }
 
-interface Podfile {
+interface TestScriptOutput {
   target_definitions: TargetDefinition[];
+  return_values: NativeModulesReturnValue[];
 }
 
 interface RunConfig {
@@ -31,8 +37,13 @@ interface RunConfig {
   dependencyConfig: IOSNativeModulesConfig;
 }
 
+interface RunResult {
+  rootTargetDefinition: TargetDefinition;
+  returnValues: NativeModulesReturnValue[];
+}
+
 function run(runConfig: RunConfig) {
-  return new Promise<TargetDefinition | string>((resolve, reject) => {
+  return new Promise<RunResult | string>((resolve, reject) => {
     const child = spawn('ruby', [SCRIPT_PATH]);
     child.stdin.write(JSON.stringify(runConfig));
     child.stdin.end();
@@ -50,8 +61,14 @@ function run(runConfig: RunConfig) {
         if (runConfig.captureStdout) {
           resolve(data.trimRight());
         } else {
-          const podfile: Podfile = JSON.parse(data);
-          resolve(podfile.target_definitions[0]);
+          const {
+            target_definitions,
+            return_values,
+          }: TestScriptOutput = JSON.parse(data);
+          resolve({
+            rootTargetDefinition: target_definitions[0],
+            returnValues: return_values,
+          });
         }
       } else {
         reject(Buffer.concat(stderrData).toString());
@@ -97,6 +114,7 @@ describeIfSupportedEnv()('native_modules.rb', () => {
   beforeEach(() => {
     runConfig = {
       dependencyConfig: {
+        reactNativePath: REACT_NATIVE_ROOT,
         project: {ios: {sourceDir: FIXTURES_ROOT}},
         dependencies: {
           'android-dep': {
@@ -110,6 +128,16 @@ describeIfSupportedEnv()('native_modules.rb', () => {
     addDependency(runConfig, 'ios-dep');
   });
 
+  it('returns relative path to a React Native location from source dir', () => {
+    return run(runConfig).then(({returnValues}: RunResult) => {
+      returnValues.forEach(rv => {
+        expect(rv.reactNativePath).toBe(
+          path.relative(FIXTURES_ROOT, REACT_NATIVE_ROOT),
+        );
+      });
+    });
+  });
+
   describe('concerning platform specificity', () => {
     beforeEach(() => {
       addDependency(runConfig, 'macos-dep');
@@ -117,7 +145,7 @@ describeIfSupportedEnv()('native_modules.rb', () => {
     });
 
     it('only activates pods that support iOS in targets that target `ios`', () => {
-      return run(runConfig).then((rootTargetDefinition: TargetDefinition) => {
+      return run(runConfig).then(({rootTargetDefinition}: RunResult) => {
         expect(
           rootTargetDefinition.children.find(
             target => target.name === 'iOS Target',
@@ -144,7 +172,7 @@ describeIfSupportedEnv()('native_modules.rb', () => {
     });
 
     it('only activates pods that support macOS in targets that target `osx`', () => {
-      return run(runConfig).then((rootTargetDefinition: TargetDefinition) => {
+      return run(runConfig).then(({rootTargetDefinition}: RunResult) => {
         expect(
           rootTargetDefinition.children.find(
             target => target.name === 'macOS Target',
@@ -173,7 +201,7 @@ describeIfSupportedEnv()('native_modules.rb', () => {
 
   it('does not activate pods that were already activated previously (by the user in their Podfile)', () => {
     runConfig.podsActivatedByUser = ['ios-dep'];
-    return run(runConfig).then(rootTargetDefinition => {
+    return run(runConfig).then(({rootTargetDefinition}: RunResult) => {
       expect(rootTargetDefinition).toMatchInlineSnapshot(`
         Object {
           "abstract": true,
@@ -203,7 +231,7 @@ describeIfSupportedEnv()('native_modules.rb', () => {
 
   it('does not activate pods whose root spec were already activated previously (by the user in their Podfile)', () => {
     runConfig.podsActivatedByUser = ['ios-dep/foo/bar'];
-    return run(runConfig).then(rootTargetDefinition => {
+    return run(runConfig).then(({rootTargetDefinition}: RunResult) => {
       expect(rootTargetDefinition).toMatchInlineSnapshot(`
         Object {
           "abstract": true,
@@ -253,7 +281,7 @@ describeIfSupportedEnv()('native_modules.rb', () => {
           execution_position: 'before_compile',
         },
       ];
-      return run(runConfig).then((rootTargetDefinition: TargetDefinition) => {
+      return run(runConfig).then(({rootTargetDefinition}: RunResult) => {
         expect(rootTargetDefinition.children[0].script_phases)
           .toMatchInlineSnapshot(`
             Array [
@@ -277,7 +305,7 @@ describeIfSupportedEnv()('native_modules.rb', () => {
           execution_position: 'before_compile',
         },
       ];
-      return run(runConfig).then((rootTargetDefinition: TargetDefinition) => {
+      return run(runConfig).then(({rootTargetDefinition}: RunResult) => {
         expect(rootTargetDefinition.children[0].script_phases)
           .toMatchInlineSnapshot(`
             Array [

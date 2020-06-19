@@ -65,6 +65,7 @@ export type IOSScriptPhase = ({script: string} | {path: string}) & {
  * requirements of `native_modules.rb` change.
  */
 export interface IOSNativeModulesConfig {
+  reactNativePath: string;
   project: {
     ios?: {
       sourceDir: string;

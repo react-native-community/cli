@@ -154,7 +154,7 @@ Initialize a new React Native project named <projectName> in a directory of the 
 
 #### `--version [string]`
 
-Uses a valid semver version of React Native as a template.
+Shortcut for `--template react-native@version`.
 
 #### `--directory [string]`
 

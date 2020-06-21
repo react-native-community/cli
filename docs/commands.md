@@ -172,6 +172,7 @@ Uses a custom template. Accepts following template sources:
 - an npm package name
 - an absolute path to a local directory
 - an absolute path to a tarball created using `npm pack`
+- link to a GitHub repository (supports `username/repo` format)
 
 Example:
 
@@ -179,6 +180,7 @@ Example:
 npx react-native init MyApp --template react-native-custom-template
 npx react-native init MyApp --template file:///Users/name/template-path
 npx react-native init MyApp --template file:///Users/name/template-name-1.0.0.tgz
+npx react-native init MyApp --template Esemesek/react-native-new-template
 ```
 
 A template is any directory or npm package that contains a `template.config.js` file in the root with the following type:

@@ -2547,6 +2547,31 @@ acorn@^7.1.0:
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-7.1.1.tgz#e35668de0b402f359de515c5482a1ab9f89a69bf"
   integrity sha512-add7dgA5ppRPxCFJoAGfMDi7PIBXq1RtGo7BhbLaxwrXPOmw8gq48Y9ozT01hUKy9byMjlR20EJhu5zlkErEkg==
 
+adbkit-logcat@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/adbkit-logcat/-/adbkit-logcat-1.1.0.tgz#01d7f9b0cef9093a30bcb3b007efff301508962f"
+  integrity sha1-Adf5sM75CTowvLOwB+//MBUIli8=
+
+adbkit-monkey@~1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/adbkit-monkey/-/adbkit-monkey-1.0.1.tgz#f291be701a2efc567a63fc7aa6afcded31430be1"
+  integrity sha1-8pG+cBou/FZ6Y/x6pq/N7TFDC+E=
+  dependencies:
+    async "~0.2.9"
+
+adbkit@^2.11.1:
+  version "2.11.1"
+  resolved "https://registry.yarnpkg.com/adbkit/-/adbkit-2.11.1.tgz#7da847fe561254f3121088947bc1907ef053e894"
+  integrity sha512-hDTiRg9NX3HQt7WoDAPCplUpvzr4ZzQa2lq7BdTTJ/iOZ6O7YNAs6UYD8sFAiBEcYHDRIyq3cm9sZP6uZnhvXw==
+  dependencies:
+    adbkit-logcat "^1.1.0"
+    adbkit-monkey "~1.0.1"
+    bluebird "~2.9.24"
+    commander "^2.3.0"
+    debug "~2.6.3"
+    node-forge "^0.7.1"
+    split "~0.3.3"
+
 agent-base@4, agent-base@^4.3.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/agent-base/-/agent-base-4.3.0.tgz#8165f01c436009bccad0b1d122f05ed770efc6ee"
@@ -3078,6 +3103,11 @@ bluebird@^3.5.1, bluebird@^3.5.3, bluebird@^3.5.5:
   version "3.7.2"
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.7.2.tgz#9f229c15be272454ffa973ace0dbee79a1b0c36f"
   integrity sha512-XpNj6GDQzdfW+r2Wnn7xiSAd7TM3jzkxGXBGTtWKuSXv1xUV+azxAm8jdWZN06QTQk+2N2XB9jRDkvbmQmcRtg==
+
+bluebird@~2.9.24:
+  version "2.9.34"
+  resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-2.9.34.tgz#2f7b4ec80216328a9fddebdf69c8d4942feff7d8"
+  integrity sha1-L3tOyAIWMoqf3evfacjUlC/v99g=
 
 bn.js@^4.0.0, bn.js@^4.1.0, bn.js@^4.1.1, bn.js@^4.4.0:
   version "4.11.8"
@@ -3681,7 +3711,7 @@ command-exists@^1.2.6, command-exists@^1.2.8:
   resolved "https://registry.yarnpkg.com/command-exists/-/command-exists-1.2.8.tgz#715acefdd1223b9c9b37110a149c6392c2852291"
   integrity sha512-PM54PkseWbiiD/mMsbvW351/u+dafwTJ0ye2qB60G1aGQP9j3xK2gmMDc+R34L3nDtx4qMCitXT75mkbkGJDLw==
 
-commander@^2.11.0, commander@^2.19.0, commander@^2.20.0, commander@~2.20.3:
+commander@^2.11.0, commander@^2.19.0, commander@^2.20.0, commander@^2.3.0, commander@~2.20.3:
   version "2.20.3"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.20.3.tgz#fd485e84c03eb4881c20722ba48035e8531aeb33"
   integrity sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==
@@ -4224,7 +4254,7 @@ deasync@^0.1.14:
     bindings "^1.5.0"
     node-addon-api "^1.7.1"
 
-debug@2.6.9, debug@^2.2.0, debug@^2.3.3, debug@^2.6.9:
+debug@2.6.9, debug@^2.2.0, debug@^2.3.3, debug@^2.6.9, debug@~2.6.3:
   version "2.6.9"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.9.tgz#5d128515df134ff327e90a4c93f4e077a536341f"
   integrity sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==
@@ -10541,6 +10571,13 @@ split@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/split/-/split-1.0.1.tgz#605bd9be303aa59fb35f9229fbea0ddec9ea07d9"
   integrity sha512-mTyOoPbrivtXnwnIxZRFYRrPNtEFKlpB2fvjSnCQUiAA6qAZzqwna5envK4uk6OIeP17CsdF3rSBGYVBsU0Tkg==
+  dependencies:
+    through "2"
+
+split@~0.3.3:
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/split/-/split-0.3.3.tgz#cd0eea5e63a211dfff7eb0f091c4133e2d0dd28f"
+  integrity sha1-zQ7qXmOiEd//frDwkcQTPi0N0o8=
   dependencies:
     through "2"
 

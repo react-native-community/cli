@@ -34,6 +34,7 @@
     "@types/mkdirp": "^0.5.2",
     "@types/node": "^8.0.0",
     "@types/node-fetch": "^2.3.7",
+    "adbkit": "^2.11.1",
     "babel-jest": "^25.2.4",
     "babel-plugin-module-resolver": "^3.2.0",
     "chalk": "^3.0.0",

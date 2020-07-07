@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es2017",
     "module": "commonjs",
-    "lib": ["es2017"],
+    "lib": ["es2017", "esnext.asynciterable"],
     "declaration": true,
     "declarationMap": true,
     "composite": true,

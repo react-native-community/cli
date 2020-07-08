@@ -107,6 +107,22 @@ function getArgumentsForLineNumber(
   }
 }
 
+function getArgumentsForFileName(
+  editor: string,
+  fileName: string,
+  workspace: string,
+) {
+  switch (path.basename(editor)) {
+    case 'code':
+      return addWorkspaceToArgumentsIfExists([fileName], workspace);
+    case 'devenv':
+      return ['/EDIT', fileName];
+    // Every other editor just takes the filename as an argument
+    default:
+      return [fileName];
+  }
+}
+
 function guessEditor() {
   // Explicit config always wins
   if (process.env.REACT_EDITOR) {
@@ -245,7 +261,8 @@ function editorWindowsLaunchPath(editor: string) {
     // ignore
   }
 
-  // Just use what the user specified.. it'll probably fail, but we'll show some help text when we fail to launch it
+  // Just use what the user specified, it will probably fail,
+  // but we will show some help text when it fails.
   return editor;
 }
 
@@ -277,7 +294,7 @@ function launchEditor(
       getArgumentsForLineNumber(editor, fileName, lineNumber, workspace),
     );
   } else {
-    args.push(fileName);
+    args = args.concat(getArgumentsForFileName(editor, fileName, workspace));
   }
 
   // cmd.exe on Windows is vulnerable to RCE attacks given a file name of the

@@ -236,7 +236,7 @@ function editorWindowsLaunchPath(editor: string) {
     const editorImageNames = Object.keys(COMMON_WINDOWS_EDITORS);
     for (let i = 0; i < editorNames.length; i++) {
       const editorName = editorNames[i];
-      if (editor === editorName) {
+      if (editor.toLowerCase() === editorName.toLowerCase()) {
         // An editor was guessed by guessEditor, but isn't part of the users path
         // Attempt to get the executable location from the running process
         const output = execSync(

@@ -239,7 +239,9 @@ function editorWindowsLaunchPath(editor: string) {
         const pid = parseInt(results[1].replace(/^"|"$/gm, ''), 10);
         return execSync(
           `powershell (Get-CimInstance Win32_Process -Filter "ProcessId=${pid}").ExecutablePath`,
-        ).toString();
+        )
+          .toString()
+          .trim();
       }
     }
   } catch (error) {

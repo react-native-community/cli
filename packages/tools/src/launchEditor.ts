@@ -155,13 +155,13 @@ function guessEditor() {
 
 function printInstructions(title: string) {
   const WINDOWS_FIXIT_INSTRUCTIONS = [
-    'To set it up, you can run something like "SETX REACT_EDITOR code"',
-    'which will set the environment variable in future shells,',
-    'then "SET REACTEDITOR=code" to set it in the current shell',
+    '  To set it up, you can run something like "SETX REACT_EDITOR code"',
+    '  which will set the environment variable in future shells,',
+    '  then "SET REACTEDITOR=code" to set it in the current shell',
   ];
 
   const FIXIT_INSTRUCTIONS = [
-    'To set it up, you can add something like ',
+    '  To set it up, you can add something like ',
     '  export REACT_EDITOR=atom to your ~/.bashrc or ~/.zshrc depending on ',
     '  which shell you use.',
   ];

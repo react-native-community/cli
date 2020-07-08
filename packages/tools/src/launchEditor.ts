@@ -110,7 +110,7 @@ function getArgumentsForLineNumber(
 function getArgumentsForFileName(
   editor: string,
   fileName: string,
-  workspace: string,
+  workspace: any,
 ) {
   switch (path.basename(editor)) {
     case 'code':

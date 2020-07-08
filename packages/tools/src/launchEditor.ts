@@ -202,12 +202,9 @@ function findRootForFile(
 
 // On windows, find the editor executable path even if its not in the users path
 function editorWindowsLaunchPath(editor: string) {
-  try {
-    execSync(`dir "${editor}"`, {stdio: 'ignore'});
+  if (fs.existsSync(editor)) {
     // Editor is a full path to an exe, we can just launch it
     return editor;
-  } catch (error) {
-    // ignore
   }
 
   try {

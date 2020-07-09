@@ -135,8 +135,7 @@ function guessEditor() {
     if (process.platform === 'darwin') {
       const output = execSync('ps x').toString();
       const processNames = Object.keys(COMMON_EDITORS);
-      for (let i = 0; i < processNames.length; i++) {
-        const processName = processNames[i];
+      for (const processName of processNames) {
         if (output.indexOf(processName) !== -1) {
           return [COMMON_EDITORS[processName]];
         }
@@ -146,10 +145,12 @@ function guessEditor() {
         'tasklist /NH /FO CSV /FI "SESSIONNAME ne Services"',
       ).toString();
 
+      const runningProcesses = output
+        .split('\n')
+        .map(line => line.replace(/^"|".*\r$/gm, ''));
       const processNames = Object.keys(COMMON_WINDOWS_EDITORS);
-      for (let i = 0; i < processNames.length; i++) {
-        const processName = processNames[i];
-        if (output.indexOf(processName) !== -1) {
+      for (const processName of processNames) {
+        if (runningProcesses.includes(processName)) {
           return [COMMON_WINDOWS_EDITORS[processName]];
         }
       }

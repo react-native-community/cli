@@ -1,84 +1,111 @@
 // @ts-ignore untyped
-import getEnvironmentInfo from '../../tools/envinfo';
-import {logger} from '@react-native-community/cli-tools';
 import {Config} from '@react-native-community/cli-types';
-import releaseChecker from '../../tools/releaseChecker';
-import { listFiles } from './listFile';
-import { pullFile } from './pullFile';
+import {execSync} from 'child_process';
+//import {projectConfig} from '../../../../platform-android/src/config/index';
+import {logger, CLIError} from '@react-native-community/cli-tools';
+import chalk from 'chalk';
+import fs from 'fs';
 
-// const info = async function getInfo(_argv: Array<string>, ctx: Config) {
-//   try {
-//     logger.info('Fetching system and libraries information...');
-//     const output = await getEnvironmentInfo(false);
-//     logger.log(output);
-//   } catch (err) {
-//     logger.error(`Unable to print environment info.\n${err}`);
-//   } finally {
-//     await releaseChecker(ctx.root);
-//   }
-// };
-type Options = {
-    fileName?: string;
-  };
-const promise = require('adbkit/bluebird');
-const adb = require('adbkit/lib/adb');
-const client = adb.createClient();
-function download(dstPath: string){
-  listFiles('com.awesomeproject');
-  pullFile(dstPath);
+//get the last modified hermes profile
+function getLatestFile(packageName: string): string {
+  try {
+    const file = execSync(`adb shell run-as ${packageName} ls cache/ -tp | grep -v /$ | head -1
+        `);
+    //console.log(file.toString());
+    return file.toString().trim();
+    //return parsePackagename(packages.toString());
+  } catch (e) {
+    throw new Error(e);
+  }
+}
+//get the package name of the running React Native app
+function getPackageName(config: Config) {
+  const androidProject = config.project.android;
+
+  if (!androidProject) {
+    throw new CLIError(`
+  Android project not found. Are you sure this is a React Native project?
+  If your Android files are located in a non-standard location (e.g. not inside \'android\' folder), consider setting
+  \`project.android.sourceDir\` option to point to a new location.
+`);
+  }
+  const {manifestPath} = androidProject;
+  const androidManifest = fs.readFileSync(manifestPath, 'utf8');
+
+  let packageNameMatchArray = androidManifest.match(/package="(.+?)"/);
+  if (!packageNameMatchArray || packageNameMatchArray.length === 0) {
+    throw new CLIError(
+      'Failed to build the app: No package name found. Found errors in /src/main/AndroidManifest.xml',
+    );
+  }
+
+  let packageName = packageNameMatchArray[1];
+
+  if (!validatePackageName(packageName)) {
+    logger.warn(
+      `Invalid application's package name "${chalk.bgRed(
+        packageName,
+      )}" in 'AndroidManifest.xml'. Read guidelines for setting the package name here: ${chalk.underline.dim(
+        'https://developer.android.com/studio/build/application-id',
+      )}`,
+    );
+  }
+  return packageName;
+}
+// Validates that the package name is correct
+function validatePackageName(packageName: string) {
+  return /^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/.test(packageName);
 }
 
-const hermesProfile = async function downloadProfile(_argv: Array<string>, ctx: Config, options: Options) {
-    try{
-        logger.info('Downloading the latest Hermes Sampling Profiler from your Android device...');
-        const output = await 
+/**
+ * Executes the commands to pull a hermes profile
+ * Commands:
+ * adb shell run-as com.rnhermesapp cp cache/sampling-profiler-trace1502707982002849976.cpuprofile /sdcard/latest.cpuprofile
+ * adb pull /sdcard/latest.cpuprofile
+ */
 
+//const packageName = projectConfig(".",{} )?.packageName; //TODO: get AndroidProjectConfig
+export async function downloadProfile(
+  ctx: Config,
+  dstPath?: string,
+  fileName?: string,
+) {
+  try {
+    const packageName = getPackageName(ctx);
+
+    // const projectConfigResult = projectConfig(ctx.root, {});
+    // let packageName;
+    // if (projectConfigResult !== null) {
+    //   packageName = projectConfigResult.packageName;
+    // } else {
+    //   packageName = ''; //cannot get packageName since config is empty
+    // }
+    let file;
+    if (fileName !== undefined) {
+      file = fileName;
+    } else {
+      file = await getLatestFile(packageName);
     }
-    catch (err){
-        logger.error(`Unable to download the Hermes Sampling Profiler.\n${err}`);
+    logger.info(`File to be pulled: ${file}`);
+    // console.log(`adb shell run-as ${packageName} ls`);
+    // execSync(`adb shell run-as ${packageName} ls`);
+    execSync(`adb shell run-as ${packageName} cp cache/${file} /sdcard`);
+
+    //if not specify destination path, pull to the current directory
+    if (dstPath === undefined) {
+      //execSync(`adb pull /sdcard/${file} ${process.cwd()}`);
+      execSync(`adb pull /sdcard/${file} ${ctx.root}`);
+      console.log(
+        'Successfully pulled the file to the current root working directory',
+      );
     }
-    finally{
-        await 
+    //if specified destination path, pull to that directory
+    else {
+      execSync(`adb pull /sdcard/${file} ${dstPath}`);
+      console.log(`Successfully pulled the file to ${dstPath}`);
     }
-};
-
-// type Command = {
-//     name: string,
-//     description?: string,
-//     func: (argv: Array<string>, config: ConfigT, args: Object) => ?Promise<void>,
-//     options?: Array<{
-//       name: string,
-//       description?: string,
-//       parse?: (val: string) => any,
-//       default?:
-//         | string
-//         | boolean
-//         | number
-//         | ((config: ConfigT) => string | boolean | number),
-//     }>,
-//     examples?: Array<{
-//       desc: string,
-//       cmd: string,
-//     }>,
-//   };
-
-export default {
-  name: 'profile-hermes <destinationDir>',
-  description: 'Download the Hermes Sampling Profiler to the directory <destinationDir> of the local machine',
-  func: hermesProfile,
-  //options: download the latest or filename 
-  options: [
-    {
-      name: '--filename <string>',
-      description: 'Filename of the profile to be downloaded',
-    },
-   ],
-   examples: [
-       {
-        desc: 'Download the Hermes Sampling Profiler to the directory <destinationDir> of the local machine',
-        cmd: 'profile-hermes /users/name/desktop',
-       },   
-   ],
-};
-
-
+    //return '';
+  } catch (e) {
+    throw new Error(e.message);
+  }
+}

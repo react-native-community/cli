@@ -4,7 +4,7 @@ import {wrap} from 'jest-snapshot-serializer-raw';
 import {
   runCLI,
   getTempDirectory,
-  cleanup,
+  cleanupSync,
   writeFiles,
   spawnScript,
   replaceProjectRootInOutput,
@@ -44,7 +44,7 @@ beforeAll(() => {
   }
 
   // Clean up folder and re-create a new project
-  cleanup(DIR);
+  cleanupSync(DIR);
   writeFiles(DIR, {});
 
   // Initialise React Native project
@@ -63,7 +63,7 @@ beforeAll(() => {
 });
 
 afterAll(() => {
-  cleanup(DIR);
+  cleanupSync(DIR);
 });
 
 test('shows up current config without unnecessary output', () => {

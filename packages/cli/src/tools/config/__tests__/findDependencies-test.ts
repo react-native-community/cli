@@ -7,12 +7,12 @@ import {
 
 jest.mock('../resolveNodeModuleDir');
 
-beforeEach(() => {
-  cleanup(DIR);
+beforeEach(async () => {
+  await cleanup(DIR);
   jest.resetModules();
 });
 
-afterEach(() => cleanup(DIR));
+afterEach(async () => await cleanup(DIR));
 
 const DIR = getTempDirectory('find_dependencies_test');
 

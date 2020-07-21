@@ -1,6 +1,7 @@
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
+import {promisify} from 'util';
 import {createDirectory} from 'jest-util';
 // @ts-ignore jsfile
 import rimraf from 'rimraf';
@@ -9,6 +10,8 @@ import chalk from 'chalk';
 import slash from 'slash';
 // @ts-ignore jsfile
 import {Writable} from 'readable-stream';
+
+const rimrafAsync = promisify(rimraf);
 
 const CLI_PATH = path.resolve(__dirname, '../packages/cli/build/bin.js');
 
@@ -77,7 +80,13 @@ export const makeTemplate = (
     return values[number - 1];
   });
 
-export const cleanup = (directory: string) => rimraf.sync(directory);
+export const cleanup = (directory: string) => {
+  return rimrafAsync(directory);
+};
+
+export const cleanupSync = (directory: string) => {
+  rimraf.sync(directory);
+};
 
 /**
  * Creates a nested directory with files and their contents
@@ -189,7 +198,7 @@ function handleTestFailure(
 ) {
   if (!options.expectedFailure && result.code !== 0) {
     console.log(`Running ${cmd} command failed for unexpected reason. Here's more info:
-${chalk.bold('cmd:')}     ${cmd}    
+${chalk.bold('cmd:')}     ${cmd}
 ${chalk.bold('options:')} ${JSON.stringify(options)}
 ${chalk.bold('args:')}    ${(args || []).join(' ')}
 ${chalk.bold('stderr:')}  ${result.stderr}

@@ -8,7 +8,8 @@ import {downloadAndUnzip} from '../../../tools/downloadAndUnzip';
 import {
   setEnvironment,
   updateEnvironment,
-} from '../../../tools/environmentVariables';
+} from '../../../tools/windows/environmentVariables';
+
 import {Ora} from 'ora';
 
 export default {

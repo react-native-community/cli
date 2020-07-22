@@ -16,47 +16,23 @@ async function profile(
     logger.info(
       'Downloading a Hermes Sampling Profiler from your Android device...',
     );
-    //logger.log(`options ${JSON.stringify(options)}`);
-    // logger.log(`${typeof options}`);
-    // logger.log(`${options.fileName}`);
+
     if (options.fileName) {
-      //logger.log(options.fileName);
       await downloadProfile(ctx, dstPath, options.fileName);
     } else {
       logger.info('No filename is provided, pulling latest file');
       await downloadProfile(ctx, dstPath, undefined);
     }
-    //logger.log(output);
   } catch (err) {
     logger.error(`Unable to download the Hermes Sampling Profiler.\n${err}`);
   }
 }
 
-// type Command = {
-//     name: string,
-//     description?: string,
-//     func: (argv: Array<string>, config: ConfigT, args: Object) => ?Promise<void>,
-//     options?: Array<{
-//       name: string,
-//       description?: string,
-//       parse?: (val: string) => any,
-//       default?:
-//         | string
-//         | boolean
-//         | number
-//         | ((config: ConfigT) => string | boolean | number),
-//     }>,
-//     examples?: Array<{
-//       desc: string,
-//       cmd: string,
-//     }>,
-//   };
-
 export default {
-  name: 'profile-hermes [destinationDir]', //profile-hermes ls
+  name: 'profile-hermes [destinationDir]',
   description:
     'Download the Hermes Sampling Profiler to the directory <destinationDir> of the local machine',
-  func: profile, //how to give the args for this func: an array of arguments
+  func: profile,
   options: [
     //options: download the latest or fileName
     {

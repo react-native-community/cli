@@ -6,7 +6,9 @@ import {logger, CLIError} from '@react-native-community/cli-tools';
 import chalk from 'chalk';
 import fs from 'fs';
 
-//get the last modified hermes profile
+/**
+ * get the last modified hermes profile
+ */
 function getLatestFile(packageName: string): string {
   try {
     const file = execSync(`adb shell run-as ${packageName} ls cache/ -tp | grep -v /$ | head -1
@@ -18,7 +20,9 @@ function getLatestFile(packageName: string): string {
     throw new Error(e);
   }
 }
-//get the package name of the running React Native app
+/**
+ * get the package name of the running React Native app
+ */
 function getPackageName(config: Config) {
   const androidProject = config.project.android;
 
@@ -52,7 +56,10 @@ function getPackageName(config: Config) {
   }
   return packageName;
 }
-// Validates that the package name is correct
+/** Validates that the package name is correct
+ *
+ */
+
 function validatePackageName(packageName: string) {
   return /^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/.test(packageName);
 }

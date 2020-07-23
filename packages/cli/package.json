@@ -38,7 +38,7 @@
     "commander": "^2.19.0",
     "cosmiconfig": "^5.1.0",
     "deepmerge": "^3.2.0",
-    "envinfo": "^7.7.0",
+    "envinfo": "^7.7.2",
     "execa": "^1.0.0",
     "find-up": "^4.1.0",
     "fs-extra": "^8.1.0",

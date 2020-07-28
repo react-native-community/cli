@@ -74,6 +74,7 @@ export async function downloadProfile(
   dstPath: string,
   fileName?: string,
   sourceMapPath?: string,
+  raw?: boolean,
 ) {
   try {
     const packageName = getPackageName(ctx);
@@ -97,25 +98,36 @@ export async function downloadProfile(
     }
     //Copy the file from device's data to sdcard, then pull the file to a temp directory
     execSync(`adb shell run-as ${packageName} cp cache/${file} /sdcard`);
-    const tmpDir = path.join(os.tmpdir(), file);
-    console.log('temp dir: ', tmpDir);
-    execSync(`adb pull /sdcard/${file} ${tmpDir}`);
+    //If --raw, pull the hermes profile to dstPath
+    if (raw) {
+      execSync(`adb pull /sdcard/${file} ${dstPath}`);
+      logger.success(`Successfully pulled the file to ${dstPath}/${file}`);
+    }
+    //Else: transform the profile to Chrome format and pull it to dstPath
+    else {
+      const tmpDir = path.join(os.tmpdir(), file);
+      console.log('temp dir: ', tmpDir);
+      execSync(`adb pull /sdcard/${file} ${tmpDir}`);
 
-    //Run transformer tool to convert from Hermes to Chrome format
-    //find the bundle file name
-    const events = await transformer(tmpDir, sourceMapPath, 'index.bundle');
-    // console.log(
-    //   `${dstPath}/${path.basename(file, '.cpuprofile')}-converted.json`,
-    // );
-    fs.writeFileSync(
-      `${dstPath}/${path.basename(file, '.cpuprofile')}-converted.json`,
-      JSON.stringify(events, undefined, 4),
-      'utf-8',
-    );
-
-    //Pull the hermes profile to dstPath
-    execSync(`adb pull /sdcard/${file} ${dstPath}`);
-    logger.success(`Successfully pulled the file to ${dstPath}/${file}`);
+      //Run transformer tool to convert from Hermes to Chrome format
+      //TODO: find the bundle file name (default is "index.bundle");
+      const events = await transformer(tmpDir, sourceMapPath, 'index.bundle');
+      // console.log(
+      //   `${dstPath}/${path.basename(file, '.cpuprofile')}-converted.json`,
+      // );
+      const transformedFile = `${dstPath}/${path.basename(
+        file,
+        '.cpuprofile',
+      )}-converted.json`;
+      fs.writeFileSync(
+        transformedFile,
+        JSON.stringify(events, undefined, 4),
+        'utf-8',
+      );
+      logger.success(
+        `Successfully converted to Chrome tracing format and pulled the file to ${transformedFile}`,
+      );
+    }
   } catch (e) {
     throw new Error(e.message);
   }

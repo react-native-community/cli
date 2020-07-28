@@ -25,12 +25,23 @@ async function profile(
     if (options.verbose) {
       logger.setVerbose(true);
     }
-    await downloadProfile(
-      ctx,
-      dstPath,
-      options.fileName,
-      options.sourceMapPath,
-    );
+    if (options.raw) {
+      await downloadProfile(
+        ctx,
+        dstPath,
+        options.fileName,
+        options.sourceMapPath,
+        true,
+      );
+    } else {
+      await downloadProfile(
+        ctx,
+        dstPath,
+        options.fileName,
+        options.sourceMapPath,
+        false,
+      );
+    }
   } catch (err) {
     logger.error(`Unable to download the Hermes Sampling Profiler.\n${err}`);
   }

@@ -5,6 +5,9 @@ import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
+/* For source map testing */
+// import axios from 'axios';
+import {transformer} from './transformer';
 
 /**
  * Get the last modified hermes profile
@@ -70,6 +73,7 @@ export async function downloadProfile(
   ctx: Config,
   dstPath: string,
   fileName?: string,
+  sourceMapPath?: string,
 ) {
   try {
     const packageName = getPackageName(ctx);
@@ -98,61 +102,18 @@ export async function downloadProfile(
     execSync(`adb pull /sdcard/${file} ${tmpDir}`);
 
     //Run transformer tool to convert from Hermes to Chrome format
+    //find the bundle file name
+    const events = await transformer(tmpDir, sourceMapPath, 'index.bundle');
+    // console.log(
+    //   `${dstPath}/${path.basename(file, '.cpuprofile')}-converted.json`,
+    // );
+    fs.writeFileSync(
+      `${dstPath}/${path.basename(file, '.cpuprofile')}-converted.json`,
+      JSON.stringify(events, undefined, 4),
+      'utf-8',
+    );
 
-    execSync(`adb pull /sdcard/${file} ${dstPath}`);
-    logger.success(`Successfully pulled the file to ${dstPath}/${file}`);
-    execSync(`adb pull /sdcard/${file} ${tmpDir}`);
-
-    //Run transformer tool to convert from Hermes to Chrome format
-
-    execSync(`adb pull /sdcard/${file} ${dstPath}`);
-    logger.success(`Successfully pulled the file to ${dstPath}/${file}`);
-    execSync(`adb pull /sdcard/${file} ${tmpDir}`);
-
-    //Run transformer tool to convert from Hermes to Chrome format
-
-    execSync(`adb pull /sdcard/${file} ${dstPath}`);
-    logger.success(`Successfully pulled the file to ${dstPath}/${file}`);
-    execSync(`adb pull /sdcard/${file} ${tmpDir}`);
-
-    //Run transformer tool to convert from Hermes to Chrome format
-
-    execSync(`adb pull /sdcard/${file} ${dstPath}`);
-    logger.success(`Successfully pulled the file to ${dstPath}/${file}`);
-    execSync(`adb pull /sdcard/${file} ${tmpDir}`);
-
-    //Run transformer tool to convert from Hermes to Chrome format
-
-    execSync(`adb pull /sdcard/${file} ${dstPath}`);
-    logger.success(`Successfully pulled the file to ${dstPath}/${file}`);
-    execSync(`adb pull /sdcard/${file} ${tmpDir}`);
-
-    //Run transformer tool to convert from Hermes to Chrome format
-
-    execSync(`adb pull /sdcard/${file} ${dstPath}`);
-    logger.success(`Successfully pulled the file to ${dstPath}/${file}`);
-    execSync(`adb pull /sdcard/${file} ${tmpDir}`);
-
-    //Run transformer tool to convert from Hermes to Chrome format
-
-    execSync(`adb pull /sdcard/${file} ${dstPath}`);
-    logger.success(`Successfully pulled the file to ${dstPath}/${file}`);
-    execSync(`adb pull /sdcard/${file} ${tmpDir}`);
-
-    //Run transformer tool to convert from Hermes to Chrome format
-
-    execSync(`adb pull /sdcard/${file} ${dstPath}`);
-    logger.success(`Successfully pulled the file to ${dstPath}/${file}`);
-    execSync(`adb pull /sdcard/${file} ${tmpDir}`);
-
-    //Run transformer tool to convert from Hermes to Chrome format
-
-    execSync(`adb pull /sdcard/${file} ${dstPath}`);
-    logger.success(`Successfully pulled the file to ${dstPath}/${file}`);
-    execSync(`adb pull /sdcard/${file} ${tmpDir}`);
-
-    //Run transformer tool to convert from Hermes to Chrome format
-
+    //Pull the hermes profile to dstPath
     execSync(`adb pull /sdcard/${file} ${dstPath}`);
     logger.success(`Successfully pulled the file to ${dstPath}/${file}`);
   } catch (e) {

@@ -25,7 +25,12 @@ async function profile(
     if (options.verbose) {
       logger.setVerbose(true);
     }
-    await downloadProfile(ctx, dstPath, options.fileName);
+    await downloadProfile(
+      ctx,
+      dstPath,
+      options.fileName,
+      options.sourceMapPath,
+    );
   } catch (err) {
     logger.error(`Unable to download the Hermes Sampling Profiler.\n${err}`);
   }
@@ -52,8 +57,8 @@ export default {
       description: 'Pulling original Hermes formatted profile',
     },
     {
-      name: 'source-map-path',
-      description: 'Providing the local path to your source map bundle',
+      name: '--sourceMapPath [string]',
+      description: 'Providing the local path to your source map output path',
     },
   ],
   examples: [

@@ -102,19 +102,18 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
     } else {
       // result == 'not_running'
       logger.info('Starting JS server...');
-      try {
-        startServerInNewWindow(
-          args.port,
-          args.terminal,
-          config.reactNativePath,
-        );
-      } catch (error) {
+
+      // Using a Promises-style catch here so the process runs in the background - awaiting it will cause it to hang.
+      startServerInNewWindow(
+        args.port,
+        args.terminal,
+        config.reactNativePath,
+      ).catch(error => {
         logger.warn(
-          `Failed to automatically start the packager server. Please run "react-native start" manually. Error details: ${
-            error.message
-          }`,
+          'Failed to automatically start the packager server. Please run "react-native start" manually. ' +
+            `Error details: ${error.message}`,
         );
-      }
+      });
     }
     return buildAndRun(args, androidProject);
   });
@@ -271,7 +270,7 @@ function installAndLaunchOnDevice(
   tryLaunchAppOnDevice(selectedDevice, packageName, adbPath, args);
 }
 
-function startServerInNewWindow(
+async function startServerInNewWindow(
   port: number,
   terminal: string,
   reactNativePath: string,
@@ -314,29 +313,35 @@ function startServerInNewWindow(
 
   if (process.platform === 'darwin') {
     try {
-      return execa.sync(
+      return await execa(
         'open',
         ['-a', terminal, launchPackagerScript],
         procConfig,
       );
     } catch (error) {
-      return execa.sync('open', [launchPackagerScript], procConfig);
+      return await execa('open', [launchPackagerScript], procConfig);
     }
   }
   if (process.platform === 'linux') {
     // Awaiting this causes the CLI to hang indefinitely, so this must execute without .sync.
-    return execa(terminal, ['-e', 'sh', launchPackagerScript], {
-      ...procConfig,
-      detached: true,
-    }).catch(_ => {
+    try {
+      return await execa(terminal, ['-e', 'sh', launchPackagerScript], {
+        ...procConfig,
+        detached: true,
+      });
+    } catch (_) {
+      logger.error(
+        `Could not open terminal ${terminal}. Falling back to running the packager inside the process.`,
+      );
+
       // If the terminal could not be opened, fall back to running it inside the process.
       const processSh = execa('sh', [launchPackagerScript], procConfig);
 
       // Unreference the process to avoid quitting when run-android is done.
       processSh.unref();
 
-      return processSh;
-    });
+      return await processSh;
+    }
   }
   if (/^win/.test(process.platform)) {
     // Awaiting this causes the CLI to hang indefinitely, so this must execute without await.

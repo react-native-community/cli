@@ -325,15 +325,16 @@ function startServerInNewWindow(
   }
   if (process.platform === 'linux') {
     // Awaiting this causes the CLI to hang indefinitely, so this must execute without .sync.
-    const process = execa(terminal, ['-e', 'sh', launchPackagerScript], {
+    return execa(terminal, ['-e', 'sh', launchPackagerScript], {
       ...procConfig,
       detached: true,
-    });
-
-    return process.catch(_ => {
+    }).catch(_ => {
       // If the terminal could not be opened, fall back to running it inside the process.
       const processSh = execa('sh', [launchPackagerScript], procConfig);
+
+      // Unreference the process to avoid quitting when run-android is done.
       processSh.unref();
+
       return processSh;
     });
   }

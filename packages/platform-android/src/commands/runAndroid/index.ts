@@ -324,15 +324,18 @@ function startServerInNewWindow(
     }
   }
   if (process.platform === 'linux') {
-    try {
-      return execa.sync(terminal, ['-e', `sh ${launchPackagerScript}`], {
-        ...procConfig,
-        detached: true,
-      });
-    } catch (error) {
-      // By default, the child shell process will be attached to the parent
-      return execa.sync('sh', [launchPackagerScript], procConfig);
-    }
+    // Awaiting this causes the CLI to hang indefinitely, so this must execute without .sync.
+    const process = execa(terminal, ['-e', 'sh', launchPackagerScript], {
+      ...procConfig,
+      detached: true,
+    });
+
+    return process.catch(_ => {
+      // If the terminal could not be opened, fall back to running it inside the process.
+      const processSh = execa('sh', [launchPackagerScript], procConfig);
+      processSh.unref();
+      return processSh;
+    });
   }
   if (/^win/.test(process.platform)) {
     // Awaiting this causes the CLI to hang indefinitely, so this must execute without await.

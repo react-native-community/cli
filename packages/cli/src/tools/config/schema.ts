@@ -36,6 +36,25 @@ const command = t.object({
 });
 
 /**
+ * Schema for HealthChecksT
+ */
+const healthCheck = t.object({
+  label: t.string().required(),
+  healthchecks: t.array().items(
+    t.object({
+      label: t.string().required(),
+      isRequired: t.string(),
+      description: t.string(),
+      getDiagnostics: t.func(),
+      win32AutomaticFix: t.func(),
+      darwinAutomaticFix: t.func(),
+      linuxAutomaticFix: t.func(),
+      runAutomaticFix: t.func().required(),
+    }),
+  ),
+});
+
+/**
  * Schema for UserDependencyConfigT
  */
 export const dependencyConfig = t
@@ -92,6 +111,10 @@ export const dependencyConfig = t
     commands: t
       .array()
       .items(command)
+      .default([]),
+    healthChecks: t
+      .array()
+      .items(healthCheck)
       .default([]),
   })
   .unknown(true)

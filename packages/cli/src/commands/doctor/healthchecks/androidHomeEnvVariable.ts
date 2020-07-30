@@ -1,7 +1,5 @@
 import chalk from 'chalk';
-import {Ora} from 'ora';
-import {logManualInstallation} from './common';
-import {HealthCheckInterface} from '../types';
+import {HealthCheckInterface} from '@react-native-community/cli-types';
 
 // List of answers on how to set `ANDROID_HOME` for each platform
 const URLS = {
@@ -25,7 +23,7 @@ export default {
   getDiagnostics: async () => ({
     needsToBeFixed: !process.env.ANDROID_HOME,
   }),
-  runAutomaticFix: async ({loader}: {loader: Ora}) => {
+  runAutomaticFix: async ({loader, logManualInstallation}) => {
     // Variable could have been added if installing Android Studio so double checking
     if (process.env.ANDROID_HOME) {
       loader.succeed();

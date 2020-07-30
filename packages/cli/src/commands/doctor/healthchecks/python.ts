@@ -1,12 +1,10 @@
 import {fetchToTemp} from '@react-native-community/cli-tools';
 import versionRanges from '../versionRanges';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
-import {logManualInstallation} from './common';
-import {HealthCheckInterface} from '../types';
+import {HealthCheckInterface} from '@react-native-community/cli-types';
 
 import {updateEnvironment} from '../../../tools/windows/environmentVariables';
 import {join} from 'path';
-import {Ora} from 'ora';
 import {executeCommand} from '../../../tools/windows/executeWinCommand';
 
 export default {
@@ -26,7 +24,7 @@ export default {
         : Languages.Python.version,
     versionRange: versionRanges.PYTHON,
   }),
-  win32AutomaticFix: async ({loader}: {loader: Ora}) => {
+  win32AutomaticFix: async ({loader}) => {
     try {
       const arch = process.arch === 'x64' ? 'amd64.' : '';
       const installerUrl = `https://www.python.org/ftp/python/2.7.9/python-2.7.9.${arch}msi`;
@@ -51,7 +49,7 @@ export default {
       loader.fail(e);
     }
   },
-  runAutomaticFix: async () => {
+  runAutomaticFix: async ({logManualInstallation}) => {
     /**
      * Python is only needed on Windows so this method should never be called.
      * Leaving it in case that changes and as an example of how to have a

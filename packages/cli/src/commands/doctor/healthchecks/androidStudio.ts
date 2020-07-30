@@ -1,7 +1,6 @@
 import {join} from 'path';
 
-import {logManualInstallation} from './common';
-import {HealthCheckInterface} from '../types';
+import {HealthCheckInterface} from '@react-native-community/cli-types';
 
 import {downloadAndUnzip} from '../../../tools/downloadAndUnzip';
 import {executeCommand} from '../../../tools/windows/executeWinCommand';
@@ -70,7 +69,7 @@ export default {
       `Android Studio installed successfully in "${installPath}".`,
     );
   },
-  runAutomaticFix: async ({loader}) => {
+  runAutomaticFix: async ({loader, logManualInstallation}) => {
     loader.fail();
 
     return logManualInstallation({

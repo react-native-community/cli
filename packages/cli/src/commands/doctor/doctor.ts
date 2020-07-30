@@ -4,13 +4,12 @@ import {getHealthchecks, HEALTHCHECK_TYPES} from './healthchecks';
 import {getLoader} from '../../tools/loader';
 import printFixOptions, {KEYS} from './printFixOptions';
 import runAutomaticFix, {AUTOMATIC_FIX_LEVELS} from './runAutomaticFix';
-import {DetachedCommandFunction} from '@react-native-community/cli-types';
 import {
+  DetachedCommandFunction,
   HealthCheckCategory,
-  HealthCheckCategoryResult,
-  HealthCheckResult,
   HealthCheckInterface,
-} from './types';
+} from '@react-native-community/cli-types';
+import {HealthCheckCategoryResult, HealthCheckResult} from './types';
 import getEnvironmentInfo from '../../tools/envinfo';
 import {logMessage} from './healthchecks/common';
 

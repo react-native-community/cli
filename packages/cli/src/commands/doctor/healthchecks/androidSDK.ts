@@ -3,8 +3,10 @@ import fs from 'fs';
 import path from 'path';
 import {logger} from '@react-native-community/cli-tools';
 
-import {logManualInstallation} from './common';
-import {HealthCheckInterface, EnvironmentInfo} from '../types';
+import {
+  HealthCheckInterface,
+  EnvironmentInfo,
+} from '@react-native-community/cli-types';
 import findProjectRoot from '../../../tools/config/findProjectRoot';
 import {
   getAndroidSdkRootInstallation,
@@ -175,7 +177,7 @@ export default {
       'Android SDK configured. You might need to restart your PC for all changes to take effect.',
     );
   },
-  runAutomaticFix: async ({loader, environmentInfo}) => {
+  runAutomaticFix: async ({loader, logManualInstallation, environmentInfo}) => {
     loader.fail();
 
     if (isSDKInstalled(environmentInfo)) {

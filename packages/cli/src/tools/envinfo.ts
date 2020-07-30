@@ -1,6 +1,6 @@
 // @ts-ignore
 import envinfo from 'envinfo';
-import {EnvironmentInfo} from '../commands/doctor/types';
+import {EnvironmentInfo} from '@react-native-community/cli-types';
 
 /**
  * Returns information about the running system.

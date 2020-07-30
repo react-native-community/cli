@@ -2,7 +2,9 @@ import chalk from 'chalk';
 import ora, {Ora} from 'ora';
 import {logger} from '@react-native-community/cli-tools';
 import {HEALTHCHECK_TYPES} from './healthchecks';
-import {EnvironmentInfo, HealthCheckCategoryResult} from './types';
+import {EnvironmentInfo} from '@react-native-community/cli-types';
+import {HealthCheckCategoryResult} from './types';
+import {logManualInstallation} from './healthchecks/common';
 
 export enum AUTOMATIC_FIX_LEVELS {
   ALL_ISSUES = 'ALL_ISSUES',
@@ -86,6 +88,7 @@ export default async function({
       try {
         await healthcheckToRun.runAutomaticFix({
           loader: spinner,
+          logManualInstallation,
           environmentInfo,
         });
       } catch (error) {

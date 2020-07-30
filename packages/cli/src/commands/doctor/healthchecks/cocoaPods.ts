@@ -6,7 +6,7 @@ import {
 } from '../../../tools/installPods';
 import {removeMessage, logError} from './common';
 import {brewInstall} from '../../../tools/brewInstall';
-import {HealthCheckInterface} from '../types';
+import {HealthCheckInterface} from '@react-native-community/cli-types';
 
 const label = 'CocoaPods';
 

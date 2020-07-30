@@ -75,7 +75,7 @@ export default {
     },
     {
       name: '--sourceMapPath [string]',
-      description: 'Provide the local path to your source map file',
+      description: 'The local path to your source map file',
     },
   ],
   examples: [

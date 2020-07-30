@@ -25,23 +25,30 @@ async function profile(
     if (options.verbose) {
       logger.setVerbose(true);
     }
-    if (options.raw) {
-      await downloadProfile(
-        ctx,
-        dstPath,
-        options.fileName,
-        options.sourceMapPath,
-        true,
-      );
-    } else {
-      await downloadProfile(
-        ctx,
-        dstPath,
-        options.fileName,
-        options.sourceMapPath,
-        false,
-      );
-    }
+    await downloadProfile(
+      ctx,
+      dstPath,
+      options.fileName,
+      options.sourceMapPath,
+      options.raw,
+    );
+    // if (options.raw) {
+    //   await downloadProfile(
+    //     ctx,
+    //     dstPath,
+    //     options.fileName,
+    //     options.sourceMapPath,
+    //     true,
+    //   );
+    // } else {
+    //   await downloadProfile(
+    //     ctx,
+    //     dstPath,
+    //     options.fileName,
+    //     options.sourceMapPath,
+    //     false,
+    //   );
+    // }
   } catch (err) {
     logger.error(`Unable to download the Hermes Sampling Profiler.\n${err}`);
   }
@@ -53,7 +60,6 @@ export default {
     'Download the Hermes Sampling Profiler to the directory <destinationDir> of the local machine',
   func: profile,
   options: [
-    //options: specify fileName as a string
     {
       name: '--fileName [string]',
       description:
@@ -69,7 +75,7 @@ export default {
     },
     {
       name: '--sourceMapPath [string]',
-      description: 'Providing the local path to your source map output path',
+      description: 'Provide the local path to your source map file',
     },
   ],
   examples: [

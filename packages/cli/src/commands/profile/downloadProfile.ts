@@ -5,8 +5,6 @@ import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
-/* For source map testing */
-// import axios from 'axios';
 import {transformer} from './transformer';
 
 /**
@@ -91,6 +89,7 @@ export async function downloadProfile(
       dstPath = ctx.root;
     }
     logger.info(`File to be pulled: ${file}`);
+    //if '--verbose' is enabled
     if (logger.isVerbose()) {
       logger.info('Internal commands run to pull the file: ');
       logger.debug(`adb shell run-as ${packageName} cp cache/${file} /sdcard`);
@@ -98,6 +97,7 @@ export async function downloadProfile(
     }
     //Copy the file from device's data to sdcard, then pull the file to a temp directory
     execSync(`adb shell run-as ${packageName} cp cache/${file} /sdcard`);
+
     //If --raw, pull the hermes profile to dstPath
     if (raw) {
       execSync(`adb pull /sdcard/${file} ${dstPath}`);
@@ -106,26 +106,21 @@ export async function downloadProfile(
     //Else: transform the profile to Chrome format and pull it to dstPath
     else {
       const tmpDir = path.join(os.tmpdir(), file);
-      console.log('temp dir: ', tmpDir);
       execSync(`adb pull /sdcard/${file} ${tmpDir}`);
 
       //Run transformer tool to convert from Hermes to Chrome format
-      //TODO: find the bundle file name (default is "index.bundle");
       const events = await transformer(tmpDir, sourceMapPath, 'index.bundle');
-      // console.log(
-      //   `${dstPath}/${path.basename(file, '.cpuprofile')}-converted.json`,
-      // );
-      const transformedFile = `${dstPath}/${path.basename(
+      const transformedFilePath = `${dstPath}/${path.basename(
         file,
         '.cpuprofile',
       )}-converted.json`;
       fs.writeFileSync(
-        transformedFile,
+        transformedFilePath,
         JSON.stringify(events, undefined, 4),
         'utf-8',
       );
       logger.success(
-        `Successfully converted to Chrome tracing format and pulled the file to ${transformedFile}`,
+        `Successfully converted to Chrome tracing format and pulled the file to ${transformedFilePath}`,
       );
     }
   } catch (e) {

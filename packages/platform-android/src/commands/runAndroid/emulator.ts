@@ -15,8 +15,10 @@ const getEmulators = () => {
   }
 };
 
-const launchEmulator = async (emulatorName: string, adbPath: string) => {
+export const launchEmulator = async (emulatorName: string, adbPath: string) => {
   return new Promise((resolve, reject) => {
+    const devicesList = Adb.getDevices(adbPath);
+
     const cp = execa(emulatorCommand, [`@${emulatorName}`], {
       detached: true,
       stdio: 'ignore',
@@ -31,7 +33,11 @@ const launchEmulator = async (emulatorName: string, adbPath: string) => {
     }, timeout * 1000);
 
     const bootCheckInterval = setInterval(() => {
-      if (Adb.getDevices(adbPath).length > 0) {
+      const latestDevicesList = Adb.getDevices(adbPath);
+      const hasDevicesListChanged =
+        latestDevicesList.filter(d => !devicesList.includes(d)).length > 0;
+
+      if (hasDevicesListChanged) {
         cleanup();
         resolve();
       }
@@ -54,9 +60,9 @@ const launchEmulator = async (emulatorName: string, adbPath: string) => {
   });
 };
 
-export default async function tryLaunchEmulator(
+export const tryLaunchEmulator = async (
   adbPath: string,
-): Promise<{success: boolean; error?: string}> {
+): Promise<{success: boolean; error?: string}> => {
   const emulators = getEmulators();
   if (emulators.length > 0) {
     try {
@@ -70,4 +76,4 @@ export default async function tryLaunchEmulator(
     success: false,
     error: 'No emulators found as an output of `emulator -list-avds`',
   };
-}
+};

@@ -9,6 +9,7 @@ import path from 'path';
 import execa from 'execa';
 import chalk from 'chalk';
 import fs from 'fs';
+import inquirer from 'inquirer';
 import {Config} from '@react-native-community/cli-types';
 import adb from './adb';
 import runOnAllDevices from './runOnAllDevices';
@@ -22,6 +23,8 @@ import {
   CLIError,
 } from '@react-native-community/cli-tools';
 import warnAboutManuallyLinkedLibs from '../../link/warnAboutManuallyLinkedLibs';
+import tryLaunchEmulator from './__mocks__/tryLaunchEmulator';
+import {launchEmulator} from './emulator';
 
 // Validates that the package name is correct
 function validatePackageName(packageName: string) {
@@ -50,6 +53,7 @@ export interface Flags {
   appId: string;
   appIdSuffix: string;
   mainActivity: string;
+  device?: string | true;
   deviceId?: string;
   packager: boolean;
   port: number;
@@ -121,7 +125,7 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
 }
 
 // Builds the app and runs it on a connected emulator / device.
-function buildAndRun(args: Flags, androidProject: AndroidProject) {
+async function buildAndRun(args: Flags, androidProject: AndroidProject) {
   process.chdir(androidProject.sourceDir);
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
 
@@ -152,22 +156,71 @@ function buildAndRun(args: Flags, androidProject: AndroidProject) {
   }
 
   const adbPath = getAdbPath();
+  console.log(args.device);
+  if (args.device === true) {
+    const device = await promptWhichDeviceToRun(adbPath);
+
+    if (device) {
+      return runOnSpecificDevice(
+        {
+          ...args,
+          deviceId: device.deviceId,
+        },
+        cmd,
+        packageName,
+        adbPath,
+        androidProject,
+        device.name,
+      );
+    }
+  }
+
   if (args.deviceId) {
     return runOnSpecificDevice(args, cmd, packageName, adbPath, androidProject);
-  } else {
-    return runOnAllDevices(args, cmd, packageName, adbPath, androidProject);
   }
+
+  return runOnAllDevices(args, cmd, packageName, adbPath, androidProject);
 }
 
-function runOnSpecificDevice(
+async function promptWhichDeviceToRun(adbPath: string) {
+  const devices = adb.getAllAvailableDevices(adbPath);
+
+  if (devices.length === 0) {
+    return;
+  }
+
+  const devicesList = devices.map(({type, name}) => {
+    const highlightColor = type === 'emulator' ? 'gray' : 'blue';
+
+    return type && `${name} - ${chalk[highlightColor](type)}`;
+  });
+
+  const {chosenDevice} = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'chosenDevice',
+      message: 'Which device to run the application?',
+      filter: (device: string) =>
+        device.substring(0, device.lastIndexOf('-')).trim(),
+      choices: devicesList,
+      loop: false,
+    },
+  ]);
+
+  return devices.find(device => device.name === chosenDevice)!;
+}
+
+async function runOnSpecificDevice(
   args: Flags,
   gradlew: 'gradlew.bat' | './gradlew',
   packageName: string,
   adbPath: string,
   androidProject: AndroidProject,
+  deviceName?: string,
 ) {
   const devices = adb.getDevices(adbPath);
   const {deviceId} = args;
+
   if (devices.length > 0 && deviceId) {
     if (devices.indexOf(deviceId) !== -1) {
       buildApk(gradlew, androidProject.sourceDir);
@@ -178,15 +231,36 @@ function runOnSpecificDevice(
         adbPath,
         androidProject,
       );
-    } else {
-      logger.error(
-        `Could not find device with the id: "${deviceId}". Please choose one of the following:`,
-        ...devices,
-      );
+      return;
     }
-  } else {
-    logger.error('No Android device or emulator connected.');
+
+    logger.error(
+      `Could not find device with the id: "${deviceId}". Please choose one of the following:`,
+      ...devices,
+    );
+    return;
   }
+
+  if (deviceName) {
+    // TODO: error handling
+    await launchEmulator(deviceName, adbPath);
+    // const latestDevices = adb.getDevices(adbPath);
+    // const launchedEmulator = latestDevices.filter(d => !devices.includes(d))[0];
+
+    buildApk(gradlew, androidProject.sourceDir);
+    // installAndLaunchOnDevice(
+    //   args,
+    //   launchedEmulator,
+    //   packageName,
+    //   adbPath,
+    //   androidProject,
+    // );
+
+    return;
+  }
+
+  logger.error('No Android device or emulator connected.');
+  return;
 }
 
 function buildApk(gradlew: string, sourceDir: string) {
@@ -194,7 +268,7 @@ function buildApk(gradlew: string, sourceDir: string) {
     // using '-x lint' in order to ignore linting errors while building the apk
     const gradleArgs = ['build', '-x', 'lint'];
     logger.info('Building the app...');
-    logger.debug(`Running command "${gradlew} ${gradleArgs.join(' ')}"`);
+    logger.info(`Running command "${gradlew} ${gradleArgs.join(' ')}"`);
     execa.sync(gradlew, gradleArgs, {stdio: 'inherit', cwd: sourceDir});
   } catch (error) {
     throw new CLIError('Failed to build the app.', error);
@@ -266,6 +340,8 @@ function installAndLaunchOnDevice(
   adbPath: string,
   androidProject: AndroidProject,
 ) {
+  console.log('selectedDevice', selectedDevice);
+  return;
   tryRunAdbReverse(args.port, selectedDevice);
   tryInstallAppOnDevice(args, adbPath, selectedDevice, androidProject);
   tryLaunchAppOnDevice(selectedDevice, packageName, adbPath, args);
@@ -387,9 +463,14 @@ export default {
       default: 'MainActivity',
     },
     {
+      name: '--device [string|boolean]',
+      description:
+        'Explicitly set device to use by name. The value is not required if you have a single device connected.',
+    },
+    {
       name: '--deviceId [string]',
       description:
-        'builds your app and starts it on a specific device/simulator with the ' +
+        'builds your app and starts it on a specific device/emulator with the ' +
         'given device id (listed by running "adb devices" on the command line).',
     },
     {

@@ -13,7 +13,7 @@ import {logger, CLIError} from '@react-native-community/cli-tools';
 import adb from './adb';
 import tryRunAdbReverse from './tryRunAdbReverse';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
-import tryLaunchEmulator from './tryLaunchEmulator';
+import {tryLaunchEmulator} from './emulator';
 import {Flags} from '.';
 
 function getTaskNames(appName: string, commands: Array<string>): Array<string> {

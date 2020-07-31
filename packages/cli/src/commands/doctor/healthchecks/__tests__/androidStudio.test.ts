@@ -1,7 +1,7 @@
 import execa from 'execa';
 import androidStudio from '../androidStudio';
 import getEnvironmentInfo from '../../../../tools/envinfo';
-import {EnvironmentInfo} from '../../types';
+import {EnvironmentInfo} from '@react-native-community/cli-types';
 import {NoopLoader} from '../../../../tools/loader';
 import * as common from '../common';
 import * as downloadAndUnzip from '../../../../tools/downloadAndUnzip';
@@ -9,6 +9,7 @@ import * as downloadAndUnzip from '../../../../tools/downloadAndUnzip';
 jest.mock('execa', () => jest.fn());
 
 const logSpy = jest.spyOn(common, 'logManualInstallation');
+const {logManualInstallation} = common;
 
 describe('androidStudio', () => {
   let environmentInfo: EnvironmentInfo;
@@ -42,7 +43,11 @@ describe('androidStudio', () => {
   it('logs manual installation steps to the screen for the default fix', async () => {
     const loader = new NoopLoader();
 
-    await androidStudio.runAutomaticFix({loader, environmentInfo});
+    await androidStudio.runAutomaticFix({
+      loader,
+      logManualInstallation,
+      environmentInfo,
+    });
     expect(logSpy).toHaveBeenCalledTimes(1);
   });
 
@@ -54,7 +59,11 @@ describe('androidStudio', () => {
       .spyOn(downloadAndUnzip, 'downloadAndUnzip')
       .mockImplementation(() => Promise.resolve());
 
-    await androidStudio.win32AutomaticFix({loader, environmentInfo});
+    await androidStudio.win32AutomaticFix({
+      loader,
+      logManualInstallation,
+      environmentInfo,
+    });
 
     expect(loaderFailSpy).toHaveBeenCalledTimes(0);
     expect(logSpy).toHaveBeenCalledTimes(0);

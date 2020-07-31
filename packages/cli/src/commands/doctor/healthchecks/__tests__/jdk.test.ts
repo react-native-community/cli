@@ -1,7 +1,7 @@
 import execa from 'execa';
 import jdk from '../jdk';
 import getEnvironmentInfo from '../../../../tools/envinfo';
-import {EnvironmentInfo} from '../../types';
+import {EnvironmentInfo} from '@react-native-community/cli-types';
 import {NoopLoader} from '../../../../tools/loader';
 import * as common from '../common';
 import * as unzip from '../../../../tools/unzip';
@@ -20,6 +20,7 @@ jest.mock('@react-native-community/cli-tools', () => {
 });
 
 const logSpy = jest.spyOn(common, 'logManualInstallation');
+const {logManualInstallation} = common;
 
 describe('jdk', () => {
   let environmentInfo: EnvironmentInfo;
@@ -61,7 +62,7 @@ describe('jdk', () => {
 
   it('logs manual installation steps to the screen for the default fix', async () => {
     const loader = new NoopLoader();
-    await jdk.runAutomaticFix({loader, environmentInfo});
+    await jdk.runAutomaticFix({loader, logManualInstallation, environmentInfo});
     expect(logSpy).toHaveBeenCalledTimes(1);
   });
 
@@ -73,7 +74,11 @@ describe('jdk', () => {
       .spyOn(unzip, 'unzip')
       .mockImplementation(() => Promise.resolve());
 
-    await jdk.win32AutomaticFix({loader, environmentInfo});
+    await jdk.win32AutomaticFix({
+      loader,
+      logManualInstallation,
+      environmentInfo,
+    });
 
     expect(loaderFailSpy).toHaveBeenCalledTimes(0);
     expect(logSpy).toHaveBeenCalledTimes(0);

@@ -1,12 +1,15 @@
 import androidHomeEnvVariables from '../androidHomeEnvVariable';
 import {NoopLoader} from '../../../../tools/loader';
+import {EnvironmentInfo} from '@react-native-community/cli-types';
 
 import * as common from '../common';
 
 const logSpy = jest.spyOn(common, 'logManualInstallation');
+const {logManualInstallation} = common;
 
 describe('androidHomeEnvVariables', () => {
   const OLD_ENV = process.env;
+  let environmentInfo: EnvironmentInfo;
 
   afterEach(() => {
     process.env = OLD_ENV;
@@ -16,14 +19,18 @@ describe('androidHomeEnvVariables', () => {
   it('returns true if no ANDROID_HOME is defined', async () => {
     delete process.env.ANDROID_HOME;
 
-    const diagnostics = await androidHomeEnvVariables.getDiagnostics();
+    const diagnostics = await androidHomeEnvVariables.getDiagnostics(
+      environmentInfo,
+    );
     expect(diagnostics.needsToBeFixed).toBe(true);
   });
 
   it('returns false if ANDROID_HOME is defined', async () => {
     process.env.ANDROID_HOME = '/fake/path/to/android/home';
 
-    const diagnostics = await androidHomeEnvVariables.getDiagnostics();
+    const diagnostics = await androidHomeEnvVariables.getDiagnostics(
+      environmentInfo,
+    );
     expect(diagnostics.needsToBeFixed).toBe(false);
   });
 
@@ -31,7 +38,11 @@ describe('androidHomeEnvVariables', () => {
     const loader = new NoopLoader();
     delete process.env.ANDROID_HOME;
 
-    androidHomeEnvVariables.runAutomaticFix({loader});
+    androidHomeEnvVariables.runAutomaticFix({
+      loader,
+      logManualInstallation,
+      environmentInfo,
+    });
 
     expect(logSpy).toHaveBeenCalledTimes(1);
   });

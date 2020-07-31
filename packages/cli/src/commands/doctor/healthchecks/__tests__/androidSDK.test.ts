@@ -5,13 +5,14 @@ import {cleanup, writeFiles} from '../../../../../../../jest/helpers';
 import androidSDK from '../androidSDK';
 import getEnvironmentInfo from '../../../../tools/envinfo';
 import * as downloadAndUnzip from '../../../../tools/downloadAndUnzip';
-import {EnvironmentInfo} from '../../types';
+import {EnvironmentInfo} from '@react-native-community/cli-types';
 import {NoopLoader} from '../../../../tools/loader';
 import * as common from '../common';
 import * as androidWinHelpers from '../../../../tools/windows/androidWinHelpers';
 import * as environmentVariables from '../../../../tools/windows/environmentVariables';
 
 const logSpy = jest.spyOn(common, 'logManualInstallation');
+const {logManualInstallation} = common;
 
 jest.mock('execa', () => jest.fn());
 
@@ -90,7 +91,11 @@ describe('androidSDK', () => {
 
   it('logs manual installation steps to the screen for the default fix', () => {
     const loader = new NoopLoader();
-    androidSDK.runAutomaticFix({loader, environmentInfo});
+    androidSDK.runAutomaticFix({
+      loader,
+      logManualInstallation,
+      environmentInfo,
+    });
     expect(logSpy).toHaveBeenCalledTimes(1);
   });
 
@@ -124,7 +129,11 @@ describe('androidSDK', () => {
         return Promise.resolve({hypervisor: 'WHPX', installed: true});
       });
 
-    await androidSDK.win32AutomaticFix({loader, environmentInfo});
+    await androidSDK.win32AutomaticFix({
+      loader,
+      logManualInstallation,
+      environmentInfo,
+    });
 
     // 1. Download and unzip the SDK
     expect(downloadAndUnzipSpy).toBeCalledTimes(1);

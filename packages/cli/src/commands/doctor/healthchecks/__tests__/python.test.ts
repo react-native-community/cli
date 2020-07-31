@@ -1,7 +1,7 @@
 import execa from 'execa';
 import python from '../python';
 import getEnvironmentInfo from '../../../../tools/envinfo';
-import {EnvironmentInfo} from '../../types';
+import {EnvironmentInfo} from '@react-native-community/cli-types';
 import {NoopLoader} from '../../../../tools/loader';
 import * as common from '../common';
 
@@ -11,6 +11,7 @@ jest.mock('@react-native-community/cli-tools', () => ({
 }));
 
 const logSpy = jest.spyOn(common, 'logManualInstallation');
+const {logManualInstallation} = common;
 
 describe('python', () => {
   let environmentInfo: EnvironmentInfo;
@@ -44,7 +45,11 @@ describe('python', () => {
 
   it('logs manual installation steps to the screen for the default fix', async () => {
     const loader = new NoopLoader();
-    await python.runAutomaticFix({loader, environmentInfo});
+    await python.runAutomaticFix({
+      loader,
+      logManualInstallation,
+      environmentInfo,
+    });
     expect(logSpy).toHaveBeenCalledTimes(1);
   });
 
@@ -53,7 +58,11 @@ describe('python', () => {
     const loaderSucceedSpy = jest.spyOn(loader, 'succeed');
     const loaderFailSpy = jest.spyOn(loader, 'fail');
 
-    await python.win32AutomaticFix({loader, environmentInfo});
+    await python.win32AutomaticFix({
+      loader,
+      logManualInstallation,
+      environmentInfo,
+    });
 
     expect(loaderFailSpy).toHaveBeenCalledTimes(0);
     expect(logSpy).toHaveBeenCalledTimes(0);

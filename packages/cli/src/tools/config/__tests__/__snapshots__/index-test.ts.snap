@@ -5,6 +5,7 @@ Object {
   "assets": Array [],
   "commands": Array [],
   "dependencies": Object {},
+  "healthChecks": Array [],
   "platforms": Object {},
   "project": Object {},
   "reactNativePath": "<<REPLACED>>",

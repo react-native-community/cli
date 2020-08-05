@@ -29,8 +29,22 @@ function getChromeAppName(): string {
   switch (process.platform) {
     case 'darwin':
       return 'google chrome';
-    case 'win32':
+    case 'win32': {
+      const possibleDebuggingApps = ['chrome.exe', 'msedge.exe'];
+      const output = execSync(
+        'tasklist /NH /FO CSV /FI "SESSIONNAME ne Services"',
+      ).toString();
+      const runningProcesses = output
+        .split('\n')
+        .map((line: string) => line.replace(/^"|".*\r$/gm, ''));
+
+      for (const app of possibleDebuggingApps) {
+        if (runningProcesses.includes(app)) {
+          return app;
+        }
+      }
       return 'chrome';
+    }
     case 'linux':
       if (commandExistsUnixSync('google-chrome')) {
         return 'google-chrome';

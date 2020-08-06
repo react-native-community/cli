@@ -57,7 +57,7 @@ export default {
       description: 'Pulling original Hermes formatted profile',
     },
     {
-      name: '--sourceMapPath [string]',
+      name: '--sourceMapPath [string]', //sourcemap-path
       description: 'The local path to your source map file',
     },
   ],

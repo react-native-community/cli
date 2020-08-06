@@ -105,11 +105,25 @@ export async function downloadProfile(
     }
     //Else: transform the profile to Chrome format and pull it to dstPath
     else {
-      const tmpDir = path.join(os.tmpdir(), file);
-      execSync(`adb pull /sdcard/${file} ${tmpDir}`);
+      const fileTmpDir = path.join(os.tmpdir(), file);
+      execSync(`adb pull /sdcard/${file} ${fileTmpDir}`);
+
+      //Generating the bundle and source map files
+      if (!sourceMapPath) {
+        execSync(
+          `react-native bundle --entry-file index.js --bundle-output ${os.tmpdir()}/index.bundle --sourcemap-output ${os.tmpdir()}/index.map`,
+        );
+
+        //buildBundle(args, ctx, output);
+      }
+      sourceMapPath = sourceMapPath || `${os.tmpdir()}/index.map`;
 
       //Run transformer tool to convert from Hermes to Chrome format
-      const events = await transformer(tmpDir, sourceMapPath, 'index.bundle');
+      const events = await transformer(
+        fileTmpDir,
+        sourceMapPath,
+        'index.bundle',
+      );
       const transformedFilePath = `${dstPath}/${path.basename(
         file,
         '.cpuprofile',

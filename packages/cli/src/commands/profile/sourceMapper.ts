@@ -39,6 +39,7 @@ export const changeNamesToSourceMaps = async (
             column: sm.column,
           },
         },
+        sm,
       };
       /**
        * The name in source maps (for reasons I don't understand) is sometimes null, so OR-ing this

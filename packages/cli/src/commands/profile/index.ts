@@ -7,7 +7,8 @@ type Options = {
   verbose: boolean;
   fileName?: string;
   raw?: boolean;
-  sourceMapPath?: string;
+  sourcemapPath?: string;
+  generateSourcemap?: boolean;
 };
 
 async function profile(
@@ -29,8 +30,9 @@ async function profile(
       ctx,
       dstPath,
       options.fileName,
-      options.sourceMapPath,
+      options.sourcemapPath,
       options.raw,
+      options.generateSourcemap,
     );
   } catch (err) {
     logger.error(`Unable to download the Hermes Sampling Profiler.\n${err}`);
@@ -57,15 +59,20 @@ export default {
       description: 'Pulling original Hermes formatted profile',
     },
     {
-      name: '--sourceMapPath [string]', //sourcemap-path
-      description: 'The local path to your source map file',
+      name: '--sourcemap-path [string]',
+      description:
+        'The local path to your source map file, eg. Users/.../Desktop/sourcemap.json',
+    },
+    {
+      name: '--generate-sourcemap',
+      description: 'Generate the JS bundle and source map',
     },
   ],
   examples: [
     {
       desc:
         'Download the Hermes Sampling Profiler to the directory <destinationDir> of the local machine',
-      cmd: 'profile-hermes /Users/phuonganh/Desktop',
+      cmd: 'profile-hermes /Users/.../Desktop',
     },
   ],
 };

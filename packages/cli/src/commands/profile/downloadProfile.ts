@@ -3,9 +3,12 @@ import {execSync} from 'child_process';
 import {logger, CLIError} from '@react-native-community/cli-tools';
 import chalk from 'chalk';
 import fs from 'fs';
+import path from 'path';
+import os from 'os';
+import {transformer} from './transformer';
 
 /**
- * get the last modified hermes profile
+ * Get the last modified hermes profile
  */
 function getLatestFile(packageName: string): string {
   try {
@@ -18,7 +21,7 @@ function getLatestFile(packageName: string): string {
   }
 }
 /**
- * get the package name of the running React Native app
+ * Get the package name of the running React Native app
  */
 function getPackageName(config: Config) {
   const androidProject = config.project.android;
@@ -63,18 +66,17 @@ function validatePackageName(packageName: string) {
 
 /**
  * Executes the commands to pull a hermes profile
- * Commands:
- * adb shell run-as com.rnhermesapp cp cache/sampling-profiler-trace1502707982002849976.cpuprofile /sdcard/latest.cpuprofile
- * adb pull /sdcard/latest.cpuprofile
  */
 export async function downloadProfile(
   ctx: Config,
-  dstPath?: string,
+  dstPath: string,
   fileName?: string,
+  sourceMapPath?: string,
+  raw?: boolean,
 ) {
   try {
     const packageName = getPackageName(ctx);
-
+    //if not specify fileName, pull the latest file
     const file = fileName || (await getLatestFile(packageName));
     if (!file) {
       logger.error(
@@ -82,18 +84,44 @@ export async function downloadProfile(
       );
       process.exit(1);
     }
+    //if not specify destination path, pull to the current directory
+    if (!dstPath) {
+      dstPath = ctx.root;
+    }
     logger.info(`File to be pulled: ${file}`);
+    //if '--verbose' is enabled
+    if (logger.isVerbose()) {
+      logger.info('Internal commands run to pull the file: ');
+      logger.debug(`adb shell run-as ${packageName} cp cache/${file} /sdcard`);
+      logger.debug(`adb pull /sdcard/${file} ${dstPath}`);
+    }
+    //Copy the file from device's data to sdcard, then pull the file to a temp directory
     execSync(`adb shell run-as ${packageName} cp cache/${file} /sdcard`);
 
-    //if not specify destination path, pull to the current directory
-    if (dstPath === undefined) {
-      execSync(`adb pull /sdcard/${file} ${ctx.root}`);
-      console.log(`Successfully pulled the file to ${ctx.root}/${file}`);
-    }
-    //if specified destination path, pull to that directory
-    else {
+    //If --raw, pull the hermes profile to dstPath
+    if (raw) {
       execSync(`adb pull /sdcard/${file} ${dstPath}`);
-      console.log(`Successfully pulled the file to ${dstPath}/${file}`);
+      logger.success(`Successfully pulled the file to ${dstPath}/${file}`);
+    }
+    //Else: transform the profile to Chrome format and pull it to dstPath
+    else {
+      const tmpDir = path.join(os.tmpdir(), file);
+      execSync(`adb pull /sdcard/${file} ${tmpDir}`);
+
+      //Run transformer tool to convert from Hermes to Chrome format
+      const events = await transformer(tmpDir, sourceMapPath, 'index.bundle');
+      const transformedFilePath = `${dstPath}/${path.basename(
+        file,
+        '.cpuprofile',
+      )}-converted.json`;
+      fs.writeFileSync(
+        transformedFilePath,
+        JSON.stringify(events, undefined, 4),
+        'utf-8',
+      );
+      logger.success(
+        `Successfully converted to Chrome tracing format and pulled the file to ${transformedFilePath}`,
+      );
     }
   } catch (e) {
     throw new Error(e.message);

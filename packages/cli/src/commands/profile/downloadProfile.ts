@@ -75,6 +75,7 @@ export async function downloadProfile(
   raw?: boolean,
 ) {
   try {
+    console.log('start the profile command');
     const packageName = getPackageName(ctx);
     //if not specify fileName, pull the latest file
     const file = fileName || (await getLatestFile(packageName));
@@ -105,18 +106,20 @@ export async function downloadProfile(
     }
     //Else: transform the profile to Chrome format and pull it to dstPath
     else {
-      const fileTmpDir = path.join(os.tmpdir(), file);
+      const osTmpDir = os.tmpdir();
+      const fileTmpDir = path.join(osTmpDir, file);
       execSync(`adb pull /sdcard/${file} ${fileTmpDir}`);
 
       //Generating the bundle and source map files
       if (!sourceMapPath) {
+        console.log('begin to build bundle');
         execSync(
-          `react-native bundle --entry-file index.js --bundle-output ${os.tmpdir()}/index.bundle --sourcemap-output ${os.tmpdir()}/index.map`,
+          `react-native bundle --entry-file index.js --bundle-output ${osTmpDir}/index.bundle --sourcemap-output ${osTmpDir}/index.map`,
         );
-
+        sourceMapPath = `${osTmpDir}/index.map`;
+        //console.log('sourceMapPath: ', sourceMapPath);
         //buildBundle(args, ctx, output);
       }
-      sourceMapPath = sourceMapPath || `${os.tmpdir()}/index.map`;
 
       //Run transformer tool to convert from Hermes to Chrome format
       const events = await transformer(

@@ -1,4 +1,3 @@
-import Joi from '@hapi/joi';
 import cosmiconfig from 'cosmiconfig';
 import {JoiError} from './errors';
 import * as schema from './schema';
@@ -24,8 +23,7 @@ export function readConfigFromDisk(rootFolder: string): UserConfig {
 
   const searchResult = explorer.searchSync(rootFolder);
   const config = searchResult ? searchResult.config : undefined;
-
-  const result = Joi.validate(config, schema.projectConfig);
+  const result = schema.projectConfig.validate(config);
 
   if (result.error) {
     throw new JoiError(result.error);
@@ -49,7 +47,7 @@ export function readDependencyConfigFromDisk(
   const searchResult = explorer.searchSync(rootFolder);
   const config = searchResult ? searchResult.config : emptyDependencyConfig;
 
-  const result = Joi.validate(config, schema.dependencyConfig);
+  const result = schema.dependencyConfig.validate(config);
 
   if (result.error) {
     throw new JoiError(result.error);

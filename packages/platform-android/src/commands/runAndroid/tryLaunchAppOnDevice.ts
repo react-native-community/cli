@@ -21,7 +21,9 @@ function tryLaunchAppOnDevice(
     .filter(Boolean)
     .join('.');
 
-  const activityToLaunch = args.mainActivity.includes(".") ? args.mainActivity : [packageName, args.mainActivity].filter(Boolean).join('.');
+  const activityToLaunch = args.mainActivity.includes('.')
+    ? args.mainActivity
+    : [packageName, args.mainActivity].filter(Boolean).join('.');
 
   try {
     const adbArgs = [

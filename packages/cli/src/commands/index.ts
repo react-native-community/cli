@@ -11,7 +11,7 @@ import info from './info/info';
 import config from './config/config';
 import init from './init';
 import doctor from './doctor';
-import profile from './profile';
+import profile from './profile-hermes';
 
 export const projectCommands = [
   start,

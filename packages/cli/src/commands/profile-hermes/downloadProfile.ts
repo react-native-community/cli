@@ -5,10 +5,8 @@ import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
-import axios, {AxiosResponse} from 'axios';
-import ip from 'ip';
 import {transformer} from 'hermes-profile-transformer';
-
+import {findSourcemap, generateSourcemap} from './sourcemapUtils';
 /**
  * Get the last modified hermes profile
  * @param packageName
@@ -70,100 +68,6 @@ function validatePackageName(packageName: string) {
   return /^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/.test(packageName);
 }
 
-async function getSourcemapFromServer(): Promise<AxiosResponse<SourceMap>> {
-  const DEBUG_SERVER_PORT = '8081';
-  const IP_ADDRESS = ip.address();
-  const PLATFORM = 'android';
-  const requestURL = `http://${IP_ADDRESS}:${DEBUG_SERVER_PORT}/index.map?platform=${PLATFORM}&dev=true`;
-  return (await axios.get(requestURL)) as AxiosResponse<SourceMap>;
-}
-
-/**
- * Find or generate source map
- * @param ctx
- * @param generateSourceMap
- */
-async function getSourcemapPath(
-  ctx: Config,
-  generateSourceMap?: boolean,
-): Promise<string> {
-  const osTmpDir = os.tmpdir();
-  //If '--generate-sourcemap, generate the bundle and source map files and store them in os.tmpDir()
-  if (generateSourceMap) {
-    console.log('generate new source map');
-    //Store the file in os.tmpDir()
-    const sourceMapPath = path.join(osTmpDir, 'index.map');
-
-    const sourceMapResult = await getSourcemapFromServer();
-    if (sourceMapResult) {
-      console.log('Request from server: done finding the source map');
-      fs.writeFileSync(
-        `${sourceMapPath}`,
-        JSON.stringify(sourceMapResult.data),
-        'utf-8',
-      );
-      console.log('Request from server: done writing the source map');
-    } else {
-      console.log('begin to build bundle');
-      execSync(
-        `react-native bundle --entry-file index.js --bundle-output ${path.join(
-          osTmpDir,
-          'index.bundle',
-        )} --sourcemap-output ${sourceMapPath}`,
-      );
-    }
-    logger.info(
-      `Successfully generated the source map and store it in ${sourceMapPath}`,
-    );
-    return `${sourceMapPath}`;
-  }
-
-  //Find the sourcemap if it exists
-  else {
-    console.log('find the existing source map');
-    //Find from local machine
-    //QUESTION: why is my source map path different from Jani's
-    //(android/app/build/generated/sourcemaps/react/debug/index.android.bundle.map)
-    const sourceMapDir =
-      path.join(
-        ctx.root,
-        'android',
-        'app',
-        'build',
-        'intermediates', //'generated',
-        'sourcemaps',
-        'react',
-        'debug',
-        'index.android.bundle.packager.map',
-      ) ||
-      path.join(
-        ctx.root,
-        'android',
-        'app',
-        'build',
-        'generated',
-        'sourcemaps',
-        'react',
-        'debug',
-        'index.android.bundle.map',
-      );
-    console.log(sourceMapDir);
-    if (fs.existsSync(sourceMapDir)) {
-      console.log('get the sourcemap if it exists from local machine');
-      return sourceMapDir;
-    } else {
-      //Request from server
-      const sourceMapResult = await getSourcemapFromServer();
-      fs.writeFileSync(
-        `${path.join(osTmpDir, 'index.map')}`,
-        JSON.stringify(sourceMapResult.data),
-        'utf-8',
-      );
-      return `${path.join(osTmpDir, 'index.map')}`;
-    }
-  }
-}
-
 /**
  * Pull and convert a Hermes tracing profile to Chrome tracing profile
  * @param ctx
@@ -179,7 +83,7 @@ export async function downloadProfile(
   fileName?: string,
   sourceMapPath?: string,
   raw?: boolean,
-  generateSourceMap?: boolean,
+  shouldGenerateSourcemap?: boolean,
 ) {
   try {
     //console.log('start the profile command');
@@ -222,7 +126,12 @@ export async function downloadProfile(
       //If path to source map is not given
       if (!sourceMapPath) {
         //Get or generate the source map
-        sourceMapPath = await getSourcemapPath(ctx, generateSourceMap);
+        if (shouldGenerateSourcemap) {
+          sourceMapPath = await generateSourcemap();
+        } else {
+          sourceMapPath = await findSourcemap(ctx);
+        }
+
         //Run without source map
         if (sourceMapPath && sourceMapPath.length === 0) {
           logger.warn(

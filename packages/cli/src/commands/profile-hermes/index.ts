@@ -42,7 +42,7 @@ async function profile(
 export default {
   name: 'profile-hermes [destinationDir]',
   description:
-    'Pull and convert a Hermes tracing profile to Chrome tracing profile, then store them in the directory <destinationDir> of the local machine',
+    'Pull and convert a Hermes tracing profile to Chrome tracing profile, then store it in the directory <destinationDir> of the local machine',
   func: profile,
   options: [
     {
@@ -53,7 +53,7 @@ export default {
     {
       name: '--verbose',
       description:
-        'Listing adb commands that are run internally to pull the file from Android device',
+        'Lists adb commands that are run internally when pulling the file from Android device',
     },
     {
       name: '--raw',
@@ -63,7 +63,7 @@ export default {
     {
       name: '--sourcemap-path [string]',
       description:
-        'The local path to your source map file, eg. Users/.../Desktop/sourcemap.json',
+        'The local path to your source map file, eg. /tmp/sourcemap.json',
     },
     {
       name: '--generate-sourcemap',
@@ -73,8 +73,8 @@ export default {
   examples: [
     {
       desc:
-        'Download the Hermes Sampling Profiler to the directory <destinationDir> of the local machine',
-      cmd: 'profile-hermes /Users/.../Desktop',
+        'Download the Hermes Sampling Profiler to the directory <destinationDir> on the local machine',
+      cmd: 'profile-hermes /tmp',
     },
   ],
 };

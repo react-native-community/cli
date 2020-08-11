@@ -18,6 +18,9 @@ function bundleWithOutput(
   args: CommandLineArgs,
   output: any, // untyped metro/src/shared/output/bundle or metro/src/shared/output/RamBundle
 ) {
+  // console.log('config: ', config);
+  // console.log('args: ', args);
+  // console.log('output: ', output);
   return buildBundle(args, config, output);
 }
 

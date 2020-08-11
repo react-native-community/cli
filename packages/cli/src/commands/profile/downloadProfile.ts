@@ -5,13 +5,13 @@ import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
-import {transformer} from './transformer';
 import axios, {AxiosResponse} from 'axios';
 import ip from 'ip';
-import {SourceMap} from './EventInterfaces';
+import {transformer} from 'hermes-profile-transformer';
 
 /**
  * Get the last modified hermes profile
+ * @param packageName
  */
 function getLatestFile(packageName: string): string {
   try {
@@ -23,8 +23,10 @@ function getLatestFile(packageName: string): string {
     throw new Error(e);
   }
 }
+
 /**
  * Get the package name of the running React Native app
+ * @param config
  */
 function getPackageName(config: Config) {
   const androidProject = config.project.android;
@@ -59,10 +61,11 @@ function getPackageName(config: Config) {
   }
   return packageName;
 }
-/** Validates that the package name is correct
- *
- */
 
+/**
+ * Validates that the package name is correct
+ * @param packageName
+ */
 function validatePackageName(packageName: string) {
   return /^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/.test(packageName);
 }
@@ -75,6 +78,11 @@ async function getSourcemapFromServer(): Promise<AxiosResponse<SourceMap>> {
   return (await axios.get(requestURL)) as AxiosResponse<SourceMap>;
 }
 
+/**
+ * Find or generate source map
+ * @param ctx
+ * @param generateSourceMap
+ */
 async function getSourcemapPath(
   ctx: Config,
   generateSourceMap?: boolean,
@@ -116,17 +124,29 @@ async function getSourcemapPath(
     //Find from local machine
     //QUESTION: why is my source map path different from Jani's
     //(android/app/build/generated/sourcemaps/react/debug/index.android.bundle.map)
-    const sourceMapDir = path.join(
-      ctx.root,
-      'android',
-      'app',
-      'build',
-      'intermediates', //'generated',
-      'sourcemaps',
-      'react',
-      'debug',
-      'index.android.bundle.packager.map',
-    );
+    const sourceMapDir =
+      path.join(
+        ctx.root,
+        'android',
+        'app',
+        'build',
+        'intermediates', //'generated',
+        'sourcemaps',
+        'react',
+        'debug',
+        'index.android.bundle.packager.map',
+      ) ||
+      path.join(
+        ctx.root,
+        'android',
+        'app',
+        'build',
+        'generated',
+        'sourcemaps',
+        'react',
+        'debug',
+        'index.android.bundle.map',
+      );
     console.log(sourceMapDir);
     if (fs.existsSync(sourceMapDir)) {
       console.log('get the sourcemap if it exists from local machine');
@@ -145,7 +165,13 @@ async function getSourcemapPath(
 }
 
 /**
- * Executes the commands to pull a hermes profile
+ * Pull and convert a Hermes tracing profile to Chrome tracing profile
+ * @param ctx
+ * @param dstPath
+ * @param fileName
+ * @param sourceMapPath
+ * @param raw
+ * @param generateSourceMap
  */
 export async function downloadProfile(
   ctx: Config,

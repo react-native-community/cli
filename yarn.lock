@@ -5765,6 +5765,13 @@ hash.js@^1.0.0, hash.js@^1.0.3:
     inherits "^2.0.3"
     minimalistic-assert "^1.0.1"
 
+hermes-profile-transformer@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/hermes-profile-transformer/-/hermes-profile-transformer-0.0.2.tgz#4d75bf5bce89846203988a80f5f7e038c70bf115"
+  integrity sha512-NsnLtAjbR+g5WAnX70jqA/XVmrvpNnOFWvjrrL5SkoOjy/UK1+H5ynSQr1gZEFYOkWFhQUwqJRA/PokKprGtig==
+  dependencies:
+    source-map "^0.7.3"
+
 hex-color-regex@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/hex-color-regex/-/hex-color-regex-1.1.0.tgz#4c06fccb4602fe2602b3c93df82d7e7dbf1a8a8e"

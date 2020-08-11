@@ -42,21 +42,23 @@ async function profile(
 export default {
   name: 'profile-hermes [destinationDir]',
   description:
-    'Download the Hermes Sampling Profiler to the directory <destinationDir> of the local machine',
+    'Pull and convert a Hermes tracing profile to Chrome tracing profile, then store them in the directory <destinationDir> of the local machine',
   func: profile,
   options: [
     {
       name: '--fileName [string]',
       description:
-        'Filename of the profile to be downloaded, eg. sampling-profiler-trace8593107139682635366.cpuprofile',
+        'File name of the profile to be downloaded, eg. sampling-profiler-trace8593107139682635366.cpuprofile',
     },
     {
       name: '--verbose',
-      description: 'Listing adb commands that are run internally',
+      description:
+        'Listing adb commands that are run internally to pull the file from Android device',
     },
     {
       name: '--raw',
-      description: 'Pulling original Hermes formatted profile',
+      description:
+        'Pull the original Hermes tracing profile without any transformation',
     },
     {
       name: '--sourcemap-path [string]',

@@ -20,10 +20,10 @@ async function getEnvironmentInfo(
     {
       System: ['OS', 'CPU', 'Memory', 'Shell'],
       Binaries: ['Node', 'Yarn', 'npm', 'Watchman'],
-      IDEs: ['Xcode', 'Android Studio'],
+      IDEs: ['Xcode', 'Android Studio', 'Visual Studio'],
       Managers: ['CocoaPods'],
       Languages: ['Java', 'Python'],
-      SDKs: ['iOS SDK', 'Android SDK'],
+      SDKs: ['iOS SDK', 'Android SDK', 'Windows SDK'],
       npmPackages: ['react', 'react-native', '@react-native-community/cli'],
       npmGlobalPackages: ['*react-native*'],
     },

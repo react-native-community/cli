@@ -1,4 +1,4 @@
-# Autolinking
+	# Autolinking
 
 React Native libraries often come with platform-specific (native) code. Autolinking is a mechanism that allows your project to discover and use this code.
 
@@ -34,7 +34,7 @@ The implementation ensures that a library is imported only once. If you need to 
 
 ### Example
 
-See example usage in React Native template's [Podfile](https://github.com/facebook/react-native/blob/0.60-stable/template/ios/Podfile).
+See example usage in React Native template's [Podfile](https://github.com/facebook/react-native/blob/0.63-stable/template/ios/Podfile).
 
 ## Platform Android
 

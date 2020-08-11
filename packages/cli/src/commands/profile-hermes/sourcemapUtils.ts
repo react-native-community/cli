@@ -11,10 +11,10 @@ function getTempFilePath(filename: string) {
   return path.join(os.tmpdir(), filename);
 }
 
-function writeJsonSync(targetPath: string, data: any, format: boolean = false) {
+function writeJsonSync(targetPath: string, data: any) {
   let json;
   try {
-    json = format ? JSON.stringify(data, null, 2) : JSON.stringify(data);
+    json = JSON.stringify(data);
   } catch (e) {
     logger.error(
       `Failed to serialize data to json before writing to ${targetPath}`,
@@ -29,12 +29,21 @@ function writeJsonSync(targetPath: string, data: any, format: boolean = false) {
   }
 }
 
-async function getSourcemapFromServer(): Promise<AxiosResponse<SourceMap>> {
+// @TODO
+// Remove AxiosResponse, return Promise<SourceMap> where SourceMap
+// is imported from the hermes-profiler-transformer
+async function getSourcemapFromServer(): Promise<AxiosResponse<any>> {
   const DEBUG_SERVER_PORT = '8081';
   const IP_ADDRESS = ip.address();
   const PLATFORM = 'android';
   const requestURL = `http://${IP_ADDRESS}:${DEBUG_SERVER_PORT}/index.map?platform=${PLATFORM}&dev=true`;
-  return (await axios.get(requestURL)) as AxiosResponse<SourceMap>;
+
+  // @TODO
+  // Use node-fetch instead of axios
+  // Check for return http status code, if > 400 it's an error and
+  // we should return null instead of the source map string
+
+  return (await axios.get(requestURL)) as AxiosResponse<any>;
 }
 
 /**

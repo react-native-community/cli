@@ -13,6 +13,7 @@ import {findSourcemap, generateSourcemap} from './sourcemapUtils';
  */
 function getLatestFile(packageName: string): string {
   try {
+    // @TODO: Only check for *.cpuprofile files
     const file = execSync(`adb shell run-as ${packageName} ls cache/ -tp | grep -v /$ | head -1
         `);
 
@@ -20,6 +21,14 @@ function getLatestFile(packageName: string): string {
   } catch (e) {
     throw new Error(e);
   }
+}
+
+function execSyncWithLog(command: string) {
+  if (logger.isVerbose()) {
+    logger.debug(command);
+  }
+
+  return execSync(command);
 }
 
 /**
@@ -86,9 +95,9 @@ export async function downloadProfile(
   shouldGenerateSourcemap?: boolean,
 ) {
   try {
-    //console.log('start the profile command');
     const packageName = getPackageName(ctx);
-    //if not specify fileName, pull the latest file
+
+    // if file name is not specified, pull the latest file from device
     const file = fileName || (await getLatestFile(packageName));
     if (!file) {
       logger.error(
@@ -96,32 +105,31 @@ export async function downloadProfile(
       );
       process.exit(1);
     }
+
     logger.info(`File to be pulled: ${file}`);
 
-    //if not specify destination path, pull to the current directory
-    if (!dstPath) {
-      dstPath = ctx.root;
-    }
-    //if '--verbose' is enabled
+    //if destination path is not specified, pull to the current directory
+    dstPath = dstPath || ctx.root;
+
     if (logger.isVerbose()) {
       logger.info('Internal commands run to pull the file: ');
-      logger.debug(`adb shell run-as ${packageName} cp cache/${file} /sdcard`);
-      logger.debug(`adb pull /sdcard/${file} ${dstPath}`);
     }
+
     //Copy the file from device's data to sdcard, then pull the file to a temp directory
-    execSync(`adb shell run-as ${packageName} cp cache/${file} /sdcard`);
+    execSyncWithLog(`adb shell run-as ${packageName} cp cache/${file} /sdcard`);
 
     //If --raw, pull the hermes profile to dstPath
     if (raw) {
-      execSync(`adb pull /sdcard/${file} ${dstPath}`);
+      execSyncWithLog(`adb pull /sdcard/${file} ${dstPath}`);
       logger.success(`Successfully pulled the file to ${dstPath}/${file}`);
     }
 
     //Else: transform the profile to Chrome format and pull it to dstPath
     else {
       const osTmpDir = os.tmpdir();
-      const fileTmpDir = path.join(osTmpDir, file);
-      execSync(`adb pull /sdcard/${file} ${fileTmpDir}`);
+      const tempFilePath = path.join(osTmpDir, file);
+
+      execSyncWithLog(`adb pull /sdcard/${file} ${tempFilePath}`);
 
       //If path to source map is not given
       if (!sourceMapPath) {
@@ -133,7 +141,7 @@ export async function downloadProfile(
         }
 
         //Run without source map
-        if (sourceMapPath && sourceMapPath.length === 0) {
+        if (!sourceMapPath) {
           logger.warn(
             'Cannot generate or find bundle and source map, running the transformer without source map',
           );
@@ -145,10 +153,11 @@ export async function downloadProfile(
 
       //Run transformer tool to convert from Hermes to Chrome format
       const events = await transformer(
-        fileTmpDir,
+        tempFilePath,
         sourceMapPath,
         'index.bundle',
       );
+
       const transformedFilePath = `${dstPath}/${path.basename(
         file,
         '.cpuprofile',

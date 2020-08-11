@@ -11,7 +11,7 @@ type Options = {
   generateSourcemap?: boolean;
 };
 
-async function profile(
+async function profileHermes(
   [dstPath]: Array<string>,
   ctx: Config,
   options: Options,
@@ -35,7 +35,7 @@ async function profile(
       options.generateSourcemap,
     );
   } catch (err) {
-    logger.error(`Unable to download the Hermes Sampling Profiler.\n${err}`);
+    logger.error(`Unable to download the Hermes Sampling Profile.\n${err}`);
   }
 }
 
@@ -43,7 +43,7 @@ export default {
   name: 'profile-hermes [destinationDir]',
   description:
     'Pull and convert a Hermes tracing profile to Chrome tracing profile, then store it in the directory <destinationDir> of the local machine',
-  func: profile,
+  func: profileHermes,
   options: [
     {
       name: '--fileName [string]',

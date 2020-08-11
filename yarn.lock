@@ -5765,10 +5765,10 @@ hash.js@^1.0.0, hash.js@^1.0.3:
     inherits "^2.0.3"
     minimalistic-assert "^1.0.1"
 
-hermes-profile-transformer@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/hermes-profile-transformer/-/hermes-profile-transformer-0.0.2.tgz#4d75bf5bce89846203988a80f5f7e038c70bf115"
-  integrity sha512-NsnLtAjbR+g5WAnX70jqA/XVmrvpNnOFWvjrrL5SkoOjy/UK1+H5ynSQr1gZEFYOkWFhQUwqJRA/PokKprGtig==
+hermes-profile-transformer@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/hermes-profile-transformer/-/hermes-profile-transformer-0.0.3.tgz#ef264e56add319cd12f6fb799b208ced4d8c0797"
+  integrity sha512-atBQiLWV8Sd4bF6Md2I1oh+m77zE/9MHyDZbd6i6599y0UwD8hASp7VARk8/EdCU4ukWjbjO3Tc4Xm6CR4c2VA==
   dependencies:
     source-map "^0.7.3"
 

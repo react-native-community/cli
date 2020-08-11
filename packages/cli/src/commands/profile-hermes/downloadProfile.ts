@@ -5,7 +5,7 @@ import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
-import {transformer} from 'hermes-profile-transformer';
+import transformer from 'hermes-profile-transformer';
 import {findSourcemap, generateSourcemap} from './sourcemapUtils';
 /**
  * Get the last modified hermes profile
@@ -13,10 +13,8 @@ import {findSourcemap, generateSourcemap} from './sourcemapUtils';
  */
 function getLatestFile(packageName: string): string {
   try {
-    // @TODO: Only check for *.cpuprofile files
-    const file = execSync(`adb shell run-as ${packageName} ls cache/ -tp | grep -v /$ | head -1
+    const file = execSync(`adb shell run-as ${packageName} ls cache/ -tp | grep -v /$ | egrep '\.cpuprofile' | head -1
         `);
-
     return file.toString().trim();
   } catch (e) {
     throw new Error(e);
@@ -90,7 +88,7 @@ export async function downloadProfile(
   ctx: Config,
   dstPath: string,
   fileName?: string,
-  sourceMapPath?: string,
+  sourcemapPath?: string,
   raw?: boolean,
   shouldGenerateSourcemap?: boolean,
 ) {
@@ -132,16 +130,16 @@ export async function downloadProfile(
       execSyncWithLog(`adb pull /sdcard/${file} ${tempFilePath}`);
 
       //If path to source map is not given
-      if (!sourceMapPath) {
+      if (!sourcemapPath) {
         //Get or generate the source map
         if (shouldGenerateSourcemap) {
-          sourceMapPath = await generateSourcemap();
+          sourcemapPath = await generateSourcemap();
         } else {
-          sourceMapPath = await findSourcemap(ctx);
+          sourcemapPath = await findSourcemap(ctx);
         }
 
         //Run without source map
-        if (!sourceMapPath) {
+        if (!sourcemapPath) {
           logger.warn(
             'Cannot generate or find bundle and source map, running the transformer without source map',
           );
@@ -154,7 +152,7 @@ export async function downloadProfile(
       //Run transformer tool to convert from Hermes to Chrome format
       const events = await transformer(
         tempFilePath,
-        sourceMapPath,
+        sourcemapPath,
         'index.bundle',
       );
 

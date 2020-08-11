@@ -10,13 +10,13 @@
 
 ## How to pull the sampling profiler to your local machine
 
-### React Native CLI
+### React Native CLI command
 
 Usage:
 
-### `react-native profile-hermes [destinationDir]`
+### `npx react-native profile-hermes [destinationDir]`
 
-Pull and convert a Hermes tracing profile to Chrome tracing profile, then store them in the directory <destinationDir> of the local machine. `destinationDir` is optional, if provided, pull the file to that directory (if not present, pull to the current React Native app root directory)
+Pull and convert a Hermes tracing profile to Chrome tracing profile, then store it in the directory <destinationDir> of the local machine. `destinationDir` is optional, if provided, pull the file to that directory (if not present, pull to the current React Native app root directory)
 
 Options:
 
@@ -26,7 +26,7 @@ File name of the profile to be downloaded, eg. sampling-profiler-trace8593107139
 
 #### `--verbose`
 
-Listing adb commands that are run internally to pull the file from Android device
+Lists adb commands that are run internally to pull the file from Android device
 
 #### `--raw`
 
@@ -34,19 +34,47 @@ Pull the original Hermes tracing profile without any transformation
 
 #### `--sourcemap-path [string]`
 
-The local path to where source map file is stored, eg. Users/.../Desktop/sourcemap.json
+The local path to your source map file, eg. /tmp/sourcemap.json
 
 #### `--generate-sourcemap`
 
 Generate the JS bundle and source map
 
+### Notes on source map
+
+This step is recommended in order for the source map to be generated for the use of this command:
+
+#### Enable `bundleInDebug: true` if the app is running in development mode:
+
+- In the `android/app/build.gradle` file of the React Native app that you use to test, add
+
+```sh
+project.ext.react = [
+    bundleInDebug: true,
+]
+```
+
+- Clean the build by running this command
+
+```sh
+cd android && ./gradlew clean
+```
+
+- Run your app as normal
+
+```sh
+npx react-native run-android
+```
+
+- This allows React Native to build the bundle during its running process
+
 ## Common errors encountered during the process
 
-#### adb: no devices/emulators found
+- #### adb: no devices/emulators found
 
 Solution: make sure your Android device/ emulator is connected and running. The command only works when it can access adb
 
-#### There is no file in the cache/ directory
+- #### There is no file in the cache/ directory
 
 User may have forgotten to record a profile from the device (instruction on how to enable/ disable profiler is above)
 
@@ -59,3 +87,21 @@ Using `yarn link` as instructed by the CLI's [Testing Plan](https://github.com/M
 Get the error `ReferenceError: SHA-1 for file ... is not computed` even if we run `react-native start --watchFolders /path/to/cloned/cli/`. That's because we use the command `react-native bundle` within our code, which creates a new Metro Server that can't find the symlinked folder
 
 ### Solution:
+
+- In the `/package.json` file of the React Native app that you use to test, add
+
+```sh
+"dependencies": {
+    "@react-native-community/cli": "file:/path/to/cloned/cli/",
+  },
+  ...
+"resolutions": {
+    "@react-native-community/cli": "file:/path/to/cloned/cli/"
+  },
+```
+
+- Every time we make any changes to the CLI source code, run the command below to update the changes to this project
+
+```sh
+rm -rf node_modules/@react-native-community/cli && yarn --check-files
+```

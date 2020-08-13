@@ -1,4 +1,3 @@
-// @ts-ignore untyped
 import {logger} from '@react-native-community/cli-tools';
 import {Config} from '@react-native-community/cli-types';
 import {downloadProfile} from './downloadProfile';
@@ -11,17 +10,17 @@ type Options = {
   generateSourcemap?: boolean;
 };
 
-async function profile(
+async function profileHermes(
   [dstPath]: Array<string>,
   ctx: Config,
   options: Options,
 ) {
   try {
     logger.info(
-      'Downloading a Hermes Sampling Profiler from your Android device...',
+      'Downloading a Hermes Sampling Profiler from your Android device...\n',
     );
     if (!options.fileName) {
-      logger.info('No filename is provided, pulling latest file');
+      logger.info('No filename is provided, pulling latest file\n');
     }
     if (options.verbose) {
       logger.setVerbose(true);
@@ -35,15 +34,15 @@ async function profile(
       options.generateSourcemap,
     );
   } catch (err) {
-    logger.error(`Unable to download the Hermes Sampling Profiler.\n${err}`);
+    logger.error(`Unable to download the Hermes Sampling Profile.\n${err}`);
   }
 }
 
 export default {
   name: 'profile-hermes [destinationDir]',
   description:
-    'Pull and convert a Hermes tracing profile to Chrome tracing profile, then store them in the directory <destinationDir> of the local machine',
-  func: profile,
+    'Pull and convert a Hermes tracing profile to Chrome tracing profile, then store it in the directory <destinationDir> of the local machine',
+  func: profileHermes,
   options: [
     {
       name: '--fileName [string]',
@@ -53,28 +52,28 @@ export default {
     {
       name: '--verbose',
       description:
-        'Listing adb commands that are run internally to pull the file from Android device',
+        'Lists commands and steps that are run internally when pulling the file from Android device',
     },
     {
       name: '--raw',
       description:
-        'Pull the original Hermes tracing profile without any transformation',
+        'Pulls the original Hermes tracing profile without any transformation',
     },
     {
       name: '--sourcemap-path [string]',
       description:
-        'The local path to your source map file, eg. Users/.../Desktop/sourcemap.json',
+        'The local path to your source map file, eg. /tmp/sourcemap.json',
     },
     {
       name: '--generate-sourcemap',
-      description: 'Generate the JS bundle and source map',
+      description: 'Generates the JS bundle and source map',
     },
   ],
   examples: [
     {
       desc:
-        'Download the Hermes Sampling Profiler to the directory <destinationDir> of the local machine',
-      cmd: 'profile-hermes /Users/.../Desktop',
+        'Download the Hermes Sampling Profiler to the directory <destinationDir> on the local machine',
+      cmd: 'profile-hermes /tmp',
     },
   ],
 };

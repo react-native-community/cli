@@ -44,13 +44,11 @@ async function buildBundle(
   ctx: Config,
   output: typeof outputBundle = outputBundle,
 ) {
-  //console.log('not load metro config yet');
   const config = await loadMetroConfig(ctx, {
     maxWorkers: args.maxWorkers,
     resetCache: args.resetCache,
     config: args.config,
   });
-  //console.log('loaded metro config');
 
   if (config.resolver.platforms.indexOf(args.platform) === -1) {
     logger.error(
@@ -86,9 +84,7 @@ async function buildBundle(
     minify: args.minify !== undefined ? args.minify : !args.dev,
     platform: args.platform,
   };
-  //console.log('not build server yet');
   const server = new Server(config);
-  //console.log('built new server');
 
   try {
     const bundle = await output.build(server, requestOpts);

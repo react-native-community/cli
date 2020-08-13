@@ -1,4 +1,3 @@
-// @ts-ignore untyped
 import {logger} from '@react-native-community/cli-tools';
 import {Config} from '@react-native-community/cli-types';
 import {downloadProfile} from './downloadProfile';
@@ -18,10 +17,10 @@ async function profileHermes(
 ) {
   try {
     logger.info(
-      'Downloading a Hermes Sampling Profiler from your Android device...',
+      'Downloading a Hermes Sampling Profiler from your Android device...\n',
     );
     if (!options.fileName) {
-      logger.info('No filename is provided, pulling latest file');
+      logger.info('No filename is provided, pulling latest file\n');
     }
     if (options.verbose) {
       logger.setVerbose(true);

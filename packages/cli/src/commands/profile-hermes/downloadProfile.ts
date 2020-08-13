@@ -23,7 +23,7 @@ function getLatestFile(packageName: string): string {
 
 function execSyncWithLog(command: string) {
   if (logger.isVerbose()) {
-    logger.debug(command);
+    logger.debug(`${command}\n`);
   }
 
   return execSync(command);
@@ -99,18 +99,18 @@ export async function downloadProfile(
     const file = fileName || (await getLatestFile(packageName));
     if (!file) {
       logger.error(
-        'There is no file in the cache/ directory. Did you record a profile from the developer menu?',
+        'There is no file in the cache/ directory. Did you record a profile from the developer menu?\n',
       );
       process.exit(1);
     }
 
-    logger.info(`File to be pulled: ${file}`);
+    logger.info(`File to be pulled: ${file}\n`);
 
     //if destination path is not specified, pull to the current directory
     dstPath = dstPath || ctx.root;
 
     if (logger.isVerbose()) {
-      logger.info('Internal commands run to pull the file: ');
+      logger.info('Internal commands run to pull the file:\n');
     }
 
     //Copy the file from device's data to sdcard, then pull the file to a temp directory
@@ -119,7 +119,7 @@ export async function downloadProfile(
     //If --raw, pull the hermes profile to dstPath
     if (raw) {
       execSyncWithLog(`adb pull /sdcard/${file} ${dstPath}`);
-      logger.success(`Successfully pulled the file to ${dstPath}/${file}`);
+      logger.success(`Successfully pulled the file to ${dstPath}/${file}\n`);
     }
 
     //Else: transform the profile to Chrome format and pull it to dstPath
@@ -141,10 +141,10 @@ export async function downloadProfile(
         //Run without source map
         if (!sourcemapPath) {
           logger.warn(
-            'Cannot generate or find bundle and source map, running the transformer without source map',
+            'Cannot generate or find bundle and source map, running the transformer without source map\n',
           );
           logger.info(
-            'Instructions on how to get source map:\n Go to directory android/app/build.gradle \n Set bundleInDebug: true',
+            'Instructions on how to get source map: set `bundleInDebug: true` in your app/build.gradle file, inside the `project.ext.react` map.\n',
           );
         }
       }
@@ -166,7 +166,7 @@ export async function downloadProfile(
         'utf-8',
       );
       logger.success(
-        `Successfully converted to Chrome tracing format and pulled the file to ${transformedFilePath}`,
+        `Successfully converted to Chrome tracing format and pulled the file to ${transformedFilePath}\n`,
       );
     }
   } catch (e) {

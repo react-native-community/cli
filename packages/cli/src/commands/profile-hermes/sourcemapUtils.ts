@@ -17,7 +17,7 @@ function writeJsonSync(targetPath: string, data: any) {
     json = JSON.stringify(data);
   } catch (e) {
     logger.error(
-      `Failed to serialize data to json before writing to ${targetPath}`,
+      `Failed to serialize data to json before writing to ${targetPath}\n`,
       e,
     );
   }
@@ -25,12 +25,12 @@ function writeJsonSync(targetPath: string, data: any) {
   try {
     fs.writeFileSync(targetPath, json, 'utf-8');
   } catch (e) {
-    logger.error(`Failed to write json to ${targetPath}`, e);
+    logger.error(`Failed to write json to ${targetPath}\n`, e);
   }
 }
 
 async function getSourcemapFromServer(): Promise<SourceMap> {
-  logger.debug('Getting source maps from Metro packager server');
+  logger.debug('Getting source maps from Metro packager server\n');
   const DEBUG_SERVER_PORT = '8081';
   const IP_ADDRESS = ip.address();
   const PLATFORM = 'android';
@@ -38,7 +38,7 @@ async function getSourcemapFromServer(): Promise<SourceMap> {
   const requestURL = `http://${IP_ADDRESS}:${DEBUG_SERVER_PORT}/index.map?platform=${PLATFORM}&dev=true`;
   const result = await nodeFetch(requestURL);
   if (result.status >= 400) {
-    logger.error('Cannot get source map from running metro server');
+    logger.error('Cannot get source map from running metro server\n');
     throw new CLIError(`Fetch request failed with status ${result.status}.`);
   }
   const data = await result.json();
@@ -55,14 +55,14 @@ export async function generateSourcemap(): Promise<string> {
 
   if (sourceMapResult) {
     if (logger.isVerbose()) {
-      logger.debug('Using source maps from Metro packager server');
+      logger.debug('Using source maps from Metro packager server\n');
     }
     writeJsonSync(sourceMapPath, sourceMapResult);
     logger.info(
-      `Successfully generated the source map and stored it in ${sourceMapPath}`,
+      `Successfully generated the source map and stored it in ${sourceMapPath}\n`,
     );
   } else {
-    logger.error('Cannot generate source maps from Metro packager server`');
+    logger.error('Cannot generate source maps from Metro packager server\n`');
   }
 
   return sourceMapPath;
@@ -99,18 +99,18 @@ export async function findSourcemap(ctx: Config): Promise<string> {
 
   if (fs.existsSync(generatedBuildPath)) {
     if (logger.isVerbose()) {
-      logger.debug(`Getting the source map from ${generateSourcemap}`);
+      logger.debug(`Getting the source map from ${generateSourcemap}\n`);
     }
     return Promise.resolve(generatedBuildPath);
   } else if (fs.existsSync(intermediateBuildPath)) {
     if (logger.isVerbose()) {
-      logger.debug(`Getting the source map from ${intermediateBuildPath}`);
+      logger.debug(`Getting the source map from ${intermediateBuildPath}\n`);
     }
     return Promise.resolve(intermediateBuildPath);
   } else {
     const sourcemapResult = await getSourcemapFromServer();
     if (logger.isVerbose()) {
-      logger.debug('Using source maps from Metro packager server');
+      logger.debug('Using source maps from Metro packager server\n');
     }
     const tempPath = getTempFilePath('index.map');
     writeJsonSync(tempPath, sourcemapResult);

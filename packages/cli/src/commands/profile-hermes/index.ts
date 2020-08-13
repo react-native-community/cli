@@ -53,12 +53,12 @@ export default {
     {
       name: '--verbose',
       description:
-        'Lists adb commands that are run internally when pulling the file from Android device',
+        'Lists commands and steps that are run internally when pulling the file from Android device',
     },
     {
       name: '--raw',
       description:
-        'Pull the original Hermes tracing profile without any transformation',
+        'Pulls the original Hermes tracing profile without any transformation',
     },
     {
       name: '--sourcemap-path [string]',
@@ -67,7 +67,7 @@ export default {
     },
     {
       name: '--generate-sourcemap',
-      description: 'Generate the JS bundle and source map',
+      description: 'Generates the JS bundle and source map',
     },
   ],
   examples: [

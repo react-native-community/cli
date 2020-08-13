@@ -1,12 +1,11 @@
 import {Config} from '@react-native-community/cli-types';
-import {execSync} from 'child_process';
-import {logger} from '@react-native-community/cli-tools';
+import {logger, CLIError} from '@react-native-community/cli-tools';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
-import axios, {AxiosResponse} from 'axios';
 import {SourceMap} from 'hermes-profile-transformer';
 import ip from 'ip';
+import nodeFetch from 'node-fetch';
 
 function getTempFilePath(filename: string) {
   return path.join(os.tmpdir(), filename);
@@ -30,26 +29,24 @@ function writeJsonSync(targetPath: string, data: any) {
   }
 }
 
-// @TODO
-// Remove AxiosResponse, return Promise<SourceMap> where SourceMap
-// is imported from the hermes-profiler-transformer
-async function getSourcemapFromServer(): Promise<AxiosResponse<SourceMap>> {
+async function getSourcemapFromServer(): Promise<SourceMap> {
+  logger.debug('Getting source maps from Metro packager server');
   const DEBUG_SERVER_PORT = '8081';
   const IP_ADDRESS = ip.address();
   const PLATFORM = 'android';
+
   const requestURL = `http://${IP_ADDRESS}:${DEBUG_SERVER_PORT}/index.map?platform=${PLATFORM}&dev=true`;
-
-  // @TODO
-  // Use node-fetch instead of axios
-  // Check for return http status code, if > 400 it's an error and
-  // we should return null instead of the source map string
-
-  return (await axios.get(requestURL)) as AxiosResponse<SourceMap>;
+  const result = await nodeFetch(requestURL);
+  if (result.status >= 400) {
+    logger.error('Cannot get source map from running metro server');
+    throw new CLIError(`Fetch request failed with status ${result.status}.`);
+  }
+  const data = await result.json();
+  return data as SourceMap;
 }
 
 /**
- * Generate a sourcemap either by fetching it from a running metro server
- * or by running react-native bundle with sourcemaps enables
+ * Generate a sourcemap by fetching it from a running metro server
  */
 export async function generateSourcemap(): Promise<string> {
   // fetch the source map to a temp directory
@@ -60,21 +57,13 @@ export async function generateSourcemap(): Promise<string> {
     if (logger.isVerbose()) {
       logger.debug('Using source maps from Metro packager server');
     }
-    writeJsonSync(sourceMapPath, sourceMapResult.data);
-  } else {
-    if (logger.isVerbose()) {
-      logger.debug('Generating source maps using `react-native bundle`');
-    }
-    execSync(
-      `react-native bundle --entry-file index.js --bundle-output ${getTempFilePath(
-        'index.bundle',
-      )} --sourcemap-output ${sourceMapPath}`,
+    writeJsonSync(sourceMapPath, sourceMapResult);
+    logger.info(
+      `Successfully generated the source map and stored it in ${sourceMapPath}`,
     );
+  } else {
+    logger.error('Cannot generate source maps from Metro packager server`');
   }
-
-  logger.info(
-    `Successfully generated the source map and stored it in ${sourceMapPath}`,
-  );
 
   return sourceMapPath;
 }
@@ -124,7 +113,7 @@ export async function findSourcemap(ctx: Config): Promise<string> {
       logger.debug('Using source maps from Metro packager server');
     }
     const tempPath = getTempFilePath('index.map');
-    writeJsonSync(tempPath, sourcemapResult.data);
+    writeJsonSync(tempPath, sourcemapResult);
 
     return tempPath;
   }

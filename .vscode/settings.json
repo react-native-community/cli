@@ -1,8 +1,10 @@
 {
-  "editor.rulers": [80],
+  "editor.rulers": [
+    80
+  ],
   "files.exclude": {
     "**/.git": true,
-    "**/node_modules": false,
+    "**/node_modules": true,
     "**/build": true
   },
   "editor.codeActionsOnSave": {

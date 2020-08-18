@@ -11,7 +11,6 @@ import info from './info/info';
 import config from './config/config';
 import init from './init';
 import doctor from './doctor';
-import profile from './profile-hermes';
 
 export const projectCommands = [
   start,
@@ -25,7 +24,6 @@ export const projectCommands = [
   info,
   config,
   doctor,
-  profile,
 ] as Command[];
 
 export const detachedCommands = [init, doctor] as DetachedCommand[];

@@ -7,13 +7,14 @@
     "access": "public"
   },
   "dependencies": {
-    "@react-native-community/cli-tools": "^4.11.0"
+    "@react-native-community/cli-tools": "^4.11.0",
+    "hermes-profile-transformer": "^0.0.6",
+    "ip": "^1.1.5"
   },
   "files": [
     "build",
     "!*.d.ts",
-    "!*.map",
-    "native_modules.gradle"
+    "!*.map"
   ],
   "devDependencies": {
     "@react-native-community/cli-types": "^4.10.1"

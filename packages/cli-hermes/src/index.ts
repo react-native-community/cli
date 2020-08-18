@@ -1,1 +1,1 @@
-export {default as commands} from './profileHermes';
+export {default} from './profileHermes';

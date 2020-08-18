@@ -373,18 +373,22 @@ function bootSimulator(selectedSimulator: Device) {
   }
 }
 
-function getTargetBuildDir(buildSettings: string) {
+function getTargetPaths(buildSettings: string) {
   const settings = JSON.parse(buildSettings);
 
   // Find app in all building settings - look for WRAPPER_EXTENSION: 'app',
   for (const i in settings) {
     const wrapperExtension = settings[i].buildSettings.WRAPPER_EXTENSION;
+
     if (wrapperExtension === 'app') {
-      return settings[i].buildSettings.TARGET_BUILD_DIR;
+      return {
+        targetBuildDir: settings[i].buildSettings.TARGET_BUILD_DIR,
+        executableFolderPath: settings[i].buildSettings.EXECUTABLE_FOLDER_PATH,
+      };
     }
   }
 
-  return null;
+  return {};
 }
 
 function getBuildPath(
@@ -420,12 +424,17 @@ function getBuildPath(
     ],
     {encoding: 'utf8'},
   );
-  const targetBuildDir = getTargetBuildDir(buildSettings);
+  const {targetBuildDir, executableFolderPath} = getTargetPaths(buildSettings);
+
   if (!targetBuildDir) {
     throw new CLIError('Failed to get the target build directory.');
   }
 
-  return `${targetBuildDir}/${appName}.app`;
+  if (!executableFolderPath) {
+    throw new CLIError('Failed to get the app name.');
+  }
+
+  return `${targetBuildDir}/${executableFolderPath}`;
 }
 
 function getProductName(buildOutput: string) {

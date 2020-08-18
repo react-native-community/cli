@@ -25,6 +25,7 @@ This repository is split into two packages:
 _Note: you must use the `--watchFolders` flag with the `start` command when testing the CLI with `yarn link` like this. Otherwise Metro can't find the symlinked folder and this may result in errors such as `ReferenceError: SHA-1 for file ... is not computed`._
 
 ### Setup
+
 Because of a modular design of the CLI, we recommend developing using symbolic links to its packages. This way you can use it seamlessly in the tested project, as you'd use the locally installed CLI. Here's what you need to run in the terminal:
 
 #### yarn v1
@@ -33,10 +34,12 @@ Because of a modular design of the CLI, we recommend developing using symbolic l
 cd /path/to/cloned/cli/
 yarn link-packages
 ```
+
 And then:
+
 ```sh
 cd /my/new/react-native/project/
-yarn link "@react-native-community/cli-platform-ios" "@react-native-community/cli-platform-android" "@react-native-community/cli" "@react-native-community/cli-server-api" "@react-native-community/cli-types" "@react-native-community/cli-tools" "@react-native-community/cli-debugger-ui"
+yarn link "@react-native-community/cli-platform-ios" "@react-native-community/cli-platform-android" "@react-native-community/cli" "@react-native-community/cli-server-api" "@react-native-community/cli-types" "@react-native-community/cli-tools" "@react-native-community/cli-debugger-ui" "@react-native-community/cli-hermes"
 ```
 
 Once you're done with testing and you'd like to get back to regular setup, run `yarn unlink` instead of `yarn link` from above command. Then `yarn install --force`.
@@ -51,6 +54,7 @@ yarn link /path/to/cloned/cli/ --all
 When you'd like to revert to a regular setup, you will need to revert the changes made to the `resolutions` field of `package.json`.
 
 ### Running
+
 ```sh
 yarn react-native start --watchFolders /path/to/cloned/cli/
 yarn react-native run-android

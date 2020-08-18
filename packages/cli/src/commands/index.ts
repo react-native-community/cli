@@ -11,7 +11,7 @@ import info from './info/info';
 import config from './config/config';
 import init from './init';
 import doctor from './doctor';
-import profile from './profile-hermes';
+import profile from '@react-native-community/cli-hermes';
 
 export const projectCommands = [
   start,

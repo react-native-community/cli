@@ -78,7 +78,7 @@ export async function findSourcemap(ctx: Config): Promise<string> {
     'android',
     'app',
     'build',
-    'intermediates', //'generated',
+    'intermediates',
     'sourcemaps',
     'react',
     'debug',

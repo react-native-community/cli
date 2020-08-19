@@ -1,12 +1,15 @@
 import {Config} from '@react-native-community/cli-types';
 import {execSync} from 'child_process';
 import {logger, CLIError} from '@react-native-community/cli-tools';
-import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
 import transformer from 'hermes-profile-transformer';
 import {findSourcemap, generateSourcemap} from './sourcemapUtils';
+import {
+  getAndroidProject,
+  getPackageName,
+} from '@react-native-community/cli-platform-android';
 /**
  * Get the last modified hermes profile
  * @param packageName
@@ -22,57 +25,8 @@ function getLatestFile(packageName: string): string {
 }
 
 function execSyncWithLog(command: string) {
-  if (logger.isVerbose()) {
-    logger.debug(`${command}\n`);
-  }
-
+  logger.debug(`${command}`);
   return execSync(command);
-}
-
-/**
- * Get the package name of the running React Native app
- * @param config
- */
-function getPackageName(config: Config) {
-  const androidProject = config.project.android;
-
-  if (!androidProject) {
-    throw new CLIError(`
-  Android project not found. Are you sure this is a React Native project?
-  If your Android files are located in a non-standard location (e.g. not inside \'android\' folder), consider setting
-  \`project.android.sourceDir\` option to point to a new location.
-`);
-  }
-  const {manifestPath} = androidProject;
-  const androidManifest = fs.readFileSync(manifestPath, 'utf8');
-
-  let packageNameMatchArray = androidManifest.match(/package="(.+?)"/);
-  if (!packageNameMatchArray || packageNameMatchArray.length === 0) {
-    throw new CLIError(
-      'Failed to build the app: No package name found. Found errors in /src/main/AndroidManifest.xml',
-    );
-  }
-
-  let packageName = packageNameMatchArray[1];
-
-  if (!validatePackageName(packageName)) {
-    logger.warn(
-      `Invalid application's package name "${chalk.bgRed(
-        packageName,
-      )}" in 'AndroidManifest.xml'. Read guidelines for setting the package name here: ${chalk.underline.dim(
-        'https://developer.android.com/studio/build/application-id',
-      )}`,
-    );
-  }
-  return packageName;
-}
-
-/**
- * Validates that the package name is correct
- * @param packageName
- */
-function validatePackageName(packageName: string) {
-  return /^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/.test(packageName);
 }
 
 /**
@@ -91,65 +45,64 @@ export async function downloadProfile(
   sourcemapPath?: string,
   raw?: boolean,
   shouldGenerateSourcemap?: boolean,
+  port?: string,
 ) {
   try {
-    const packageName = getPackageName(ctx);
+    const androidProject = getAndroidProject(ctx);
+    const packageName = getPackageName(androidProject);
 
-    // if file name is not specified, pull the latest file from device
+    // If file name is not specified, pull the latest file from device
     const file = fileName || (await getLatestFile(packageName));
     if (!file) {
-      logger.error(
-        'There is no file in the cache/ directory. Did you record a profile from the developer menu?\n',
+      throw new CLIError(
+        'There is no file in the cache/ directory. Did you record a profile from the developer menu?',
       );
-      process.exit(1);
     }
 
-    logger.info(`File to be pulled: ${file}\n`);
+    logger.info(`File to be pulled: ${file}`);
 
-    //if destination path is not specified, pull to the current directory
+    // If destination path is not specified, pull to the current directory
     dstPath = dstPath || ctx.root;
 
-    if (logger.isVerbose()) {
-      logger.info('Internal commands run to pull the file:\n');
-    }
+    logger.debug('Internal commands run to pull the file:');
 
-    //Copy the file from device's data to sdcard, then pull the file to a temp directory
+    // Copy the file from device's data to sdcard, then pull the file to a temp directory
     execSyncWithLog(`adb shell run-as ${packageName} cp cache/${file} /sdcard`);
 
-    //If --raw, pull the hermes profile to dstPath
+    // If --raw, pull the hermes profile to dstPath
     if (raw) {
       execSyncWithLog(`adb pull /sdcard/${file} ${dstPath}`);
-      logger.success(`Successfully pulled the file to ${dstPath}/${file}\n`);
+      logger.success(`Successfully pulled the file to ${dstPath}/${file}`);
     }
 
-    //Else: transform the profile to Chrome format and pull it to dstPath
+    // Else: transform the profile to Chrome format and pull it to dstPath
     else {
       const osTmpDir = os.tmpdir();
       const tempFilePath = path.join(osTmpDir, file);
 
       execSyncWithLog(`adb pull /sdcard/${file} ${tempFilePath}`);
 
-      //If path to source map is not given
+      // If path to source map is not given
       if (!sourcemapPath) {
-        //Get or generate the source map
+        // Get or generate the source map
         if (shouldGenerateSourcemap) {
-          sourcemapPath = await generateSourcemap();
+          sourcemapPath = await generateSourcemap(port);
         } else {
-          sourcemapPath = await findSourcemap(ctx);
+          sourcemapPath = await findSourcemap(ctx, port);
         }
 
-        //Run without source map
+        // Run without source map
         if (!sourcemapPath) {
           logger.warn(
-            'Cannot generate or find bundle and source map, running the transformer without source map\n',
+            'Cannot find source maps, running the transformer without it',
           );
           logger.info(
-            'Instructions on how to get source map: set `bundleInDebug: true` in your app/build.gradle file, inside the `project.ext.react` map.\n',
+            'Instructions on how to get source maps: set `bundleInDebug: true` in your app/build.gradle file, inside the `project.ext.react` map.',
           );
         }
       }
 
-      //Run transformer tool to convert from Hermes to Chrome format
+      // Run transformer tool to convert from Hermes to Chrome format
       const events = await transformer(
         tempFilePath,
         sourcemapPath,
@@ -166,7 +119,7 @@ export async function downloadProfile(
         'utf-8',
       );
       logger.success(
-        `Successfully converted to Chrome tracing format and pulled the file to ${transformedFilePath}\n`,
+        `Successfully converted to Chrome tracing format and pulled the file to ${transformedFilePath}`,
       );
     }
   } catch (e) {

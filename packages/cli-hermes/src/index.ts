@@ -1,1 +1,2 @@
-export {default} from './profileHermes';
+import profileHermes from './profileHermes/index';
+export default profileHermes;

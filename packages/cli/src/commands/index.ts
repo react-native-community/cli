@@ -11,7 +11,7 @@ import info from './info/info';
 import config from './config/config';
 import init from './init';
 import doctor from './doctor';
-import profile from '@react-native-community/cli-hermes';
+import profileHermes from '@react-native-community/cli-hermes';
 
 export const projectCommands = [
   start,
@@ -25,7 +25,7 @@ export const projectCommands = [
   info,
   config,
   doctor,
-  profile,
+  profileHermes,
 ] as Command[];
 
 export const detachedCommands = [init, doctor] as DetachedCommand[];

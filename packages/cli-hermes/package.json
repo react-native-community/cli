@@ -9,6 +9,7 @@
   "types": "build/index.d.ts",
   "dependencies": {
     "@react-native-community/cli-tools": "^4.11.0",
+    "chalk": "^4.1.0",
     "hermes-profile-transformer": "^0.0.6",
     "ip": "^1.1.5"
   },

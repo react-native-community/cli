@@ -569,10 +569,6 @@ File name of the profile to be downloaded, eg. sampling-profiler-trace8593107139
 
 > default: pull the latest file
 
-#### `--verbose`
-
-Lists commands and steps that are run internally to pull the file from Android device
-
 #### `--raw`
 
 Pulls the original Hermes tracing profile without any transformation
@@ -584,6 +580,12 @@ The local path to your source map file if you generated it manually, ex. `/tmp/s
 #### `--generate-sourcemap`
 
 Generate the JS bundle and source map in `os.tmpdir()`
+
+#### '--port [number]',
+
+The running metro server port number
+
+> default: 8081
 
 ### Notes on source map
 

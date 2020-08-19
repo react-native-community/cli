@@ -1,13 +1,13 @@
-import {logger} from '@react-native-community/cli-tools';
+import {logger, CLIError} from '@react-native-community/cli-tools';
 import {Config} from '@react-native-community/cli-types';
 import {downloadProfile} from './downloadProfile';
 
 type Options = {
-  verbose: boolean;
   fileName?: string;
   raw?: boolean;
   sourcemapPath?: string;
   generateSourcemap?: boolean;
+  port?: string;
 };
 
 async function profileHermes(
@@ -17,13 +17,10 @@ async function profileHermes(
 ) {
   try {
     logger.info(
-      'Downloading a Hermes Sampling Profiler from your Android device...\n',
+      'Downloading a Hermes Sampling Profiler from your Android device...',
     );
     if (!options.fileName) {
-      logger.info('No filename is provided, pulling latest file\n');
-    }
-    if (options.verbose) {
-      logger.setVerbose(true);
+      logger.info('No filename is provided, pulling latest file');
     }
     await downloadProfile(
       ctx,
@@ -32,9 +29,10 @@ async function profileHermes(
       options.sourcemapPath,
       options.raw,
       options.generateSourcemap,
+      options.port,
     );
   } catch (err) {
-    logger.error(`Unable to download the Hermes Sampling Profile.\n${err}`);
+    throw new CLIError('Failed to download the Hermes Sampling Profile.', err);
   }
 }
 
@@ -50,11 +48,6 @@ export default {
         'File name of the profile to be downloaded, eg. sampling-profiler-trace8593107139682635366.cpuprofile',
     },
     {
-      name: '--verbose',
-      description:
-        'Lists commands and steps that are run internally when pulling the file from Android device',
-    },
-    {
       name: '--raw',
       description:
         'Pulls the original Hermes tracing profile without any transformation',
@@ -67,6 +60,11 @@ export default {
     {
       name: '--generate-sourcemap',
       description: 'Generates the JS bundle and source map',
+    },
+    {
+      name: '--port [number]',
+      default: process.env.RCT_METRO_PORT || 8081,
+      parse: (val: number) => String(val),
     },
   ],
   examples: [

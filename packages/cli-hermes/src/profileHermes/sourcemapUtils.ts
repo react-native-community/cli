@@ -59,7 +59,7 @@ export async function generateSourcemap(
   if (sourceMapResult) {
     logger.debug('Using source maps from Metro packager server');
     writeJsonSync(sourceMapPath, sourceMapResult);
-    logger.info(
+    logger.debug(
       `Successfully obtained the source map and stored it in ${sourceMapPath}`,
     );
     return sourceMapPath;

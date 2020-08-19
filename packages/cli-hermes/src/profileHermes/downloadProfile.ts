@@ -123,6 +123,6 @@ export async function downloadProfile(
       );
     }
   } catch (e) {
-    throw new Error(e.message);
+    throw new CLIError('Failed to download the sampling profiler');
   }
 }

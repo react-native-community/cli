@@ -4,9 +4,5 @@
     "rootDir": "src",
     "outDir": "build"
   },
-  "references": [
-    {"path": "../tools"},
-    {"path": "../cli-types"},
-    {"path": "../platform-android"}
-  ]
+  "references": [{"path": "../tools"}, {"path": "../cli-types"}]
 }

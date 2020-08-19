@@ -82,7 +82,7 @@ export async function findSourcemap(
     'android',
     'app',
     'build',
-    'intermediates', //'generated',
+    'intermediates',
     'sourcemaps',
     'react',
     'debug',

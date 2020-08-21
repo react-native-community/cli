@@ -328,7 +328,7 @@ function buildProject(
           logger.debug(stringData);
         } else {
           loader.start(
-            `Building your app${'.'.repeat(buildOutput.length % 10)}`,
+            `Building the app${'.'.repeat(buildOutput.length % 10)}`,
           );
         }
       }

@@ -318,7 +318,6 @@ function buildProject(
     );
     let buildOutput = '';
     let errorOutput = '';
-    let buildIndicator = '';
     buildProcess.stdout.on('data', (data: Buffer) => {
       const stringData = data.toString();
       buildOutput += stringData;
@@ -328,11 +327,9 @@ function buildProject(
         if (logger.isVerbose()) {
           logger.debug(stringData);
         } else {
-          if (buildIndicator.length > 10) {
-            buildIndicator = '';
-          }
-          buildIndicator += '.';
-          loader.start(`Building your app${buildIndicator}`);
+          loader.start(
+            `Building your app${'.'.repeat(buildOutput.length % 10)}`,
+          );
         }
       }
     });

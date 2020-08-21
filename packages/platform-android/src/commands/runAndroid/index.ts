@@ -113,7 +113,6 @@ function buildAndRun(args: Flags, androidProject: AndroidProject) {
   process.chdir(androidProject.sourceDir);
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
 
-  // "app" is usually the default value for Android apps with only 1 app
   const {appFolder} = args;
   const packageName = getPackageName(androidProject, appFolder);
 

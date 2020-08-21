@@ -26,6 +26,7 @@ import {
   getDefaultUserTerminal,
 } from '@react-native-community/cli-tools';
 import {Device} from '../../types';
+import ora from 'ora';
 
 type FlagsT = {
   simulator?: string;
@@ -296,6 +297,7 @@ function buildProject(
       '-destination',
       `id=${udid}`,
     ];
+    const loader = ora();
     logger.info(
       `Building ${chalk.dim(
         `(using "xcodebuild ${xcodebuildArgs.join(' ')}")`,
@@ -316,6 +318,7 @@ function buildProject(
     );
     let buildOutput = '';
     let errorOutput = '';
+    let buildIndicator = '';
     buildProcess.stdout.on('data', (data: Buffer) => {
       const stringData = data.toString();
       buildOutput += stringData;
@@ -325,7 +328,11 @@ function buildProject(
         if (logger.isVerbose()) {
           logger.debug(stringData);
         } else {
-          process.stdout.write('.');
+          if (buildIndicator.length > 10) {
+            buildIndicator = '';
+          }
+          buildIndicator += '.';
+          loader.start(`Building your app${buildIndicator}`);
         }
       }
     });
@@ -336,7 +343,7 @@ function buildProject(
       if (xcpretty) {
         xcpretty.stdin.end();
       } else {
-        process.stdout.write('\n');
+        loader.stop();
       }
       if (code !== 0) {
         reject(
@@ -353,6 +360,7 @@ function buildProject(
         );
         return;
       }
+      logger.success('Successfully built the app');
       resolve(getProductName(buildOutput) || scheme);
     });
   });

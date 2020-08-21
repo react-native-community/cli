@@ -7,6 +7,6 @@
   "references": [
     {"path": "../tools"},
     {"path": "../cli-types"},
-    {"path": "../cli-platform-android"}
+    {"path": "../platform-android"}
   ]
 }

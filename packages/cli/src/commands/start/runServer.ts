@@ -91,6 +91,7 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
 
   const serverInstance = await Metro.runServer(metroConfig, {
     host: args.host,
+    port: metroConfig.server.port,
     secure: args.https,
     secureCert: args.cert,
     secureKey: args.key,

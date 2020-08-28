@@ -29,10 +29,6 @@ type Options = {
 export const getHealthchecks = ({contributor}: Options): Healthchecks => {
   let additionalChecks: HealthCheckCategory[] = [];
 
-  // Todo: maybe detached commands should take the config as an arg, thats null if running in detacted.
-  // There is already another case of a health check running loadConfig inside a try,
-  // so we could save some time by passing it through
-
   // Doctor can run in a detached mode, where there isn't a config so this can fail
   try {
     let config = loadConfig();

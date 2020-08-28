@@ -15,6 +15,7 @@ import fs from 'fs';
 import path from 'path';
 import chalk from 'chalk';
 import {Config} from '@react-native-community/cli-types';
+// @ts-ignore untyped
 import inquirer from 'inquirer';
 import findXcodeProject, {ProjectInfo} from './findXcodeProject';
 import parseIOSDevicesList from './parseIOSDevicesList';

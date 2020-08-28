@@ -9,6 +9,7 @@ import path from 'path';
 import execa from 'execa';
 import chalk from 'chalk';
 import fs from 'fs';
+// @ts-ignore untyped
 import inquirer from 'inquirer';
 import {Config} from '@react-native-community/cli-types';
 import adb from './adb';

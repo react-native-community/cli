@@ -95,7 +95,7 @@ Longer description of this health check
 
 ##### `getDiagnostics`
 
-Functions which performs the actual check.  Simple checks can just return `needsToBeFixed`.  Checks which are looking at versions of an installed components (such as the version of node), can also return `version`, `versions` and `versionRange` to provide better information to be displayed in `react-native doctor` when running the check
+Functions which performs the actual check.  Simple checks can just return `needsToBeFixed`.  Checks which are looking at versions of an installed component (such as the version of node), can also return `version`, `versions` and `versionRange` to provide better information to be displayed in `react-native doctor` when running the check
 
 ##### `win32AutomaticFix`
 
@@ -145,3 +145,31 @@ If an automated fix cannot be performed, this function should be used to provide
 ##### `environmentInfo`
 
 Provides information about the current system
+
+
+### Examples of RunAutomaticFix implementations
+
+A health check that requires the user to manually go download/install something.  This check will immediately display a message to notify the user how to fix the issue.
+
+```ts
+async function needToInstallFoo({loader, logManualInstallation}) {
+    loader.fail();
+
+    return logManualInstallation({
+      healthcheck: 'Foo',
+      url: 'https:/foo.com/download',
+    });
+}
+```
+
+A health check that runs some commands locally which may fix the issue.  This check will display a spinner while the exec commands are running.  Then once the commands are complete, the spinner will change to a checkmark.
+
+```ts
+
+import { exec } from 'promisify-child-process';
+async function fixFoo({loader}) {
+  await exec(`foo --install`);
+  await exec(`foo --fix`);
+
+  loader.succeed();
+}

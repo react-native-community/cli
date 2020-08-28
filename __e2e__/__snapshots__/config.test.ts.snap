@@ -33,6 +33,7 @@ exports[`shows up current config without unnecessary output 1`] = `
     }
   ],
   "assets": [],
+  "healthChecks": [],
   "platforms": {
     "ios": {},
     "android": {}

@@ -51,6 +51,7 @@ function getAllAvailableDevices(adbPath: string) {
     .split('\n')
     .filter(Boolean)
     .map(emulator => ({
+      deviceId: undefined,
       name: emulator,
       type: 'emulator',
     }));
@@ -58,6 +59,7 @@ function getAllAvailableDevices(adbPath: string) {
   const physicalDevicesList = execFileSync(adbPath, ['devices', '-l'], {
     encoding: 'utf-8',
   })
+    .toString()
     .replace(/\n$/, '')
     .split('\n');
 

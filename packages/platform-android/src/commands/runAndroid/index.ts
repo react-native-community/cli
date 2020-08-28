@@ -24,7 +24,6 @@ import {
   CLIError,
 } from '@react-native-community/cli-tools';
 import warnAboutManuallyLinkedLibs from '../../link/warnAboutManuallyLinkedLibs';
-import tryLaunchEmulator from './__mocks__/tryLaunchEmulator';
 import {launchEmulator} from './emulator';
 
 // Validates that the package name is correct
@@ -190,7 +189,13 @@ async function promptWhichDeviceToRun(adbPath: string) {
     return;
   }
 
-  const devicesList = devices.map(({type, name}) => {
+  const devicesList = devices.map(device => {
+    if (!device) {
+      return;
+    }
+
+    const {type, name} = device;
+
     const highlightColor = type === 'emulator' ? 'gray' : 'blue';
 
     return type && `${name} - ${chalk[highlightColor](type)}`;
@@ -208,7 +213,7 @@ async function promptWhichDeviceToRun(adbPath: string) {
     },
   ]);
 
-  return devices.find(device => device.name === chosenDevice)!;
+  return devices.find(device => device && device.name === chosenDevice)!;
 }
 
 async function runOnSpecificDevice(

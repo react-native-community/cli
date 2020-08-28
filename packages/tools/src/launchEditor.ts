@@ -42,6 +42,15 @@ const COMMON_EDITORS: Record<string, string> = {
   '/Applications/WebStorm.app/Contents/MacOS/webstorm': 'webstorm',
 };
 
+// Map of process image name used to identify already running instances of the editor
+// And an editor id which is used to determine which arguments to add to the commandline
+const COMMON_WINDOWS_EDITORS: Record<string, string> = {
+  'Code.exe': 'code',
+  'sublime_text.exe': 'subl',
+  'devenv.exe': 'devenv',
+  'notepad.exe': 'notepad',
+};
+
 // Transpiled version of: /^([a-zA-Z]+:)?[\p{L}0-9/.\-_\\]+$/u
 // Non-transpiled version requires support for Unicode property regex. Allows
 // alphanumeric characters, periods, dashes, slashes, and underscores, with an optional drive prefix
@@ -88,9 +97,27 @@ function getArgumentsForLineNumber(
         ['-g', `${fileName}:${lineNumber}`],
         workspace,
       );
+    case 'devenv':
+      return ['/EDIT', fileName];
     // For all others, drop the lineNumber until we have
     // a mapping above, since providing the lineNumber incorrectly
     // can result in errors or confusing behavior.
+    default:
+      return [fileName];
+  }
+}
+
+function getArgumentsForFileName(
+  editor: string,
+  fileName: string,
+  workspace: any,
+) {
+  switch (path.basename(editor)) {
+    case 'code':
+      return addWorkspaceToArgumentsIfExists([fileName], workspace);
+    case 'devenv':
+      return ['/EDIT', fileName];
+    // Every other editor just takes the filename as an argument
     default:
       return [fileName];
   }
@@ -102,21 +129,34 @@ function guessEditor() {
     return shellQuote.parse(process.env.REACT_EDITOR);
   }
 
-  // Using `ps x` on OSX we can find out which editor is currently running.
-  // Potentially we could use similar technique for Windows and Linux
-  if (process.platform === 'darwin') {
-    try {
+  try {
+    // Using `ps x` on OSX we can find out which editor is currently running.
+    // Potentially we could use similar technique for Linux
+    if (process.platform === 'darwin') {
       const output = execSync('ps x').toString();
       const processNames = Object.keys(COMMON_EDITORS);
-      for (let i = 0; i < processNames.length; i++) {
-        const processName = processNames[i];
+      for (const processName of processNames) {
         if (output.indexOf(processName) !== -1) {
           return [COMMON_EDITORS[processName]];
         }
       }
-    } catch (error) {
-      // Ignore...
+    } else if (process.platform === 'win32') {
+      const output = execSync(
+        'tasklist /NH /FO CSV /FI "SESSIONNAME ne Services"',
+      ).toString();
+
+      const runningProcesses = output
+        .split('\n')
+        .map(line => line.replace(/^"|".*\r$/gm, ''));
+      const processNames = Object.keys(COMMON_WINDOWS_EDITORS);
+      for (const processName of processNames) {
+        if (runningProcesses.includes(processName)) {
+          return [COMMON_WINDOWS_EDITORS[processName]];
+        }
+      }
     }
+  } catch (error) {
+    // Ignore...
   }
 
   // Last resort, use old skool env vars
@@ -131,6 +171,18 @@ function guessEditor() {
 }
 
 function printInstructions(title: string) {
+  const WINDOWS_FIXIT_INSTRUCTIONS = [
+    '  To set it up, you can run something like "SETX REACT_EDITOR code"',
+    '  which will set the environment variable in future shells,',
+    '  then "SET REACTEDITOR=code" to set it in the current shell',
+  ];
+
+  const FIXIT_INSTRUCTIONS = [
+    '  To set it up, you can add something like ',
+    '  export REACT_EDITOR=atom to your ~/.bashrc or ~/.zshrc depending on ',
+    '  which shell you use.',
+  ];
+
   logger.info(
     [
       '',
@@ -138,9 +190,10 @@ function printInstructions(title: string) {
       '  When you see Red Box with stack trace, you can click any ',
       '  stack frame to jump to the source file. The packager will launch your ',
       '  editor of choice. It will first look at REACT_EDITOR environment ',
-      '  variable, then at EDITOR. To set it up, you can add something like ',
-      '  export REACT_EDITOR=atom to your ~/.bashrc or ~/.zshrc depending on ',
-      '  which shell you use.',
+      '  variable, then at EDITOR.',
+      ...(process.platform === 'win32'
+        ? WINDOWS_FIXIT_INSTRUCTIONS
+        : FIXIT_INSTRUCTIONS),
       '',
     ].join('\n'),
   );
@@ -162,6 +215,56 @@ function findRootForFile(
     const absoluteRoot = transformToAbsolutePathIfNeeded(root);
     return absoluteFileName.startsWith(absoluteRoot + path.sep);
   });
+}
+
+// On windows, find the editor executable path even if its not in the users path
+function editorWindowsLaunchPath(editor: string) {
+  if (fs.existsSync(editor)) {
+    // Editor is a full path to an exe, we can just launch it
+    return editor;
+  }
+
+  try {
+    execSync(`where ${editor}`, {stdio: 'ignore'});
+    // Editor is on the path, we can just launch it
+    return editor;
+  } catch (error) {
+    // ignore
+  }
+
+  try {
+    const editorNames = Object.values(COMMON_WINDOWS_EDITORS);
+    const editorImageNames = Object.keys(COMMON_WINDOWS_EDITORS);
+    for (let i = 0; i < editorNames.length; i++) {
+      const editorName = editorNames[i];
+      if (editor.toLowerCase() === editorName.toLowerCase()) {
+        // An editor was guessed by guessEditor, but isn't part of the users path
+        // Attempt to get the executable location from the running process
+        const output = execSync(
+          `tasklist /FO CSV /NH /FI "IMAGENAME eq ${editorImageNames[i]}"`,
+        ).toString();
+
+        const results = output.split(',');
+        if (results[0] !== `"${editorImageNames[i]}"`) {
+          // Failed to find a running instance...
+          return editor;
+        }
+
+        const pid = parseInt(results[1].replace(/^"|"$/gm, ''), 10);
+        return execSync(
+          `powershell (Get-CimInstance Win32_Process -Filter "ProcessId=${pid}").ExecutablePath`,
+        )
+          .toString()
+          .trim();
+      }
+    }
+  } catch (error) {
+    // ignore
+  }
+
+  // Just use what the user specified, it will probably fail,
+  // but we will show some help text when it fails.
+  return editor;
 }
 
 let _childProcess: ChildProcess | null = null;
@@ -192,7 +295,7 @@ function launchEditor(
       getArgumentsForLineNumber(editor, fileName, lineNumber, workspace),
     );
   } else {
-    args.push(fileName);
+    args = args.concat(getArgumentsForFileName(editor, fileName, workspace));
   }
 
   // cmd.exe on Windows is vulnerable to RCE attacks given a file name of the
@@ -227,9 +330,13 @@ function launchEditor(
   if (process.platform === 'win32') {
     // On Windows, launch the editor in a shell because spawn can only
     // launch .exe files.
-    _childProcess = spawn('cmd.exe', ['/C', editor].concat(args), {
-      stdio: 'inherit',
-    });
+    _childProcess = spawn(
+      'cmd.exe',
+      ['/C', editorWindowsLaunchPath(editor)].concat(args),
+      {
+        stdio: 'inherit',
+      },
+    );
   } else {
     _childProcess = spawn(editor, args, {stdio: 'inherit'});
   }

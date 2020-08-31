@@ -1,6 +1,7 @@
 import os from 'os';
 import execa from 'execa';
 import Adb from './adb';
+import {CLIError} from '@react-native-community/cli-tools';
 
 const emulatorCommand = process.env.ANDROID_HOME
   ? `${process.env.ANDROID_HOME}/emulator/emulator`
@@ -15,7 +16,10 @@ const getEmulators = () => {
   }
 };
 
-export const launchEmulator = async (emulatorName: string, adbPath: string) => {
+export const launchEmulator = async (
+  emulatorName: string,
+  adbPath: string,
+): Promise<string[]> => {
   return new Promise((resolve, reject) => {
     const devicesList = Adb.getDevices(adbPath);
 
@@ -29,7 +33,7 @@ export const launchEmulator = async (emulatorName: string, adbPath: string) => {
     // Reject command after timeout
     const rejectTimeout = setTimeout(() => {
       cleanup();
-      reject(`Could not start emulator within ${timeout} seconds.`);
+      reject({message: `Could not start emulator within ${timeout} seconds.`});
     }, timeout * 1000);
 
     const bootCheckInterval = setInterval(() => {
@@ -39,7 +43,7 @@ export const launchEmulator = async (emulatorName: string, adbPath: string) => {
 
       if (hasDevicesListChanged) {
         cleanup();
-        resolve();
+        resolve(latestDevicesList);
       }
     }, 1000);
 
@@ -48,32 +52,31 @@ export const launchEmulator = async (emulatorName: string, adbPath: string) => {
       clearInterval(bootCheckInterval);
     };
 
-    cp.on('exit', () => {
+    cp.on('exit', (isEmulatorLaunched: 0 | 1) => {
       cleanup();
-      reject('Emulator exited before boot.');
+
+      if (!isEmulatorLaunched) {
+        return reject({message: 'Emulator exited before boot.'});
+      }
+
+      return resolve(Adb.getDevices(adbPath));
     });
 
     cp.on('error', error => {
       cleanup();
-      reject(error.message);
+      reject(error);
     });
   });
 };
 
-export const tryLaunchEmulator = async (
-  adbPath: string,
-): Promise<{success: boolean; error?: string}> => {
+export const launchAnyEmulator = async (adbPath: string): Promise<string[]> => {
   const emulators = getEmulators();
-  if (emulators.length > 0) {
-    try {
-      await launchEmulator(emulators[0], adbPath);
-      return {success: true};
-    } catch (error) {
-      return {success: false, error};
-    }
+
+  if (emulators.length === 0) {
+    throw new CLIError(
+      'No emulators found as an output of `emulator -list-avds`',
+    );
   }
-  return {
-    success: false,
-    error: 'No emulators found as an output of `emulator -list-avds`',
-  };
+
+  return await launchEmulator(emulators[0], adbPath);
 };

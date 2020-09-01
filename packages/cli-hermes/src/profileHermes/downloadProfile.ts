@@ -41,7 +41,7 @@ function execSyncWithLog(command: string) {
 export async function downloadProfile(
   ctx: Config,
   dstPath: string,
-  fileName?: string,
+  filename?: string,
   sourcemapPath?: string,
   raw?: boolean,
   shouldGenerateSourcemap?: boolean,
@@ -52,7 +52,7 @@ export async function downloadProfile(
     const packageName = getPackageName(androidProject);
 
     // If file name is not specified, pull the latest file from device
-    const file = fileName || (await getLatestFile(packageName));
+    const file = filename || (await getLatestFile(packageName));
     if (!file) {
       throw new CLIError(
         'There is no file in the cache/ directory. Did you record a profile from the developer menu?',
@@ -123,6 +123,6 @@ export async function downloadProfile(
       );
     }
   } catch (e) {
-    throw new CLIError('Failed to download the sampling profiler');
+    throw e;
   }
 }

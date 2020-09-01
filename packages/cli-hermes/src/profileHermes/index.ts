@@ -3,7 +3,7 @@ import {Config} from '@react-native-community/cli-types';
 import {downloadProfile} from './downloadProfile';
 
 type Options = {
-  fileName?: string;
+  filename?: string;
   raw?: boolean;
   sourcemapPath?: string;
   generateSourcemap?: boolean;
@@ -19,13 +19,13 @@ async function profileHermes(
     logger.info(
       'Downloading a Hermes Sampling Profiler from your Android device...',
     );
-    if (!options.fileName) {
+    if (!options.filename) {
       logger.info('No filename is provided, pulling latest file');
     }
     await downloadProfile(
       ctx,
       dstPath,
-      options.fileName,
+      options.filename,
       options.sourcemapPath,
       options.raw,
       options.generateSourcemap,
@@ -43,7 +43,7 @@ export default {
   func: profileHermes,
   options: [
     {
-      name: '--fileName [string]',
+      name: '--filename [string]',
       description:
         'File name of the profile to be downloaded, eg. sampling-profiler-trace8593107139682635366.cpuprofile',
     },

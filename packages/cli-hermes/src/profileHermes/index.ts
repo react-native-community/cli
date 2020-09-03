@@ -1,4 +1,4 @@
-import {logger} from '@react-native-community/cli-tools';
+import {logger, CLIError} from '@react-native-community/cli-tools';
 import {Config} from '@react-native-community/cli-types';
 import {downloadProfile} from './downloadProfile';
 
@@ -32,7 +32,7 @@ async function profileHermes(
       options.port,
     );
   } catch (err) {
-    throw err;
+    throw err as CLIError;
   }
 }
 

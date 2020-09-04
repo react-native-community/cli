@@ -30,6 +30,7 @@
   "dependencies": {
     "@hapi/joi": "^15.0.3",
     "@react-native-community/cli-debugger-ui": "^4.9.0",
+    "@react-native-community/cli-hermes": "^4.11.0",
     "@react-native-community/cli-server-api": "^4.11.0",
     "@react-native-community/cli-tools": "^4.11.0",
     "@react-native-community/cli-types": "^4.10.1",

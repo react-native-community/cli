@@ -22,11 +22,7 @@ import {
   CLIError,
 } from '@react-native-community/cli-tools';
 import warnAboutManuallyLinkedLibs from '../../link/warnAboutManuallyLinkedLibs';
-
-// Validates that the package name is correct
-function validatePackageName(packageName: string) {
-  return /^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/.test(packageName);
-}
+import {getAndroidProject, getPackageName} from '../../utils/getAndroidProject';
 
 function displayWarnings(config: Config, args: Flags) {
   warnAboutManuallyLinkedLibs(config);
@@ -64,15 +60,7 @@ type AndroidProject = NonNullable<Config['project']['android']>;
  */
 async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
   displayWarnings(config, args);
-  const androidProject = config.project.android;
-
-  if (!androidProject) {
-    throw new CLIError(`
-  Android project not found. Are you sure this is a React Native project?
-  If your Android files are located in a non-standard location (e.g. not inside \'android\' folder), consider setting
-  \`project.android.sourceDir\` option to point to a new location.
-`);
-  }
+  const androidProject = getAndroidProject(config);
 
   if (args.jetifier) {
     logger.info(
@@ -125,31 +113,8 @@ function buildAndRun(args: Flags, androidProject: AndroidProject) {
   process.chdir(androidProject.sourceDir);
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
 
-  // "app" is usually the default value for Android apps with only 1 app
-  const {appName, manifestPath} = androidProject;
   const {appFolder} = args;
-  const androidManifest = fs.readFileSync(manifestPath, 'utf8');
-
-  let packageNameMatchArray = androidManifest.match(/package="(.+?)"/);
-  if (!packageNameMatchArray || packageNameMatchArray.length === 0) {
-    throw new CLIError(
-      `Failed to build the app: No package name found. Found errors in ${chalk.underline.dim(
-        `${appFolder || appName}/src/main/AndroidManifest.xml`,
-      )}`,
-    );
-  }
-
-  let packageName = packageNameMatchArray[1];
-
-  if (!validatePackageName(packageName)) {
-    logger.warn(
-      `Invalid application's package name "${chalk.bgRed(
-        packageName,
-      )}" in 'AndroidManifest.xml'. Read guidelines for setting the package name here: ${chalk.underline.dim(
-        'https://developer.android.com/studio/build/application-id',
-      )}`,
-    ); // we can also directly add the package naming rules here
-  }
+  const packageName = getPackageName(androidProject, appFolder);
 
   const adbPath = getAdbPath();
   if (args.deviceId) {

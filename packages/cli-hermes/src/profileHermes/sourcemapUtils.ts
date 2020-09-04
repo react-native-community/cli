@@ -42,6 +42,7 @@ async function getSourcemapFromServer(
     const {data} = await fetch(requestURL);
     return data as SourceMap;
   } catch (e) {
+    logger.debug(`Failed to fetch source map from "${requestURL}"`);
     return undefined;
   }
 }

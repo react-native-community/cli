@@ -563,7 +563,7 @@ Pull and convert a Hermes tracing profile to Chrome tracing profile, then store 
 
 #### Options
 
-#### `--fileName [string]`
+#### `--filename [string]`
 
 File name of the profile to be downloaded, eg. sampling-profiler-trace8593107139682635366.cpuprofile.
 

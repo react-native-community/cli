@@ -24,7 +24,7 @@ async function getEnvironmentInfo(
     win32: 'react-native-windows',
   };
 
-  const outOfTreePlatformPackage: any = outOfTreePlatforms[platform()];
+  const outOfTreePlatformPackage = outOfTreePlatforms[platform()];
   if (outOfTreePlatformPackage) {
     packages.push(outOfTreePlatformPackage);
   }

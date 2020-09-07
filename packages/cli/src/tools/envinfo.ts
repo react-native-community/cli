@@ -20,6 +20,7 @@ async function getEnvironmentInfo(
   let packages = ['react', 'react-native', '@react-native-community/cli'];
 
   const outOfTreePlatforms: {[key: string]: string} = {
+    darwin: 'react-native-macos',
     win32: 'react-native-windows',
   };
 

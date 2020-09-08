@@ -52,7 +52,7 @@ export async function downloadProfile(
     const packageName = getPackageName(androidProject);
 
     // If file name is not specified, pull the latest file from device
-    const file = filename || (getLatestFile(packageName));
+    const file = filename || getLatestFile(packageName);
     if (!file) {
       throw new CLIError(
         'There is no file in the cache/ directory. Did you record a profile from the developer menu?',

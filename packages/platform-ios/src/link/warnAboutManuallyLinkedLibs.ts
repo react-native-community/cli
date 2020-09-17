@@ -27,8 +27,6 @@ export default function warnAboutManuallyLinkedLibs(
       );
       deps = deps.concat(x ? dependency.name : []);
     }
-
-    logger.debug('Checking manually linked modules failed.');
   }
 
   const installedModules = [...new Set(deps)];

@@ -17,6 +17,6 @@ export default function removeProjectFromLibraries(
   file: {basename: string},
 ) {
   libraries.children = libraries.children.filter(
-    library => library.comment !== file.basename,
+    (library) => library.comment !== file.basename,
   );
 }

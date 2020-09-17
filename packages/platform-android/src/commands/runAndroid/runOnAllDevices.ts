@@ -17,7 +17,9 @@ import tryLaunchEmulator from './tryLaunchEmulator';
 import {Flags} from '.';
 
 function getTaskNames(appName: string, commands: Array<string>): Array<string> {
-  return appName ? commands.map(command => `${appName}:${command}`) : commands;
+  return appName
+    ? commands.map((command) => `${appName}:${command}`)
+    : commands;
 }
 
 function toPascalCase(value: string) {

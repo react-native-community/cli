@@ -4,7 +4,7 @@ import path from 'path';
 const findAssetsInFolder = (folder: string): string[] => {
   const assets = glob.sync(path.join(folder, '**'), {nodir: true});
   if (process.platform === 'win32') {
-    return assets.map(asset => asset.split('/').join('\\'));
+    return assets.map((asset) => asset.split('/').join('\\'));
   }
   return assets;
 };
@@ -20,7 +20,7 @@ export default function findAssets(
   assets: Array<string>,
 ): Array<string> {
   return (assets || [])
-    .map(asset => path.join(folder, asset))
+    .map((asset) => path.join(folder, asset))
     .reduce(
       (acc, assetPath) => acc.concat(findAssetsInFolder(assetPath)),
       [] as string[],

@@ -9,7 +9,7 @@ import makeHook from './makeHook';
 import printDeprecationWarning from './printDeprecationWarning';
 
 const dedupeAssets = (assets: Array<string>): Array<string> =>
-  uniqBy(assets, asset => path.basename(asset));
+  uniqBy(assets, (asset) => path.basename(asset));
 
 type Options = {
   linkDeps?: boolean;

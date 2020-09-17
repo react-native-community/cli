@@ -9,7 +9,7 @@ const emulatorCommand = process.env.ANDROID_HOME
 const getEmulators = () => {
   try {
     const emulatorsOutput = execa.sync(emulatorCommand, ['-list-avds']).stdout;
-    return emulatorsOutput.split(os.EOL).filter(name => name !== '');
+    return emulatorsOutput.split(os.EOL).filter((name) => name !== '');
   } catch {
     return [];
   }
@@ -47,7 +47,7 @@ const launchEmulator = async (emulatorName: string, adbPath: string) => {
       reject('Emulator exited before boot.');
     });
 
-    cp.on('error', error => {
+    cp.on('error', (error) => {
       cleanup();
       reject(error.message);
     });

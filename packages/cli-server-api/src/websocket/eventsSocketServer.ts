@@ -161,7 +161,7 @@ function attachToServer(
     }
   }
 
-  wss.on('connection', function(clientWs) {
+  wss.on('connection', function (clientWs) {
     const clientId = `client#${nextClientId++}`;
 
     clients.set(clientId, clientWs);
@@ -170,7 +170,7 @@ function attachToServer(
       clients.delete(clientId);
     };
 
-    clientWs.onmessage = event => {
+    clientWs.onmessage = (event) => {
       const message: Command | undefined = parseMessage(event.data.toString());
       if (message == null) {
         return;

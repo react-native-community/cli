@@ -9,7 +9,7 @@ export default function warnAboutPodInstall(config: Config) {
     `${config.project.ios!.podfile}.lock`,
   );
   const podDeps = Object.keys(config.dependencies)
-    .map(depName => {
+    .map((depName) => {
       const dependency = config.dependencies[depName].platforms.ios;
       return dependency && dependency.podspecPath
         ? path.basename(dependency.podspecPath).replace(/\.podspec/, '')
@@ -17,12 +17,12 @@ export default function warnAboutPodInstall(config: Config) {
     })
     .filter(Boolean);
 
-  const missingPods = podDeps.filter(podDep => !podLockDeps.includes(podDep));
+  const missingPods = podDeps.filter((podDep) => !podLockDeps.includes(podDep));
 
   if (missingPods.length) {
     logger.error(
       `Could not find the following native modules: ${missingPods
-        .map(pod => chalk.bold(pod))
+        .map((pod) => chalk.bold(pod))
         .join(', ')}. Did you forget to run "${chalk.bold('pod install')}" ?`,
     );
   }

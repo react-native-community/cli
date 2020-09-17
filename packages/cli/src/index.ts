@@ -19,7 +19,7 @@ commander
   .option('--version', 'Print CLI version')
   .option('--verbose', 'Increase logging verbosity');
 
-commander.arguments('<command>').action(cmd => {
+commander.arguments('<command>').action((cmd) => {
   printUnknownCommand(cmd);
   process.exit(1);
 });
@@ -55,7 +55,7 @@ function printHelpInformation(
 ) {
   let cmdName = this._name;
   const argsList = (this._args as Array<{required: boolean; name: string}>)
-    .map(arg => (arg.required ? `<${arg.name}>` : `[${arg.name}]`))
+    .map((arg) => (arg.required ? `<${arg.name}>` : `[${arg.name}]`))
     .join(' ');
 
   if (this._alias) {
@@ -76,7 +76,7 @@ function printHelpInformation(
 
   if (examples && examples.length > 0) {
     const formattedUsage = examples
-      .map(example => `  ${example.desc}: \n  ${chalk.cyan(example.cmd)}`)
+      .map((example) => `  ${example.desc}: \n  ${chalk.cyan(example.cmd)}`)
       .join('\n\n');
 
     output = output.concat([chalk.bold('\nExample usage:'), formattedUsage]);

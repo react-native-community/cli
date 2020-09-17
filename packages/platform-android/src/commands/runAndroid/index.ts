@@ -98,9 +98,7 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
         );
       } catch (error) {
         logger.warn(
-          `Failed to automatically start the packager server. Please run "react-native start" manually. Error details: ${
-            error.message
-          }`,
+          `Failed to automatically start the packager server. Please run "react-native start" manually. Error details: ${error.message}`,
         );
       }
     }

@@ -23,7 +23,7 @@ export default function copyAssetsAndroid(
   const assets = groupFilesByType(files);
 
   logger.debug(`Assets path: ${project.assetsPath}`);
-  (assets.font || []).forEach(asset => {
+  (assets.font || []).forEach((asset) => {
     const fontsDir = path.join(project.assetsPath, 'fonts');
     logger.debug(`Copying asset ${asset}`);
     // @todo: replace with fs.mkdirSync(path, {recursive}) + fs.copyFileSync

@@ -23,11 +23,11 @@ async function logAndroid() {
     filter: makeTagsFilter('ReactNative', 'ReactNativeJS'),
   });
 
-  emitter.on('entry', entry => {
+  emitter.on('entry', (entry) => {
     logger.log(formatEntry(entry));
   });
 
-  emitter.on('error', error => {
+  emitter.on('error', (error) => {
     logger.log(formatError(error));
   });
 }

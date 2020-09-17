@@ -2,10 +2,7 @@ import * as t from '@hapi/joi';
 import {SchemaLike} from '@hapi/joi';
 
 const map = (key: RegExp | SchemaLike, value: SchemaLike) =>
-  t
-    .object()
-    .unknown(true)
-    .pattern(key, value);
+  t.object().unknown(true).pattern(key, value);
 
 /**
  * Schema for CommandT
@@ -63,10 +60,7 @@ export const dependencyConfig = t
               .default({}),
           })
           .default(),
-        assets: t
-          .array()
-          .items(t.string())
-          .default([]),
+        assets: t.array().items(t.string()).default([]),
         hooks: map(t.string(), t.string()).default({}),
         params: t
           .array()
@@ -89,10 +83,7 @@ export const dependencyConfig = t
         linkConfig: t.func(),
       }),
     ).default({}),
-    commands: t
-      .array()
-      .items(command)
-      .default([]),
+    commands: t.array().items(command).default([]),
   })
   .unknown(true)
   .default();
@@ -168,14 +159,8 @@ export const projectConfig = t
           .default({}),
       })
       .default(),
-    assets: t
-      .array()
-      .items(t.string())
-      .default([]),
-    commands: t
-      .array()
-      .items(command)
-      .default([]),
+    assets: t.array().items(t.string()).default([]),
+    commands: t.array().items(command).default([]),
     platforms: map(
       t.string(),
       t.object({

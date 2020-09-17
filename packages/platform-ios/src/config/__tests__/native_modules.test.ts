@@ -55,7 +55,7 @@ function run(runConfig: RunConfig) {
     child.stderr.on('data', (chunk: Buffer) => {
       stderrData.push(chunk);
     });
-    child.on('close', code => {
+    child.on('close', (code) => {
       if (code === 0) {
         const data = Buffer.concat(stdoutData).toString();
         if (runConfig.captureStdout) {
@@ -130,7 +130,7 @@ describeIfSupportedEnv()('native_modules.rb', () => {
 
   it('returns relative path to a React Native location from source dir', () => {
     return run(runConfig).then(({returnValues}: RunResult) => {
-      returnValues.forEach(rv => {
+      returnValues.forEach((rv) => {
         expect(rv.reactNativePath).toBe(
           path.relative(FIXTURES_ROOT, REACT_NATIVE_ROOT),
         );
@@ -148,7 +148,7 @@ describeIfSupportedEnv()('native_modules.rb', () => {
       return run(runConfig).then(({rootTargetDefinition}: RunResult) => {
         expect(
           rootTargetDefinition.children.find(
-            target => target.name === 'iOS Target',
+            (target) => target.name === 'iOS Target',
           ).dependencies,
         ).toMatchInlineSnapshot(`
             Array [
@@ -175,7 +175,7 @@ describeIfSupportedEnv()('native_modules.rb', () => {
       return run(runConfig).then(({rootTargetDefinition}: RunResult) => {
         expect(
           rootTargetDefinition.children.find(
-            target => target.name === 'macOS Target',
+            (target) => target.name === 'macOS Target',
           ).dependencies,
         ).toMatchInlineSnapshot(`
             Array [
@@ -262,7 +262,7 @@ describeIfSupportedEnv()('native_modules.rb', () => {
   it('prints out the native module pods that were found', () => {
     runConfig.captureStdout = true;
     addDependency(runConfig, 'ios-and-macos-dep');
-    return run(runConfig).then(stdout => {
+    return run(runConfig).then((stdout) => {
       expect(stdout).toMatchInlineSnapshot(`
         "Auto-linking React Native modules for target \`iOS Target\`: ios-and-macos-dep and ios-dep
         Auto-linking React Native module for target \`macOS Target\`: ios-and-macos-dep"

@@ -31,7 +31,7 @@ const fetchToTemp = (url: string): Promise<string> => {
       const fileName = path.basename(url);
       const tmpDir = path.join(os.tmpdir(), fileName);
 
-      nodeFetch(url).then(result => {
+      nodeFetch(url).then((result) => {
         if (result.status >= 400) {
           return reject(`Fetch request failed with status ${result.status}`);
         }

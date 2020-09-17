@@ -31,7 +31,7 @@ const unlinkDependency = (
   otherDependencies: Array<Dependency>,
 ) => {
   printDeprecationWarning('react-native unlink [packageName]');
-  Object.keys(platforms || {}).forEach(platform => {
+  Object.keys(platforms || {}).forEach((platform) => {
     const projectConfig: AndroidProjectConfig | IOSProjectConfig =
       project[platform];
     const dependencyConfig: AndroidDependencyConfig | IOSDependencyConfig =
@@ -137,14 +137,14 @@ async function unlink(args: Array<string>, ctx: Config, opts: Flags) {
   // @todo it is possible we could be unlinking some project assets in case of duplicate
   const assets = difference(
     dependency.assets,
-    flatMap(dependencies, d => d.assets),
+    flatMap(dependencies, (d) => d.assets),
   );
 
   if (assets.length === 0) {
     return;
   }
 
-  Object.keys(platforms || {}).forEach(platform => {
+  Object.keys(platforms || {}).forEach((platform) => {
     const projectConfig = ctx.project[platform];
     const linkConfig =
       platforms[platform] &&

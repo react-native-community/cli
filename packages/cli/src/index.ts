@@ -5,7 +5,7 @@ import leven from 'leven';
 import path from 'path';
 
 import {Command, Config} from '@react-native-community/cli-types';
-import {logger} from '@react-native-community/cli-tools';
+import {logger, CLIError} from '@react-native-community/cli-tools';
 
 import {detachedCommands, projectCommands} from './commands';
 import init from './commands/init/initCompat';
@@ -213,19 +213,30 @@ async function setupAndRun() {
   }
 
   try {
-    const ctx = loadConfig();
+    const config = loadConfig();
 
     logger.enable();
 
-    for (const command of [...projectCommands, ...ctx.commands]) {
-      attachCommand(command, ctx);
+    for (const command of [...projectCommands, ...config.commands]) {
+      attachCommand(command, config);
     }
-  } catch (e) {
-    logger.enable();
-    logger.debug(e.message);
-    logger.debug(
-      'Failed to load configuration of your project. Only a subset of commands will be available.',
-    );
+  } catch (error) {
+    /**
+     * When there is no `package.json` found, the CLI will enter `detached` mode and a subset
+     * of commands will be available. That's why we don't throw on such kind of error.
+     */
+    if (error.message.includes("We couldn't find a package.json")) {
+      logger.enable();
+      logger.debug(error.message);
+      logger.debug(
+        'Failed to load configuration of your project. Only a subset of commands will be available.',
+      );
+    } else {
+      throw new CLIError(
+        'Failed to load configuration of your project.',
+        error,
+      );
+    }
   }
 
   commander.parse(process.argv);

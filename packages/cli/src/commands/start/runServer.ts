@@ -9,13 +9,13 @@
 import Metro from 'metro';
 // @ts-ignore untyped metro
 import {Terminal} from 'metro-core';
-import http from 'http';
 import path from 'path';
+import {
+  createDevServerMiddleware,
+  indexPageMiddleware,
+} from '@react-native-community/cli-server-api';
 import {Config} from '@react-native-community/cli-types';
-import messageSocket from './messageSocket';
-import eventsSocketModule from './eventsSocket';
-import webSocketProxy from './webSocketProxy';
-import MiddlewareManager from './middleware/MiddlewareManager';
+
 import loadMetroConfig from '../../tools/loadMetroConfig';
 import releaseChecker from '../../tools/releaseChecker';
 import enableWatchMode from './watchMode';
@@ -41,17 +41,15 @@ export type Args = {
 };
 
 async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
-  let eventsSocket:
-    | ReturnType<typeof eventsSocketModule.attachToServer>
-    | undefined;
+  let reportEvent: ((event: any) => void) | undefined;
   const terminal = new Terminal(process.stdout);
   const ReporterImpl = getReporterImpl(args.customLogReporterPath);
   const terminalReporter = new ReporterImpl(terminal);
   const reporter = {
     update(event: any) {
       terminalReporter.update(event);
-      if (eventsSocket) {
-        eventsSocket.reportEvent(event);
+      if (reportEvent) {
+        reportEvent(event);
       }
     },
   };
@@ -73,24 +71,22 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
     );
   }
 
-  const middlewareManager = new MiddlewareManager({
+  const {middleware, attachToServer} = createDevServerMiddleware({
     host: args.host,
     port: metroConfig.server.port,
     watchFolders: metroConfig.watchFolders,
   });
-
-  metroConfig.watchFolders.forEach(
-    middlewareManager.serveStatic.bind(middlewareManager),
-  );
+  middleware.use(indexPageMiddleware);
 
   const customEnhanceMiddleware = metroConfig.server.enhanceMiddleware;
-
-  metroConfig.server.enhanceMiddleware = (middleware: any, server: unknown) => {
+  metroConfig.server.enhanceMiddleware = (
+    metroMiddleware: any,
+    server: unknown,
+  ) => {
     if (customEnhanceMiddleware) {
-      middleware = customEnhanceMiddleware(middleware, server);
+      metroMiddleware = customEnhanceMiddleware(metroMiddleware, server);
     }
-
-    return middlewareManager.getConnectInstance().use(middleware);
+    return middleware.use(metroMiddleware);
   };
 
   const serverInstance = await Metro.runServer(metroConfig, {
@@ -101,30 +97,13 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
     hmrEnabled: true,
   });
 
-  const wsProxy = webSocketProxy.attachToServer(
-    serverInstance,
-    '/debugger-proxy',
-  );
-  const ms = messageSocket.attachToServer(serverInstance, '/message');
-  eventsSocket = eventsSocketModule.attachToServer(
-    serverInstance,
-    '/events',
-    ms,
-  );
+  const {messageSocket, eventsSocket} = attachToServer(serverInstance);
 
-  middlewareManager.attachDevToolsSocket(wsProxy);
-  middlewareManager.attachDevToolsSocket(ms);
+  reportEvent = eventsSocket.reportEvent;
 
   if (args.interactive) {
-    enableWatchMode(ms);
+    enableWatchMode(messageSocket);
   }
-
-  middlewareManager
-    .getConnectInstance()
-    .use('/reload', (_req: http.IncomingMessage, res: http.ServerResponse) => {
-      ms.broadcast('reload');
-      res.end('OK');
-    });
 
   // In Node 8, the default keep-alive for an HTTP connection is 5 seconds. In
   // early versions of Node 8, this was implemented in a buggy way which caused

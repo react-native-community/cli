@@ -77,6 +77,7 @@ export const dependencyConfig = t
     platforms: map(
       t.string(),
       t.object({
+        npmPackageName: t.string().optional(),
         dependencyConfig: t.func(),
         projectConfig: t.func(),
         linkConfig: t.func(),
@@ -163,6 +164,7 @@ export const projectConfig = t
     platforms: map(
       t.string(),
       t.object({
+        npmPackageName: t.string().optional(),
         dependencyConfig: t.func(),
         projectConfig: t.func(),
         linkConfig: t.func(),

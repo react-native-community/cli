@@ -6,13 +6,13 @@ import replacePathSepForRegex from '../replacePathSepForRegex';
 
 const DIR = getTempDirectory('copyFiles-test');
 
-beforeEach(() => {
-  cleanup(DIR);
+beforeEach(async () => {
+  await cleanup(DIR);
   fs.mkdirSync(DIR);
 });
 
-afterEach(() => {
-  cleanup(DIR);
+afterEach(async () => {
+  await cleanup(DIR);
 });
 
 test('copies text and binary files from source to destination', async () => {

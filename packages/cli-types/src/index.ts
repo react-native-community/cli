@@ -3,6 +3,7 @@ import {
   IOSProjectParams,
   IOSDependencyConfig,
   IOSDependencyParams,
+  IOSNativeModulesConfig,
 } from './ios';
 import {
   AndroidProjectConfig,
@@ -63,6 +64,7 @@ interface PlatformConfig<
   DependencyConfig,
   DependencyParams
 > {
+  npmPackageName?: string;
   projectConfig: (
     projectRoot: string,
     projectParams: ProjectParams | void,
@@ -127,7 +129,7 @@ export type ProjectConfig = {
  * @property platforms - Map of available platforms (build-ins and dynamically loaded)
  * @property commands - An array of commands that are present in 3rd party packages
  */
-export type Config = {
+export interface Config extends IOSNativeModulesConfig {
   root: string;
   reactNativePath: string;
   project: ProjectConfig;
@@ -149,7 +151,7 @@ export type Config = {
     [name: string]: PlatformConfig<any, any, any, any>;
   };
   commands: Command[];
-};
+}
 
 /**
  * Shares some structure with Config, except that root is calculated and can't
@@ -180,6 +182,7 @@ export {
   IOSProjectParams,
   IOSDependencyConfig,
   IOSDependencyParams,
+  IOSNativeModulesConfig,
 };
 
 export {

@@ -22,22 +22,13 @@ import {
   CLIError,
 } from '@react-native-community/cli-tools';
 import warnAboutManuallyLinkedLibs from '../../link/warnAboutManuallyLinkedLibs';
-
-// Validates that the package name is correct
-function validatePackageName(packageName: string) {
-  return /^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/.test(packageName);
-}
+import {getAndroidProject, getPackageName} from '../../utils/getAndroidProject';
 
 function displayWarnings(config: Config, args: Flags) {
   warnAboutManuallyLinkedLibs(config);
-  if (args.appId) {
-    logger.warn(
-      'Using deprecated "--appId" flag. Use "platforms.android.appName" in react-native.config.js instead.',
-    );
-  }
   if (args.appFolder) {
     logger.warn(
-      'Using deprecated "--appFolder" flag. Use "platforms.android.appName" in react-native.config.js instead.',
+      'Using deprecated "--appFolder" flag. Use "project.android.appName" in react-native.config.js instead.',
     );
   }
   if (args.root) {
@@ -69,15 +60,7 @@ type AndroidProject = NonNullable<Config['project']['android']>;
  */
 async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
   displayWarnings(config, args);
-  const androidProject = config.project.android;
-
-  if (!androidProject) {
-    throw new CLIError(`
-  Android project not found. Are you sure this is a React Native project?
-  If your Android files are located in a non-standard location (e.g. not inside \'android\' folder), consider setting
-  \`project.android.sourceDir\` option to point to a new location.
-`);
-  }
+  const androidProject = getAndroidProject(config);
 
   if (args.jetifier) {
     logger.info(
@@ -128,35 +111,8 @@ function buildAndRun(args: Flags, androidProject: AndroidProject) {
   process.chdir(androidProject.sourceDir);
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
 
-  // "app" is usually the default value for Android apps with only 1 app
-  const {appName} = androidProject;
   const {appFolder} = args;
-  // @ts-ignore
-  const androidManifest = fs.readFileSync(
-    `${appFolder || appName}/src/main/AndroidManifest.xml`,
-    'utf8',
-  );
-
-  let packageNameMatchArray = androidManifest.match(/package="(.+?)"/);
-  if (!packageNameMatchArray || packageNameMatchArray.length === 0) {
-    throw new CLIError(
-      `Failed to build the app: No package name found. Found errors in ${chalk.underline.dim(
-        `${appFolder || appName}/src/main/AndroidManifest.xml`,
-      )}`,
-    );
-  }
-
-  let packageName = packageNameMatchArray[1];
-
-  if (!validatePackageName(packageName)) {
-    logger.warn(
-      `Invalid application's package name "${chalk.bgRed(
-        packageName,
-      )}" in 'AndroidManifest.xml'. Read guidelines for setting the package name here: ${chalk.underline.dim(
-        'https://developer.android.com/studio/build/application-id',
-      )}`,
-    ); // we can also directly add the package naming rules here
-  }
+  const packageName = getPackageName(androidProject, appFolder);
 
   const adbPath = getAdbPath();
   if (args.deviceId) {
@@ -375,12 +331,12 @@ export default {
     {
       name: '--appFolder [string]',
       description:
-        '[DEPRECATED – use "platforms.android.appName" in react-native.config.js] Specify a different application folder name for the android source. If not, we assume is "app"',
+        '[DEPRECATED – use "project.android.appName" in react-native.config.js] Specify a different application folder name for the android source. If not, we assume is "app"',
     },
     {
       name: '--appId [string]',
       description:
-        '[DEPRECATED – use "platforms.android.appName" in react-native.config.js] Specify an applicationId to launch after build.',
+        'Specify an applicationId to launch after build. If not specified, `package` from AndroidManifest.xml will be used.',
       default: '',
     },
     {

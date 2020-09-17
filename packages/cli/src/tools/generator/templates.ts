@@ -16,8 +16,6 @@ import * as PackageManager from '../packageManager';
  * @param destPath Create the new project at this path.
  * @param newProjectName For example 'AwesomeApp'.
  * @param template Template to use, for example 'navigation'.
- * @param yarnVersion Version of yarn available on the system, or null if
- *                    yarn is not available. For example '0.18.1'.
  */
 async function createProjectFromTemplate(
   destPath: string,

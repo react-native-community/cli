@@ -29,6 +29,7 @@ type Options = {
   directory?: string;
   displayName?: string;
   title?: string;
+  skipInstall?: boolean;
 };
 
 interface TemplateOptions {
@@ -37,6 +38,7 @@ interface TemplateOptions {
   npm?: boolean;
   directory: string;
   projectTitle?: string;
+  skipInstall?: boolean;
 }
 
 function doesDirectoryExist(dir: string) {
@@ -80,6 +82,7 @@ async function createFromTemplate({
   npm,
   directory,
   projectTitle,
+  skipInstall,
 }: TemplateOptions) {
   logger.debug('Initializing new project');
   logger.log(banner);
@@ -124,12 +127,16 @@ async function createFromTemplate({
       loader.succeed();
     }
 
-    await installDependencies({
-      projectName,
-      npm,
-      loader,
-      root: projectDirectory,
-    });
+    if (!skipInstall) {
+      await installDependencies({
+        projectName,
+        npm,
+        loader,
+        root: projectDirectory,
+      });
+    } else {
+      loader.succeed('Dependencies installation skipped');
+    }
   } catch (e) {
     loader.fail();
     throw new Error(e);
@@ -178,6 +185,7 @@ async function createProject(
     npm: options.npm,
     directory,
     projectTitle: options.title,
+    skipInstall: options.skipInstall,
   });
 }
 

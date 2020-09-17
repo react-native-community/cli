@@ -35,7 +35,7 @@ export type EnvironmentInfo = {
       | NotFound;
   };
   IDEs: {
-    'Android Studio': string;
+    'Android Studio': AvailableInformation | NotFound;
     Emacs: AvailableInformation;
     Nano: AvailableInformation;
     VSCode: AvailableInformation;

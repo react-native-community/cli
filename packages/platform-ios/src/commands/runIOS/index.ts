@@ -26,6 +26,7 @@ import {
   getDefaultUserTerminal,
 } from '@react-native-community/cli-tools';
 import {Device} from '../../types';
+import ora from 'ora';
 
 type FlagsT = {
   simulator?: string;
@@ -294,6 +295,7 @@ function buildProject(
       '-destination',
       `id=${udid}`,
     ];
+    const loader = ora();
     logger.info(
       `Building ${chalk.dim(
         `(using "xcodebuild ${xcodebuildArgs.join(' ')}")`,
@@ -323,7 +325,9 @@ function buildProject(
         if (logger.isVerbose()) {
           logger.debug(stringData);
         } else {
-          process.stdout.write('.');
+          loader.start(
+            `Building the app${'.'.repeat(buildOutput.length % 10)}`,
+          );
         }
       }
     });
@@ -334,7 +338,7 @@ function buildProject(
       if (xcpretty) {
         xcpretty.stdin.end();
       } else {
-        process.stdout.write('\n');
+        loader.stop();
       }
       if (code !== 0) {
         reject(
@@ -351,6 +355,7 @@ function buildProject(
         );
         return;
       }
+      logger.success('Successfully built the app');
       resolve(getProductName(buildOutput) || scheme);
     });
   });
@@ -371,18 +376,22 @@ function bootSimulator(selectedSimulator: Device) {
   }
 }
 
-function getTargetBuildDir(buildSettings: string) {
+function getTargetPaths(buildSettings: string) {
   const settings = JSON.parse(buildSettings);
 
   // Find app in all building settings - look for WRAPPER_EXTENSION: 'app',
   for (const i in settings) {
     const wrapperExtension = settings[i].buildSettings.WRAPPER_EXTENSION;
+
     if (wrapperExtension === 'app') {
-      return settings[i].buildSettings.TARGET_BUILD_DIR;
+      return {
+        targetBuildDir: settings[i].buildSettings.TARGET_BUILD_DIR,
+        executableFolderPath: settings[i].buildSettings.EXECUTABLE_FOLDER_PATH,
+      };
     }
   }
 
-  return null;
+  return {};
 }
 
 function getBuildPath(
@@ -418,12 +427,17 @@ function getBuildPath(
     ],
     {encoding: 'utf8'},
   );
-  const targetBuildDir = getTargetBuildDir(buildSettings);
+  const {targetBuildDir, executableFolderPath} = getTargetPaths(buildSettings);
+
   if (!targetBuildDir) {
     throw new CLIError('Failed to get the target build directory.');
   }
 
-  return `${targetBuildDir}/${appName}.app`;
+  if (!executableFolderPath) {
+    throw new CLIError('Failed to get the app name.');
+  }
+
+  return `${targetBuildDir}/${executableFolderPath}`;
 }
 
 function getProductName(buildOutput: string) {
@@ -523,8 +537,8 @@ export default {
   func: runIOS,
   examples: [
     {
-      desc: 'Run on a different simulator, e.g. iPhone 5',
-      cmd: 'react-native run-ios --simulator "iPhone 5"',
+      desc: 'Run on a different simulator, e.g. iPhone SE',
+      cmd: 'react-native run-ios --simulator "iPhone SE"',
     },
     {
       desc: 'Pass a non-standard location of iOS directory',
@@ -544,7 +558,7 @@ export default {
     {
       name: '--simulator [string]',
       description:
-        'Explicitly set simulator to use. Optionally include iOS version between' +
+        'Explicitly set simulator to use. Optionally include iOS version between ' +
         'parenthesis at the end to match an exact version: "iPhone 6 (10.0)"',
       default: 'iPhone 11',
     },

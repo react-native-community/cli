@@ -4,7 +4,7 @@ import {getHealthchecks, HEALTHCHECK_TYPES} from './healthchecks';
 import {getLoader} from '../../tools/loader';
 import printFixOptions, {KEYS} from './printFixOptions';
 import runAutomaticFix, {AUTOMATIC_FIX_LEVELS} from './runAutomaticFix';
-import {CommandFunction} from '@react-native-community/cli-types';
+import {DetachedCommandFunction} from '@react-native-community/cli-types';
 import {
   HealthCheckCategory,
   HealthCheckCategoryResult,
@@ -110,7 +110,7 @@ const getAutomaticFixForPlatform = (
   }
 };
 
-export default (async (_, __, options) => {
+export default (async (_, options) => {
   const Loader = getLoader();
   const loader = new Loader();
 
@@ -264,4 +264,4 @@ export default (async (_, __, options) => {
   if (stats.errors || stats.warnings) {
     printFixOptions({onKeyPress});
   }
-}) as CommandFunction<FlagsT>;
+}) as DetachedCommandFunction<FlagsT>;

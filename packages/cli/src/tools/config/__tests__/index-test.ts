@@ -51,13 +51,13 @@ const removeString = (config, str) =>
     ),
   );
 
-beforeEach(() => {
-  cleanup(DIR);
+beforeEach(async () => {
+  await cleanup(DIR);
   jest.resetModules();
   jest.clearAllMocks();
 });
 
-afterEach(() => cleanup(DIR));
+afterEach(async () => await cleanup(DIR));
 
 test('should have a valid structure by default', () => {
   writeFiles(DIR, {

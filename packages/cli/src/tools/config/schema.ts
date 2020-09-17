@@ -1,5 +1,4 @@
-import * as t from '@hapi/joi';
-import {SchemaLike} from '@hapi/joi';
+import t, {SchemaLike} from 'joi';
 
 const map = (key: RegExp | SchemaLike, value: SchemaLike) =>
   t.object().unknown(true).pattern(key, value);
@@ -20,7 +19,7 @@ const command = t.object({
         parse: t.func(),
         default: t
           .alternatives()
-          .try([t.bool(), t.number(), t.string().allow(''), t.func()]),
+          .try(t.bool(), t.number(), t.string().allow(''), t.func()),
       })
       .rename('command', 'name', {ignoreUndefined: true}),
   ),

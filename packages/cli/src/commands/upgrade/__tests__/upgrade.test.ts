@@ -37,7 +37,7 @@ jest.mock(
 );
 jest.mock('../../../tools/config');
 jest.mock('../../../tools/packageManager', () => ({
-  install: args => {
+  install: (args) => {
     mockPushLog('$ yarn add', ...args);
   },
 }));
@@ -93,13 +93,13 @@ const samplePatch = jest
 
 let logs = [];
 const mockPushLog = (...args) =>
-  logs.push(args.map(x => (Array.isArray(x) ? x.join(' ') : x)).join(' '));
+  logs.push(args.map((x) => (Array.isArray(x) ? x.join(' ') : x)).join(' '));
 const flushOutput = () => stripAnsi(logs.join('\n'));
 
 beforeEach(() => {
   jest.clearAllMocks();
   jest.restoreAllMocks();
-  fs.writeFileSync = jest.fn(filename => mockPushLog('[fs] write', filename));
+  fs.writeFileSync = jest.fn((filename) => mockPushLog('[fs] write', filename));
   fs.unlinkSync = jest.fn((...args) => mockPushLog('[fs] unlink', args));
   logs = [];
   ((execa as unknown) as jest.Mock).mockImplementation(mockExecaDefault);

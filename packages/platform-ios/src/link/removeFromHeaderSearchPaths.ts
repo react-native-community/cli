@@ -14,7 +14,7 @@ import {logger} from '@react-native-community/cli-tools';
  */
 export default function addToHeaderSearchPaths(project: any, path: string) {
   logger.debug(`Removing ${path} from header search paths`);
-  mapHeaderSearchPaths(project, searchPaths =>
-    searchPaths.filter(searchPath => searchPath !== path),
+  mapHeaderSearchPaths(project, (searchPaths) =>
+    searchPaths.filter((searchPath) => searchPath !== path),
   );
 }

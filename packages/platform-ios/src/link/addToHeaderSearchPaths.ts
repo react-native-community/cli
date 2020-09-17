@@ -11,5 +11,5 @@ import {logger} from '@react-native-community/cli-tools';
 
 export default function addToHeaderSearchPaths(project: any, path: string) {
   logger.debug(`Adding ${path} to header search paths`);
-  mapHeaderSearchPaths(project, searchPaths => searchPaths.concat(path));
+  mapHeaderSearchPaths(project, (searchPaths) => searchPaths.concat(path));
 }

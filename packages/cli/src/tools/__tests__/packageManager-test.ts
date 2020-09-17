@@ -117,7 +117,10 @@ it('should use yarn if project is using yarn', () => {
   expect(yarn.isProjectUsingYarn).toHaveBeenCalledWith(PROJECT_ROOT);
 });
 
-test.each([[false, 'pipe'], [true, 'inherit']])(
+test.each([
+  [false, 'pipe'],
+  [true, 'inherit'],
+])(
   'when verbose is set to %s should use "%s" stdio',
   (isVerbose: boolean, stdioType: string) => {
     jest

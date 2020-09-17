@@ -20,7 +20,7 @@ const memoizedFindProject = memoize(findProject);
  * start with 'lib' and '.framework' to the rest.
  */
 const mapSharedLibaries = (libraries: Array<string>) =>
-  libraries.map(name => {
+  libraries.map((name) => {
     if (path.extname(name)) {
       return name;
     }

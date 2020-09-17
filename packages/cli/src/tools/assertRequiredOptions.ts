@@ -21,7 +21,7 @@ export default function assertRequiredOptions(
   options: CommandOption<any>[],
   passedOptions: PassedOptions,
 ) {
-  options.forEach(opt => {
+  options.forEach((opt) => {
     const option = new Option(opt.name);
 
     if (!option.required) {

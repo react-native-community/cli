@@ -21,13 +21,17 @@ function tryLaunchAppOnDevice(
     .filter(Boolean)
     .join('.');
 
+  const activityToLaunch = args.mainActivity.includes('.')
+    ? args.mainActivity
+    : [packageName, args.mainActivity].filter(Boolean).join('.');
+
   try {
     const adbArgs = [
       'shell',
       'am',
       'start',
       '-n',
-      `${packageNameWithSuffix}/${packageName}.${args.mainActivity}`,
+      `${packageNameWithSuffix}/${activityToLaunch}`,
     ];
     if (device) {
       adbArgs.unshift('-s', device);

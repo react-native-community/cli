@@ -23,7 +23,7 @@ interface RunAutomaticFixArgs {
   environmentInfo: EnvironmentInfo;
 }
 
-export default async function({
+export default async function ({
   healthchecks,
   automaticFixLevel,
   stats,
@@ -51,7 +51,7 @@ export default async function({
   );
 
   for (const category of healthchecks) {
-    const healthchecksToRun = category.healthchecks.filter(healthcheck => {
+    const healthchecksToRun = category.healthchecks.filter((healthcheck) => {
       if (automaticFixLevel === AUTOMATIC_FIX_LEVELS.ALL_ISSUES) {
         return healthcheck.needsToBeFixed;
       }

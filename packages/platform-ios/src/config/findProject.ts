@@ -44,10 +44,10 @@ export default function findProject(folder: string): string | null {
       ignore: GLOB_EXCLUDE_PATTERN,
     })
     .filter(
-      project =>
+      (project) =>
         path.dirname(project) === IOS_BASE || !TEST_PROJECTS.test(project),
     )
-    .sort(project => (path.dirname(project) === IOS_BASE ? -1 : 1));
+    .sort((project) => (path.dirname(project) === IOS_BASE ? -1 : 1));
 
   if (projects.length === 0) {
     return null;

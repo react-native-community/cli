@@ -100,7 +100,7 @@ describe('link', () => {
     expect((makeHook as jest.Mock).mock.calls).toEqual([[prelink], [postlink]]);
   });
 
-  it('should copy assets only from the specific dependency that we are linking', done => {
+  it('should copy assets only from the specific dependency that we are linking', (done) => {
     const dependencyAssets = ['Fonts/Font.ttf'];
     const projectAssets = ['Fonts/FontC.ttf'];
 
@@ -145,7 +145,7 @@ describe('link', () => {
     });
   });
 
-  it('should not register modules when they are already installed', done => {
+  it('should not register modules when they are already installed', (done) => {
     const registerNativeModule = jest.fn();
 
     const config = {
@@ -179,7 +179,7 @@ describe('link', () => {
     });
   });
 
-  it('should register native modules for additional platforms', done => {
+  it('should register native modules for additional platforms', (done) => {
     const registerNativeModule = jest.fn();
 
     const config = {

@@ -40,7 +40,7 @@ describe('findAssets', () => {
   it('prepends assets paths with the folder path', () => {
     const assets = findAssets('/testDir', ['fonts', 'images']);
 
-    assets.forEach(assetPath => {
+    assets.forEach((assetPath) => {
       expect(assetPath).toContain('testDir');
     });
   });

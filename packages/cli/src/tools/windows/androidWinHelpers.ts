@@ -47,17 +47,17 @@ export const installComponent = (component: string, androidSdkRoot: string) => {
     const child = executeCommand(command);
     let stderr = '';
 
-    child.stdout.on('data', data => {
+    child.stdout.on('data', (data) => {
       if (data.includes('(y/N)')) {
         child.stdin.write('y\n');
       }
     });
 
-    child.stderr.on('data', data => {
+    child.stderr.on('data', (data) => {
       stderr += data.toString('utf-8');
     });
 
-    child.on('close', exitStatus => {
+    child.on('close', (exitStatus) => {
       if (exitStatus === 0) {
         done();
       } else {

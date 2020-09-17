@@ -30,8 +30,8 @@ export default function headerSearchPathIter(
   const config = project.pbxXCBuildConfigurationSection();
 
   Object.keys(config)
-    .filter(ref => ref.indexOf('_comment') === -1)
-    .forEach(ref => {
+    .filter((ref) => ref.indexOf('_comment') === -1)
+    .forEach((ref) => {
       const {buildSettings} = config[ref];
       const shouldVisitBuildSettings =
         (Array.isArray(buildSettings.OTHER_LDFLAGS)

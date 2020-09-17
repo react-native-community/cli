@@ -21,5 +21,5 @@ import mime from 'mime';
  * the returned object will be: {font: ['fonts/a.ttf'], image: ['images/b.jpg']}
  */
 export default function groupFilesByType(assets: Array<string>) {
-  return groupBy(assets, type => (mime.getType(type) || '').split('/')[0]);
+  return groupBy(assets, (type) => (mime.getType(type) || '').split('/')[0]);
 }

@@ -24,7 +24,7 @@ import {Device} from '../../types';
 function parseIOSDevicesList(text: string): Array<Device> {
   const devices: Array<Device> = [];
 
-  text.split('\n').forEach(line => {
+  text.split('\n').forEach((line) => {
     const device = line.match(
       /(.*?) (\(([0-9\.]+)\) )?\[([0-9A-F-]+)\]( \(Simulator\))?/i,
     );

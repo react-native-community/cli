@@ -5,7 +5,7 @@ function hookStdout(callback: Function) {
 
   // @ts-ignore
   process.stdout.write = ((write: any) =>
-    function(str: string) {
+    function (str: string) {
       write.apply(process.stdout, arguments);
       callback(str);
     })(process.stdout.write);

@@ -11,7 +11,7 @@ import getGroup from './getGroup';
 const hasGroup = (
   pbxGroup: {children: Array<{comment: string}>},
   name: string,
-) => pbxGroup.children.find(group => group.comment === name);
+) => pbxGroup.children.find((group) => group.comment === name);
 
 /**
  * Given project and path of the group, it deeply creates a given group

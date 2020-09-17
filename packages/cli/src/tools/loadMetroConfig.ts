@@ -56,7 +56,7 @@ export interface MetroConfig {
  */
 export const getDefaultConfig = (ctx: Config): MetroConfig => {
   const outOfTreePlatforms = Object.keys(ctx.platforms).filter(
-    platform => ctx.platforms[platform].npmPackageName,
+    (platform) => ctx.platforms[platform].npmPackageName,
   );
 
   return {
@@ -83,7 +83,7 @@ export const getDefaultConfig = (ctx: Config): MetroConfig => {
         require.resolve(
           path.join(ctx.reactNativePath, 'Libraries/Core/InitializeCore'),
         ),
-        ...outOfTreePlatforms.map(platform =>
+        ...outOfTreePlatforms.map((platform) =>
           require.resolve(
             `${ctx.platforms[platform]
               .npmPackageName!}/Libraries/Core/InitializeCore`,

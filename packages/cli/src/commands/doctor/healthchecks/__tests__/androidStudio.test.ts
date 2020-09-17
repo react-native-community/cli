@@ -60,8 +60,9 @@ describe('androidStudio', () => {
     expect(logSpy).toHaveBeenCalledTimes(0);
     expect(downloadAndUnzipSpy).toBeCalledTimes(1);
     expect(loaderSucceedSpy).toBeCalledWith(
-      `Android Studio installed successfully in "${downloadAndUnzipSpy.mock
-        .calls[0][0].installPath || ''}".`,
+      `Android Studio installed successfully in "${
+        downloadAndUnzipSpy.mock.calls[0][0].installPath || ''
+      }".`,
     );
   });
 });

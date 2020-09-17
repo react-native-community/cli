@@ -9,10 +9,7 @@ export class CLIError extends Error {
       this.stack =
         typeof originalError === 'string'
           ? originalError
-          : (originalError.stack || '')
-              .split('\n')
-              .slice(0, 2)
-              .join('\n');
+          : originalError.stack || ''.split('\n').slice(0, 2).join('\n');
     } else {
       // When the "originalError" is not passed, it means that we know exactly
       // what went wrong and provide means to fix it. In such cases showing the

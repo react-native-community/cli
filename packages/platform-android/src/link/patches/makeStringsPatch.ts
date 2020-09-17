@@ -13,7 +13,7 @@ export default function makeStringsPatch(
   params: AndroidProjectParams,
   prefix: string,
 ) {
-  const values = Object.keys(params).map(param => {
+  const values = Object.keys(params).map((param) => {
     const name = `${toCamelCase(prefix)}_${param}`;
     return (
       '    ' +

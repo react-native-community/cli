@@ -46,8 +46,8 @@ test('should edit template', () => {
     placeholderName: PLACEHOLDER_NAME,
   });
 
-  const transformedTree = walk(testPath).map(e => e.replace(testPath, ''));
-  const fixtureTree = walk(FIXTURE_DIR).map(e => e.replace(FIXTURE_DIR, ''));
+  const transformedTree = walk(testPath).map((e) => e.replace(testPath, ''));
+  const fixtureTree = walk(FIXTURE_DIR).map((e) => e.replace(FIXTURE_DIR, ''));
 
   const oldJavaFile = fs.readFileSync(
     path.resolve(

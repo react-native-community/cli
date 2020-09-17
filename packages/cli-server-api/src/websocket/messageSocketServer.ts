@@ -100,9 +100,7 @@ function attachToServer(server: Server, path: string) {
     };
     if (clients.size === 0) {
       logger.warn(
-        `No apps connected. Sending "${
-          message.method
-        }" to all React Native apps failed. Make sure your app is running in the simulator or on a phone connected via USB.`,
+        `No apps connected. Sending "${message.method}" to all React Native apps failed. Make sure your app is running in the simulator or on a phone connected via USB.`,
       );
     }
     for (const [otherId, otherWs] of clients) {
@@ -119,7 +117,7 @@ function attachToServer(server: Server, path: string) {
     }
   }
 
-  wss.on('connection', clientWs => {
+  wss.on('connection', (clientWs) => {
     const clientId = `client#${nextClientId++}`;
 
     function handleCaughtError(message: Message, error: Error) {

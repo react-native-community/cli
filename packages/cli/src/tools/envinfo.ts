@@ -1,6 +1,7 @@
 // @ts-ignore
 import envinfo from 'envinfo';
 import {EnvironmentInfo} from '../commands/doctor/types';
+import {platform} from 'os';
 
 /**
  * Returns information about the running system.
@@ -16,6 +17,18 @@ async function getEnvironmentInfo(
 ): Promise<string | EnvironmentInfo> {
   const options = {json, showNotFound: true};
 
+  let packages = ['react', 'react-native', '@react-native-community/cli'];
+
+  const outOfTreePlatforms: {[key: string]: string} = {
+    darwin: 'react-native-macos',
+    win32: 'react-native-windows',
+  };
+
+  const outOfTreePlatformPackage = outOfTreePlatforms[platform()];
+  if (outOfTreePlatformPackage) {
+    packages.push(outOfTreePlatformPackage);
+  }
+
   const info = (await envinfo.run(
     {
       System: ['OS', 'CPU', 'Memory', 'Shell'],
@@ -24,7 +37,7 @@ async function getEnvironmentInfo(
       Managers: ['CocoaPods'],
       Languages: ['Java', 'Python'],
       SDKs: ['iOS SDK', 'Android SDK', 'Windows SDK'],
-      npmPackages: ['react', 'react-native', '@react-native-community/cli'],
+      npmPackages: packages,
       npmGlobalPackages: ['*react-native*'],
     },
     options,

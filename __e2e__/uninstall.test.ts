@@ -50,7 +50,7 @@ test('uninstall fails when package is not installed', () => {
   expect(code).toBe(1);
 });
 
-test.each(['yarn', 'npm'])('uninstall module with %s', pm => {
+test.each(['yarn', 'npm'])('uninstall module with %s', (pm) => {
   if (pm === 'yarn') {
     writeFiles(DIR, {'yarn.lock': ''});
   }

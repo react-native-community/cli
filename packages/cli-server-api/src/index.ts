@@ -63,7 +63,7 @@ export function createDevServerMiddleware(options: MiddlewareOptions) {
     })
     .use(errorhandler());
 
-  options.watchFolders.forEach(folder => {
+  options.watchFolders.forEach((folder) => {
     // @ts-ignore mismatch between express and connect middleware types
     middleware.use(serveStatic(folder));
   });

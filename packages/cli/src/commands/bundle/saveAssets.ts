@@ -34,7 +34,7 @@ function saveAssets(
     platform === 'android' ? getAssetDestPathAndroid : getAssetDestPathIOS;
 
   const filesToCopy: CopiedFiles = Object.create(null); // Map src -> dest
-  assets.forEach(asset => {
+  assets.forEach((asset) => {
     const validScales = new Set(
       filterPlatformAssetScales(platform, asset.scales),
     );

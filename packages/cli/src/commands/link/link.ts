@@ -44,9 +44,7 @@ async function link(
 
   logger.debug(
     'Available platforms: ' +
-      `${Object.keys(platforms)
-        .map(getPlatformName)
-        .join(', ')}`,
+      `${Object.keys(platforms).map(getPlatformName).join(', ')}`,
   );
 
   if (rawPackageName === undefined) {

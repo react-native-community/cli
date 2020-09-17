@@ -65,7 +65,7 @@ const UNDERSCORED_DOTFILES = [
 ];
 
 function processDotfiles(filePath: string) {
-  const dotfile = UNDERSCORED_DOTFILES.find(e => filePath.includes(`_${e}`));
+  const dotfile = UNDERSCORED_DOTFILES.find((e) => filePath.includes(`_${e}`));
 
   if (dotfile === undefined) {
     return;

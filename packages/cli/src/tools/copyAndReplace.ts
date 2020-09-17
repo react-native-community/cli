@@ -68,7 +68,7 @@ function copyAndReplace(
       shouldOverwrite = contentChangedCallback(destPath, contentChanged);
     }
     if (shouldOverwrite === 'overwrite') {
-      copyBinaryFile(srcPath, destPath, err => {
+      copyBinaryFile(srcPath, destPath, (err) => {
         if (err) {
           throw err;
         }
@@ -78,7 +78,7 @@ function copyAndReplace(
     // Text file
     const srcPermissions = fs.statSync(srcPath).mode;
     let content = fs.readFileSync(srcPath, 'utf8');
-    Object.keys(replacements).forEach(regex => {
+    Object.keys(replacements).forEach((regex) => {
       content = content.replace(new RegExp(regex, 'g'), replacements[regex]);
     });
 
@@ -121,13 +121,13 @@ function copyBinaryFile(
   let cbCalled = false;
   const srcPermissions = fs.statSync(srcPath).mode;
   const readStream = fs.createReadStream(srcPath);
-  readStream.on('error', err => {
+  readStream.on('error', (err) => {
     done(err);
   });
   const writeStream = fs.createWriteStream(destPath, {
     mode: srcPermissions,
   });
-  writeStream.on('error', err => {
+  writeStream.on('error', (err) => {
     done(err);
   });
   writeStream.on('close', () => {

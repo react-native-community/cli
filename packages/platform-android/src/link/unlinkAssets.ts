@@ -23,7 +23,7 @@ export default function unlinkAssetsAndroid(
   const assets = groupFilesByType(files);
 
   logger.debug(`Assets path: ${project.assetsPath}`);
-  (assets.font || []).forEach(file => {
+  (assets.font || []).forEach((file) => {
     const filePath = path.join(
       project.assetsPath,
       'fonts',

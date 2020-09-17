@@ -92,7 +92,7 @@ const getPatch = async (
 
   let patchWithRenamedProjects = patch;
 
-  Object.keys(config.project).forEach(platform => {
+  Object.keys(config.project).forEach((platform) => {
     if (!config.project[platform]) {
       return;
     }
@@ -135,9 +135,7 @@ const getVersionToUpgradeTo = async (
 
   if (!newVersion) {
     logger.error(
-      `Provided version "${
-        argv[0]
-      }" is not allowed. Please pass a valid semver version`,
+      `Provided version "${argv[0]}" is not allowed. Please pass a valid semver version`,
     );
     return null;
   }
@@ -175,7 +173,7 @@ const installDeps = async (root: string, newVersion: string) => {
   const peerDeps = await getRNPeerDeps(newVersion);
   const deps = [
     `react-native@${newVersion}`,
-    ...Object.keys(peerDeps).map(module => `${module}@${peerDeps[module]}`),
+    ...Object.keys(peerDeps).map((module) => `${module}@${peerDeps[module]}`),
   ];
   await PackageManager.install(deps, {
     silent: true,
@@ -208,9 +206,7 @@ const installCocoaPodsDeps = async (projectDir: string) => {
     } catch (error) {
       if (error.stderr) {
         logger.debug(
-          `"pod install" or "pod repo update" failed. Error output:\n${
-            error.stderr
-          }`,
+          `"pod install" or "pod repo update" failed. Error output:\n${error.stderr}`,
         );
       }
       logger.error(
@@ -236,7 +232,7 @@ const applyPatch = async (
   try {
     try {
       const excludes = defaultExcludes.map(
-        e => `--exclude=${path.join(relativePathFromRoot, e)}`,
+        (e) => `--exclude=${path.join(relativePathFromRoot, e)}`,
       );
       await execa('git', [
         'apply',
@@ -256,25 +252,27 @@ const applyPatch = async (
       const errorLines: Array<string> = error.stderr.split('\n');
       filesThatDontExist = [
         ...errorLines
-          .filter(x => x.includes('does not exist in index'))
-          .map(x => x.replace(/^error: (.*): does not exist in index$/, '$1')),
+          .filter((x) => x.includes('does not exist in index'))
+          .map((x) =>
+            x.replace(/^error: (.*): does not exist in index$/, '$1'),
+          ),
       ].filter(Boolean);
 
       filesThatFailedToApply = errorLines
-        .filter(x => x.includes('patch does not apply'))
-        .map(x => x.replace(/^error: (.*): patch does not apply$/, '$1'))
+        .filter((x) => x.includes('patch does not apply'))
+        .map((x) => x.replace(/^error: (.*): patch does not apply$/, '$1'))
         .filter(Boolean);
 
       logger.info('Applying diff...');
       logger.warn(
         `Excluding files that exist in the template, but not in your project:\n${filesThatDontExist
-          .map(file => `  - ${chalk.bold(file)}`)
+          .map((file) => `  - ${chalk.bold(file)}`)
           .join('\n')}`,
       );
       if (filesThatFailedToApply.length) {
         logger.error(
           `Excluding files that failed to apply the diff:\n${filesThatFailedToApply
-            .map(file => `  - ${chalk.bold(file)}`)
+            .map((file) => `  - ${chalk.bold(file)}`)
             .join(
               '\n',
             )}\nPlease make sure to check the actual changes after the upgrade command is finished.\nYou can find them in our Upgrade Helper web app: ${chalk.underline.dim(
@@ -287,7 +285,7 @@ const applyPatch = async (
         ...defaultExcludes,
         ...filesThatDontExist,
         ...filesThatFailedToApply,
-      ].map(e => `--exclude=${path.join(relativePathFromRoot, e)}`);
+      ].map((e) => `--exclude=${path.join(relativePathFromRoot, e)}`);
       await execa('git', [
         'apply',
         tmpPatchFile,

@@ -44,14 +44,14 @@ export default function unlinkAssetsIOS(
 
   const removeResourceFiles = (f: Array<any> = []) =>
     (f || [])
-      .map(asset => {
+      .map((asset) => {
         logger.debug(`Unlinking asset ${asset}`);
         return project.removeResourceFile(
           path.relative(projectConfig.sourceDir, asset),
           {target: project.getFirstTarget().uuid},
         );
       })
-      .map(file => file.basename);
+      .map((file) => file.basename);
 
   removeResourceFiles(assets.image);
 

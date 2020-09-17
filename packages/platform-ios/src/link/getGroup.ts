@@ -12,7 +12,7 @@ const getFirstProject = (project: any) =>
 const findGroup = (
   groups: {children: Array<{comment: string; value: string}>},
   name: string,
-) => groups.children.find(group => group.comment === name);
+) => groups.children.find((group) => group.comment === name);
 
 /**
  * Returns group from .xcodeproj if one exists, null otherwise

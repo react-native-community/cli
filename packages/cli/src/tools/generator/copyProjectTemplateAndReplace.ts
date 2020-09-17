@@ -90,7 +90,9 @@ function copyProjectTemplateAndReplace(
         throw new Error('options.ignorePaths must be an array');
       }
       if (
-        options.ignorePaths.some(ignorePath => ignorePath === relativeFilePath)
+        options.ignorePaths.some(
+          (ignorePath) => ignorePath === relativeFilePath,
+        )
       ) {
         // Skip copying this file
         return;

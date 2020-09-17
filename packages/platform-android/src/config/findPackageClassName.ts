@@ -14,9 +14,9 @@ export default function getPackageClassName(folder: string) {
   const files = glob.sync('**/+(*.java|*.kt)', {cwd: folder});
 
   const packages = files
-    .map(filePath => fs.readFileSync(path.join(folder, filePath), 'utf8'))
+    .map((filePath) => fs.readFileSync(path.join(folder, filePath), 'utf8'))
     .map(matchClassName)
-    .filter(match => match);
+    .filter((match) => match);
 
   // @ts-ignore
   return packages.length ? packages[0][1] : null;

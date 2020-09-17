@@ -4,7 +4,7 @@ import {ValidationError} from 'joi';
 export class JoiError extends CLIError {
   constructor(joiError: ValidationError) {
     const message = joiError.details
-      .map(error => {
+      .map((error) => {
         const name = error.path.join('.');
         switch (error.type) {
           case 'object.allowUnknown': {

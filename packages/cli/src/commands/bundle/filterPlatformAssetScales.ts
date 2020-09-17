@@ -18,7 +18,7 @@ function filterPlatformAssetScales(
   if (!whitelist) {
     return scales;
   }
-  const result = scales.filter(scale => whitelist.indexOf(scale) > -1);
+  const result = scales.filter((scale) => whitelist.indexOf(scale) > -1);
   if (result.length === 0 && scales.length > 0) {
     // No matching scale found, but there are some available. Ideally we don't
     // want to be in this situation and should throw, but for now as a fallback

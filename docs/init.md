@@ -37,6 +37,7 @@ In following examples `TEMPLATE_NAME` can be either:
 - Full package name, eg. `react-native-template-typescript`.
 - Absolute path to directory containing template, eg. `file:///Users/username/project/some-template`.
 - Absolute path to a tarball created using `npm pack`.
+- Link to a GitHub repository (supports `username/repo` format).
 
 ```sh
 # This will initialize new project using template from TEMPLATE_NAME package

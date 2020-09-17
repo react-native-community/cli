@@ -77,6 +77,13 @@ function handleVersionedPackage(versionedPackage: string) {
   };
 }
 
+function handleGitHubRepo(templateName: string) {
+  return {
+    uri: `https://github.com/${templateName}`,
+    name: templateName.split('/')[1],
+  };
+}
+
 export function processTemplateName(templateName: string) {
   if (templateName.match(TARBALL)) {
     return handleTarball(templateName);
@@ -86,6 +93,12 @@ export function processTemplateName(templateName: string) {
   }
   if (templateName.match(VERSIONED_PACKAGE)) {
     return handleVersionedPackage(templateName);
+  }
+  if (
+    !['github', '@'].some(str => templateName.includes(str)) &&
+    templateName.includes('/')
+  ) {
+    return handleGitHubRepo(templateName);
   }
 
   return {

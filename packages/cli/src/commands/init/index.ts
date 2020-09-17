@@ -9,7 +9,7 @@ export default {
   options: [
     {
       name: '--version [string]',
-      description: 'Uses a valid semver version of React Native as a template',
+      description: 'Shortcut for `--template react-native@version`',
     },
     {
       name: '--template [string]',
@@ -27,6 +27,10 @@ export default {
     {
       name: '--title [string]',
       description: 'Uses a custom app title name for application',
+    },
+    {
+      name: '--skip-install',
+      description: 'Skips dependencies installation step',
     },
   ],
 };

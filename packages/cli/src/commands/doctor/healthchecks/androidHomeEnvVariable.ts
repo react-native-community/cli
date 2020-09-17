@@ -26,6 +26,13 @@ export default {
     needsToBeFixed: !process.env.ANDROID_HOME,
   }),
   runAutomaticFix: async ({loader}: {loader: Ora}) => {
+    // Variable could have been added if installing Android Studio so double checking
+    if (process.env.ANDROID_HOME) {
+      loader.succeed();
+
+      return;
+    }
+
     loader.fail();
 
     logManualInstallation({

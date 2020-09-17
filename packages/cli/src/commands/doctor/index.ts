@@ -2,6 +2,7 @@ import doctor from './doctor';
 
 export default {
   func: doctor,
+  detached: true,
   name: 'doctor',
   description:
     '[EXPERIMENTAL] Diagnose and fix common Node.js, iOS, Android & React Native issues.',

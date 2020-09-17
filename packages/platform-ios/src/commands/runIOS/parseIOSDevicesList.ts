@@ -8,36 +8,36 @@
 import {Device} from '../../types';
 
 /**
- * Parses the output of `xcrun simctl list devices` command
+ * Parses the output of the `xcrun instruments -s` command and returns metadata
+ * about available iOS simulators and physical devices, as well as host Mac for
+ * Catalyst purposes.
+ *
  * Expected text looks roughly like this:
+ *
+ * ```
  * Known Devices:
- * this-mac-device [ID]
- * Some Apple Simulator (Version) [ID]
+ * this-mac-device [UDID]
+ * A Physical Device (OS Version) [UDID]
+ * A Simulator Device (OS Version) [UDID] (Simulator)
+ * ```
  */
 function parseIOSDevicesList(text: string): Array<Device> {
   const devices: Array<Device> = [];
 
-  text.split('\n').forEach((line, index) => {
-    const device = line.match(/(.*?) \((.*?)\) \[(.*?)\]/);
-    const noSimulator = line.match(/(.*?) \((.*?)\) \[(.*?)\] \((.*?)\)/);
-
-    if (index === 1) {
-      const myMac = line.match(/(.*?) \[(.*?)\]/);
-      if (myMac) {
-        const name = myMac[1];
-        const udid = myMac[2];
-        devices.push({
-          udid,
-          name,
-        });
+  text.split('\n').forEach(line => {
+    const device = line.match(
+      /(.*?) (\(([0-9\.]+)\) )?\[([0-9A-F-]+)\]( \(Simulator\))?/i,
+    );
+    if (device) {
+      const [, name, , version, udid, isSimulator] = device;
+      const metadata: Device = {name, udid};
+      if (version) {
+        metadata.version = version;
+        metadata.type = isSimulator ? 'simulator' : 'device';
+      } else {
+        metadata.type = 'catalyst';
       }
-    }
-
-    if (device != null && noSimulator == null) {
-      const name = device[1];
-      const version = device[2];
-      const udid = device[3];
-      devices.push({udid, name, version});
+      devices.push(metadata);
     }
   });
 

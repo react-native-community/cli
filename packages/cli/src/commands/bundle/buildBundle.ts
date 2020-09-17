@@ -84,7 +84,6 @@ async function buildBundle(
     minify: args.minify !== undefined ? args.minify : !args.dev,
     platform: args.platform,
   };
-
   const server = new Server(config);
 
   try {

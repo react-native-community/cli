@@ -5,6 +5,7 @@ import path from 'path';
 // @ts-ignore - no typed definition for the package
 import {loadConfig} from 'metro-config';
 import {Config} from '@react-native-community/cli-types';
+import {reactNativePlatformResolver} from './metroPlatformResolver';
 
 const INTERNAL_CALLSITES_REGEX = new RegExp(
   [
@@ -21,6 +22,12 @@ const INTERNAL_CALLSITES_REGEX = new RegExp(
 
 export interface MetroConfig {
   resolver: {
+    resolveRequest?: (
+      context: any,
+      realModuleName: string,
+      platform: string,
+      moduleName: string,
+    ) => any;
     resolverMainFields: string[];
     platforms: string[];
   };
@@ -40,7 +47,7 @@ export interface MetroConfig {
     assetRegistryPath: string;
     assetPlugins?: Array<string>;
   };
-  watchFolders: string[];
+  watchFolders: ReadonlyArray<string>;
   reporter?: any;
 }
 
@@ -48,15 +55,39 @@ export interface MetroConfig {
  * Default configuration
  */
 export const getDefaultConfig = (ctx: Config): MetroConfig => {
+  const outOfTreePlatforms = Object.keys(ctx.platforms).filter(
+    platform => ctx.platforms[platform].npmPackageName,
+  );
+
   return {
     resolver: {
+      resolveRequest:
+        outOfTreePlatforms.length === 0
+          ? undefined
+          : reactNativePlatformResolver(
+              outOfTreePlatforms.reduce<{[platform: string]: string}>(
+                (result, platform) => {
+                  result[platform] = ctx.platforms[platform].npmPackageName!;
+                  return result;
+                },
+                {},
+              ),
+            ),
       resolverMainFields: ['react-native', 'browser', 'main'],
       platforms: [...Object.keys(ctx.platforms), 'native'],
     },
     serializer: {
+      // We can include multiple copies of InitializeCore here because metro will
+      // only add ones that are already part of the bundle
       getModulesRunBeforeMainModule: () => [
         require.resolve(
           path.join(ctx.reactNativePath, 'Libraries/Core/InitializeCore'),
+        ),
+        ...outOfTreePlatforms.map(platform =>
+          require.resolve(
+            `${ctx.platforms[platform]
+              .npmPackageName!}/Libraries/Core/InitializeCore`,
+          ),
         ),
       ],
       getPolyfills: () =>
@@ -77,10 +108,7 @@ export const getDefaultConfig = (ctx: Config): MetroConfig => {
       babelTransformerPath: require.resolve(
         'metro-react-native-babel-transformer',
       ),
-      assetRegistryPath: path.join(
-        ctx.reactNativePath,
-        'Libraries/Image/AssetRegistry',
-      ),
+      assetRegistryPath: 'react-native/Libraries/Image/AssetRegistry',
     },
     watchFolders: [],
   };

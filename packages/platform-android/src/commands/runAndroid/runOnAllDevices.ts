@@ -51,9 +51,7 @@ async function runOnAllDevices(
   }
 
   try {
-    const tasks = args.tasks || [
-      'install' + toPascalCase(args.appIdSuffix) + toPascalCase(args.variant),
-    ];
+    const tasks = args.tasks || ['install' + toPascalCase(args.variant)];
     const gradleArgs = getTaskNames(
       args.appFolder || androidProject.appName,
       tasks,
@@ -86,8 +84,7 @@ async function runOnAllDevices(
 
 function createInstallError(error: Error & {stderr: string}) {
   const stderr = (error.stderr || '').toString();
-  const docs =
-    'https://reactnative.dev/docs/getting-started.html#android-development-environment';
+  const docs = 'https://reactnative.dev/docs/environment-setup';
   let message = `Make sure you have the Android development environment set up: ${chalk.underline.dim(
     docs,
   )}`;

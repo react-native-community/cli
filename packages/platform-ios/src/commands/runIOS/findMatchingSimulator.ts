@@ -22,24 +22,25 @@ import {Device} from '../../types';
  */
 function findMatchingSimulator(
   simulators: {devices: {[index: string]: Array<Device>}},
-  simulatorString: string,
+  findOptions?: null | {simulator?: string; udid?: string},
 ) {
   if (!simulators.devices) {
     return null;
   }
   const devices = simulators.devices;
   let simulatorVersion;
-  let simulatorName;
+  let simulatorName = null;
 
-  const parsedSimulatorName = simulatorString
-    ? simulatorString.match(/(.*)? (?:\((\d+\.\d+)?\))$/)
-    : [];
-
-  if (parsedSimulatorName && parsedSimulatorName[2] !== undefined) {
-    simulatorVersion = parsedSimulatorName[2];
-    simulatorName = parsedSimulatorName[1];
-  } else {
-    simulatorName = simulatorString;
+  if (findOptions && findOptions.simulator) {
+    const parsedSimulatorName = findOptions.simulator.match(
+      /(.*)? (?:\((\d+\.\d+)?\))$/,
+    );
+    if (parsedSimulatorName && parsedSimulatorName[2] !== undefined) {
+      simulatorVersion = parsedSimulatorName[2];
+      simulatorName = parsedSimulatorName[1];
+    } else {
+      simulatorName = findOptions.simulator;
+    }
   }
 
   let match;
@@ -74,30 +75,27 @@ function findMatchingSimulator(
         continue;
       }
       const booted = simulator.state === 'Booted';
-      if (booted && simulatorName === null) {
-        return {
-          udid: simulator.udid,
-          name: simulator.name,
-          booted,
-          version,
-        };
-      }
-      if (simulator.name === simulatorName && !match) {
-        match = {
-          udid: simulator.udid,
-          name: simulator.name,
-          booted,
-          version,
-        };
-      }
-      // Keeps track of the first available simulator for use if we can't find one above.
-      if (simulatorName === null && !match) {
-        match = {
-          udid: simulator.udid,
-          name: simulator.name,
-          booted,
-          version,
-        };
+      const simulatorDescriptor = {
+        udid: simulator.udid,
+        name: simulator.name,
+        booted,
+        version,
+      };
+      if (findOptions && findOptions.udid) {
+        if (simulator.udid === findOptions.udid) {
+          return simulatorDescriptor;
+        }
+      } else {
+        if (booted && simulatorName === null) {
+          return simulatorDescriptor;
+        }
+        if (simulator.name === simulatorName && !match) {
+          match = simulatorDescriptor;
+        }
+        // Keeps track of the first available simulator for use if we can't find one above.
+        if (simulatorName === null && !match) {
+          match = simulatorDescriptor;
+        }
       }
     }
   }

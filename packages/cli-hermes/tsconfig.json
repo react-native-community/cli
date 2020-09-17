@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "build"
+  },
+  "references": [
+    {"path": "../tools"},
+    {"path": "../cli-types"},
+    {"path": "../platform-android"}
+  ]
+}

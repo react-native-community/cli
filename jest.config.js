@@ -1,17 +1,20 @@
-const common = {testEnvironment: 'node'};
+const common = {
+  testEnvironment: 'node',
+  snapshotSerializers: [require.resolve('jest-snapshot-serializer-raw')],
+};
 
 module.exports = {
   projects: [
     {
       ...common,
       displayName: 'e2e',
-      setupFiles: ['<rootDir>/jest/setupE2eTests.js'],
-      testMatch: ['<rootDir>/**/__e2e__/*{.,-}test.[jt]s'],
+      setupFilesAfterEnv: ['<rootDir>/jest/setupE2eTests.js'],
+      testMatch: ['<rootDir>/__e2e__/*{.,-}test.[jt]s'],
     },
     {
       ...common,
       displayName: 'unit',
-      setupFiles: ['<rootDir>/jest/setupUnitTests.js'],
+      setupFilesAfterEnv: ['<rootDir>/jest/setupUnitTests.js'],
       testMatch: ['<rootDir>/**/__tests__/*{.,-}test.[jt]s'],
     },
   ],

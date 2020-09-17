@@ -52,11 +52,6 @@ commands:
       - attach_workspace:
           at: ~/react-native-cli
       - run: yarn lint
-  run-cocoa-pods-tests:
-    steps:
-      - attach_workspace:
-          at: ~/react-native-cli
-      - run: yarn test:ci:cocoapods
   run-unit-tests:
     steps:
       - attach_workspace:
@@ -114,9 +109,6 @@ workflows:
           requires:
             - setup
       - e2e-tests:
-          requires:
-            - setup
-      - cocoa-pods:
           requires:
             - setup
       - lts-tests

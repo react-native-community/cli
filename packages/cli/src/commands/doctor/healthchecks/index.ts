@@ -1,8 +1,10 @@
 import nodeJS from './nodeJS';
 import {yarn, npm} from './packageManagers';
+import jdk from './jdk';
 import python from './python';
 import watchman from './watchman';
 import androidHomeEnvVariable from './androidHomeEnvVariable';
+import androidStudio from './androidStudio';
 import androidSDK from './androidSDK';
 import androidNDK from './androidNDK';
 import xcode from './xcode';
@@ -34,8 +36,10 @@ export const getHealthchecks = ({contributor}: Options): Healthchecks => ({
   android: {
     label: 'Android',
     healthchecks: [
-      androidHomeEnvVariable,
+      jdk,
+      androidStudio,
       androidSDK,
+      androidHomeEnvVariable,
       ...(contributor ? [androidNDK] : []),
     ],
   },

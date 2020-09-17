@@ -1,13 +1,18 @@
-import {runCLI, getTempDirectory, cleanup, writeFiles} from '../jest/helpers';
+import {
+  runCLI,
+  getTempDirectory,
+  cleanupSync,
+  writeFiles,
+} from '../jest/helpers';
 
 const DIR = getTempDirectory('test_default_behavior');
 
 beforeEach(() => {
-  cleanup(DIR);
+  cleanupSync(DIR);
   writeFiles(DIR, {});
 });
 afterEach(() => {
-  cleanup(DIR);
+  cleanupSync(DIR);
 });
 
 test('shows up help information without passing in any args', () => {

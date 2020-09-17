@@ -18,6 +18,7 @@ import {Config} from '@react-native-community/cli-types';
 import findXcodeProject, {ProjectInfo} from './findXcodeProject';
 import parseIOSDevicesList from './parseIOSDevicesList';
 import findMatchingSimulator from './findMatchingSimulator';
+import warnAboutManuallyLinkedLibs from '../../link/warnAboutManuallyLinkedLibs';
 import warnAboutPodInstall from '../../link/warnAboutPodInstall';
 import {
   logger,
@@ -47,6 +48,7 @@ function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     );
   }
 
+  warnAboutManuallyLinkedLibs(ctx);
   warnAboutPodInstall(ctx);
 
   process.chdir(args.projectPath);

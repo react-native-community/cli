@@ -21,9 +21,11 @@ import {
   getDefaultUserTerminal,
   CLIError,
 } from '@react-native-community/cli-tools';
+import warnAboutManuallyLinkedLibs from '../../link/warnAboutManuallyLinkedLibs';
 import {getAndroidProject, getPackageName} from '../../utils/getAndroidProject';
 
-function displayWarnings(args: Flags) {
+function displayWarnings(config: Config, args: Flags) {
+  warnAboutManuallyLinkedLibs(config);
   if (args.appFolder) {
     logger.warn(
       'Using deprecated "--appFolder" flag. Use "project.android.appName" in react-native.config.js instead.',
@@ -57,7 +59,7 @@ type AndroidProject = NonNullable<Config['project']['android']>;
  * Starts the app on a connected Android emulator or device.
  */
 async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
-  displayWarnings(args);
+  displayWarnings(config, args);
   const androidProject = getAndroidProject(config);
 
   if (args.jetifier) {

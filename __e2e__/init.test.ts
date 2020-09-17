@@ -124,7 +124,7 @@ test('init skips installation of dependencies with --skip-install', () => {
 
   expect(dirFiles).toEqual(
     customTemplateCopiedFiles.filter(
-      file => !['node_modules', 'yarn.lock'].includes(file),
+      (file) => !['node_modules', 'yarn.lock'].includes(file),
     ),
   );
 });

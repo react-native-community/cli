@@ -147,7 +147,7 @@ function guessEditor() {
 
       const runningProcesses = output
         .split('\n')
-        .map(line => line.replace(/^"|".*\r$/gm, ''));
+        .map((line) => line.replace(/^"|".*\r$/gm, ''));
       const processNames = Object.keys(COMMON_WINDOWS_EDITORS);
       for (const processName of processNames) {
         if (runningProcesses.includes(processName)) {

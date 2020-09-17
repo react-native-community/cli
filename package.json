@@ -28,7 +28,7 @@
     "@babel/plugin-transform-strict-mode": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
     "@babel/preset-typescript": "^7.3.3",
-    "@react-native-community/eslint-config": "^1.1.0",
+    "@react-native-community/eslint-config": "^2.0.0",
     "@types/glob": "^7.1.1",
     "@types/jest": "^25.1.4",
     "@types/mkdirp": "^0.5.2",

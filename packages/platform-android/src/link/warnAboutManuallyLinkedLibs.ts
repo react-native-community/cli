@@ -13,23 +13,22 @@ export default function warnAboutManuallyLinkedLibs(
   > = getLinkConfig(),
 ) {
   let deps: Array<string> = [];
+  const projectConfig = config.project[platform];
 
   for (let key in config.dependencies) {
     const dependency = config.dependencies[key];
-    const projectConfig = config.project[platform];
-    try {
-      const dependencyConfig = dependency.platforms[platform];
-      if (projectConfig && dependencyConfig) {
-        const x = linkConfig.isInstalled(
-          projectConfig,
-          dependency.name,
-          dependencyConfig,
-        );
-        deps = deps.concat(x ? dependency.name : []);
-      }
-    } catch (error) {
-      logger.debug('Checking manually linked modules failed.', error);
+
+    const dependencyConfig = dependency.platforms[platform];
+    if (projectConfig && dependencyConfig) {
+      const x = linkConfig.isInstalled(
+        projectConfig,
+        dependency.name,
+        dependencyConfig,
+      );
+      deps = deps.concat(x ? dependency.name : []);
     }
+
+    logger.debug('Checking manually linked modules failed.');
   }
 
   const installedModules = [...new Set(deps)];

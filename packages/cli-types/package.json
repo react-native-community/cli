@@ -5,6 +5,9 @@
   "publishConfig": {
     "access": "public"
   },
+  "dependencies": {
+    "ora": "^3.4.0"
+  },
   "files": [
     "build",
     "!*.map"

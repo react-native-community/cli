@@ -67,7 +67,7 @@ export function validateProjectName(name: string) {
 
   const lowerCaseName = name.toLowerCase();
   if (reservedNames.includes(lowerCaseName)) {
-    throw new ReservedNameError();
+    throw new ReservedNameError(lowerCaseName);
   }
 
   if (name.match(/helloworld/gi)) {

@@ -1,7 +1,6 @@
 import versionRanges from '../versionRanges';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
-import {logManualInstallation} from './common';
-import {HealthCheckInterface} from '../types';
+import {HealthCheckInterface} from '@react-native-community/cli-types';
 
 export default {
   label: 'Xcode',
@@ -18,7 +17,7 @@ export default {
       versionRange: versionRanges.XCODE,
     };
   },
-  runAutomaticFix: async ({loader}) => {
+  runAutomaticFix: async ({loader, logManualInstallation}) => {
     loader.fail();
 
     logManualInstallation({

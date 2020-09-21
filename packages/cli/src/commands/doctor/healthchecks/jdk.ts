@@ -1,16 +1,13 @@
 import {join} from 'path';
 import versionRanges from '../versionRanges';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
-import {logManualInstallation} from './common';
-import {HealthCheckInterface} from '../types';
+import {HealthCheckInterface} from '@react-native-community/cli-types';
 
 import {downloadAndUnzip} from '../../../tools/downloadAndUnzip';
 import {
   setEnvironment,
   updateEnvironment,
 } from '../../../tools/windows/environmentVariables';
-
-import {Ora} from 'ora';
 
 export default {
   label: 'JDK',
@@ -29,7 +26,7 @@ export default {
         : Languages.Java.version,
     versionRange: versionRanges.JAVA,
   }),
-  win32AutomaticFix: async ({loader}: {loader: Ora}) => {
+  win32AutomaticFix: async ({loader}) => {
     try {
       // Installing JDK 11 because later versions seem to cause issues with gradle at the moment
       const installerUrl =
@@ -57,7 +54,7 @@ export default {
       loader.fail(e);
     }
   },
-  runAutomaticFix: async () => {
+  runAutomaticFix: async ({logManualInstallation}) => {
     logManualInstallation({
       healthcheck: 'JDK',
       url: 'https://openjdk.java.net/',

@@ -1,9 +1,10 @@
 import chalk from 'chalk';
-import {Ora} from 'ora';
-import {logManualInstallation} from './common';
 import versionRanges from '../versionRanges';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
-import {EnvironmentInfo, HealthCheckInterface} from '../types';
+import {
+  EnvironmentInfo,
+  HealthCheckInterface,
+} from '@react-native-community/cli-types';
 
 export default {
   label: 'Android NDK',
@@ -22,13 +23,7 @@ export default {
       versionRange: versionRanges.ANDROID_NDK,
     };
   },
-  runAutomaticFix: async ({
-    loader,
-    environmentInfo,
-  }: {
-    loader: Ora;
-    environmentInfo: EnvironmentInfo;
-  }) => {
+  runAutomaticFix: async ({loader, logManualInstallation, environmentInfo}) => {
     const androidSdk = environmentInfo.SDKs['Android SDK'];
     const isNDKInstalled =
       androidSdk !== 'Not Found' && androidSdk['Android NDK'] !== 'Not Found';

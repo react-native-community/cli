@@ -74,6 +74,7 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
     get assets() {
       return findAssets(projectRoot, userConfig.assets);
     },
+    healthChecks: [],
     platforms: userConfig.platforms,
     get project() {
       if (lazyProject) {
@@ -143,6 +144,7 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
         ...acc.platforms,
         ...config.platforms,
       },
+      healthChecks: [...acc.healthChecks, ...config.healthChecks],
     }) as Config;
   }, initialConfig);
 

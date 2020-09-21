@@ -27,6 +27,8 @@ At the startup, React Native CLI reads configuration from all dependencies liste
 
 At the end, an array of commands concatenated from all plugins is passed on to the CLI to be loaded after built-in commands.
 
+> See [`healthChecks`](./healthChecks.md) for information on how plugins can provide additional health checks for `react-native doctor`.
+
 ## Command interface
 
 ```ts
@@ -106,6 +108,7 @@ String that describes this particular usage.
 ##### `examples.cmd`
 
 A command with arguments and options (if applicable) that can be run in order to achieve the desired goal.
+
 
 ## Migrating from `rnpm` configuration
 

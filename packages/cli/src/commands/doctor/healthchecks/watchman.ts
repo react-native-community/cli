@@ -1,7 +1,7 @@
 import versionRanges from '../versionRanges';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
 import {install} from '../../../tools/install';
-import {HealthCheckInterface} from '../types';
+import {HealthCheckInterface} from '@react-native-community/cli-types';
 
 const label = 'Watchman';
 

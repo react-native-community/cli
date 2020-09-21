@@ -1,11 +1,12 @@
 import androidNDK from '../androidNDK';
 import getEnvironmentInfo from '../../../../tools/envinfo';
-import {EnvironmentInfo} from '../../types';
+import {EnvironmentInfo} from '@react-native-community/cli-types';
 import {NoopLoader} from '../../../../tools/loader';
 
 import * as common from '../common';
 
 const logSpy = jest.spyOn(common, 'logManualInstallation');
+const {logManualInstallation} = common;
 
 describe('androidNDK', () => {
   let environmentInfo: EnvironmentInfo;
@@ -57,7 +58,11 @@ describe('androidNDK', () => {
   it('logs manual installation steps to the screen', () => {
     const loader = new NoopLoader();
 
-    androidNDK.runAutomaticFix({loader, environmentInfo});
+    androidNDK.runAutomaticFix({
+      loader,
+      logManualInstallation,
+      environmentInfo,
+    });
 
     expect(logSpy).toHaveBeenCalledTimes(1);
   });

@@ -4,8 +4,8 @@ import chalk from 'chalk';
 import inquirer from 'inquirer';
 import {isSoftwareNotInstalled, PACKAGE_MANAGERS} from '../checkInstallation';
 import {packageManager} from './packageManagers';
-import {logManualInstallation, logError, removeMessage} from './common';
-import {HealthCheckInterface} from '../types';
+import {logError, removeMessage} from './common';
+import {HealthCheckInterface} from '@react-native-community/cli-types';
 import {Ora} from 'ora';
 
 const label = 'ios-deploy';
@@ -60,7 +60,7 @@ export default {
   getDiagnostics: async () => ({
     needsToBeFixed: await isSoftwareNotInstalled('ios-deploy'),
   }),
-  runAutomaticFix: async ({loader}) => {
+  runAutomaticFix: async ({loader, logManualInstallation}) => {
     loader.stop();
 
     const installationCommand = identifyInstallationCommand();

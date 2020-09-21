@@ -37,7 +37,7 @@ function launchDevTools(
   // Explicit config always wins
   const customDebugger = process.env.REACT_DEBUGGER;
   if (customDebugger) {
-    startCustomDebugger({watchFolders, customDebugger});
+    startCustomDebugger({watchFolders, customDebugger, host, port});
   } else if (!isDebuggerConnected()) {
     // Debugger is not yet open; we need to open a session
     launchDefaultDebugger(host, port);
@@ -47,18 +47,36 @@ function launchDevTools(
 function startCustomDebugger({
   watchFolders,
   customDebugger,
+  host,
+  port,
 }: {
   watchFolders: ReadonlyArray<string>;
   customDebugger: string;
+  host: string | undefined;
+  port: number;
 }) {
+  const hostname = host || 'localhost';
   const folders = watchFolders.map(escapePath).join(' ');
   const command = `${customDebugger} ${folders}`;
   logger.info('Starting custom debugger by executing:', command);
-  exec(command, function (error) {
-    if (error !== null) {
-      logger.error('Error while starting custom debugger:', error.stack || '');
-    }
-  });
+  exec(
+    command,
+    {
+      env: {
+        ...process.env,
+        REACT_BUNDLER_HOST: hostname,
+        REACT_BUNDLER_PORT: `${port}`,
+      },
+    },
+    function (error) {
+      if (error !== null) {
+        logger.error(
+          'Error while starting custom debugger:',
+          error.stack || '',
+        );
+      }
+    },
+  );
 }
 
 export default function getDevToolsMiddleware(

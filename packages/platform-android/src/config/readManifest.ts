@@ -5,10 +5,17 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-
 import fs from 'fs';
 import xml from 'xmldoc';
+import {CLIError} from '@react-native-community/cli-tools';
 
 export default function readManifest(manifestPath: string) {
-  return new xml.XmlDocument(fs.readFileSync(manifestPath, 'utf8'));
+  try {
+    return new xml.XmlDocument(fs.readFileSync(manifestPath, 'utf8'));
+  } catch (error) {
+    throw new CLIError(
+      `Failed to parse Android Manifest file at ${manifestPath}`,
+      error,
+    );
+  }
 }

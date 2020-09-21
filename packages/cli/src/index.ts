@@ -31,16 +31,19 @@ const handleError = (err: Error) => {
   } else {
     // Some error messages (esp. custom ones) might have `.` at the end already.
     const message = err.message.replace(/\.$/, '');
-    logger.error(
-      `${message}. ${chalk.dim(
+    logger.error(`${message}.`);
+  }
+  if (err.stack) {
+    logger.log(err.stack);
+  }
+  if (!commander.verbose) {
+    logger.info(
+      chalk.dim(
         `Run CLI with ${chalk.reset('--verbose')} ${chalk.dim(
           'flag for more details.',
         )}`,
-      )}`,
+      ),
     );
-  }
-  if (err.stack) {
-    logger.log(chalk.dim(err.stack));
   }
   process.exit(1);
 };

@@ -95,7 +95,7 @@ export function processTemplateName(templateName: string) {
     return handleVersionedPackage(templateName);
   }
   if (
-    !['github', '@'].some(str => templateName.includes(str)) &&
+    !['github', '@'].some((str) => templateName.includes(str)) &&
     templateName.includes('/')
   ) {
     return handleGitHubRepo(templateName);

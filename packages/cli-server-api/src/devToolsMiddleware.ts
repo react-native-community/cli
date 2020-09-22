@@ -8,13 +8,8 @@ import http from 'http';
 import {launchDebugger, logger} from '@react-native-community/cli-tools';
 import {exec} from 'child_process';
 
-function launchDefaultDebugger(
-  host: string | undefined,
-  port: number,
-  args = '',
-) {
-  const hostname = host || 'localhost';
-  const debuggerURL = `http://${hostname}:${port}/debugger-ui${args}`;
+function launchDefaultDebugger(host: string, port: number, args = '') {
+  const debuggerURL = `http://${host}:${port}/debugger-ui${args}`;
   logger.info('Launching Dev Tools...');
   launchDebugger(debuggerURL);
 }
@@ -34,13 +29,14 @@ function launchDevTools(
   {host, port, watchFolders}: LaunchDevToolsOptions,
   isDebuggerConnected: () => boolean,
 ) {
+  const hostname = host ?? 'localhost';
   // Explicit config always wins
   const customDebugger = process.env.REACT_DEBUGGER;
   if (customDebugger) {
-    startCustomDebugger({watchFolders, customDebugger, host, port});
+    startCustomDebugger({watchFolders, customDebugger, host: hostname, port});
   } else if (!isDebuggerConnected()) {
     // Debugger is not yet open; we need to open a session
-    launchDefaultDebugger(host, port);
+    launchDefaultDebugger(hostname, port);
   }
 }
 
@@ -52,10 +48,9 @@ function startCustomDebugger({
 }: {
   watchFolders: ReadonlyArray<string>;
   customDebugger: string;
-  host: string | undefined;
+  host: string;
   port: number;
 }) {
-  const hostname = host || 'localhost';
   const folders = watchFolders.map(escapePath).join(' ');
   const command = `${customDebugger} ${folders}`;
   logger.info('Starting custom debugger by executing:', command);
@@ -64,7 +59,7 @@ function startCustomDebugger({
     {
       env: {
         ...process.env,
-        REACT_BUNDLER_HOST: hostname,
+        REACT_BUNDLER_HOST: host,
         REACT_BUNDLER_PORT: `${port}`,
       },
     },

@@ -39,7 +39,7 @@ function enableWatchMode(messageSocket: any) {
           process.exit();
           break;
         case 'z':
-          process.emit('SIGTSTP');
+          process.emit('SIGTSTP', 'SIGTSTP');
           break;
       }
     } else if (name === 'r') {

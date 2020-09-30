@@ -537,8 +537,8 @@ export default {
   func: runIOS,
   examples: [
     {
-      desc: 'Run on a different simulator, e.g. iPhone SE',
-      cmd: 'react-native run-ios --simulator "iPhone SE"',
+      desc: 'Run on a different simulator, e.g. iPhone SE (1st generation)',
+      cmd: 'react-native run-ios --simulator "iPhone SE (1st generation)"',
     },
     {
       desc: 'Pass a non-standard location of iOS directory',

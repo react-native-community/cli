@@ -14,8 +14,8 @@ import chalk from 'chalk';
 import {logger} from '@react-native-community/cli-tools';
 
 function printRunInstructions(projectDir: string, projectName: string) {
-  let iosInstructions;
-  let desktopInstructions;
+  let iosInstructions = '';
+  let desktopInstructions = '';
 
   if (process.platform === 'darwin') {
     const iosProjectDir = path.resolve(projectDir, 'ios');

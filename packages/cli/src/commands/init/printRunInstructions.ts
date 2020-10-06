@@ -33,15 +33,15 @@ function printRunInstructions(projectDir: string, projectName: string) {
     );
 
     iosInstructions = `
-    ${chalk.cyan(`Run instructions for ${chalk.bold('iOS')}`)}:
-      • cd "${projectDir}" && npx react-native run-ios
-    ${chalk.dim('- or -')}
-      • Open ${relativeXcodeProjectPath} in Xcode or run "xed -b ios"
-      • Hit the Run button
+  ${chalk.cyan(`Run instructions for ${chalk.bold('iOS')}`)}:
+    • cd "${projectDir}" && npx react-native run-ios
+  ${chalk.dim('- or -')}
+    • Open ${relativeXcodeProjectPath} in Xcode or run "xed -b ios"
+    • Hit the Run button
     `;
 
     desktopInstructions = `
-    ${chalk.magenta(`Run instructions for ${chalk.bold('macOS')}`)}:
+  ${chalk.magenta(`Run instructions for ${chalk.bold('macOS')}`)}:
     • See ${chalk.underline(
       'https://microsoft.github.io/react-native-windows/docs/rnm-getting-started',
     )} for the latest up-to-date instructions.
@@ -50,7 +50,7 @@ function printRunInstructions(projectDir: string, projectName: string) {
 
   if (process.platform === 'win32') {
     desktopInstructions = `
-    ${chalk.magenta(`Run instructions for ${chalk.bold('Windows')}`)}:
+  ${chalk.magenta(`Run instructions for ${chalk.bold('Windows')}`)}:
     • See ${chalk.underline(
       'https://microsoft.github.io/react-native-windows/docs/getting-started',
     )} for the latest up-to-date instructions.

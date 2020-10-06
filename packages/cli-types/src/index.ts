@@ -165,7 +165,6 @@ export type EnvironmentInfo = {
   };
   Languages: {
     Java: Information;
-    Python: Information;
   };
 };
 

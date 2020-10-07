@@ -43,7 +43,7 @@ function printRunInstructions(projectDir: string, projectName: string) {
     desktopInstructions = `
   ${chalk.magenta(`Run instructions for ${chalk.bold('macOS')}`)}:
     • See ${chalk.underline(
-      'https://microsoft.github.io/react-native-windows/docs/rnm-getting-started',
+      'https://aka.ms/ReactNativeGuideMacOS',
     )} for the latest up-to-date instructions.
     `;
   }
@@ -52,7 +52,7 @@ function printRunInstructions(projectDir: string, projectName: string) {
     desktopInstructions = `
   ${chalk.magenta(`Run instructions for ${chalk.bold('Windows')}`)}:
     • See ${chalk.underline(
-      'https://microsoft.github.io/react-native-windows/docs/getting-started',
+      'https://aka.ms/ReactNativeGuideWindows',
     )} for the latest up-to-date instructions.
     `;
   }

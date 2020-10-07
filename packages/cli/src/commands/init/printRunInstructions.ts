@@ -50,7 +50,7 @@ function printRunInstructions(projectDir: string, projectName: string) {
 
   if (process.platform === 'win32') {
     desktopInstructions = `
-  ${chalk.magenta(`Run instructions for ${chalk.bold('Windows')}`)}:
+  ${chalk.cyan(`Run instructions for ${chalk.bold('Windows')}`)}:
     • See ${chalk.underline(
       'https://aka.ms/ReactNativeGuideWindows',
     )} for the latest up-to-date instructions.

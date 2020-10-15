@@ -67,6 +67,7 @@ export const dependencyConfig = t
                 libraryFolder: t.string(),
                 scriptPhases: t.array().items(t.object()),
               })
+              .allow(null)
               .default({}),
             android: t
               .object({
@@ -75,6 +76,7 @@ export const dependencyConfig = t
                 packageImportPath: t.string(),
                 packageInstance: t.string(),
               })
+              .allow(null)
               .default({}),
           })
           .default(),

@@ -73,6 +73,7 @@ class ReactNativeModules {
   private String packageName
   private File root
   private ArrayList<HashMap<String, String>> reactNativeModules
+  private HashMap<String, ArrayList> reactNativeModulesBuildVariants
 
   private static String LOG_PREFIX = ":ReactNative:"
 
@@ -80,8 +81,9 @@ class ReactNativeModules {
     this.logger = logger
     this.root = root
 
-    def (nativeModules, packageName) = this.getReactNativeConfig()
+    def (nativeModules, reactNativeModulesBuildVariants, packageName) = this.getReactNativeConfig()
     this.reactNativeModules = nativeModules
+    this.reactNativeModulesBuildVariants = reactNativeModulesBuildVariants
     this.packageName = packageName
   }
 
@@ -104,8 +106,16 @@ class ReactNativeModules {
     reactNativeModules.forEach { reactNativeModule ->
       def nameCleansed = reactNativeModule["nameCleansed"]
       appProject.dependencies {
-        // TODO(salakar): are other dependency scope methods such as `api` required?
-        implementation project(path: ":${nameCleansed}")
+        if (reactNativeModulesBuildVariants.containsKey(nameCleansed)) {
+          reactNativeModulesBuildVariants
+            .get(nameCleansed)
+            .forEach { buildVariant ->
+              "${buildVariant}Implementation" project(path: ":${nameCleansed}")
+            }
+        } else {
+          // TODO(salakar): are other dependency scope methods such as `api` required?
+          implementation project(path: ":${nameCleansed}")
+        }
       }
     }
   }
@@ -208,7 +218,8 @@ class ReactNativeModules {
     if (this.reactNativeModules != null) return this.reactNativeModules
 
     ArrayList<HashMap<String, String>> reactNativeModules = new ArrayList<HashMap<String, String>>()
-
+    HashMap<String, ArrayList> reactNativeModulesBuildVariants = new HashMap<String, ArrayList>()
+    
     /**
      * Resolve the CLI location from Gradle file
      *
@@ -243,22 +254,26 @@ class ReactNativeModules {
 
       if (androidConfig != null && androidConfig["sourceDir"] != null) {
         this.logger.info("${LOG_PREFIX}Automatically adding native module '${name}'")
-
+        
         HashMap reactNativeModuleConfig = new HashMap<String, String>()
+        def nameCleansed = name.replaceAll('[~*!\'()]+', '_').replaceAll('^@([\\w-.]+)/', '$1_')
         reactNativeModuleConfig.put("name", name)
-        reactNativeModuleConfig.put("nameCleansed", name.replaceAll('[~*!\'()]+', '_').replaceAll('^@([\\w-.]+)/', '$1_'))
+        reactNativeModuleConfig.put("nameCleansed", nameCleansed)
         reactNativeModuleConfig.put("androidSourceDir", androidConfig["sourceDir"])
         reactNativeModuleConfig.put("packageInstance", androidConfig["packageInstance"])
         reactNativeModuleConfig.put("packageImportPath", androidConfig["packageImportPath"])
+        if (!androidConfig["buildTypes"].isEmpty()) {
+          reactNativeModulesBuildVariants.put(nameCleansed, androidConfig["buildTypes"])
+        }
         this.logger.trace("${LOG_PREFIX}'${name}': ${reactNativeModuleConfig.toMapString()}")
-
+        
         reactNativeModules.add(reactNativeModuleConfig)
       } else {
         this.logger.info("${LOG_PREFIX}Skipping native module '${name}'")
       }
     }
 
-    return [reactNativeModules, json["project"]["android"]["packageName"]];
+    return [reactNativeModules, reactNativeModulesBuildVariants, json["project"]["android"]["packageName"]];
   }
 }
 

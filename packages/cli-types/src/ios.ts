@@ -20,7 +20,9 @@ export interface IOSProjectParams {
   scriptPhases?: Array<any>;
 }
 
-export interface IOSDependencyParams extends IOSProjectParams {}
+export interface IOSDependencyParams extends IOSProjectParams {
+  buildTypes?: string[];
+}
 
 // The following types are used in untyped-parts of the codebase, so I am leaving them
 // until we actually need them.
@@ -37,7 +39,9 @@ export interface IOSProjectConfig {
   plist: Array<any>;
 }
 
-export interface IOSDependencyConfig extends IOSProjectConfig {}
+export interface IOSDependencyConfig extends IOSProjectConfig {
+  buildTypes: string[];
+}
 
 /**
  * @see https://www.rubydoc.info/gems/cocoapods-core/Pod/Podfile/DSL#script_phase-instance_method

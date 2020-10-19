@@ -66,6 +66,7 @@ export const dependencyConfig = t
                 sharedLibraries: t.array().items(t.string()),
                 libraryFolder: t.string(),
                 scriptPhases: t.array().items(t.object()),
+                buildTypes: t.array().items(t.string()).default([]),
               })
               .default({}),
             android: t
@@ -74,6 +75,7 @@ export const dependencyConfig = t
                 manifestPath: t.string(),
                 packageImportPath: t.string(),
                 packageInstance: t.string(),
+                buildTypes: t.array().items(t.string()).default([]),
               })
               .default({}),
           })

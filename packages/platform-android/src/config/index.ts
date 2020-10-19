@@ -154,5 +154,13 @@ export function dependencyConfig(
   const packageInstance =
     userConfig.packageInstance || `new ${packageClassName}()`;
 
-  return {sourceDir, folder: root, packageImportPath, packageInstance};
+  const buildTypes = userConfig.buildTypes || [];
+
+  return {
+    sourceDir,
+    folder: root,
+    packageImportPath,
+    packageInstance,
+    buildTypes,
+  };
 }

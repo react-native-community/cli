@@ -131,6 +131,7 @@ export const projectConfig = t
                 projectName: t.string(),
                 libraryFolder: t.string(),
                 sharedLibraries: t.array().items(t.string()),
+                buildTypes: t.array().items(t.string()).default([]),
               })
               .allow(null),
             android: t
@@ -139,6 +140,7 @@ export const projectConfig = t
                 folder: t.string(),
                 packageImportPath: t.string(),
                 packageInstance: t.string(),
+                buildTypes: t.array().items(t.string()).default([]),
               })
               .allow(null),
           }),

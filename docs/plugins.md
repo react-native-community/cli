@@ -83,6 +83,9 @@ For example, a `--reset-cache` option will result in a `resetCache: true` or `re
 
 Just like with a [command name](#name), your option can require a value (e.g. `--port <port>`) or accept an optional one (e.g. `--host [host]`). In this case, you may find [`default`](#optionsdefault) value useful.
 
+> Note: Almost all names are accepted, but **there's an exception** for `--version`, we consider it a reserved word and do not guarantee that it will
+work as expected, so avoid using it. (see [this](https://github.com/react-native-community/cli/issues/1300) for further details)
+
 ##### `options.description`
 
 Optional description of your option. When provided, will be used to output a better help information.

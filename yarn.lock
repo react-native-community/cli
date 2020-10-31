@@ -2746,6 +2746,11 @@ anymatch@^3.0.3, anymatch@~3.1.1:
     normalize-path "^3.0.0"
     picomatch "^2.0.4"
 
+appdirsjs@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/appdirsjs/-/appdirsjs-1.2.1.tgz#5e0d5bd146c3946b3ef6ac525f3ccff5430852b8"
+  integrity sha512-5jFb1jV9E69+J1oPAOHktzErgBXl4jAXtW0XgtHY2y/R3RX5hHF9zKIUIIwfyJyY97LwUP9dnBtCjyblH88Hmw==
+
 aproba@^1.0.3, aproba@^1.1.1:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/aproba/-/aproba-1.2.0.tgz#6802e6264efd18c790a1b0d517f0f2627bf2c94a"

@@ -60,55 +60,6 @@ yarn react-native start --watchFolders /path/to/cloned/cli/
 yarn react-native run-android
 ```
 
-## Testing `init` command
-
-You can test your changes by installing local npm proxy - `verdaccio`, and publishing custom versions of `@react-native-community/cli` and `react-native`.
-
-- Install `verdaccio`
-
-```sh
-yarn global add verdaccio
-```
-
-- Run verdaccio
-
-```sh
-verdaccio
-```
-
-- Set npm registry to `verdaccio` proxy server
-
-```sh
-npm set registry http://localhost:4873/
-```
-
-- Clone `react-native` and `@react-native-community/cli`
-- Release new version of `@react-native-community/cli` to local npm proxy. If you have any issues, head over to [verdaccio](https://github.com/verdaccio/verdaccio) and check out the docs.
-
-```
-cd /path/to/cli/packages/cli && npm publish
-```
-
-- Install new version of `@react-native-community/cli` in `react-native` and publish new version of it.
-
-```sh
-# RN_CLI_VERSION is the version of localy released cli
-cd /path/to/react-native && yarn add @react-native-community/cli@${RN_CLI_VERSION} && npm publish
-```
-
-- You are ready to go
-
-```sh
-# RN_VERSION is the version of localy released react-native
-react-native init --version ${RN_VERSION}
-```
-
-- Cleanup
-
-```sh
-npm config set registry https://registry.npmjs.org/
-```
-
 ## Running `start` command
 
 In order for linked dependencies to work correctly when running `start` locally, set `--watchFolders` with a path to the root folder of the CLI project:

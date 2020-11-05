@@ -66,7 +66,7 @@ export const dependencyConfig = t
                 sharedLibraries: t.array().items(t.string()),
                 libraryFolder: t.string(),
                 scriptPhases: t.array().items(t.object()),
-                buildTypes: t.array().items(t.string()).default([]),
+                configurations: t.array().items(t.string()).default([]),
               })
               .default({}),
             android: t
@@ -131,7 +131,7 @@ export const projectConfig = t
                 projectName: t.string(),
                 libraryFolder: t.string(),
                 sharedLibraries: t.array().items(t.string()),
-                buildTypes: t.array().items(t.string()).default([]),
+                configurations: t.array().items(t.string()).default([]),
               })
               .allow(null),
             android: t

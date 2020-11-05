@@ -21,7 +21,7 @@ export interface IOSProjectParams {
 }
 
 export interface IOSDependencyParams extends IOSProjectParams {
-  buildTypes?: string[];
+  configurations?: string[];
 }
 
 // The following types are used in untyped-parts of the codebase, so I am leaving them
@@ -40,7 +40,7 @@ export interface IOSProjectConfig {
 }
 
 export interface IOSDependencyConfig extends IOSProjectConfig {
-  buildTypes: string[];
+  configurations: string[];
 }
 
 /**

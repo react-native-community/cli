@@ -268,7 +268,7 @@ module.exports = {
       "platforms": Object {
         "android": null,
         "ios": Object {
-          "buildTypes": Array [],
+          "configurations": Array [],
           "folder": "<<REPLACED>>/native-libs/local-lib",
           "libraryFolder": "Libraries",
           "pbxprojPath": "<<REPLACED>>/native-libs/local-lib/ios/LocalRNLibrary.xcodeproj/project.pbxproj",
@@ -297,7 +297,7 @@ test('should apply build types from dependency config', () => {
       dependency: {
         platforms: {
           ios: {
-            buildTypes: ["debug"]
+            configurations: ["debug"]
           }
         }
       }
@@ -323,7 +323,7 @@ test('supports dependencies from user configuration with custom build type', () 
     'react-native-test': {
       platforms: {
         ios: {
-          buildTypes: ["custom_build_type"]
+          configurations: ["custom_build_type"]
         }
       }
     },

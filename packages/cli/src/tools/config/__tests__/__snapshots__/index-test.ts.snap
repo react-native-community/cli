@@ -9,7 +9,7 @@ Object {
   "platforms": Object {
     "android": null,
     "ios": Object {
-      "buildTypes": Array [
+      "configurations": Array [
         "debug",
       ],
       "folder": "<<REPLACED>>/node_modules/react-native-test",
@@ -66,7 +66,7 @@ Object {
   "platforms": Object {
     "android": null,
     "ios": Object {
-      "buildTypes": Array [],
+      "configurations": Array [],
       "folder": "<<REPLACED>>/node_modules/react-native-test",
       "libraryFolder": "Libraries",
       "pbxprojPath": "<<REPLACED>>/node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj",
@@ -93,7 +93,7 @@ Object {
   "platforms": Object {
     "android": null,
     "ios": Object {
-      "buildTypes": Array [],
+      "configurations": Array [],
       "folder": "<<REPLACED>>/node_modules/react-native-test",
       "libraryFolder": "Libraries",
       "pbxprojPath": "<<REPLACED>>/node_modules/react-native-test/customLocation/customProject.xcodeproj/project.pbxproj",
@@ -132,7 +132,7 @@ Object {
     "platforms": Object {
       "android": null,
       "ios": Object {
-        "buildTypes": Array [],
+        "configurations": Array [],
         "folder": "<<REPLACED>>/node_modules/react-native-test",
         "libraryFolder": "Libraries",
         "pbxprojPath": "<<REPLACED>>/node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj",
@@ -164,7 +164,7 @@ Object {
   "platforms": Object {
     "android": null,
     "ios": Object {
-      "buildTypes": Array [
+      "configurations": Array [
         "custom_build_type",
       ],
       "folder": "<<REPLACED>>/node_modules/react-native-test",

@@ -74,12 +74,12 @@ export function dependencyConfig(
   folder: string,
   userConfig: IOSDependencyParams,
 ) {
-  const buildTypes = userConfig.buildTypes || [];
+  const configurations = userConfig.configurations || [];
 
   const baseConfig = projectConfig(folder, userConfig);
   if (!baseConfig) {
     return null;
   }
 
-  return {...baseConfig, buildTypes};
+  return {...baseConfig, configurations};
 }

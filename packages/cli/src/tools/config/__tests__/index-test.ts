@@ -288,6 +288,7 @@ module.exports = {
 });
 
 test('should apply build types from dependency config', () => {
+  DIR = getTempDirectory('config_test_apply_dependency_config');
   writeFiles(DIR, {
     ...REACT_NATIVE_MOCK,
     'node_modules/react-native-test/package.json': '{}',
@@ -316,6 +317,7 @@ test('should apply build types from dependency config', () => {
 });
 
 test('supports dependencies from user configuration with custom build type', () => {
+  DIR = getTempDirectory('config_test_apply_custom_build_config');
   writeFiles(DIR, {
     ...REACT_NATIVE_MOCK,
     'react-native.config.js': `module.exports = {
@@ -340,6 +342,7 @@ test('supports dependencies from user configuration with custom build type', () 
       }
     }`,
   });
+
   const {dependencies} = loadConfig(DIR);
   expect(
     removeString(dependencies['react-native-test'], DIR),

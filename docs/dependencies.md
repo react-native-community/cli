@@ -111,7 +111,7 @@ See [`script_phase` options](https://www.rubydoc.info/gems/cocoapods-core/Pod/Po
 
 #### platforms.ios.configurations
 
-An array of build configurations which will include the dependency. If the array is empty, your dependency will be installed in all configurations. If you're working on a helper library, you should set debug as a value, to avoid shipping it as a part of the release process. For more details, see [`build configurations`](https://guides.cocoapods.org/syntax/podfile.html#pod).
+An array of build configurations which will include the dependency. If the array is empty, your dependency will be installed in all configurations. If you're working on a helper library that should only be included in development, such as a replacement for the React Native development menu, you should set this to `['debug']` to avoid shipping the library in a release build. For more details, see [`build configurations`](https://guides.cocoapods.org/syntax/podfile.html#pod).
 
 #### platforms.android.sourceDir
 
@@ -133,7 +133,7 @@ For settings applicable on other platforms, please consult their respective docu
 
 #### platforms.android.buildTypes
 
-An array of build variants or flavors which will include the dependency. If the array is empty, your dependency will be included in all build types. If you're working on a helper library, you should set debug as a value, to avoid shipping it as a part of the release process. For more details, see [`build variants`](https://developer.android.com/studio/build/build-variants#dependencies).
+An array of build variants or flavors which will include the dependency. If the array is empty, your dependency will be included in all build types. If you're working on a helper library that should only be included in development, such as a replacement for the React Native development menu, you should set this to `['debug']` to avoid shipping the library in a release build. For more details, see [`build variants`](https://developer.android.com/studio/build/build-variants#dependencies).
 
 ### assets
 

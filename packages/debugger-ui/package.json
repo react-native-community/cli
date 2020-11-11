@@ -5,7 +5,7 @@
   "main": "./build/middleware",
   "scripts": {
     "build": "yarn build:ui && yarn build:middleware",
-    "build:ui": "parcel build src/ui/index.html --out-dir build/ui --public-url '/debugger-ui'",
+    "build:ui": "parcel build --no-content-hash src/ui/index.html --out-dir build/ui --public-url '/debugger-ui'",
     "build:middleware": "tsc"
   },
   "files": [

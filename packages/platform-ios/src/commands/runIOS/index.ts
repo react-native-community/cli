@@ -441,7 +441,7 @@ function getBuildPath(
 }
 
 function getProductName(buildOutput: string) {
-  const productNameMatch = /export FULL_PRODUCT_NAME="?(.+).app"?$/m.exec(
+  const productNameMatch = /export FULL_PRODUCT_NAME\\="?(.+).app"?$/m.exec(
     buildOutput,
   );
   return productNameMatch ? productNameMatch[1] : null;

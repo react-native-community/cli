@@ -1,6 +1,6 @@
 {
   "name": "react-native-cli",
-  "version": "2.0.2",
+  "version": "5.0.1-alpha.0",
   "license": "MIT",
   "description": "The React Native CLI tools",
   "main": "index.js",

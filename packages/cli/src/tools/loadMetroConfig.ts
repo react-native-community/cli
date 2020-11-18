@@ -46,6 +46,7 @@ export interface MetroConfig {
     babelTransformerPath: string;
     assetRegistryPath: string;
     assetPlugins?: Array<string>;
+    asyncRequireModulePath?: string;
   };
   watchFolders: ReadonlyArray<string>;
   reporter?: any;
@@ -109,6 +110,9 @@ export const getDefaultConfig = (ctx: Config): MetroConfig => {
         'metro-react-native-babel-transformer',
       ),
       assetRegistryPath: 'react-native/Libraries/Image/AssetRegistry',
+      asyncRequireModulePath: require.resolve(
+        'metro-runtime/src/modules/asyncRequire',
+      ),
     },
     watchFolders: [],
   };

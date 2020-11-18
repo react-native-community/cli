@@ -53,6 +53,7 @@
     "metro-core": "^0.64.0",
     "metro-react-native-babel-transformer": "^0.64.0",
     "metro-resolver": "^0.64.0",
+    "metro-runtime": "^0.64.0",
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
     "node-stream-zip": "^1.9.1",

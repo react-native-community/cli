@@ -24,6 +24,7 @@ interface RequestOptions {
   dev: boolean;
   minify: boolean;
   platform: string | undefined;
+  unstable_transformProfile: string | undefined;
 }
 
 export interface AssetData {
@@ -83,6 +84,7 @@ async function buildBundle(
     dev: args.dev,
     minify: args.minify !== undefined ? args.minify : !args.dev,
     platform: args.platform,
+    unstable_transformProfile: args.unstableTransformProfile,
   };
   const server = new Server(config);
 

@@ -17,7 +17,6 @@ import {
 import {changePlaceholderInTemplate} from './editTemplate';
 import * as PackageManager from '../../tools/packageManager';
 import installPods from '../../tools/installPods';
-import {processTemplateName} from './templateName';
 import banner from './banner';
 import {getLoader} from '../../tools/loader';
 
@@ -34,7 +33,7 @@ type Options = {
 
 interface TemplateOptions {
   projectName: string;
-  templateName: string;
+  templateUri: string;
   npm?: boolean;
   directory: string;
   projectTitle?: string;
@@ -63,22 +62,21 @@ async function setProjectDirectory(directory: string) {
   return process.cwd();
 }
 
-function adjustNameIfUrl(name: string, cwd: string) {
+function getTemplateName(cwd: string) {
   // We use package manager to infer the name of the template module for us.
   // That's why we get it from temporary package.json, where the name is the
   // first and only dependency (hence 0).
-  if (name.match(/https?:/)) {
-    name = Object.keys(
-      JSON.parse(fs.readFileSync(path.join(cwd, './package.json'), 'utf8'))
-        .dependencies,
-    )[0];
-  }
+  const name = Object.keys(
+    JSON.parse(fs.readFileSync(path.join(cwd, './package.json'), 'utf8'))
+      .dependencies,
+  )[0];
+  console.log(name);
   return name;
 }
 
 async function createFromTemplate({
   projectName,
-  templateName,
+  templateUri,
   npm,
   directory,
   projectTitle,
@@ -97,16 +95,15 @@ async function createFromTemplate({
 
   try {
     loader.start();
-    let {uri, name} = await processTemplateName(templateName);
 
-    await installTemplatePackage(uri, templateSourceDir, npm);
+    await installTemplatePackage(templateUri, templateSourceDir, npm);
 
     loader.succeed();
     loader.start('Copying template');
 
-    name = adjustNameIfUrl(name, templateSourceDir);
-    const templateConfig = getTemplateConfig(name, templateSourceDir);
-    await copyTemplate(name, templateConfig.templateDir, templateSourceDir);
+    const templateName = getTemplateName(templateSourceDir);
+    const templateConfig = getTemplateConfig(templateName, templateSourceDir);
+    await copyTemplate(templateName, templateConfig.templateDir, templateSourceDir);
 
     loader.succeed();
     loader.start('Processing template');
@@ -123,7 +120,7 @@ async function createFromTemplate({
     if (postInitScript) {
       // Leaving trailing space because there may be stdout from the script
       loader.start('Executing post init script ');
-      await executePostInitScript(name, postInitScript, templateSourceDir);
+      await executePostInitScript(templateName, postInitScript, templateSourceDir);
       loader.succeed();
     }
 
@@ -177,11 +174,11 @@ async function createProject(
   version: string,
   options: Options,
 ) {
-  const templateName = options.template || `react-native@${version}`;
+  const templateUri = options.template || `react-native@${version}`;
 
   return createFromTemplate({
     projectName,
-    templateName,
+    templateUri,
     npm: options.npm,
     directory,
     projectTitle: options.title,

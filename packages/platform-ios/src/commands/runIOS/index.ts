@@ -437,7 +437,7 @@ function getPlatformName(buildOutput: string) {
   );
   if (!platformNameMatch) {
     throw new CLIError(
-      'Couldn\'t find "PLATFORM_NAME" variable in your build output. Please report this issue and run your project with Xcode instead.',
+      'Couldn\'t find "PLATFORM_NAME" variable in xcodebuild output. Please report this issue and run your project with Xcode instead.',
     );
   }
   return platformNameMatch[1];

@@ -135,10 +135,11 @@ async function runOnSimulator(
 
   /**
    * If provided simulator does not exist, try simulators in following order
+   * - iPhone 11
    * - iPhone X
    * - iPhone 8
    */
-  const fallbackSimulators = ['iPhone X', 'iPhone 8'];
+  const fallbackSimulators = ['iPhone 11', 'iPhone X', 'iPhone 8'];
   const selectedSimulator = fallbackSimulators.reduce((simulator, fallback) => {
     return (
       simulator || findMatchingSimulator(simulators, {simulator: fallback})
@@ -560,7 +561,7 @@ export default {
       description:
         'Explicitly set simulator to use. Optionally include iOS version between ' +
         'parenthesis at the end to match an exact version: "iPhone 6 (10.0)"',
-      default: 'iPhone 11',
+      default: 'iPhone 12',
     },
     {
       name: '--configuration [string]',

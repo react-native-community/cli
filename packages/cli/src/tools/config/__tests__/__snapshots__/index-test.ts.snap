@@ -118,3 +118,7 @@ Object {
   },
 }
 `;
+
+exports[`should skip packages that have invalid configuration: dependencies config 1`] = `Object {}`;
+
+exports[`should skip packages that have invalid configuration: logged warning 1`] = `"Package [1mreact-native[22m has been ignored because it contains invalid configuration. Reason: [2m\\"dependency.invalidProperty\\" is not allowed[22m"`;

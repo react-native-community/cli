@@ -1,7 +1,6 @@
 import nodeJS from './nodeJS';
 import {yarn, npm} from './packageManagers';
 import jdk from './jdk';
-import python from './python';
 import watchman from './watchman';
 import androidHomeEnvVariable from './androidHomeEnvVariable';
 import androidStudio from './androidStudio';
@@ -43,7 +42,6 @@ export const getHealthchecks = ({contributor}: Options): Healthchecks => {
         yarn,
         npm,
         ...(process.platform === 'darwin' ? [watchman] : []),
-        ...(process.platform === 'win32' ? [python] : []),
       ],
     },
     android: {

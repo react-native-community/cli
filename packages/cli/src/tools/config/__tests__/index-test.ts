@@ -10,7 +10,7 @@ import {
 
 jest.mock('../resolveNodeModuleDir');
 
-const DIR = getTempDirectory('resolve_config_path_test');
+let DIR = getTempDirectory('config_test');
 
 const iosPath = slash(
   require.resolve('@react-native-community/cli-platform-ios'),
@@ -60,6 +60,7 @@ beforeEach(async () => {
 afterEach(async () => await cleanup(DIR));
 
 test('should have a valid structure by default', () => {
+  DIR = getTempDirectory('config_test_structure');
   writeFiles(DIR, {
     'react-native.config.js': `module.exports = {
       reactNativePath: "."
@@ -70,6 +71,7 @@ test('should have a valid structure by default', () => {
 });
 
 test('should return dependencies from package.json', () => {
+  DIR = getTempDirectory('config_test_deps');
   writeFiles(DIR, {
     ...REACT_NATIVE_MOCK,
     'node_modules/react-native-test/package.json': '{}',
@@ -87,6 +89,7 @@ test('should return dependencies from package.json', () => {
 });
 
 test('should read a config of a dependency and use it to load other settings', () => {
+  DIR = getTempDirectory('config_test_settings');
   writeFiles(DIR, {
     ...REACT_NATIVE_MOCK,
     'node_modules/react-native-test/package.json': '{}',
@@ -114,6 +117,7 @@ test('should read a config of a dependency and use it to load other settings', (
 });
 
 test('should merge project configuration with default values', () => {
+  DIR = getTempDirectory('config_test_merge');
   writeFiles(DIR, {
     ...REACT_NATIVE_MOCK,
     'node_modules/react-native-test/package.json': '{}',
@@ -151,6 +155,7 @@ test('should merge project configuration with default values', () => {
 });
 
 test('should load commands from "react-native-foo" and "react-native-bar" packages', () => {
+  DIR = getTempDirectory('config_test_packages');
   writeFiles(DIR, {
     'node_modules/react-native-foo/package.json': '{}',
     'node_modules/react-native-foo/react-native.config.js': `module.exports = {
@@ -181,9 +186,8 @@ test('should load commands from "react-native-foo" and "react-native-bar" packag
   expect(commands).toMatchSnapshot();
 });
 
-// @todo: figure out why this test is so flaky
-// eslint-disable-next-line jest/no-disabled-tests
-test.skip('should skip packages that have invalid configuration', () => {
+test('should skip packages that have invalid configuration', () => {
+  DIR = getTempDirectory('config_test_skip');
   writeFiles(DIR, {
     'node_modules/react-native/package.json': '{}',
     'node_modules/react-native/react-native.config.js': `module.exports = {
@@ -204,6 +208,7 @@ test.skip('should skip packages that have invalid configuration', () => {
 });
 
 test('does not use restricted "react-native" key to resolve config from package.json', () => {
+  DIR = getTempDirectory('config_test_restricted');
   writeFiles(DIR, {
     'node_modules/react-native-netinfo/package.json': `{
       "react-native": "src/index.js"
@@ -221,6 +226,7 @@ test('does not use restricted "react-native" key to resolve config from package.
 });
 
 test('supports dependencies from user configuration with custom root and properties', () => {
+  DIR = getTempDirectory('config_test_custom_root');
   const escapePathSeparator = (value: string) =>
     path.sep === '\\' ? value.replace(/(\/|\\)/g, '\\\\') : value;
 

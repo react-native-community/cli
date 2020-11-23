@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/cli",
-  "version": "4.13.0",
+  "version": "5.0.1-alpha.0",
   "description": "React Native CLI",
   "license": "MIT",
   "main": "build/index.js",
@@ -18,7 +18,7 @@
   ],
   "engineStrict": true,
   "engines": {
-    "node": ">=10"
+    "node": ">=12"
   },
   "repository": {
     "type": "git",
@@ -28,11 +28,11 @@
     "testEnvironment": "node"
   },
   "dependencies": {
-    "@react-native-community/cli-debugger-ui": "^4.9.0",
-    "@react-native-community/cli-hermes": "^4.13.0",
-    "@react-native-community/cli-server-api": "^4.13.0",
-    "@react-native-community/cli-tools": "^4.13.0",
-    "@react-native-community/cli-types": "^4.10.1",
+    "@react-native-community/cli-debugger-ui": "^5.0.1-alpha.0",
+    "@react-native-community/cli-hermes": "^5.0.1-alpha.0",
+    "@react-native-community/cli-server-api": "^5.0.1-alpha.0",
+    "@react-native-community/cli-tools": "^5.0.1-alpha.0",
+    "@react-native-community/cli-types": "^5.0.1-alpha.0",
     "appdirsjs": "^1.2.4",
     "chalk": "^3.0.0",
     "command-exists": "^1.2.8",
@@ -49,16 +49,17 @@
     "joi": "^17.2.1",
     "leven": "^3.1.0",
     "lodash": "^4.17.15",
-    "metro": "^0.58.0",
-    "metro-config": "^0.58.0",
-    "metro-core": "^0.58.0",
-    "metro-react-native-babel-transformer": "^0.58.0",
-    "metro-resolver": "^0.58.0",
+    "metro": "^0.64.0",
+    "metro-config": "^0.64.0",
+    "metro-core": "^0.64.0",
+    "metro-react-native-babel-transformer": "^0.64.0",
+    "metro-resolver": "^0.64.0",
+    "metro-runtime": "^0.64.0",
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
     "node-stream-zip": "^1.9.1",
     "ora": "^3.4.0",
-    "pretty-format": "^25.2.0",
+    "pretty-format": "^26.6.2",
     "semver": "^6.3.0",
     "serve-static": "^1.13.1",
     "strip-ansi": "^5.2.0",
@@ -66,7 +67,7 @@
     "wcwidth": "^1.0.1"
   },
   "peerDependencies": {
-    "react-native": ">=0.62.0-rc.0 <0.64.0"
+    "react-native": ">=0.64.0-rc.0 || 0.0.0-*"
   },
   "devDependencies": {
     "@types/command-exists": "^1.2.0",

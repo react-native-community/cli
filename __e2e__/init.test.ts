@@ -128,3 +128,42 @@ test('init skips installation of dependencies with --skip-install', () => {
     ),
   );
 });
+
+test('init uses npm as the package manager with --npm', () => {
+  createCustomTemplateFiles();
+  let templatePath = path.resolve(DIR, 'custom', 'template');
+  if (process.platform === 'win32') {
+    templatePath = templatePath.split('\\').join('/');
+  }
+
+  const {stdout} = runCLI(DIR, [
+    'init',
+    '--template',
+    `file://${templatePath}`,
+    'TestInit',
+    '--npm',
+  ]);
+
+  expect(stdout).toContain('Run instructions');
+
+  // make sure we don't leave garbage
+  expect(fs.readdirSync(DIR)).toContain('custom');
+
+  const initDirPath = path.join(DIR, 'TestInit');
+
+  // Remove yarn.lock and node_modules
+  const filteredFiles = customTemplateCopiedFiles.filter(
+    (file) => !['yarn.lock', 'node_modules'].includes(file),
+  );
+
+  // Add package-lock.json
+  const customTemplateCopiedFilesForNpm = [
+    ...filteredFiles,
+    'package-lock.json',
+  ];
+
+  // Assert for existence
+  customTemplateCopiedFilesForNpm.forEach((file) => {
+    expect(fs.existsSync(path.join(initDirPath, file))).toBe(true);
+  });
+});

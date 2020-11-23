@@ -401,8 +401,6 @@ function getBuildPath(
   buildOutput: string,
   scheme: string,
 ) {
-  const device = getPlatformName(buildOutput);
-
   const buildSettings = child_process.execFileSync(
     'xcodebuild',
     [
@@ -411,7 +409,7 @@ function getBuildPath(
       '-scheme',
       scheme,
       '-sdk',
-      device,
+      getPlatformName(buildOutput),
       '-configuration',
       configuration,
       '-showBuildSettings',

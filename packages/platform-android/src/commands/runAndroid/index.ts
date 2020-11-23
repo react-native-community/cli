@@ -329,7 +329,7 @@ async function startServerInNewWindow(
         ...procConfig,
         detached: true,
       });
-    } catch (_) {
+    } catch {
       logger.error(
         `Could not open terminal ${terminal}. Falling back to running the packager inside the process.`,
       );

@@ -102,7 +102,11 @@ async function createFromTemplate({
 
     const templateName = getTemplateName(templateSourceDir);
     const templateConfig = getTemplateConfig(templateName, templateSourceDir);
-    await copyTemplate(templateName, templateConfig.templateDir, templateSourceDir);
+    await copyTemplate(
+      templateName,
+      templateConfig.templateDir,
+      templateSourceDir,
+    );
 
     loader.succeed();
     loader.start('Processing template');
@@ -119,7 +123,11 @@ async function createFromTemplate({
     if (postInitScript) {
       // Leaving trailing space because there may be stdout from the script
       loader.start('Executing post init script ');
-      await executePostInitScript(templateName, postInitScript, templateSourceDir);
+      await executePostInitScript(
+        templateName,
+        postInitScript,
+        templateSourceDir,
+      );
       loader.succeed();
     }
 

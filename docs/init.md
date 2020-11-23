@@ -30,20 +30,26 @@ npx react-native init ProjectName --version ${VERSION}
 npx react-native@${VERSION} init ProjectName
 ```
 
-#### Initializing project with custom template.
+#### Initializing project with custom template
 
-In following examples `TEMPLATE_NAME` can be either:
+It is possible to initialise a new application with a custom template with
+a `--template` option.
 
+It should point to a valid package that can be installed with `yarn` or `npm` (if you're using `--npm` option). 
+
+The most common options are:
 - Full package name, eg. `react-native-template-typescript`.
 - Absolute path to directory containing template, eg. `file:///Users/username/project/some-template`.
 - Absolute path to a tarball created using `npm pack`.
-- Link to a GitHub repository (supports `username/repo` format).
+
+For all available options, please check [Yarn documentation](https://classic.yarnpkg.com/en/docs/cli/add/#toc-adding-dependencies) and [Npm](https://docs.npmjs.com/cli/v6/commands/npm-install#synopsis).
+
 
 ```sh
-# This will initialize new project using template from TEMPLATE_NAME package
+# This will initialize new project using template from `react-native-template-typescript` package
 npx react-native init ProjectName --template ${TEMPLATE_NAME}
 
-# This will initialize new project using init command from react-native@VERSION but will use TEMPLATE_NAME custom template
+# This will initialize new project using init command from react-native@VERSION but will use a custom template
 npx react-native@${VERSION} init ProjectName --template ${TEMPLATE_NAME}
 ```
 

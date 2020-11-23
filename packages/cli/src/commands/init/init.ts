@@ -70,7 +70,6 @@ function getTemplateName(cwd: string) {
     JSON.parse(fs.readFileSync(path.join(cwd, './package.json'), 'utf8'))
       .dependencies,
   )[0];
-  console.log(name);
   return name;
 }
 

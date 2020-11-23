@@ -27,6 +27,7 @@ import {
 } from '@react-native-community/cli-tools';
 import {Device} from '../../types';
 import ora from 'ora';
+import { platform } from 'os';
 
 type FlagsT = {
   simulator?: string;
@@ -180,7 +181,7 @@ async function runOnSimulator(
     bootSimulator(selectedSimulator);
   }
 
-  const appName = await buildProject(
+  const buildOutput = await buildProject(
     xcodeProject,
     selectedSimulator.udid,
     scheme,
@@ -190,8 +191,7 @@ async function runOnSimulator(
   const appPath = getBuildPath(
     xcodeProject,
     args.configuration,
-    appName,
-    false,
+    buildOutput,
     scheme,
   );
 
@@ -247,7 +247,7 @@ async function runOnDevice(
     );
   }
 
-  const appName = await buildProject(
+  const buildOutput = await buildProject(
     xcodeProject,
     selectedDevice.udid,
     scheme,
@@ -256,7 +256,7 @@ async function runOnDevice(
 
   const iosDeployInstallArgs = [
     '--bundle',
-    getBuildPath(xcodeProject, args.configuration, appName, true, scheme),
+    getBuildPath(xcodeProject, args.configuration, buildOutput, scheme),
     '--id',
     selectedDevice.udid,
     '--justlaunch',
@@ -357,7 +357,7 @@ function buildProject(
         return;
       }
       logger.success('Successfully built the app');
-      resolve(getProductName(buildOutput) || scheme);
+      resolve(buildOutput);
     });
   });
 }
@@ -398,19 +398,10 @@ function getTargetPaths(buildSettings: string) {
 function getBuildPath(
   xcodeProject: ProjectInfo,
   configuration: string,
-  appName: string,
-  isDevice: boolean,
+  buildOutput: string,
   scheme: string,
 ) {
-  let device;
-
-  if (isDevice) {
-    device = 'iphoneos';
-  } else if (appName.toLowerCase().includes('tvos')) {
-    device = 'appletvsimulator';
-  } else {
-    device = 'iphonesimulator';
-  }
+  const device = getPlatformName(buildOutput);
 
   const buildSettings = child_process.execFileSync(
     'xcodebuild',
@@ -441,11 +432,17 @@ function getBuildPath(
   return `${targetBuildDir}/${executableFolderPath}`;
 }
 
-function getProductName(buildOutput: string) {
-  const productNameMatch = /export FULL_PRODUCT_NAME="?(.+).app"?$/m.exec(
-    buildOutput,
+function getPlatformName(buildOutput: string) {
+  // Xcode can sometimes escape `=` with a backslash or put the value in quotes
+  const platformNameMatch = /export PLATFORM_NAME\\?="?(\w+)"?$/m.exec(
+    buildOutput
   );
-  return productNameMatch ? productNameMatch[1] : null;
+  if (!platformNameMatch) {
+    throw new CLIError(
+      'Couldn\'t find "PLATFORM_NAME" variable in your build output. Please report this issue and run your project with Xcode instead.',
+    );
+  }
+  return platformNameMatch[1];
 }
 
 function xcprettyAvailable() {

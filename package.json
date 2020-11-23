@@ -39,7 +39,7 @@
     "chalk": "^3.0.0",
     "chokidar": "^3.3.1",
     "core-js": "^2.0.0",
-    "eslint": "^5.10.0",
+    "eslint": "^7.14.0",
     "eslint-import-resolver-alias": "^1.1.2",
     "eslint-import-resolver-typescript": "^1.1.1",
     "eslint-plugin-import": "^2.17.0",

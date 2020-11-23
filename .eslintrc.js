@@ -6,7 +6,7 @@ module.exports = {
     node: true,
   },
   rules: {
-    'prettier/prettier': [2, 'fb'],
+    'prettier/prettier': [2],
   },
   // @todo: remove once we cover whole codebase with types
   plugins: ['import'],

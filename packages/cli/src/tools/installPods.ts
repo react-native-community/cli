@@ -2,7 +2,7 @@ import fs from 'fs';
 import execa from 'execa';
 import chalk from 'chalk';
 import ora from 'ora';
-import enquirer from 'enquirer';
+import prompts from 'prompts';
 import {logger} from '@react-native-community/cli-tools';
 import {NoopLoader} from './loader';
 // @ts-ignore untyped
@@ -95,24 +95,23 @@ async function promptCocoaPodsInstallationQuestion(): Promise<
   const installWithGem = 'Yes, with gem (may require sudo)';
   const installWithHomebrew = 'Yes, with Homebrew';
 
-  const {shouldInstallCocoaPods} = await enquirer.prompt<{
-    shouldInstallCocoaPods: string;
-  }>([
+  const {installMethod} = await prompts([
     {
       type: 'select',
-      name: 'shouldInstallCocoaPods',
+      name: 'installMethod',
       message: promptQuestion,
-      choices: [installWithGem, installWithHomebrew],
+      choices: [
+        {title: installWithGem, value: 'gem'},
+        {title: installWithHomebrew, value: 'homebrew'},
+      ],
     },
   ]);
 
-  const shouldInstallWithGem = shouldInstallCocoaPods === installWithGem;
-
   return {
-    installMethod: shouldInstallWithGem ? 'gem' : 'homebrew',
+    installMethod,
     // This is used for removing the message in `doctor` after it's answered
     promptQuestion: `? ${promptQuestion} ${
-      shouldInstallWithGem ? installWithGem : installWithHomebrew
+      installMethod === 'gem' ? installWithGem : installWithHomebrew
     }`,
   };
 }

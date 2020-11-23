@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import {prompt} from 'enquirer';
+import prompts from 'prompts';
 
 export default (questions: any[]) =>
   new Promise<Object>((resolve, reject) => {
@@ -14,5 +14,5 @@ export default (questions: any[]) =>
       return;
     }
 
-    prompt(questions).then(resolve, reject);
+    prompts(questions).then(resolve, reject);
   });

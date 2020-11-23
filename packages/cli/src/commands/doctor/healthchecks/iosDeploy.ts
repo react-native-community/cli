@@ -1,6 +1,6 @@
 import execa from 'execa';
 import chalk from 'chalk';
-import enquirer from 'enquirer';
+import prompts from 'prompts';
 import {isSoftwareNotInstalled, PACKAGE_MANAGERS} from '../checkInstallation';
 import {packageManager} from './packageManagers';
 import {logError, removeMessage} from './common';
@@ -71,11 +71,14 @@ export default {
       )} ${chalk.reset('or')} ${chalk.bold(
         'npm',
       )} ${chalk.reset()}, which one do you want to use?`;
-      const installWithYarn = 'yarn';
-      const installWithNpm = 'npm';
-      const skipInstallation = 'Skip installation';
+      const installWithYarn = {title: 'yarn', value: 'yarn'};
+      const installWithNpm = {title: 'npm', value: 'npm'};
+      const skipInstallation = {
+        title: 'Skip installation',
+        value: 'skip',
+      };
 
-      const {chosenPackageManager} = await enquirer.prompt([
+      const {chosenPackageManager} = await prompts([
         {
           type: 'select',
           name: 'chosenPackageManager',
@@ -86,7 +89,10 @@ export default {
 
       removeMessage(`? ${promptQuestion} ${chosenPackageManager}`);
 
-      if (chosenPackageManager === skipInstallation) {
+      if (
+        chosenPackageManager === skipInstallation.value ||
+        !chosenPackageManager // e.g. when user presses Esc
+      ) {
         loader.fail();
 
         // Then we just print out the URL that the user can head to download the library
@@ -98,7 +104,8 @@ export default {
         return;
       }
 
-      const shouldInstallWithYarn = chosenPackageManager === installWithYarn;
+      const shouldInstallWithYarn =
+        chosenPackageManager === installWithYarn.value;
 
       return installLibrary({
         installationCommand: shouldInstallWithYarn

@@ -54,7 +54,8 @@ export default {
       loader.fail(e);
     }
   },
-  runAutomaticFix: async ({logManualInstallation}) => {
+  runAutomaticFix: async ({logManualInstallation, loader}) => {
+    loader.fail();
     logManualInstallation({
       healthcheck: 'JDK',
       url: 'https://openjdk.java.net/',

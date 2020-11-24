@@ -175,12 +175,21 @@ async function installDependencies({
   loader.succeed();
 }
 
+function validateOption(optName: string, optValue: string) {
+  if (typeof optValue === 'boolean') {
+    throw new CLIError(`error: '${optName} <string>' argument missing`);
+  }
+}
+
 async function createProject(
   projectName: string,
   directory: string,
   version: string,
   options: Options,
 ) {
+  // Required arguments check
+  options.template && validateOption('template', options.template);
+
   const templateUri = options.template || `react-native@${version}`;
 
   return createFromTemplate({
@@ -206,6 +215,11 @@ export default (async function initialize(
    * We have to use `minimist` to take that directly from `process.argv`
    */
   const version: string = minimist(process.argv).version || DEFAULT_VERSION;
+
+  // Required arguments check
+  validateOption('version', version);
+
+  options.directory && validateOption('directory', options.directory);
 
   const directoryName = path.relative(root, options.directory || projectName);
 

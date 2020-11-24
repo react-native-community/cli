@@ -28,7 +28,6 @@ export type CommandOption<T = (ctx: Config) => OptionValue> = {
   description?: string;
   parse?: (val: string) => any;
   default?: OptionValue | T;
-  required?: OptionValue;
 };
 
 export type DetachedCommandFunction<Args = Object> = (

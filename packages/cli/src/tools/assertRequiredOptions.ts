@@ -22,12 +22,11 @@ export default function assertRequiredOptions(
   passedOptions: PassedOptions,
 ) {
   options.forEach((opt) => {
-    // Early return if the option is not required
-    if (!opt.required) {
+    const option = new Option(opt.name);
+
+    if (!option.required) {
       return;
     }
-
-    const option = new Option(opt.name);
 
     const name = camelCase(option.long);
 

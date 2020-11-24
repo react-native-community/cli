@@ -11,7 +11,10 @@ import {memoize} from 'lodash';
 import findProject from './findProject';
 import findPodfilePath from './findPodfilePath';
 import findPodspec from './findPodspec';
-import {IOSProjectParams} from '@react-native-community/cli-types';
+import {
+  IOSProjectParams,
+  IOSDependencyParams,
+} from '@react-native-community/cli-types';
 
 const memoizedFindProject = memoize(findProject);
 
@@ -67,4 +70,16 @@ export function projectConfig(folder: string, userConfig: IOSProjectParams) {
   };
 }
 
-export const dependencyConfig = projectConfig;
+export function dependencyConfig(
+  folder: string,
+  userConfig: IOSDependencyParams,
+) {
+  const configurations = userConfig.configurations || [];
+
+  const baseConfig = projectConfig(folder, userConfig);
+  if (!baseConfig) {
+    return null;
+  }
+
+  return {...baseConfig, configurations};
+}

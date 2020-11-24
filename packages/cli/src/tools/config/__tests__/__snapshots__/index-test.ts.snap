@@ -1,5 +1,34 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`should apply build types from dependency config 1`] = `
+Object {
+  "assets": Array [],
+  "hooks": Object {},
+  "name": "react-native-test",
+  "params": Array [],
+  "platforms": Object {
+    "android": null,
+    "ios": Object {
+      "configurations": Array [
+        "debug",
+      ],
+      "folder": "<<REPLACED>>/node_modules/react-native-test",
+      "libraryFolder": "Libraries",
+      "pbxprojPath": "<<REPLACED>>/node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj",
+      "plist": Array [],
+      "podfile": null,
+      "podspecPath": null,
+      "projectName": "HelloWorld.xcodeproj",
+      "projectPath": "<<REPLACED>>/node_modules/react-native-test/ios/HelloWorld.xcodeproj",
+      "scriptPhases": Array [],
+      "sharedLibraries": Array [],
+      "sourceDir": "<<REPLACED>>/node_modules/react-native-test/ios",
+    },
+  },
+  "root": "<<REPLACED>>/node_modules/react-native-test",
+}
+`;
+
 exports[`should have a valid structure by default 1`] = `
 Object {
   "assets": Array [],
@@ -37,6 +66,7 @@ Object {
   "platforms": Object {
     "android": null,
     "ios": Object {
+      "configurations": Array [],
       "folder": "<<REPLACED>>/node_modules/react-native-test",
       "libraryFolder": "Libraries",
       "pbxprojPath": "<<REPLACED>>/node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj",
@@ -63,6 +93,7 @@ Object {
   "platforms": Object {
     "android": null,
     "ios": Object {
+      "configurations": Array [],
       "folder": "<<REPLACED>>/node_modules/react-native-test",
       "libraryFolder": "Libraries",
       "pbxprojPath": "<<REPLACED>>/node_modules/react-native-test/customLocation/customProject.xcodeproj/project.pbxproj",
@@ -101,6 +132,7 @@ Object {
     "platforms": Object {
       "android": null,
       "ios": Object {
+        "configurations": Array [],
         "folder": "<<REPLACED>>/node_modules/react-native-test",
         "libraryFolder": "Libraries",
         "pbxprojPath": "<<REPLACED>>/node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj",
@@ -122,3 +154,32 @@ Object {
 exports[`should skip packages that have invalid configuration: dependencies config 1`] = `Object {}`;
 
 exports[`should skip packages that have invalid configuration: logged warning 1`] = `"Package [1mreact-native[22m has been ignored because it contains invalid configuration. Reason: [2m\\"dependency.invalidProperty\\" is not allowed[22m"`;
+
+exports[`supports dependencies from user configuration with custom build type 1`] = `
+Object {
+  "assets": Array [],
+  "hooks": Object {},
+  "name": "react-native-test",
+  "params": Array [],
+  "platforms": Object {
+    "android": null,
+    "ios": Object {
+      "configurations": Array [
+        "custom_build_type",
+      ],
+      "folder": "<<REPLACED>>/node_modules/react-native-test",
+      "libraryFolder": "Libraries",
+      "pbxprojPath": "<<REPLACED>>/node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj",
+      "plist": Array [],
+      "podfile": null,
+      "podspecPath": null,
+      "projectName": "HelloWorld.xcodeproj",
+      "projectPath": "<<REPLACED>>/node_modules/react-native-test/ios/HelloWorld.xcodeproj",
+      "scriptPhases": Array [],
+      "sharedLibraries": Array [],
+      "sourceDir": "<<REPLACED>>/node_modules/react-native-test/ios",
+    },
+  },
+  "root": "<<REPLACED>>/node_modules/react-native-test",
+}
+`;

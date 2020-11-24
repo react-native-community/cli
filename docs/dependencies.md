@@ -58,6 +58,7 @@ type DependencyParamsIOST = {
   project?: string;
   podspecPath?: string;
   sharedLibraries?: string[];
+  configurations?: string[];
 };
 
 type DependencyParamsAndroidT = {
@@ -65,6 +66,7 @@ type DependencyParamsAndroidT = {
   manifestPath?: string;
   packageImportPath?: string;
   packageInstance?: string;
+  buildTypes?: string[];
 };
 ```
 
@@ -107,6 +109,10 @@ module.exports = {
 
 See [`script_phase` options](https://www.rubydoc.info/gems/cocoapods-core/Pod/Podfile/DSL#script_phase-instance_method) for a full list of available object keys.
 
+#### platforms.ios.configurations
+
+An array of build configurations which will include the dependency. If the array is empty, your dependency will be installed in all configurations. If you're working on a helper library that should only be included in development, such as a replacement for the React Native development menu, you should set this to `['debug']` to avoid shipping the library in a release build. For more details, see [`build configurations`](https://guides.cocoapods.org/syntax/podfile.html#pod).
+
 #### platforms.android.sourceDir
 
 A relative path to a folder with Android project (Gradle root project), e.g. `./path/to/custom-android`. By default, CLI searches for `./android` as source dir.
@@ -124,6 +130,10 @@ Custom package import. For example: `import com.acme.AwesomePackage;`.
 Custom syntax to instantiate a package. By default, it's a `new AwesomePackage()`. It can be useful when your package requires additional arguments while initializing.
 
 For settings applicable on other platforms, please consult their respective documentation.
+
+#### platforms.android.buildTypes
+
+An array of build variants or flavors which will include the dependency. If the array is empty, your dependency will be included in all build types. If you're working on a helper library that should only be included in development, such as a replacement for the React Native development menu, you should set this to `['debug']` to avoid shipping the library in a release build. For more details, see [`build variants`](https://developer.android.com/studio/build/build-variants#dependencies).
 
 ### assets
 

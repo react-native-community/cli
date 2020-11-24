@@ -268,6 +268,7 @@ module.exports = {
       "platforms": Object {
         "android": null,
         "ios": Object {
+          "configurations": Array [],
           "folder": "<<REPLACED>>/native-libs/local-lib",
           "libraryFolder": "Libraries",
           "pbxprojPath": "<<REPLACED>>/native-libs/local-lib/ios/LocalRNLibrary.xcodeproj/project.pbxproj",
@@ -284,4 +285,66 @@ module.exports = {
       "root": "<<REPLACED>>/native-libs/local-lib",
     }
   `);
+});
+
+test('should apply build types from dependency config', () => {
+  DIR = getTempDirectory('config_test_apply_dependency_config');
+  writeFiles(DIR, {
+    ...REACT_NATIVE_MOCK,
+    'node_modules/react-native-test/package.json': '{}',
+    'node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj':
+      '',
+    'node_modules/react-native-test/react-native.config.js': `module.exports = {
+      dependency: {
+        platforms: {
+          ios: {
+            configurations: ["debug"]
+          }
+        }
+      }
+    }`,
+    'package.json': `{
+      "dependencies": {
+        "react-native": "0.0.1",
+        "react-native-test": "0.0.1"
+      }
+    }`,
+  });
+  const {dependencies} = loadConfig(DIR);
+  expect(
+    removeString(dependencies['react-native-test'], DIR),
+  ).toMatchSnapshot();
+});
+
+test('supports dependencies from user configuration with custom build type', () => {
+  DIR = getTempDirectory('config_test_apply_custom_build_config');
+  writeFiles(DIR, {
+    ...REACT_NATIVE_MOCK,
+    'react-native.config.js': `module.exports = {
+  dependencies: {
+    'react-native-test': {
+      platforms: {
+        ios: {
+          configurations: ["custom_build_type"]
+        }
+      }
+    },
+  }
+}`,
+    'node_modules/react-native-test/package.json': '{}',
+    'node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj':
+      '',
+    'node_modules/react-native-test/react-native.config.js': `module.exports = {}`,
+    'package.json': `{
+      "dependencies": {
+        "react-native": "0.0.1",
+        "react-native-test": "0.0.1"
+      }
+    }`,
+  });
+
+  const {dependencies} = loadConfig(DIR);
+  expect(
+    removeString(dependencies['react-native-test'], DIR),
+  ).toMatchSnapshot();
 });

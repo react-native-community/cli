@@ -46,6 +46,7 @@ def use_native_modules!(config = nil)
     next unless package_config = package["platforms"]["ios"]
 
     podspec_path = package_config["podspecPath"]
+    configurations = package_config["configurations"]
 
     # Add a warning to the queue and continue to the next dependency if the podspec_path is nil/empty
     if podspec_path.nil? || podspec_path.empty?
@@ -86,9 +87,7 @@ def use_native_modules!(config = nil)
     podspec_dir_path = Pathname.new(File.dirname(podspec_path))
 
     relative_path = podspec_dir_path.relative_path_from project_root
-
-    pod spec.name, :path => relative_path.to_path
-
+    pod spec.name, :path => relative_path.to_path, :configurations => configurations
     if package_config["scriptPhases"] && !this_target.abstract?
       # Can be either an object, or an array of objects
       Array(package_config["scriptPhases"]).each do |phase|

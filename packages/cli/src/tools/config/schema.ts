@@ -66,6 +66,7 @@ export const dependencyConfig = t
                 sharedLibraries: t.array().items(t.string()),
                 libraryFolder: t.string(),
                 scriptPhases: t.array().items(t.object()),
+                configurations: t.array().items(t.string()).default([]),
               })
               .default({}),
             android: t
@@ -74,6 +75,7 @@ export const dependencyConfig = t
                 manifestPath: t.string(),
                 packageImportPath: t.string(),
                 packageInstance: t.string(),
+                buildTypes: t.array().items(t.string()).default([]),
               })
               .default({}),
           })
@@ -129,6 +131,7 @@ export const projectConfig = t
                 projectName: t.string(),
                 libraryFolder: t.string(),
                 sharedLibraries: t.array().items(t.string()),
+                configurations: t.array().items(t.string()).default([]),
               })
               .allow(null),
             android: t
@@ -137,6 +140,7 @@ export const projectConfig = t
                 folder: t.string(),
                 packageImportPath: t.string(),
                 packageInstance: t.string(),
+                buildTypes: t.array().items(t.string()).default([]),
               })
               .allow(null),
           }),

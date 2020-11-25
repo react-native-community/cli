@@ -119,6 +119,7 @@ function registerCommand(...[command, config]: [command: DetachedCommand] | [com
       opt.description,
       opt.parse || (val => val),
       typeof opt.default === 'function'
+        // @ts-ignore
         ? opt.default(config)
         : opt.default
     );

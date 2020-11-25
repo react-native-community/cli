@@ -318,39 +318,39 @@ export default {
   func: runAndroid,
   options: [
     {
-      name: '--root [string]',
+      name: '--root <string>',
       description:
         '[DEPRECATED - root is discovered automatically] Override the root directory for the android build (which contains the android directory)',
       default: '',
     },
     {
-      name: '--variant [string]',
+      name: '--variant <string>',
       description: "Specify your app's build variant",
       default: 'debug',
     },
     {
-      name: '--appFolder [string]',
+      name: '--appFolder <string>',
       description:
         '[DEPRECATED – use "project.android.appName" in react-native.config.js] Specify a different application folder name for the android source. If not, we assume is "app"',
     },
     {
-      name: '--appId [string]',
+      name: '--appId <string>',
       description:
         'Specify an applicationId to launch after build. If not specified, `package` from AndroidManifest.xml will be used.',
       default: '',
     },
     {
-      name: '--appIdSuffix [string]',
+      name: '--appIdSuffix <string>',
       description: 'Specify an applicationIdSuffix to launch after build.',
       default: '',
     },
     {
-      name: '--main-activity [string]',
+      name: '--main-activity <string>',
       description: 'Name of the activity to start',
       default: 'MainActivity',
     },
     {
-      name: '--deviceId [string]',
+      name: '--deviceId <string>',
       description:
         'builds your app and starts it on a specific device/simulator with the ' +
         'given device id (listed by running "adb devices" on the command line).',
@@ -360,20 +360,19 @@ export default {
       description: 'Do not launch packager while building',
     },
     {
-      name: '--port [number]',
+      name: '--port <number>',
       default: process.env.RCT_METRO_PORT || 8081,
-      parse: (val: string) => Number(val),
+      parse: Number,
     },
     {
-      name: '--terminal [string]',
+      name: '--terminal <string>',
       description:
         'Launches the Metro Bundler in a new window using the specified terminal path.',
       default: getDefaultUserTerminal(),
     },
     {
-      name: '--tasks [list]',
+      name: '--tasks <list...>',
       description: 'Run custom Gradle tasks. By default it\'s "installDebug"',
-      parse: (val: string) => val.split(','),
     },
     {
       name: '--no-jetifier',

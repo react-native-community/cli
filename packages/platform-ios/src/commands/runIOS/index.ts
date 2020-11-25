@@ -557,35 +557,35 @@ export default {
   ],
   options: [
     {
-      name: '--simulator [string]',
+      name: '--simulator <string>',
       description:
         'Explicitly set simulator to use. Optionally include iOS version between ' +
         'parenthesis at the end to match an exact version: "iPhone 6 (10.0)"',
       default: 'iPhone 12',
     },
     {
-      name: '--configuration [string]',
+      name: '--configuration <string>',
       description: 'Explicitly set the scheme configuration to use',
       default: 'Debug',
     },
     {
-      name: '--scheme [string]',
+      name: '--scheme <string>',
       description: 'Explicitly set Xcode scheme to use',
     },
     {
-      name: '--project-path [string]',
+      name: '--project-path <string>',
       description:
         'Path relative to project root where the Xcode project ' +
         '(.xcodeproj) lives.',
       default: 'ios',
     },
     {
-      name: '--device [string]',
+      name: '--device <string>',
       description:
         'Explicitly set device to use by name.  The value is not required if you have a single device connected.',
     },
     {
-      name: '--udid [string]',
+      name: '--udid <string>',
       description: 'Explicitly set device to use by udid',
     },
     {
@@ -599,10 +599,10 @@ export default {
     {
       name: '--port [number]',
       default: process.env.RCT_METRO_PORT || 8081,
-      parse: (val: string) => Number(val),
+      parse: Number,
     },
     {
-      name: '--terminal [string]',
+      name: '--terminal <string>',
       description:
         'Launches the Metro Bundler in a new window using the specified terminal path.',
       default: getDefaultUserTerminal,

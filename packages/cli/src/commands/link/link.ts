@@ -93,14 +93,12 @@ export default {
   name: 'link [packageName]',
   options: [
     {
-      name: '--platforms [list]',
+      name: '--platforms <list...>',
       description: 'Scope linking to specified platforms',
-      parse: (val: string) => val.toLowerCase().split(','),
     },
     {
-      name: '--all [boolean]',
+      name: '--all',
       description: 'Link all native modules and assets',
-      parse: (val: string) => val.toLowerCase().split(','),
     },
   ],
 };

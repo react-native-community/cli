@@ -144,8 +144,6 @@ async function setupAndRun() {
     logger.disable();
   }
 
-  logger.setVerbose(process.argv.includes('--verbose'));
-
   logger.enable();
 
   // We only have a setup script for UNIX envs currently

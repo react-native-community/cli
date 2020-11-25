@@ -81,8 +81,9 @@ const handleError = (err: Error) => {
         )}`,
       ),
     );
-    return;
   }
+
+  process.exit(1);
 }
 
 /**

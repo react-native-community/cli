@@ -4,7 +4,7 @@ import commander from 'commander';
 import leven from 'leven';
 import path from 'path';
 
-import {Command, Config, OptionValue} from '@react-native-community/cli-types';
+import {Command, Config, DetachedCommand, OptionValue} from '@react-native-community/cli-types';
 import {logger, CLIError} from '@react-native-community/cli-tools';
 
 import {detachedCommands, projectCommands} from './commands';
@@ -88,7 +88,7 @@ const handleError = (err: Error) => {
 /**
  * Registers a new command within Commander interface
  */
-function registerCommand(command: Command, config: Config): commander.Command {
+function registerCommand(...[command, config]: [command: DetachedCommand] | [command: Command, config: Config]): commander.Command {
   const cmd = commander.command(command.name);
 
   if (command.description) {

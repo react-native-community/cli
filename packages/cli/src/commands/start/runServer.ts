@@ -41,7 +41,6 @@ export type Args = {
 };
 
 async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
-  console.log(args.watchFolders);
   let reportEvent: ((event: any) => void) | undefined;
   const terminal = new Terminal(process.stdout);
   const ReporterImpl = getReporterImpl(args.customLogReporterPath);

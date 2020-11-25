@@ -23,11 +23,11 @@ export type CommandFunction<Args = Object> = (
 
 export type OptionValue = string | boolean | number | OptionValue[];
 
-export type CommandOption<IsDetached extends boolean = false> = {
+export type CommandOption<T = (ctx: Config) => OptionValue> = {
   name: string;
   description: string;
   parse?: (val: string) => OptionValue;
-  default?: OptionValue | IsDetached extends true ? () => OptionValue : ((ctx: Config) => OptionValue);
+  default?: OptionValue | T;
 };
 
 export type DetachedCommandFunction<Args = Object> = (
@@ -38,7 +38,7 @@ export type DetachedCommandFunction<Args = Object> = (
 export type Command<IsDetached extends boolean = false> = {
   name: string;
   description?: string;
-  detached: IsDetached;
+  detached?: IsDetached;
   examples?: Array<{
     desc: string;
     cmd: string;
@@ -50,7 +50,11 @@ export type Command<IsDetached extends boolean = false> = {
   func: IsDetached extends true
     ? DetachedCommandFunction<Object>
     : CommandFunction<Object>;
-  options?: Array<CommandOption<IsDetached>>;
+  options?: Array<
+    CommandOption<
+      IsDetached extends true ? () => OptionValue : (ctx: Config) => OptionValue
+    >
+  >;
 };
 
 export type DetachedCommand = Command<true>;

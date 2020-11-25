@@ -14,7 +14,7 @@ export default {
     {
       name: '--template [string]',
       description:
-        'Uses a custom template. Valid arguments are: npm package, absolute directory prefixed with `file://`, Git repository or a tarball',
+        'Uses a custom template. Valid arguments are the ones supported by `yarn add [package]` or `npm install [package]`, if you are using `--npm` option',
     },
     {
       name: '--npm',

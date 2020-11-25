@@ -16,7 +16,7 @@ export default {
   options: [
     {
       name: '--port <number>',
-      default: process.env.RCT_METRO_PORT || '8081',
+      default: process.env.RCT_METRO_PORT || 8081,
       parse: Number,
     },
     {

@@ -15,39 +15,39 @@ export default {
   description: 'starts the webserver',
   options: [
     {
-      name: '--port [number]',
-      parse: (val: string) => Number(val),
+      name: '--port <number>',
+      parse: Number,
     },
     {
-      name: '--host [string]',
+      name: '--host <string>',
       default: '',
     },
     {
-      name: '--projectRoot [path]',
+      name: '--projectRoot <path>',
       description: 'Path to a custom project root',
       parse: (val: string) => path.resolve(val),
     },
     {
-      name: '--watchFolders [list]',
+      name: '--watchFolders <list>',
       description:
         'Specify any additional folders to be added to the watch list',
       parse: (val: string) =>
         val.split(',').map<string>((folder: string) => path.resolve(folder)),
     },
     {
-      name: '--assetPlugins [list]',
+      name: '--assetPlugins <list>',
       description:
         'Specify any additional asset plugins to be used by the packager by full filepath',
       parse: (val: string) => val.split(','),
     },
     {
-      name: '--sourceExts [list]',
+      name: '--sourceExts <list>',
       description:
         'Specify any additional source extensions to be used by the packager',
       parse: (val: string) => val.split(','),
     },
     {
-      name: '--max-workers [number]',
+      name: '--max-workers <number>',
       description:
         'Specifies the maximum number of workers the worker-pool ' +
         'will spawn for transforming files. This defaults to the number of the ' +
@@ -55,7 +55,7 @@ export default {
       parse: (workers: string) => Number(workers),
     },
     {
-      name: '--transformer [string]',
+      name: '--transformer <string>',
       description: 'Specify a custom transformer to be used',
     },
     {
@@ -63,7 +63,7 @@ export default {
       description: 'Removes cached files',
     },
     {
-      name: '--custom-log-reporter-path, --customLogReporterPath [string]',
+      name: '--custom-log-reporter-path, --customLogReporterPath <string>',
       description:
         'Path to a JavaScript file that exports a log reporter as a replacement for TerminalReporter',
     },
@@ -76,15 +76,15 @@ export default {
       description: 'Enables https connections to the server',
     },
     {
-      name: '--key [path]',
+      name: '--key <path>',
       description: 'Path to custom SSL key',
     },
     {
-      name: '--cert [path]',
+      name: '--cert <path>',
       description: 'Path to custom SSL cert',
     },
     {
-      name: '--config [string]',
+      name: '--config <string>',
       description: 'Path to the CLI configuration file',
       parse: (val: string) => path.resolve(val),
     },

@@ -7,7 +7,7 @@ type Options = {
   raw?: boolean;
   sourcemapPath?: string;
   generateSourcemap?: boolean;
-  port?: string;
+  port: string;
 };
 
 async function profileHermes(
@@ -43,7 +43,7 @@ export default {
   func: profileHermes,
   options: [
     {
-      name: '--filename [string]',
+      name: '--filename <string>',
       description:
         'File name of the profile to be downloaded, eg. sampling-profiler-trace8593107139682635366.cpuprofile',
     },
@@ -53,7 +53,7 @@ export default {
         'Pulls the original Hermes tracing profile without any transformation',
     },
     {
-      name: '--sourcemap-path [string]',
+      name: '--sourcemap-path <string>',
       description:
         'The local path to your source map file, eg. /tmp/sourcemap.json',
     },
@@ -62,9 +62,8 @@ export default {
       description: 'Generates the JS bundle and source map',
     },
     {
-      name: '--port [number]',
-      default: process.env.RCT_METRO_PORT || 8081,
-      parse: (val: number) => String(val),
+      name: '--port <number>',
+      default: `${process.env.RCT_METRO_PORT || 8081}`,
     },
   ],
   examples: [

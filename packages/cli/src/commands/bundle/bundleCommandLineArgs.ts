@@ -35,12 +35,12 @@ export default [
       'Path to the root JS file, either absolute or relative to JS root',
   },
   {
-    name: '--platform [string]',
+    name: '--platform <string>',
     description: 'Either "ios" or "android"',
     default: 'ios',
   },
   {
-    name: '--transformer [string]',
+    name: '--transformer <string>',
     description: 'Specify a custom transformer to be used',
   },
   {
@@ -63,13 +63,13 @@ export default [
       'File name where to store the resulting bundle, ex. /tmp/groups.bundle',
   },
   {
-    name: '--bundle-encoding [string]',
+    name: '--bundle-encoding <string>',
     description:
       'Encoding the bundle should be written in (https://nodejs.org/api/buffer.html#buffer_buffer).',
     default: 'utf8',
   },
   {
-    name: '--max-workers [number]',
+    name: '--max-workers <number>',
     description:
       'Specifies the maximum number of workers the worker-pool ' +
       'will spawn for transforming files. This defaults to the number of the ' +
@@ -77,12 +77,12 @@ export default [
     parse: (workers: string) => Number(workers),
   },
   {
-    name: '--sourcemap-output [string]',
+    name: '--sourcemap-output <string>',
     description:
       'File name where to store the sourcemap file for resulting bundle, ex. /tmp/groups.map',
   },
   {
-    name: '--sourcemap-sources-root [string]',
+    name: '--sourcemap-sources-root <string>',
     description:
       "Path to make sourcemap's sources entries relative to, ex. /root/dir",
   },
@@ -92,12 +92,12 @@ export default [
     default: false,
   },
   {
-    name: '--assets-dest [string]',
+    name: '--assets-dest <string>',
     description:
       'Directory name where to store assets referenced in the bundle',
   },
   {
-    name: '--unstable-transform-profile [string]',
+    name: '--unstable-transform-profile <string>',
     description:
       'Experimental, transform JS for a specific JS engine. Currently supported: hermes, hermes-canary, default',
   },
@@ -113,7 +113,7 @@ export default [
     default: false,
   },
   {
-    name: '--config [string]',
+    name: '--config <string>',
     description: 'Path to the CLI configuration file',
     parse: (val: string) => path.resolve(val),
   },

@@ -27,7 +27,6 @@ import {
 } from '@react-native-community/cli-tools';
 import {Device} from '../../types';
 import ora from 'ora';
-import { platform } from 'os';
 
 type FlagsT = {
   simulator?: string;

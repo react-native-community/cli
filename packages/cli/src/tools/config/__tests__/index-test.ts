@@ -334,7 +334,8 @@ test('supports dependencies from user configuration with custom build type', () 
     'node_modules/react-native-test/package.json': '{}',
     'node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj':
       '',
-    'node_modules/react-native-test/react-native.config.js': `module.exports = {}`,
+    'node_modules/react-native-test/react-native.config.js':
+      'module.exports = {}',
     'package.json': `{
       "dependencies": {
         "react-native": "0.0.1",

@@ -89,7 +89,7 @@ const handleError = (err: Error) => {
 /**
  * Registers a new command within Commander interface
  */
-function registerCommand(...[command, config]: [command: DetachedCommand] | [command: Command, config: Config]): commander.Command {
+function registerCommand(...[command, config]: [DetachedCommand] | [Command, Config]): commander.Command {
   const cmd = commander.command(command.name);
 
   if (command.description) {

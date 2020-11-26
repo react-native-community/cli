@@ -130,7 +130,6 @@ function attachCommand<IsDetached extends boolean>(
   command: Command<IsDetached>,
   ...rest: IsDetached extends false ? [Config] : []
 ): void {
-  const options = command.options || [];
   const cmd = commander
     .command(command.name)
     .action(async function handleAction(
@@ -141,7 +140,6 @@ function attachCommand<IsDetached extends boolean>(
       const argv = Array.from(args).slice(0, -1);
 
       try {
-        assertRequiredOptions(options, passedOptions);
         if (isDetachedCommand(command)) {
           await command.func(argv, passedOptions);
         } else {

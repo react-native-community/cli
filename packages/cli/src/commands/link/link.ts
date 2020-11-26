@@ -98,9 +98,8 @@ export default {
       parse: (val: string) => val.toLowerCase().split(','),
     },
     {
-      name: '--all [boolean]',
+      name: '--all',
       description: 'Link all native modules and assets',
-      parse: (val: string) => val.toLowerCase().split(','),
     },
   ],
 };

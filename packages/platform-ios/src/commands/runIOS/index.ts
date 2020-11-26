@@ -432,7 +432,7 @@ function getBuildPath(
 function getPlatformName(buildOutput: string) {
   // Xcode can sometimes escape `=` with a backslash or put the value in quotes
   const platformNameMatch = /export PLATFORM_NAME\\?="?(\w+)"?$/m.exec(
-    buildOutput
+    buildOutput,
   );
   if (!platformNameMatch) {
     throw new CLIError(

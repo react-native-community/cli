@@ -39,6 +39,15 @@ afterEach(() => {
   cleanupSync(DIR);
 });
 
+test('init fails if the directory already exists', () => {
+  fs.mkdirSync(path.join(DIR, 'TestInit'));
+
+  const {stderr} = runCLI(DIR, ['init', 'TestInit'], {expectedFailure: true});
+  expect(stderr).toBe(
+    'error Cannot initialize new project because directory "TestInit" already exists.',
+  );
+});
+
 test('init --template fails without package name', () => {
   const {stderr} = runCLI(
     DIR,

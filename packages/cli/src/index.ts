@@ -9,7 +9,6 @@ import {logger, CLIError} from '@react-native-community/cli-tools';
 
 import {detachedCommands, projectCommands} from './commands';
 import init from './commands/init/initCompat';
-import assertRequiredOptions from './tools/assertRequiredOptions';
 import loadConfig from './tools/config';
 
 const pkgJson = require('../package.json');

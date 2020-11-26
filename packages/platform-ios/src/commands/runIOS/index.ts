@@ -17,6 +17,7 @@ import chalk from 'chalk';
 import {Config} from '@react-native-community/cli-types';
 import findXcodeProject, {ProjectInfo} from './findXcodeProject';
 import parseIOSDevicesList from './parseIOSDevicesList';
+import parseXctraceIOSDevicesList from './parseXctraceIOSDevicesList';
 import findMatchingSimulator from './findMatchingSimulator';
 import warnAboutManuallyLinkedLibs from '../../link/warnAboutManuallyLinkedLibs';
 import warnAboutPodInstall from '../../link/warnAboutPodInstall';
@@ -27,6 +28,7 @@ import {
 } from '@react-native-community/cli-tools';
 import {Device} from '../../types';
 import ora from 'ora';
+import execa from 'execa';
 
 type FlagsT = {
   simulator?: string;
@@ -83,11 +85,17 @@ function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     );
   }
 
-  const devices = parseIOSDevicesList(
-    child_process.execFileSync('xcrun', ['instruments', '-s'], {
-      encoding: 'utf8',
-    }),
-  );
+  let devices;
+  try {
+    devices = parseXctraceIOSDevicesList(
+      execa.sync('xcrun', ['xctrace', 'list', 'devices']).stderr,
+    )
+  } catch (e) {
+    logger.warn(`Support for Xcode 11 and older is deprecated. Please upgrade to Xcode 12.`);
+    devices = parseIOSDevicesList(
+      execa.sync('xcrun', ['instruments', '-s']).stdout
+    );
+  }
 
   if (args.udid) {
     const device = devices.find((d) => d.udid === args.udid);

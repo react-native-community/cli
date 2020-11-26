@@ -6,13 +6,13 @@
  *
  */
 
-import parseXtraceIOSDevicesList from '../parseXtraceIOSDevicesList';
+import parseXctraceIOSDevicesList from '../parseXctraceIOSDevicesList';
 
-jest.dontMock('../parseXtraceIOSDevicesList');
+jest.dontMock('../parseXctraceIOSDevicesList');
 
-describe('parseXtraceIOSDevicesList', () => {
+describe('parseXctraceIOSDevicesList', () => {
 	it('parses typical output', () => {
-		const devices = parseXtraceIOSDevicesList(
+		const devices = parseXctraceIOSDevicesList(
 			[
 				'== Devices ==',
 				'Maxs MacBook Pro (11111111-1111-1111-1111-111111111111)',
@@ -71,6 +71,6 @@ describe('parseXtraceIOSDevicesList', () => {
 	});
 
 	it('ignores garbage', () => {
-		expect(parseXtraceIOSDevicesList('Something went terribly wrong (-42)')).toEqual([]);
+		expect(parseXctraceIOSDevicesList('Something went terribly wrong (-42)')).toEqual([]);
 	});
 });

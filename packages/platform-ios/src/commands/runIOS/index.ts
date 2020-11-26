@@ -89,11 +89,13 @@ function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   try {
     devices = parseXctraceIOSDevicesList(
       execa.sync('xcrun', ['xctrace', 'list', 'devices']).stderr,
-    )
+    );
   } catch (e) {
-    logger.warn(`Support for Xcode 11 and older is deprecated. Please upgrade to Xcode 12.`);
+    logger.warn(
+      'Support for Xcode 11 and older is deprecated. Please upgrade to Xcode 12.',
+    );
     devices = parseIOSDevicesList(
-      execa.sync('xcrun', ['instruments', '-s']).stdout
+      execa.sync('xcrun', ['instruments', '-s']).stdout,
     );
   }
 

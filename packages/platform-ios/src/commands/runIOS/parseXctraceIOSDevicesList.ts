@@ -26,14 +26,14 @@ import {Device} from '../../types';
 function parseIOSDevicesList(text: string): Array<Device> {
   const devices: Array<Device> = [];
   let isSimulator = false;
-  if (text.indexOf('== Simulators ==') == -1) {
+  if (text.indexOf('== Simulators ==') === -1) {
     return [];
   }
   text.split('\n').forEach((line) => {
     if (line === '== Simulators ==') {
       isSimulator = true;
     }
-    const device = line.match(/(.*?) (\(([0-9\.]+)\) )?\(([0-9A-F-]+)\)/i);
+    const device = line.match(/(.*?) (\(([0-9.]+)\) )?\(([0-9A-F-]+)\)/i);
     if (device) {
       const [, name, , version, udid] = device;
       const metadata: Device = {name, udid};

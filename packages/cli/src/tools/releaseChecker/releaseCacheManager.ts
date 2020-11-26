@@ -1,6 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import os from 'os';
+import appDirs from 'appdirsjs';
 import mkdirp from 'mkdirp';
 import {logger} from '@react-native-community/cli-tools';
 
@@ -38,7 +39,9 @@ function saveCache(name: string, cache: Cache) {
  * In case it doesn't exist, it will be created.
  */
 function getCacheRootPath() {
-  const cachePath = path.resolve(os.homedir(), '.react-native-cli', 'cache');
+  const legacyPath = path.resolve(os.homedir(), '.react-native-cli', 'cache');
+  const cachePath = appDirs({appName: 'react-native-cli', legacyPath}).cache;
+
   if (!fs.existsSync(cachePath)) {
     mkdirp.sync(cachePath);
   }

@@ -33,6 +33,7 @@
     "@react-native-community/cli-server-api": "^5.0.1-alpha.0",
     "@react-native-community/cli-tools": "^5.0.1-alpha.0",
     "@react-native-community/cli-types": "^5.0.1-alpha.0",
+    "appdirsjs": "^1.2.4",
     "chalk": "^3.0.0",
     "command-exists": "^1.2.8",
     "commander": "^2.19.0",

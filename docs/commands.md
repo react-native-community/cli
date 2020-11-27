@@ -464,6 +464,10 @@ Path to a custom project root
 
 Specify any additional folders to be added to the watch list
 
+#### `--assetPlugins <list>`
+
+Specify any additional asset plugins to be used by the packager by full filepath
+
 #### `--sourceExts <list>`
 
 Specify any additional source extensions to be used by the packager

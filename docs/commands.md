@@ -33,13 +33,13 @@ Builds the JavaScript bundle for offline use.
 
 Path to the root JS file, either absolute or relative to JS root.
 
-#### `--platform [string]`
+#### `--platform <string>`
 
 > default: ios
 
 Either "ios" or "android".
 
-#### `--transformer [string]`
+#### `--transformer <string>`
 
 Specify a custom transformer to be used.
 
@@ -71,21 +71,21 @@ The expected path for the js bundle can be found on the line that starts with <c
 
 </details>
 
-#### `--bundle-encoding [string]`
+#### `--bundle-encoding <string>`
 
 > default: utf8
 
 Encoding the bundle should be written in (https://nodejs.org/api/buffer.html#buffer_buffer).
 
-#### `--max-workers [number]`
+#### `--max-workers <number>`
 
 Specifies the maximum number of workers the worker-pool will spawn for transforming files. This defaults to the number of the cores available on your machine.
 
-#### `--sourcemap-output [string]`
+#### `--sourcemap-output <string>`
 
 File name where to store the sourcemap file for resulting bundle, ex. `/tmp/groups.map`.
 
-#### `--sourcemap-sources-root [string]`
+#### `--sourcemap-sources-root <string>`
 
 Path to make sourcemaps sources entries relative to, ex. `/root/dir`.
 
@@ -95,7 +95,7 @@ Path to make sourcemaps sources entries relative to, ex. `/root/dir`.
 
 Report SourceMapURL using its full path.
 
-#### `--assets-dest [string]`
+#### `--assets-dest <string>`
 
 Directory name where to store assets referenced in the bundle.
 
@@ -123,7 +123,7 @@ Removes cached files.
 
 Try to fetch transformed JS code from the global cache, if configured.
 
-#### `--config [string]`
+#### `--config <string>`
 
 Path to the CLI configuration file.
 
@@ -153,19 +153,19 @@ Initialize a new React Native project named <projectName> in a directory of the 
 
 #### Options
 
-#### `--version [string]`
+#### `--version <string>`
 
 Shortcut for `--template react-native@version`.
 
-#### `--directory [string]`
+#### `--directory <string>`
 
 Uses a custom directory instead of `<projectName>`.
 
-#### `--title [string]`
+#### `--title <string>`
 
 Uses a custom app title instead of `<projectName>`.
 
-#### `--template [string]`
+#### `--template <string>`
 
 Uses a custom template. Accepts following template sources:
 
@@ -310,19 +310,19 @@ Builds your app and starts it on a connected Android emulator or device.
 
 #### Options
 
-#### `--root [string]`
+#### `--root <string>`
 
 > **DEPRECATED** – root is discovered automatically
 
 Override the root directory for the Android build (which contains the android directory)'.
 
-#### `--variant [string]`
+#### `--variant <string>`
 
 > default: 'debug'
 
 Specify your app's build variant.
 
-#### `--appFolder [string]`
+#### `--appFolder <string>`
 
 > **DEPRECATED** – use "project.android.appName" in react-native.config.js
 
@@ -330,21 +330,21 @@ Specify your app's build variant.
 
 Specify a different application folder name for the Android source. If not, we assume is "app".
 
-#### `--appId [string]`
+#### `--appId <string>`
 
 Specify an `applicationId` to launch after build. If not specified, `package` from AndroidManifest.xml will be used.
 
-#### `--appIdSuffix [string]`
+#### `--appIdSuffix <string>`
 
 Specify an `applicationIdSuffix` to launch after build.
 
-#### `--main-activity [string]`
+#### `--main-activity <string>`
 
 > default: 'MainActivity'
 
 Name of the activity to start.
 
-#### `--deviceId [string]`
+#### `--deviceId <string>`
 
 builds your app and starts it on a specific device/simulator with the given device id (listed by running "adb devices" on the command line).
 
@@ -352,17 +352,17 @@ builds your app and starts it on a specific device/simulator with the given devi
 
 Do not launch packager while building.
 
-#### `--port [number]`
+#### `--port <number>`
 
 > default: process.env.RCT_METRO_PORT || 8081
 
-#### `--terminal [string]`
+#### `--terminal <string>`
 
 > default: process.env.REACT_TERMINAL || process.env.TERM_PROGRAM
 
 Launches the Metro Bundler in a new window using the specified terminal path.
 
-#### `--tasks [list]`
+#### `--tasks <list>`
 
 > default: 'installDebug'
 
@@ -387,7 +387,7 @@ Builds your app and starts it on iOS simulator.
 
 #### Options
 
-#### `--simulator [simulator_name]`
+#### `--simulator <simulator_name>`
 
 > default: iPhone 11
 
@@ -406,15 +406,15 @@ Example: this will launch your projet directly onto the iPhone XS Max simulator:
 react-native run-ios --simulator "iPhone XS Max"
 ```
 
-#### `--configuration [string]`
+#### `--configuration <string>`
 
 Explicitly set the scheme configuration to use default: 'Debug'.
 
-#### `--scheme [string]`
+#### `--scheme <string>`
 
 Explicitly set Xcode scheme to use.
 
-#### `--project-path [string]`
+#### `--project-path <string>`
 
 Path relative to project root where the Xcode project (.xcodeproj) lives. default: 'ios'.
 
@@ -422,7 +422,7 @@ Path relative to project root where the Xcode project (.xcodeproj) lives. defaul
 
 Explicitly set device to use by name. The value is not required if you have a single device connected.
 
-#### `--udid [string]`
+#### `--udid <string>`
 
 Explicitly set device to use by udid.
 
@@ -434,7 +434,7 @@ Do not launch packager while building.
 
 Do not use `xcpretty` even if installed.
 
-#### `--port [number]`
+#### `--port <number>`
 
 Runs packager on specified port
 
@@ -452,27 +452,27 @@ Starts the server that communicates with connected devices
 
 #### Options
 
-#### `--port [number]`
+#### `--port <number>`
 
 Specify port to listen on
 
-#### `--projectRoot [path]`
+#### `--projectRoot <path>`
 
 Path to a custom project root
 
-#### `--watchFolders [list]`
+#### `--watchFolders <list>`
 
 Specify any additional folders to be added to the watch list
 
-#### `--sourceExts [list]`
+#### `--sourceExts <list>`
 
 Specify any additional source extensions to be used by the packager
 
-#### `--max-workers [number]`
+#### `--max-workers <number>`
 
 Specifies the maximum number of workers the worker-pool will spawn for transforming files. This defaults to the number of the cores available on your machine
 
-#### `--transformer [string]`
+#### `--transformer <string>`
 
 Specify a custom transformer to be used
 
@@ -480,7 +480,7 @@ Specify a custom transformer to be used
 
 Removes cached files
 
-#### `--custom-log-reporter-path, --customLogReporterPath [string]`
+#### `--custom-log-reporter-path, --customLogReporterPath <string>`
 
 Path to a JavaScript file that exports a log reporter as a replacement for TerminalReporter
 
@@ -492,15 +492,15 @@ Enables logging
 
 Enables https connections to the server
 
-#### `--key [path]`
+#### `--key <path>`
 
 Path to custom SSL key
 
-#### `--cert [path]`
+#### `--cert <path>`
 
 Path to custom SSL cert
 
-#### `--config [string]`
+#### `--config <string>`
 
 Path to the CLI configuration file
 
@@ -565,7 +565,7 @@ Pull and convert a Hermes tracing profile to Chrome tracing profile, then store 
 
 #### Options
 
-#### `--filename [string]`
+#### `--filename <string>`
 
 File name of the profile to be downloaded, eg. sampling-profiler-trace8593107139682635366.cpuprofile.
 
@@ -575,7 +575,7 @@ File name of the profile to be downloaded, eg. sampling-profiler-trace8593107139
 
 Pulls the original Hermes tracing profile without any transformation
 
-#### `--sourcemap-path [string]`
+#### `--sourcemap-path <string>`
 
 The local path to your source map file if you generated it manually, ex. `/tmp/sourcemap.json`
 
@@ -583,7 +583,7 @@ The local path to your source map file if you generated it manually, ex. `/tmp/s
 
 Generate the JS bundle and source map in `os.tmpdir()`
 
-#### '--port [number]',
+#### `--port <number>`,
 
 The running metro server port number
 

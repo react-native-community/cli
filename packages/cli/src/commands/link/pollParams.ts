@@ -5,15 +5,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-// @ts-ignore untyped
-import {prompt, QuestionCollection, Answers} from 'inquirer';
+import prompts from 'prompts';
 
-export default (questions: QuestionCollection) =>
-  new Promise<Answers>((resolve, reject) => {
+export default (questions: any[]) =>
+  new Promise<Object>((resolve, reject) => {
     if (!questions) {
       resolve({});
       return;
     }
 
-    prompt(questions).then(resolve, reject);
+    prompts(questions).then(resolve, reject);
   });

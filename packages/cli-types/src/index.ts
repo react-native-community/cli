@@ -13,7 +13,7 @@ import {
 } from './android';
 import {Ora} from 'ora';
 
-export type InquirerPrompt = any;
+export type Prompt = any;
 
 export type CommandFunction<Args = Object> = (
   argv: Array<string>,
@@ -112,7 +112,7 @@ export interface Dependency {
     preunlink?: string;
     postunlink?: string;
   };
-  params: InquirerPrompt[];
+  params: Prompt[];
 }
 
 export type ProjectConfig = {

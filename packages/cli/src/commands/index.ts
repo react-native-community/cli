@@ -24,7 +24,6 @@ export const projectCommands = [
   upgrade,
   info,
   config,
-  doctor,
   profileHermes,
 ] as Command[];
 

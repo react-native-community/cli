@@ -117,3 +117,18 @@ correct location and update them accordingly:
 - path to `native_modules.rb` in your `ios/Podfile`
 - path to `native_modules.gradle` in your `android/settings.gradle`
 - path to `native_modules.gradle` in your `android/app/build.gradle`
+
+Another note: Dependencies are only linked if they are listed in the package.json of the mobile workspace.  For example, with this file structure:
+```
+/root
+  /packages
+    /mobile
+      /ios
+      /android
+      package.json <-- Only dependencies listed here are auto-linked
+    /components
+      package.json <-- Dependencies here are ignored when auto-linking
+  package.json
+```
+In this example, if you add a package with native code as a dependecy of `components`, you need to also add it as a dependency of `mobile` for auto-linking to work.
+

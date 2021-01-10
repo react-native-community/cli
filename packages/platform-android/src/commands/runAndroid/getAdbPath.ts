@@ -8,7 +8,7 @@
 
 function getAdbPath() {
   return process.env.ANDROID_HOME
-    ? `${process.env.ANDROID_HOME}/platform-tools/adb`
+    ? `${process.env.ANDROID_HOME}/platform-tools/adb.exe`
     : 'adb';
 }
 

@@ -130,5 +130,4 @@ Another note: Dependencies are only linked if they are listed in the package.jso
       package.json <-- Dependencies here are ignored when auto-linking
   package.json
 ```
-In this example, if you add a package with native code as a dependecy of `components`, you need to also add it as a dependency of `mobile` for auto-linking to work.
-
+In this example, if you add a package with native code as a dependency of `components`, you need to also add it as a dependency of `mobile` for auto-linking to work.

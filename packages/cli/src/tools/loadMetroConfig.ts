@@ -43,6 +43,7 @@ export interface MetroConfig {
     customizeFrame: (frame: {file: string | null}) => {collapse: boolean};
   };
   transformer: {
+    allowOptionalDependencies?: boolean;
     babelTransformerPath: string;
     assetRegistryPath: string;
     assetPlugins?: Array<string>;
@@ -106,6 +107,7 @@ export const getDefaultConfig = (ctx: Config): MetroConfig => {
       },
     },
     transformer: {
+      allowOptionalDependencies: true,
       babelTransformerPath: require.resolve(
         'metro-react-native-babel-transformer',
       ),

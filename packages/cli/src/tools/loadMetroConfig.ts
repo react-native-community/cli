@@ -20,11 +20,10 @@ const INTERNAL_CALLSITES_REGEX = new RegExp(
   ].join('|'),
 );
 
-type ConfigLoadingContext = Pick<Config, 'root' | 'reactNativePath'> & {
-  platforms: {
-    [name: string]: {npmPackageName?: string};
-  };
-};
+type ConfigLoadingContext = Pick<
+  Config,
+  'root' | 'reactNativePath' | 'platforms'
+>;
 
 export interface MetroConfig {
   resolver: {

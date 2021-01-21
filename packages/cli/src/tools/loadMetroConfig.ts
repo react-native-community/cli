@@ -20,6 +20,12 @@ const INTERNAL_CALLSITES_REGEX = new RegExp(
   ].join('|'),
 );
 
+type ConfigLoadingContext = Pick<Config, 'root' | 'reactNativePath'> & {
+  platforms: {
+    [name: string]: {npmPackageName?: string};
+  };
+};
+
 export interface MetroConfig {
   resolver: {
     resolveRequest?: (
@@ -56,7 +62,7 @@ export interface MetroConfig {
 /**
  * Default configuration
  */
-export const getDefaultConfig = (ctx: Config): MetroConfig => {
+export const getDefaultConfig = (ctx: ConfigLoadingContext): MetroConfig => {
   const outOfTreePlatforms = Object.keys(ctx.platforms).filter(
     (platform) => ctx.platforms[platform].npmPackageName,
   );
@@ -137,7 +143,7 @@ export interface ConfigOptionsT {
  * This allows the CLI to always overwrite the file settings.
  */
 export default function load(
-  ctx: Config,
+  ctx: ConfigLoadingContext,
   options?: ConfigOptionsT,
 ): Promise<MetroConfig> {
   const defaultConfig = getDefaultConfig(ctx);

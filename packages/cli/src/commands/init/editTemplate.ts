@@ -43,7 +43,9 @@ function renameFile(filePath: string, oldName: string, newName: string) {
 
   logger.debug(`Renaming ${filePath} -> file:${newFileName}`);
 
-  fs.renameSync(filePath, newFileName);
+  if (!fs.existsSync(newFileName)) {
+    fs.renameSync(filePath, newFileName);
+  }
 }
 
 function shouldRenameFile(filePath: string, nameToReplace: string) {

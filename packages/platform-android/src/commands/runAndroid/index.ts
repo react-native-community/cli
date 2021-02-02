@@ -51,6 +51,7 @@ export interface Flags {
   port: number;
   terminal: string;
   jetifier: boolean;
+  launchPackagerDirectory: string;
 }
 
 type AndroidProject = NonNullable<Config['project']['android']>;
@@ -94,6 +95,7 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
         startServerInNewWindow(
           args.port,
           args.terminal,
+          args.launchPackagerDirectory,
           config.reactNativePath,
         );
       } catch (error) {
@@ -237,6 +239,7 @@ function installAndLaunchOnDevice(
 function startServerInNewWindow(
   port: number,
   terminal: string,
+  launchPackagerDirectory: string,
   reactNativePath: string,
 ) {
   /**
@@ -254,8 +257,9 @@ function startServerInNewWindow(
   /**
    * Set up the `.packager.(env|bat)` file to ensure the packager starts on the right port.
    */
+
   const launchPackagerScript = path.join(
-    reactNativePath,
+    launchPackagerDirectory !== '' ? launchPackagerDirectory : reactNativePath,
     `scripts/${scriptFile}`,
   );
 
@@ -322,6 +326,11 @@ export default {
       description:
         '[DEPRECATED - root is discovered automatically] Override the root directory for the android build (which contains the android directory)',
       default: '',
+    },
+    {
+      name: '--launchPackagerDirectory <string>',
+      description:
+        'The directory that contains the command and the environment file to launch the packager',
     },
     {
       name: '--variant <string>',

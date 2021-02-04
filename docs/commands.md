@@ -4,6 +4,7 @@ React Native CLI comes with following commands:
 
 - [`bundle`](#bundle)
 - [`config`](#config)
+- [`doctor`](#doctor)
 - [`init`](#init)
 - [`info`](#info)
 - [`install`](#install)
@@ -136,6 +137,16 @@ react-native config
 ```
 
 Output project and dependencies configuration in JSON format to stdout. Used by [autolinking](./autolinking.md).
+
+### `doctor`
+
+Usage:
+
+```sh
+react-native doctor
+```
+
+[EXPERIMENTAL] Diagnose and fix common Node.js, iOS, Android & React Native issues.
 
 ### `init`
 

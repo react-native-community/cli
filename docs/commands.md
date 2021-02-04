@@ -146,7 +146,7 @@ Usage:
 react-native doctor
 ```
 
-Get diagnosis about development environment required (Common, Android and IOS packages).
+[EXPERIMENTAL] Diagnose and fix common Node.js, iOS, Android & React Native issues.
 
 ### `init`
 

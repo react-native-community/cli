@@ -20,6 +20,11 @@ const INTERNAL_CALLSITES_REGEX = new RegExp(
   ].join('|'),
 );
 
+type ConfigLoadingContext = Pick<
+  Config,
+  'root' | 'reactNativePath' | 'platforms'
+>;
+
 export interface MetroConfig {
   resolver: {
     resolveRequest?: (
@@ -43,6 +48,7 @@ export interface MetroConfig {
     customizeFrame: (frame: {file: string | null}) => {collapse: boolean};
   };
   transformer: {
+    allowOptionalDependencies?: boolean;
     babelTransformerPath: string;
     assetRegistryPath: string;
     assetPlugins?: Array<string>;
@@ -54,7 +60,7 @@ export interface MetroConfig {
 /**
  * Default configuration
  */
-export const getDefaultConfig = (ctx: Config): MetroConfig => {
+export const getDefaultConfig = (ctx: ConfigLoadingContext): MetroConfig => {
   const outOfTreePlatforms = Object.keys(ctx.platforms).filter(
     platform => ctx.platforms[platform].npmPackageName,
   );
@@ -105,6 +111,7 @@ export const getDefaultConfig = (ctx: Config): MetroConfig => {
       },
     },
     transformer: {
+      allowOptionalDependencies: true,
       babelTransformerPath: require.resolve(
         'metro-react-native-babel-transformer',
       ),
@@ -131,7 +138,7 @@ export interface ConfigOptionsT {
  * This allows the CLI to always overwrite the file settings.
  */
 export default function load(
-  ctx: Config,
+  ctx: ConfigLoadingContext,
   options?: ConfigOptionsT,
 ): Promise<MetroConfig> {
   const defaultConfig = getDefaultConfig(ctx);

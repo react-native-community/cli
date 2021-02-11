@@ -39,7 +39,7 @@ const healthCheck = t.object({
   healthchecks: t.array().items(
     t.object({
       label: t.string().required(),
-      isRequired: t.string(),
+      isRequired: t.bool(),
       description: t.string(),
       getDiagnostics: t.func(),
       win32AutomaticFix: t.func(),

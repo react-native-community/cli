@@ -124,3 +124,33 @@ test('should edit template with custom title', () => {
     snapshotDiff(oldJavaFile, newJavaFile, {contextLines: 1}),
   ).toMatchSnapshot();
 });
+
+describe('changePlaceholderInTemplate', () => {
+  beforeEach(() => {
+    jest.spyOn(process, 'cwd').mockImplementation(() => testPath);
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
+  test(`should produce a lowercased version of "${PROJECT_NAME}" in package.json "name" field`, () => {
+    changePlaceholderInTemplate({
+      projectName: PROJECT_NAME,
+      placeholderName: PLACEHOLDER_NAME,
+    });
+
+    const oldPackageJsonFile = fs.readFileSync(
+      path.resolve(FIXTURE_DIR, 'package.json'),
+      'utf8',
+    );
+    const newPackageJsonFile = fs.readFileSync(
+      path.resolve(testPath, 'package.json'),
+      'utf8',
+    );
+
+    expect(
+      snapshotDiff(oldPackageJsonFile, newPackageJsonFile, {contextLines: 1}),
+    ).toMatchSnapshot();
+  });
+});

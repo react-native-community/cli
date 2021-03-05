@@ -125,25 +125,32 @@ test('should edit template with custom title', () => {
   ).toMatchSnapshot();
 });
 
-test('should edit package.json template', () => {
-  jest.spyOn(process, 'cwd').mockImplementation(() => testPath);
-  changePlaceholderInTemplate({
-    projectName: PROJECT_NAME,
-    placeholderName: PLACEHOLDER_NAME,
+describe('changePlaceholderInTemplate', () => {
+  beforeEach(() => {
+    jest.spyOn(process, 'cwd').mockImplementation(() => testPath);
   });
 
-  const oldPackageJsonFile = fs.readFileSync(
-    path.resolve(FIXTURE_DIR, 'package.json'),
-    'utf8',
-  );
-  const newPackageJsonFile = fs.readFileSync(
-    path.resolve(testPath, 'package.json'),
-    'utf8',
-  );
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
 
-  console.log(oldPackageJsonFile);
+  test(`should produce a lowercased version of "${PROJECT_NAME}" in package.json "name" field`, () => {
+    changePlaceholderInTemplate({
+      projectName: PROJECT_NAME,
+      placeholderName: PLACEHOLDER_NAME,
+    });
 
-  expect(
-    snapshotDiff(oldPackageJsonFile, newPackageJsonFile, {contextLines: 1}),
-  ).toMatchSnapshot();
+    const oldPackageJsonFile = fs.readFileSync(
+      path.resolve(FIXTURE_DIR, 'package.json'),
+      'utf8',
+    );
+    const newPackageJsonFile = fs.readFileSync(
+      path.resolve(testPath, 'package.json'),
+      'utf8',
+    );
+
+    expect(
+      snapshotDiff(oldPackageJsonFile, newPackageJsonFile, {contextLines: 1}),
+    ).toMatchSnapshot();
+  });
 });

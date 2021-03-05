@@ -124,3 +124,26 @@ test('should edit template with custom title', () => {
     snapshotDiff(oldJavaFile, newJavaFile, {contextLines: 1}),
   ).toMatchSnapshot();
 });
+
+test('should edit package.json template', () => {
+  jest.spyOn(process, 'cwd').mockImplementation(() => testPath);
+  changePlaceholderInTemplate({
+    projectName: PROJECT_NAME,
+    placeholderName: PLACEHOLDER_NAME,
+  });
+
+  const oldPackageJsonFile = fs.readFileSync(
+    path.resolve(FIXTURE_DIR, 'package.json'),
+    'utf8',
+  );
+  const newPackageJsonFile = fs.readFileSync(
+    path.resolve(testPath, 'package.json'),
+    'utf8',
+  );
+
+  console.log(oldPackageJsonFile);
+
+  expect(
+    snapshotDiff(oldPackageJsonFile, newPackageJsonFile, {contextLines: 1}),
+  ).toMatchSnapshot();
+});

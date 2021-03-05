@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`should edit package.json template 1`] = `
+exports[`changePlaceholderInTemplate should produce a lowercased version of "ProjectName" in package.json "name" field 1`] = `
 "Snapshot Diff:
 - First value
 + Second value

@@ -44,6 +44,8 @@ async function createProjectFromTemplate(
 /**
  * The following formats are supported for the template:
  * - 'demo' -> Fetch the package react-native-template-demo from npm
+ * - 'react-native-template-demo' -> Fetch the package
+ * react-native-template-demo from npm
  * - git://..., http://..., file://... or any other URL supported by npm
  */
 async function createFromRemoteTemplate(
@@ -58,8 +60,12 @@ async function createFromRemoteTemplate(
     installPackage = template;
     templateName = template.substr(template.lastIndexOf('/') + 1);
   } else {
-    // e.g 'demo'
-    installPackage = `react-native-template-${template}`;
+    const prefix = 'react-native-template-';
+
+    installPackage = template.includes(prefix)
+      ? template // e.g 'react-native-template-demo'
+      : prefix.concat(template); // e.g 'demo'
+
     templateName = installPackage;
   }
 

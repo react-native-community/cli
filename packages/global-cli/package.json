@@ -7,6 +7,10 @@
   "engines": {
     "node": ">=4"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/react-native-community/react-native-cli.git"
+  },
   "scripts": {
     "test": "mocha"
   },
@@ -21,11 +25,5 @@
   },
   "jest": {
     "displayName": "global-cli"
-  },
-  "homepage": "https://github.com/react-native-community/cli/tree/master/packages/global-cli",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/react-native-community/cli.git",
-    "directory": "packages/global-cli"
   }
 }

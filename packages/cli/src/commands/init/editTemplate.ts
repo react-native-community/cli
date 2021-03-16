@@ -71,6 +71,7 @@ const UNDERSCORED_DOTFILES = [
   'gitignore',
   'prettierrc.js',
   'watchmanconfig',
+  'editorconfig',
 ];
 
 function processDotfiles(filePath: string) {

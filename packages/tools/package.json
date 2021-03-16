@@ -23,5 +23,11 @@
     "build",
     "!*.d.ts",
     "!*.map"
-  ]
+  ],
+  "homepage": "https://github.com/react-native-community/cli/tree/master/packages/tools",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/react-native-community/cli.git",
+    "directory": "packages/tools"
+  }
 }

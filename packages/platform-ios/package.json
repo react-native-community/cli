@@ -28,5 +28,11 @@
     "!*.d.ts",
     "!*.map",
     "native_modules.rb"
-  ]
+  ],
+  "homepage": "https://github.com/react-native-community/cli/tree/master/packages/platform-ios",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/react-native-community/cli.git",
+    "directory": "packages/platform-ios"
+  }
 }

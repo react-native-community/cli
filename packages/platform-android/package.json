@@ -31,5 +31,11 @@
     "@types/glob": "^7.1.1",
     "@types/lodash": "^4.14.149",
     "@types/xmldoc": "^1.1.4"
+  },
+  "homepage": "https://github.com/react-native-community/cli/tree/master/packages/platform-android",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/react-native-community/cli.git",
+    "directory": "packages/platform-android"
   }
 }

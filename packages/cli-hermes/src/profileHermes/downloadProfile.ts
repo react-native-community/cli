@@ -46,13 +46,18 @@ export async function downloadProfile(
   raw?: boolean,
   shouldGenerateSourcemap?: boolean,
   port?: string,
+  appId?: string,
+  appIdSuffix?: string,
 ) {
   try {
     const androidProject = getAndroidProject(ctx);
     const packageName = getPackageName(androidProject);
+    const packageNameWithSuffix = [appId || packageName, appIdSuffix]
+      .filter(Boolean)
+      .join('.');
 
     // If file name is not specified, pull the latest file from device
-    const file = filename || getLatestFile(packageName);
+    const file = filename || getLatestFile(packageNameWithSuffix);
     if (!file) {
       throw new CLIError(
         'There is no file in the cache/ directory. Did you record a profile from the developer menu?',
@@ -67,7 +72,7 @@ export async function downloadProfile(
     logger.debug('Internal commands run to pull the file:');
 
     // Copy the file from device's data to sdcard, then pull the file to a temp directory
-    execSyncWithLog(`adb shell run-as ${packageName} cp cache/${file} /sdcard`);
+    execSyncWithLog(`adb shell run-as ${packageNameWithSuffix} cp cache/${file} /sdcard`);
 
     // If --raw, pull the hermes profile to dstPath
     if (raw) {

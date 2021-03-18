@@ -1,3 +1,4 @@
+// @ts-ignore
 import {logger, CLIError} from '@react-native-community/cli-tools';
 import {Config} from '@react-native-community/cli-types';
 import {downloadProfile} from './downloadProfile';
@@ -8,6 +9,8 @@ type Options = {
   sourcemapPath?: string;
   generateSourcemap?: boolean;
   port: string;
+  appId?: string;
+  appIdSuffix?: string;
 };
 
 async function profileHermes(
@@ -30,6 +33,8 @@ async function profileHermes(
       options.raw,
       options.generateSourcemap,
       options.port,
+      options.appId,
+      options.appIdSuffix,
     );
   } catch (err) {
     throw err as CLIError;
@@ -64,6 +69,17 @@ export default {
     {
       name: '--port <number>',
       default: `${process.env.RCT_METRO_PORT || 8081}`,
+    },
+    {
+      name: '--appId <string>',
+      description:
+        'Specify an applicationId to launch after build. If not specified, `package` from AndroidManifest.xml will be used.',
+      default: '',
+    },
+    {
+      name: '--appIdSuffix <string>',
+      description: 'Specify an applicationIdSuffix to launch after build.',
+      default: '',
     },
   ],
   examples: [

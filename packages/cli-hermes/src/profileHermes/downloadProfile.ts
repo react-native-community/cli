@@ -74,7 +74,9 @@ export async function downloadProfile(
     logger.debug('Internal commands run to pull the file:');
 
     // Copy the file from device's data to sdcard, then pull the file to a temp directory
-    execSyncWithLog(`adb shell run-as ${packageNameWithSuffix} cp cache/${file} /sdcard`);
+    execSyncWithLog(
+      `adb shell run-as ${packageNameWithSuffix} cp cache/${file} /sdcard`,
+    );
 
     // If --raw, pull the hermes profile to dstPath
     if (raw) {

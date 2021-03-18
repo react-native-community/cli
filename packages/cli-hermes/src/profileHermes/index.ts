@@ -1,4 +1,3 @@
-// @ts-ignore
 import {logger, CLIError} from '@react-native-community/cli-tools';
 import {Config} from '@react-native-community/cli-types';
 import {downloadProfile} from './downloadProfile';

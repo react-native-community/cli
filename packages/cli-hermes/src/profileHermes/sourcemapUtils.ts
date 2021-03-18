@@ -1,5 +1,5 @@
 import {Config} from '@react-native-community/cli-types';
-import {logger, CLIError,fetch} from '@react-native-community/cli-tools';
+import {logger, CLIError, fetch} from '@react-native-community/cli-tools';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';

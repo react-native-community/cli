@@ -37,6 +37,8 @@ function execSyncWithLog(command: string) {
  * @param sourceMapPath
  * @param raw
  * @param generateSourceMap
+ * @param appId
+ * @param appIdSuffix
  */
 export async function downloadProfile(
   ctx: Config,

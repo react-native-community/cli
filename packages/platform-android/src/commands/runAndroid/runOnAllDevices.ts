@@ -63,6 +63,20 @@ async function runOnAllDevices(
       gradleArgs.push('-PreactNativeDevServerPort=' + args.port);
     }
 
+    if (args.activeArchOnly) {
+      const architectures = devices
+        .map((device) => {
+          return adb.getCPU(adbPath, device);
+        })
+        .filter((arch) => arch != null);
+      if (architectures.length > 0) {
+        logger.info(`Detected architectures ${architectures.join(', ')}`);
+        gradleArgs.push(
+          '-PreactNativeDebugArchitectures=' + architectures.join(','),
+        );
+      }
+    }
+
     logger.info('Installing the app...');
     logger.debug(
       `Running command "cd android && ${cmd} ${gradleArgs.join(' ')}"`,

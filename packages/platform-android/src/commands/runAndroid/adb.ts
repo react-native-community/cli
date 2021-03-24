@@ -67,7 +67,29 @@ function getAvailableCPUs(adbPath: string, device: string): Array<string> {
   }
 }
 
+/**
+ * Gets the CPU architecture of a device from ADB
+ */
+function getCPU(adbPath: string, device: string): string | null {
+  try {
+    const cpus = execFileSync(adbPath, [
+      '-s',
+      device,
+      'shell',
+      'getprop',
+      'ro.product.cpu.abi',
+    ])
+      .toString()
+      .trim();
+
+    return cpus.length > 0 ? cpus : null;
+  } catch (e) {
+    return null;
+  }
+}
+
 export default {
   getDevices,
   getAvailableCPUs,
+  getCPU,
 };

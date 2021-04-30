@@ -87,8 +87,9 @@ function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
 
   let devices;
   try {
+    const out = execa.sync('xcrun', ['xctrace', 'list', 'devices']);
     devices = parseXctraceIOSDevicesList(
-      execa.sync('xcrun', ['xctrace', 'list', 'devices']).stdout,
+      out.stderr || out.stdout
     );
   } catch (e) {
     logger.warn(

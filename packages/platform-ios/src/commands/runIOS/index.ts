@@ -88,15 +88,9 @@ function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   let devices;
   try {
     const out = execa.sync('xcrun', ['xctrace', 'list', 'devices']);
-    if (out === "") {
-      devices = parseXctraceIOSDevicesList(
-        out.stout,
-      );
-    } else {
-      devices = parseXctraceIOSDevicesList(
-        out.stderr,
-      );
-    }
+    devices = parseXctraceIOSDevicesList(
+      out.stderr === "" ? out.stdout : out.stderr,
+    );
   } catch (e) {
     logger.warn(
       'Support for Xcode 11 and older is deprecated. Please upgrade to Xcode 12.',

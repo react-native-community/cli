@@ -87,8 +87,10 @@ function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
 
   let devices;
   try {
+    const out = execa.sync('xcrun', ['xctrace', 'list', 'devices']);
     devices = parseXctraceIOSDevicesList(
-      execa.sync('xcrun', ['xctrace', 'list', 'devices']).stderr,
+      // Xcode 12.5 introduced a change to output the list to stdout instead of stderr
+      out.stderr === '' ? out.stdout : out.stderr,
     );
   } catch (e) {
     logger.warn(

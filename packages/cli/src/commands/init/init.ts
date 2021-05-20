@@ -5,7 +5,7 @@ import minimist from 'minimist';
 import ora from 'ora';
 import mkdirp from 'mkdirp';
 import {validateProjectName} from './validate';
-import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
+import DirectoryContainsConflictingFilesError from './errors/DirectoryContainsConflictingFilesError';
 import printRunInstructions from './printRunInstructions';
 import {CLIError, logger} from '@react-native-community/cli-tools';
 import {
@@ -40,14 +40,41 @@ interface TemplateOptions {
   skipInstall?: boolean;
 }
 
-function doesDirectoryExist(dir: string) {
-  return fs.existsSync(dir);
+function validateProjectDirectory(directory: string) {
+  const validFiles = [
+    '.DS_Store',
+    '.git',
+    '.gitattributes',
+    '.gitignore',
+    '.gitlab-ci.yml',
+    '.hg',
+    '.hgcheck',
+    '.hgignore',
+    '.idea',
+    '.npmignore',
+    '.travis.yml',
+    'docs',
+    'LICENSE',
+    'README.md',
+    'mkdocs.yml',
+    'Thumbs.db',
+  ];
+
+  const conflicts = fs.readdirSync(directory).filter((file) => {
+    return (
+      !validFiles.includes(file) &&
+      // IntelliJ IDEA creates module files before CRA is launched
+      !/\.iml$/.test(file)
+    );
+  });
+
+  if (conflicts.length > 0) {
+    throw new DirectoryContainsConflictingFilesError(directory, conflicts);
+  }
 }
 
 async function setProjectDirectory(directory: string) {
-  if (doesDirectoryExist(directory)) {
-    throw new DirectoryAlreadyExistsError(directory);
-  }
+  validateProjectDirectory(directory);
 
   try {
     mkdirp.sync(directory);
@@ -199,15 +226,28 @@ export default (async function initialize(
 ) {
   const root = process.cwd();
 
-  validateProjectName(projectName);
-
   /**
    * Commander is stripping `version` from options automatically.
    * We have to use `minimist` to take that directly from `process.argv`
    */
   const version: string = minimist(process.argv).version || DEFAULT_VERSION;
 
-  const directoryName = path.relative(root, options.directory || projectName);
+  // handles the case when '.' is passed as for projectDirectory
+  const tempDirectoryName = path.relative(
+    root,
+    options.directory || projectName,
+  );
+  const directoryName = tempDirectoryName === '' ? '.' : tempDirectoryName;
+
+  if (!options.directory) {
+    /**
+     * `path.basename` requires resolved paths
+     * eg: `path.basename('.') === '.'`, instead we need the directory name
+     */
+    projectName = path.basename(path.resolve(directoryName));
+  }
+
+  validateProjectName(projectName);
 
   try {
     await createProject(projectName, directoryName, version, options);

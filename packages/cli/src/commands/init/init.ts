@@ -5,7 +5,7 @@ import minimist from 'minimist';
 import ora from 'ora';
 import mkdirp from 'mkdirp';
 import {validateProjectName} from './validate';
-import DirectoryContainsConflictingFilesError from './errors/DirectoryContainsConflictingFilesError';
+import {validateProjectDirectory} from './validateProjectDirectory';
 import printRunInstructions from './printRunInstructions';
 import {CLIError, logger} from '@react-native-community/cli-tools';
 import {
@@ -38,45 +38,6 @@ interface TemplateOptions {
   directory: string;
   projectTitle?: string;
   skipInstall?: boolean;
-}
-
-function validateProjectDirectory(directory: string) {
-  const validFiles = [
-    '.DS_Store',
-    '.git',
-    '.gitattributes',
-    '.gitignore',
-    '.gitlab-ci.yml',
-    '.hg',
-    '.hgcheck',
-    '.hgignore',
-    '.idea',
-    '.npmignore',
-    '.travis.yml',
-    'docs',
-    'LICENSE',
-    'README.md',
-    'mkdocs.yml',
-    'Thumbs.db',
-  ];
-
-  const conflicts = fs
-    .readdirSync(directory)
-    .filter((file) => {
-      return (
-        !validFiles.includes(file) &&
-        // IntelliJ IDEA creates module files before CRA is launched
-        !/\.iml$/.test(file)
-      );
-    })
-    .map((file) => {
-      const stats = fs.lstatSync(path.join(directory, file));
-      return `${file}${stats.isDirectory() ? '/' : ''}`;
-    });
-
-  if (conflicts.length > 0) {
-    throw new DirectoryContainsConflictingFilesError(directory, conflicts);
-  }
 }
 
 async function setProjectDirectory(directory: string) {

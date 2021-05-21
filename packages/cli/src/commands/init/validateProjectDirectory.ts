@@ -22,6 +22,10 @@ const validFiles = [
 ];
 
 export function validateProjectDirectory(directory: string) {
+  if (!fs.existsSync(directory)) {
+    return;
+  }
+
   const conflicts = fs
     .readdirSync(directory)
     .filter((file) => {

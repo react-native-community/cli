@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/cli-hermes",
-  "version": "5.0.1-alpha.1",
+  "version": "6.0.0",
   "license": "MIT",
   "main": "build/index.js",
   "publishConfig": {
@@ -8,8 +8,8 @@
   },
   "types": "build/index.d.ts",
   "dependencies": {
-    "@react-native-community/cli-platform-android": "^5.0.1-alpha.1",
-    "@react-native-community/cli-tools": "^5.0.1-alpha.1",
+    "@react-native-community/cli-platform-android": "^6.0.0",
+    "@react-native-community/cli-tools": "^6.0.0",
     "chalk": "^3.0.0",
     "hermes-profile-transformer": "^0.0.6",
     "ip": "^1.1.5"
@@ -20,7 +20,7 @@
     "!*.map"
   ],
   "devDependencies": {
-    "@react-native-community/cli-types": "^5.0.1-alpha.1",
+    "@react-native-community/cli-types": "^6.0.0",
     "@types/ip": "^1.1.0"
   },
   "homepage": "https://github.com/react-native-community/cli/tree/master/packages/cli-hermes",

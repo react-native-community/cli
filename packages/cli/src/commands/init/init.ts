@@ -60,13 +60,19 @@ function validateProjectDirectory(directory: string) {
     'Thumbs.db',
   ];
 
-  const conflicts = fs.readdirSync(directory).filter((file) => {
-    return (
-      !validFiles.includes(file) &&
-      // IntelliJ IDEA creates module files before CRA is launched
-      !/\.iml$/.test(file)
-    );
-  });
+  const conflicts = fs
+    .readdirSync(directory)
+    .filter((file) => {
+      return (
+        !validFiles.includes(file) &&
+        // IntelliJ IDEA creates module files before CRA is launched
+        !/\.iml$/.test(file)
+      );
+    })
+    .map((file) => {
+      const stats = fs.lstatSync(path.join(directory, file));
+      return `${file}${stats.isDirectory() ? '/' : ''}`;
+    });
 
   if (conflicts.length > 0) {
     throw new DirectoryContainsConflictingFilesError(directory, conflicts);

@@ -201,7 +201,7 @@ const installCocoaPodsDeps = async (projectDir: string) => {
         )}`,
       );
       await installPods({
-        projectName: projectDir.split('/').pop() || '',
+        directory: projectDir.split('/').pop() || '',
       });
     } catch (error) {
       if (error.stderr) {

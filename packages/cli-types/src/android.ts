@@ -22,6 +22,7 @@ export interface AndroidDependencyConfig {
   packageInstance: string;
   manifestPath: string;
   packageName: string;
+  customScope?: string;
   buildTypes: string[];
 }
 

@@ -155,6 +155,7 @@ export function dependencyConfig(
     userConfig.packageInstance || `new ${packageClassName}()`;
 
   const buildTypes = userConfig.buildTypes || [];
+  const customScope = userConfig.customScope;
 
   return {
     sourceDir,
@@ -162,5 +163,6 @@ export function dependencyConfig(
     packageImportPath,
     packageInstance,
     buildTypes,
+    customScope,
   };
 }

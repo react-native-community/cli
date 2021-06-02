@@ -75,6 +75,7 @@ export const dependencyConfig = t
                 manifestPath: t.string(),
                 packageImportPath: t.string(),
                 packageInstance: t.string(),
+                customScope: t.string(),
                 buildTypes: t.array().items(t.string()).default([]),
               })
               .default({}),

@@ -105,16 +105,25 @@ class ReactNativeModules {
   void addReactNativeModuleDependencies(Project appProject) {
     reactNativeModules.forEach { reactNativeModule ->
       def nameCleansed = reactNativeModule["nameCleansed"]
+      def customScope = reactNativeModule["customScope"]
       appProject.dependencies {
         if (reactNativeModulesBuildVariants.containsKey(nameCleansed)) {
           reactNativeModulesBuildVariants
             .get(nameCleansed)
-            .forEach { buildVariant ->
-              "${buildVariant}Implementation" project(path: ":${nameCleansed}")
+            .forEach { buildVariant -> {
+              if(customScope != null) {
+                "${buildVariant}${customScope}"
+              } else {
+                "${buildVariant}Implementation" project(path: ":${nameCleansed}")
+              }
+              }
             }
         } else {
-          // TODO(salakar): are other dependency scope methods such as `api` required?
-          implementation project(path: ":${nameCleansed}")
+          if(customScope != null) {
+            "${customScope}"
+          } else {
+             implementation project(path: ":${nameCleansed}")
+          }
         }
       }
     }
@@ -264,6 +273,9 @@ class ReactNativeModules {
         reactNativeModuleConfig.put("packageImportPath", androidConfig["packageImportPath"])
         if (!androidConfig["buildTypes"].isEmpty()) {
           reactNativeModulesBuildVariants.put(nameCleansed, androidConfig["buildTypes"])
+        }
+        if(androidConfig.containsKey("customScope")) {
+          reactNativeModuleConfig.put("customScope", androidConfig["customScope"])
         }
         this.logger.trace("${LOG_PREFIX}'${name}': ${reactNativeModuleConfig.toMapString()}")
         

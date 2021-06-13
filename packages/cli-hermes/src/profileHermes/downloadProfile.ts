@@ -16,7 +16,7 @@ import {
  */
 function getLatestFile(packageName: string): string {
   try {
-    const file = execSync(`adb shell run-as ${packageName} ls cache/ -tp | grep -v /$ | egrep '.cpuprofile' | head -1
+    const file = execSync(`adb shell run-as ${packageName} ls cache/ -tp | grep -v /$ | grep -E '.cpuprofile' | head -1
         `);
     return file.toString().trim();
   } catch (e) {

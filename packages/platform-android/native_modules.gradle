@@ -105,22 +105,21 @@ class ReactNativeModules {
   void addReactNativeModuleDependencies(Project appProject) {
     reactNativeModules.forEach { reactNativeModule ->
       def nameCleansed = reactNativeModule["nameCleansed"]
-      def customScope = reactNativeModule["customScope"]
+      def customDependencyConfiguration = reactNativeModule["customDependencyConfiguration"]
       appProject.dependencies {
         if (reactNativeModulesBuildVariants.containsKey(nameCleansed)) {
           reactNativeModulesBuildVariants
             .get(nameCleansed)
-            .forEach { buildVariant -> {
-              if(customScope != null) {
-                "${buildVariant}${customScope}"
+            .forEach { buildVariant -> 
+              if(customDependencyConfiguration != null) {
+                "${buildVariant}${customDependencyConfiguration}"
               } else {
                 "${buildVariant}Implementation" project(path: ":${nameCleansed}")
               }
-              }
             }
         } else {
-          if(customScope != null) {
-            "${customScope}"
+          if(customDependencyConfiguration != null) {
+            "${customDependencyConfiguration}"
           } else {
              implementation project(path: ":${nameCleansed}")
           }
@@ -257,6 +256,8 @@ class ReactNativeModules {
       throw new Exception("React Native CLI failed to determine Android project configuration. This is likely due to misconfiguration. Config output:\n${json.toMapString()}")
     }
 
+    def engine = new groovy.text.SimpleTemplateEngine()
+
     dependencies.each { name, value ->
       def platformsConfig = value["platforms"];
       def androidConfig = platformsConfig["android"]
@@ -274,9 +275,15 @@ class ReactNativeModules {
         if (!androidConfig["buildTypes"].isEmpty()) {
           reactNativeModulesBuildVariants.put(nameCleansed, androidConfig["buildTypes"])
         }
-        if(androidConfig.containsKey("customScope")) {
-          reactNativeModuleConfig.put("customScope", androidConfig["customScope"])
+        if(androidConfig.containsKey("customDependencyConfiguration")) {
+          reactNativeModuleConfig.put("customDependencyConfiguration", androidConfig["customDependencyConfiguration"])
+        } else if (project.containsKey("customDependencyConfiguration")) {
+          def bindings = ["dependencyName": nameCleansed]
+          def template = engine.createTemplate(project["customDependencyConfiguration"]).make(bindings)
+
+          reactNativeModuleConfig.put("customDependencyConfiguration", template.toString())
         }
+
         this.logger.trace("${LOG_PREFIX}'${name}': ${reactNativeModuleConfig.toMapString()}")
         
         reactNativeModules.add(reactNativeModuleConfig)

@@ -27,28 +27,28 @@ You can check all available options below.
 
 ```ts
 type ProjectConfigT = {
-  reactNativePath: ?string,
+  reactNativePath: ?string;
   project: {
-    android?: ProjectParamsAndroidT,
-    ios?: IOSProjectParams,
-    [key: string]: any,
-  },
-  assets: string[],
-  platforms: PlatformT,
+    android?: ProjectParamsAndroidT;
+    ios?: IOSProjectParams;
+    [key: string]: any;
+  };
+  assets: string[];
+  platforms: PlatformT;
   dependencies: {
     [key: string]: {
-      name: string,
-      root: string,
+      name: string;
+      root: string;
       platforms: {
-        [key: string]: PlatformSettingsT
-      },
-      assets: string[],
+        [key: string]: PlatformSettingsT;
+      };
+      assets: string[];
       hooks: {
-        [key: string]: string
-      }
-    },
-  },
-  commands: CommandT[]
+        [key: string]: string;
+      };
+    };
+  };
+  commands: CommandT[];
 };
 ```
 
@@ -77,6 +77,7 @@ type AndroidProjectParams = {
   assetsPath?: string;
   buildGradlePath?: string;
   appName?: string; // A name of the app in the Android `sourceDir`, equivalent to Gradle project name. By default it's `app`.
+  customDependencyConfiguration?: string;
 };
 
 type IOSProjectParams = {
@@ -120,6 +121,25 @@ module.exports = {
 ```
 
 in order to disable linking of React Native WebView on iOS.
+
+or you could set:
+
+```js
+module.exports = {
+  dependencies: {
+    'react-native-brownfield': {
+      platforms: {
+        android: {
+          customDependencyConfiguration:
+            'embed project(path: ":react-native-brownfield-bridge", configuration: "default")',
+        },
+      },
+    },
+  },
+};
+```
+
+in order to use something else than `implementation` _(default scope method)_
 
 Another use-case would be supporting local libraries that are not discoverable for autolinking, since they're not part of your `dependencies` or `devDependencies`:
 

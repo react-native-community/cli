@@ -313,17 +313,14 @@ function buildProject(
     );
     let xcodebuildOutputFormatter: ChildProcess | any;
     if (!args.verbose) {
-      xcodebuildOutputFormatter =
-        xcbeautifyAvailable() &&
-        child_process.spawn('xcbeautify', [], {
+      if (xcbeautifyAvailable()) {
+        xcodebuildOutputFormatter = child_process.spawn('xcbeautify', [], {
           stdio: ['pipe', process.stdout, process.stderr],
         });
-      if (!xcodebuildOutputFormatter) {
-        xcodebuildOutputFormatter =
-          xcprettyAvailable() &&
-          child_process.spawn('xcpretty', [], {
-            stdio: ['pipe', process.stdout, process.stderr],
-          });
+      } else if (xcprettyAvailable()) {
+        xcodebuildOutputFormatter = child_process.spawn('xcpretty', [], {
+          stdio: ['pipe', process.stdout, process.stderr],
+        });
       }
     }
     const buildProcess = child_process.spawn(

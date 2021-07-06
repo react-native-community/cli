@@ -111,7 +111,7 @@ type ProjectConfigAndroidT = {
   packageName: string;
   packageFolder: string;
   appName: string;
-  customDependencyConfiguration?: string;
+  dependencyConfiguration?: string;
 };
 ```
 
@@ -145,7 +145,7 @@ type DependencyConfigAndroidT = {
   packageInstance: string;
   manifestPath: string;
   packageName: string;
-  customDependencyConfiguration?: string;
+  dependencyConfiguration?: string;
 };
 ```
 

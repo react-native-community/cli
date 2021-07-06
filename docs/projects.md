@@ -27,28 +27,28 @@ You can check all available options below.
 
 ```ts
 type ProjectConfigT = {
-  reactNativePath: ?string;
+  reactNativePath: ?string,
   project: {
-    android?: ProjectParamsAndroidT;
-    ios?: IOSProjectParams;
-    [key: string]: any;
+    android?: ProjectParamsAndroidT,
+    ios?: IOSProjectParams,
+    [key: string]: any,
   };
-  assets: string[];
-  platforms: PlatformT;
+  assets: string[],
+  platforms: PlatformT,
   dependencies: {
     [key: string]: {
-      name: string;
-      root: string;
+      name: string,
+      root: string,
       platforms: {
-        [key: string]: PlatformSettingsT;
+        [key: string]: PlatformSettingsT,
       };
-      assets: string[];
+      assets: string[],
       hooks: {
-        [key: string]: string;
-      };
-    };
-  };
-  commands: CommandT[];
+        [key: string]: string,
+      },
+    },
+  },
+  commands: CommandT[],
 };
 ```
 

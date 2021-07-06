@@ -20,7 +20,7 @@ module.exports = {
         project: './Custom.xcodeproj'
       }
     }
-    assets: ['./assets']e
+    assets: ['./assets']
   }
 };
 ```

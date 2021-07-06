@@ -105,21 +105,21 @@ class ReactNativeModules {
   void addReactNativeModuleDependencies(Project appProject) {
     reactNativeModules.forEach { reactNativeModule ->
       def nameCleansed = reactNativeModule["nameCleansed"]
-      def customDependencyConfiguration = reactNativeModule["customDependencyConfiguration"]
+      def dependencyConfiguration = reactNativeModule["dependencyConfiguration"]
       appProject.dependencies {
         if (reactNativeModulesBuildVariants.containsKey(nameCleansed)) {
           reactNativeModulesBuildVariants
             .get(nameCleansed)
             .forEach { buildVariant -> 
-              if(customDependencyConfiguration != null) {
-                "${buildVariant}${customDependencyConfiguration}"
+              if(dependencyConfiguration != null) {
+                "${buildVariant}${dependencyConfiguration}"
               } else {
                 "${buildVariant}Implementation" project(path: ":${nameCleansed}")
               }
             }
         } else {
-          if(customDependencyConfiguration != null) {
-            "${customDependencyConfiguration}"
+          if(dependencyConfiguration != null) {
+            "${dependencyConfiguration}"
           } else {
              implementation project(path: ":${nameCleansed}")
           }
@@ -275,13 +275,13 @@ class ReactNativeModules {
         if (!androidConfig["buildTypes"].isEmpty()) {
           reactNativeModulesBuildVariants.put(nameCleansed, androidConfig["buildTypes"])
         }
-        if(androidConfig.containsKey("customDependencyConfiguration")) {
-          reactNativeModuleConfig.put("customDependencyConfiguration", androidConfig["customDependencyConfiguration"])
-        } else if (project.containsKey("customDependencyConfiguration")) {
+        if(androidConfig.containsKey("dependencyConfiguration")) {
+          reactNativeModuleConfig.put("dependencyConfiguration", androidConfig["dependencyConfiguration"])
+        } else if (project.containsKey("dependencyConfiguration")) {
           def bindings = ["dependencyName": nameCleansed]
-          def template = engine.createTemplate(project["customDependencyConfiguration"]).make(bindings)
+          def template = engine.createTemplate(project["dependencyConfiguration"]).make(bindings)
 
-          reactNativeModuleConfig.put("customDependencyConfiguration", template.toString())
+          reactNativeModuleConfig.put("dependencyConfiguration", template.toString())
         }
 
         this.logger.trace("${LOG_PREFIX}'${name}': ${reactNativeModuleConfig.toMapString()}")

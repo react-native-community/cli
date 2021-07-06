@@ -77,7 +77,7 @@ type AndroidProjectParams = {
   assetsPath?: string;
   buildGradlePath?: string;
   appName?: string; // A name of the app in the Android `sourceDir`, equivalent to Gradle project name. By default it's `app`.
-  customDependencyConfiguration?: string;
+  dependencyConfiguration?: string;
 };
 
 type IOSProjectParams = {
@@ -130,7 +130,7 @@ module.exports = {
     'react-native-brownfield': {
       platforms: {
         android: {
-          customDependencyConfiguration:
+          dependencyConfiguration:
             'embed project(path: ":react-native-brownfield-bridge", configuration: "default")',
         },
       },

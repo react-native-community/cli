@@ -84,8 +84,8 @@ export function projectConfig(
     userConfig.buildGradlePath || 'build.gradle',
   );
 
-  const customDependencyConfiguration =
-    userConfig.customDependencyConfiguration;
+  const dependencyConfiguration =
+    userConfig.dependencyConfiguration;
 
   return {
     sourceDir,
@@ -100,7 +100,7 @@ export function projectConfig(
     packageName,
     packageFolder,
     appName,
-    customDependencyConfiguration,
+    dependencyConfiguration,
   };
 }
 
@@ -159,8 +159,8 @@ export function dependencyConfig(
     userConfig.packageInstance || `new ${packageClassName}()`;
 
   const buildTypes = userConfig.buildTypes || [];
-  const customDependencyConfiguration =
-    userConfig.customDependencyConfiguration;
+  const dependencyConfiguration =
+    userConfig.dependencyConfiguration;
 
   return {
     sourceDir,
@@ -168,6 +168,6 @@ export function dependencyConfig(
     packageImportPath,
     packageInstance,
     buildTypes,
-    customDependencyConfiguration,
+    dependencyConfiguration,
   };
 }

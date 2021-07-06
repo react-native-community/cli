@@ -11,6 +11,7 @@ export interface AndroidProjectConfig {
   packageName: string;
   packageFolder: string;
   appName: string;
+  dependencyConfiguration?: string;
 }
 
 export type AndroidProjectParams = Partial<AndroidProjectConfig>;
@@ -22,6 +23,7 @@ export interface AndroidDependencyConfig {
   packageInstance: string;
   manifestPath: string;
   packageName: string;
+  dependencyConfiguration?: string;
   buildTypes: string[];
 }
 

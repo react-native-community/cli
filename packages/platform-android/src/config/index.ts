@@ -84,6 +84,9 @@ export function projectConfig(
     userConfig.buildGradlePath || 'build.gradle',
   );
 
+  const dependencyConfiguration =
+    userConfig.dependencyConfiguration;
+
   return {
     sourceDir,
     isFlat,
@@ -97,6 +100,7 @@ export function projectConfig(
     packageName,
     packageFolder,
     appName,
+    dependencyConfiguration,
   };
 }
 
@@ -155,6 +159,8 @@ export function dependencyConfig(
     userConfig.packageInstance || `new ${packageClassName}()`;
 
   const buildTypes = userConfig.buildTypes || [];
+  const dependencyConfiguration =
+    userConfig.dependencyConfiguration;
 
   return {
     sourceDir,
@@ -162,5 +168,6 @@ export function dependencyConfig(
     packageImportPath,
     packageInstance,
     buildTypes,
+    dependencyConfiguration,
   };
 }

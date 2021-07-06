@@ -80,7 +80,7 @@ export async function downloadProfile(
       const tempFilePath = path.join(osTmpDir, file);
 
       execSyncWithLog(
-        `adb shell run-as ${packageName} cat cache/${file} > ${tempFilePath}`
+        `adb shell run-as ${packageName} cat cache/${file} > ${tempFilePath}`,
       );
       // If path to source map is not given
       if (!sourcemapPath) {

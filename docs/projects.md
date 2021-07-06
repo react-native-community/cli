@@ -41,7 +41,7 @@ type ProjectConfigT = {
       root: string,
       platforms: {
         [key: string]: PlatformSettingsT
-      };
+      },
       assets: string[],
       hooks: {
         [key: string]: string

@@ -32,7 +32,7 @@ type ProjectConfigT = {
     android?: ProjectParamsAndroidT,
     ios?: IOSProjectParams,
     [key: string]: any,
-  };
+  },
   assets: string[],
   platforms: PlatformT,
   dependencies: {
@@ -40,15 +40,15 @@ type ProjectConfigT = {
       name: string,
       root: string,
       platforms: {
-        [key: string]: PlatformSettingsT,
+        [key: string]: PlatformSettingsT
       };
       assets: string[],
       hooks: {
-        [key: string]: string,
-      },
+        [key: string]: string
+      }
     },
   },
-  commands: CommandT[],
+  commands: CommandT[]
 };
 ```
 

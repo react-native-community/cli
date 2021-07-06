@@ -89,7 +89,7 @@ async function generateProject(
   if (process.platform === 'darwin') {
     logger.info('Installing required CocoaPods dependencies');
 
-    await installPods({projectName: newProjectName});
+    await installPods({directory: destinationRoot});
   }
 
   printRunInstructions(destinationRoot, newProjectName);

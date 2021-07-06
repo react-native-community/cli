@@ -68,10 +68,6 @@ export default {
         'Path to a JavaScript file that exports a log reporter as a replacement for TerminalReporter',
     },
     {
-      name: '--verbose',
-      description: 'Enables logging',
-    },
-    {
       name: '--https',
       description: 'Enables https connections to the server',
     },

@@ -499,10 +499,6 @@ Removes cached files
 
 Path to a JavaScript file that exports a log reporter as a replacement for TerminalReporter
 
-#### `--verbose`
-
-Enables logging
-
 #### `--https`
 
 Enables https connections to the server

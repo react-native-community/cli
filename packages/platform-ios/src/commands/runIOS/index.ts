@@ -87,8 +87,10 @@ function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
 
   let devices;
   try {
+    const out = execa.sync('xcrun', ['xctrace', 'list', 'devices']);
     devices = parseXctraceIOSDevicesList(
-      execa.sync('xcrun', ['xctrace', 'list', 'devices']).stderr,
+      // Xcode 12.5 introduced a change to output the list to stdout instead of stderr
+      out.stderr === '' ? out.stdout : out.stderr,
     );
   } catch (e) {
     logger.warn(
@@ -311,17 +313,13 @@ function buildProject(
         `(using "xcodebuild ${xcodebuildArgs.join(' ')}")`,
       )}`,
     );
-    let xcodebuildOutputFormatter: ChildProcess | any;
+    let xcpretty: ChildProcess | any;
     if (!args.verbose) {
-      if (xcbeautifyAvailable()) {
-        xcodebuildOutputFormatter = child_process.spawn('xcbeautify', [], {
+      xcpretty =
+        xcprettyAvailable() &&
+        child_process.spawn('xcpretty', [], {
           stdio: ['pipe', process.stdout, process.stderr],
         });
-      } else if (xcprettyAvailable()) {
-        xcodebuildOutputFormatter = child_process.spawn('xcpretty', [], {
-          stdio: ['pipe', process.stdout, process.stderr],
-        });
-      }
     }
     const buildProcess = child_process.spawn(
       'xcodebuild',
@@ -333,8 +331,8 @@ function buildProject(
     buildProcess.stdout.on('data', (data: Buffer) => {
       const stringData = data.toString();
       buildOutput += stringData;
-      if (xcodebuildOutputFormatter) {
-        xcodebuildOutputFormatter.stdin.write(data);
+      if (xcpretty) {
+        xcpretty.stdin.write(data);
       } else {
         if (logger.isVerbose()) {
           logger.debug(stringData);
@@ -349,8 +347,8 @@ function buildProject(
       errorOutput += data;
     });
     buildProcess.on('close', (code: number) => {
-      if (xcodebuildOutputFormatter) {
-        xcodebuildOutputFormatter.stdin.end();
+      if (xcpretty) {
+        xcpretty.stdin.end();
       } else {
         loader.stop();
       }
@@ -454,17 +452,6 @@ function getPlatformName(buildOutput: string) {
     );
   }
   return platformNameMatch[1];
-}
-
-function xcbeautifyAvailable() {
-  try {
-    child_process.execSync('xcbeautify --version', {
-      stdio: [0, 'pipe', 'ignore'],
-    });
-  } catch (error) {
-    return false;
-  }
-  return true;
 }
 
 function xcprettyAvailable() {
@@ -613,7 +600,7 @@ export default {
     },
     {
       name: '--verbose',
-      description: 'Do not use xcbeautify or xcpretty even if installed',
+      description: 'Do not use xcpretty even if installed',
     },
     {
       name: '--port <number>',

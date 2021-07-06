@@ -75,7 +75,7 @@ export const dependencyConfig = t
                 manifestPath: t.string(),
                 packageImportPath: t.string(),
                 packageInstance: t.string(),
-                dependencyConfiguration: t.string(),
+                customDependencyConfiguration: t.string(),
                 buildTypes: t.array().items(t.string()).default([]),
               })
               .default({}),
@@ -141,7 +141,7 @@ export const projectConfig = t
                 folder: t.string(),
                 packageImportPath: t.string(),
                 packageInstance: t.string(),
-                dependencyConfiguration: t.string(),
+                customDependencyConfiguration: t.string(),
                 buildTypes: t.array().items(t.string()).default([]),
               })
               .allow(null),
@@ -180,7 +180,7 @@ export const projectConfig = t
             assetsPath: t.string(),
             buildGradlePath: t.string(),
             appName: t.string(),
-            dependencyConfiguration: t.string(),
+            customDependencyConfiguration: t.string(),
           })
           .default({}),
       })

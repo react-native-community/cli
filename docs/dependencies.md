@@ -67,7 +67,7 @@ type DependencyParamsAndroidT = {
   packageImportPath?: string;
   packageInstance?: string;
   buildTypes?: string[];
-  dependencyConfiguration?: string;
+  customDependencyConfiguration?: string;
 };
 ```
 
@@ -136,7 +136,7 @@ For settings applicable on other platforms, please consult their respective docu
 
 An array of build variants or flavors which will include the dependency. If the array is empty, your dependency will be included in all build types. If you're working on a helper library that should only be included in development, such as a replacement for the React Native development menu, you should set this to `['debug']` to avoid shipping the library in a release build. For more details, see [`build variants`](https://developer.android.com/studio/build/build-variants#dependencies).
 
-### platforms.android.dependencyConfiguration
+### platforms.android.customDependencyConfiguration
 
 A string that defines which method other than `implementation` do you want to use
 for autolinking inside `build.gradle` i.e: `'embed project(path: ":$dependencyName", configuration: "default")',` - `"dependencyName` will be replaced by the actual package's name. You can achieve the same result by directly defining this key per `dependency` _(without placeholder)_ and it will have higher priority than this option.

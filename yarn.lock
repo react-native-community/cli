@@ -8003,10 +8003,10 @@ metro-inspector-proxy@0.66.1:
     ws "^1.1.5"
     yargs "^15.3.1"
 
-metro-memory-fs@^0.64.0:
-  version "0.64.0"
-  resolved "https://registry.yarnpkg.com/metro-memory-fs/-/metro-memory-fs-0.64.0.tgz#9e6f8fc6d68952a34083647c733e9bfff6ae7da0"
-  integrity sha512-icuA1wiIVD3UgUZI2jQzf4wGW5RNegp4k55EuOjJL8Fi0l4DhxAv2Y0WLXIGiKoYIQLDTAnlXspJPnKvqeZFgQ==
+metro-memory-fs@^0.66.1:
+  version "0.66.1"
+  resolved "https://registry.yarnpkg.com/metro-memory-fs/-/metro-memory-fs-0.66.1.tgz#f0917d1bcedf4486bf322cf8a68dcd2ecae13129"
+  integrity sha512-62Jpw+8VO8aHO6Y+rpwqmmKgmQuVsgUbKjJmN0SlUtNnp592D06NH+ryRdHVZ+TX8/D9Hv7t+RFON2GnPo9SYQ==
 
 metro-minify-uglify@0.66.1:
   version "0.66.1"

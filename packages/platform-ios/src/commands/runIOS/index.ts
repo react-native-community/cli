@@ -313,13 +313,17 @@ function buildProject(
         `(using "xcodebuild ${xcodebuildArgs.join(' ')}")`,
       )}`,
     );
-    let xcpretty: ChildProcess | any;
+    let xcodebuildOutputFormatter: ChildProcess | any;
     if (!args.verbose) {
-      xcpretty =
-        xcprettyAvailable() &&
-        child_process.spawn('xcpretty', [], {
+      if (xcbeautifyAvailable()) {
+        xcodebuildOutputFormatter = child_process.spawn('xcbeautify', [], {
           stdio: ['pipe', process.stdout, process.stderr],
         });
+      } else if (xcprettyAvailable()) {
+        xcodebuildOutputFormatter = child_process.spawn('xcpretty', [], {
+          stdio: ['pipe', process.stdout, process.stderr],
+        });
+      }
     }
     const buildProcess = child_process.spawn(
       'xcodebuild',
@@ -331,8 +335,8 @@ function buildProject(
     buildProcess.stdout.on('data', (data: Buffer) => {
       const stringData = data.toString();
       buildOutput += stringData;
-      if (xcpretty) {
-        xcpretty.stdin.write(data);
+      if (xcodebuildOutputFormatter) {
+        xcodebuildOutputFormatter.stdin.write(data);
       } else {
         if (logger.isVerbose()) {
           logger.debug(stringData);
@@ -347,8 +351,8 @@ function buildProject(
       errorOutput += data;
     });
     buildProcess.on('close', (code: number) => {
-      if (xcpretty) {
-        xcpretty.stdin.end();
+      if (xcodebuildOutputFormatter) {
+        xcodebuildOutputFormatter.stdin.end();
       } else {
         loader.stop();
       }
@@ -452,6 +456,17 @@ function getPlatformName(buildOutput: string) {
     );
   }
   return platformNameMatch[1];
+}
+
+function xcbeautifyAvailable() {
+  try {
+    child_process.execSync('xcbeautify --version', {
+      stdio: [0, 'pipe', 'ignore'],
+    });
+  } catch (error) {
+    return false;
+  }
+  return true;
 }
 
 function xcprettyAvailable() {
@@ -600,7 +615,7 @@ export default {
     },
     {
       name: '--verbose',
-      description: 'Do not use xcpretty even if installed',
+      description: 'Do not use xcbeautify or xcpretty even if installed',
     },
     {
       name: '--port <number>',

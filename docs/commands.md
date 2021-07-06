@@ -443,7 +443,7 @@ Do not launch packager while building.
 
 #### `--verbose`
 
-Do not use `xcpretty` even if installed.
+Do not use `xcbeautify` or `xcpretty` even if installed.
 
 #### `--port <number>`
 

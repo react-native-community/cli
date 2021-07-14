@@ -9,14 +9,33 @@
 // @ts-ignore - no typed definition for the package
 import Server from 'metro/src/Server';
 // @ts-ignore - no typed definition for the package
-import outputBundle from 'metro/src/shared/output/bundle';
+const outputBundle = require('metro/src/shared/output/bundle');
 import path from 'path';
 import chalk from 'chalk';
-import {CommandLineArgs} from './bundleCommandLineArgs';
 import {Config} from '@react-native-community/cli-types';
 import saveAssets from './saveAssets';
-import loadMetroConfig from '../../tools/loadMetroConfig';
+import {load as loadMetroConfig} from '@react-native-community/metro-config';
 import {logger} from '@react-native-community/cli-tools';
+
+export interface BundleArgs {
+  assetsDest?: string;
+  entryFile: string;
+  resetCache: boolean;
+  resetGlobalCache: boolean;
+  transformer?: string;
+  minify?: boolean;
+  config?: string;
+  platform: string;
+  dev: boolean;
+  bundleOutput: string;
+  bundleEncoding?: string;
+  maxWorkers?: number;
+  sourcemapOutput?: string;
+  sourcemapSourcesRoot?: string;
+  sourcemapUseAbsolutePath: boolean;
+  verbose: boolean;
+  unstableTransformProfile?: string;
+}
 
 interface RequestOptions {
   entryFile: string;
@@ -40,8 +59,8 @@ export interface AssetData {
   files: string[];
 }
 
-async function buildBundle(
-  args: CommandLineArgs,
+export async function buildBundle(
+  args: BundleArgs,
   ctx: Config,
   output: typeof outputBundle = outputBundle,
 ) {
@@ -106,5 +125,3 @@ async function buildBundle(
     server.end();
   }
 }
-
-export default buildBundle;

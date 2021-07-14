@@ -8,7 +8,9 @@
     {"path": "../tools"},
     {"path": "../cli-types"},
     {"path": "../debugger-ui"},
+    {"path": "../cli-bundle-api"},
     {"path": "../cli-server-api"},
-    {"path": "../cli-hermes"}
+    {"path": "../cli-hermes"},
+    {"path": "../metro-config"},
   ]
 }

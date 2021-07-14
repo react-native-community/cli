@@ -7,26 +7,7 @@
  */
 
 import path from 'path';
-
-export interface CommandLineArgs {
-  assetsDest?: string;
-  entryFile: string;
-  resetCache: boolean;
-  resetGlobalCache: boolean;
-  transformer?: string;
-  minify?: boolean;
-  config?: string;
-  platform: string;
-  dev: boolean;
-  bundleOutput: string;
-  bundleEncoding?: string;
-  maxWorkers?: number;
-  sourcemapOutput?: string;
-  sourcemapSourcesRoot?: string;
-  sourcemapUseAbsolutePath: boolean;
-  verbose: boolean;
-  unstableTransformProfile?: string;
-}
+export type {BundleArgs as CommandLineArgs} from '@react-native-community/cli-bundle-api';
 
 export default [
   {

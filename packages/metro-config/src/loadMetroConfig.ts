@@ -141,7 +141,7 @@ export interface ConfigOptionsT {
  *
  * This allows the CLI to always overwrite the file settings.
  */
-export default function load(
+export function load(
   ctx: ConfigLoadingContext,
   options?: ConfigOptionsT,
 ): Promise<MetroConfig> {

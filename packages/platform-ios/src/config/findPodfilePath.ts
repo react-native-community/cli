@@ -16,7 +16,10 @@ export default function findPodfilePath(folder: string, projectFolder: string) {
     return podFilePath;
   }
 
-  const podfiles = glob.sync('**/Podfile', {cwd: folder, ignore: "node_modules/**"});
+  const podfiles = glob.sync('**/Podfile', {
+    cwd: folder,
+    ignore: 'node_modules/**',
+  });
   if (podfiles.length > 0) {
     return path.join(folder, podfiles[0]);
   }

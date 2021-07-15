@@ -7,7 +7,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@react-native-community/metro-config": "^6.0.0-rc.0"
+    "@react-native-community/metro": "^6.0.0-rc.0"
   },
   "files": [
     "build",

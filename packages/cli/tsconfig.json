@@ -11,6 +11,6 @@
     {"path": "../cli-bundle-api"},
     {"path": "../cli-server-api"},
     {"path": "../cli-hermes"},
-    {"path": "../metro-config"},
+    {"path": "../metro"},
   ]
 }

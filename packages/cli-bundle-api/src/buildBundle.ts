@@ -14,7 +14,7 @@ import path from 'path';
 import chalk from 'chalk';
 import {Config} from '@react-native-community/cli-types';
 import saveAssets from './saveAssets';
-import {load as loadMetroConfig} from '@react-native-community/metro-config';
+import {load as loadMetroConfig} from '@react-native-community/metro';
 import {logger} from '@react-native-community/cli-tools';
 
 export interface BundleArgs {

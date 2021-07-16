@@ -33,7 +33,6 @@ export type Args = {
   resetCache?: boolean;
   sourceExts?: string[];
   transformer?: string;
-  verbose?: boolean;
   watchFolders?: string[];
   config?: string;
   projectRoot?: string;

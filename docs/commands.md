@@ -443,7 +443,7 @@ Do not launch packager while building.
 
 #### `--verbose`
 
-Do not use `xcpretty` even if installed.
+Do not use `xcbeautify` or `xcpretty` even if installed.
 
 #### `--port <number>`
 
@@ -498,10 +498,6 @@ Removes cached files
 #### `--custom-log-reporter-path, --customLogReporterPath <string>`
 
 Path to a JavaScript file that exports a log reporter as a replacement for TerminalReporter
-
-#### `--verbose`
-
-Enables logging
 
 #### `--https`
 

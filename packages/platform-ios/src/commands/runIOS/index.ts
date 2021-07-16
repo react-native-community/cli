@@ -265,26 +265,41 @@ async function runOnDevice(
     args,
   );
 
-  const iosDeployInstallArgs = [
-    '--bundle',
-    getBuildPath(xcodeProject, args.configuration, buildOutput, scheme),
-    '--id',
-    selectedDevice.udid,
-    '--justlaunch',
-  ];
-
-  logger.info(`Installing and launching your app on ${selectedDevice.name}`);
-
-  const iosDeployOutput = child_process.spawnSync(
-    'ios-deploy',
-    iosDeployInstallArgs,
-    {encoding: 'utf8'},
-  );
-
-  if (iosDeployOutput.error) {
-    throw new CLIError(
-      `Failed to install the app on the device. We've encountered an error in "ios-deploy" command: ${iosDeployOutput.error.message}`,
+  if (selectedDevice.type === 'catalyst') {
+    const appPath = getBuildPath(
+      xcodeProject,
+      args.configuration,
+      buildOutput,
+      scheme,
+      true,
     );
+    const appProcess = child_process.spawn(`${appPath}/${scheme}`, [], {
+      detached: true,
+      stdio: 'ignore',
+    });
+    appProcess.unref();
+  } else {
+    const iosDeployInstallArgs = [
+      '--bundle',
+      getBuildPath(xcodeProject, args.configuration, buildOutput, scheme),
+      '--id',
+      selectedDevice.udid,
+      '--justlaunch',
+    ];
+
+    logger.info(`Installing and launching your app on ${selectedDevice.name}`);
+
+    const iosDeployOutput = child_process.spawnSync(
+      'ios-deploy',
+      iosDeployInstallArgs,
+      {encoding: 'utf8'},
+    );
+
+    if (iosDeployOutput.error) {
+      throw new CLIError(
+        `Failed to install the app on the device. We've encountered an error in "ios-deploy" command: ${iosDeployOutput.error.message}`,
+      );
+    }
   }
 
   return logger.success('Installed the app on the device.');
@@ -313,13 +328,17 @@ function buildProject(
         `(using "xcodebuild ${xcodebuildArgs.join(' ')}")`,
       )}`,
     );
-    let xcpretty: ChildProcess | any;
+    let xcodebuildOutputFormatter: ChildProcess | any;
     if (!args.verbose) {
-      xcpretty =
-        xcprettyAvailable() &&
-        child_process.spawn('xcpretty', [], {
+      if (xcbeautifyAvailable()) {
+        xcodebuildOutputFormatter = child_process.spawn('xcbeautify', [], {
           stdio: ['pipe', process.stdout, process.stderr],
         });
+      } else if (xcprettyAvailable()) {
+        xcodebuildOutputFormatter = child_process.spawn('xcpretty', [], {
+          stdio: ['pipe', process.stdout, process.stderr],
+        });
+      }
     }
     const buildProcess = child_process.spawn(
       'xcodebuild',
@@ -331,8 +350,8 @@ function buildProject(
     buildProcess.stdout.on('data', (data: Buffer) => {
       const stringData = data.toString();
       buildOutput += stringData;
-      if (xcpretty) {
-        xcpretty.stdin.write(data);
+      if (xcodebuildOutputFormatter) {
+        xcodebuildOutputFormatter.stdin.write(data);
       } else {
         if (logger.isVerbose()) {
           logger.debug(stringData);
@@ -347,8 +366,8 @@ function buildProject(
       errorOutput += data;
     });
     buildProcess.on('close', (code: number) => {
-      if (xcpretty) {
-        xcpretty.stdin.end();
+      if (xcodebuildOutputFormatter) {
+        xcodebuildOutputFormatter.stdin.end();
       } else {
         loader.stop();
       }
@@ -411,6 +430,7 @@ function getBuildPath(
   configuration: string,
   buildOutput: string,
   scheme: string,
+  isCatalyst: boolean = false,
 ) {
   const buildSettings = child_process.execFileSync(
     'xcodebuild',
@@ -438,7 +458,9 @@ function getBuildPath(
     throw new CLIError('Failed to get the app name.');
   }
 
-  return `${targetBuildDir}/${executableFolderPath}`;
+  return `${targetBuildDir}${
+    isCatalyst ? '-maccatalyst' : ''
+  }/${executableFolderPath}`;
 }
 
 function getPlatformName(buildOutput: string) {
@@ -452,6 +474,17 @@ function getPlatformName(buildOutput: string) {
     );
   }
   return platformNameMatch[1];
+}
+
+function xcbeautifyAvailable() {
+  try {
+    child_process.execSync('xcbeautify --version', {
+      stdio: [0, 'pipe', 'ignore'],
+    });
+  } catch (error) {
+    return false;
+  }
+  return true;
 }
 
 function xcprettyAvailable() {
@@ -600,7 +633,7 @@ export default {
     },
     {
       name: '--verbose',
-      description: 'Do not use xcpretty even if installed',
+      description: 'Do not use xcbeautify or xcpretty even if installed',
     },
     {
       name: '--port <number>',

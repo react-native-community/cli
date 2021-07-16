@@ -77,6 +77,7 @@ type AndroidProjectParams = {
   assetsPath?: string;
   buildGradlePath?: string;
   appName?: string; // A name of the app in the Android `sourceDir`, equivalent to Gradle project name. By default it's `app`.
+  dependencyConfiguration?: string;
 };
 
 type IOSProjectParams = {
@@ -120,6 +121,25 @@ module.exports = {
 ```
 
 in order to disable linking of React Native WebView on iOS.
+
+or you could set:
+
+```js
+module.exports = {
+  dependencies: {
+    'react-native-brownfield': {
+      platforms: {
+        android: {
+          dependencyConfiguration:
+            'embed project(path: ":react-native-brownfield-bridge", configuration: "default")',
+        },
+      },
+    },
+  },
+};
+```
+
+in order to use something else than `implementation` _(default scope method)_
 
 Another use-case would be supporting local libraries that are not discoverable for autolinking, since they're not part of your `dependencies` or `devDependencies`:
 

@@ -16,7 +16,7 @@ import {
 } from '@react-native-community/cli-server-api';
 import {Config} from '@react-native-community/cli-types';
 
-import {loadMetroConfig} from '@react-native-community/metro';
+import {loadMetroConfig} from '../config/loadMetroConfig';
 import {releaseChecker} from '@react-native-community/cli-tools';
 import enableWatchMode from './watchMode';
 
@@ -39,7 +39,7 @@ export type Args = {
   interactive: boolean;
 };
 
-async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
+export async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
   let reportEvent: ((event: any) => void) | undefined;
   const terminal = new Terminal(process.stdout);
   const ReporterImpl = getReporterImpl(args.customLogReporterPath);
@@ -119,7 +119,7 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
   await releaseChecker(ctx.root);
 }
 
-function getReporterImpl(customLogReporterPath: string | undefined) {
+export function getReporterImpl(customLogReporterPath: string | undefined) {
   if (customLogReporterPath === undefined) {
     return require('metro/src/lib/TerminalReporter');
   }
@@ -136,5 +136,3 @@ function getReporterImpl(customLogReporterPath: string | undefined) {
     return require(path.resolve(customLogReporterPath));
   }
 }
-
-export default runServer;

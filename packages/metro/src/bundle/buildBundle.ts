@@ -12,30 +12,11 @@ import Server from 'metro/src/Server';
 const outputBundle = require('metro/src/shared/output/bundle');
 import path from 'path';
 import chalk from 'chalk';
-import {Config} from '@react-native-community/cli-types';
+import {CommandLineArgs} from './bundleCommandLineArgs';
+import type {Config} from '@react-native-community/cli-types';
 import saveAssets from './saveAssets';
-import {load as loadMetroConfig} from '@react-native-community/metro';
+import {loadMetroConfig} from '../config';
 import {logger} from '@react-native-community/cli-tools';
-
-export interface BundleArgs {
-  assetsDest?: string;
-  entryFile: string;
-  resetCache: boolean;
-  resetGlobalCache: boolean;
-  transformer?: string;
-  minify?: boolean;
-  config?: string;
-  platform: string;
-  dev: boolean;
-  bundleOutput: string;
-  bundleEncoding?: string;
-  maxWorkers?: number;
-  sourcemapOutput?: string;
-  sourcemapSourcesRoot?: string;
-  sourcemapUseAbsolutePath: boolean;
-  verbose: boolean;
-  unstableTransformProfile?: string;
-}
 
 interface RequestOptions {
   entryFile: string;
@@ -60,7 +41,7 @@ export interface AssetData {
 }
 
 export async function buildBundle(
-  args: BundleArgs,
+  args: CommandLineArgs,
   ctx: Config,
   output: typeof outputBundle = outputBundle,
 ) {

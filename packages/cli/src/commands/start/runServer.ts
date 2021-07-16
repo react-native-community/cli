@@ -16,7 +16,7 @@ import {
 } from '@react-native-community/cli-server-api';
 import {Config} from '@react-native-community/cli-types';
 
-import {load as loadMetroConfig} from '@react-native-community/metro';
+import {loadMetroConfig} from '@react-native-community/metro';
 import releaseChecker from '../../tools/releaseChecker';
 import enableWatchMode from './watchMode';
 

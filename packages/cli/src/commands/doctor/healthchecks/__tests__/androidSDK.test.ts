@@ -50,7 +50,7 @@ describe('androidSDK', () => {
 
   beforeAll(async () => {
     environmentInfo = await getEnvironmentInfo();
-  }, 15000);
+  }, 60000);
 
   afterEach(() => {
     jest.resetAllMocks();

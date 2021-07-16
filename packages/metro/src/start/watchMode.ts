@@ -47,6 +47,8 @@ function enableWatchMode(messageSocket: any) {
     } else if (name === 'd') {
       messageSocket.broadcast('devMenu', null);
       logger.info('Opening developer menu...');
+    } else {
+      console.log(_key);
     }
   });
 }

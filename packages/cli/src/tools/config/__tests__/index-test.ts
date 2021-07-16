@@ -187,6 +187,7 @@ test('should load commands from "react-native-foo" and "react-native-bar" packag
 });
 
 test('should skip packages that have invalid configuration', () => {
+  process.env.FORCE_COLOR = '0'; // To disable chalk
   DIR = getTempDirectory('config_test_skip');
   writeFiles(DIR, {
     'node_modules/react-native/package.json': '{}',

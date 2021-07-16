@@ -64,7 +64,15 @@ commands:
     steps:
       - attach_workspace:
           at: ~/react-native-cli
+      - restore_cache:
+          keys:
+            - v2-gradle-dependencies-{{ checksum "package.json" }}
+            - v2-gradle-dependencies-
       - run: yarn test:ci:e2e
+      - save_cache:
+          key: v2-gradle-dependencies-{{ checksum "package.json" }}
+          paths:
+            - ~/.gradle
 
 jobs:
   setup:

@@ -265,26 +265,41 @@ async function runOnDevice(
     args,
   );
 
-  const iosDeployInstallArgs = [
-    '--bundle',
-    getBuildPath(xcodeProject, args.configuration, buildOutput, scheme),
-    '--id',
-    selectedDevice.udid,
-    '--justlaunch',
-  ];
-
-  logger.info(`Installing and launching your app on ${selectedDevice.name}`);
-
-  const iosDeployOutput = child_process.spawnSync(
-    'ios-deploy',
-    iosDeployInstallArgs,
-    {encoding: 'utf8'},
-  );
-
-  if (iosDeployOutput.error) {
-    throw new CLIError(
-      `Failed to install the app on the device. We've encountered an error in "ios-deploy" command: ${iosDeployOutput.error.message}`,
+  if (selectedDevice.type === 'catalyst') {
+    const appPath = getBuildPath(
+      xcodeProject,
+      args.configuration,
+      buildOutput,
+      scheme,
+      true,
     );
+    const appProcess = child_process.spawn(`${appPath}/${scheme}`, [], {
+      detached: true,
+      stdio: 'ignore',
+    });
+    appProcess.unref();
+  } else {
+    const iosDeployInstallArgs = [
+      '--bundle',
+      getBuildPath(xcodeProject, args.configuration, buildOutput, scheme),
+      '--id',
+      selectedDevice.udid,
+      '--justlaunch',
+    ];
+
+    logger.info(`Installing and launching your app on ${selectedDevice.name}`);
+
+    const iosDeployOutput = child_process.spawnSync(
+      'ios-deploy',
+      iosDeployInstallArgs,
+      {encoding: 'utf8'},
+    );
+
+    if (iosDeployOutput.error) {
+      throw new CLIError(
+        `Failed to install the app on the device. We've encountered an error in "ios-deploy" command: ${iosDeployOutput.error.message}`,
+      );
+    }
   }
 
   return logger.success('Installed the app on the device.');
@@ -415,6 +430,7 @@ function getBuildPath(
   configuration: string,
   buildOutput: string,
   scheme: string,
+  isCatalyst: boolean = false,
 ) {
   const buildSettings = child_process.execFileSync(
     'xcodebuild',
@@ -442,7 +458,9 @@ function getBuildPath(
     throw new CLIError('Failed to get the app name.');
   }
 
-  return `${targetBuildDir}/${executableFolderPath}`;
+  return `${targetBuildDir}${
+    isCatalyst ? '-maccatalyst' : ''
+  }/${executableFolderPath}`;
 }
 
 function getPlatformName(buildOutput: string) {

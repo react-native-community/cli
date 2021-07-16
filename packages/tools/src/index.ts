@@ -6,5 +6,6 @@ export {fetch, fetchToTemp} from './fetch';
 export {default as launchDefaultBrowser} from './launchDefaultBrowser';
 export {default as launchDebugger} from './launchDebugger';
 export {default as launchEditor} from './launchEditor';
+export {default as resolveNodeModuleDir} from './resolveNodeModuleDir';
 
 export * from './errors';

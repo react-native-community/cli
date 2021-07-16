@@ -17,7 +17,7 @@ import {
 import {Config} from '@react-native-community/cli-types';
 
 import {loadMetroConfig} from '@react-native-community/metro';
-import releaseChecker from '../../tools/releaseChecker';
+import {releaseChecker} from '@react-native-community/cli-tools';
 import enableWatchMode from './watchMode';
 
 export type Args = {

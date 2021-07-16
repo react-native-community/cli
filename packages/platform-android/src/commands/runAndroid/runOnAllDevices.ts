@@ -46,44 +46,6 @@ async function runOnAllDevices(
   await buildApk(args, gradlew, androidProject);
   await installApk(args, gradlew, adbPath, devices, androidProject);
 
-  try {
-    const tasks = args.tasks || ['install' + toPascalCase(args.variant)];
-    const gradleArgs = getTaskNames(
-      args.appFolder || androidProject.appName,
-      tasks,
-    );
-
-    if (args.port != null) {
-      gradleArgs.push('-PreactNativeDevServerPort=' + args.port);
-    }
-
-    if (args.activeArchOnly) {
-      const architectures = devices
-        .map((device) => {
-          return adb.getCPU(adbPath, device);
-        })
-        .filter((arch) => arch != null);
-      if (architectures.length > 0) {
-        logger.info(`Detected architectures ${architectures.join(', ')}`);
-        gradleArgs.push(
-          '-PreactNativeDebugArchitectures=' + architectures.join(','),
-        );
-      }
-    }
-
-    logger.info('Installing the app...');
-    logger.debug(
-      `Running command "cd android && ${cmd} ${gradleArgs.join(' ')}"`,
-    );
-
-    await execa(cmd, gradleArgs, {
-      stdio: ['inherit', 'inherit', 'pipe'],
-      cwd: androidProject.sourceDir,
-    });
-  } catch (error) {
-    throw createInstallError(error);
-  }
-
   (devices.length > 0 ? devices : [undefined]).forEach(
     (device: string | void) => {
       tryRunAdbReverse(args.port, device);

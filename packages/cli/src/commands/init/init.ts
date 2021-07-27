@@ -44,10 +44,10 @@ function doesDirectoryExist(dir: string) {
 }
 
 async function setProjectDirectory(directory: string) {
-  if (directory !== '' && !doesDirectoryExist(directory)) {
+  const projectDirectory = path.join(process.cwd(), directory);
+  if (!doesDirectoryExist(projectDirectory)) {
     try {
-      mkdirp.sync(directory);
-      process.chdir(directory);
+      mkdirp.sync(projectDirectory);
     } catch (error) {
       throw new CLIError(
         'Error occurred while trying to create project directory.',
@@ -55,7 +55,8 @@ async function setProjectDirectory(directory: string) {
       );
     }
   }
-  return process.cwd();
+  process.chdir(projectDirectory);
+  return projectDirectory;
 }
 
 function getTemplateName(cwd: string) {

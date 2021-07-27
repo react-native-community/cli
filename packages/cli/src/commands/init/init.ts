@@ -46,7 +46,8 @@ function doesDirectoryExist(dir: string) {
 }
 
 async function setProjectDirectory(directory: string) {
-  if (directory !== '' && !doesDirectoryExist(directory)) {
+  const projectDirectory = path.join(process.cwd(), directory);
+  if (!doesDirectoryExist(projectDirectory)) {
     try {
       fs.mkdirSync(directory, {recursive: true});
       process.chdir(directory);
@@ -57,7 +58,8 @@ async function setProjectDirectory(directory: string) {
       );
     }
   }
-  return process.cwd();
+  process.chdir(projectDirectory);
+  return projectDirectory;
 }
 
 function getTemplateName(cwd: string) {

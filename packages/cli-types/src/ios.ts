@@ -14,6 +14,7 @@ export interface IOSProjectParams {
    * @todo Log a warning when this is used.
    */
   podspecPath?: string;
+  podfile?: string;
   sharedLibraries?: string[];
   libraryFolder?: string;
   plist: Array<any>;

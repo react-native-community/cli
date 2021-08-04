@@ -164,6 +164,7 @@ export const projectConfig = t
         ios: t
           .object({
             project: t.string(),
+            podfile: t.string(),
             sharedLibraries: t.array().items(t.string()),
             libraryFolder: t.string(),
           })

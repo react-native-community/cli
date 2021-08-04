@@ -618,7 +618,7 @@ export default {
       description:
         'Path relative to project root where the Xcode project ' +
         '(.xcodeproj) lives.',
-      default: 'ios',
+      default: (ctx: Config) => ctx.project.ios ? ctx.project.ios.sourceDir : 'ios',
     },
     {
       name: '--device [string]',

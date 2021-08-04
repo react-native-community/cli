@@ -79,6 +79,10 @@ Custom path to `.xcodeproj`.
 
 Custom path to `.podspec` file to use when auto-linking. Example: `node_modules/react-native-module/ios/module.podspec`.
 
+#### platforms.ios.podfile
+
+Custom path to `Podfile` file to use when auto-linking. Example: `ios/Podfile`.
+
 #### platforms.ios.sharedLibraries
 
 An array of shared iOS libraries to link with the dependency. E.g. `libc++`. This is mostly a requirement of the native code that a dependency ships with.

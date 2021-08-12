@@ -15,6 +15,7 @@ export interface CommandLineArgs {
   resetGlobalCache: boolean;
   transformer?: string;
   minify?: boolean;
+  metroConfig?: string;
   config?: string;
   platform: string;
   dev: boolean;
@@ -113,8 +114,8 @@ export default [
     default: false,
   },
   {
-    name: '--config <string>',
-    description: 'Path to the CLI configuration file',
+    name: '--config, --metro-config <string>',
+    description: 'Path to the metro configuration file',
     parse: (val: string) => path.resolve(val),
   },
 ];

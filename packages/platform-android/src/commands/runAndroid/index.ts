@@ -8,6 +8,7 @@
 import path from 'path';
 import execa from 'execa';
 import chalk from 'chalk';
+import os from 'os';
 import fs from 'fs';
 import {Config} from '@react-native-community/cli-types';
 import adb from './adb';
@@ -52,6 +53,7 @@ export interface Flags {
   terminal: string;
   jetifier: boolean;
   activeArchOnly: boolean;
+  metroConfig?: string;
 }
 
 type AndroidProject = NonNullable<Config['project']['android']>;
@@ -96,6 +98,7 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
           args.port,
           args.terminal,
           config.reactNativePath,
+          args.metroConfig,
         );
       } catch (error) {
         logger.warn(
@@ -235,10 +238,37 @@ function installAndLaunchOnDevice(
   tryLaunchAppOnDevice(selectedDevice, packageName, adbPath, args);
 }
 
+/**
+ * Creates a temporary launch packager script that invokes launch packager defined in React Native with additional arguments.
+ * @param reactNativeLaunchPackagerScript Path to a launch packager script defined in React native.
+ * @param metroConfig Path to a metro config.
+ * @returns Path of a temporary launch packager script.
+ */
+function createLaunchPackagerScript(
+  reactNativeLaunchPackagerScript: string,
+  metroConfig: string,
+): string {
+  const launchPackagerScript = path.join(os.tmpdir(), 'launchPackager.command');
+  const launchPackagerScriptContents = `
+  #!/bin/bash
+
+  "${reactNativeLaunchPackagerScript}" --metro-config ${metroConfig}
+  `;
+  fs.writeFileSync(launchPackagerScript, launchPackagerScriptContents, {
+    encoding: 'utf8',
+    flag: 'w',
+  });
+
+  // Make the script executable
+  fs.chmodSync(launchPackagerScript, '755');
+  return launchPackagerScript;
+}
+
 function startServerInNewWindow(
   port: number,
   terminal: string,
   reactNativePath: string,
+  metroConfig?: string,
 ) {
   /**
    * Set up OS-specific filenames and commands
@@ -255,7 +285,7 @@ function startServerInNewWindow(
   /**
    * Set up the `.packager.(env|bat)` file to ensure the packager starts on the right port.
    */
-  const launchPackagerScript = path.join(
+  const reactNativeLaunchPackagerScript = path.join(
     reactNativePath,
     `scripts/${scriptFile}`,
   );
@@ -264,7 +294,7 @@ function startServerInNewWindow(
    * Set up the `launchpackager.(command|bat)` file.
    * It lives next to `.packager.(bat|env)`
    */
-  const scriptsDir = path.dirname(launchPackagerScript);
+  const scriptsDir = path.dirname(reactNativeLaunchPackagerScript);
   const packagerEnvFile = path.join(scriptsDir, packagerEnvFilename);
   const procConfig: execa.SyncOptions = {cwd: scriptsDir};
 
@@ -275,6 +305,10 @@ function startServerInNewWindow(
     encoding: 'utf8',
     flag: 'w',
   });
+
+  const launchPackagerScript = metroConfig
+    ? createLaunchPackagerScript(reactNativeLaunchPackagerScript, metroConfig)
+    : reactNativeLaunchPackagerScript;
 
   if (process.platform === 'darwin') {
     try {
@@ -386,6 +420,11 @@ export default {
       description:
         'Build native libraries only for the current device architecture for debug builds.',
       default: false,
+    },
+    {
+      name: '--metro-config <string>',
+      description: 'Path to the metro configuration file',
+      parse: (val: string) => path.resolve(val),
     },
   ],
 };

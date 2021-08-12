@@ -48,7 +48,7 @@ async function buildBundle(
   const config = await loadMetroConfig(ctx, {
     maxWorkers: args.maxWorkers,
     resetCache: args.resetCache,
-    config: args.config,
+    config: args.metroConfig ?? args.config,
   });
 
   if (config.resolver.platforms.indexOf(args.platform) === -1) {

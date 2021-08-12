@@ -34,6 +34,7 @@ export type Args = {
   sourceExts?: string[];
   transformer?: string;
   watchFolders?: string[];
+  metroConfig?: string;
   config?: string;
   projectRoot?: string;
   interactive: boolean;
@@ -54,7 +55,7 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
   };
 
   const metroConfig = await loadMetroConfig(ctx, {
-    config: args.config,
+    config: args.metroConfig ?? args.config,
     maxWorkers: args.maxWorkers,
     port: args.port,
     resetCache: args.resetCache,

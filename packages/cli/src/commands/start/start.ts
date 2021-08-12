@@ -80,8 +80,8 @@ export default {
       description: 'Path to custom SSL cert',
     },
     {
-      name: '--config <string>',
-      description: 'Path to the CLI configuration file',
+      name: '--config, --metro-config <string>',
+      description: 'Path to the metro configuration file',
       parse: (val: string) => path.resolve(val),
     },
     {

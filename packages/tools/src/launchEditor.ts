@@ -39,8 +39,8 @@ const COMMON_EDITORS: Record<string, string> = {
   '/Applications/Sublime Text 2.app/Contents/MacOS/Sublime Text 2':
     '/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl',
   '/Applications/Visual Studio Code.app/Contents/MacOS/Electron': 'code',
-  '/Applications/Visual Studio Code Insiders.app/Contents/MacOS/Electron':
-    '/Applications/Visual Studio Code Insiders.app/Contents/MacOS/Electron',
+  '/Applications/Visual Studio Code - Insiders.app/Contents/MacOS/Electron':
+    '/Applications/Visual Studio Code - Insiders.app/Contents/MacOS/Electron',
   '/Applications/WebStorm.app/Contents/MacOS/webstorm': 'webstorm',
 };
 

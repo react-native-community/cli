@@ -18,6 +18,7 @@
     "parcel-bundler": "^1.12.4"
   },
   "dependencies": {
+    "@babel/runtime": "^7.4.4",
     "serve-static": "^1.13.1"
   },
   "homepage": "https://github.com/react-native-community/cli/tree/master/packages/debugger-ui",

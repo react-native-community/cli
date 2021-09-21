@@ -14,19 +14,15 @@ import type {Config} from '@react-native-community/cli-types';
 /**
  * Builds the bundle starting to look for dependencies at the given entry path.
  */
-function createRamBundle(
-  argv: Array<string>,
-  config: Config,
-  args: CommandLineArgs,
-) {
+function ramBundle(argv: Array<string>, config: Config, args: CommandLineArgs) {
   return bundleWithOutput(argv, config, args, outputUnbundle);
 }
 
-export const ramBundle = {
+export default {
   name: 'ram-bundle',
   description:
     'builds javascript as a "Random Access Module" bundle for offline use',
-  func: createRamBundle,
+  func: ramBundle,
   options: bundleCommandLineArgs.concat({
     name: '--indexed-ram-bundle',
     description:
@@ -34,3 +30,5 @@ export const ramBundle = {
     default: false,
   }),
 };
+
+export {ramBundle};

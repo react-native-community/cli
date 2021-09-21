@@ -21,7 +21,7 @@ function bundleWithOutput(
   return buildBundle(args, config, output);
 }
 
-export const bundle = {
+export default {
   name: 'bundle',
   description: 'builds the javascript bundle for offline use',
   func: bundleWithOutput,

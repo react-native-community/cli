@@ -7,9 +7,9 @@
  */
 
 import path from 'path';
-import {runServer} from './runServer';
+import runServer from './runServer';
 
-export const start = {
+export default {
   name: 'start',
   func: runServer,
   description: 'starts the webserver',

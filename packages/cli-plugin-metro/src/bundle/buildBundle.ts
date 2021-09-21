@@ -40,7 +40,7 @@ export interface AssetData {
   files: string[];
 }
 
-export async function buildBundle(
+async function buildBundle(
   args: CommandLineArgs,
   ctx: Config,
   output: typeof outputBundle = outputBundle,
@@ -106,3 +106,5 @@ export async function buildBundle(
     server.end();
   }
 }
+
+export default buildBundle;

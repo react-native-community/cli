@@ -6,7 +6,7 @@
  *
  */
 import type {Config} from '@react-native-community/cli-types';
-import {buildBundle} from './buildBundle';
+import buildBundle from './buildBundle';
 import bundleCommandLineArgs, {CommandLineArgs} from './bundleCommandLineArgs';
 
 /**

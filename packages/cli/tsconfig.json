@@ -10,6 +10,6 @@
     {"path": "../debugger-ui"},
     {"path": "../cli-server-api"},
     {"path": "../cli-hermes"},
-    {"path": "../metro"},
+    {"path": "../cli-plugin-metro"},
   ]
 }

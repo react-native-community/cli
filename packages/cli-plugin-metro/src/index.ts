@@ -1,10 +1,13 @@
 export {
-  bundle,
+  bundleCommand,
   ramBundleCommand,
-  ramBundle,
-  AssetData,
-  buildBundle,
+  buildBundleWithConfig,
   CommandLineArgs,
 } from './bundle';
-export * from './config';
-export * from './start';
+export {
+  Config,
+  ConfigLoadingContext,
+  MetroConfig,
+  getDefaultConfig,
+} from './config';
+export {default as startCommand} from './start';

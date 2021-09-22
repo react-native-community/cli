@@ -1,4 +1,4 @@
-import {getDefaultConfig} from '../loadMetroConfig';
+import {getDefaultConfig} from '../config';
 
 jest.mock('fs');
 jest.mock('path');

@@ -16,7 +16,7 @@ import {
 } from '@react-native-community/cli-server-api';
 import {Config} from '@react-native-community/cli-types';
 
-import loadMetroConfig from '../config/loadMetroConfig';
+import loadMetroConfig from './config';
 import {releaseChecker} from '@react-native-community/cli-tools';
 import enableWatchMode from './watchMode';
 
@@ -138,4 +138,3 @@ function getReporterImpl(customLogReporterPath: string | undefined) {
 }
 
 export default runServer;
-export {getReporterImpl};

@@ -1,0 +1,85 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`fetches regular patch, adds remote, applies patch, installs deps, removes remote,: RnDiffApp is replaced with app name (TestApp and com.testapp) 1`] = `
+"Snapshot Diff:
+- First value
++ Second value
+
+@@ -1,9 +1,9 @@
+- diff --git a/RnDiffApp/android/app/src/main/AndroidManifest.xml b/RnDiffApp/android/app/src/main/AndroidManifest.xml
++ diff --git a/TestApp/android/app/src/main/AndroidManifest.xml b/TestApp/android/app/src/main/AndroidManifest.xml
+  index bc3a9310..f3e0d155 100644
+- --- a/RnDiffApp/android/app/src/main/AndroidManifest.xml
+- +++ b/RnDiffApp/android/app/src/main/AndroidManifest.xml
++ --- a/TestApp/android/app/src/main/AndroidManifest.xml
++ +++ b/TestApp/android/app/src/main/AndroidManifest.xml
+  @@ -1,8 +1,7 @@
+   <manifest xmlns:android=\\"http://schemas.android.com/apk/res/android\\"
+- -    package=\\"com.rndiffapp\\">
+- +  package=\\"com.rndiffapp\\">
++ -    package=\\"com.testapp\\">
++ +  package=\\"com.testapp\\">
+
+@@ -14,6 +14,6 @@
+         android:name=\\".MainApplication\\"
+- diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.h b/RnDiffApp/ios/RnDiffApp/AppDelegate.h
++ diff --git a/TestApp/ios/TestApp/AppDelegate.h b/TestApp/ios/TestApp/AppDelegate.h
+  index 4b5644f2..2726d5e1 100644
+- --- a/RnDiffApp/ios/RnDiffApp/AppDelegate.h
+- +++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.h
++ --- a/TestApp/ios/TestApp/AppDelegate.h
++ +++ b/TestApp/ios/TestApp/AppDelegate.h
+  @@ -5,9 +5,10 @@
+@@ -29,6 +29,6 @@
+   @property (nonatomic, strong) UIWindow *window;
+- diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
++ diff --git a/TestApp/android/app/src/main/java/com/testapp/MainApplication.java b/TestApp/android/app/src/main/java/com/testapp/MainApplication.java
+  index bc3a9310..f3e0d155 100644
+- --- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
+- +++ b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
++ --- a/TestApp/android/app/src/main/java/com/testapp/MainApplication.java
++ +++ b/TestApp/android/app/src/main/java/com/testapp/MainApplication.java
+"
+`;
+
+exports[`works with --name-ios and --name-android: RnDiffApp is replaced with app name (CustomIos and co.uk.customandroid.app) 1`] = `
+"Snapshot Diff:
+- First value
++ Second value
+
+@@ -1,9 +1,9 @@
+- diff --git a/RnDiffApp/android/app/src/main/AndroidManifest.xml b/RnDiffApp/android/app/src/main/AndroidManifest.xml
++ diff --git a/CustomIos/android/app/src/main/AndroidManifest.xml b/CustomIos/android/app/src/main/AndroidManifest.xml
+  index bc3a9310..f3e0d155 100644
+- --- a/RnDiffApp/android/app/src/main/AndroidManifest.xml
+- +++ b/RnDiffApp/android/app/src/main/AndroidManifest.xml
++ --- a/CustomIos/android/app/src/main/AndroidManifest.xml
++ +++ b/CustomIos/android/app/src/main/AndroidManifest.xml
+  @@ -1,8 +1,7 @@
+   <manifest xmlns:android=\\"http://schemas.android.com/apk/res/android\\"
+- -    package=\\"com.rndiffapp\\">
+- +  package=\\"com.rndiffapp\\">
++ -    package=\\"co.uk.customandroid.app\\">
++ +  package=\\"co.uk.customandroid.app\\">
+
+@@ -14,6 +14,6 @@
+         android:name=\\".MainApplication\\"
+- diff --git a/RnDiffApp/ios/RnDiffApp/AppDelegate.h b/RnDiffApp/ios/RnDiffApp/AppDelegate.h
++ diff --git a/CustomIos/ios/CustomIos/AppDelegate.h b/CustomIos/ios/CustomIos/AppDelegate.h
+  index 4b5644f2..2726d5e1 100644
+- --- a/RnDiffApp/ios/RnDiffApp/AppDelegate.h
+- +++ b/RnDiffApp/ios/RnDiffApp/AppDelegate.h
++ --- a/CustomIos/ios/CustomIos/AppDelegate.h
++ +++ b/CustomIos/ios/CustomIos/AppDelegate.h
+  @@ -5,9 +5,10 @@
+@@ -29,6 +29,6 @@
+   @property (nonatomic, strong) UIWindow *window;
+- diff --git a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
++ diff --git a/CustomIos/android/app/src/main/java/co/uk/customandroid/app/MainApplication.java b/CustomIos/android/app/src/main/java/co/uk/customandroid/app/MainApplication.java
+  index bc3a9310..f3e0d155 100644
+- --- a/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
+- +++ b/RnDiffApp/android/app/src/main/java/com/rndiffapp/MainApplication.java
++ --- a/CustomIos/android/app/src/main/java/co/uk/customandroid/app/MainApplication.java
++ +++ b/CustomIos/android/app/src/main/java/co/uk/customandroid/app/MainApplication.java
+"
+`;

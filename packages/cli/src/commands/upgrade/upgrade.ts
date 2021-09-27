@@ -158,14 +158,16 @@ const getVersionToUpgradeTo = async (
       dependencies: {'react-native': version},
     } = require(path.join(projectDir, 'package.json'));
 
-    if (semver.satisfies(newVersion, version)) {
+    const parsedVersion = version.split('@')[version.split('@').length - 1];
+
+    if (semver.satisfies(newVersion, parsedVersion)) {
       logger.warn(
-        `Specified version "${newVersion}" is already installed in node_modules and it satisfies "${version}" semver range. No need to upgrade`,
+        `Specified version "${newVersion}" is already installed in node_modules and it satisfies "${parsedVersion}" semver range. No need to upgrade`,
       );
       return null;
     }
     logger.error(
-      `Dependency mismatch. Specified version "${newVersion}" is already installed in node_modules and it doesn't satisfy "${version}" semver range of your "react-native" dependency. Please re-install your dependencies`,
+      `Dependency mismatch. Specified version "${newVersion}" is already installed in node_modules and it doesn't satisfy "${parsedVersion}" semver range of your "react-native" dependency. Please re-install your dependencies`,
     );
     return null;
   }
@@ -322,21 +324,12 @@ const applyPatch = async (
 async function upgrade(argv: Array<string>, ctx: Config) {
   const tmpPatchFile = 'tmp-upgrade-rn.patch';
   const projectDir = ctx.root;
-  const {version: currentVersion} = require(path.join(
+  const {name: rnName, version: currentVersion} = require(path.join(
     projectDir,
     'node_modules/react-native/package.json',
   ));
 
-  let isTV = false;
-  const existingPackageJson = require(path.join(projectDir, 'package.json'));
-
-  if (
-    existingPackageJson.dependencies['react-native'].indexOf(
-      'react-native-tvos',
-    ) !== -1
-  ) {
-    isTV = true;
-  }
+  const isTV = rnName === 'react-native-tvos';
 
   const newVersion = await getVersionToUpgradeTo(
     argv,

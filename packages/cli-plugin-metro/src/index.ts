@@ -5,4 +5,8 @@ export {
   getDefaultConfig,
   default as loadMetroConfig,
 } from './tools/loadMetroConfig';
-export {default as commands} from './commands';
+export {
+  default as commands,
+  buildBundleWithConfig,
+  CommandLineArgs,
+} from './commands';

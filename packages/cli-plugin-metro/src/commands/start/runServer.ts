@@ -127,8 +127,8 @@ function getReporterImpl(customLogReporterPath: string | undefined) {
     // First we let require resolve it, so we can require packages in node_modules
     // as expected. eg: require('my-package/reporter');
     return require(customLogReporterPath);
-  } catch (e: any) {
-    if (e.code !== 'MODULE_NOT_FOUND') {
+  } catch (e) {
+    if ((<any>e).code !== 'MODULE_NOT_FOUND') {
       throw e;
     }
     // If that doesn't work, then we next try relative to the cwd, eg:

@@ -15,7 +15,7 @@ import chalk from 'chalk';
 import {CommandLineArgs} from './bundleCommandLineArgs';
 import type {Config} from '@react-native-community/cli-types';
 import saveAssets from './saveAssets';
-import {default as loadMetroConfig, MetroConfig} from '../config';
+import {default as loadMetroConfig, MetroConfig} from '../../tools/loadMetroConfig';
 import {logger} from '@react-native-community/cli-tools';
 
 interface RequestOptions {

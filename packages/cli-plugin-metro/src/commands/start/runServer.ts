@@ -16,7 +16,7 @@ import {
 } from '@react-native-community/cli-server-api';
 import {Config} from '@react-native-community/cli-types';
 
-import loadMetroConfig from './config';
+import loadMetroConfig from '../../tools/loadMetroConfig';
 import {releaseChecker} from '@react-native-community/cli-tools';
 import enableWatchMode from './watchMode';
 
@@ -127,7 +127,7 @@ function getReporterImpl(customLogReporterPath: string | undefined) {
     // First we let require resolve it, so we can require packages in node_modules
     // as expected. eg: require('my-package/reporter');
     return require(customLogReporterPath);
-  } catch (e) {
+  } catch (e: any) {
     if (e.code !== 'MODULE_NOT_FOUND') {
       throw e;
     }

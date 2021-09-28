@@ -296,7 +296,7 @@ test('cleans up if patching fails,', async () => {
     info You may find these resources helpful:
     • Release notes: https://github.com/facebook/react-native/releases/tag/v0.64.2-4
     • Manual Upgrade Helper: https://react-native-community.github.io/upgrade-helper/?from=0.62.2-1&to=0.64.2-4
-    • Git diff: https://raw.githubusercontent.com/douglowder/rn-diff-purge-tv/diffs/diffs/0.62.2-1..0.64.2-4.diff"
+    • Git diff: https://raw.githubusercontent.com/react-native-tvos/rn-diff-purge-tv/diffs/diffs/0.62.2-1..0.64.2-4.diff"
   `);
 }, 60000);
 test('works with --name-ios and --name-android', async () => {

@@ -21,7 +21,7 @@ const forks = {
   },
   'react-native-tvos': {
     rawDiffUrl:
-      'https://raw.githubusercontent.com/douglowder/rn-diff-purge-tv/diffs/diffs',
+      'https://raw.githubusercontent.com/react-native-tvos/rn-diff-purge-tv/diffs/diffs',
     webDiffUrl: 'https://react-native-community.github.io/upgrade-helper',
     dependencyName: 'react-native@npm:react-native-tvos',
   },

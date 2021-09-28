@@ -9,11 +9,23 @@ import * as PackageManager from '../../tools/packageManager';
 import installPods from '../../tools/installPods';
 
 // https://react-native-community.github.io/upgrade-helper/?from=0.59.10&to=0.60.0-rc.3
-const webDiffUrl = 'https://react-native-community.github.io/upgrade-helper';
-const rawDiffUrl =
-  'https://raw.githubusercontent.com/react-native-community/rn-diff-purge/diffs/diffs';
-const rawDiffUrlTV =
-  'https://raw.githubusercontent.com/douglowder/rn-diff-purge-tv/diffs/diffs';
+
+type ForkNameType = 'react-native' | 'react-native-tvos';
+
+const forks = {
+  'react-native': {
+    rawDiffUrl:
+      'https://raw.githubusercontent.com/react-native-community/rn-diff-purge/diffs/diffs',
+    webDiffUrl: 'https://react-native-community.github.io/upgrade-helper',
+    dependencyName: 'react-native',
+  },
+  'react-native-tvos': {
+    rawDiffUrl:
+      'https://raw.githubusercontent.com/douglowder/rn-diff-purge-tv/diffs/diffs',
+    webDiffUrl: 'https://react-native-community.github.io/upgrade-helper',
+    dependencyName: 'react-native@npm:react-native-tvos',
+  },
+};
 
 const isConnected = (output: string): boolean => {
   // there is no reliable way of checking for internet connectivity, so we should just
@@ -40,24 +52,20 @@ const checkForErrors = (output: string): void => {
   }
 };
 
-const getLatestRNVersion = async (isTV: boolean): Promise<string> => {
+const getLatestRNVersion = async (forkName: ForkNameType): Promise<string> => {
   logger.info('No version passed. Fetching latest...');
-  const {stdout, stderr} = await execa('npm', [
-    'info',
-    isTV ? 'react-native-tvos' : 'react-native',
-    'version',
-  ]);
+  const {stdout, stderr} = await execa('npm', ['info', forkName, 'version']);
   checkForErrors(stderr);
   return stdout;
 };
 
 const getRNPeerDeps = async (
   version: string,
-  isTV: boolean,
+  forkName: ForkNameType,
 ): Promise<{[key: string]: string}> => {
   const {stdout, stderr} = await execa('npm', [
     'info',
-    isTV ? `react-native-tvos@${version}` : `react-native@${version}`,
+    `${forkName}@${version}`,
     'peerDependencies',
     '--json',
   ]);
@@ -69,7 +77,7 @@ const getPatch = async (
   currentVersion: string,
   newVersion: string,
   config: Config,
-  isTV: boolean,
+  forkName: ForkNameType,
 ) => {
   let patch;
 
@@ -77,9 +85,7 @@ const getPatch = async (
 
   try {
     const {data} = await fetch(
-      `${
-        isTV ? rawDiffUrlTV : rawDiffUrl
-      }/${currentVersion}..${newVersion}.diff`,
+      `${forks[forkName].rawDiffUrl}/${currentVersion}..${newVersion}.diff`,
     );
 
     patch = data;
@@ -131,14 +137,14 @@ const getVersionToUpgradeTo = async (
   argv: Array<string>,
   currentVersion: string,
   projectDir: string,
-  isTV: boolean,
+  forkName: ForkNameType,
 ) => {
   const argVersion = argv[0];
   const semverCoercedVersion = semver.coerce(argVersion);
   const newVersion = argVersion
     ? semver.valid(argVersion) ||
       (semverCoercedVersion ? semverCoercedVersion.version : null)
-    : await getLatestRNVersion(isTV);
+    : await getLatestRNVersion(forkName);
 
   if (!newVersion) {
     logger.error(
@@ -175,15 +181,17 @@ const getVersionToUpgradeTo = async (
   return newVersion;
 };
 
-const installDeps = async (root: string, newVersion: string, isTV: boolean) => {
+const installDeps = async (
+  root: string,
+  newVersion: string,
+  forkName: ForkNameType,
+) => {
   logger.info(
     `Installing "react-native@${newVersion}" and its peer dependencies...`,
   );
-  const peerDeps = await getRNPeerDeps(newVersion, isTV);
+  const peerDeps = await getRNPeerDeps(newVersion, forkName);
   const deps = [
-    isTV
-      ? `react-native@npm:react-native-tvos@${newVersion}`
-      : `react-native@${newVersion}`,
+    `${forks[forkName].dependencyName}@${newVersion}`,
     ...Object.keys(peerDeps).map((module) => `${module}@${peerDeps[module]}`),
   ];
   await PackageManager.install(deps, {
@@ -231,6 +239,7 @@ const applyPatch = async (
   currentVersion: string,
   newVersion: string,
   tmpPatchFile: string,
+  forkName: ForkNameType,
 ) => {
   const defaultExcludes = ['package.json'];
   let filesThatDontExist: Array<string> = [];
@@ -287,7 +296,7 @@ const applyPatch = async (
             .join(
               '\n',
             )}\nPlease make sure to check the actual changes after the upgrade command is finished.\nYou can find them in our Upgrade Helper web app: ${chalk.underline.dim(
-            `${webDiffUrl}/?from=${currentVersion}&to=${newVersion}`,
+            `${forks[forkName].webDiffUrl}/?from=${currentVersion}&to=${newVersion}`,
           )}`,
         );
       }
@@ -329,20 +338,21 @@ async function upgrade(argv: Array<string>, ctx: Config) {
     'node_modules/react-native/package.json',
   ));
 
-  const isTV = rnName === 'react-native-tvos';
+  const forkName: ForkNameType =
+    rnName === 'react-native-tvos' ? 'react-native-tvos' : 'react-native';
 
   const newVersion = await getVersionToUpgradeTo(
     argv,
     currentVersion,
     projectDir,
-    isTV,
+    forkName,
   );
 
   if (!newVersion) {
     return;
   }
 
-  const patch = await getPatch(currentVersion, newVersion, ctx, isTV);
+  const patch = await getPatch(currentVersion, newVersion, ctx, forkName);
 
   if (patch === null) {
     return;
@@ -350,7 +360,7 @@ async function upgrade(argv: Array<string>, ctx: Config) {
 
   if (patch === '') {
     logger.info('Diff has no changes to apply, proceeding further');
-    await installDeps(projectDir, newVersion, isTV);
+    await installDeps(projectDir, newVersion, forkName);
     await installCocoaPodsDeps(projectDir);
 
     logger.success(
@@ -362,7 +372,12 @@ async function upgrade(argv: Array<string>, ctx: Config) {
 
   try {
     fs.writeFileSync(tmpPatchFile, patch);
-    patchSuccess = await applyPatch(currentVersion, newVersion, tmpPatchFile);
+    patchSuccess = await applyPatch(
+      currentVersion,
+      newVersion,
+      tmpPatchFile,
+      forkName,
+    );
   } catch (error) {
     throw new Error(error.stderr || error);
   } finally {
@@ -377,7 +392,7 @@ async function upgrade(argv: Array<string>, ctx: Config) {
         logger.warn(
           'Continuing after failure. Some of the files are upgraded but you will need to deal with conflicts manually',
         );
-        await installDeps(projectDir, newVersion, isTV);
+        await installDeps(projectDir, newVersion, forkName);
         logger.info('Running "git status" to check what changed...');
         await execa('git', ['status'], {stdio: 'inherit'});
       } else {
@@ -386,7 +401,7 @@ async function upgrade(argv: Array<string>, ctx: Config) {
         );
       }
     } else {
-      await installDeps(projectDir, newVersion, isTV);
+      await installDeps(projectDir, newVersion, forkName);
       await installCocoaPodsDeps(projectDir);
       logger.info('Running "git status" to check what changed...');
       await execa('git', ['status'], {stdio: 'inherit'});
@@ -407,10 +422,10 @@ async function upgrade(argv: Array<string>, ctx: Config) {
         `https://github.com/facebook/react-native/releases/tag/v${newVersion}`,
       )}
 • Manual Upgrade Helper: ${chalk.underline.dim(
-        `${webDiffUrl}/?from=${currentVersion}&to=${newVersion}`,
+        `${forks[forkName].webDiffUrl}/?from=${currentVersion}&to=${newVersion}`,
       )}
 • Git diff: ${chalk.underline.dim(
-        `${rawDiffUrl}/${currentVersion}..${newVersion}.diff`,
+        `${forks[forkName].rawDiffUrl}/${currentVersion}..${newVersion}.diff`,
       )}`);
 
       throw new CLIError(

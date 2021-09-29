@@ -1,5 +1,5 @@
 import androidHomeEnvVariables from '../androidHomeEnvVariable';
-import {NoopLoader} from '../../../../tools/loader';
+import {NoopLoader} from '@react-native-communit/tools/loader';
 import {EnvironmentInfo} from '@react-native-community/cli-types';
 
 import * as common from '../common';

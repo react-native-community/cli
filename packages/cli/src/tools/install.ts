@@ -1,6 +1,6 @@
 import ora from 'ora';
 import {brewInstall} from './brewInstall';
-import {logManualInstallation} from '../commands/doctor/healthchecks/common';
+import {logManualInstallation} from '@react-native-community/cli-doctor/src/healthchecks/common';
 
 type InstallArgs = {
   pkg: string;

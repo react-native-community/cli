@@ -3,9 +3,9 @@ import {isSoftwareNotInstalled} from '../checkInstallation';
 import {
   promptCocoaPodsInstallationQuestion,
   runSudo,
-} from '../../../tools/installPods';
+} from '@react-native-community/cli/src/tools/installPods';
 import {removeMessage, logError} from './common';
-import {brewInstall} from '../../../tools/brewInstall';
+import {brewInstall} from '@react-native-community/cli/src/tools/brewInstall';
 import {HealthCheckInterface} from '@react-native-community/cli-types';
 
 const label = 'CocoaPods';

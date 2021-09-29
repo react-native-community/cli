@@ -2,10 +2,10 @@ import {join} from 'path';
 
 import {HealthCheckInterface} from '@react-native-community/cli-types';
 
-import {downloadAndUnzip} from '../../../tools/downloadAndUnzip';
-import {executeCommand} from '../../../tools/windows/executeWinCommand';
-import {getUserAndroidPath} from '../../../tools/windows/androidWinHelpers';
-import {createShortcut} from '../../../tools/windows/create-shortcut';
+import {downloadAndUnzip} from '@react-native-community/cli/src/tools/downloadAndUnzip';
+import {executeCommand} from '@react-native-community/cli/src/tools/windows/executeWinCommand';
+import {getUserAndroidPath} from '@react-native-community/cli/src/tools/windows/androidWinHelpers';
+import {createShortcut} from '@react-native-community/cli/src/tools/windows/create-shortcut';
 
 export default {
   label: 'Android Studio',

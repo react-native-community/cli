@@ -7,7 +7,7 @@ import {
   HealthCheckInterface,
   EnvironmentInfo,
 } from '@react-native-community/cli-types';
-import findProjectRoot from '../../../tools/config/findProjectRoot';
+import findProjectRoot from '@react-native-community/cli/src/tools/config/findProjectRoot';
 import {
   getAndroidSdkRootInstallation,
   installComponent,
@@ -16,13 +16,13 @@ import {
   enableHAXM,
   enableWHPX,
   createAVD,
-} from '../../../tools/windows/androidWinHelpers';
-import {downloadAndUnzip} from '../../../tools/downloadAndUnzip';
+} from '@react-native-community/cli/src/tools/windows/androidWinHelpers';
+import {downloadAndUnzip} from '@react-native-community/cli/src/tools/downloadAndUnzip';
 
 import {
   setEnvironment,
   updateEnvironment,
-} from '../../../tools/windows/environmentVariables';
+} from '@react-native-community/cli/src/tools/windows/environmentVariables';
 
 const getBuildToolsVersion = (): string => {
   let projectRoot = '';

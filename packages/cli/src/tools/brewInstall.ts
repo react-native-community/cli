@@ -1,6 +1,6 @@
 import execa from 'execa';
 import ora from 'ora';
-import {logError} from '../commands/doctor/healthchecks/common';
+import {logError} from '@react-native-community/cli-doctor/src/healthchecks/common';
 
 type InstallArgs = {
   pkg: string;

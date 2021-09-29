@@ -1,11 +1,11 @@
 import execa from 'execa';
 import jdk from '../jdk';
-import getEnvironmentInfo from '../../../../tools/envinfo';
+import getEnvironmentInfo from '@react-native-community/tools/envinfo';
 import {EnvironmentInfo} from '@react-native-community/cli-types';
-import {NoopLoader} from '../../../../tools/loader';
+import {NoopLoader} from '@react-native-community/tools/loader';
 import * as common from '../common';
-import * as unzip from '../../../../tools/unzip';
-import * as deleteFile from '../../../../tools/deleteFile';
+import * as unzip from '@react-native-community/tools/unzip';
+import * as deleteFile from '@react-native-communit/tools/deleteFile';
 
 jest.mock('execa', () => jest.fn());
 jest

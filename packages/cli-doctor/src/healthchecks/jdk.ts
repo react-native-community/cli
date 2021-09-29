@@ -3,11 +3,11 @@ import versionRanges from '../versionRanges';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
 import {HealthCheckInterface} from '@react-native-community/cli-types';
 
-import {downloadAndUnzip} from '../../../tools/downloadAndUnzip';
+import {downloadAndUnzip} from '@react-native-community/cli/src/tools/downloadAndUnzip';
 import {
   setEnvironment,
   updateEnvironment,
-} from '../../../tools/windows/environmentVariables';
+} from '@react-native-community/cli/src/tools/windows/environmentVariables';
 
 export default {
   label: 'JDK',

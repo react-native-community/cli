@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import {logger} from '@react-native-community/cli-tools';
 import {getHealthchecks, HEALTHCHECK_TYPES} from './healthchecks';
-import {getLoader} from '../../tools/loader';
+import {getLoader} from '@react-native-community/cli/src/tools/loader';
 import printFixOptions, {KEYS} from './printFixOptions';
 import runAutomaticFix, {AUTOMATIC_FIX_LEVELS} from './runAutomaticFix';
 import {
@@ -10,7 +10,7 @@ import {
   HealthCheckInterface,
 } from '@react-native-community/cli-types';
 import {HealthCheckCategoryResult, HealthCheckResult} from './types';
-import getEnvironmentInfo from '../../tools/envinfo';
+import getEnvironmentInfo from '@react-native-community/cli/src/tools/envinfo';
 import {logMessage} from './healthchecks/common';
 
 const printCategory = ({label, key}: {label: string; key: number}) => {

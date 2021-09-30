@@ -10,9 +10,9 @@ import installPods from '../../tools/installPods';
 
 // https://react-native-community.github.io/upgrade-helper/?from=0.59.10&to=0.60.0-rc.3
 
-type ForkNameType = 'react-native' | 'react-native-tvos';
+type RepoNameType = 'react-native' | 'react-native-tvos';
 
-const forks = {
+const repos = {
   'react-native': {
     rawDiffUrl:
       'https://raw.githubusercontent.com/react-native-community/rn-diff-purge/diffs/diffs',
@@ -52,20 +52,20 @@ const checkForErrors = (output: string): void => {
   }
 };
 
-const getLatestRNVersion = async (forkName: ForkNameType): Promise<string> => {
+const getLatestRNVersion = async (repoName: RepoNameType): Promise<string> => {
   logger.info('No version passed. Fetching latest...');
-  const {stdout, stderr} = await execa('npm', ['info', forkName, 'version']);
+  const {stdout, stderr} = await execa('npm', ['info', repoName, 'version']);
   checkForErrors(stderr);
   return stdout;
 };
 
 const getRNPeerDeps = async (
   version: string,
-  forkName: ForkNameType,
+  repoName: RepoNameType,
 ): Promise<{[key: string]: string}> => {
   const {stdout, stderr} = await execa('npm', [
     'info',
-    `${forkName}@${version}`,
+    `${repoName}@${version}`,
     'peerDependencies',
     '--json',
   ]);
@@ -77,7 +77,7 @@ const getPatch = async (
   currentVersion: string,
   newVersion: string,
   config: Config,
-  forkName: ForkNameType,
+  repoName: RepoNameType,
 ) => {
   let patch;
 
@@ -85,7 +85,7 @@ const getPatch = async (
 
   try {
     const {data} = await fetch(
-      `${forks[forkName].rawDiffUrl}/${currentVersion}..${newVersion}.diff`,
+      `${repos[repoName].rawDiffUrl}/${currentVersion}..${newVersion}.diff`,
     );
 
     patch = data;
@@ -137,14 +137,14 @@ const getVersionToUpgradeTo = async (
   argv: Array<string>,
   currentVersion: string,
   projectDir: string,
-  forkName: ForkNameType,
+  repoName: RepoNameType,
 ) => {
   const argVersion = argv[0];
   const semverCoercedVersion = semver.coerce(argVersion);
   const newVersion = argVersion
     ? semver.valid(argVersion) ||
       (semverCoercedVersion ? semverCoercedVersion.version : null)
-    : await getLatestRNVersion(forkName);
+    : await getLatestRNVersion(repoName);
 
   if (!newVersion) {
     logger.error(
@@ -184,14 +184,14 @@ const getVersionToUpgradeTo = async (
 const installDeps = async (
   root: string,
   newVersion: string,
-  forkName: ForkNameType,
+  repoName: RepoNameType,
 ) => {
   logger.info(
     `Installing "react-native@${newVersion}" and its peer dependencies...`,
   );
-  const peerDeps = await getRNPeerDeps(newVersion, forkName);
+  const peerDeps = await getRNPeerDeps(newVersion, repoName);
   const deps = [
-    `${forks[forkName].dependencyName}@${newVersion}`,
+    `${repos[repoName].dependencyName}@${newVersion}`,
     ...Object.keys(peerDeps).map((module) => `${module}@${peerDeps[module]}`),
   ];
   await PackageManager.install(deps, {
@@ -239,7 +239,7 @@ const applyPatch = async (
   currentVersion: string,
   newVersion: string,
   tmpPatchFile: string,
-  forkName: ForkNameType,
+  repoName: RepoNameType,
 ) => {
   const defaultExcludes = ['package.json'];
   let filesThatDontExist: Array<string> = [];
@@ -296,7 +296,7 @@ const applyPatch = async (
             .join(
               '\n',
             )}\nPlease make sure to check the actual changes after the upgrade command is finished.\nYou can find them in our Upgrade Helper web app: ${chalk.underline.dim(
-            `${forks[forkName].webDiffUrl}/?from=${currentVersion}&to=${newVersion}`,
+            `${repos[repoName].webDiffUrl}/?from=${currentVersion}&to=${newVersion}`,
           )}`,
         );
       }
@@ -338,21 +338,21 @@ async function upgrade(argv: Array<string>, ctx: Config) {
     'node_modules/react-native/package.json',
   ));
 
-  const forkName: ForkNameType =
+  const repoName: RepoNameType =
     rnName === 'react-native-tvos' ? 'react-native-tvos' : 'react-native';
 
   const newVersion = await getVersionToUpgradeTo(
     argv,
     currentVersion,
     projectDir,
-    forkName,
+    repoName,
   );
 
   if (!newVersion) {
     return;
   }
 
-  const patch = await getPatch(currentVersion, newVersion, ctx, forkName);
+  const patch = await getPatch(currentVersion, newVersion, ctx, repoName);
 
   if (patch === null) {
     return;
@@ -360,7 +360,7 @@ async function upgrade(argv: Array<string>, ctx: Config) {
 
   if (patch === '') {
     logger.info('Diff has no changes to apply, proceeding further');
-    await installDeps(projectDir, newVersion, forkName);
+    await installDeps(projectDir, newVersion, repoName);
     await installCocoaPodsDeps(projectDir);
 
     logger.success(
@@ -376,7 +376,7 @@ async function upgrade(argv: Array<string>, ctx: Config) {
       currentVersion,
       newVersion,
       tmpPatchFile,
-      forkName,
+      repoName,
     );
   } catch (error) {
     throw new Error(error.stderr || error);
@@ -392,7 +392,7 @@ async function upgrade(argv: Array<string>, ctx: Config) {
         logger.warn(
           'Continuing after failure. Some of the files are upgraded but you will need to deal with conflicts manually',
         );
-        await installDeps(projectDir, newVersion, forkName);
+        await installDeps(projectDir, newVersion, repoName);
         logger.info('Running "git status" to check what changed...');
         await execa('git', ['status'], {stdio: 'inherit'});
       } else {
@@ -401,7 +401,7 @@ async function upgrade(argv: Array<string>, ctx: Config) {
         );
       }
     } else {
-      await installDeps(projectDir, newVersion, forkName);
+      await installDeps(projectDir, newVersion, repoName);
       await installCocoaPodsDeps(projectDir);
       logger.info('Running "git status" to check what changed...');
       await execa('git', ['status'], {stdio: 'inherit'});
@@ -422,10 +422,10 @@ async function upgrade(argv: Array<string>, ctx: Config) {
         `https://github.com/facebook/react-native/releases/tag/v${newVersion}`,
       )}
 • Manual Upgrade Helper: ${chalk.underline.dim(
-        `${forks[forkName].webDiffUrl}/?from=${currentVersion}&to=${newVersion}`,
+        `${repos[repoName].webDiffUrl}/?from=${currentVersion}&to=${newVersion}`,
       )}
 • Git diff: ${chalk.underline.dim(
-        `${forks[forkName].rawDiffUrl}/${currentVersion}..${newVersion}.diff`,
+        `${repos[repoName].rawDiffUrl}/${currentVersion}..${newVersion}.diff`,
       )}`);
 
       throw new CLIError(

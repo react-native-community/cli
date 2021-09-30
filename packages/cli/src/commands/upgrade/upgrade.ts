@@ -8,6 +8,8 @@ import {logger, CLIError, fetch} from '@react-native-community/cli-tools';
 import * as PackageManager from '../../tools/packageManager';
 import installPods from '../../tools/installPods';
 
+type UpgradeError = {message: string; stderr: string};
+
 // https://react-native-community.github.io/upgrade-helper/?from=0.59.10&to=0.60.0-rc.3
 
 type RepoNameType = 'react-native' | 'react-native-tvos';
@@ -90,7 +92,7 @@ const getPatch = async (
 
     patch = data;
   } catch (error) {
-    logger.error(error.message);
+    logger.error((error as UpgradeError).message);
     logger.error(
       `Failed to fetch diff for react-native@${newVersion}. Maybe it's not released yet?`,
     );
@@ -223,9 +225,11 @@ const installCocoaPodsDeps = async (projectDir: string) => {
         directory: projectDir.split('/').pop() || '',
       });
     } catch (error) {
-      if (error.stderr) {
+      if ((error as UpgradeError).stderr) {
         logger.debug(
-          `"pod install" or "pod repo update" failed. Error output:\n${error.stderr}`,
+          `"pod install" or "pod repo update" failed. Error output:\n${
+            (error as UpgradeError).stderr
+          }`,
         );
       }
       logger.error(
@@ -269,7 +273,9 @@ const applyPatch = async (
       ]);
       logger.info('Applying diff...');
     } catch (error) {
-      const errorLines: Array<string> = error.stderr.split('\n');
+      const errorLines: Array<string> = (error as UpgradeError).stderr.split(
+        '\n',
+      );
       filesThatDontExist = [
         ...errorLines
           .filter((x) => x.includes('does not exist in index'))
@@ -316,8 +322,10 @@ const applyPatch = async (
       ]);
     }
   } catch (error) {
-    if (error.stderr) {
-      logger.debug(`"git apply" failed. Error output:\n${error.stderr}`);
+    if ((error as UpgradeError).stderr) {
+      logger.debug(
+        `"git apply" failed. Error output:\n${(error as UpgradeError).stderr}`,
+      );
     }
     logger.error(
       'Automatically applying diff failed. We did our best to automatically upgrade as many files as possible',
@@ -379,7 +387,7 @@ async function upgrade(argv: Array<string>, ctx: Config) {
       repoName,
     );
   } catch (error) {
-    throw new Error(error.stderr || error);
+    throw new Error((error as UpgradeError).stderr || (error as string));
   } finally {
     try {
       fs.unlinkSync(tmpPatchFile);

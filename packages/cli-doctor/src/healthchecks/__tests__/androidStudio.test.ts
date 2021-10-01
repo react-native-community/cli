@@ -1,10 +1,10 @@
 import execa from 'execa';
 import androidStudio from '../androidStudio';
-import getEnvironmentInfo from '../../../../tools/envinfo';
+import getEnvironmentInfo from '@react-native-community/cli/src/tools/envinfo';
 import {EnvironmentInfo} from '@react-native-community/cli-types';
-import {NoopLoader} from '../../../../tools/loader';
+import {NoopLoader} from '@react-native-community/cli/src/tools/loader';
 import * as common from '../common';
-import * as downloadAndUnzip from '../../../../tools/downloadAndUnzip';
+import * as downloadAndUnzip from '@react-native-community/cli/src/tools/downloadAndUnzip';
 
 jest.mock('execa', () => jest.fn());
 

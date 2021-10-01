@@ -1,15 +1,15 @@
 import * as os from 'os';
 import {join} from 'path';
 import execa from 'execa';
-import {cleanup, writeFiles} from '../../../../../../../jest/helpers';
+import {cleanup, writeFiles} from '../../../../../jest/helpers';
 import androidSDK from '../androidSDK';
-import getEnvironmentInfo from '../../../../tools/envinfo';
-import * as downloadAndUnzip from '../../../../tools/downloadAndUnzip';
+import getEnvironmentInfo from '@react-native-community/cli/src/tools/envinfo';
+import * as downloadAndUnzip from '@react-native-community/cli/src/tools/downloadAndUnzip';
 import {EnvironmentInfo} from '@react-native-community/cli-types';
-import {NoopLoader} from '../../../../tools/loader';
+import {NoopLoader} from '@react-native-community/cli/src/tools/loader';
 import * as common from '../common';
-import * as androidWinHelpers from '../../../../tools/windows/androidWinHelpers';
-import * as environmentVariables from '../../../../tools/windows/environmentVariables';
+import * as androidWinHelpers from '@react-native-community/cli/src/tools/windows/androidWinHelpers';
+import * as environmentVariables from '@react-native-community/cli/src/tools/windows/environmentVariables';
 
 const logSpy = jest.spyOn(common, 'logManualInstallation');
 const {logManualInstallation} = common;

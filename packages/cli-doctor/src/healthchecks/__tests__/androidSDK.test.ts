@@ -19,7 +19,7 @@ jest.mock('execa', () => jest.fn());
 let mockWorkingDir = '';
 
 // TODO remove when androidSDK starts getting gradle.build path from config
-jest.mock('../../../../tools/config/findProjectRoot', () => () => {
+jest.mock('../../../../cli/src/tools/config/findProjectRoot', () => () => {
   return mockWorkingDir;
 });
 

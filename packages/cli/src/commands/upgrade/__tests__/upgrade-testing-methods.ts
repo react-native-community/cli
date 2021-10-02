@@ -1,22 +1,99 @@
-const usesLatestVersionWhenNonePassed = async (
-  upgrade,
-  ctx,
-  execa,
-  repoName,
-) => {
+import execa from 'execa';
+import path from 'path';
+import fs from 'fs';
+import snapshotDiff from 'snapshot-diff';
+import stripAnsi from 'strip-ansi';
+import upgrade from '../upgrade';
+import {fetch, logger} from '@react-native-community/cli-tools';
+import loadConfig from '../../../tools/config';
+import merge from '../../../tools/merge';
+
+jest.mock('https');
+jest.mock('fs');
+jest.mock('path');
+jest.mock('execa');
+
+jest.mock('../../../tools/config');
+jest.mock('../../../tools/packageManager', () => ({
+  install: (args) => {
+    mockPushLog('$ yarn add', ...args);
+  },
+}));
+jest.mock('@react-native-community/cli-tools', () => ({
+  ...jest.requireActual('@react-native-community/cli-tools'),
+  fetch: jest.fn(),
+  logger: {
+    info: jest.fn((...args) => mockPushLog('info', args)),
+    error: jest.fn((...args) => mockPushLog('error', args)),
+    warn: jest.fn((...args) => mockPushLog('warn', args)),
+    success: jest.fn((...args) => mockPushLog('success', args)),
+    debug: jest.fn((...args) => mockPushLog('debug', args)),
+    log: jest.fn((...args) => mockPushLog(args)),
+  },
+}));
+
+const mockFetch = (value = '', status = 200) => {
+  (fetch as jest.Mock).mockImplementation(() =>
+    Promise.resolve({data: value, status}),
+  );
+};
+
+const mockExecaDefault = (command, args) => {
+  mockPushLog('$', 'execa', command, args);
+  if (command === 'npm' && args[3] === '--json') {
+    return Promise.resolve({stdout: '{"react": "16.6.3"}'});
+  }
+  if (command === 'git' && args[0] === 'rev-parse') {
+    return Promise.resolve({stdout: ''});
+  }
+  return Promise.resolve({stdout: ''});
+};
+
+const mockExecaNested = (command, args) => {
+  mockPushLog('$', 'execa', command, args);
+  if (command === 'npm' && args[3] === '--json') {
+    return Promise.resolve({stdout: '{"react": "16.6.3"}'});
+  }
+  if (command === 'git' && args[0] === 'rev-parse') {
+    return Promise.resolve({stdout: 'NestedApp/'});
+  }
+  return Promise.resolve({stdout: ''});
+};
+
+const ctx = loadConfig();
+
+const samplePatch = jest
+  .requireActual('fs')
+  .readFileSync(path.join(__dirname, './sample.patch'), 'utf8');
+
+let logs = [];
+const mockPushLog = (...args) =>
+  logs.push(args.map((x) => (Array.isArray(x) ? x.join(' ') : x)).join(' '));
+const flushOutput = () => stripAnsi(logs.join('\n'));
+
+const setup = () => {
+  jest.clearAllMocks();
+  jest.restoreAllMocks();
+  fs.writeFileSync = jest.fn((filename) => mockPushLog('[fs] write', filename));
+  fs.unlinkSync = jest.fn((...args) => mockPushLog('[fs] unlink', args));
+  logs = [];
+  ((execa as unknown) as jest.Mock).mockImplementation(mockExecaDefault);
+  Object.defineProperty(process, 'platform', {
+    value: 'darwin',
+  });
+};
+
+const teardown = () => {
+  fs.writeFileSync = jest.requireMock('fs').writeFileSync;
+  fs.unlinkSync = jest.requireMock('fs').unlinkSync;
+};
+
+const usesLatestVersionWhenNonePassed = async (repoName) => {
   await upgrade.func([], ctx);
   expect(execa).toBeCalledWith('npm', ['info', repoName, 'version']);
 };
 
-const appliesPatchInCwdWhenNested = async (
-  mockFetch,
-  samplePatch,
-  execa,
-  mockExecaNested,
-  ctx,
-  upgrade,
-  newVersion,
-) => {
+const appliesPatchInCwdWhenNested = async (newVersion) => {
   mockFetch(samplePatch, 200);
   ((execa as unknown) as jest.Mock).mockImplementation(mockExecaNested);
   const config = {...ctx, root: '/project/root/NestedApp'};
@@ -32,7 +109,7 @@ const appliesPatchInCwdWhenNested = async (
   ]);
 };
 
-const errorsWhenInvalidVersionPassed = async (upgrade, ctx, logger) => {
+const errorsWhenInvalidVersionPassed = async () => {
   await upgrade.func(['next'], ctx);
   expect(logger.error).toBeCalledWith(
     'Provided version "next" is not allowed. Please pass a valid semver version',
@@ -40,12 +117,9 @@ const errorsWhenInvalidVersionPassed = async (upgrade, ctx, logger) => {
 };
 
 const errorsWhenOlderVersionPassed = async (
-  upgrade,
   olderVersion,
   lessOlderVersion,
-  ctx,
   currentVersion,
-  logger,
 ) => {
   await upgrade.func([olderVersion], ctx);
   expect(logger.error).toBeCalledWith(
@@ -57,40 +131,21 @@ const errorsWhenOlderVersionPassed = async (
   );
 };
 
-const warnsWhenDependencyInSemverRange = async (
-  upgrade,
-  currentVersion,
-  ctx,
-  logger,
-) => {
+const warnsWhenDependencyInSemverRange = async (currentVersion) => {
   await upgrade.func([currentVersion], ctx);
   expect(logger.warn).toBeCalledWith(
     `Specified version "${currentVersion}" is already installed in node_modules and it satisfies "^${currentVersion}" semver range. No need to upgrade`,
   );
 };
 
-const fetchesEmptyPatchAndInstallsDeps = async (
-  mockFetch,
-  upgrade,
-  newVersion,
-  ctx,
-  flushOutput,
-) => {
+const fetchesEmptyPatchAndInstallsDeps = async (newVersion) => {
   mockFetch();
   await upgrade.func([newVersion], ctx);
   expect(flushOutput()).toMatchSnapshot();
 };
 
 const fetchesRegularPatchInstallRemoteAppliesPatchInstallsDepsRemovesRemote = async (
-  mockFetch,
-  samplePatch,
-  upgrade,
   newVersion,
-  merge,
-  ctx,
-  flushOutput,
-  snapshotDiff,
-  fs,
 ) => {
   mockFetch(samplePatch, 200);
   await upgrade.func(
@@ -117,14 +172,7 @@ const fetchesRegularPatchInstallRemoteAppliesPatchInstallsDepsRemovesRemote = as
 };
 
 const fetchesRegularPatchInstallRemoteAppliesPatchInstallsDepsRemovesRemoteNested = async (
-  samplePatch,
-  mockFetch,
-  execa,
-  mockExecaNested,
-  ctx,
-  upgrade,
   newVersion,
-  flushOutput,
 ) => {
   mockFetch(samplePatch, 200);
   ((execa as unknown) as jest.Mock).mockImplementation(mockExecaNested);
@@ -133,16 +181,7 @@ const fetchesRegularPatchInstallRemoteAppliesPatchInstallsDepsRemovesRemoteNeste
   expect(flushOutput()).toMatchSnapshot();
 };
 
-const cleansUpIfPatchingFails = async (
-  mockFetch,
-  samplePatch,
-  execa,
-  mockPushLog,
-  upgrade,
-  newVersion,
-  ctx,
-  flushOutput,
-) => {
+const cleansUpIfPatchingFails = async (newVersion) => {
   mockFetch(samplePatch, 200);
   ((execa as unknown) as jest.Mock).mockImplementation((command, args) => {
     mockPushLog('$', 'execa', command, args);
@@ -173,16 +212,7 @@ const cleansUpIfPatchingFails = async (
   expect(flushOutput()).toMatchSnapshot();
 };
 
-const worksWithNameIosAndNameAndroid = async (
-  mockFetch,
-  samplePatch,
-  upgrade,
-  newVersion,
-  merge,
-  ctx,
-  snapshotDiff,
-  fs,
-) => {
+const worksWithNameIosAndNameAndroid = async (newVersion) => {
   mockFetch(samplePatch, 200);
   await upgrade.func(
     [newVersion],
@@ -207,6 +237,8 @@ const worksWithNameIosAndNameAndroid = async (
 };
 
 export default {
+  setup,
+  teardown,
   usesLatestVersionWhenNonePassed,
   appliesPatchInCwdWhenNested,
   errorsWhenInvalidVersionPassed,

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`cleans up if patching fails, 1`] = `
+exports[`Upgrade tests for react-native-tvos repo cleans up if patching fails, 1`] = `
 "info Fetching diff between v0.62.2-1 and v0.64.2-4...
 [fs] write tmp-upgrade-rn.patch
 $ execa git rev-parse --show-prefix
@@ -27,7 +27,7 @@ info You may find these resources helpful:
 • Git diff: https://raw.githubusercontent.com/react-native-tvos/rn-diff-purge-tv/diffs/diffs/0.62.2-1..0.64.2-4.diff"
 `;
 
-exports[`fetches empty patch and installs deps 1`] = `
+exports[`Upgrade tests for react-native-tvos repo fetches empty patch and installs deps 1`] = `
 "info Fetching diff between v0.62.2-1 and v0.64.2-4...
 info Diff has no changes to apply, proceeding further
 info Installing \\"react-native@0.64.2-4\\" and its peer dependencies...
@@ -40,7 +40,7 @@ info Installing CocoaPods dependencies (this may take a few minutes)
 success Upgraded React Native to v0.64.2-4 🎉. Now you can review and commit the changes"
 `;
 
-exports[`fetches regular patch, adds remote, applies patch, installs deps, removes remote when updated from nested directory 1`] = `
+exports[`Upgrade tests for react-native-tvos repo fetches regular patch, adds remote, applies patch, installs deps, removes remote when updated from nested directory 1`] = `
 "info Fetching diff between v0.62.2-1 and v0.64.2-4...
 [fs] write tmp-upgrade-rn.patch
 $ execa git rev-parse --show-prefix
@@ -61,7 +61,7 @@ $ execa git status
 success Upgraded React Native to v0.64.2-4 🎉. Now you can review and commit the changes"
 `;
 
-exports[`fetches regular patch, adds remote, applies patch, installs deps, removes remote, 1`] = `
+exports[`Upgrade tests for react-native-tvos repo fetches regular patch, adds remote, applies patch, installs deps, removes remote, 1`] = `
 "info Fetching diff between v0.62.2-1 and v0.64.2-4...
 [fs] write tmp-upgrade-rn.patch
 $ execa git rev-parse --show-prefix
@@ -82,7 +82,7 @@ $ execa git status
 success Upgraded React Native to v0.64.2-4 🎉. Now you can review and commit the changes"
 `;
 
-exports[`fetches regular patch, adds remote, applies patch, installs deps, removes remote,: RnDiffApp is replaced with app name (TestApp and com.testapp) 1`] = `
+exports[`Upgrade tests for react-native-tvos repo fetches regular patch, adds remote, applies patch, installs deps, removes remote,: RnDiffApp is replaced with app name (TestApp and com.testapp) 1`] = `
 "Snapshot Diff:
 - First value
 + Second value
@@ -124,7 +124,7 @@ exports[`fetches regular patch, adds remote, applies patch, installs deps, remov
 "
 `;
 
-exports[`works with --name-ios and --name-android: RnDiffApp is replaced with app name (CustomIos and co.uk.customandroid.app) 1`] = `
+exports[`Upgrade tests for react-native-tvos repo works with --name-ios and --name-android: RnDiffApp is replaced with app name (CustomIos and co.uk.customandroid.app) 1`] = `
 "Snapshot Diff:
 - First value
 + Second value

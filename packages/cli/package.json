@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/cli",
-  "version": "6.0.1",
+  "version": "6.1.0",
   "description": "React Native CLI",
   "license": "MIT",
   "main": "build/index.js",
@@ -25,11 +25,11 @@
   },
   "dependencies": {
     "@react-native-community/cli-debugger-ui": "^6.0.0-rc.0",
-    "@react-native-community/cli-hermes": "^6.0.1",
-    "@react-native-community/cli-server-api": "^6.0.0-rc.0",
-    "@react-native-community/cli-tools": "^6.0.0-rc.0",
+    "@react-native-community/cli-hermes": "^6.1.0",
+    "@react-native-community/cli-plugin-metro": "^6.1.0",
+    "@react-native-community/cli-server-api": "^6.1.0",
+    "@react-native-community/cli-tools": "^6.1.0",
     "@react-native-community/cli-types": "^6.0.0",
-    "@react-native-community/cli-plugin-metro": "^6.0.0",
     "appdirsjs": "^1.2.4",
     "chalk": "^3.0.0",
     "command-exists": "^1.2.8",

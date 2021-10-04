@@ -2,35 +2,38 @@ import UpgradeTestingMethods from './upgrade-testing-methods';
 
 jest.mock(
   '/project/root/node_modules/react-native/package.json',
-  () => ({name: 'react-native', version: '0.57.8'}),
+  () => ({name: 'react-native-tvos', version: '0.62.2-1'}),
   {virtual: true},
 );
 jest.mock(
   '/project/root/package.json',
-  () => ({name: 'TestApp', dependencies: {'react-native': '^0.57.8'}}),
+  () => ({
+    name: 'TestApp',
+    dependencies: {'react-native': 'npm:react-native-tvos@^0.62.2-1'},
+  }),
   {virtual: true},
 );
 jest.mock(
   '/project/root/NestedApp/node_modules/react-native/package.json',
-  () => ({name: 'react-native', version: '0.57.8'}),
+  () => ({name: 'react-native-tvos', version: '0.62.2-1'}),
   {virtual: true},
 );
 jest.mock(
   '/project/root/NestedApp/package.json',
   () => ({
     name: 'TestAppNested',
-    dependencies: {'react-native': '^0.57.8'},
+    dependencies: {'react-native': 'npm:react-native-tvos@^0.62.2-1'},
   }),
   {virtual: true},
 );
 
-const repoName = 'react-native';
-const currentVersion = '0.57.8';
-const newVersion = '0.58.4';
-const olderVersion = '0.56.0';
-const lessOlderVersion = '0.57.10';
+const repoName = 'react-native-tvos';
+const currentVersion = '0.62.2-1';
+const newVersion = '0.64.2-4';
+const olderVersion = '0.60.2-1';
+const lessOlderVersion = '0.63.3-0';
 
-describe('Upgrade tests for react-native repo', () => {
+describe('Upgrade tests for react-native-tvos repo', () => {
   beforeEach(() => {
     UpgradeTestingMethods.setup();
   });

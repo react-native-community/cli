@@ -87,8 +87,10 @@ function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
 
   let devices;
   try {
+    const out = execa.sync('xcrun', ['xctrace', 'list', 'devices']);
     devices = parseXctraceIOSDevicesList(
-      execa.sync('xcrun', ['xctrace', 'list', 'devices']).stderr,
+      // Xcode 12.5 introduced a change to output the list to stdout instead of stderr
+      out.stderr === '' ? out.stdout : out.stderr,
     );
   } catch (e) {
     logger.warn(
@@ -145,11 +147,11 @@ async function runOnSimulator(
 
   /**
    * If provided simulator does not exist, try simulators in following order
+   * - iPhone 13
    * - iPhone 12
    * - iPhone 11
-   * - iPhone 8
    */
-  const fallbackSimulators = ['iPhone 12', 'iPhone 11', 'iPhone 8'];
+  const fallbackSimulators = ['iPhone 13', 'iPhone 12', 'iPhone 11'];
   const selectedSimulator = fallbackSimulators.reduce((simulator, fallback) => {
     return (
       simulator || findMatchingSimulator(simulators, {simulator: fallback})
@@ -263,26 +265,41 @@ async function runOnDevice(
     args,
   );
 
-  const iosDeployInstallArgs = [
-    '--bundle',
-    getBuildPath(xcodeProject, args.configuration, buildOutput, scheme),
-    '--id',
-    selectedDevice.udid,
-    '--justlaunch',
-  ];
-
-  logger.info(`Installing and launching your app on ${selectedDevice.name}`);
-
-  const iosDeployOutput = child_process.spawnSync(
-    'ios-deploy',
-    iosDeployInstallArgs,
-    {encoding: 'utf8'},
-  );
-
-  if (iosDeployOutput.error) {
-    throw new CLIError(
-      `Failed to install the app on the device. We've encountered an error in "ios-deploy" command: ${iosDeployOutput.error.message}`,
+  if (selectedDevice.type === 'catalyst') {
+    const appPath = getBuildPath(
+      xcodeProject,
+      args.configuration,
+      buildOutput,
+      scheme,
+      true,
     );
+    const appProcess = child_process.spawn(`${appPath}/${scheme}`, [], {
+      detached: true,
+      stdio: 'ignore',
+    });
+    appProcess.unref();
+  } else {
+    const iosDeployInstallArgs = [
+      '--bundle',
+      getBuildPath(xcodeProject, args.configuration, buildOutput, scheme),
+      '--id',
+      selectedDevice.udid,
+      '--justlaunch',
+    ];
+
+    logger.info(`Installing and launching your app on ${selectedDevice.name}`);
+
+    const iosDeployOutput = child_process.spawnSync(
+      'ios-deploy',
+      iosDeployInstallArgs,
+      {encoding: 'utf8'},
+    );
+
+    if (iosDeployOutput.error) {
+      throw new CLIError(
+        `Failed to install the app on the device. We've encountered an error in "ios-deploy" command: ${iosDeployOutput.error.message}`,
+      );
+    }
   }
 
   return logger.success('Installed the app on the device.');
@@ -311,13 +328,17 @@ function buildProject(
         `(using "xcodebuild ${xcodebuildArgs.join(' ')}")`,
       )}`,
     );
-    let xcpretty: ChildProcess | any;
+    let xcodebuildOutputFormatter: ChildProcess | any;
     if (!args.verbose) {
-      xcpretty =
-        xcprettyAvailable() &&
-        child_process.spawn('xcpretty', [], {
+      if (xcbeautifyAvailable()) {
+        xcodebuildOutputFormatter = child_process.spawn('xcbeautify', [], {
           stdio: ['pipe', process.stdout, process.stderr],
         });
+      } else if (xcprettyAvailable()) {
+        xcodebuildOutputFormatter = child_process.spawn('xcpretty', [], {
+          stdio: ['pipe', process.stdout, process.stderr],
+        });
+      }
     }
     const buildProcess = child_process.spawn(
       'xcodebuild',
@@ -329,8 +350,8 @@ function buildProject(
     buildProcess.stdout.on('data', (data: Buffer) => {
       const stringData = data.toString();
       buildOutput += stringData;
-      if (xcpretty) {
-        xcpretty.stdin.write(data);
+      if (xcodebuildOutputFormatter) {
+        xcodebuildOutputFormatter.stdin.write(data);
       } else {
         if (logger.isVerbose()) {
           logger.debug(stringData);
@@ -345,8 +366,8 @@ function buildProject(
       errorOutput += data;
     });
     buildProcess.on('close', (code: number) => {
-      if (xcpretty) {
-        xcpretty.stdin.end();
+      if (xcodebuildOutputFormatter) {
+        xcodebuildOutputFormatter.stdin.end();
       } else {
         loader.stop();
       }
@@ -360,7 +381,9 @@ function buildProject(
             logs further, consider building your app with Xcode.app, by opening
             ${xcodeProject.name}.
           `,
-            buildOutput + '\n' + errorOutput,
+            xcodebuildOutputFormatter
+              ? undefined
+              : buildOutput + '\n' + errorOutput,
           ),
         );
         return;
@@ -409,6 +432,7 @@ function getBuildPath(
   configuration: string,
   buildOutput: string,
   scheme: string,
+  isCatalyst: boolean = false,
 ) {
   const buildSettings = child_process.execFileSync(
     'xcodebuild',
@@ -436,7 +460,9 @@ function getBuildPath(
     throw new CLIError('Failed to get the app name.');
   }
 
-  return `${targetBuildDir}/${executableFolderPath}`;
+  return `${targetBuildDir}${
+    isCatalyst ? '-maccatalyst' : ''
+  }/${executableFolderPath}`;
 }
 
 function getPlatformName(buildOutput: string) {
@@ -450,6 +476,17 @@ function getPlatformName(buildOutput: string) {
     );
   }
   return platformNameMatch[1];
+}
+
+function xcbeautifyAvailable() {
+  try {
+    child_process.execSync('xcbeautify --version', {
+      stdio: [0, 'pipe', 'ignore'],
+    });
+  } catch (error) {
+    return false;
+  }
+  return true;
 }
 
 function xcprettyAvailable() {
@@ -542,8 +579,8 @@ export default {
   func: runIOS,
   examples: [
     {
-      desc: 'Run on a different simulator, e.g. iPhone SE (1st generation)',
-      cmd: 'react-native run-ios --simulator "iPhone SE (1st generation)"',
+      desc: 'Run on a different simulator, e.g. iPhone SE (2nd generation)',
+      cmd: 'react-native run-ios --simulator "iPhone SE (2nd generation)"',
     },
     {
       desc: 'Pass a non-standard location of iOS directory',
@@ -565,7 +602,7 @@ export default {
       description:
         'Explicitly set simulator to use. Optionally include iOS version between ' +
         'parenthesis at the end to match an exact version: "iPhone 6 (10.0)"',
-      default: 'iPhone 12',
+      default: 'iPhone 13',
     },
     {
       name: '--configuration <string>',
@@ -598,7 +635,7 @@ export default {
     },
     {
       name: '--verbose',
-      description: 'Do not use xcpretty even if installed',
+      description: 'Do not use xcbeautify or xcpretty even if installed',
     },
     {
       name: '--port <number>',

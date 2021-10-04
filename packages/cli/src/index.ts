@@ -255,4 +255,4 @@ async function setupAndRun() {
 
 const bin = require.resolve('./bin');
 
-export {run, init, bin};
+export {run, init, bin, loadConfig};

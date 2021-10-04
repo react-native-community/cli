@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/cli",
-  "version": "5.0.1-alpha.2",
+  "version": "6.0.1",
   "description": "React Native CLI",
   "license": "MIT",
   "main": "build/index.js",
@@ -24,11 +24,12 @@
     "testEnvironment": "node"
   },
   "dependencies": {
-    "@react-native-community/cli-debugger-ui": "^5.0.1-alpha.1",
-    "@react-native-community/cli-hermes": "^5.0.1-alpha.1",
-    "@react-native-community/cli-server-api": "^5.0.1-alpha.2",
-    "@react-native-community/cli-tools": "^5.0.1-alpha.1",
-    "@react-native-community/cli-types": "^5.0.1-alpha.1",
+    "@react-native-community/cli-debugger-ui": "^6.0.0-rc.0",
+    "@react-native-community/cli-hermes": "^6.0.1",
+    "@react-native-community/cli-server-api": "^6.0.0-rc.0",
+    "@react-native-community/cli-tools": "^6.0.0-rc.0",
+    "@react-native-community/cli-types": "^6.0.0",
+    "@react-native-community/cli-plugin-metro": "^6.0.0",
     "appdirsjs": "^1.2.4",
     "chalk": "^3.0.0",
     "command-exists": "^1.2.8",
@@ -44,12 +45,6 @@
     "joi": "^17.2.1",
     "leven": "^3.1.0",
     "lodash": "^4.17.15",
-    "metro": "^0.64.0",
-    "metro-config": "^0.64.0",
-    "metro-core": "^0.64.0",
-    "metro-react-native-babel-transformer": "^0.64.0",
-    "metro-resolver": "^0.64.0",
-    "metro-runtime": "^0.64.0",
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
     "node-stream-zip": "^1.9.1",
@@ -63,7 +58,7 @@
     "wcwidth": "^1.0.1"
   },
   "peerDependencies": {
-    "react-native": ">=0.64.0-rc.0 || 0.0.0-*"
+    "react-native": "*"
   },
   "devDependencies": {
     "@types/command-exists": "^1.2.0",

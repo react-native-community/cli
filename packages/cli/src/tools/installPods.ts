@@ -16,7 +16,7 @@ type PromptCocoaPodsInstallation = {
 
 async function runPodInstall(
   loader: ora.Ora,
-  projectName: string,
+  directory: string,
   shouldHandleRepoUpdate: boolean = true,
 ) {
   try {
@@ -39,11 +39,11 @@ async function runPodInstall(
      */
     if (stderr.includes('pod repo update') && shouldHandleRepoUpdate) {
       await runPodUpdate(loader);
-      await runPodInstall(loader, projectName, false);
+      await runPodInstall(loader, directory, false);
     } else {
       loader.fail();
       throw new Error(
-        `Failed to install CocoaPods dependencies for iOS project, which is required by this template.\nPlease try again manually: "cd ./${projectName}/ios && pod install".\nCocoaPods documentation: ${chalk.dim.underline(
+        `Failed to install CocoaPods dependencies for iOS project, which is required by this template.\nPlease try again manually: "cd ./${directory}/ios && pod install".\nCocoaPods documentation: ${chalk.dim.underline(
           'https://cocoapods.org/',
         )}`,
       );
@@ -162,10 +162,10 @@ async function installCocoaPods(loader: ora.Ora) {
 }
 
 async function installPods({
-  projectName,
+  directory,
   loader,
 }: {
-  projectName: string;
+  directory: string;
   loader?: ora.Ora;
 }) {
   loader = loader || new NoopLoader();
@@ -192,7 +192,7 @@ async function installPods({
       await installCocoaPods(loader);
     }
 
-    await runPodInstall(loader, projectName);
+    await runPodInstall(loader, directory);
   } catch (error) {
     throw error;
   } finally {

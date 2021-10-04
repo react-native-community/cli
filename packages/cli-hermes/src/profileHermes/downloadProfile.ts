@@ -16,7 +16,7 @@ import {
  */
 function getLatestFile(packageName: string): string {
   try {
-    const file = execSync(`adb shell run-as ${packageName} ls cache/ -tp | grep -v /$ | egrep '.cpuprofile' | head -1
+    const file = execSync(`adb shell run-as ${packageName} ls cache/ -tp | grep -v /$ | grep -E '.cpuprofile' | head -1
         `);
     return file.toString().trim();
   } catch (e) {
@@ -73,14 +73,11 @@ export async function downloadProfile(
 
     logger.debug('Internal commands run to pull the file:');
 
-    // Copy the file from device's data to sdcard, then pull the file to a temp directory
-    execSyncWithLog(
-      `adb shell run-as ${packageNameWithSuffix} cp cache/${file} /sdcard`,
-    );
-
     // If --raw, pull the hermes profile to dstPath
     if (raw) {
-      execSyncWithLog(`adb pull /sdcard/${file} ${dstPath}`);
+      execSyncWithLog(
+        `adb shell run-as ${packageNameWithSuffix} cat cache/${file} > ${dstPath}/${file}`,
+      );
       logger.success(`Successfully pulled the file to ${dstPath}/${file}`);
     }
 
@@ -89,8 +86,9 @@ export async function downloadProfile(
       const osTmpDir = os.tmpdir();
       const tempFilePath = path.join(osTmpDir, file);
 
-      execSyncWithLog(`adb pull /sdcard/${file} ${tempFilePath}`);
-
+      execSyncWithLog(
+        `adb shell run-as ${packageName} cat cache/${file} > ${tempFilePath}`,
+      );
       // If path to source map is not given
       if (!sourcemapPath) {
         // Get or generate the source map

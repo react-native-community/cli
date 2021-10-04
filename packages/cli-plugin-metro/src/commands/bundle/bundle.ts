@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import {Config} from '@react-native-community/cli-types';
+import type {Config} from '@react-native-community/cli-types';
 import buildBundle from './buildBundle';
 import bundleCommandLineArgs, {CommandLineArgs} from './bundleCommandLineArgs';
 

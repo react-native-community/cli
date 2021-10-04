@@ -27,7 +27,7 @@ describe('jdk', () => {
 
   beforeAll(async () => {
     environmentInfo = await getEnvironmentInfo();
-  }, 15000);
+  }, 60000);
 
   afterEach(() => {
     jest.resetAllMocks();
@@ -40,10 +40,20 @@ describe('jdk', () => {
     expect(diagnostics.needsToBeFixed).toBe(true);
   });
 
-  it('returns false if JDK version is in range', async () => {
+  it('returns false if JDK version is in range (JDK 9+ version number format)', async () => {
     // @ts-ignore
     environmentInfo.Languages.Java = {
-      version: '9',
+      version: '9.0.4',
+    };
+
+    const diagnostics = await jdk.getDiagnostics(environmentInfo);
+    expect(diagnostics.needsToBeFixed).toBe(false);
+  });
+
+  it('returns false if JDK version is in range (JDK 8 version number format)', async () => {
+    // @ts-ignore
+    environmentInfo.Languages.Java = {
+      version: '1.8.0_282',
     };
 
     const diagnostics = await jdk.getDiagnostics(environmentInfo);

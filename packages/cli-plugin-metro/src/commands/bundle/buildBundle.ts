@@ -9,13 +9,16 @@
 // @ts-ignore - no typed definition for the package
 import Server from 'metro/src/Server';
 // @ts-ignore - no typed definition for the package
-import outputBundle from 'metro/src/shared/output/bundle';
+const outputBundle = require('metro/src/shared/output/bundle');
 import path from 'path';
 import chalk from 'chalk';
 import {CommandLineArgs} from './bundleCommandLineArgs';
-import {Config} from '@react-native-community/cli-types';
+import type {Config} from '@react-native-community/cli-types';
 import saveAssets from './saveAssets';
-import loadMetroConfig from '../../tools/loadMetroConfig';
+import {
+  default as loadMetroConfig,
+  MetroConfig,
+} from '../../tools/loadMetroConfig';
 import {logger} from '@react-native-community/cli-tools';
 
 interface RequestOptions {
@@ -51,6 +54,19 @@ async function buildBundle(
     config: args.config,
   });
 
+  return buildBundleWithConfig(args, config, output);
+}
+
+/**
+ * Create a bundle using a pre-loaded Metro config. The config can be
+ * re-used for several bundling calls if multiple platforms are being
+ * bundled.
+ */
+export async function buildBundleWithConfig(
+  args: CommandLineArgs,
+  config: MetroConfig,
+  output: typeof outputBundle = outputBundle,
+) {
   if (config.resolver.platforms.indexOf(args.platform) === -1) {
     logger.error(
       `Invalid platform ${

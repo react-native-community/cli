@@ -51,6 +51,7 @@ export interface Flags {
   port: number;
   terminal: string;
   jetifier: boolean;
+  activeArchOnly: boolean;
 }
 
 type AndroidProject = NonNullable<Config['project']['android']>;
@@ -379,6 +380,12 @@ export default {
       name: '--no-jetifier',
       description:
         'Do not run "jetifier" – the AndroidX transition tool. By default it runs before Gradle to ease working with libraries that don\'t support AndroidX yet. See more at: https://www.npmjs.com/package/jetifier.',
+    },
+    {
+      name: '--active-arch-only',
+      description:
+        'Build native libraries only for the current device architecture for debug builds.',
+      default: false,
     },
   ],
 };

@@ -5,10 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
+import path from 'path';
 
 function getAdbPath() {
   return process.env.ANDROID_HOME
-    ? `${process.env.ANDROID_HOME}/platform-tools/adb`
+    ? path.join(process.env.ANDROID_HOME, 'platform-tools', 'adb')
     : 'adb';
 }
 

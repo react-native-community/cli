@@ -105,16 +105,24 @@ class ReactNativeModules {
   void addReactNativeModuleDependencies(Project appProject) {
     reactNativeModules.forEach { reactNativeModule ->
       def nameCleansed = reactNativeModule["nameCleansed"]
+      def dependencyConfiguration = reactNativeModule["dependencyConfiguration"]
       appProject.dependencies {
         if (reactNativeModulesBuildVariants.containsKey(nameCleansed)) {
           reactNativeModulesBuildVariants
             .get(nameCleansed)
-            .forEach { buildVariant ->
-              "${buildVariant}Implementation" project(path: ":${nameCleansed}")
+            .forEach { buildVariant -> 
+              if(dependencyConfiguration != null) {
+                "${buildVariant}${dependencyConfiguration}"
+              } else {
+                "${buildVariant}Implementation" project(path: ":${nameCleansed}")
+              }
             }
         } else {
-          // TODO(salakar): are other dependency scope methods such as `api` required?
-          implementation project(path: ":${nameCleansed}")
+          if(dependencyConfiguration != null) {
+            "${dependencyConfiguration}"
+          } else {
+             implementation project(path: ":${nameCleansed}")
+          }
         }
       }
     }
@@ -128,7 +136,7 @@ class ReactNativeModules {
    * @param generatedFileContentsTemplate
    */
   void generatePackagesFile(File outputDir, String generatedFileName, String generatedFileContentsTemplate) {
-    ArrayList<HashMap<String, String>>[] packages = this.reactNativeModules
+    ArrayList<HashMap<String, String>> packages = this.reactNativeModules
     String packageName = this.packageName
 
     String packageImports = ""
@@ -248,6 +256,8 @@ class ReactNativeModules {
       throw new Exception("React Native CLI failed to determine Android project configuration. This is likely due to misconfiguration. Config output:\n${json.toMapString()}")
     }
 
+    def engine = new groovy.text.SimpleTemplateEngine()
+
     dependencies.each { name, value ->
       def platformsConfig = value["platforms"];
       def androidConfig = platformsConfig["android"]
@@ -265,6 +275,15 @@ class ReactNativeModules {
         if (!androidConfig["buildTypes"].isEmpty()) {
           reactNativeModulesBuildVariants.put(nameCleansed, androidConfig["buildTypes"])
         }
+        if(androidConfig.containsKey("dependencyConfiguration")) {
+          reactNativeModuleConfig.put("dependencyConfiguration", androidConfig["dependencyConfiguration"])
+        } else if (project.containsKey("dependencyConfiguration")) {
+          def bindings = ["dependencyName": nameCleansed]
+          def template = engine.createTemplate(project["dependencyConfiguration"]).make(bindings)
+
+          reactNativeModuleConfig.put("dependencyConfiguration", template.toString())
+        }
+
         this.logger.trace("${LOG_PREFIX}'${name}': ${reactNativeModuleConfig.toMapString()}")
         
         reactNativeModules.add(reactNativeModuleConfig)

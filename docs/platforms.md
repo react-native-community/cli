@@ -60,10 +60,9 @@ type PlatformConfig<ProjectParams, ProjectConfig, DependencyConfig> = {
 
 ### npmPackageName
 
-Returns the name of the npm package that should be used as the source for react-native JS code for platforms that provide platform specific overrides to core JS files.  This causes the default metro config to redirect imports of react-native to another package based when bundling for that platform.  The package specified should provide a complete react-native implementation for that platform.
+Returns the name of the npm package that should be used as the source for react-native JS code for platforms that provide platform specific overrides to core JS files. This causes the default metro config to redirect imports of react-native to another package based when bundling for that platform. The package specified should provide a complete react-native implementation for that platform.
 
 If this property is not specified, it is assumed that the code in core `react-native` works for the platform.
-
 
 ### projectConfig
 
@@ -112,6 +111,7 @@ type ProjectConfigAndroidT = {
   packageName: string;
   packageFolder: string;
   appName: string;
+  dependencyConfiguration?: string;
 };
 ```
 
@@ -145,6 +145,7 @@ type DependencyConfigAndroidT = {
   packageInstance: string;
   manifestPath: string;
   packageName: string;
+  dependencyConfiguration?: string;
 };
 ```
 

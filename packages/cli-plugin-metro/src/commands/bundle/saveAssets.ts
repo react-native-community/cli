@@ -14,7 +14,7 @@ import filterPlatformAssetScales from './filterPlatformAssetScales';
 import getAssetDestPathAndroid from './getAssetDestPathAndroid';
 import getAssetDestPathIOS from './getAssetDestPathIOS';
 import {logger} from '@react-native-community/cli-tools';
-import {AssetData} from './buildBundle';
+import type {AssetData} from './buildBundle';
 
 interface CopiedFiles {
   [src: string]: string;

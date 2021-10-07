@@ -186,7 +186,7 @@ test('init uses npm as the package manager with --npm', () => {
   });
 });
 
-test.only('init replaces templateName everywhere', () => {
+test('init replaces templateName everywhere', () => {
   createCustomTemplateFiles();
   let templatePath = path.resolve(DIR, 'custom', 'template');
   if (process.platform === 'win32') {

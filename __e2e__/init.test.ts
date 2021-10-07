@@ -207,6 +207,11 @@ test('init replaces templateName everywhere', () => {
 
   const initDirPath = path.join(DIR, 'TestInit');
 
-  const packageJson = fs.readFileSync(path.join(initDirPath, 'package.json'), 'utf8');
-  expect(packageJson).toEqual(packageJsonContent.replace(new RegExp('HelloWorld', 'g'), 'TestInit'))
+  const packageJson = fs.readFileSync(
+    path.join(initDirPath, 'package.json'),
+    'utf8',
+  );
+  expect(packageJson).toEqual(
+    packageJsonContent.replace(new RegExp('HelloWorld', 'g'), 'TestInit'),
+  );
 });

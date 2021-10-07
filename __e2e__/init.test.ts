@@ -211,7 +211,11 @@ test('init replaces templateName everywhere', () => {
     path.join(initDirPath, 'package.json'),
     'utf8',
   );
+  const file = fs.readFileSync(path.join(initDirPath, 'file'), 'utf8')
+
+  expect(file).toEqual('HelloWorld');
   expect(packageJson).toEqual(
     packageJsonContent.replace(new RegExp('HelloWorld', 'g'), 'TestInit'),
   );
+  expect(fs.existsSync(path.join(initDirPath, 'dir/HelloWorld')));
 });

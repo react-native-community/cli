@@ -9,6 +9,15 @@ import {
 
 const DIR = getTempDirectory('command-init');
 
+const packageJsonContent = `
+{
+  "name": "HelloWorld",
+  "scripts: {
+    "build": "react-native run-ios --scheme HelloWorldDevelopment"
+  }
+}
+`;
+
 function createCustomTemplateFiles() {
   writeFiles(DIR, {
     'custom/template/template.config.js': `module.exports = {
@@ -17,9 +26,9 @@ function createCustomTemplateFiles() {
     };`,
     'custom/template/package.json':
       '{ "name": "template", "version": "0.0.1" }',
-    'custom/template/template-dir/package.json': '{}',
-    'custom/template/template-dir/file': '',
-    'custom/template/template-dir/dir/file': '',
+    'custom/template/template-dir/package.json': packageJsonContent,
+    'custom/template/template-dir/file': 'HelloWorld',
+    'custom/template/template-dir/dir/HelloWorld': 'HelloWorld',
   });
 }
 
@@ -175,4 +184,29 @@ test('init uses npm as the package manager with --npm', () => {
   customTemplateCopiedFilesForNpm.forEach((file) => {
     expect(fs.existsSync(path.join(initDirPath, file))).toBe(true);
   });
+});
+
+test.only('init replaces templateName everywhere', () => {
+  createCustomTemplateFiles();
+  let templatePath = path.resolve(DIR, 'custom', 'template');
+  if (process.platform === 'win32') {
+    templatePath = templatePath.split('\\').join('/');
+  }
+
+  const {stdout} = runCLI(DIR, [
+    'init',
+    '--template',
+    `file://${templatePath}`,
+    'TestInit',
+  ]);
+
+  expect(stdout).toContain('Run instructions');
+
+  // make sure we don't leave garbage
+  expect(fs.readdirSync(DIR)).toContain('custom');
+
+  const initDirPath = path.join(DIR, 'TestInit');
+
+  const packageJson = fs.readFileSync(path.join(initDirPath, 'package.json'), 'utf8');
+  expect(packageJson).toEqual(packageJsonContent.replace(new RegExp('HelloWorld', 'g'), 'TestInit'))
 });

@@ -399,11 +399,17 @@ function bootSimulator(selectedSimulator: Device) {
   logger.info(`Launching ${simulatorFullName}`);
   try {
     child_process.spawnSync('xcrun', [
-      'instruments',
-      '-w',
+      'simctl',
+      'boot',
       selectedSimulator.udid,
     ]);
   } catch (_ignored) {
+    // before Xcode 13 we wre using
+    // child_process.spawnSync('xcrun', [
+    //   'instruments',
+    //   '-w',
+    //   selectedSimulator.udid,
+    // ]);
     // instruments always fail with 255 because it expects more arguments,
     // but we want it to only launch the simulator
   }

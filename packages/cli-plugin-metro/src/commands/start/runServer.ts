@@ -17,7 +17,7 @@ import {
 import {Config} from '@react-native-community/cli-types';
 
 import loadMetroConfig from '../../tools/loadMetroConfig';
-import releaseChecker from '../../tools/releaseChecker';
+import {releaseChecker} from '@react-native-community/cli-tools';
 import enableWatchMode from './watchMode';
 
 export type Args = {
@@ -128,7 +128,7 @@ function getReporterImpl(customLogReporterPath: string | undefined) {
     // as expected. eg: require('my-package/reporter');
     return require(customLogReporterPath);
   } catch (e) {
-    if (e.code !== 'MODULE_NOT_FOUND') {
+    if ((<any>e).code !== 'MODULE_NOT_FOUND') {
       throw e;
     }
     // If that doesn't work, then we next try relative to the cwd, eg:

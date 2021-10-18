@@ -398,11 +398,7 @@ function bootSimulator(selectedSimulator: Device) {
   const simulatorFullName = formattedDeviceName(selectedSimulator);
   logger.info(`Launching ${simulatorFullName}`);
 
-  child_process.spawnSync('xcrun', [
-    'simctl',
-    'boot',
-    selectedSimulator.udid,
-  ]);
+  child_process.spawnSync('xcrun', ['simctl', 'boot', selectedSimulator.udid]);
 }
 
 function getTargetPaths(buildSettings: string) {

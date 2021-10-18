@@ -397,22 +397,12 @@ function buildProject(
 function bootSimulator(selectedSimulator: Device) {
   const simulatorFullName = formattedDeviceName(selectedSimulator);
   logger.info(`Launching ${simulatorFullName}`);
-  try {
-    child_process.spawnSync('xcrun', [
-      'simctl',
-      'boot',
-      selectedSimulator.udid,
-    ]);
-  } catch (_ignored) {
-    // before Xcode 13 we wre using
-    // child_process.spawnSync('xcrun', [
-    //   'instruments',
-    //   '-w',
-    //   selectedSimulator.udid,
-    // ]);
-    // instruments always fail with 255 because it expects more arguments,
-    // but we want it to only launch the simulator
-  }
+
+  child_process.spawnSync('xcrun', [
+    'simctl',
+    'boot',
+    selectedSimulator.udid,
+  ]);
 }
 
 function getTargetPaths(buildSettings: string) {

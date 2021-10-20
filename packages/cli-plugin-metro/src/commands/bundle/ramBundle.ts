@@ -9,7 +9,7 @@
 import outputUnbundle from 'metro/src/shared/output/RamBundle';
 import {withOutput as bundleWithOutput} from './bundle';
 import bundleCommandLineArgs, {CommandLineArgs} from './bundleCommandLineArgs';
-import {Config} from '@react-native-community/cli-types';
+import type {Config} from '@react-native-community/cli-types';
 
 /**
  * Builds the bundle starting to look for dependencies at the given entry path.
@@ -30,3 +30,5 @@ export default {
     default: false,
   }),
 };
+
+export {ramBundle};

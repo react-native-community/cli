@@ -147,11 +147,11 @@ async function runOnSimulator(
 
   /**
    * If provided simulator does not exist, try simulators in following order
+   * - iPhone 13
    * - iPhone 12
    * - iPhone 11
-   * - iPhone 8
    */
-  const fallbackSimulators = ['iPhone 12', 'iPhone 11', 'iPhone 8'];
+  const fallbackSimulators = ['iPhone 13', 'iPhone 12', 'iPhone 11'];
   const selectedSimulator = fallbackSimulators.reduce((simulator, fallback) => {
     return (
       simulator || findMatchingSimulator(simulators, {simulator: fallback})
@@ -397,16 +397,8 @@ function buildProject(
 function bootSimulator(selectedSimulator: Device) {
   const simulatorFullName = formattedDeviceName(selectedSimulator);
   logger.info(`Launching ${simulatorFullName}`);
-  try {
-    child_process.spawnSync('xcrun', [
-      'instruments',
-      '-w',
-      selectedSimulator.udid,
-    ]);
-  } catch (_ignored) {
-    // instruments always fail with 255 because it expects more arguments,
-    // but we want it to only launch the simulator
-  }
+
+  child_process.spawnSync('xcrun', ['simctl', 'boot', selectedSimulator.udid]);
 }
 
 function getTargetPaths(buildSettings: string) {
@@ -579,8 +571,8 @@ export default {
   func: runIOS,
   examples: [
     {
-      desc: 'Run on a different simulator, e.g. iPhone SE (1st generation)',
-      cmd: 'react-native run-ios --simulator "iPhone SE (1st generation)"',
+      desc: 'Run on a different simulator, e.g. iPhone SE (2nd generation)',
+      cmd: 'react-native run-ios --simulator "iPhone SE (2nd generation)"',
     },
     {
       desc: 'Pass a non-standard location of iOS directory',
@@ -602,7 +594,7 @@ export default {
       description:
         'Explicitly set simulator to use. Optionally include iOS version between ' +
         'parenthesis at the end to match an exact version: "iPhone 6 (10.0)"',
-      default: 'iPhone 12',
+      default: 'iPhone 13',
     },
     {
       name: '--configuration <string>',

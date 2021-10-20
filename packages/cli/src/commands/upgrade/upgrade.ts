@@ -8,10 +8,26 @@ import {logger, CLIError, fetch} from '@react-native-community/cli-tools';
 import * as PackageManager from '../../tools/packageManager';
 import installPods from '../../tools/installPods';
 
+type UpgradeError = {message: string; stderr: string};
+
 // https://react-native-community.github.io/upgrade-helper/?from=0.59.10&to=0.60.0-rc.3
-const webDiffUrl = 'https://react-native-community.github.io/upgrade-helper';
-const rawDiffUrl =
-  'https://raw.githubusercontent.com/react-native-community/rn-diff-purge/diffs/diffs';
+
+type RepoNameType = 'react-native' | 'react-native-tvos';
+
+const repos = {
+  'react-native': {
+    rawDiffUrl:
+      'https://raw.githubusercontent.com/react-native-community/rn-diff-purge/diffs/diffs',
+    webDiffUrl: 'https://react-native-community.github.io/upgrade-helper',
+    dependencyName: 'react-native',
+  },
+  'react-native-tvos': {
+    rawDiffUrl:
+      'https://raw.githubusercontent.com/react-native-tvos/rn-diff-purge-tv/diffs/diffs',
+    webDiffUrl: 'https://react-native-community.github.io/upgrade-helper',
+    dependencyName: 'react-native@npm:react-native-tvos',
+  },
+};
 
 const isConnected = (output: string): boolean => {
   // there is no reliable way of checking for internet connectivity, so we should just
@@ -38,23 +54,20 @@ const checkForErrors = (output: string): void => {
   }
 };
 
-const getLatestRNVersion = async (): Promise<string> => {
+const getLatestRNVersion = async (repoName: RepoNameType): Promise<string> => {
   logger.info('No version passed. Fetching latest...');
-  const {stdout, stderr} = await execa('npm', [
-    'info',
-    'react-native',
-    'version',
-  ]);
+  const {stdout, stderr} = await execa('npm', ['info', repoName, 'version']);
   checkForErrors(stderr);
   return stdout;
 };
 
 const getRNPeerDeps = async (
   version: string,
+  repoName: RepoNameType,
 ): Promise<{[key: string]: string}> => {
   const {stdout, stderr} = await execa('npm', [
     'info',
-    `react-native@${version}`,
+    `${repoName}@${version}`,
     'peerDependencies',
     '--json',
   ]);
@@ -66,6 +79,7 @@ const getPatch = async (
   currentVersion: string,
   newVersion: string,
   config: Config,
+  repoName: RepoNameType,
 ) => {
   let patch;
 
@@ -73,12 +87,12 @@ const getPatch = async (
 
   try {
     const {data} = await fetch(
-      `${rawDiffUrl}/${currentVersion}..${newVersion}.diff`,
+      `${repos[repoName].rawDiffUrl}/${currentVersion}..${newVersion}.diff`,
     );
 
     patch = data;
   } catch (error) {
-    logger.error(error.message);
+    logger.error((error as UpgradeError).message);
     logger.error(
       `Failed to fetch diff for react-native@${newVersion}. Maybe it's not released yet?`,
     );
@@ -125,13 +139,14 @@ const getVersionToUpgradeTo = async (
   argv: Array<string>,
   currentVersion: string,
   projectDir: string,
+  repoName: RepoNameType,
 ) => {
   const argVersion = argv[0];
   const semverCoercedVersion = semver.coerce(argVersion);
   const newVersion = argVersion
     ? semver.valid(argVersion) ||
       (semverCoercedVersion ? semverCoercedVersion.version : null)
-    : await getLatestRNVersion();
+    : await getLatestRNVersion(repoName);
 
   if (!newVersion) {
     logger.error(
@@ -151,14 +166,16 @@ const getVersionToUpgradeTo = async (
       dependencies: {'react-native': version},
     } = require(path.join(projectDir, 'package.json'));
 
-    if (semver.satisfies(newVersion, version)) {
+    const parsedVersion = version.split('@')[version.split('@').length - 1];
+
+    if (semver.satisfies(newVersion, parsedVersion)) {
       logger.warn(
-        `Specified version "${newVersion}" is already installed in node_modules and it satisfies "${version}" semver range. No need to upgrade`,
+        `Specified version "${newVersion}" is already installed in node_modules and it satisfies "${parsedVersion}" semver range. No need to upgrade`,
       );
       return null;
     }
     logger.error(
-      `Dependency mismatch. Specified version "${newVersion}" is already installed in node_modules and it doesn't satisfy "${version}" semver range of your "react-native" dependency. Please re-install your dependencies`,
+      `Dependency mismatch. Specified version "${newVersion}" is already installed in node_modules and it doesn't satisfy "${parsedVersion}" semver range of your "react-native" dependency. Please re-install your dependencies`,
     );
     return null;
   }
@@ -166,13 +183,17 @@ const getVersionToUpgradeTo = async (
   return newVersion;
 };
 
-const installDeps = async (root: string, newVersion: string) => {
+const installDeps = async (
+  root: string,
+  newVersion: string,
+  repoName: RepoNameType,
+) => {
   logger.info(
     `Installing "react-native@${newVersion}" and its peer dependencies...`,
   );
-  const peerDeps = await getRNPeerDeps(newVersion);
+  const peerDeps = await getRNPeerDeps(newVersion, repoName);
   const deps = [
-    `react-native@${newVersion}`,
+    `${repos[repoName].dependencyName}@${newVersion}`,
     ...Object.keys(peerDeps).map((module) => `${module}@${peerDeps[module]}`),
   ];
   await PackageManager.install(deps, {
@@ -204,9 +225,11 @@ const installCocoaPodsDeps = async (projectDir: string) => {
         directory: projectDir.split('/').pop() || '',
       });
     } catch (error) {
-      if (error.stderr) {
+      if ((error as UpgradeError).stderr) {
         logger.debug(
-          `"pod install" or "pod repo update" failed. Error output:\n${error.stderr}`,
+          `"pod install" or "pod repo update" failed. Error output:\n${
+            (error as UpgradeError).stderr
+          }`,
         );
       }
       logger.error(
@@ -220,6 +243,7 @@ const applyPatch = async (
   currentVersion: string,
   newVersion: string,
   tmpPatchFile: string,
+  repoName: RepoNameType,
 ) => {
   const defaultExcludes = ['package.json'];
   let filesThatDontExist: Array<string> = [];
@@ -249,7 +273,9 @@ const applyPatch = async (
       ]);
       logger.info('Applying diff...');
     } catch (error) {
-      const errorLines: Array<string> = error.stderr.split('\n');
+      const errorLines: Array<string> = (error as UpgradeError).stderr.split(
+        '\n',
+      );
       filesThatDontExist = [
         ...errorLines
           .filter((x) => x.includes('does not exist in index'))
@@ -276,7 +302,7 @@ const applyPatch = async (
             .join(
               '\n',
             )}\nPlease make sure to check the actual changes after the upgrade command is finished.\nYou can find them in our Upgrade Helper web app: ${chalk.underline.dim(
-            `${webDiffUrl}/?from=${currentVersion}&to=${newVersion}`,
+            `${repos[repoName].webDiffUrl}/?from=${currentVersion}&to=${newVersion}`,
           )}`,
         );
       }
@@ -296,8 +322,10 @@ const applyPatch = async (
       ]);
     }
   } catch (error) {
-    if (error.stderr) {
-      logger.debug(`"git apply" failed. Error output:\n${error.stderr}`);
+    if ((error as UpgradeError).stderr) {
+      logger.debug(
+        `"git apply" failed. Error output:\n${(error as UpgradeError).stderr}`,
+      );
     }
     logger.error(
       'Automatically applying diff failed. We did our best to automatically upgrade as many files as possible',
@@ -313,22 +341,26 @@ const applyPatch = async (
 async function upgrade(argv: Array<string>, ctx: Config) {
   const tmpPatchFile = 'tmp-upgrade-rn.patch';
   const projectDir = ctx.root;
-  const {version: currentVersion} = require(path.join(
+  const {name: rnName, version: currentVersion} = require(path.join(
     projectDir,
     'node_modules/react-native/package.json',
   ));
+
+  const repoName: RepoNameType =
+    rnName === 'react-native-tvos' ? 'react-native-tvos' : 'react-native';
 
   const newVersion = await getVersionToUpgradeTo(
     argv,
     currentVersion,
     projectDir,
+    repoName,
   );
 
   if (!newVersion) {
     return;
   }
 
-  const patch = await getPatch(currentVersion, newVersion, ctx);
+  const patch = await getPatch(currentVersion, newVersion, ctx, repoName);
 
   if (patch === null) {
     return;
@@ -336,7 +368,7 @@ async function upgrade(argv: Array<string>, ctx: Config) {
 
   if (patch === '') {
     logger.info('Diff has no changes to apply, proceeding further');
-    await installDeps(projectDir, newVersion);
+    await installDeps(projectDir, newVersion, repoName);
     await installCocoaPodsDeps(projectDir);
 
     logger.success(
@@ -348,9 +380,14 @@ async function upgrade(argv: Array<string>, ctx: Config) {
 
   try {
     fs.writeFileSync(tmpPatchFile, patch);
-    patchSuccess = await applyPatch(currentVersion, newVersion, tmpPatchFile);
+    patchSuccess = await applyPatch(
+      currentVersion,
+      newVersion,
+      tmpPatchFile,
+      repoName,
+    );
   } catch (error) {
-    throw new Error(error.stderr || error);
+    throw new Error((error as UpgradeError).stderr || (error as string));
   } finally {
     try {
       fs.unlinkSync(tmpPatchFile);
@@ -363,7 +400,7 @@ async function upgrade(argv: Array<string>, ctx: Config) {
         logger.warn(
           'Continuing after failure. Some of the files are upgraded but you will need to deal with conflicts manually',
         );
-        await installDeps(projectDir, newVersion);
+        await installDeps(projectDir, newVersion, repoName);
         logger.info('Running "git status" to check what changed...');
         await execa('git', ['status'], {stdio: 'inherit'});
       } else {
@@ -372,7 +409,7 @@ async function upgrade(argv: Array<string>, ctx: Config) {
         );
       }
     } else {
-      await installDeps(projectDir, newVersion);
+      await installDeps(projectDir, newVersion, repoName);
       await installCocoaPodsDeps(projectDir);
       logger.info('Running "git status" to check what changed...');
       await execa('git', ['status'], {stdio: 'inherit'});
@@ -393,10 +430,10 @@ async function upgrade(argv: Array<string>, ctx: Config) {
         `https://github.com/facebook/react-native/releases/tag/v${newVersion}`,
       )}
 • Manual Upgrade Helper: ${chalk.underline.dim(
-        `${webDiffUrl}/?from=${currentVersion}&to=${newVersion}`,
+        `${repos[repoName].webDiffUrl}/?from=${currentVersion}&to=${newVersion}`,
       )}
 • Git diff: ${chalk.underline.dim(
-        `${rawDiffUrl}/${currentVersion}..${newVersion}.diff`,
+        `${repos[repoName].rawDiffUrl}/${currentVersion}..${newVersion}.diff`,
       )}`);
 
       throw new CLIError(

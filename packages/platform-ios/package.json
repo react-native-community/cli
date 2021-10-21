@@ -14,7 +14,7 @@
     "lodash": "^4.17.15",
     "ora": "^3.4.0",
     "plist": "^3.0.2",
-    "xcode": "^2.0.0"
+    "xcode": "^3.0.0"
   },
   "devDependencies": {
     "@react-native-community/cli-types": "^6.0.0",

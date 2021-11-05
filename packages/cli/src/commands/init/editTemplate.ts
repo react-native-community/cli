@@ -1,7 +1,11 @@
-import fs from 'fs-extra';
 import path from 'path';
 import {logger} from '@react-native-community/cli-tools';
 import walk from '../../tools/walk';
+
+// We need `graceful-fs` behavior around async file renames on Win32.
+// `gracefulify` does not support patching `fs.promises`. Use `fs-extra`, which
+// exposes its own promise-based interface over `graceful-fs`.
+import fs from 'fs-extra';
 
 interface PlaceholderConfig {
   projectName: string;

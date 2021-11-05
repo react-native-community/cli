@@ -1,4 +1,4 @@
-import {promises as fs} from 'fs';
+import fs from 'fs-extra';
 import path from 'path';
 import {logger} from '@react-native-community/cli-tools';
 import walk from '../../tools/walk';

@@ -1,4 +1,4 @@
-import fs from 'fs-extra';
+import {promises as fs} from 'fs';
 import path from 'path';
 import {logger} from '@react-native-community/cli-tools';
 import walk from '../../tools/walk';
@@ -96,7 +96,7 @@ export async function changePlaceholderInTemplate({
     if (shouldIgnoreFile(filePath)) {
       continue;
     }
-    if (!fs.statSync(filePath).isDirectory()) {
+    if (!(await fs.stat(filePath)).isDirectory()) {
       await replaceNameInUTF8File(filePath, projectName, placeholderName);
       await replaceNameInUTF8File(filePath, projectTitle, placeholderTitle);
     }

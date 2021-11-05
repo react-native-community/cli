@@ -16,14 +16,14 @@ interface PlaceholderConfig {
 */
 const DEFAULT_TITLE_PLACEHOLDER = 'Hello App Display Name';
 
-function replaceNameInUTF8File(
+async function replaceNameInUTF8File(
   filePath: string,
   projectName: string,
   templateName: string,
 ) {
   logger.debug(`Replacing in ${filePath}`);
   const isPackageJson = path.basename(filePath) === 'package.json';
-  const fileContent = fs.readFileSync(filePath, 'utf8');
+  const fileContent = await fs.readFile(filePath, 'utf8');
   const replacedFileContent = fileContent
     .replace(new RegExp(templateName, 'g'), projectName)
     .replace(
@@ -32,11 +32,11 @@ function replaceNameInUTF8File(
     );
 
   if (fileContent !== replacedFileContent) {
-    fs.writeFileSync(filePath, replacedFileContent, 'utf8');
+    await fs.writeFile(filePath, replacedFileContent, 'utf8');
   }
 
   if (isPackageJson) {
-    fs.writeFileSync(
+    await fs.writeFile(
       filePath,
       fileContent.replace(templateName, projectName.toLowerCase()),
       'utf8',
@@ -94,11 +94,11 @@ export async function changePlaceholderInTemplate({
 
   for (const filePath of walk(process.cwd()).reverse()) {
     if (shouldIgnoreFile(filePath)) {
-      return;
+      continue;
     }
     if (!fs.statSync(filePath).isDirectory()) {
-      replaceNameInUTF8File(filePath, projectName, placeholderName);
-      replaceNameInUTF8File(filePath, projectTitle, placeholderTitle);
+      await replaceNameInUTF8File(filePath, projectName, placeholderName);
+      await replaceNameInUTF8File(filePath, projectTitle, placeholderTitle);
     }
     if (shouldRenameFile(filePath, placeholderName)) {
       await renameFile(filePath, placeholderName, projectName);

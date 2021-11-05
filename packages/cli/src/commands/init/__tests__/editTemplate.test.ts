@@ -38,10 +38,10 @@ afterEach(() => {
   fs.removeSync(testPath);
 });
 
-test('should edit template', () => {
+test('should edit template', async () => {
   jest.spyOn(process, 'cwd').mockImplementation(() => testPath);
 
-  changePlaceholderInTemplate({
+  await changePlaceholderInTemplate({
     projectName: PROJECT_NAME,
     placeholderName: PLACEHOLDER_NAME,
   });
@@ -90,10 +90,10 @@ test('should edit template', () => {
   ).toMatchSnapshot();
 });
 
-test('should edit template with custom title', () => {
+test('should edit template with custom title', async () => {
   jest.spyOn(process, 'cwd').mockImplementation(() => testPath);
 
-  changePlaceholderInTemplate({
+  await changePlaceholderInTemplate({
     projectName: PROJECT_NAME,
     placeholderName: PLACEHOLDER_NAME,
     projectTitle: PROJECT_TITLE,
@@ -134,8 +134,8 @@ describe('changePlaceholderInTemplate', () => {
     jest.resetAllMocks();
   });
 
-  test(`should produce a lowercased version of "${PROJECT_NAME}" in package.json "name" field`, () => {
-    changePlaceholderInTemplate({
+  test(`should produce a lowercased version of "${PROJECT_NAME}" in package.json "name" field`, async () => {
+    await changePlaceholderInTemplate({
       projectName: PROJECT_NAME,
       placeholderName: PLACEHOLDER_NAME,
     });

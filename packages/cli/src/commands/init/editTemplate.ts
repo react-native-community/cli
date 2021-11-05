@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'fs-extra';
 import path from 'path';
 import {logger} from '@react-native-community/cli-tools';
 import walk from '../../tools/walk';
@@ -44,7 +44,7 @@ function replaceNameInUTF8File(
   }
 }
 
-function renameFile(filePath: string, oldName: string, newName: string) {
+async function renameFile(filePath: string, oldName: string, newName: string) {
   const newFileName = path.join(
     path.dirname(filePath),
     path.basename(filePath).replace(new RegExp(oldName, 'g'), newName),
@@ -52,7 +52,7 @@ function renameFile(filePath: string, oldName: string, newName: string) {
 
   logger.debug(`Renaming ${filePath} -> file:${newFileName}`);
 
-  fs.renameSync(filePath, newFileName);
+  await fs.rename(filePath, newFileName);
 }
 
 function shouldRenameFile(filePath: string, nameToReplace: string) {
@@ -74,17 +74,17 @@ const UNDERSCORED_DOTFILES = [
   'editorconfig',
 ];
 
-function processDotfiles(filePath: string) {
+async function processDotfiles(filePath: string) {
   const dotfile = UNDERSCORED_DOTFILES.find((e) => filePath.includes(`_${e}`));
 
   if (dotfile === undefined) {
     return;
   }
 
-  renameFile(filePath, `_${dotfile}`, `.${dotfile}`);
+  await renameFile(filePath, `_${dotfile}`, `.${dotfile}`);
 }
 
-export function changePlaceholderInTemplate({
+export async function changePlaceholderInTemplate({
   projectName,
   placeholderName,
   placeholderTitle = DEFAULT_TITLE_PLACEHOLDER,
@@ -92,27 +92,25 @@ export function changePlaceholderInTemplate({
 }: PlaceholderConfig) {
   logger.debug(`Changing ${placeholderName} for ${projectName} in template`);
 
-  walk(process.cwd())
-    .reverse()
-    .forEach((filePath: string) => {
-      if (shouldIgnoreFile(filePath)) {
-        return;
-      }
-      if (!fs.statSync(filePath).isDirectory()) {
-        replaceNameInUTF8File(filePath, projectName, placeholderName);
-        replaceNameInUTF8File(filePath, projectTitle, placeholderTitle);
-      }
-      if (shouldRenameFile(filePath, placeholderName)) {
-        renameFile(filePath, placeholderName, projectName);
-      }
-      if (shouldRenameFile(filePath, placeholderName.toLowerCase())) {
-        renameFile(
-          filePath,
-          placeholderName.toLowerCase(),
-          projectName.toLowerCase(),
-        );
-      }
+  for (const filePath of walk(process.cwd()).reverse()) {
+    if (shouldIgnoreFile(filePath)) {
+      return;
+    }
+    if (!fs.statSync(filePath).isDirectory()) {
+      replaceNameInUTF8File(filePath, projectName, placeholderName);
+      replaceNameInUTF8File(filePath, projectTitle, placeholderTitle);
+    }
+    if (shouldRenameFile(filePath, placeholderName)) {
+      await renameFile(filePath, placeholderName, projectName);
+    }
+    if (shouldRenameFile(filePath, placeholderName.toLowerCase())) {
+      await renameFile(
+        filePath,
+        placeholderName.toLowerCase(),
+        projectName.toLowerCase(),
+      );
+    }
 
-      processDotfiles(filePath);
-    });
+    processDotfiles(filePath);
+  }
 }

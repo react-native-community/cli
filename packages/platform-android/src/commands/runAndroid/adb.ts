@@ -34,8 +34,8 @@ function parseDevicesResult(result: string): Array<string> {
  */
 function getDevices(adbPath: string): Array<string> {
   try {
-    //If the path includes spaces (for example, the name of the USER_NAME) in Windows...
-    if (adbPath.includes(' ') && process.platform.startsWith('win')) {
+    //If the path includes spaces (for example, the name of the USER_NAME)
+    if (adbPath.includes(' ')) {
       adbPath = `"${adbPath}"`;
     }
 

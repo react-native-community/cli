@@ -111,6 +111,6 @@ export async function changePlaceholderInTemplate({
       );
     }
 
-    processDotfiles(filePath);
+    await processDotfiles(filePath);
   }
 }

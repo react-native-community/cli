@@ -111,7 +111,7 @@ async function createFromTemplate({
     loader.succeed();
     loader.start('Processing template');
 
-    changePlaceholderInTemplate({
+    await changePlaceholderInTemplate({
       projectName,
       projectTitle,
       placeholderName: templateConfig.placeholderName,

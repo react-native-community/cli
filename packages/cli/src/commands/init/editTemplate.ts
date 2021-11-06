@@ -1,7 +1,11 @@
-import fs from 'fs';
 import path from 'path';
 import {logger} from '@react-native-community/cli-tools';
 import walk from '../../tools/walk';
+
+// We need `graceful-fs` behavior around async file renames on Win32.
+// `gracefulify` does not support patching `fs.promises`. Use `fs-extra`, which
+// exposes its own promise-based interface over `graceful-fs`.
+import fs from 'fs-extra';
 
 interface PlaceholderConfig {
   projectName: string;
@@ -16,14 +20,14 @@ interface PlaceholderConfig {
 */
 const DEFAULT_TITLE_PLACEHOLDER = 'Hello App Display Name';
 
-function replaceNameInUTF8File(
+async function replaceNameInUTF8File(
   filePath: string,
   projectName: string,
   templateName: string,
 ) {
   logger.debug(`Replacing in ${filePath}`);
   const isPackageJson = path.basename(filePath) === 'package.json';
-  const fileContent = fs.readFileSync(filePath, 'utf8');
+  const fileContent = await fs.readFile(filePath, 'utf8');
   const replacedFileContent = fileContent
     .replace(new RegExp(templateName, 'g'), projectName)
     .replace(
@@ -32,11 +36,11 @@ function replaceNameInUTF8File(
     );
 
   if (fileContent !== replacedFileContent) {
-    fs.writeFileSync(filePath, replacedFileContent, 'utf8');
+    await fs.writeFile(filePath, replacedFileContent, 'utf8');
   }
 
   if (isPackageJson) {
-    fs.writeFileSync(
+    await fs.writeFile(
       filePath,
       fileContent.replace(templateName, projectName.toLowerCase()),
       'utf8',
@@ -44,7 +48,7 @@ function replaceNameInUTF8File(
   }
 }
 
-function renameFile(filePath: string, oldName: string, newName: string) {
+async function renameFile(filePath: string, oldName: string, newName: string) {
   const newFileName = path.join(
     path.dirname(filePath),
     path.basename(filePath).replace(new RegExp(oldName, 'g'), newName),
@@ -52,7 +56,7 @@ function renameFile(filePath: string, oldName: string, newName: string) {
 
   logger.debug(`Renaming ${filePath} -> file:${newFileName}`);
 
-  fs.renameSync(filePath, newFileName);
+  await fs.rename(filePath, newFileName);
 }
 
 function shouldRenameFile(filePath: string, nameToReplace: string) {
@@ -74,17 +78,17 @@ const UNDERSCORED_DOTFILES = [
   'editorconfig',
 ];
 
-function processDotfiles(filePath: string) {
+async function processDotfiles(filePath: string) {
   const dotfile = UNDERSCORED_DOTFILES.find((e) => filePath.includes(`_${e}`));
 
   if (dotfile === undefined) {
     return;
   }
 
-  renameFile(filePath, `_${dotfile}`, `.${dotfile}`);
+  await renameFile(filePath, `_${dotfile}`, `.${dotfile}`);
 }
 
-export function changePlaceholderInTemplate({
+export async function changePlaceholderInTemplate({
   projectName,
   placeholderName,
   placeholderTitle = DEFAULT_TITLE_PLACEHOLDER,
@@ -92,27 +96,25 @@ export function changePlaceholderInTemplate({
 }: PlaceholderConfig) {
   logger.debug(`Changing ${placeholderName} for ${projectName} in template`);
 
-  walk(process.cwd())
-    .reverse()
-    .forEach((filePath: string) => {
-      if (shouldIgnoreFile(filePath)) {
-        return;
-      }
-      if (!fs.statSync(filePath).isDirectory()) {
-        replaceNameInUTF8File(filePath, projectName, placeholderName);
-        replaceNameInUTF8File(filePath, projectTitle, placeholderTitle);
-      }
-      if (shouldRenameFile(filePath, placeholderName)) {
-        renameFile(filePath, placeholderName, projectName);
-      }
-      if (shouldRenameFile(filePath, placeholderName.toLowerCase())) {
-        renameFile(
-          filePath,
-          placeholderName.toLowerCase(),
-          projectName.toLowerCase(),
-        );
-      }
+  for (const filePath of walk(process.cwd()).reverse()) {
+    if (shouldIgnoreFile(filePath)) {
+      continue;
+    }
+    if (!(await fs.stat(filePath)).isDirectory()) {
+      await replaceNameInUTF8File(filePath, projectName, placeholderName);
+      await replaceNameInUTF8File(filePath, projectTitle, placeholderTitle);
+    }
+    if (shouldRenameFile(filePath, placeholderName)) {
+      await renameFile(filePath, placeholderName, projectName);
+    }
+    if (shouldRenameFile(filePath, placeholderName.toLowerCase())) {
+      await renameFile(
+        filePath,
+        placeholderName.toLowerCase(),
+        projectName.toLowerCase(),
+      );
+    }
 
-      processDotfiles(filePath);
-    });
+    await processDotfiles(filePath);
+  }
 }

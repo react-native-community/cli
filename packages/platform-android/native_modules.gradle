@@ -118,7 +118,7 @@ class ReactNativeModules {
    * @param generatedFileContentsTemplate
    */
   void generatePackagesFile(File outputDir, String generatedFileName, String generatedFileContentsTemplate) {
-    ArrayList<HashMap<String, String>>[] packages = this.reactNativeModules
+    ArrayList<HashMap<String, String>> packages = this.reactNativeModules
     String packageName = this.packageName
 
     String packageImports = ""

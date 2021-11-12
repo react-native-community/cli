@@ -77,7 +77,7 @@ function buildFile(file, silent) {
     return;
   }
 
-  fs.mkdirSync(path.dirname(destPath), {mode: '777', recursive: true});
+  fs.mkdirSync(path.dirname(destPath), {mode: 0o777, recursive: true});
 
   if (
     !micromatch.isMatch(file, JS_FILES_PATTERN) &&

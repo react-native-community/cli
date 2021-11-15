@@ -10,7 +10,7 @@
   "dependencies": {
     "@react-native-community/cli-platform-android": "^6.1.0",
     "@react-native-community/cli-tools": "^6.1.0",
-    "chalk": "^3.0.0",
+    "chalk": "^4.1.2",
     "hermes-profile-transformer": "^0.0.6",
     "ip": "^1.1.5"
   },

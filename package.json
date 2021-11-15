@@ -31,7 +31,6 @@
     "@react-native-community/eslint-config": "^2.0.0",
     "@types/glob": "^7.1.1",
     "@types/jest": "^26.0.15",
-    "@types/mkdirp": "^0.5.2",
     "@types/node": "^10.0.0",
     "@types/node-fetch": "^2.3.7",
     "babel-jest": "^26.6.2",
@@ -51,14 +50,12 @@
     "lerna": "^3.22.1",
     "metro-memory-fs": "^0.66.1",
     "micromatch": "^3.1.10",
-    "mkdirp": "^0.5.3",
     "rimraf": "^3.0.2",
     "slash": "^3.0.0",
     "string-length": "^2.0.0",
     "typescript": "^3.8.0"
   },
   "resolutions": {
-    "mkdirp": "^0.5.3",
     "@types/node": "^10.0.0"
   }
 }

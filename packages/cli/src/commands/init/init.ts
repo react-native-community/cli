@@ -3,7 +3,6 @@ import path from 'path';
 import fs from 'fs-extra';
 import minimist from 'minimist';
 import ora from 'ora';
-import mkdirp from 'mkdirp';
 import {validateProjectName} from './validate';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
 import printRunInstructions from './printRunInstructions';
@@ -50,7 +49,7 @@ async function setProjectDirectory(directory: string) {
   }
 
   try {
-    mkdirp.sync(directory);
+    fs.mkdirSync(directory, {recursive: true});
     process.chdir(directory);
   } catch (error) {
     throw new CLIError(

@@ -47,11 +47,6 @@ commands:
           at: ~/react-native-cli
       - run: gem install cocoapods
 
-  run-lint:
-    steps:
-      - attach_workspace:
-          at: ~/react-native-cli
-      - run: yarn lint
   run-unit-tests:
     steps:
       - attach_workspace:
@@ -79,19 +74,11 @@ jobs:
     executor: node12
     steps:
       - install-dependencies
-  lint:
-    executor: node12
-    steps:
-      - run-lint
   cocoa-pods:
     executor: noderuby
     steps:
       - install-cocoapods
       - run-cocoa-pods-tests
-  unit-tests:
-    executor: node12
-    steps:
-      - run-unit-tests
   e2e-tests:
     executor: reactnative
     steps:
@@ -100,7 +87,6 @@ jobs:
     executor: nodelts
     steps:
       - install-dependencies
-      - run-lint
       - run-unit-tests
       # TODO: figure out why e2e tests fail even though not interfering with
       # other tests
@@ -110,13 +96,6 @@ workflows:
   build-and-test:
     jobs:
       - setup
-      - lint:
-          requires:
-            - setup
-      - unit-tests:
-          requires:
-            - setup
       - e2e-tests:
           requires:
             - setup
-      - lts-tests

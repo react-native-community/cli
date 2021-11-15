@@ -3,44 +3,62 @@ name: Node.js CI
 on: [push, pull_request]
 
 jobs:
-  unit-tests:
-    name: Unit Tests
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 16
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          cache: yarn
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
+      - name: Lint
+        run: yarn lint
 
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [12.x]
+        node-version: [12, 14, 16]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: yarn
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
+      - name: Unit tests
+        run: yarn test:ci:unit
+
+  e2e-tests:
+    name: E2E Tests
+    strategy:
+      matrix:
+        node-version: [16]
         os: [windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-java@v2
         with:
-          distribution: 'adopt'
+          distribution: adopt
           java-version: 8
-          cache: 'gradle'
+          cache: gradle
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
+          cache: yarn
 
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - uses: actions/cache@v2
-        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-
-      - name: 'Install dependencies'
+      - name: Install dependencies
         run: yarn --frozen-lockfile
 
-      - name: 'Unit tests'
-        run: yarn test:ci:unit
-
-      - name: 'E2E tests'
+      - name: E2E tests
         run: yarn test:ci:e2e

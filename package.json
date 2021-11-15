@@ -20,7 +20,7 @@
     "publish": "yarn build-clean-all && yarn install && lerna publish",
     "publish:next": "yarn build-clean-all && yarn install && lerna publish --dist-tag next"
   },
-  "dependencies": {
+  "devDependencies": {
     "@babel/core": "^7.0.0",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@babel/plugin-transform-modules-commonjs": "^7.2.0",

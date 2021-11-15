@@ -31,7 +31,7 @@
     "@react-native-community/cli-tools": "^6.1.0",
     "@react-native-community/cli-types": "^6.0.0",
     "appdirsjs": "^1.2.4",
-    "chalk": "^3.0.0",
+    "chalk": "^4.1.2",
     "command-exists": "^1.2.8",
     "commander": "^2.19.0",
     "cosmiconfig": "^5.1.0",

@@ -35,7 +35,7 @@
     "@types/node-fetch": "^2.3.7",
     "babel-jest": "^26.6.2",
     "babel-plugin-module-resolver": "^3.2.0",
-    "chalk": "^3.0.0",
+    "chalk": "^4.1.2",
     "chokidar": "^3.3.1",
     "core-js": "^2.0.0",
     "eslint": "^7.14.0",

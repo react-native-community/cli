@@ -41,7 +41,8 @@ jobs:
     strategy:
       matrix:
         node-version: [16]
-        os: [windows-latest]
+        os: [ubuntu-latest]
+        # TODO: add macos, windows
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2

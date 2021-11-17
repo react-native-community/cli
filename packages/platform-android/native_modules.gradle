@@ -272,7 +272,7 @@ class ReactNativeModules {
         reactNativeModuleConfig.put("androidSourceDir", androidConfig["sourceDir"])
         reactNativeModuleConfig.put("packageInstance", androidConfig["packageInstance"])
         reactNativeModuleConfig.put("packageImportPath", androidConfig["packageImportPath"])
-        if (!androidConfig["buildTypes"].isEmpty()) {
+        if (androidConfig["buildTypes"] && !androidConfig["buildTypes"].isEmpty()) {
           reactNativeModulesBuildVariants.put(nameCleansed, androidConfig["buildTypes"])
         }
         if(androidConfig.containsKey("dependencyConfiguration")) {

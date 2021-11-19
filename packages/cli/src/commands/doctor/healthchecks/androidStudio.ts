@@ -26,8 +26,9 @@ export default {
         'bin',
         'studio.exe',
       ).replace(/\\/g, '\\\\');
+      const powershell = `${process.env.SystemRoot}\\System32\\WindowsPowerShell\\v1.0\\powershell.exe`;
       const {stdout} = await executeCommand(
-        `wmic datafile where name="${androidStudioPath}" get Version`,
+        `${powershell} -Command "& { (Get-ChildItem \\"${androidStudioPath}\\").VersionInfo.FileVersionRaw.ToString() }"`,
       );
       const version = stdout.replace(/(\r\n|\n|\r)/gm, '').trim();
 

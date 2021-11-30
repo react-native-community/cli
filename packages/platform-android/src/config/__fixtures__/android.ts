@@ -157,6 +157,10 @@ export const findPackagesClassNameKotlinValid = [
        return Collections.emptyList()
     }
   }`,
+  `
+  class SomeExampleKotlinPackage : TurboReactPackage {
+
+  }`,
 ];
 
 export const findPackagesClassNameKotlinNotValid = [
@@ -205,7 +209,28 @@ export const findPackagesClassNameJavaValid = [
     implements
     SomePackage,
     ReactPackage {
-    
+
+  }
+  `,
+  `
+  class SomeExampleKotlinPackage extends TurboReactPackage {
+
+  }
+  `,
+  `
+  class SomeExampleKotlinPackage
+    extends
+    TurboReactPackage {
+
+  }
+  `,
+  `
+  class SomeExampleKotlinPackage
+    extends
+    TurboReactPackage
+    implements
+    ReactPackage {
+
   }
   `,
 ];

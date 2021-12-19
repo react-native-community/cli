@@ -81,8 +81,6 @@ class ReactNativeModules {
     this.logger = logger
     this.root = root
 
-    logger.info "root: ${root.getPath()}"
-
     def (nativeModules, reactNativeModulesBuildVariants, packageName) = this.getReactNativeConfig()
     this.reactNativeModules = nativeModules
     this.reactNativeModulesBuildVariants = reactNativeModulesBuildVariants
@@ -146,26 +144,25 @@ class ReactNativeModules {
 
     if (packages.size() > 0) {
       def interpolateDynamicValues = {
-        it
-        // Before adding the package replacement mechanism,
-        // BuildConfig and R classes were imported automatically
-        // into the scope of the file. We want to replace all
-        // non-FQDN references to those classes with the package name
-        // of the MainApplication.
-        //
-        // We want to match "R" or "BuildConfig":
-        //  - new Package(R.string…),
-        //  - Module.configure(BuildConfig);
-        //    ^ hence including (BuildConfig|R)
-        // but we don't want to match "R":
-        //  - new Package(getResources…),
-        //  - new PackageR…,
-        //  - new Royal…,
-        //    ^ hence excluding \w before and after matches
-        // and "BuildConfig" that has FQDN reference:
-        //  - Module.configure(com.acme.BuildConfig);
-        //    ^ hence excluding . before the match.
-          .replaceAll(~/([^.\w])(BuildConfig|R)([^\w])/, {
+          // Before adding the package replacement mechanism,
+          // BuildConfig and R classes were imported automatically
+          // into the scope of the file. We want to replace all
+          // non-FQDN references to those classes with the package name
+          // of the MainApplication.
+          //
+          // We want to match "R" or "BuildConfig":
+          //  - new Package(R.string…),
+          //  - Module.configure(BuildConfig);
+          //    ^ hence including (BuildConfig|R)
+          // but we don't want to match "R":
+          //  - new Package(getResources…),
+          //  - new PackageR…,
+          //  - new Royal…,
+          //    ^ hence excluding \w before and after matches
+          // and "BuildConfig" that has FQDN reference:
+          //  - Module.configure(com.acme.BuildConfig);
+          //    ^ hence excluding . before the match.
+          it.replaceAll(~/([^.\w])(BuildConfig|R)([^\w])/, {
             wholeString, prefix, className, suffix ->
               "${prefix}${packageName}.${className}${suffix}"
           })

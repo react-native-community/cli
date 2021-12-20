@@ -74,6 +74,7 @@ async function generateProject(
       '@babel/runtime',
       '@react-native-community/eslint-config',
       'eslint',
+      'flow-bin',
       'jest',
       'babel-jest',
       'metro-react-native-babel-preset',

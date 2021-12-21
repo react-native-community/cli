@@ -47,7 +47,7 @@
     "lodash": "^4.17.15",
     "minimist": "^1.2.0",
     "node-stream-zip": "^1.9.1",
-    "ora": "^3.4.0",
+    "ora": "^6.0.0",
     "pretty-format": "^26.6.2",
     "prompts": "^2.4.0",
     "semver": "^6.3.0",

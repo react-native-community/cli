@@ -128,7 +128,11 @@ function attachToServer(
       // origin is only checked if it is set, e.g. when the request is made from a (CORS) browser
       // any 'back-end' connection isn't CORS at all, and has full control over the origin header,
       // so there is no point in checking it security wise
-      return !origin || origin.startsWith('http://localhost:') || origin.startsWith('file:');
+      return (
+        !origin ||
+        origin.startsWith('http://localhost:') ||
+        origin.startsWith('file:')
+      );
     },
   });
 

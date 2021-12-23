@@ -97,7 +97,7 @@ function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
       'Support for Xcode 11 and older is deprecated. Please upgrade to Xcode 12.',
     );
     devices = parseIOSDevicesList(
-      execa.sync('xcrun', ['instruments', '-s']).stdout,
+      execa.sync('xcrun', ['xctrace', 'list', 'devices']).stdout,
     );
   }
 
@@ -584,8 +584,7 @@ export default {
     },
     {
       desc: 'Run on the AppleTV simulator',
-      cmd:
-        'react-native run-ios --simulator "Apple TV"  --scheme "helloworld-tvOS"',
+      cmd: 'react-native run-ios --simulator "Apple TV"  --scheme "helloworld-tvOS"',
     },
   ],
   options: [

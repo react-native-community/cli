@@ -23,21 +23,28 @@ import {Device} from '../../types';
  */
 function parseIOSDevicesList(text: string): Array<Device> {
   const devices: Array<Device> = [];
+  let isSimulator = false;
 
   text.split('\n').forEach((line) => {
-    const device = line.match(
-      /(.*?) (\(([0-9.]+)\) )?\[([0-9A-F-]+)\]( \(Simulator\))?/i,
-    );
-    if (device) {
-      const [, name, , version, udid, isSimulator] = device;
-      const metadata: Device = {name, udid};
-      if (version) {
-        metadata.version = version;
-        metadata.type = isSimulator ? 'simulator' : 'device';
-      } else {
-        metadata.type = 'catalyst';
+    if (line.indexOf('== Simulators ==') !== -1) {
+      isSimulator = true;
+    }
+
+    if (!isSimulator) {
+      const device = line.match(
+        /(.*?) (\(([0-9.]+)\) )?\[([0-9A-F-]+)\]( \(Simulator\))?/i,
+      );
+      if (device) {
+        const [, name, , version, udid, isSimulator] = device;
+        const metadata: Device = {name, udid};
+        if (version) {
+          metadata.version = version;
+          metadata.type = isSimulator ? 'simulator' : 'device';
+        } else {
+          metadata.type = 'catalyst';
+        }
+        devices.push(metadata);
       }
-      devices.push(metadata);
     }
   });
 

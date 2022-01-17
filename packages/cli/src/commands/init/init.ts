@@ -121,13 +121,11 @@ async function createFromTemplate({
     const {postInitScript} = templateConfig;
     if (postInitScript) {
       // Leaving trailing space because there may be stdout from the script
-      loader.start('Executing post init script ');
       await executePostInitScript(
         templateName,
         postInitScript,
         templateSourceDir,
       );
-      loader.succeed();
     }
 
     if (!skipInstall) {

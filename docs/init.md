@@ -91,4 +91,21 @@ module.exports = {
 };
 ```
 
+## Breaking change >6.3.1
+Now the responsibility of showing the user progress of the "Executing post init script" goes to the implementor. In the cli, the `ora` package is used to display progress. 
+For a simple usage in a custom template, `ora` can be used like this in a postInitScript :
+
+```javascript
+#!/usr/bin/env node
+const ora = require('ora');
+
+new Promise((resolve) => {
+  const spinner = ora('Executing post init script ').start();
+  // do something
+  resolve();
+}).then(() => {
+  spinner.succeed();
+});
+```
+
 You can find example custom template [here](https://github.com/Esemesek/react-native-new-template).

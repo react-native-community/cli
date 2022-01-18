@@ -99,12 +99,17 @@ For a simple usage in a custom template, `ora` can be used like this in a postIn
 #!/usr/bin/env node
 const ora = require('ora');
 
+const spinner = ora('Executing post init script ');
+
 new Promise((resolve) => {
-  const spinner = ora('Executing post init script ').start();
+  spinner.start();
   // do something
   resolve();
 }).then(() => {
   spinner.succeed();
+}).catch(() => {
+  spinner.fail();
+  throw new Error('Something went wrong during the post init script execution');
 });
 ```
 

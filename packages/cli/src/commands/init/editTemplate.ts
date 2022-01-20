@@ -76,6 +76,8 @@ const UNDERSCORED_DOTFILES = [
   'prettierrc.js',
   'watchmanconfig',
   'editorconfig',
+  'bundle',
+  'ruby-version',
 ];
 
 async function processDotfiles(filePath: string) {

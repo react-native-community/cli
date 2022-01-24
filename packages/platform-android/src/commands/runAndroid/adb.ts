@@ -34,12 +34,7 @@ function parseDevicesResult(result: string): Array<string> {
  */
 function getDevices(adbPath: string): Array<string> {
   try {
-    //If the path includes spaces (for example, the name of the USER_NAME)
-    if (adbPath.includes(' ')) {
-      adbPath = `"${adbPath}"`;
-    }
-
-    const devicesResult = execSync(`${adbPath} devices`);
+    const devicesResult = execSync(`"${adbPath}" devices`);
     return parseDevicesResult(devicesResult.toString());
   } catch (e) {
     return [];

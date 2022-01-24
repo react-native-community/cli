@@ -26,7 +26,6 @@ async function replaceNameInUTF8File(
   templateName: string,
 ) {
   logger.debug(`Replacing in ${filePath}`);
-  const isPackageJson = path.basename(filePath) === 'package.json';
   const fileContent = await fs.readFile(filePath, 'utf8');
   const replacedFileContent = fileContent
     .replace(new RegExp(templateName, 'g'), projectName)
@@ -37,14 +36,6 @@ async function replaceNameInUTF8File(
 
   if (fileContent !== replacedFileContent) {
     await fs.writeFile(filePath, replacedFileContent, 'utf8');
-  }
-
-  if (isPackageJson) {
-    await fs.writeFile(
-      filePath,
-      fileContent.replace(templateName, projectName.toLowerCase()),
-      'utf8',
-    );
   }
 }
 

@@ -12,11 +12,11 @@ import {
 } from '@react-native-community/cli-platform-android';
 /**
  * Get the last modified hermes profile
- * @param packageName
+ * @param packageNameWithSuffix
  */
-function getLatestFile(packageName: string): string {
+function getLatestFile(packageNameWithSuffix: string): string {
   try {
-    const file = execSync(`adb shell run-as ${packageName} ls cache/ -tp | grep -v /$ | grep -E '.cpuprofile' | head -1
+    const file = execSync(`adb shell run-as ${packageNameWithSuffix} ls cache/ -tp | grep -v /$ | grep -E '.cpuprofile' | head -1
         `);
     return file.toString().trim();
   } catch (e) {
@@ -53,8 +53,7 @@ export async function downloadProfile(
 ) {
   try {
     const androidProject = getAndroidProject(ctx);
-    const packageName = getPackageName(androidProject);
-    const packageNameWithSuffix = [appId || packageName, appIdSuffix]
+    const packageNameWithSuffix = [appId || getPackageName(androidProject), appIdSuffix]
       .filter(Boolean)
       .join('.');
 
@@ -87,7 +86,7 @@ export async function downloadProfile(
       const tempFilePath = path.join(osTmpDir, file);
 
       execSyncWithLog(
-        `adb shell run-as ${packageName} cat cache/${file} > ${tempFilePath}`,
+        `adb shell run-as ${packageNameWithSuffix} cat cache/${file} > ${tempFilePath}`,
       );
       // If path to source map is not given
       if (!sourcemapPath) {

@@ -14,7 +14,7 @@
     "node-fetch": "^2.6.0",
     "open": "^6.2.0",
     "semver": "^6.3.0",
-    "shell-quote": "1.6.1"
+    "shell-quote": "^1.7.3"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.149",

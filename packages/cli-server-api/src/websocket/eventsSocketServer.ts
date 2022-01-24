@@ -125,8 +125,13 @@ function attachToServer(
     verifyClient({origin}: {origin: string}) {
       // This exposes the full JS logs and enables issuing commands like reload
       // so let's make sure only locally running stuff can connect to it
+      // origin is only checked if it is set, e.g. when the request is made from a (CORS) browser
+      // any 'back-end' connection isn't CORS at all, and has full control over the origin header,
+      // so there is no point in checking it security wise
       return (
-        origin.startsWith('http://localhost:') || origin.startsWith('file:')
+        !origin ||
+        origin.startsWith('http://localhost:') ||
+        origin.startsWith('file:')
       );
     },
   });

@@ -236,7 +236,7 @@ class ReactNativeModules {
      *
      * @todo: `fastlane` has been reported to not work too.
      */
-    def cliResolveScript = "console.log(require('react-native/cli').bin);"
+    def cliResolveScript = "try {console.log(require('@react-native-community/cli').bin);} catch (e) {console.log(require('react-native/cli').bin);}"
     String[] nodeCommand = ["node", "-e", cliResolveScript]
     def cliPath = this.getCommandOutput(nodeCommand, this.root)
 
@@ -272,7 +272,7 @@ class ReactNativeModules {
         reactNativeModuleConfig.put("androidSourceDir", androidConfig["sourceDir"])
         reactNativeModuleConfig.put("packageInstance", androidConfig["packageInstance"])
         reactNativeModuleConfig.put("packageImportPath", androidConfig["packageImportPath"])
-        if (!androidConfig["buildTypes"].isEmpty()) {
+        if (androidConfig["buildTypes"] && !androidConfig["buildTypes"].isEmpty()) {
           reactNativeModulesBuildVariants.put(nameCleansed, androidConfig["buildTypes"])
         }
         if(androidConfig.containsKey("dependencyConfiguration")) {

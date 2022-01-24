@@ -338,10 +338,12 @@ export default {
       name: '--appId <string>',
       description:
         'Specify an applicationId to launch after build. If not specified, `package` from AndroidManifest.xml will be used.',
+      default: '',
     },
     {
       name: '--appIdSuffix <string>',
       description: 'Specify an applicationIdSuffix to launch after build.',
+      default: '',
     },
     {
       name: '--main-activity <string>',

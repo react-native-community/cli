@@ -53,7 +53,10 @@ export async function downloadProfile(
 ) {
   try {
     const androidProject = getAndroidProject(ctx);
-    const packageNameWithSuffix = [appId || getPackageName(androidProject), appIdSuffix]
+    const packageNameWithSuffix = [
+      appId || getPackageName(androidProject),
+      appIdSuffix,
+    ]
       .filter(Boolean)
       .join('.');
 

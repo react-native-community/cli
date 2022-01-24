@@ -1,20 +1,6 @@
-import doctor from './doctor';
+import doctor from './commands/doctor';
+import info from './commands/info';
 
-export default {
-  func: doctor,
-  detached: true,
-  name: 'doctor',
-  description:
-    '[EXPERIMENTAL] Diagnose and fix common Node.js, iOS, Android & React Native issues.',
-  options: [
-    {
-      name: '--fix',
-      description: 'Attempt to fix all diagnosed issues.',
-    },
-    {
-      name: '--contributor',
-      description:
-        'Add healthchecks required to installations required for contributing to React Native.',
-    },
-  ],
-};
+export {logManualInstallation, logError} from './tools/healthchecks/common';
+
+export const commands = {info, doctor};

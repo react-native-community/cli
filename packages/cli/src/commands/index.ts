@@ -5,22 +5,21 @@ import unlink from './link/unlink';
 import install from './install/install';
 import uninstall from './install/uninstall';
 import upgrade from './upgrade/upgrade';
-import info from './info/info';
+import {commands as doctorCommands} from '@react-native-community/cli-doctor';
 import config from './config/config';
 import init from './init';
-import doctor from '@react-native-community/cli-doctor';
 import profileHermes from '@react-native-community/cli-hermes';
 
 export const projectCommands = [
   ...metroCommands,
+  doctorCommands.info,
   link,
   unlink,
   install,
   uninstall,
   upgrade,
-  info,
   config,
   profileHermes,
 ] as Command[];
 
-export const detachedCommands = [init, doctor] as DetachedCommand[];
+export const detachedCommands = [init, doctorCommands.doctor] as DetachedCommand[];

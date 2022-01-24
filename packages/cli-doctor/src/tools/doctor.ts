@@ -10,7 +10,7 @@ import {
   HealthCheckInterface,
 } from '@react-native-community/cli-types';
 import {HealthCheckCategoryResult, HealthCheckResult} from './types';
-import getEnvironmentInfo from '@react-native-community/cli/src/tools/envinfo';
+import getEnvironmentInfo from './envinfo';
 import {logMessage} from './healthchecks/common';
 
 const printCategory = ({label, key}: {label: string; key: number}) => {

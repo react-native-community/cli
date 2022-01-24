@@ -4,8 +4,5 @@
     "rootDir": "src",
     "outDir": "build"
   },
-  "references": [
-    {"path": "../tools"},
-    {"path": "../debugger-ui"}
-  ]
+  "references": [{"path": "../tools"}, {"path": "../debugger-ui"}]
 }

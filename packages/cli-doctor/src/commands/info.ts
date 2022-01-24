@@ -6,7 +6,7 @@
  */
 
 // @ts-ignore untyped
-import getEnvironmentInfo from '../../tools/envinfo';
+import getEnvironmentInfo from '../tools/envinfo';
 import {logger, releaseChecker} from '@react-native-community/cli-tools';
 import {Config} from '@react-native-community/cli-types';
 

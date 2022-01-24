@@ -3,7 +3,7 @@ import {join} from 'path';
 import execa from 'execa';
 import {cleanup, writeFiles} from '../../../../../jest/helpers';
 import androidSDK from '../androidSDK';
-import getEnvironmentInfo from '@react-native-community/cli/src/tools/envinfo';
+import getEnvironmentInfo from '../../envinfo';
 import * as downloadAndUnzip from '@react-native-community/cli/src/tools/downloadAndUnzip';
 import {EnvironmentInfo} from '@react-native-community/cli-types';
 import {NoopLoader} from '@react-native-community/cli/src/tools/loader';

@@ -1,6 +1,6 @@
 import execa from 'execa';
 import jdk from '../jdk';
-import getEnvironmentInfo from '@react-native-community/cli/src/tools/envinfo';
+import getEnvironmentInfo from '../../envinfo';
 import {EnvironmentInfo} from '@react-native-community/cli-types';
 import {NoopLoader} from '@react-native-community/cli/src/tools/loader';
 import * as common from '../common';

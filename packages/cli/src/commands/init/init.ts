@@ -2,7 +2,7 @@ import os from 'os';
 import path from 'path';
 import fs from 'fs-extra';
 import minimist from 'minimist';
-import ora from 'ora';
+import type {Ora} from 'ora';
 import {validateProjectName} from './validate';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
 import printRunInstructions from './printRunInstructions';
@@ -156,7 +156,7 @@ async function installDependencies({
 }: {
   directory: string;
   npm?: boolean;
-  loader: ora.Ora;
+  loader: Ora;
   root: string;
 }) {
   loader.start('Installing dependencies');

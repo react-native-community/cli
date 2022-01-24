@@ -1,11 +1,11 @@
 import execa from 'execa';
-import ora from 'ora';
+import type {Ora} from 'ora';
 import {logError} from '../commands/doctor/healthchecks/common';
 
 type InstallArgs = {
   pkg: string;
   label?: string;
-  loader: ora.Ora;
+  loader: Ora;
   onSuccess?: () => void;
   onFail?: () => void;
 };

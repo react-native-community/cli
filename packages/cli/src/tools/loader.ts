@@ -1,43 +1,44 @@
 import ora from 'ora';
+import type {Ora, Spinner, Color} from 'ora';
 import {logger} from '@react-native-community/cli-tools';
 
-class OraNoop implements ora.Ora {
-  spinner: ora.Spinner = {interval: 1, frames: []};
+class OraNoop implements Ora {
+  spinner: Spinner = {interval: 1, frames: []};
   indent: number = 0;
   isSpinning: boolean = false;
   text: string = '';
   prefixText: string = '';
-  color: ora.Color = 'blue';
+  color: Color = 'blue';
 
   succeed(_text?: string | undefined) {
-    return ora();
+    return this;
   }
   fail(_text?: string) {
-    return ora();
+    return this;
   }
   start(_text?: string) {
-    return ora();
+    return this;
   }
   stop() {
-    return ora();
+    return this;
   }
   warn(_text?: string) {
-    return ora();
+    return this;
   }
   info(_text?: string) {
-    return ora();
+    return this;
   }
   stopAndPersist() {
-    return ora();
+    return this;
   }
   clear() {
-    return ora();
+    return this;
   }
   render() {
-    return ora();
+    return this;
   }
   frame() {
-    return ora();
+    return this.text;
   }
 }
 

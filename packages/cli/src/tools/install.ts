@@ -1,4 +1,4 @@
-import ora from 'ora';
+import type {Ora} from 'ora';
 import {brewInstall} from './brewInstall';
 import {logManualInstallation} from '../commands/doctor/healthchecks/common';
 
@@ -6,7 +6,7 @@ type InstallArgs = {
   pkg: string;
   label: string;
   url: string;
-  loader: ora.Ora;
+  loader: Ora;
 };
 
 async function install({pkg, label, url, loader}: InstallArgs) {

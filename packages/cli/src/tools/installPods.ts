@@ -1,7 +1,7 @@
 import fs from 'fs';
 import execa from 'execa';
 import chalk from 'chalk';
-import ora from 'ora';
+import type {Ora} from 'ora';
 import prompts from 'prompts';
 import {logger} from '@react-native-community/cli-tools';
 import {NoopLoader} from './loader';
@@ -15,7 +15,7 @@ type PromptCocoaPodsInstallation = {
 };
 
 async function runPodInstall(
-  loader: ora.Ora,
+  loader: Ora,
   directory: string,
   shouldHandleRepoUpdate: boolean = true,
 ) {
@@ -51,7 +51,7 @@ async function runPodInstall(
   }
 }
 
-async function runPodUpdate(loader: ora.Ora) {
+async function runPodUpdate(loader: Ora) {
   try {
     loader.start(
       `Updating CocoaPods repositories ${chalk.dim(
@@ -128,7 +128,7 @@ async function installCocoaPodsWithGem() {
   }
 }
 
-async function installCocoaPods(loader: ora.Ora) {
+async function installCocoaPods(loader: Ora) {
   loader.stop();
 
   const {installMethod} = await promptCocoaPodsInstallationQuestion();
@@ -166,7 +166,7 @@ async function installPods({
   loader,
 }: {
   directory: string;
-  loader?: ora.Ora;
+  loader?: Ora;
 }) {
   loader = loader || new NoopLoader();
   try {

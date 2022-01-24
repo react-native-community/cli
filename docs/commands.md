@@ -600,6 +600,14 @@ The running metro server port number
 
 > default: 8081
 
+#### `--appId <string>`
+
+Specify an `applicationId` to launch after build. If not specified, `package` from AndroidManifest.xml will be used.
+
+#### `--appIdSuffix <string>`
+
+Specify an `applicationIdSuffix` to launch after build.
+
 ### Notes on source map
 
 This step is recommended in order for the source map to be generated:

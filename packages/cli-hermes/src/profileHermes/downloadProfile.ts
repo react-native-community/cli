@@ -12,11 +12,11 @@ import {
 } from '@react-native-community/cli-platform-android';
 /**
  * Get the last modified hermes profile
- * @param packageName
+ * @param packageNameWithSuffix
  */
-function getLatestFile(packageName: string): string {
+function getLatestFile(packageNameWithSuffix: string): string {
   try {
-    const file = execSync(`adb shell run-as ${packageName} ls cache/ -tp | grep -v /$ | grep -E '.cpuprofile' | head -1
+    const file = execSync(`adb shell run-as ${packageNameWithSuffix} ls cache/ -tp | grep -v /$ | grep -E '.cpuprofile' | head -1
         `);
     return file.toString().trim();
   } catch (e) {
@@ -37,6 +37,8 @@ function execSyncWithLog(command: string) {
  * @param sourceMapPath
  * @param raw
  * @param generateSourceMap
+ * @param appId
+ * @param appIdSuffix
  */
 export async function downloadProfile(
   ctx: Config,
@@ -46,13 +48,20 @@ export async function downloadProfile(
   raw?: boolean,
   shouldGenerateSourcemap?: boolean,
   port?: string,
+  appId?: string,
+  appIdSuffix?: string,
 ) {
   try {
     const androidProject = getAndroidProject(ctx);
-    const packageName = getPackageName(androidProject);
+    const packageNameWithSuffix = [
+      appId || getPackageName(androidProject),
+      appIdSuffix,
+    ]
+      .filter(Boolean)
+      .join('.');
 
     // If file name is not specified, pull the latest file from device
-    const file = filename || getLatestFile(packageName);
+    const file = filename || getLatestFile(packageNameWithSuffix);
     if (!file) {
       throw new CLIError(
         'There is no file in the cache/ directory. Did you record a profile from the developer menu?',
@@ -69,7 +78,7 @@ export async function downloadProfile(
     // If --raw, pull the hermes profile to dstPath
     if (raw) {
       execSyncWithLog(
-        `adb shell run-as ${packageName} cat cache/${file} > ${dstPath}/${file}`,
+        `adb shell run-as ${packageNameWithSuffix} cat cache/${file} > ${dstPath}/${file}`,
       );
       logger.success(`Successfully pulled the file to ${dstPath}/${file}`);
     }
@@ -80,7 +89,7 @@ export async function downloadProfile(
       const tempFilePath = path.join(osTmpDir, file);
 
       execSyncWithLog(
-        `adb shell run-as ${packageName} cat cache/${file} > ${tempFilePath}`,
+        `adb shell run-as ${packageNameWithSuffix} cat cache/${file} > ${tempFilePath}`,
       );
       // If path to source map is not given
       if (!sourcemapPath) {

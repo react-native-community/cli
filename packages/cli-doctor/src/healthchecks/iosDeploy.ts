@@ -5,7 +5,7 @@ import {isSoftwareNotInstalled, PACKAGE_MANAGERS} from '../checkInstallation';
 import {packageManager} from './packageManagers';
 import {logError, removeMessage} from './common';
 import {HealthCheckInterface} from '@react-native-community/cli-types';
-import {Ora} from 'ora';
+import type {Ora} from 'ora';
 
 const label = 'ios-deploy';
 

@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import readline from 'readline';
 import wcwidth from 'wcwidth';
 import stripAnsi from 'strip-ansi';
-import {Ora} from 'ora';
+import type {Ora} from 'ora';
 import {logger} from '@react-native-community/cli-tools';
 
 // Space is necessary to keep correct ordering on screen

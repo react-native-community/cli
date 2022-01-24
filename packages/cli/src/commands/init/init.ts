@@ -2,8 +2,7 @@ import os from 'os';
 import path from 'path';
 import fs from 'fs-extra';
 import minimist from 'minimist';
-import ora from 'ora';
-import mkdirp from 'mkdirp';
+import type {Ora} from 'ora';
 import {validateProjectName} from './validate';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
 import printRunInstructions from './printRunInstructions';
@@ -50,7 +49,7 @@ async function setProjectDirectory(directory: string) {
   }
 
   try {
-    mkdirp.sync(directory);
+    fs.mkdirSync(directory, {recursive: true});
     process.chdir(directory);
   } catch (error) {
     throw new CLIError(
@@ -111,7 +110,7 @@ async function createFromTemplate({
     loader.succeed();
     loader.start('Processing template');
 
-    changePlaceholderInTemplate({
+    await changePlaceholderInTemplate({
       projectName,
       projectTitle,
       placeholderName: templateConfig.placeholderName,
@@ -157,7 +156,7 @@ async function installDependencies({
 }: {
   directory: string;
   npm?: boolean;
-  loader: ora.Ora;
+  loader: Ora;
   root: string;
 }) {
   loader.start('Installing dependencies');

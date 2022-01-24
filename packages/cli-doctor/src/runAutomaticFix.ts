@@ -1,5 +1,6 @@
 import chalk from 'chalk';
-import ora, {Ora} from 'ora';
+import ora from 'ora';
+import type {Ora} from 'ora';
 import {logger} from '@react-native-community/cli-tools';
 import {HEALTHCHECK_TYPES} from './healthchecks';
 import {EnvironmentInfo} from '@react-native-community/cli-types';

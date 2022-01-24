@@ -2,7 +2,6 @@ import path from 'path';
 import fs from 'fs';
 import os from 'os';
 import appDirs from 'appdirsjs';
-import mkdirp from 'mkdirp';
 import logger from '../logger';
 
 type ReleaseCacheKey = 'eTag' | 'lastChecked' | 'latestVersion';
@@ -43,7 +42,7 @@ function getCacheRootPath() {
   const cachePath = appDirs({appName: 'react-native-cli', legacyPath}).cache;
 
   if (!fs.existsSync(cachePath)) {
-    mkdirp.sync(cachePath);
+    fs.mkdirSync(cachePath, {recursive: true});
   }
 
   return cachePath;

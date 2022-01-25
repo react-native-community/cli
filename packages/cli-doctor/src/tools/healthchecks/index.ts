@@ -13,7 +13,7 @@ import {
   Healthchecks,
   HealthCheckCategory,
 } from '@react-native-community/cli-types';
-import loadConfig from '@react-native-community/cli/src/tools/config';
+import loadConfig from '@react-native-community/cli-config';
 
 export const HEALTHCHECK_TYPES = {
   ERROR: 'ERROR',

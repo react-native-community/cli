@@ -1,13 +1,11 @@
 import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
-import {logger} from '@react-native-community/cli-tools';
-
+import {logger, findProjectRoot} from '@react-native-community/cli-tools';
 import {
   HealthCheckInterface,
   EnvironmentInfo,
 } from '@react-native-community/cli-types';
-import findProjectRoot from '@react-native-community/cli/src/tools/config/findProjectRoot';
 import {
   getAndroidSdkRootInstallation,
   installComponent,
@@ -16,13 +14,12 @@ import {
   enableHAXM,
   enableWHPX,
   createAVD,
-} from '@react-native-community/cli/src/tools/windows/androidWinHelpers';
-import {downloadAndUnzip} from '@react-native-community/cli/src/tools/downloadAndUnzip';
-
+} from '../windows/androidWinHelpers';
+import {downloadAndUnzip} from '../downloadAndUnzip';
 import {
   setEnvironment,
   updateEnvironment,
-} from '@react-native-community/cli/src/tools/windows/environmentVariables';
+} from '../windows/environmentVariables';
 
 const getBuildToolsVersion = (): string => {
   let projectRoot = '';

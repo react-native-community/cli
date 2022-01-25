@@ -1,6 +1,6 @@
 import findUp from 'find-up';
 import path from 'path';
-import {CLIError} from '@react-native-community/cli-tools';
+import {CLIError} from './errors';
 
 /**
  * Finds project root by looking for a closest `package.json`.

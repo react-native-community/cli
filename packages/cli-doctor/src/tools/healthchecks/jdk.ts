@@ -2,12 +2,11 @@ import {join} from 'path';
 import versionRanges from '../versionRanges';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
 import {HealthCheckInterface} from '@react-native-community/cli-types';
-
-import {downloadAndUnzip} from '@react-native-community/cli/src/tools/downloadAndUnzip';
+import {downloadAndUnzip} from '../downloadAndUnzip';
 import {
   setEnvironment,
   updateEnvironment,
-} from '@react-native-community/cli/src/tools/windows/environmentVariables';
+} from '../windows/environmentVariables';
 
 export default {
   label: 'JDK',

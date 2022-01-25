@@ -1,9 +1,8 @@
 import chalk from 'chalk';
 import ora from 'ora';
-import type {Ora} from 'ora';
-import {logger} from '@react-native-community/cli-tools';
-import {HEALTHCHECK_TYPES} from './healthchecks';
+import {logger, Loader} from '@react-native-community/cli-tools';
 import {EnvironmentInfo} from '@react-native-community/cli-types';
+import {HEALTHCHECK_TYPES} from './healthchecks';
 import {HealthCheckCategoryResult} from './types';
 import {logManualInstallation} from './healthchecks/common';
 
@@ -20,7 +19,7 @@ interface RunAutomaticFixArgs {
     errors: number;
     warnings: number;
   };
-  loader: Ora;
+  loader: Loader;
   environmentInfo: EnvironmentInfo;
 }
 
@@ -81,6 +80,7 @@ export default async function ({
     logger.log(`\n${chalk.dim(category.label)}`);
 
     for (const healthcheckToRun of healthchecksToRun) {
+      // @todo replace this with `getLoader` from `tools`
       const spinner = ora({
         prefixText: '',
         text: healthcheckToRun.label,

@@ -1,6 +1,4 @@
-import {CLIError} from '@react-native-community/cli-tools';
-
-import resolveNodeModuleDir from './resolveNodeModuleDir';
+import {CLIError, resolveNodeModuleDir} from '@react-native-community/cli-tools';
 
 /**
  * Finds path to React Native inside `node_modules` or throws

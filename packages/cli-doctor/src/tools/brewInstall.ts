@@ -1,11 +1,11 @@
 import execa from 'execa';
-import type {Ora} from 'ora';
-import {logError} from '@react-native-community/cli-doctor';
+import type {Loader} from '@react-native-community/cli-tools';
+import {logError} from './healthchecks/common';
 
 type InstallArgs = {
   pkg: string;
   label?: string;
-  loader: Ora;
+  loader: Loader;
   onSuccess?: () => void;
   onFail?: () => void;
 };

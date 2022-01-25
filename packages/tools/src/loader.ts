@@ -1,6 +1,8 @@
 import ora from 'ora';
 import type {Ora, Spinner, Color} from 'ora';
-import {logger} from '@react-native-community/cli-tools';
+import logger from './logger';
+
+export type Loader = Ora;
 
 class OraNoop implements Ora {
   spinner: Spinner = {interval: 1, frames: []};

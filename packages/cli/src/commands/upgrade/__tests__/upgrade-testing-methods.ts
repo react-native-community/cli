@@ -5,8 +5,7 @@ import snapshotDiff from 'snapshot-diff';
 import stripAnsi from 'strip-ansi';
 import upgrade from '../upgrade';
 import {fetch, logger} from '@react-native-community/cli-tools';
-import loadConfig from '../../../tools/config';
-import merge from '../../../tools/merge';
+import loadConfig, {merge} from '@react-native-community/cli-config';
 
 jest.mock('https');
 jest.mock('fs');

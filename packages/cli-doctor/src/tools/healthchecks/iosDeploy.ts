@@ -5,7 +5,7 @@ import {isSoftwareNotInstalled, PACKAGE_MANAGERS} from '../checkInstallation';
 import {packageManager} from './packageManagers';
 import {logError, removeMessage} from './common';
 import {HealthCheckInterface} from '@react-native-community/cli-types';
-import type {Ora} from 'ora';
+import type {Loader} from '@react-native-community/cli-tools';
 
 const label = 'ios-deploy';
 
@@ -31,7 +31,7 @@ const installLibrary = async ({
 }: {
   installationCommand: string;
   packageManagerToUse: 'yarn' | 'npm';
-  loader: Ora;
+  loader: Loader;
 }) => {
   try {
     loader.start(`${label} (installing with ${packageManagerToUse})`);

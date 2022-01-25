@@ -9,17 +9,20 @@
   "types": "build/index.d.ts",
   "dependencies": {
     "@react-native-community/cli-tools": "^6.2.0",
+    "@react-native-community/cli-config": "^6.0.1",
     "chalk": "^3.0.0",
     "envinfo": "^7.7.2",
     "hermes-profile-transformer": "^0.0.6",
     "ip": "^1.1.5",
+    "node-stream-zip": "^1.9.1",
     "command-exists": "^1.2.8",
     "prompts": "^2.4.0",
     "semver": "^6.3.0",
     "strip-ansi": "^5.2.0",
     "ora": "^6.0.0",
     "execa": "^1.0.0",
-    "wcwidth": "^1.0.1"
+    "wcwidth": "^1.0.1",
+    "sudo-prompt": "^9.0.0"
   },
   "files": [
     "build",

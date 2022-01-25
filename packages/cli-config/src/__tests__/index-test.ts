@@ -6,7 +6,7 @@ import {
   cleanup,
   writeFiles,
   getTempDirectory,
-} from '../../../../../../jest/helpers';
+} from '../../../../jest/helpers';
 
 jest.mock('../resolveNodeModuleDir');
 

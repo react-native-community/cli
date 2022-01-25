@@ -6,7 +6,7 @@ import type {Ora} from 'ora';
 import {validateProjectName} from './validate';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
 import printRunInstructions from './printRunInstructions';
-import {CLIError, logger} from '@react-native-community/cli-tools';
+import {CLIError, logger, getLoader} from '@react-native-community/cli-tools';
 import {
   installTemplatePackage,
   getTemplateConfig,
@@ -15,9 +15,8 @@ import {
 } from './template';
 import {changePlaceholderInTemplate} from './editTemplate';
 import * as PackageManager from '../../tools/packageManager';
-import installPods from '../../tools/installPods';
+import {installPods} from '@react-native-community/cli-doctor';
 import banner from './banner';
-import {getLoader} from '../../tools/loader';
 
 const DEFAULT_VERSION = 'latest';
 

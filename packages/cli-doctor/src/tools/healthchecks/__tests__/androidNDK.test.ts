@@ -1,7 +1,7 @@
 import androidNDK from '../androidNDK';
 import getEnvironmentInfo from '../../envinfo';
 import {EnvironmentInfo} from '@react-native-community/cli-types';
-import {NoopLoader} from '@react-native-community/cli/src/tools/loader';
+import {NoopLoader} from '../../loader';
 
 import * as common from '../common';
 

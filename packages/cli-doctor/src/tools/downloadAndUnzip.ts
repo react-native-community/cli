@@ -1,6 +1,4 @@
-import {fetchToTemp} from '@react-native-community/cli-tools';
-
-import * as ora from 'ora';
+import {fetchToTemp, Loader} from '@react-native-community/cli-tools';
 import {unzip} from './unzip';
 import {deleteFile} from './deleteFile';
 
@@ -14,7 +12,7 @@ export const downloadAndUnzip = async ({
   component,
   installPath,
 }: {
-  loader: ora.Ora;
+  loader: Loader;
   component: string;
   downloadUrl: string;
   installPath: string;

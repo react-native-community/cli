@@ -11,7 +11,6 @@ import {
   AndroidDependencyConfig,
   AndroidDependencyParams,
 } from './android';
-import type {Ora} from 'ora';
 
 export type Prompt = any;
 

@@ -3,7 +3,7 @@ import {
   cleanup,
   writeFiles,
   getTempDirectory,
-} from '../../../../../../jest/helpers';
+} from '../../../../jest/helpers';
 
 beforeEach(async () => {
   await cleanup(DIR);

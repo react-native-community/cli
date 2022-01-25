@@ -1,6 +1,7 @@
 import {func as link} from '../link';
-import loadConfig from '../../../tools/config';
+import loadConfig from '@react-native-community/cli-config';
 import makeHook from '../makeHook';
+
 jest.mock('chalk', () => ({
   grey: jest.fn(),
   bold: jest.fn(),

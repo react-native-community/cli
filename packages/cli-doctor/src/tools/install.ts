@@ -1,12 +1,12 @@
-import type {Ora} from 'ora';
+import type {Loader} from '@react-native-community/cli-tools';
 import {brewInstall} from './brewInstall';
-import {logManualInstallation} from '@react-native-community/cli-doctor';
+import {logManualInstallation} from './healthchecks/common';
 
 type InstallArgs = {
   pkg: string;
   label: string;
   url: string;
-  loader: Ora;
+  loader: Loader;
 };
 
 async function install({pkg, label, url, loader}: InstallArgs) {

@@ -7,17 +7,16 @@ import {
   UserConfig,
   Config,
 } from '@react-native-community/cli-types';
-import {logger, inlineString} from '@react-native-community/cli-tools';
+import {logger, inlineString, findProjectRoot} from '@react-native-community/cli-tools';
 import findDependencies from './findDependencies';
-import findProjectRoot from './findProjectRoot';
 import resolveReactNativePath from './resolveReactNativePath';
 import findAssets from './findAssets';
 import {
   readConfigFromDisk,
   readDependencyConfigFromDisk,
 } from './readConfigFromDisk';
-import assign from '../assign';
-import merge from '../merge';
+import assign from './assign';
+import merge from './merge';
 import resolveNodeModuleDir from './resolveNodeModuleDir';
 
 function getDependencyConfig(

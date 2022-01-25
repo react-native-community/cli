@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import ora from 'ora';
-import {logger, Loader} from '@react-native-community/cli-tools';
-import {EnvironmentInfo} from '@react-native-community/cli-types';
+import {logger} from '@react-native-community/cli-tools';
+import {EnvironmentInfo, Loader} from '@react-native-community/cli-types';
 import {HEALTHCHECK_TYPES} from './healthchecks';
 import {HealthCheckCategoryResult} from './types';
 import {logManualInstallation} from './healthchecks/common';

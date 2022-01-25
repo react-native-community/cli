@@ -12,7 +12,11 @@ import {
   AndroidDependencyParams,
 } from './android';
 
+import type {Ora} from 'ora';
+
 export type Prompt = any;
+
+export type Loader = Ora;
 
 export type CommandFunction<Args = Object> = (
   argv: Array<string>,
@@ -179,7 +183,7 @@ export type Healthchecks = {
 };
 
 export type RunAutomaticFix = (args: {
-  loader: Ora;
+  loader: Loader;
   logManualInstallation: ({
     healthcheck,
     url,

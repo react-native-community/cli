@@ -1,4 +1,5 @@
-import {fetchToTemp, Loader} from '@react-native-community/cli-tools';
+import {fetchToTemp} from '@react-native-community/cli-tools';
+import {Loader} from '@react-native-community/cli-types';
 import {unzip} from './unzip';
 import {deleteFile} from './deleteFile';
 

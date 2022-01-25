@@ -1,4 +1,4 @@
-import type {Loader} from '@react-native-community/cli-tools';
+import {Loader} from '@react-native-community/cli-types';
 import {brewInstall} from './brewInstall';
 import {logManualInstallation} from './healthchecks/common';
 

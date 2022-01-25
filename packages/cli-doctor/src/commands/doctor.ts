@@ -1,7 +1,6 @@
 import chalk from 'chalk';
-import {logger} from '@react-native-community/cli-tools';
+import {logger, getLoader} from '@react-native-community/cli-tools';
 import {getHealthchecks, HEALTHCHECK_TYPES} from '../tools/healthchecks';
-import {getLoader} from '@react-native-community/cli-tools/src/loader';
 import printFixOptions, {KEYS} from '../tools/printFixOptions';
 import runAutomaticFix, {AUTOMATIC_FIX_LEVELS} from '../tools/runAutomaticFix';
 import {

@@ -10,5 +10,5 @@ Options:
 
 Commands:
   init [options] <projectName>  Initialize a new React Native project named <projectName> in a directory of the same name.
-  doctor [options]              [EXPERIMENTAL] Diagnose and fix common Node.js, iOS, Android & React Native issues."
+  doctor [options]              Diagnose and fix common Node.js, iOS, Android & React Native issues."
 `;

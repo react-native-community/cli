@@ -11,5 +11,7 @@
     {"path": "../cli-server-api"},
     {"path": "../cli-hermes"},
     {"path": "../cli-plugin-metro"},
+    {"path": "../cli-doctor"},
+    {"path": "../cli-config"}
   ]
 }

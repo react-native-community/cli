@@ -8,7 +8,7 @@
 import {logger} from '@react-native-community/cli-tools';
 import * as PackageManager from '../../tools/packageManager';
 import link from '../link/link';
-import loadConfig from '../../tools/config';
+import loadConfig from '@react-native-community/cli-config';
 import {Config} from '@react-native-community/cli-types';
 
 async function install(args: Array<string>, ctx: Config): Promise<void> {

@@ -14,7 +14,7 @@ import printRunInstructions from './printRunInstructions';
 import {createProjectFromTemplate} from '../../tools/generator/templates';
 import * as PackageManager from '../../tools/packageManager';
 import {logger} from '@react-native-community/cli-tools';
-import installPods from '../../tools/installPods';
+import {installPods} from '@react-native-community/cli-doctor';
 
 /**
  * Creates the template for a React Native project given the provided

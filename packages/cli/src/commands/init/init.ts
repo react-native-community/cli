@@ -2,11 +2,15 @@ import os from 'os';
 import path from 'path';
 import fs from 'fs-extra';
 import minimist from 'minimist';
-import type {Ora} from 'ora';
 import {validateProjectName} from './validate';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
 import printRunInstructions from './printRunInstructions';
-import {CLIError, logger} from '@react-native-community/cli-tools';
+import {
+  CLIError,
+  logger,
+  getLoader,
+  Loader,
+} from '@react-native-community/cli-tools';
 import {
   installTemplatePackage,
   getTemplateConfig,
@@ -15,9 +19,8 @@ import {
 } from './template';
 import {changePlaceholderInTemplate} from './editTemplate';
 import * as PackageManager from '../../tools/packageManager';
-import installPods from '../../tools/installPods';
+import {installPods} from '@react-native-community/cli-doctor';
 import banner from './banner';
-import {getLoader} from '../../tools/loader';
 
 const DEFAULT_VERSION = 'latest';
 
@@ -85,8 +88,7 @@ async function createFromTemplate({
 
   const projectDirectory = await setProjectDirectory(directory);
 
-  const Loader = getLoader();
-  const loader = new Loader({text: 'Downloading template'});
+  const loader = getLoader({text: 'Downloading template'});
   const templateSourceDir = fs.mkdtempSync(
     path.join(os.tmpdir(), 'rncli-init-template-'),
   );
@@ -156,7 +158,7 @@ async function installDependencies({
 }: {
   directory: string;
   npm?: boolean;
-  loader: Ora;
+  loader: Loader;
   root: string;
 }) {
   loader.start('Installing dependencies');

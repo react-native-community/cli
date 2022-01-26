@@ -6,7 +6,7 @@ import execa from 'execa';
 import {Config} from '@react-native-community/cli-types';
 import {logger, CLIError, fetch} from '@react-native-community/cli-tools';
 import * as PackageManager from '../../tools/packageManager';
-import installPods from '../../tools/installPods';
+import {installPods} from '@react-native-community/cli-doctor';
 
 type UpgradeError = {message: string; stderr: string};
 

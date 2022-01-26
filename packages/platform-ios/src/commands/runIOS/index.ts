@@ -322,6 +322,7 @@ function buildProject(
       '-destination',
       `id=${udid}`,
     ];
+    // @todo use `getLoader` from cli-tools package
     const loader = ora();
     logger.info(
       `Building ${chalk.dim(

@@ -1,10 +1,6 @@
 import path from 'path';
 import findProjectRoot from '../findProjectRoot';
-import {
-  cleanup,
-  writeFiles,
-  getTempDirectory,
-} from '../../../../jest/helpers';
+import {cleanup, writeFiles, getTempDirectory} from '../../../../jest/helpers';
 
 beforeEach(async () => {
   await cleanup(DIR);

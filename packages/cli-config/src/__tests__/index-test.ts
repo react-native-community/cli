@@ -2,11 +2,7 @@ import path from 'path';
 import slash from 'slash';
 import loadConfig from '..';
 import {logger} from '@react-native-community/cli-tools';
-import {
-  cleanup,
-  writeFiles,
-  getTempDirectory,
-} from '../../../../jest/helpers';
+import {cleanup, writeFiles, getTempDirectory} from '../../../../jest/helpers';
 
 jest.mock('../resolveNodeModuleDir');
 

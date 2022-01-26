@@ -5,7 +5,12 @@ import minimist from 'minimist';
 import {validateProjectName} from './validate';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
 import printRunInstructions from './printRunInstructions';
-import {CLIError, logger, getLoader, Loader} from '@react-native-community/cli-tools';
+import {
+  CLIError,
+  logger,
+  getLoader,
+  Loader,
+} from '@react-native-community/cli-tools';
 import {
   installTemplatePackage,
   getTemplateConfig,

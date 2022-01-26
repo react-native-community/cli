@@ -7,7 +7,12 @@ import {
   UserConfig,
   Config,
 } from '@react-native-community/cli-types';
-import {logger, inlineString, findProjectRoot, resolveNodeModuleDir} from '@react-native-community/cli-tools';
+import {
+  logger,
+  inlineString,
+  findProjectRoot,
+  resolveNodeModuleDir,
+} from '@react-native-community/cli-tools';
 import findDependencies from './findDependencies';
 import resolveReactNativePath from './resolveReactNativePath';
 import findAssets from './findAssets';

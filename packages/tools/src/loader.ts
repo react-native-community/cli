@@ -49,4 +49,3 @@ export function getLoader(options?: string | Options | undefined): Loader {
 }
 
 export const NoopLoader = OraNoop;
-

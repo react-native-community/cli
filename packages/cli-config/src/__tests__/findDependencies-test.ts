@@ -1,9 +1,5 @@
 import findDependencies from '../findDependencies';
-import {
-  cleanup,
-  writeFiles,
-  getTempDirectory,
-} from '../../../../jest/helpers';
+import {cleanup, writeFiles, getTempDirectory} from '../../../../jest/helpers';
 
 beforeEach(async () => {
   await cleanup(DIR);

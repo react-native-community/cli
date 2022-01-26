@@ -108,7 +108,6 @@ test('should read a config of a dependency and use it to load other settings', (
     }`,
   });
   const {dependencies} = loadConfig(DIR);
-  console.log(dependencies['react-native-test'], DIR);
   expect(
     removeString(dependencies['react-native-test'], DIR),
   ).toMatchSnapshot();

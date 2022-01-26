@@ -152,6 +152,7 @@ export interface Config extends IOSNativeModulesConfig {
     [name: string]: PlatformConfig<any, any, any, any>;
   };
   commands: Command[];
+  // @todo this should be removed: https://github.com/react-native-community/cli/issues/1261
   healthChecks: [];
 }
 

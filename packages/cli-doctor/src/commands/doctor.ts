@@ -269,7 +269,7 @@ export default {
   detached: true,
   name: 'doctor',
   description:
-    '[EXPERIMENTAL] Diagnose and fix common Node.js, iOS, Android & React Native issues.',
+    'Diagnose and fix common Node.js, iOS, Android & React Native issues.',
   options: [
     {
       name: '--fix',

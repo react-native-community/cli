@@ -3,12 +3,13 @@ import {logger, getLoader} from '@react-native-community/cli-tools';
 import {getHealthchecks, HEALTHCHECK_TYPES} from '../tools/healthchecks';
 import printFixOptions, {KEYS} from '../tools/printFixOptions';
 import runAutomaticFix, {AUTOMATIC_FIX_LEVELS} from '../tools/runAutomaticFix';
+import {DetachedCommandFunction} from '@react-native-community/cli-types';
 import {
-  DetachedCommandFunction,
-  HealthCheckCategory,
+  HealthCheckCategoryResult,
   HealthCheckInterface,
-} from '@react-native-community/cli-types';
-import {HealthCheckCategoryResult, HealthCheckResult} from '../tools/types';
+  HealthCheckCategory,
+  HealthCheckResult,
+} from '../types';
 import getEnvironmentInfo from '../tools/envinfo';
 import {logMessage} from '../tools/healthchecks/common';
 
@@ -109,8 +110,7 @@ const getAutomaticFixForPlatform = (
 };
 
 const doctorCommand = (async (_, options) => {
-  const Loader = getLoader();
-  const loader = new Loader();
+  const loader = getLoader();
 
   loader.start('Running diagnostics...');
 
@@ -282,4 +282,3 @@ export default {
     },
   ],
 };
-  

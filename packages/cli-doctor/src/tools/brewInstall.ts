@@ -1,5 +1,5 @@
 import execa from 'execa';
-import {Loader} from '@react-native-community/cli-types';
+import {Loader} from '../types';
 import {logError} from './healthchecks/common';
 
 type InstallArgs = {

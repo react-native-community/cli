@@ -1,8 +1,8 @@
 import execa from 'execa';
 import jdk from '../jdk';
 import getEnvironmentInfo from '../../envinfo';
-import {EnvironmentInfo} from '@react-native-community/cli-types';
-import {NoopLoader} from '../../../tools/loader';
+import {EnvironmentInfo} from '../../../types';
+import {NoopLoader} from '@react-native-community/cli-tools';
 import * as common from '../common';
 import * as unzip from '../../unzip';
 import * as deleteFile from '../../deleteFile';

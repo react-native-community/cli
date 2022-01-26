@@ -1,10 +1,7 @@
 import chalk from 'chalk';
 import versionRanges from '../versionRanges';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
-import {
-  EnvironmentInfo,
-  HealthCheckInterface,
-} from '@react-native-community/cli-types';
+import {EnvironmentInfo, HealthCheckInterface} from '../../types';
 
 export default {
   label: 'Android NDK',

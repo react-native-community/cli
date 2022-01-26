@@ -9,10 +9,7 @@ import androidNDK from './androidNDK';
 import xcode from './xcode';
 import cocoaPods from './cocoaPods';
 import iosDeploy from './iosDeploy';
-import {
-  Healthchecks,
-  HealthCheckCategory,
-} from '@react-native-community/cli-types';
+import {Healthchecks, HealthCheckCategory} from '../../types';
 import loadConfig from '@react-native-community/cli-config';
 
 export const HEALTHCHECK_TYPES = {

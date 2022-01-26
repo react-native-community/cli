@@ -1,6 +1,6 @@
 import {join} from 'path';
 
-import {HealthCheckInterface} from '@react-native-community/cli-types';
+import {HealthCheckInterface} from '../../types';
 
 import {downloadAndUnzip} from '../downloadAndUnzip';
 import {executeCommand} from '../windows/executeWinCommand';

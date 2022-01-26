@@ -1,9 +1,8 @@
 import chalk from 'chalk';
 import ora from 'ora';
 import {logger} from '@react-native-community/cli-tools';
-import {EnvironmentInfo, Loader} from '@react-native-community/cli-types';
+import {EnvironmentInfo, HealthCheckCategoryResult, Loader} from '../types';
 import {HEALTHCHECK_TYPES} from './healthchecks';
-import {HealthCheckCategoryResult} from './types';
 import {logManualInstallation} from './healthchecks/common';
 
 export enum AUTOMATIC_FIX_LEVELS {

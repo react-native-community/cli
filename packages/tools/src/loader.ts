@@ -1,9 +1,10 @@
 import ora from 'ora';
-import type {Ora, Spinner, Color} from 'ora';
+import type {Ora, Options, Spinner, Color} from 'ora';
 import logger from './logger';
-import type {Loader} from '@react-native-community/cli-types';
 
-class OraNoop implements Ora {
+export type Loader = Ora;
+
+class OraNoop implements Loader {
   spinner: Spinner = {interval: 1, frames: []};
   indent: number = 0;
   isSpinning: boolean = false;
@@ -39,14 +40,13 @@ class OraNoop implements Ora {
     return this;
   }
   frame() {
-   
     return this.text;
   }
 }
 
-export function getLoader(): Loader {
-  // FIXME refactor getLoader to not rely on class instantiation to avoid type conflict or implement an default Ora Loader Class definition
-  return logger.isVerbose() ? OraNoop : (ora as Loader);
+export function getLoader(options?: string | Options | undefined): Loader {
+  return logger.isVerbose() ? new OraNoop() : ora(options);
 }
 
 export const NoopLoader = OraNoop;
+

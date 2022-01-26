@@ -1,7 +1,7 @@
 // @ts-ignore
 import envinfo from 'envinfo';
-import {EnvironmentInfo} from '@react-native-community/cli-types';
 import {platform} from 'os';
+import {EnvironmentInfo} from '../types';
 
 /**
  * Returns information about the running system.

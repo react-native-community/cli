@@ -1,12 +1,12 @@
 import fs from 'fs';
 import execa from 'execa';
 import chalk from 'chalk';
-import {Loader} from '@react-native-community/cli-types';
 import prompts from 'prompts';
 import {logger, NoopLoader} from '@react-native-community/cli-tools';
 // @ts-ignore untyped
 import sudo from 'sudo-prompt';
 import {brewInstall} from './brewInstall';
+import {Loader} from '../types';
 
 type PromptCocoaPodsInstallation = {
   installMethod: 'gem' | 'homebrew';

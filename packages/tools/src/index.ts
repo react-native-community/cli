@@ -9,7 +9,7 @@ export {default as launchEditor} from './launchEditor';
 export {default as releaseChecker} from './releaseChecker';
 export {default as resolveNodeModuleDir} from './resolveNodeModuleDir';
 export {default as hookStdout} from './hookStdout';
-export {getLoader, NoopLoader} from './loader';
+export {getLoader, NoopLoader, Loader} from './loader';
 export {default as findProjectRoot} from './findProjectRoot';
 
 export * from './errors';

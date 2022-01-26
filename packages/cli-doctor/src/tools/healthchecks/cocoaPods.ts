@@ -1,12 +1,9 @@
 import execa from 'execa';
 import {isSoftwareNotInstalled} from '../checkInstallation';
-import {
-  promptCocoaPodsInstallationQuestion,
-  runSudo,
-} from '../installPods';
+import {promptCocoaPodsInstallationQuestion, runSudo} from '../installPods';
 import {removeMessage, logError} from './common';
 import {brewInstall} from '../brewInstall';
-import {HealthCheckInterface} from '@react-native-community/cli-types';
+import {HealthCheckInterface} from '../../types';
 
 const label = 'CocoaPods';
 

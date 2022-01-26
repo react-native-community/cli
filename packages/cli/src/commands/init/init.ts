@@ -5,8 +5,7 @@ import minimist from 'minimist';
 import {validateProjectName} from './validate';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
 import printRunInstructions from './printRunInstructions';
-import {Loader} from '@react-native-community/cli-types';
-import {CLIError, logger, getLoader} from '@react-native-community/cli-tools';
+import {CLIError, logger, getLoader, Loader} from '@react-native-community/cli-tools';
 import {
   installTemplatePackage,
   getTemplateConfig,
@@ -84,8 +83,7 @@ async function createFromTemplate({
 
   const projectDirectory = await setProjectDirectory(directory);
 
-  const Loader = getLoader();
-  const loader = new Loader({text: 'Downloading template'});
+  const loader = getLoader({text: 'Downloading template'});
   const templateSourceDir = fs.mkdtempSync(
     path.join(os.tmpdir(), 'rncli-init-template-'),
   );

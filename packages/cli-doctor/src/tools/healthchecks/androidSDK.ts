@@ -2,10 +2,7 @@ import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
 import {logger, findProjectRoot} from '@react-native-community/cli-tools';
-import {
-  HealthCheckInterface,
-  EnvironmentInfo,
-} from '@react-native-community/cli-types';
+import {HealthCheckInterface, EnvironmentInfo} from '../../types';
 import {
   getAndroidSdkRootInstallation,
   installComponent,

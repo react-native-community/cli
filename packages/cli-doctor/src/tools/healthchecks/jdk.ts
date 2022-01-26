@@ -1,7 +1,7 @@
 import {join} from 'path';
 import versionRanges from '../versionRanges';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
-import {HealthCheckInterface} from '@react-native-community/cli-types';
+import {HealthCheckInterface} from '../../types';
 import {downloadAndUnzip} from '../downloadAndUnzip';
 import {
   setEnvironment,

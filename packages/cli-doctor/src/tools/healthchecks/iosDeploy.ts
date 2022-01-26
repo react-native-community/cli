@@ -4,7 +4,7 @@ import prompts from 'prompts';
 import {isSoftwareNotInstalled, PACKAGE_MANAGERS} from '../checkInstallation';
 import {packageManager} from './packageManagers';
 import {logError, removeMessage} from './common';
-import {HealthCheckInterface, Loader} from '@react-native-community/cli-types';
+import {HealthCheckInterface, Loader} from '../../types';
 
 const label = 'ios-deploy';
 

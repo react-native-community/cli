@@ -1,6 +1,6 @@
 import versionRanges from '../versionRanges';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
-import {HealthCheckInterface} from '@react-native-community/cli-types';
+import {HealthCheckInterface} from '../../types';
 
 export default {
   label: 'Node.js',

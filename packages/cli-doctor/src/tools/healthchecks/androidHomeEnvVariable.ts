@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import {HealthCheckInterface} from '@react-native-community/cli-types';
+import {HealthCheckInterface} from '../../types';
 
 // List of answers on how to set `ANDROID_HOME` for each platform
 const URLS = {

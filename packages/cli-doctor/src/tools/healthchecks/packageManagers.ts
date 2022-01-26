@@ -5,7 +5,7 @@ import {
   doesSoftwareNeedToBeFixed,
 } from '../checkInstallation';
 import {install} from '../install';
-import {HealthCheckInterface} from '@react-native-community/cli-types';
+import {HealthCheckInterface} from '../../types';
 
 const packageManager = (() => {
   if (fs.existsSync('yarn.lock')) {

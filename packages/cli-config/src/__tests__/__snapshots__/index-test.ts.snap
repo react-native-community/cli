@@ -153,7 +153,7 @@ Object {
 
 exports[`should skip packages that have invalid configuration: dependencies config 1`] = `Object {}`;
 
-exports[`should skip packages that have invalid configuration: logged warning 1`] = `"Package react-native has been ignored because it contains invalid configuration. Reason: \\"dependency.invalidProperty\\" is not allowed"`;
+exports[`should skip packages that have invalid configuration: logged warning 1`] = `"warn Package react-native has been ignored because it contains invalid configuration. Reason: \\"dependency.invalidProperty\\" is not allowed"`;
 
 exports[`supports dependencies from user configuration with custom build type 1`] = `
 Object {

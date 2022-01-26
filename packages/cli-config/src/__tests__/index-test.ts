@@ -1,10 +1,13 @@
 import path from 'path';
 import slash from 'slash';
 import loadConfig from '..';
-import {logger} from '@react-native-community/cli-tools';
 import {cleanup, writeFiles, getTempDirectory} from '../../../../jest/helpers';
 
 let DIR = getTempDirectory('config_test');
+
+jest.dontMock('@react-native-community/cli-tools');
+
+const spy = jest.spyOn(global.console, 'warn').mockImplementation(jest.fn());
 
 const iosPath = slash(
   require.resolve('@react-native-community/cli-platform-ios'),
@@ -199,7 +202,6 @@ test('should skip packages that have invalid configuration', () => {
       }
     }`,
   });
-  const spy = jest.spyOn(logger, 'warn');
   const {dependencies} = loadConfig(DIR);
   expect(dependencies).toMatchSnapshot('dependencies config');
   expect(spy.mock.calls[0][0]).toMatchSnapshot('logged warning');
@@ -217,7 +219,6 @@ test('does not use restricted "react-native" key to resolve config from package.
       }
     }`,
   });
-  const spy = jest.spyOn(logger, 'warn');
   const {dependencies} = loadConfig(DIR);
   expect(dependencies).toHaveProperty('react-native-netinfo');
   expect(spy).not.toHaveBeenCalled();

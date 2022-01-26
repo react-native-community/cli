@@ -6,7 +6,7 @@ import androidSDK from '../androidSDK';
 import getEnvironmentInfo from '../../envinfo';
 import * as downloadAndUnzip from '../../downloadAndUnzip';
 import {EnvironmentInfo} from '../../../types';
-import {NoopLoader} from '@react-native-community/cli-tools';
+import * as tools from '@react-native-community/cli-tools';
 import * as common from '../common';
 import * as androidWinHelpers from '../../windows/androidWinHelpers';
 import * as environmentVariables from '../../windows/environmentVariables';
@@ -19,9 +19,10 @@ jest.mock('execa', () => jest.fn());
 let mockWorkingDir = '';
 
 // TODO remove when androidSDK starts getting gradle.build path from config
-jest.mock('../../../../cli/src/tools/config/findProjectRoot', () => () => {
-  return mockWorkingDir;
-});
+jest.mock('@react-native-community/cli-tools', () => ({
+  ...jest.requireActual('@react-native-community/cli-tools'),
+  findProjectRoot: () => mockWorkingDir,
+}));
 
 describe('androidSDK', () => {
   beforeEach(() => {
@@ -90,7 +91,7 @@ describe('androidSDK', () => {
   });
 
   it('logs manual installation steps to the screen for the default fix', () => {
-    const loader = new NoopLoader();
+    const loader = new tools.NoopLoader();
     androidSDK.runAutomaticFix({
       loader,
       logManualInstallation,
@@ -100,7 +101,7 @@ describe('androidSDK', () => {
   });
 
   it('installs the SDK if it is missing on Windows', async () => {
-    const loader = new NoopLoader();
+    const loader = new tools.NoopLoader();
     const loaderSucceedSpy = jest.spyOn(loader, 'succeed');
     const loaderFailSpy = jest.spyOn(loader, 'fail');
     const downloadAndUnzipSpy = jest

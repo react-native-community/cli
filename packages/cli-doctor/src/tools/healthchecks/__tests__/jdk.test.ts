@@ -2,7 +2,7 @@ import execa from 'execa';
 import jdk from '../jdk';
 import getEnvironmentInfo from '../../envinfo';
 import {EnvironmentInfo} from '../../../types';
-import {NoopLoader} from '@react-native-community/cli-tools';
+import * as tools from '@react-native-community/cli-tools';
 import * as common from '../common';
 import * as unzip from '../../unzip';
 import * as deleteFile from '../../deleteFile';
@@ -12,12 +12,7 @@ jest
   .spyOn(deleteFile, 'deleteFile')
   .mockImplementation(() => Promise.resolve());
 
-const mockFetchToTemp = jest.fn();
-jest.mock('@react-native-community/cli-tools', () => {
-  return {
-    fetchToTemp: mockFetchToTemp,
-  };
-});
+jest.spyOn(tools, 'fetchToTemp').mockImplementation(jest.fn());
 
 const logSpy = jest.spyOn(common, 'logManualInstallation');
 const {logManualInstallation} = common;
@@ -71,13 +66,13 @@ describe('jdk', () => {
   });
 
   it('logs manual installation steps to the screen for the default fix', async () => {
-    const loader = new NoopLoader();
+    const loader = new tools.NoopLoader();
     await jdk.runAutomaticFix({loader, logManualInstallation, environmentInfo});
     expect(logSpy).toHaveBeenCalledTimes(1);
   });
 
   it('downloads and unzips JDK on Windows when missing', async () => {
-    const loader = new NoopLoader();
+    const loader = new tools.NoopLoader();
     const loaderSucceedSpy = jest.spyOn(loader, 'succeed');
     const loaderFailSpy = jest.spyOn(loader, 'fail');
     const unzipSpy = jest

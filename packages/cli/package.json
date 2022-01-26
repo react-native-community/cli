@@ -55,6 +55,7 @@
     "@types/minimist": "^1.2.0",
     "@types/prompts": "^2.0.9",
     "@types/semver": "^6.0.2",
+    "deepmerge": "^3.2.0",
     "slash": "^3.0.0",
     "snapshot-diff": "^0.7.0"
   },

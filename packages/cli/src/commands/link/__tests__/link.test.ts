@@ -7,7 +7,7 @@ jest.mock('chalk', () => ({
   bold: jest.fn(),
   dim: {underline: jest.fn()},
 }));
-jest.mock('../../../tools/config');
+jest.mock('@react-native-community/cli-config');
 jest.mock('../makeHook', () => {
   return jest.fn(() => {
     return jest.fn(() => Promise.resolve());

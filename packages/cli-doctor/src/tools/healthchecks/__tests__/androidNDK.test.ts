@@ -19,12 +19,6 @@ describe('androidNDK', () => {
     jest.resetAllMocks();
   });
 
-  it('returns a message if the Android SDK is not installed', async () => {
-    environmentInfo.SDKs['Android SDK'] = 'Not Found';
-    const diagnostics = await androidNDK.getDiagnostics(environmentInfo);
-    expect(diagnostics.needsToBeFixed).toBe(true);
-  });
-
   it('returns a message if the Android NDK is not installed', async () => {
     // To avoid having to provide fake versions for all the Android SDK tools
     // @ts-ignore

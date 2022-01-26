@@ -4,8 +4,6 @@ import loadConfig from '..';
 import {logger} from '@react-native-community/cli-tools';
 import {cleanup, writeFiles, getTempDirectory} from '../../../../jest/helpers';
 
-jest.mock('../resolveNodeModuleDir');
-
 let DIR = getTempDirectory('config_test');
 
 const iosPath = slash(
@@ -41,8 +39,11 @@ const REACT_NATIVE_MOCK = {
 const removeString = (config, str) =>
   JSON.parse(
     JSON.stringify(config, (_key, value) =>
+      // In certain cases, `str` (which is a temporary location) will be `/tmp`
+      // which is a symlink to `/private/tmp` on OS X. In this case, tests will fail.
+      // Following RegExp makes sure we strip the entire path.
       typeof value === 'string'
-        ? slash(value.replace(str, '<<REPLACED>>'))
+        ? slash(value.replace(new RegExp(`(.*)${str}`), '<<REPLACED>>'))
         : value,
     ),
   );
@@ -107,6 +108,7 @@ test('should read a config of a dependency and use it to load other settings', (
     }`,
   });
   const {dependencies} = loadConfig(DIR);
+  console.log(dependencies['react-native-test'], DIR);
   expect(
     removeString(dependencies['react-native-test'], DIR),
   ).toMatchSnapshot();

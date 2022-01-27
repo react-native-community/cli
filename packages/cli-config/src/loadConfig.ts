@@ -15,7 +15,6 @@ import {
 } from '@react-native-community/cli-tools';
 import findDependencies from './findDependencies';
 import resolveReactNativePath from './resolveReactNativePath';
-import findAssets from './findAssets';
 import {
   readConfigFromDisk,
   readDependencyConfigFromDisk,
@@ -50,9 +49,6 @@ function getDependencyConfig(
         },
         {} as Config['platforms'],
       ),
-      assets: findAssets(root, config.dependency.assets),
-      hooks: config.dependency.hooks,
-      params: config.dependency.params,
     },
     userConfig.dependencies[dependencyName] || {},
   ) as Dependency;
@@ -74,9 +70,6 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
     },
     dependencies: userConfig.dependencies,
     commands: userConfig.commands,
-    get assets() {
-      return findAssets(projectRoot, userConfig.assets);
-    },
     healthChecks: [],
     platforms: userConfig.platforms,
     get project() {

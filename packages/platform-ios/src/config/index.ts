@@ -15,20 +15,9 @@ import {
   IOSProjectParams,
   IOSDependencyParams,
 } from '@react-native-community/cli-types';
+import {logger} from '@react-native-community/cli-tools';
 
 const memoizedFindProject = memoize(findProject);
-
-/**
- * For libraries specified without an extension, add '.tbd' for those that
- * start with 'lib' and '.framework' to the rest.
- */
-const mapSharedLibaries = (libraries: Array<string>) =>
-  libraries.map((name) => {
-    if (path.extname(name)) {
-      return name;
-    }
-    return name + (name.indexOf('lib') === 0 ? '.tbd' : '.framework');
-  });
 
 /**
  * Returns project config by analyzing given folder and applying some user defaults
@@ -57,21 +46,6 @@ export function projectConfig(folder: string, userConfig: IOSProjectParams) {
 
   return {
     sourceDir,
-    folder,
-    pbxprojPath: path.join(projectPath, 'project.pbxproj'),
-    podfile,
-    podspecPath:
-      userConfig.podspecPath ||
-      // podspecs are usually placed in the root dir of the library or in the
-      // iOS project path
-      findPodspec(folder) ||
-      findPodspec(sourceDir),
-    projectPath,
-    projectName: path.basename(projectPath),
-    libraryFolder: userConfig.libraryFolder || 'Libraries',
-    sharedLibraries: mapSharedLibaries(userConfig.sharedLibraries || []),
-    plist: userConfig.plist || [],
-    scriptPhases: userConfig.scriptPhases || [],
   };
 }
 
@@ -79,12 +53,15 @@ export function dependencyConfig(
   folder: string,
   userConfig: IOSDependencyParams,
 ) {
-  const configurations = userConfig.configurations || [];
-
-  const baseConfig = projectConfig(folder, userConfig);
-  if (!baseConfig) {
-    return null;
+  if (userConfig.podspecPath) {
+    logger.warn(`
+      A podspec should always be at the root of a package and have the name of the package.
+      This property will be removed in a future major version.
+    `);
   }
-
-  return {...baseConfig, configurations};
+  return {
+    podspecPath: userConfig.podspecPath || findPodspec(folder),
+    configurations: userConfig.configurations || [],
+    scriptPhases: userConfig.scriptPhases || [],
+  };
 }

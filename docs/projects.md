@@ -17,7 +17,6 @@ module.exports = {
       project: './CustomProject.xcodeproj',
     },
   },
-  assets: ['./assets'],
 };
 ```
 
@@ -27,28 +26,27 @@ You can check all available options below.
 
 ```ts
 type ProjectConfigT = {
-  reactNativePath: ?string,
+  reactNativePath: ?string;
   project: {
-    android?: ProjectParamsAndroidT,
-    ios?: IOSProjectParams,
-    [key: string]: any,
-  },
-  assets: string[],
-  platforms: PlatformT,
+    android?: ProjectParamsAndroidT;
+    ios?: IOSProjectParams;
+    [key: string]: any;
+  };
+  platforms: PlatformT;
   dependencies: {
     [key: string]: {
-      name: string,
-      root: string,
+      name: string;
+      root: string;
       platforms: {
-        [key: string]: PlatformSettingsT
-      },
-      assets: string[],
+        [key: string]: PlatformSettingsT;
+      };
+      assets: string[];
       hooks: {
-        [key: string]: string
-      }
-    },
-  },
-  commands: CommandT[]
+        [key: string]: string;
+      };
+    };
+  };
+  commands: CommandT[];
 };
 ```
 
@@ -156,33 +154,3 @@ module.exports = {
 The object provided here is deep merged with the dependency config. Check [`projectConfig`](platforms.md#projectconfig) and [`dependencyConfig`](platforms.md#dependencyConfig) return values for a full list of properties that you can override.
 
 > Note: This is an advanced feature and you should not need to use it mos of the time.
-
-## Migrating from `rnpm` configuration
-
-The changes are mostly cosmetic so the migration should be pretty straight-forward.
-
-### Changing the configuration
-
-Properties `ios` and `android` were moved under `project`. Take a look at the following example for the differences.
-
-```json
-{
-  "rnpm": {
-    "ios": {},
-    "android": {},
-    "assets": ["./path-to-assets"]
-  }
-}
-```
-
-to a `react-native.config.js`
-
-```js
-module.exports = {
-  project: {
-    ios: {},
-    android: {},
-  },
-  assets: ['./path-to-assets'],
-};
-```

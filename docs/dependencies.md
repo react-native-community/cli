@@ -31,8 +31,10 @@ module.exports = {
 The following type describes the configuration of a dependency that can be set under `dependency` key inside `react-native.config.js`.
 
 ```ts
-type DependencyConfigT = {
+type DependencyConfig = {
   platforms: {
+    android?: AndroidDependencyParams;
+    ios?: IOSDependencyParams;
     [key: string]: any;
   };
 };
@@ -47,26 +49,22 @@ In most cases, as a library author, you should not need to define any of these.
 The following settings are available on iOS and Android:
 
 ```ts
-type DependencyParamsIOST = {
-  project?: string;
+type IOSDependencyConfig = {
   podspecPath?: string;
-  sharedLibraries?: string[];
+  scriptPhases?: Array<IOSScriptPhase>;
   configurations?: string[];
 };
 
-type DependencyParamsAndroidT = {
+type AndroidDependencyParams = {
   sourceDir?: string;
   manifestPath?: string;
+  packageName?: string;
+  dependencyConfiguration?: string;
   packageImportPath?: string;
   packageInstance?: string;
   buildTypes?: string[];
-  dependencyConfiguration?: string;
 };
 ```
-
-#### platforms.ios.project
-
-Custom path to `.xcodeproj`.
 
 #### platforms.ios.podspecPath
 

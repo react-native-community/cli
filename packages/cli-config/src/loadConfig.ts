@@ -3,7 +3,7 @@ import chalk from 'chalk';
 import {
   UserDependencyConfig,
   ProjectConfig,
-  Dependency,
+  DependencyConfig,
   UserConfig,
   Config,
 } from '@react-native-community/cli-types';
@@ -29,7 +29,7 @@ function getDependencyConfig(
   config: UserDependencyConfig,
   userConfig: UserConfig,
   isPlatform: boolean,
-): Dependency {
+): DependencyConfig {
   return merge(
     {
       root,
@@ -51,7 +51,7 @@ function getDependencyConfig(
       ),
     },
     userConfig.dependencies[dependencyName] || {},
-  ) as Dependency;
+  ) as DependencyConfig;
 }
 
 /**
@@ -124,7 +124,7 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
 
     return assign({}, acc, {
       dependencies: assign({}, acc.dependencies, {
-        get [dependencyName](): Dependency {
+        get [dependencyName](): DependencyConfig {
           return getDependencyConfig(
             root,
             dependencyName,

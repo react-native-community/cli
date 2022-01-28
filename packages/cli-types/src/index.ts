@@ -89,8 +89,8 @@ type IOSPlatformConfig = PlatformConfig<
 >;
 
 export type ProjectConfig = {
-  android?: ReturnType<AndroidPlatformConfig['projectConfig']>;
-  ios?: ReturnType<IOSPlatformConfig['projectConfig']>;
+  android?: Exclude<ReturnType<AndroidPlatformConfig['projectConfig']>, void>;
+  ios?: Exclude<ReturnType<IOSPlatformConfig['projectConfig']>, void>;
   [key: string]: any;
 };
 
@@ -98,8 +98,11 @@ export interface DependencyConfig {
   name: string;
   root: string;
   platforms: {
-    android?: ReturnType<AndroidPlatformConfig['dependencyConfig']>;
-    ios?: ReturnType<IOSPlatformConfig['dependencyConfig']>;
+    android?: Exclude<
+      ReturnType<AndroidPlatformConfig['dependencyConfig']>,
+      void
+    >;
+    ios?: Exclude<ReturnType<IOSPlatformConfig['dependencyConfig']>, void>;
     [key: string]: any;
   };
 }

@@ -19,8 +19,6 @@ import findXcodeProject, {ProjectInfo} from './findXcodeProject';
 import parseIOSDevicesList from './parseIOSDevicesList';
 import parseXctraceIOSDevicesList from './parseXctraceIOSDevicesList';
 import findMatchingSimulator from './findMatchingSimulator';
-import warnAboutManuallyLinkedLibs from '../../link/warnAboutManuallyLinkedLibs';
-import warnAboutPodInstall from '../../link/warnAboutPodInstall';
 import {
   logger,
   CLIError,
@@ -43,15 +41,12 @@ type FlagsT = {
   terminal: string | undefined;
 };
 
-function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
+function runIOS(_: Array<string>, _ctx: Config, args: FlagsT) {
   if (!fs.existsSync(args.projectPath)) {
     throw new CLIError(
       'iOS project folder not found. Are you sure this is a React Native project?',
     );
   }
-
-  warnAboutManuallyLinkedLibs(ctx);
-  warnAboutPodInstall(ctx);
 
   process.chdir(args.projectPath);
 

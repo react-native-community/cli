@@ -21,11 +21,9 @@ import {
   getDefaultUserTerminal,
   CLIError,
 } from '@react-native-community/cli-tools';
-import warnAboutManuallyLinkedLibs from '../../link/warnAboutManuallyLinkedLibs';
-import {getAndroidProject, getPackageName} from '../../utils/getAndroidProject';
+import {getAndroidProject} from '../../config/getAndroidProject';
 
-function displayWarnings(config: Config, args: Flags) {
-  warnAboutManuallyLinkedLibs(config);
+function displayWarnings(args: Flags) {
   if (args.appFolder) {
     logger.warn(
       'Using deprecated "--appFolder" flag. Use "project.android.appName" in react-native.config.js instead.',
@@ -60,7 +58,7 @@ type AndroidProject = NonNullable<Config['project']['android']>;
  * Starts the app on a connected Android emulator or device.
  */
 async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
-  displayWarnings(config, args);
+  displayWarnings(args);
   const androidProject = getAndroidProject(config);
 
   if (args.jetifier) {
@@ -112,21 +110,17 @@ function buildAndRun(args: Flags, androidProject: AndroidProject) {
   process.chdir(androidProject.sourceDir);
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
 
-  const {appFolder} = args;
-  const packageName = getPackageName(androidProject, appFolder);
-
   const adbPath = getAdbPath();
   if (args.deviceId) {
-    return runOnSpecificDevice(args, cmd, packageName, adbPath, androidProject);
+    return runOnSpecificDevice(args, cmd, adbPath, androidProject);
   } else {
-    return runOnAllDevices(args, cmd, packageName, adbPath, androidProject);
+    return runOnAllDevices(args, cmd, adbPath, androidProject);
   }
 }
 
 function runOnSpecificDevice(
   args: Flags,
   gradlew: 'gradlew.bat' | './gradlew',
-  packageName: string,
   adbPath: string,
   androidProject: AndroidProject,
 ) {
@@ -135,13 +129,7 @@ function runOnSpecificDevice(
   if (devices.length > 0 && deviceId) {
     if (devices.indexOf(deviceId) !== -1) {
       buildApk(gradlew, androidProject.sourceDir);
-      installAndLaunchOnDevice(
-        args,
-        deviceId,
-        packageName,
-        adbPath,
-        androidProject,
-      );
+      installAndLaunchOnDevice(args, deviceId, adbPath, androidProject);
     } else {
       logger.error(
         `Could not find device with the id: "${deviceId}". Please choose one of the following:`,
@@ -226,13 +214,17 @@ function getInstallApkName(
 function installAndLaunchOnDevice(
   args: Flags,
   selectedDevice: string,
-  packageName: string,
   adbPath: string,
   androidProject: AndroidProject,
 ) {
   tryRunAdbReverse(args.port, selectedDevice);
   tryInstallAppOnDevice(args, adbPath, selectedDevice, androidProject);
-  tryLaunchAppOnDevice(selectedDevice, packageName, adbPath, args);
+  tryLaunchAppOnDevice(
+    selectedDevice,
+    androidProject.packageName,
+    adbPath,
+    args,
+  );
 }
 
 function startServerInNewWindow(

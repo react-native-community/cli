@@ -11,15 +11,12 @@ import fs from 'fs';
 import findAndroidDir from './findAndroidDir';
 import findManifest from './findManifest';
 import findPackageClassName from './findPackageClassName';
-import readManifest from './readManifest';
 import {
   AndroidProjectParams,
   AndroidDependencyParams,
   AndroidProjectConfig,
 } from '@react-native-community/cli-types';
-import {XmlDocument} from 'xmldoc';
-
-const getPackageName = (manifest: XmlDocument) => manifest.attr.package;
+import {getPackageName} from './getAndroidProject';
 
 /**
  * Gets android project config by analyzing given folder and taking some
@@ -46,9 +43,7 @@ export function projectConfig(
     return null;
   }
 
-  const manifest = readManifest(manifestPath);
-
-  const packageName = userConfig.packageName || getPackageName(manifest);
+  const packageName = userConfig.packageName || getPackageName(manifestPath);
 
   if (!packageName) {
     throw new Error(`Package name not found in ${manifestPath}`);
@@ -56,6 +51,7 @@ export function projectConfig(
 
   return {
     sourceDir,
+    appName,
     packageName,
     dependencyConfiguration: userConfig.dependencyConfiguration,
   };
@@ -97,8 +93,7 @@ export function dependencyConfig(
     return null;
   }
 
-  const manifest = readManifest(manifestPath);
-  const packageName = userConfig.packageName || getPackageName(manifest);
+  const packageName = userConfig.packageName || getPackageName(manifestPath);
   const packageClassName = findPackageClassName(sourceDir);
 
   /**

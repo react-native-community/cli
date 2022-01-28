@@ -1,5 +1,6 @@
 export interface AndroidProjectConfig {
   sourceDir: string;
+  appName: string;
   packageName: string;
   dependencyConfiguration?: string;
 }

@@ -6,10 +6,7 @@ import path from 'path';
 import os from 'os';
 import transformer from 'hermes-profile-transformer';
 import {findSourcemap, generateSourcemap} from './sourcemapUtils';
-import {
-  getAndroidProject,
-  getPackageName,
-} from '@react-native-community/cli-platform-android';
+import {getAndroidProject} from '@react-native-community/cli-platform-android';
 /**
  * Get the last modified hermes profile
  * @param packageNameWithSuffix
@@ -54,7 +51,7 @@ export async function downloadProfile(
   try {
     const androidProject = getAndroidProject(ctx);
     const packageNameWithSuffix = [
-      appId || getPackageName(androidProject),
+      appId || androidProject.packageName,
       appIdSuffix,
     ]
       .filter(Boolean)

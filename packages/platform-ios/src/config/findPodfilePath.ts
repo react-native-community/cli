@@ -6,16 +6,10 @@
  *
  */
 
-import fs from 'fs';
 import glob from 'glob';
 import path from 'path';
 
-export default function findPodfilePath(folder: string, projectFolder: string) {
-  const podFilePath = path.join(projectFolder, '..', 'Podfile');
-  if (fs.existsSync(podFilePath)) {
-    return podFilePath;
-  }
-
+export default function findPodfilePath(folder: string) {
   const podfiles = glob.sync('**/Podfile', {
     cwd: folder,
     ignore: 'node_modules/**',

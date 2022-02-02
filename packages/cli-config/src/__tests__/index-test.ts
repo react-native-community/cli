@@ -97,7 +97,7 @@ test('should read a config of a dependency and use it to load other settings', (
       dependency: {
         platforms: {
           ios: {
-            project: "./customLocation/customProject.xcodeproj"
+            scriptPhases: ["./customLocation/custom.sh"]
           }
         }
       }

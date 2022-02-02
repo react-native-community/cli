@@ -62,7 +62,7 @@ export const dependencyConfig = t
             ios: t
               // IOSDependencyParams
               .object({
-                scriptPhases: t.array().items(t.object()),
+                scriptPhases: t.array().items(t.string()),
                 configurations: t.array().items(t.string()).default([]),
               })
               .default({}),

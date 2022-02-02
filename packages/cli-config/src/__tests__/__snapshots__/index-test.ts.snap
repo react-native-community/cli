@@ -67,7 +67,9 @@ Object {
     "ios": Object {
       "configurations": Array [],
       "podspecPath": "<<REPLACED>>/node_modules/react-native-test/ReactNativeTest.podspec",
-      "scriptPhases": Array [],
+      "scriptPhases": Array [
+        "./customLocation/custom.sh",
+      ],
     },
   },
   "root": "<<REPLACED>>/node_modules/react-native-test",

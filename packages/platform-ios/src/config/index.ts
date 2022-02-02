@@ -40,6 +40,10 @@ export function projectConfig(
     return null;
   }
 
+  /**
+   * @todo
+   * What if there are multiple `xcodeproj` found? Shall we read from a Podfile?
+   */
   const xcodeProject = findXcodeProject(fs.readdirSync(folder));
 
   return {

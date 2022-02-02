@@ -6,11 +6,14 @@
  *
  */
 import path from 'path';
+import fs from 'fs';
 import findPodfilePath from './findPodfilePath';
+import findXcodeProject from './findXcodeProject';
 import findPodspec from './findPodspec';
 import {
   IOSProjectParams,
   IOSDependencyParams,
+  IOSProjectConfig,
 } from '@react-native-community/cli-types';
 import {logger} from '@react-native-community/cli-tools';
 
@@ -18,9 +21,12 @@ import {logger} from '@react-native-community/cli-tools';
  * Returns project config by analyzing given folder and applying some user defaults
  * when constructing final object
  */
-export function projectConfig(folder: string, userConfig: IOSProjectParams) {
+export function projectConfig(
+  folder: string,
+  userConfig: IOSProjectParams,
+): IOSProjectConfig | null {
   if (!userConfig) {
-    return;
+    return null;
   }
 
   const podfile = findPodfilePath(folder);
@@ -34,8 +40,11 @@ export function projectConfig(folder: string, userConfig: IOSProjectParams) {
     return null;
   }
 
+  const xcodeProject = findXcodeProject(fs.readdirSync(folder));
+
   return {
     sourceDir: path.dirname(podfile),
+    xcodeProject,
   };
 }
 

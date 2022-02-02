@@ -7,7 +7,6 @@ import {Config} from '@react-native-community/cli-types';
 import {logger, CLIError, fetch} from '@react-native-community/cli-tools';
 import * as PackageManager from '../../tools/packageManager';
 import {installPods} from '@react-native-community/cli-doctor';
-import {findXcodeProject} from '@react-native-community/cli-platform-ios';
 
 type UpgradeError = {message: string; stderr: string};
 
@@ -112,13 +111,11 @@ const getPatch = async (
       return;
     }
     if (platform === 'ios') {
-      const project = findXcodeProject(
-        fs.readdirSync(config.project[platform]!.sourceDir),
-      );
-      if (project) {
+      const xcodeProject = config.project.ios!.xcodeProject;
+      if (xcodeProject) {
         patchWithRenamedProjects = patchWithRenamedProjects.replace(
           new RegExp('RnDiffApp', 'g'),
-          project.name.replace('.xcodeproj', ''),
+          xcodeProject.name.replace('.xcodeproj', ''),
         );
       }
     } else if (platform === 'android') {

@@ -7,6 +7,10 @@ export interface IOSProjectParams {}
 
 export interface IOSProjectConfig {
   sourceDir: string;
+  xcodeProject: {
+    name: string;
+    isWorkspace: boolean;
+  } | null;
 }
 
 export interface IOSDependencyConfig {

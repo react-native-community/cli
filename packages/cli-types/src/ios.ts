@@ -3,7 +3,9 @@
  * When performing changes, make sure to sync it with the Ruby file.
  */
 
-export interface IOSProjectParams {}
+export interface IOSProjectParams {
+  sourceDir?: string;
+}
 
 export type IOSProjectInfo = {
   name: string;

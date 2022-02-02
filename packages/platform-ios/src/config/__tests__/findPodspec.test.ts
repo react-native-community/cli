@@ -7,7 +7,6 @@
  */
 
 import findPodspec from '../findPodspec';
-import * as projects from '../__fixtures__/projects';
 
 jest.mock('path');
 jest.mock('fs');
@@ -16,12 +15,14 @@ const fs = require('fs');
 
 describe('ios::findPodspec', () => {
   it('returns null if there is not podspec file', () => {
-    fs.__setMockFilesystem(projects.flat);
+    fs.__setMockFilesystem({});
     expect(findPodspec('')).toBeNull();
   });
 
   it('returns podspec name if only one exists', () => {
-    fs.__setMockFilesystem(projects.withPods.ios);
+    fs.__setMockFilesystem({
+      'TestPod.podspec': 'empty',
+    });
     expect(findPodspec('/')).toBe('/TestPod.podspec');
   });
 

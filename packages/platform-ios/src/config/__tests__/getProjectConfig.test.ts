@@ -6,8 +6,6 @@
  *
  */
 
-import * as projects from '../__fixtures__/projects';
-
 jest.mock('path');
 jest.mock('fs');
 
@@ -18,11 +16,9 @@ const getProjectConfig = require('../').projectConfig;
 describe('ios::getProjectConfig', () => {
   const userConfig = {};
 
-  beforeEach(() => {
-    fs.__setMockFilesystem({testDir: projects});
-  });
-
   it.skip('returns `null` if Podfile was not found', () => {});
 
   it.skip(`returns an object with ios project configuration`, () => {});
+
+  it.skip(`returns correct configuration when multiple Podfile are present`, () => {});
 });

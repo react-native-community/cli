@@ -33,6 +33,7 @@ export function projectConfig(
   }
 
   const sourceDir = path.join(root, src);
+
   const appName = getAppName(sourceDir, userConfig.appName);
 
   const manifestPath = userConfig.manifestPath

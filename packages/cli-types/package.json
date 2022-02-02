@@ -9,6 +9,9 @@
     "build",
     "!*.map"
   ],
+  "dependencies": {
+    "joi": "^17.2.1"
+  },
   "types": "build/index.d.ts",
   "license": "MIT",
   "homepage": "https://github.com/react-native-community/cli/tree/master/packages/cli-types",

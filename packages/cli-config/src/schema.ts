@@ -1,3 +1,7 @@
+/**
+ * This schema is used by `cli-config` to validate the structure. Make sure
+ * this file stays up to date with `cli-types` package.
+ */
 import t, {SchemaLike} from 'joi';
 
 const map = (key: RegExp | SchemaLike, value: SchemaLike) =>
@@ -51,7 +55,7 @@ const healthCheck = t.object({
 });
 
 /**
- * Schema for UserDependencyConfigT
+ * Schema for UserDependencyConfig
  */
 export const dependencyConfig = t
   .object({
@@ -98,7 +102,7 @@ export const dependencyConfig = t
   .default();
 
 /**
- * Schema for ProjectConfigT
+ * Schema for ProjectConfig
  */
 export const projectConfig = t
   .object({

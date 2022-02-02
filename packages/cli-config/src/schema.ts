@@ -60,6 +60,7 @@ export const dependencyConfig = t
         platforms: map(t.string(), t.any())
           .keys({
             ios: t
+              // IOSDependencyConfig
               .object({
                 project: t.string(),
                 podspecPath: t.string(),
@@ -70,9 +71,11 @@ export const dependencyConfig = t
               })
               .default({}),
             android: t
+              // AndroidDependencyParams
               .object({
                 sourceDir: t.string(),
                 manifestPath: t.string(),
+                packageName: t.string(),
                 packageImportPath: t.string(),
                 packageInstance: t.string(),
                 dependencyConfiguration: t.string(),
@@ -110,24 +113,17 @@ export const projectConfig = t
           root: t.string(),
           platforms: map(t.string(), t.any()).keys({
             ios: t
+              // IOSDependencyConfig
               .object({
-                sourceDir: t.string(),
-                folder: t.string(),
-                pbxprojPath: t.string(),
-                podfile: t.string(),
                 podspecPath: t.string(),
-                projectPath: t.string(),
-                projectName: t.string(),
-                libraryFolder: t.string(),
-                sharedLibraries: t.array().items(t.string()),
                 configurations: t.array().items(t.string()).default([]),
                 scriptPhases: t.array().items(t.string()).default([]),
               })
               .allow(null),
             android: t
+              // AndroidDependencyConfig
               .object({
                 sourceDir: t.string(),
-                folder: t.string(),
                 packageImportPath: t.string(),
                 packageInstance: t.string(),
                 dependencyConfiguration: t.string(),
@@ -142,24 +138,18 @@ export const projectConfig = t
     project: map(t.string(), t.any())
       .keys({
         ios: t
+          // IOSProjectParams
           .object({
-            project: t.string(),
-            sharedLibraries: t.array().items(t.string()),
-            libraryFolder: t.string(),
+            sourceDir: t.string(),
           })
           .default({}),
         android: t
+          // AndroidProjectParams
           .object({
             sourceDir: t.string(),
+            appName: t.string(),
             manifestPath: t.string(),
             packageName: t.string(),
-            packageFolder: t.string(),
-            mainFilePath: t.string(),
-            stringsPath: t.string(),
-            settingsGradlePath: t.string(),
-            assetsPath: t.string(),
-            buildGradlePath: t.string(),
-            appName: t.string(),
             dependencyConfiguration: t.string(),
           })
           .default({}),

@@ -8,7 +8,6 @@ import {Command, Config} from '@react-native-community/cli-types';
 import {logger, CLIError} from '@react-native-community/cli-tools';
 
 import {detachedCommands, projectCommands} from './commands';
-import init from './commands/init/initCompat';
 import loadConfig from '@react-native-community/cli-config';
 
 const pkgJson = require('../package.json');
@@ -255,4 +254,4 @@ async function setupAndRun() {
 
 const bin = require.resolve('./bin');
 
-export {run, init, bin, loadConfig};
+export {run, bin, loadConfig};

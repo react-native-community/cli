@@ -42,6 +42,22 @@ Array [
 ]
 `;
 
+exports[`should merge project configuration with default values: snapshoting \`react-native-test\` config 1`] = `
+Object {
+  "name": "react-native-test",
+  "platforms": Object {
+    "android": null,
+    "ios": Object {
+      "configurations": Array [],
+      "podspecPath": null,
+      "scriptPhases": Array [],
+      "sourceDir": "./abc",
+    },
+  },
+  "root": "<<REPLACED>>/node_modules/react-native-test",
+}
+`;
+
 exports[`should read a config of a dependency and use it to load other settings 1`] = `
 Object {
   "name": "react-native-test",

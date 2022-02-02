@@ -121,11 +121,6 @@ test('should merge project configuration with default values', () => {
   writeFiles(DIR, {
     ...REACT_NATIVE_MOCK,
     'node_modules/react-native-test/package.json': '{}',
-    'node_modules/react-native-test/react-native.config.js': `module.exports = {
-      dependency: {
-        assets: ["foo", "baz"]
-      }
-    }`,
     'node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj':
       '',
     'package.json': `{
@@ -143,7 +138,6 @@ test('should merge project configuration with default values', () => {
               sourceDir: "./abc"
             }
           },
-          assets: ["foo"]
         }
       }
     }`,

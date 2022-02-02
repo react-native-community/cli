@@ -60,12 +60,8 @@ export const dependencyConfig = t
         platforms: map(t.string(), t.any())
           .keys({
             ios: t
-              // IOSDependencyConfig
+              // IOSDependencyParams
               .object({
-                project: t.string(),
-                podspecPath: t.string(),
-                sharedLibraries: t.array().items(t.string()),
-                libraryFolder: t.string(),
                 scriptPhases: t.array().items(t.object()),
                 configurations: t.array().items(t.string()).default([]),
               })

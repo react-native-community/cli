@@ -1,6 +1,9 @@
 /**
  * This schema is used by `cli-config` to validate the structure. Make sure
  * this file stays up to date with `cli-types` package.
+ *
+ * In the future, it would be great to generate this file automatically from the
+ * Typescript types.
  */
 import t, {SchemaLike} from 'joi';
 

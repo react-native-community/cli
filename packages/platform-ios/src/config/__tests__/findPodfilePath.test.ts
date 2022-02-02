@@ -1,4 +1,3 @@
-import path from 'path';
 import findPodfilePath from '../findPodfilePath';
 
 import * as projects from '../__fixtures__/projects';

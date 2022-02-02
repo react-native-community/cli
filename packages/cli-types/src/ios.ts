@@ -5,12 +5,14 @@
 
 export interface IOSProjectParams {}
 
+export type IOSProjectInfo = {
+  name: string;
+  isWorkspace: boolean;
+};
+
 export interface IOSProjectConfig {
   sourceDir: string;
-  xcodeProject: {
-    name: string;
-    isWorkspace: boolean;
-  } | null;
+  xcodeProject: IOSProjectInfo | null;
 }
 
 export interface IOSDependencyConfig {

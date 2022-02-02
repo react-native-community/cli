@@ -11,11 +11,9 @@ import child_process, {
   // @ts-ignore
   SpawnOptionsWithoutStdio,
 } from 'child_process';
-import fs from 'fs';
 import path from 'path';
 import chalk from 'chalk';
-import {Config} from '@react-native-community/cli-types';
-import findXcodeProject, {ProjectInfo} from '../../config/findXcodeProject';
+import {Config, IOSProjectInfo} from '@react-native-community/cli-types';
 import parseIOSDevicesList from './parseIOSDevicesList';
 import parseXctraceIOSDevicesList from './parseXctraceIOSDevicesList';
 import findMatchingSimulator from './findMatchingSimulator';
@@ -121,7 +119,7 @@ function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
 }
 
 async function runOnSimulator(
-  xcodeProject: ProjectInfo,
+  xcodeProject: IOSProjectInfo,
   scheme: string,
   args: FlagsT,
 ) {
@@ -237,7 +235,7 @@ async function runOnSimulator(
 async function runOnDevice(
   selectedDevice: Device,
   scheme: string,
-  xcodeProject: ProjectInfo,
+  xcodeProject: IOSProjectInfo,
   args: FlagsT,
 ) {
   const isIOSDeployInstalled = child_process.spawnSync(
@@ -302,7 +300,7 @@ async function runOnDevice(
 }
 
 function buildProject(
-  xcodeProject: ProjectInfo,
+  xcodeProject: IOSProjectInfo,
   udid: string | undefined,
   scheme: string,
   args: FlagsT,
@@ -417,7 +415,7 @@ function getTargetPaths(buildSettings: string) {
 }
 
 function getBuildPath(
-  xcodeProject: ProjectInfo,
+  xcodeProject: IOSProjectInfo,
   configuration: string,
   buildOutput: string,
   scheme: string,

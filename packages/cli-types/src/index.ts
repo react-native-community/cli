@@ -3,6 +3,7 @@ import {
   IOSProjectParams,
   IOSDependencyConfig,
   IOSDependencyParams,
+  IOSProjectInfo,
 } from './ios';
 import {
   AndroidProjectConfig,
@@ -151,6 +152,7 @@ export {
   IOSProjectParams,
   IOSDependencyConfig,
   IOSDependencyParams,
+  IOSProjectInfo,
 };
 
 export {

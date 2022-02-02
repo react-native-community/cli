@@ -121,6 +121,7 @@ export const projectConfig = t
                 libraryFolder: t.string(),
                 sharedLibraries: t.array().items(t.string()),
                 configurations: t.array().items(t.string()).default([]),
+                scriptPhases: t.array().items(t.string()).default([]),
               })
               .allow(null),
             android: t

@@ -9,7 +9,7 @@ Object {
       "configurations": Array [
         "debug",
       ],
-      "podspecPath": null,
+      "podspecPath": "<<REPLACED>>/node_modules/react-native-test/ReactNativeTest.podspec",
       "scriptPhases": Array [],
     },
   },
@@ -49,9 +49,10 @@ Object {
     "android": null,
     "ios": Object {
       "configurations": Array [],
-      "podspecPath": null,
-      "scriptPhases": Array [],
-      "sourceDir": "./abc",
+      "podspecPath": "<<REPLACED>>/node_modules/react-native-test/ReactNativeTest.podspec",
+      "scriptPhases": Array [
+        "./abc",
+      ],
     },
   },
   "root": "<<REPLACED>>/node_modules/react-native-test",
@@ -89,7 +90,7 @@ Object {
       "android": null,
       "ios": Object {
         "configurations": Array [],
-        "podspecPath": null,
+        "podspecPath": "<<REPLACED>>/node_modules/react-native-test/ReactNativeTest.podspec",
         "scriptPhases": Array [],
       },
     },
@@ -111,7 +112,7 @@ Object {
       "configurations": Array [
         "custom_build_type",
       ],
-      "podspecPath": null,
+      "podspecPath": "<<REPLACED>>/node_modules/react-native-test/ReactNativeTest.podspec",
       "scriptPhases": Array [],
     },
   },

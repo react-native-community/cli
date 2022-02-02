@@ -75,8 +75,7 @@ test('should return dependencies from package.json', () => {
   writeFiles(DIR, {
     ...REACT_NATIVE_MOCK,
     'node_modules/react-native-test/package.json': '{}',
-    'node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj':
-      '',
+    'node_modules/react-native-test/ReactNativeTest.podspec': '',
     'package.json': `{
       "dependencies": {
         "react-native": "0.0.1",
@@ -121,8 +120,7 @@ test('should merge project configuration with default values', () => {
   writeFiles(DIR, {
     ...REACT_NATIVE_MOCK,
     'node_modules/react-native-test/package.json': '{}',
-    'node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj':
-      '',
+    'node_modules/react-native-test/ReactNativeTest.podspec': '',
     'package.json': `{
       "dependencies": {
         "react-native": "0.0.1",
@@ -135,7 +133,7 @@ test('should merge project configuration with default values', () => {
         "react-native-test": {
           platforms: {
             ios: {
-              sourceDir: "./abc"
+              scriptPhases: ["./abc"]
             }
           },
         }
@@ -225,7 +223,7 @@ test('supports dependencies from user configuration with custom root and propert
 
   writeFiles(DIR, {
     ...REACT_NATIVE_MOCK,
-    'native-libs/local-lib/ios/LocalRNLibrary.xcodeproj/project.pbxproj': '',
+    'native-libs/local-lib/LocalRNLibrary.podspec': '',
     'react-native.config.js': `
 const path = require('path');
 const root = path.resolve('${escapePathSeparator(
@@ -273,8 +271,7 @@ test('should apply build types from dependency config', () => {
   writeFiles(DIR, {
     ...REACT_NATIVE_MOCK,
     'node_modules/react-native-test/package.json': '{}',
-    'node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj':
-      '',
+    'node_modules/react-native-test/ReactNativeTest.podspec': '',
     'node_modules/react-native-test/react-native.config.js': `module.exports = {
       dependency: {
         platforms: {
@@ -313,8 +310,7 @@ test('supports dependencies from user configuration with custom build type', () 
   }
 }`,
     'node_modules/react-native-test/package.json': '{}',
-    'node_modules/react-native-test/ios/HelloWorld.xcodeproj/project.pbxproj':
-      '',
+    'node_modules/react-native-test/ReactNativeTest.podspec': '',
     'node_modules/react-native-test/react-native.config.js':
       'module.exports = {}',
     'package.json': `{

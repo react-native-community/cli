@@ -28,7 +28,7 @@ export function projectConfig(
     return null;
   }
 
-  const podfile = findPodfilePath(folder);
+  const podfile = findPodfilePath(userConfig.sourceDir || folder);
 
   /**
    * In certain repos, the Xcode project can
@@ -57,8 +57,14 @@ export function dependencyConfig(
   folder: string,
   userConfig: IOSDependencyParams,
 ) {
+  const podspecPath = findPodspec(folder);
+
+  if (!podspecPath) {
+    return null;
+  }
+
   return {
-    podspecPath: findPodspec(folder),
+    podspecPath,
     configurations: userConfig.configurations || [],
     scriptPhases: userConfig.scriptPhases || [],
   };

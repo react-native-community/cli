@@ -56,12 +56,7 @@ describe('android::getProjectConfig', () => {
       const folder = '/nested';
 
       const config = getProjectConfig(folder, userConfig);
-      expect(config).toMatchObject({
-        sourceDir: '/nested/android',
-        appName: 'app',
-        packageName: 'com.some.example',
-        manifestPath: '/nested/android/app/src/AndroidManifest.xml',
-      });
+      expect(config).toMatchSnapshot();
     });
 
     it('flat structure', () => {
@@ -69,12 +64,7 @@ describe('android::getProjectConfig', () => {
       const folder = '/flat';
 
       const config = getProjectConfig(folder, userConfig);
-      expect(config).toMatchObject({
-        sourceDir: '/flat/android',
-        appName: '',
-        packageName: 'com.some.example',
-        manifestPath: '/flat/android/src/AndroidManifest.xml',
-      });
+      expect(config).toMatchSnapshot();
     });
 
     it('multiple', () => {
@@ -82,14 +72,9 @@ describe('android::getProjectConfig', () => {
         manifestPath: 'src/main/AndroidManifest.xml',
       };
       const folder = '/multiple';
-
       const config = getProjectConfig(folder, userConfig);
-      expect(config).toMatchObject({
-        sourceDir: '/multiple/android',
-        appName: '',
-        packageName: 'com.some.example',
-        manifestPath: '/multiple/android/src/main/AndroidManifest.xml',
-      });
+
+      expect(config).toMatchSnapshot();
     });
   });
 
@@ -98,15 +83,5 @@ describe('android::getProjectConfig', () => {
     const folder = '/empty';
 
     expect(getProjectConfig(folder, userConfig)).toBeNull();
-  });
-
-  it('should correctly resolve mainFilePath', () => {
-    const userConfig = {};
-    const folder = '/nested';
-
-    const config = getProjectConfig(folder, userConfig);
-    expect(config.mainFilePath).toEqual(
-      '/nested/android/app/src/main/java/com/some/example/MainApplication.java',
-    );
   });
 });

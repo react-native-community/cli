@@ -15,7 +15,6 @@ import {
   IOSDependencyParams,
   IOSProjectConfig,
 } from '@react-native-community/cli-types';
-import {logger} from '@react-native-community/cli-tools';
 
 /**
  * Returns project config by analyzing given folder and applying some user defaults

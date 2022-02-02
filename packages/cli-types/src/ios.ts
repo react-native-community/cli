@@ -19,7 +19,10 @@ export interface IOSDependencyConfig {
   configurations: string[];
 }
 
-export type IOSDependencyParams = Partial<IOSDependencyConfig>;
+export type IOSDependencyParams = Omit<
+  Partial<IOSDependencyConfig>,
+  'podspecPath'
+>;
 
 /**
  * @see https://www.rubydoc.info/gems/cocoapods-core/Pod/Podfile/DSL#script_phase-instance_method

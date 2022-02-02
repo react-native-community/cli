@@ -40,14 +40,16 @@ export function projectConfig(
     return null;
   }
 
+  const sourceDir = path.dirname(podfile);
+
   /**
    * @todo
    * What if there are multiple `xcodeproj` found? Shall we read from a Podfile?
    */
-  const xcodeProject = findXcodeProject(fs.readdirSync(folder));
+  const xcodeProject = findXcodeProject(fs.readdirSync(sourceDir));
 
   return {
-    sourceDir: path.dirname(podfile),
+    sourceDir,
     xcodeProject,
   };
 }
@@ -56,14 +58,8 @@ export function dependencyConfig(
   folder: string,
   userConfig: IOSDependencyParams,
 ) {
-  if (userConfig.podspecPath) {
-    logger.warn(`
-      A podspec should always be at the root of a package and have the name of the package.
-      This property will be removed in a future major version.
-    `);
-  }
   return {
-    podspecPath: userConfig.podspecPath || findPodspec(folder),
+    podspecPath: findPodspec(folder),
     configurations: userConfig.configurations || [],
     scriptPhases: userConfig.scriptPhases || [],
   };

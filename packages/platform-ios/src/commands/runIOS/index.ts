@@ -15,7 +15,7 @@ import fs from 'fs';
 import path from 'path';
 import chalk from 'chalk';
 import {Config} from '@react-native-community/cli-types';
-import findXcodeProject, {ProjectInfo} from './findXcodeProject';
+import findXcodeProject, {ProjectInfo} from '../../config/findXcodeProject';
 import parseIOSDevicesList from './parseIOSDevicesList';
 import parseXctraceIOSDevicesList from './parseXctraceIOSDevicesList';
 import findMatchingSimulator from './findMatchingSimulator';
@@ -41,19 +41,20 @@ type FlagsT = {
   terminal: string | undefined;
 };
 
-function runIOS(_: Array<string>, _ctx: Config, args: FlagsT) {
-  if (!fs.existsSync(args.projectPath)) {
+function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
+  if (!ctx.project.ios) {
     throw new CLIError(
       'iOS project folder not found. Are you sure this is a React Native project?',
     );
   }
 
-  process.chdir(args.projectPath);
+  const {xcodeProject, sourceDir} = ctx.project.ios;
 
-  const xcodeProject = findXcodeProject(fs.readdirSync('.'));
+  process.chdir(sourceDir);
+
   if (!xcodeProject) {
     throw new CLIError(
-      `Could not find Xcode project files in "${args.projectPath}" folder`,
+      `Could not find Xcode project files in "${sourceDir}" folder`,
     );
   }
 
@@ -571,10 +572,6 @@ export default {
       cmd: 'react-native run-ios --simulator "iPhone SE (2nd generation)"',
     },
     {
-      desc: 'Pass a non-standard location of iOS directory',
-      cmd: 'react-native run-ios --project-path "./app/ios"',
-    },
-    {
       desc: "Run on a connected device, e.g. Max's iPhone",
       cmd: 'react-native run-ios --device "Max\'s iPhone"',
     },
@@ -600,13 +597,6 @@ export default {
     {
       name: '--scheme <string>',
       description: 'Explicitly set Xcode scheme to use',
-    },
-    {
-      name: '--project-path <string>',
-      description:
-        'Path relative to project root where the Xcode project ' +
-        '(.xcodeproj) lives.',
-      default: 'ios',
     },
     {
       name: '--device [string]',

@@ -260,25 +260,13 @@ module.exports = {
   const {dependencies} = loadConfig(DIR);
   expect(removeString(dependencies['local-lib'], DIR)).toMatchInlineSnapshot(`
     Object {
-      "assets": Array [],
-      "hooks": Object {},
       "name": "local-lib",
-      "params": Array [],
       "platforms": Object {
         "android": null,
         "ios": Object {
           "configurations": Array [],
-          "folder": "<<REPLACED>>/native-libs/local-lib",
-          "libraryFolder": "Libraries",
-          "pbxprojPath": "<<REPLACED>>/native-libs/local-lib/ios/LocalRNLibrary.xcodeproj/project.pbxproj",
-          "plist": Array [],
-          "podfile": null,
           "podspecPath": "custom-path",
-          "projectName": "LocalRNLibrary.xcodeproj",
-          "projectPath": "<<REPLACED>>/native-libs/local-lib/ios/LocalRNLibrary.xcodeproj",
           "scriptPhases": Array [],
-          "sharedLibraries": Array [],
-          "sourceDir": "<<REPLACED>>/native-libs/local-lib/ios",
         },
       },
       "root": "<<REPLACED>>/native-libs/local-lib",

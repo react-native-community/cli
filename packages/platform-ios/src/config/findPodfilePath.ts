@@ -6,6 +6,7 @@
  *
  */
 
+import {inlineString, logger} from '@react-native-community/cli-tools';
 import glob from 'glob';
 import path from 'path';
 
@@ -41,10 +42,15 @@ export default function findPodfilePath(cwd: string) {
     .sort((project) => (path.dirname(project) === IOS_BASE ? -1 : 1));
 
   if (podfiles.length > 0) {
-    /**
-     * @todo
-     * Shall we print a warning when multiple `Podfile` were found?
-     */
+    if (podfiles.length > 1) {
+      logger.warn(
+        inlineString(`
+          Multiple Podfiles were found: ${podfiles}. Choosing ${podfiles[0]} automatically.
+          If you would like to select a different one, you can configure it via "project.ios.sourceDir".
+          You can learn more about it here: https://github.com/react-native-community/cli/blob/master/docs/configuration.md
+        `),
+      );
+    }
     return path.join(cwd, podfiles[0]);
   }
 

@@ -1,14 +1,6 @@
 # Dependency
 
-A dependency is a JavaScript package that is listed under dependencies present in the project's `package.json`. It can also contain native, platform-specific files that should be linked.
-
-For example, `lodash` is a dependency that doesn't have any native code to link. On the other hand, `react-native-vector-icons` is a dependency that contains not only native code, but also font assets that the CLI should link.
-
-By default, CLI analyses the folder structure inside the dependency and looks for assets and native files to link. This simple heuristic works in most of the cases.
-
-At the same time, a dependency can explicitly set its configuration in case CLI cannot infer it properly.
-
-## How does it work?
+A dependency is a JavaScript package that is listed under dependencies present in the project's `package.json` and contains native, platform-specific code.
 
 A dependency can define the following `react-native.config.js` at the root:
 
@@ -16,15 +8,14 @@ A dependency can define the following `react-native.config.js` at the root:
 module.exports = {
   dependency: {
     platforms: {
-      ios: {
-        project: './Custom.xcodeproj',
-      },
+      // iOS specific properties go here
+      ios: {},
+      // Android specific properties go here
+      android: {},
     },
   },
 };
 ```
-
-> The above configuration informs CLI about a custom project location.
 
 ## Dependency interface
 
@@ -35,6 +26,8 @@ type DependencyConfig = {
   platforms: {
     android?: AndroidDependencyParams;
     ios?: IOSDependencyParams;
+
+    // There can be additional platforms, such as `windows` present
     [key: string]: any;
   };
 };
@@ -50,7 +43,6 @@ The following settings are available on iOS and Android:
 
 ```ts
 type IOSDependencyConfig = {
-  podspecPath?: string;
   scriptPhases?: Array<IOSScriptPhase>;
   configurations?: string[];
 };
@@ -65,10 +57,6 @@ type AndroidDependencyParams = {
   buildTypes?: string[];
 };
 ```
-
-#### platforms.ios.podspecPath
-
-Custom path to `.podspec` file to use when auto-linking. Example: `node_modules/react-native-module/ios/module.podspec`.
 
 #### platforms.ios.scriptPhases
 
@@ -109,6 +97,10 @@ A relative path to a folder with Android project (Gradle root project), e.g. `./
 
 Path to a custom `AndroidManifest.xml`
 
+#### platforms.android.packageName
+
+Custom package name to override one from `AndroidManifest.xml`
+
 #### platforms.android.packageImportPath
 
 Custom package import. For example: `import com.acme.AwesomePackage;`.
@@ -123,7 +115,7 @@ For settings applicable on other platforms, please consult their respective docu
 
 An array of build variants or flavors which will include the dependency. If the array is empty, your dependency will be included in all build types. If you're working on a helper library that should only be included in development, such as a replacement for the React Native development menu, you should set this to `['debug']` to avoid shipping the library in a release build. For more details, see [`build variants`](https://developer.android.com/studio/build/build-variants#dependencies).
 
-### platforms.android.dependencyConfiguration
+#### platforms.android.dependencyConfiguration
 
 A string that defines which method other than `implementation` do you want to use
 for autolinking inside `build.gradle` i.e: `'embed project(path: ":$dependencyName", configuration: "default")',` - `"dependencyName` will be replaced by the actual package's name. You can achieve the same result by directly defining this key per `dependency` _(without placeholder)_ and it will have higher priority than this option.

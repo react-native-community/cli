@@ -66,17 +66,22 @@ module.exports = {
 };
 ```
 
-> Note: You may find this useful in order to alter the default behavior of your function. For example, on iOS, we find an `.xcodeproj` by globbing the project files and taking the first match. There's a possibility we pick the wrong one in case the project has multiple `.xcodeproj` files. In order to support this use-case, we have allowed users to define an exact path to an iOS project in order to overwrite our `glob` mechanism.
+> Note: You may find this useful in order to alter the default behavior of your function. For example, on iOS, we find a `Podfile` by globbing the project files and taking the first match. There's a possibility we pick the wrong one in case the project has multiple `Podfile` files. In order to support this use-case, we have allowed users to define an iOS directory where the desired `Podfile` is located.
 
 On Android and iOS, this function returns:
 
 ```ts
 type IOSProjectConfig = {
   sourceDir: string;
+  xcodeProject: {
+    name: string;
+    isWorkspace: boolean;
+  } | null;
 };
 
 type AndroidProjectConfig = {
   sourceDir: string;
+  appName: string;
   packageName: string;
   dependencyConfiguration?: string;
 };

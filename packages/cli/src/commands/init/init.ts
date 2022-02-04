@@ -18,6 +18,7 @@ import {
   executePostInitScript,
 } from './template';
 import {changePlaceholderInTemplate} from './editTemplate';
+import {enableHermes} from './enableHermes';
 import * as PackageManager from '../../tools/packageManager';
 import {installPods} from '@react-native-community/cli-doctor';
 import banner from './banner';
@@ -31,6 +32,7 @@ type Options = {
   displayName?: string;
   title?: string;
   skipInstall?: boolean;
+  hermes?: boolean;
 };
 
 interface TemplateOptions {
@@ -40,6 +42,7 @@ interface TemplateOptions {
   directory: string;
   projectTitle?: string;
   skipInstall?: boolean;
+  hermes?: boolean;
 }
 
 function doesDirectoryExist(dir: string) {
@@ -82,6 +85,7 @@ async function createFromTemplate({
   directory,
   projectTitle,
   skipInstall,
+  hermes,
 }: TemplateOptions) {
   logger.debug('Initializing new project');
   logger.log(banner);
@@ -120,6 +124,15 @@ async function createFromTemplate({
     });
 
     loader.succeed();
+
+    if (hermes) {
+      loader.start('Enabling hermes engine');
+
+      await enableHermes();
+
+      loader.succeed();
+    }
+
     const {postInitScript} = templateConfig;
     if (postInitScript) {
       // Leaving trailing space because there may be stdout from the script
@@ -191,6 +204,7 @@ async function createProject(
     directory,
     projectTitle: options.title,
     skipInstall: options.skipInstall,
+    hermes: options.hermes,
   });
 }
 

@@ -32,5 +32,9 @@ export default {
       name: '--skip-install',
       description: 'Skips dependencies installation step',
     },
+    {
+      name: '--hermes',
+      description: 'enable hermes engine',
+    },
   ],
 };

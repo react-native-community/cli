@@ -13,8 +13,9 @@ import findManifest from './findManifest';
 import findPackageClassName from './findPackageClassName';
 import {
   AndroidProjectParams,
-  AndroidDependencyParams,
   AndroidProjectConfig,
+  AndroidDependencyParams,
+  AndroidDependencyConfig,
 } from '@react-native-community/cli-types';
 import {getPackageName} from './getAndroidProject';
 
@@ -78,7 +79,7 @@ function getAppName(sourceDir: string, userConfigAppName: string | undefined) {
 export function dependencyConfig(
   root: string,
   userConfig: AndroidDependencyParams = {},
-) {
+): AndroidDependencyConfig | null {
   const src = userConfig.sourceDir || findAndroidDir(root);
 
   if (!src) {

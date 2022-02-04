@@ -14,6 +14,7 @@ import {
   IOSProjectParams,
   IOSDependencyParams,
   IOSProjectConfig,
+  IOSDependencyConfig,
 } from '@react-native-community/cli-types';
 
 /**
@@ -51,7 +52,7 @@ export function projectConfig(
 export function dependencyConfig(
   folder: string,
   userConfig: IOSDependencyParams,
-) {
+): IOSDependencyConfig | null {
   const podspecPath = findPodspec(folder);
 
   if (!podspecPath) {

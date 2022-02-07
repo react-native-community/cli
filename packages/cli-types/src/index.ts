@@ -125,7 +125,6 @@ export interface Config {
   healthChecks: [];
 }
 
-// @todo double check the following two types for correction
 export type UserConfig = Omit<Config, 'root'> & {
   reactNativePath: string | void;
   // Additional project settings

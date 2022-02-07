@@ -15,8 +15,6 @@ yarn react-native run-android
 
 That's it. No more editing build config files to use native code.
 
-> Autolinking is a replacement for [react-native link](https://github.com/react-native-community/cli/blob/master/docs/commands.md#link). If you have been using React Native before version 0.60, please `unlink` native dependencies if you have any from a previous install.
-
 ## How does it work
 
 Each platform defines its own [`platforms`](./platforms.md) configuration. It instructs the CLI on how to find information about native dependencies. This information is exposed through the [`config`](./commands.md#config) command in a JSON format. It's then used by the scripts run by the platform's build tools. Each script applies the logic to link native dependencies specific to its platform.
@@ -28,7 +26,7 @@ The [native_modules.rb](https://github.com/react-native-community/cli/blob/maste
 1. Adds dependencies via CocoaPods dev pods (using files from a local path).
 1. Adds build phase scripts to the App project’s build phase. (see examples below)
 
-This means that all libraries need to ship a Podspec either in the root of their folder or where the Xcode project is. Podspec references the native code that your library depends on.
+This means that all libraries need to ship a Podspec in the root of their folder. Podspec references the native code that your library depends on.
 
 The implementation ensures that a library is imported only once. If you need to have a custom `pod` directive then include it above the `use_native_modules!` function.
 

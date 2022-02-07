@@ -15,8 +15,7 @@
     "jetifier": "^1.6.2",
     "lodash": "^4.17.15",
     "logkitty": "^0.7.1",
-    "slash": "^3.0.0",
-    "xmldoc": "^1.1.2"
+    "slash": "^3.0.0"
   },
   "files": [
     "build",
@@ -29,8 +28,7 @@
     "@types/execa": "^0.9.0",
     "@types/fs-extra": "^8.1.0",
     "@types/glob": "^7.1.1",
-    "@types/lodash": "^4.14.149",
-    "@types/xmldoc": "^1.1.4"
+    "@types/lodash": "^4.14.149"
   },
   "homepage": "https://github.com/react-native-community/cli/tree/master/packages/platform-android",
   "repository": {

@@ -111,10 +111,13 @@ const getPatch = async (
       return;
     }
     if (platform === 'ios') {
-      patchWithRenamedProjects = patchWithRenamedProjects.replace(
-        new RegExp('RnDiffApp', 'g'),
-        config.project[platform]!.projectName.replace('.xcodeproj', ''),
-      );
+      const xcodeProject = config.project.ios!.xcodeProject;
+      if (xcodeProject) {
+        patchWithRenamedProjects = patchWithRenamedProjects.replace(
+          new RegExp('RnDiffApp', 'g'),
+          xcodeProject.name.replace('.xcodeproj', ''),
+        );
+      }
     } else if (platform === 'android') {
       patchWithRenamedProjects = patchWithRenamedProjects
         .replace(

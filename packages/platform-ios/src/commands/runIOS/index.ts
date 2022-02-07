@@ -11,16 +11,12 @@ import child_process, {
   // @ts-ignore
   SpawnOptionsWithoutStdio,
 } from 'child_process';
-import fs from 'fs';
 import path from 'path';
 import chalk from 'chalk';
-import {Config} from '@react-native-community/cli-types';
-import findXcodeProject, {ProjectInfo} from './findXcodeProject';
+import {Config, IOSProjectInfo} from '@react-native-community/cli-types';
 import parseIOSDevicesList from './parseIOSDevicesList';
 import parseXctraceIOSDevicesList from './parseXctraceIOSDevicesList';
 import findMatchingSimulator from './findMatchingSimulator';
-import warnAboutManuallyLinkedLibs from '../../link/warnAboutManuallyLinkedLibs';
-import warnAboutPodInstall from '../../link/warnAboutPodInstall';
 import {
   logger,
   CLIError,
@@ -44,21 +40,19 @@ type FlagsT = {
 };
 
 function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
-  if (!fs.existsSync(args.projectPath)) {
+  if (!ctx.project.ios) {
     throw new CLIError(
       'iOS project folder not found. Are you sure this is a React Native project?',
     );
   }
 
-  warnAboutManuallyLinkedLibs(ctx);
-  warnAboutPodInstall(ctx);
+  const {xcodeProject, sourceDir} = ctx.project.ios;
 
-  process.chdir(args.projectPath);
+  process.chdir(sourceDir);
 
-  const xcodeProject = findXcodeProject(fs.readdirSync('.'));
   if (!xcodeProject) {
     throw new CLIError(
-      `Could not find Xcode project files in "${args.projectPath}" folder`,
+      `Could not find Xcode project files in "${sourceDir}" folder`,
     );
   }
 
@@ -125,7 +119,7 @@ function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
 }
 
 async function runOnSimulator(
-  xcodeProject: ProjectInfo,
+  xcodeProject: IOSProjectInfo,
   scheme: string,
   args: FlagsT,
 ) {
@@ -241,7 +235,7 @@ async function runOnSimulator(
 async function runOnDevice(
   selectedDevice: Device,
   scheme: string,
-  xcodeProject: ProjectInfo,
+  xcodeProject: IOSProjectInfo,
   args: FlagsT,
 ) {
   const isIOSDeployInstalled = child_process.spawnSync(
@@ -306,7 +300,7 @@ async function runOnDevice(
 }
 
 function buildProject(
-  xcodeProject: ProjectInfo,
+  xcodeProject: IOSProjectInfo,
   udid: string | undefined,
   scheme: string,
   args: FlagsT,
@@ -421,7 +415,7 @@ function getTargetPaths(buildSettings: string) {
 }
 
 function getBuildPath(
-  xcodeProject: ProjectInfo,
+  xcodeProject: IOSProjectInfo,
   configuration: string,
   buildOutput: string,
   scheme: string,
@@ -576,10 +570,6 @@ export default {
       cmd: 'react-native run-ios --simulator "iPhone SE (2nd generation)"',
     },
     {
-      desc: 'Pass a non-standard location of iOS directory',
-      cmd: 'react-native run-ios --project-path "./app/ios"',
-    },
-    {
       desc: "Run on a connected device, e.g. Max's iPhone",
       cmd: 'react-native run-ios --device "Max\'s iPhone"',
     },
@@ -605,13 +595,6 @@ export default {
     {
       name: '--scheme <string>',
       description: 'Explicitly set Xcode scheme to use',
-    },
-    {
-      name: '--project-path <string>',
-      description:
-        'Path relative to project root where the Xcode project ' +
-        '(.xcodeproj) lives.',
-      default: 'ios',
     },
     {
       name: '--device [string]',

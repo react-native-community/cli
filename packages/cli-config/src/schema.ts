@@ -1,3 +1,10 @@
+/**
+ * This schema is used by `cli-config` to validate the structure. Make sure
+ * this file stays up to date with `cli-types` package.
+ *
+ * In the future, it would be great to generate this file automatically from the
+ * Typescript types.
+ */
 import t, {SchemaLike} from 'joi';
 
 const map = (key: RegExp | SchemaLike, value: SchemaLike) =>
@@ -51,7 +58,7 @@ const healthCheck = t.object({
 });
 
 /**
- * Schema for UserDependencyConfigT
+ * Schema for UserDependencyConfig
  */
 export const dependencyConfig = t
   .object({
@@ -60,19 +67,18 @@ export const dependencyConfig = t
         platforms: map(t.string(), t.any())
           .keys({
             ios: t
+              // IOSDependencyParams
               .object({
-                project: t.string(),
-                podspecPath: t.string(),
-                sharedLibraries: t.array().items(t.string()),
-                libraryFolder: t.string(),
-                scriptPhases: t.array().items(t.object()),
+                scriptPhases: t.array().items(t.string()),
                 configurations: t.array().items(t.string()).default([]),
               })
               .default({}),
             android: t
+              // AndroidDependencyParams
               .object({
                 sourceDir: t.string(),
                 manifestPath: t.string(),
+                packageName: t.string(),
                 packageImportPath: t.string(),
                 packageInstance: t.string(),
                 dependencyConfiguration: t.string(),
@@ -81,18 +87,6 @@ export const dependencyConfig = t
               .default({}),
           })
           .default(),
-        assets: t.array().items(t.string()).default([]),
-        hooks: map(t.string(), t.string()).default({}),
-        params: t
-          .array()
-          .items(
-            t.object({
-              name: t.string(),
-              type: t.string(),
-              message: t.string(),
-            }),
-          )
-          .default([]),
       })
       .default(),
     platforms: map(
@@ -111,7 +105,7 @@ export const dependencyConfig = t
   .default();
 
 /**
- * Schema for ProjectConfigT
+ * Schema for ProjectConfig
  */
 export const projectConfig = t
   .object({
@@ -122,23 +116,17 @@ export const projectConfig = t
           root: t.string(),
           platforms: map(t.string(), t.any()).keys({
             ios: t
+              // IOSDependencyConfig
               .object({
-                sourceDir: t.string(),
-                folder: t.string(),
-                pbxprojPath: t.string(),
-                podfile: t.string(),
                 podspecPath: t.string(),
-                projectPath: t.string(),
-                projectName: t.string(),
-                libraryFolder: t.string(),
-                sharedLibraries: t.array().items(t.string()),
                 configurations: t.array().items(t.string()).default([]),
+                scriptPhases: t.array().items(t.string()).default([]),
               })
               .allow(null),
             android: t
+              // AndroidDependencyConfig
               .object({
                 sourceDir: t.string(),
-                folder: t.string(),
                 packageImportPath: t.string(),
                 packageInstance: t.string(),
                 dependencyConfiguration: t.string(),
@@ -146,15 +134,6 @@ export const projectConfig = t
               })
               .allow(null),
           }),
-          assets: t.array().items(t.string()),
-          hooks: map(t.string(), t.string()),
-          params: t.array().items(
-            t.object({
-              name: t.string(),
-              type: t.string(),
-              message: t.string(),
-            }),
-          ),
         })
         .allow(null),
     ).default({}),
@@ -162,24 +141,18 @@ export const projectConfig = t
     project: map(t.string(), t.any())
       .keys({
         ios: t
+          // IOSProjectParams
           .object({
-            project: t.string(),
-            sharedLibraries: t.array().items(t.string()),
-            libraryFolder: t.string(),
+            sourceDir: t.string(),
           })
           .default({}),
         android: t
+          // AndroidProjectParams
           .object({
             sourceDir: t.string(),
+            appName: t.string(),
             manifestPath: t.string(),
             packageName: t.string(),
-            packageFolder: t.string(),
-            mainFilePath: t.string(),
-            stringsPath: t.string(),
-            settingsGradlePath: t.string(),
-            assetsPath: t.string(),
-            buildGradlePath: t.string(),
-            appName: t.string(),
             dependencyConfiguration: t.string(),
           })
           .default({}),

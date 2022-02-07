@@ -1,4 +1,4 @@
-import {Config, AndroidProjectConfig} from '@react-native-community/cli-types';
+import {Config} from '@react-native-community/cli-types';
 import {logger, CLIError} from '@react-native-community/cli-tools';
 import fs from 'fs';
 import chalk from 'chalk';
@@ -20,18 +20,14 @@ export function getAndroidProject(config: Config) {
  * Get the package name of the running React Native app
  * @param config
  */
-export function getPackageName(
-  androidProject: AndroidProjectConfig,
-  appFolder?: string,
-) {
-  const {appName, manifestPath} = androidProject;
+export function getPackageName(manifestPath: string) {
   const androidManifest = fs.readFileSync(manifestPath, 'utf8');
 
   let packageNameMatchArray = androidManifest.match(/package="(.+?)"/);
   if (!packageNameMatchArray || packageNameMatchArray.length === 0) {
     throw new CLIError(
       `Failed to build the app: No package name found. Found errors in ${chalk.underline.dim(
-        `${appFolder || appName}/src/main/AndroidManifest.xml`,
+        `${manifestPath}`,
       )}`,
     );
   }

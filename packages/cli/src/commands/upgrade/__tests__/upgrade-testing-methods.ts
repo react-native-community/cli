@@ -152,7 +152,7 @@ const fetchesRegularPatchInstallRemoteAppliesPatchInstallsDepsRemovesRemote = as
     [newVersion],
     merge(ctx, {
       project: {
-        ios: {projectName: 'TestApp.xcodeproj'},
+        ios: {xcodeProject: {name: 'TestApp.xcodeproj'}},
         android: {packageName: 'com.testapp'},
       },
     }),
@@ -218,7 +218,7 @@ const worksWithNameIosAndNameAndroid = async (newVersion) => {
     [newVersion],
     merge(ctx, {
       project: {
-        ios: {projectName: 'CustomIos.xcodeproj'},
+        ios: {xcodeProject: {name: 'CustomIos.xcodeproj'}},
         android: {packageName: 'co.uk.customandroid.app'},
       },
     }),

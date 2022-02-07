@@ -59,9 +59,6 @@ export function readDependencyConfigFromDisk(
 const emptyDependencyConfig = {
   dependency: {
     platforms: {},
-    assets: [],
-    hooks: {},
-    params: [],
   },
   commands: [],
   platforms: {},

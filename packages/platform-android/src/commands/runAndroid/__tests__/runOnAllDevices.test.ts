@@ -8,13 +8,15 @@
 
 import runOnAllDevices from '../runOnAllDevices';
 import execa from 'execa';
+import {Flags} from '..';
+import {AndroidProjectConfig} from '@react-native-community/cli-types';
 
 jest.mock('execa');
 jest.mock('../getAdbPath');
 jest.mock('../tryLaunchEmulator');
 
 describe('--appFolder', () => {
-  const args = {
+  const args: Flags = {
     root: '/root',
     appFolder: undefined,
     appId: '',
@@ -27,20 +29,12 @@ describe('--appFolder', () => {
     port: 8081,
     terminal: 'iTerm2',
     jetifier: true,
+    activeArchOnly: false,
   };
-  const androidProject = {
-    manifestPath: '/android/app/src/main/AndroidManifest.xml',
+  const androidProject: AndroidProjectConfig = {
     appName: 'app',
     packageName: 'com.test',
     sourceDir: '/android',
-    isFlat: false,
-    folder: '',
-    stringsPath: '',
-    buildGradlePath: '',
-    settingsGradlePath: '',
-    assetsPath: '',
-    mainFilePath: '',
-    packageFolder: '',
   };
   beforeEach(() => {
     jest.clearAllMocks();
@@ -50,7 +44,6 @@ describe('--appFolder', () => {
     await runOnAllDevices(
       {...args, variant: 'debug'},
       './gradlew',
-      'com.testapp',
       'adb',
       androidProject,
     );
@@ -60,13 +53,10 @@ describe('--appFolder', () => {
   });
 
   it('uses appName and default variant', async () => {
-    await runOnAllDevices(
-      {...args, variant: 'debug'},
-      './gradlew',
-      'com.testapp',
-      'adb',
-      {...androidProject, appName: 'someApp'},
-    );
+    await runOnAllDevices({...args, variant: 'debug'}, './gradlew', 'adb', {
+      ...androidProject,
+      appName: 'someApp',
+    });
 
     expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toContain(
       'someApp:installDebug',
@@ -74,13 +64,10 @@ describe('--appFolder', () => {
   });
 
   it('uses appName and custom variant', async () => {
-    await runOnAllDevices(
-      {...args, variant: 'staging'},
-      './gradlew',
-      'com.testapp',
-      'adb',
-      {...androidProject, appName: 'anotherApp'},
-    );
+    await runOnAllDevices({...args, variant: 'staging'}, './gradlew', 'adb', {
+      ...androidProject,
+      appName: 'anotherApp',
+    });
 
     expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toContain(
       'anotherApp:installStaging',
@@ -91,7 +78,6 @@ describe('--appFolder', () => {
     await runOnAllDevices(
       {...args, appFolder: 'someApp', variant: 'debug'},
       './gradlew',
-      'com.testapp',
       'adb',
       androidProject,
     );
@@ -105,7 +91,6 @@ describe('--appFolder', () => {
     await runOnAllDevices(
       {...args, appFolder: 'anotherApp', variant: 'staging'},
       './gradlew',
-      'com.testapp',
       'adb',
       androidProject,
     );
@@ -119,7 +104,6 @@ describe('--appFolder', () => {
     await runOnAllDevices(
       {...args, tasks: ['someTask']},
       './gradlew',
-      'com.testapp',
       'adb',
       androidProject,
     );
@@ -130,13 +114,10 @@ describe('--appFolder', () => {
   });
 
   it('uses appName and custom task argument', async () => {
-    await runOnAllDevices(
-      {...args, tasks: ['someTask']},
-      './gradlew',
-      'com.testapp',
-      'adb',
-      {...androidProject, appName: 'anotherApp'},
-    );
+    await runOnAllDevices({...args, tasks: ['someTask']}, './gradlew', 'adb', {
+      ...androidProject,
+      appName: 'anotherApp',
+    });
 
     expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toContain(
       'anotherApp:someTask',
@@ -147,7 +128,6 @@ describe('--appFolder', () => {
     await runOnAllDevices(
       {...args, appFolder: 'anotherApp', tasks: ['someTask'], variant: 'debug'},
       './gradlew',
-      'com.testapp',
       'adb',
       {...androidProject, appName: 'anotherApp'},
     );
@@ -161,7 +141,6 @@ describe('--appFolder', () => {
     await runOnAllDevices(
       {...args, tasks: ['clean', 'someTask']},
       './gradlew',
-      'com.testapp',
       'adb',
       androidProject,
     );

@@ -7,14 +7,11 @@
  */
 
 import path from 'path';
+import {IOSProjectInfo} from '@react-native-community/cli-types';
 
-export type ProjectInfo = {
-  name: string;
-  isWorkspace: boolean;
-};
-
-function findXcodeProject(files: Array<string>): ProjectInfo | null {
+function findXcodeProject(files: Array<string>): IOSProjectInfo | null {
   const sortedFiles = files.sort();
+
   for (let i = sortedFiles.length - 1; i >= 0; i--) {
     const fileName = files[i];
     const ext = path.extname(fileName);

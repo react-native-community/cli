@@ -1,12 +1,5 @@
 {
-  "version": "6.4.0",
+  "version": "7.0.1",
   "npmClient": "yarn",
-  "useWorkspaces": true,
-  "command": {
-    "publish": {
-      "ignoreChanges": [
-        "packages/global-cli/**"
-      ]
-    }
-  }
+  "useWorkspaces": true
 }

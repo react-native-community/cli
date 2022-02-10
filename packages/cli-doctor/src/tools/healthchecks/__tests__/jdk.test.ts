@@ -4,7 +4,7 @@ import getEnvironmentInfo from '../../envinfo';
 import {EnvironmentInfo} from '../../../types';
 import * as tools from '@react-native-community/cli-tools';
 import * as common from '../common';
-import * as unzip from '../../unzip';
+import * as downloadAndUnzip from '../../downloadAndUnzip';
 import * as deleteFile from '../../deleteFile';
 
 jest.mock('execa', () => jest.fn());
@@ -75,8 +75,8 @@ describe('jdk', () => {
     const loader = new tools.NoopLoader();
     const loaderSucceedSpy = jest.spyOn(loader, 'succeed');
     const loaderFailSpy = jest.spyOn(loader, 'fail');
-    const unzipSpy = jest
-      .spyOn(unzip, 'unzip')
+    const downloadAndUnzipSpy = jest
+      .spyOn(downloadAndUnzip, 'downloadAndUnzip')
       .mockImplementation(() => Promise.resolve());
 
     await jdk.win32AutomaticFix({
@@ -87,7 +87,7 @@ describe('jdk', () => {
 
     expect(loaderFailSpy).toHaveBeenCalledTimes(0);
     expect(logSpy).toHaveBeenCalledTimes(0);
-    expect(unzipSpy).toBeCalledTimes(1);
+    expect(downloadAndUnzipSpy).toBeCalledTimes(1);
     expect(loaderSucceedSpy).toBeCalledWith(
       'JDK installed successfully. Please restart your shell to see the changes',
     );

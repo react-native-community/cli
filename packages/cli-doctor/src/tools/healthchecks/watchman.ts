@@ -13,6 +13,7 @@ export default {
     needsToBeFixed: doesSoftwareNeedToBeFixed({
       version: Binaries.Watchman.version,
       versionRange: versionRanges.WATCHMAN,
+      looseRange: true,
     }),
     version: Binaries.Watchman.version,
     versionRange: versionRanges.WATCHMAN,

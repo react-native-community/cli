@@ -19,11 +19,13 @@ const isSoftwareNotInstalled = async (command: string): Promise<boolean> => {
 const doesSoftwareNeedToBeFixed = ({
   version,
   versionRange,
+  looseRange = false,
 }: {
   version: string;
   versionRange: string;
+  looseRange?: boolean;
 }): boolean => {
-  const coercedVersion = semver.coerce(version);
+  const coercedVersion = semver.coerce(version, {loose: looseRange});
 
   return (
     version === 'Not Found' ||

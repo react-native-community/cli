@@ -41,6 +41,16 @@ describe('watchman', () => {
     expect(diagnostics.needsToBeFixed).toBe(false);
   });
 
+  it('returns false if watchman is installed with new date-based versions', async () => {
+    environmentInfo.Binaries.Watchman = {
+      version: '2020.02.07.00',
+      path: '/unimportant/path',
+    };
+
+    const diagnostics = await watchman.getDiagnostics(environmentInfo);
+    expect(diagnostics.needsToBeFixed).toBe(false);
+  });
+
   it('logs manual installation steps to the screen for the non-macOS fix', async () => {
     // Pretend we are linux, all the time
     const originalPlatform = process.platform;

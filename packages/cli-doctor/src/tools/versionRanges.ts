@@ -7,7 +7,7 @@ export default {
   JAVA: '1.8.x || >= 9',
   // Android
   ANDROID_SDK: '>= 26.x',
-  ANDROID_NDK: '>= 19.x',
+  ANDROID_NDK: '>= 21.4',
   // iOS
   XCODE: '>= 10.x',
 };

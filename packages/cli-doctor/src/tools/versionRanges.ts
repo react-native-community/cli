@@ -4,9 +4,9 @@ export default {
   YARN: '>= 1.10.x',
   NPM: '>= 4.x',
   WATCHMAN: '>= 4.x',
-  JAVA: '1.8.x || >= 9',
+  JAVA: '>= 11',
   // Android
-  ANDROID_SDK: '>= 26.x',
+  ANDROID_SDK: '>= 31.x',
   ANDROID_NDK: '>= 19.x',
   // iOS
   XCODE: '>= 12.x',

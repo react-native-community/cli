@@ -14,10 +14,12 @@ import {
 import {
   installTemplatePackage,
   getTemplateConfig,
-  copyTemplate,
   executePostInitScript,
 } from './template';
-import {changePlaceholderInTemplate} from './editTemplate';
+import {
+  copyTemplateAndReplacePlaceholders,
+  overridePlaceholderTitle,
+} from './editTemplate';
 import * as PackageManager from '../../tools/packageManager';
 import {installPods} from '@react-native-community/cli-doctor';
 import banner from './banner';
@@ -34,7 +36,6 @@ type Options = {
 };
 
 interface TemplateOptions {
-  projectName: string;
   templateUri: string;
   npm?: boolean;
   directory: string;
@@ -76,7 +77,6 @@ function getTemplateName(cwd: string) {
 }
 
 async function createFromTemplate({
-  projectName,
   templateUri,
   npm,
   directory,
@@ -99,25 +99,18 @@ async function createFromTemplate({
     await installTemplatePackage(templateUri, templateSourceDir, npm);
 
     loader.succeed();
-    loader.start('Copying template');
+    loader.start('Copying template & Processing template');
 
     const templateName = getTemplateName(templateSourceDir);
     const templateConfig = getTemplateConfig(templateName, templateSourceDir);
-    await copyTemplate(
+    const placeholders = templateConfig.placeholders || {};
+    overridePlaceholderTitle(projectTitle, placeholders);
+    await copyTemplateAndReplacePlaceholders(
       templateName,
       templateConfig.templateDir,
       templateSourceDir,
+      placeholders,
     );
-
-    loader.succeed();
-    loader.start('Processing template');
-
-    await changePlaceholderInTemplate({
-      projectName,
-      projectTitle,
-      placeholderName: templateConfig.placeholderName,
-      placeholderTitle: templateConfig.titlePlaceholder,
-    });
 
     loader.succeed();
     const {postInitScript} = templateConfig;
@@ -177,7 +170,6 @@ async function installDependencies({
 }
 
 async function createProject(
-  projectName: string,
   directory: string,
   version: string,
   options: Options,
@@ -185,7 +177,6 @@ async function createProject(
   const templateUri = options.template || `react-native@${version}`;
 
   return createFromTemplate({
-    projectName,
     templateUri,
     npm: options.npm,
     directory,
@@ -211,7 +202,7 @@ export default (async function initialize(
   const directoryName = path.relative(root, options.directory || projectName);
 
   try {
-    await createProject(projectName, directoryName, version, options);
+    await createProject(directoryName, version, options);
 
     const projectFolder = path.join(root, directoryName);
     printRunInstructions(projectFolder, projectName);

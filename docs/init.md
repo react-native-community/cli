@@ -76,19 +76,25 @@ Every custom template needs to have configuration file called `template.config.j
 
 ```js
 module.exports = {
-  // Placeholder name that will be replaced in package.json, index.json, android/, ios/ for a project name.
-  placeholderName: 'ProjectName',
+  templateDir: "./template",
 
-  // Placeholder title that will be replaced in values.xml and Info.plist with title provided by the user.
-  // We default this value to 'Hello App Display Name', which is default placeholder in react-native template.
-  titlePlaceholder: 'Hello App Display Name',
+  placeholders: {
+    hermes_flag:true,
 
-  // Directory with the template which will be copied and processed by React Native CLI. Template directory should have package.json with all dependencies specified, including `react-native`.
-  templateDir: './template',
+    slug:"my_project_name",
+    
+    // Placeholder name that will be replaced in package.json, index.json, android/, ios/ for a project name.
+    name: 'MyProjectName', // if you override this name, than you can use --title arg in cli
 
-  // Path to script, which will be executed after initialization process, but before installing all the dependencies specified in the template. This script runs as a shell script but you can change that (e.g. to Node) by using a shebang (see example custom template).
-  postInitScript: './script.js',
+    // title that will be replaced in values.xml and Info.plist with title provided by the user.
+    // We default this value to 'Hello App Display Name', which is default placeholder in react-native template.
+    title: 'Hello App Display Name'
+  },
+  // Path to script, which will be executed after init
+  postInitScript: "./script.js"
 };
 ```
 
-You can find example custom template [here](https://github.com/Esemesek/react-native-new-template).
+You can find example custom template [here](https://github.com/nomi9995/react-native-template-placeholder).
+
+for add more placeholders, you can add a placeholder into the `placeholders` object as mentioned in `template.config.js` and you can add that variable in template file like this `<%= slug %>` by using [Embedded JavaScript templating](https://ejs.co/#docs) 

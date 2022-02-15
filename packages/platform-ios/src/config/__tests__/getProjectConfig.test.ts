@@ -33,14 +33,14 @@ describe('ios::getProjectConfig', () => {
   it('returns correct configuration when multiple Podfile are present', () => {
     fs.__setMockFilesystem({
       sample: {
-        Podfile: ''
+        Podfile: '',
       },
       ios: {
         Podfile: '',
       },
       example: {
         Podfile: '',
-      }
+      },
     });
     expect(projectConfig('/', {})).toMatchInlineSnapshot(`
       Object {

@@ -293,7 +293,7 @@ export default {
     'builds your app and starts it on a connected Android emulator or device',
   func: runAndroid,
   options: [
-     {
+    {
       name: '--variant <string>',
       description: "Specify your app's build variant",
       default: 'debug',

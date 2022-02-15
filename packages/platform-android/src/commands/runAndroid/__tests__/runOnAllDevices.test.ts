@@ -72,7 +72,6 @@ describe('--appFolder', () => {
     );
   });
 
-
   it('uses only task argument', async () => {
     await runOnAllDevices(
       {...args, tasks: ['someTask']},

@@ -49,10 +49,10 @@ const Page = (window.Page = {
     const statusNode = document.getElementById('status');
     switch (status.type) {
       case 'connected':
-        statusNode.innerHTML = 'Debugger session #' + status.id + ' active.';
+        statusNode.textContent = 'Debugger session #' + status.id + ' active.';
         break;
       case 'error':
-        statusNode.innerHTML =
+        statusNode.textContent =
           status.error.reason ||
           'Disconnected from proxy. Attempting reconnection. Is node server running?';
         break;

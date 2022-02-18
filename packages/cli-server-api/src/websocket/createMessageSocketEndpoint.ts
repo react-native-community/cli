@@ -8,8 +8,6 @@
 import url from 'url';
 import {Server as WebSocketServer} from 'ws';
 import {logger} from '@react-native-community/cli-tools';
-import {Server as HttpServer} from 'http';
-import {Server as HttpsServer} from 'https';
 
 const PROTOCOL_VERSION = 2;
 
@@ -70,11 +68,12 @@ function isResponse(message: Message) {
   );
 }
 
-type Server = HttpServer | HttpsServer;
-function attachToServer(server: Server, path: string) {
+export default function createMessageSocketEndpoint(): {
+  server: WebSocketServer;
+  broadcast: (method: string, params?: Record<string, any>) => void;
+} {
   const wss = new WebSocketServer({
-    server,
-    path,
+    noServer: true,
   });
   const clients = new Map();
   let nextClientId = 0;
@@ -211,8 +210,7 @@ function attachToServer(server: Server, path: string) {
 
     clients.set(clientId, clientWs);
     const onCloseHandler = () => {
-      // @ts-ignore
-      clientWs.onmessage = null;
+      clientWs.onmessage = () => {};
       clients.delete(clientId);
     };
     clientWs.onclose = onCloseHandler;
@@ -245,10 +243,9 @@ function attachToServer(server: Server, path: string) {
   });
 
   return {
+    server: wss,
     broadcast: (method: string, params?: Record<string, any>) => {
       handleSendBroadcast(null, {method, params});
     },
   };
 }
-
-export default {attachToServer, parseMessage};

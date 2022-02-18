@@ -1,5 +1,4 @@
-import http, {Server as HttpServer} from 'http';
-import {Server as HttpsServer} from 'https';
+import http from 'http';
 
 import compression from 'compression';
 import connect from 'connect';
@@ -17,9 +16,9 @@ import securityHeadersMiddleware from './securityHeadersMiddleware';
 import statusPageMiddleware from './statusPageMiddleware';
 import systraceProfileMiddleware from './systraceProfileMiddleware';
 
-import debuggerProxyServer from './websocket/debuggerProxyServer';
-import eventsSocketServer from './websocket/eventsSocketServer';
-import messageSocketServer from './websocket/messageSocketServer';
+import createDebuggerProxyEndpoint from './websocket/createDebuggerProxyEndpoint';
+import createMessageSocketEndpoint from './websocket/createMessageSocketEndpoint';
+import createEventsSocketEndpoint from './websocket/createEventsSocketEndpoint';
 
 export {devToolsMiddleware};
 export {indexPageMiddleware};
@@ -29,10 +28,6 @@ export {rawBodyMiddleware};
 export {securityHeadersMiddleware};
 export {statusPageMiddleware};
 export {systraceProfileMiddleware};
-
-export {debuggerProxyServer};
-export {eventsSocketServer};
-export {messageSocketServer};
 
 type MiddlewareOptions = {
   host?: string;
@@ -70,29 +65,23 @@ export function createDevServerMiddleware(options: MiddlewareOptions) {
     middleware.use(serveStatic(folder));
   });
 
+  const debuggerProxyEndpoint = createDebuggerProxyEndpoint();
+  isDebuggerConnected = debuggerProxyEndpoint.isDebuggerConnected;
+
+  const messageSocketEndpoint = createMessageSocketEndpoint();
+  broadcast = messageSocketEndpoint.broadcast;
+
+  const eventsSocketEndpoint = createEventsSocketEndpoint(broadcast);
+
   return {
-    attachToServer(server: HttpServer | HttpsServer) {
-      const debuggerProxy = debuggerProxyServer.attachToServer(
-        server,
-        '/debugger-proxy',
-      );
-      const messageSocket = messageSocketServer.attachToServer(
-        server,
-        '/message',
-      );
-      broadcast = messageSocket.broadcast;
-      isDebuggerConnected = debuggerProxy.isDebuggerConnected;
-      const eventsSocket = eventsSocketServer.attachToServer(
-        server,
-        '/events',
-        messageSocket,
-      );
-      return {
-        debuggerProxy,
-        eventsSocket,
-        messageSocket,
-      };
+    websocketEndpoints: {
+      '/debugger-proxy': debuggerProxyEndpoint.server,
+      '/message': messageSocketEndpoint.server,
+      '/events': eventsSocketEndpoint.server,
     },
+    debuggerProxyEndpoint,
+    messageSocketEndpoint,
+    eventsSocketEndpoint,
     middleware,
   };
 }

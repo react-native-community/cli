@@ -70,7 +70,12 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
     );
   }
 
-  const {middleware, attachToServer} = createDevServerMiddleware({
+  const {
+    middleware,
+    websocketEndpoints,
+    messageSocketEndpoint,
+    eventsSocketEndpoint,
+  } = createDevServerMiddleware({
     host: args.host,
     port: metroConfig.server.port,
     watchFolders: metroConfig.watchFolders,
@@ -94,14 +99,13 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
     secureCert: args.cert,
     secureKey: args.key,
     hmrEnabled: true,
+    websocketEndpoints,
   });
 
-  const {messageSocket, eventsSocket} = attachToServer(serverInstance);
-
-  reportEvent = eventsSocket.reportEvent;
+  reportEvent = eventsSocketEndpoint.reportEvent;
 
   if (args.interactive) {
-    enableWatchMode(messageSocket);
+    enableWatchMode(messageSocketEndpoint);
   }
 
   // In Node 8, the default keep-alive for an HTTP connection is 5 seconds. In

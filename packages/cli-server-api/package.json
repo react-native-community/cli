@@ -1,13 +1,13 @@
 {
   "name": "@react-native-community/cli-server-api",
-  "version": "6.4.0",
+  "version": "6.4.1",
   "license": "MIT",
   "main": "build/index.js",
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "@react-native-community/cli-debugger-ui": "^6.0.0-rc.0",
+    "@react-native-community/cli-debugger-ui": "^6.0.0",
     "@react-native-community/cli-tools": "^6.2.0",
     "compression": "^1.7.1",
     "connect": "^3.6.5",

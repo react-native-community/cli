@@ -49,7 +49,7 @@ const Page = (window.Page = {
     const statusNode = document.getElementById('status');
     switch (status.type) {
       case 'connected':
-        statusNode.innerHTML = 'Debugger session #' + status.id + ' active.';
+        statusNode.innerHTML = 'Debugger session active.';
         break;
       case 'error':
         statusNode.innerHTML =

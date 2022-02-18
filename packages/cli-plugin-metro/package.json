@@ -7,7 +7,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@react-native-community/cli-server-api": "^6.4.1",
+    "@react-native-community/cli-server-api": "^7.0.2",
     "@react-native-community/cli-tools": "^6.2.0",
     "chalk": "^4.1.2",
     "metro": "^0.67.0",

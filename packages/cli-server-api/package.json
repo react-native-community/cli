@@ -15,13 +15,13 @@
     "nocache": "^2.1.0",
     "pretty-format": "^26.6.2",
     "serve-static": "^1.13.1",
-    "ws": "^1.1.0"
+    "ws": "^7.5.1"
   },
   "devDependencies": {
     "@types/compression": "^1.0.1",
     "@types/connect": "^3.4.33",
     "@types/errorhandler": "^0.0.32",
-    "@types/ws": "^6.0.3"
+    "@types/ws": "^7.4.7"
   },
   "files": [
     "build",

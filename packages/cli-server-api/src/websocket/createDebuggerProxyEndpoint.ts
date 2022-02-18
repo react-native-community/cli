@@ -9,15 +9,14 @@
 
 import ws from 'ws';
 import {logger} from '@react-native-community/cli-tools';
-import {Server as HttpServer} from 'http';
-import {Server as HttpsServer} from 'https';
 
-type Server = HttpServer | HttpsServer;
-function attachToServer(server: Server, path: string) {
+export default function createDebuggerProxyEndpoint(): {
+  server: ws.Server;
+  isDebuggerConnected: () => boolean;
+} {
   const WebSocketServer = ws.Server;
   const wss = new WebSocketServer({
-    server,
-    path,
+    noServer: true,
   });
 
   let debuggerSocket: ws | null;
@@ -48,37 +47,33 @@ function attachToServer(server: Server, path: string) {
     send(debuggerSocket, JSON.stringify({method: '$disconnected'}));
   };
 
-  wss.on('connection', (connection: ws) => {
-    // @ts-ignore current definition of ws does not have upgradeReq type
-    const {url} = connection.upgradeReq;
+  wss.on('connection', (socket, request) => {
+    const {url} = request;
 
-    if (url.indexOf('role=debugger') > -1) {
+    if (url && url.indexOf('role=debugger') > -1) {
       if (debuggerSocket) {
-        connection.close(1011, 'Another debugger is already connected');
+        socket.close(1011, 'Another debugger is already connected');
         return;
       }
-      debuggerSocket = connection;
+      debuggerSocket = socket;
       if (debuggerSocket) {
         debuggerSocket.onerror = debuggerSocketCloseHandler;
         debuggerSocket.onclose = debuggerSocketCloseHandler;
         debuggerSocket.onmessage = ({data}) => send(clientSocket, data);
       }
-    } else if (url.indexOf('role=client') > -1) {
+    } else if (url && url.indexOf('role=client') > -1) {
       if (clientSocket) {
-        // @ts-ignore not nullable with current type definition of ws
-        clientSocket.onerror = null;
-        // @ts-ignore not nullable with current type definition of ws
-        clientSocket.onclose = null;
-        // @ts-ignore not nullable with current type definition of ws
-        clientSocket.onmessage = null;
+        clientSocket.onerror = () => {};
+        clientSocket.onclose = () => {};
+        clientSocket.onmessage = () => {};
         clientSocket.close(1011, 'Another client connected');
       }
-      clientSocket = connection;
+      clientSocket = socket;
       clientSocket.onerror = clientSocketCloseHandler;
       clientSocket.onclose = clientSocketCloseHandler;
       clientSocket.onmessage = ({data}) => send(debuggerSocket, data);
     } else {
-      connection.close(1011, 'Missing role param');
+      socket.close(1011, 'Missing role param');
     }
   });
 
@@ -89,7 +84,3 @@ function attachToServer(server: Server, path: string) {
     },
   };
 }
-
-export default {
-  attachToServer,
-};

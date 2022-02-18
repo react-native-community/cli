@@ -36,8 +36,13 @@ type MiddlewareOptions = {
 };
 
 export function createDevServerMiddleware(options: MiddlewareOptions) {
-  let isDebuggerConnected = () => false;
-  let broadcast = (_event: any) => {};
+  const debuggerProxyEndpoint = createDebuggerProxyEndpoint();
+  const isDebuggerConnected = debuggerProxyEndpoint.isDebuggerConnected;
+
+  const messageSocketEndpoint = createMessageSocketEndpoint();
+  const broadcast = messageSocketEndpoint.broadcast;
+
+  const eventsSocketEndpoint = createEventsSocketEndpoint(broadcast);
 
   const middleware = connect()
     .use(securityHeadersMiddleware)
@@ -47,7 +52,7 @@ export function createDevServerMiddleware(options: MiddlewareOptions) {
     .use('/debugger-ui', debuggerUIMiddleware())
     .use(
       '/launch-js-devtools',
-      devToolsMiddleware(options, () => isDebuggerConnected()),
+      devToolsMiddleware(options, isDebuggerConnected),
     )
     .use('/open-stack-frame', openStackFrameInEditorMiddleware(options))
     .use('/open-url', openURLMiddleware)
@@ -64,14 +69,6 @@ export function createDevServerMiddleware(options: MiddlewareOptions) {
     // @ts-ignore mismatch between express and connect middleware types
     middleware.use(serveStatic(folder));
   });
-
-  const debuggerProxyEndpoint = createDebuggerProxyEndpoint();
-  isDebuggerConnected = debuggerProxyEndpoint.isDebuggerConnected;
-
-  const messageSocketEndpoint = createMessageSocketEndpoint();
-  broadcast = messageSocketEndpoint.broadcast;
-
-  const eventsSocketEndpoint = createEventsSocketEndpoint(broadcast);
 
   return {
     websocketEndpoints: {

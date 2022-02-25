@@ -23,24 +23,9 @@ import {
 } from '@react-native-community/cli-tools';
 import {getAndroidProject} from '../../config/getAndroidProject';
 
-function displayWarnings(args: Flags) {
-  if (args.appFolder) {
-    logger.warn(
-      'Using deprecated "--appFolder" flag. Use "project.android.appName" in react-native.config.js instead.',
-    );
-  }
-  if (args.root) {
-    logger.warn(
-      'Using deprecated "--root" flag. App root is discovered automatically. Alternatively, set "project.android.sourceDir" in react-native.config.js.',
-    );
-  }
-}
-
 export interface Flags {
   tasks?: Array<string>;
-  root: string;
   variant: string;
-  appFolder: string;
   appId: string;
   appIdSuffix: string;
   mainActivity: string;
@@ -58,7 +43,6 @@ type AndroidProject = NonNullable<Config['project']['android']>;
  * Starts the app on a connected Android emulator or device.
  */
 async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
-  displayWarnings(args);
   const androidProject = getAndroidProject(config);
 
   if (args.jetifier) {
@@ -162,11 +146,10 @@ function tryInstallAppOnDevice(
   try {
     // "app" is usually the default value for Android apps with only 1 app
     const {appName, sourceDir} = androidProject;
-    const {appFolder} = args;
     const variant = args.variant.toLowerCase();
     const buildDirectory = `${sourceDir}/${appName}/build/outputs/apk/${variant}`;
     const apkFile = getInstallApkName(
-      appFolder || appName, // TODO: remove appFolder
+      appName,
       adbPath,
       variant,
       device,
@@ -311,20 +294,9 @@ export default {
   func: runAndroid,
   options: [
     {
-      name: '--root <string>',
-      description:
-        '[DEPRECATED - root is discovered automatically] Override the root directory for the android build (which contains the android directory)',
-      default: '',
-    },
-    {
       name: '--variant <string>',
       description: "Specify your app's build variant",
       default: 'debug',
-    },
-    {
-      name: '--appFolder <string>',
-      description:
-        '[DEPRECATED – use "project.android.appName" in react-native.config.js] Specify a different application folder name for the android source. If not, we assume is "app"',
     },
     {
       name: '--appId <string>',

@@ -1,5 +1,4 @@
-import http, {Server as HttpServer} from 'http';
-import {Server as HttpsServer} from 'https';
+import http from 'http';
 
 import compression from 'compression';
 import connect from 'connect';
@@ -17,9 +16,9 @@ import securityHeadersMiddleware from './securityHeadersMiddleware';
 import statusPageMiddleware from './statusPageMiddleware';
 import systraceProfileMiddleware from './systraceProfileMiddleware';
 
-import debuggerProxyServer from './websocket/debuggerProxyServer';
-import eventsSocketServer from './websocket/eventsSocketServer';
-import messageSocketServer from './websocket/messageSocketServer';
+import createDebuggerProxyEndpoint from './websocket/createDebuggerProxyEndpoint';
+import createMessageSocketEndpoint from './websocket/createMessageSocketEndpoint';
+import createEventsSocketEndpoint from './websocket/createEventsSocketEndpoint';
 
 export {devToolsMiddleware};
 export {indexPageMiddleware};
@@ -30,10 +29,6 @@ export {securityHeadersMiddleware};
 export {statusPageMiddleware};
 export {systraceProfileMiddleware};
 
-export {debuggerProxyServer};
-export {eventsSocketServer};
-export {messageSocketServer};
-
 type MiddlewareOptions = {
   host?: string;
   watchFolders: ReadonlyArray<string>;
@@ -41,8 +36,13 @@ type MiddlewareOptions = {
 };
 
 export function createDevServerMiddleware(options: MiddlewareOptions) {
-  let isDebuggerConnected = () => false;
-  let broadcast = (_event: any) => {};
+  const debuggerProxyEndpoint = createDebuggerProxyEndpoint();
+  const isDebuggerConnected = debuggerProxyEndpoint.isDebuggerConnected;
+
+  const messageSocketEndpoint = createMessageSocketEndpoint();
+  const broadcast = messageSocketEndpoint.broadcast;
+
+  const eventsSocketEndpoint = createEventsSocketEndpoint(broadcast);
 
   const middleware = connect()
     .use(securityHeadersMiddleware)
@@ -52,7 +52,7 @@ export function createDevServerMiddleware(options: MiddlewareOptions) {
     .use('/debugger-ui', debuggerUIMiddleware())
     .use(
       '/launch-js-devtools',
-      devToolsMiddleware(options, () => isDebuggerConnected()),
+      devToolsMiddleware(options, isDebuggerConnected),
     )
     .use('/open-stack-frame', openStackFrameInEditorMiddleware(options))
     .use('/open-url', openURLMiddleware)
@@ -71,28 +71,14 @@ export function createDevServerMiddleware(options: MiddlewareOptions) {
   });
 
   return {
-    attachToServer(server: HttpServer | HttpsServer) {
-      const debuggerProxy = debuggerProxyServer.attachToServer(
-        server,
-        '/debugger-proxy',
-      );
-      const messageSocket = messageSocketServer.attachToServer(
-        server,
-        '/message',
-      );
-      broadcast = messageSocket.broadcast;
-      isDebuggerConnected = debuggerProxy.isDebuggerConnected;
-      const eventsSocket = eventsSocketServer.attachToServer(
-        server,
-        '/events',
-        messageSocket,
-      );
-      return {
-        debuggerProxy,
-        eventsSocket,
-        messageSocket,
-      };
+    websocketEndpoints: {
+      '/debugger-proxy': debuggerProxyEndpoint.server,
+      '/message': messageSocketEndpoint.server,
+      '/events': eventsSocketEndpoint.server,
     },
+    debuggerProxyEndpoint,
+    messageSocketEndpoint,
+    eventsSocketEndpoint,
     middleware,
   };
 }

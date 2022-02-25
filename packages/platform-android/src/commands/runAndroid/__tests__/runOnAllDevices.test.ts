@@ -17,8 +17,6 @@ jest.mock('../tryLaunchEmulator');
 
 describe('--appFolder', () => {
   const args: Flags = {
-    root: '/root',
-    appFolder: undefined,
     appId: '',
     tasks: undefined,
     variant: 'debug',
@@ -74,32 +72,6 @@ describe('--appFolder', () => {
     );
   });
 
-  it('uses appFolder and default variant', async () => {
-    await runOnAllDevices(
-      {...args, appFolder: 'someApp', variant: 'debug'},
-      './gradlew',
-      'adb',
-      androidProject,
-    );
-
-    expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toContain(
-      'someApp:installDebug',
-    );
-  });
-
-  it('uses appFolder and custom variant', async () => {
-    await runOnAllDevices(
-      {...args, appFolder: 'anotherApp', variant: 'staging'},
-      './gradlew',
-      'adb',
-      androidProject,
-    );
-
-    expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toContain(
-      'anotherApp:installStaging',
-    );
-  });
-
   it('uses only task argument', async () => {
     await runOnAllDevices(
       {...args, tasks: ['someTask']},
@@ -118,19 +90,6 @@ describe('--appFolder', () => {
       ...androidProject,
       appName: 'anotherApp',
     });
-
-    expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toContain(
-      'anotherApp:someTask',
-    );
-  });
-
-  it('uses appFolder and custom task argument', async () => {
-    await runOnAllDevices(
-      {...args, appFolder: 'anotherApp', tasks: ['someTask'], variant: 'debug'},
-      './gradlew',
-      'adb',
-      {...androidProject, appName: 'anotherApp'},
-    );
 
     expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toContain(
       'anotherApp:someTask',

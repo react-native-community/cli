@@ -1,9 +1,6 @@
 import {Server as WebSocketServer} from 'ws';
 import {logger} from '@react-native-community/cli-tools';
 import prettyFormat from 'pretty-format';
-import {Server as HttpServer} from 'http';
-import {Server as HttpsServer} from 'https';
-import messageSocketModule from './messageSocketServer';
 
 /**
  * The eventsSocket websocket listens at the 'events/` for websocket
@@ -20,8 +17,6 @@ import messageSocketModule from './messageSocketServer';
  *   This reuses the generic command mechanism.
  *   Two useful commands are 'reload' and 'devmenu'.
  */
-
-type Server = HttpServer | HttpsServer;
 
 type Command = {
   version: number;
@@ -105,23 +100,18 @@ function serializeMessage(message: any) {
   }
 }
 
-type MessageSocket = ReturnType<typeof messageSocketModule.attachToServer>;
-
 /**
  * Starts the eventsSocket at the given path
  *
- * @param server
- * @param path typically: 'events/'
- * @param messageSocket: webSocket to which all connected RN apps are listening
  */
-function attachToServer(
-  server: Server,
-  path: string,
-  messageSocket: MessageSocket,
-) {
+export default function createEventsSocketEndpoint(
+  broadcast: (method: string, params?: Record<string, any>) => void,
+): {
+  server: WebSocketServer;
+  reportEvent: (event: any) => void;
+} {
   const wss = new WebSocketServer({
-    server: server,
-    path: path,
+    noServer: true,
     verifyClient({origin}: {origin: string}) {
       // This exposes the full JS logs and enables issuing commands like reload
       // so let's make sure only locally running stuff can connect to it
@@ -186,7 +176,7 @@ function attachToServer(
            * messageSocket.broadcast (not to be confused with our own broadcast above)
            * forwards a command to all connected React Native applications.
            */
-          messageSocket.broadcast(message.command, message.params);
+          broadcast(message.command, message.params);
         } catch (e) {
           logger.error('Failed to forward message to clients: ', e);
         }
@@ -197,12 +187,9 @@ function attachToServer(
   });
 
   return {
+    server: wss,
     reportEvent: (event: any) => {
       broadCastEvent(event);
     },
   };
 }
-
-export default {
-  attachToServer,
-};

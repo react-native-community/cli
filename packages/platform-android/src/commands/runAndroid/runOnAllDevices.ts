@@ -53,10 +53,7 @@ async function runOnAllDevices(
 
   try {
     const tasks = args.tasks || ['install' + toPascalCase(args.variant)];
-    const gradleArgs = getTaskNames(
-      args.appFolder || androidProject.appName,
-      tasks,
-    );
+    const gradleArgs = getTaskNames(androidProject.appName, tasks);
 
     if (args.port != null) {
       gradleArgs.push('-PreactNativeDevServerPort=' + args.port);

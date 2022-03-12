@@ -137,6 +137,13 @@ function attachCommand<IsDetached extends boolean>(
       const passedOptions = this.opts();
       const argv = Array.from(args).slice(0, -1);
 
+      // Copy parent commander verbose value to the sub-command if the sub-command also has a verbose option
+      // This is a workaround that can potentially be removed if commander is upgraded to v7+
+      // See https://github.com/react-native-community/cli/issues/1391#issuecomment-813078097 for more info
+      if (passedOptions.hasOwnProperty('verbose')) {
+        passedOptions.verbose = commander.verbose;
+      }
+
       try {
         if (isDetachedCommand(command)) {
           await command.func(argv, passedOptions);
@@ -254,4 +261,4 @@ async function setupAndRun() {
 
 const bin = require.resolve('./bin');
 
-export {run, bin, loadConfig};
+export {run, bin, loadConfig, attachCommand};

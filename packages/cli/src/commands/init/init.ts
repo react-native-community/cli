@@ -120,6 +120,7 @@ async function createFromTemplate({
     loader.succeed();
     const {postInitScript} = templateConfig;
     if (postInitScript) {
+      loader.info('Executing post init script ');
       await executePostInitScript(
         templateName,
         postInitScript,

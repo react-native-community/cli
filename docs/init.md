@@ -91,7 +91,7 @@ module.exports = {
 };
 ```
 
-## 6.3.1
+## Post init script loading
 The responsibility of showing the user progress of the "Executing post init script" goes to the implementor. In the cli, the `ora` package is used to display progress. 
 For a simple usage in a custom template, `ora` can be used like this in a postInitScript :
 

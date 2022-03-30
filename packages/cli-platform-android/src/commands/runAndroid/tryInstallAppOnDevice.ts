@@ -14,16 +14,22 @@ function tryInstallAppOnDevice(
     // "app" is usually the default value for Android apps with only 1 app
     const {appName, sourceDir} = androidProject;
     const variant = (args.mode || 'debug').toLowerCase();
-    const buildDirectory = `${sourceDir}/${appName}/build/outputs/apk/${variant}`;
-    const apkFile = getInstallApkName(
-      appName,
-      adbPath,
-      variant,
-      device,
-      buildDirectory,
-    );
 
-    const pathToApk = `${buildDirectory}/${apkFile}`;
+    let pathToApk;
+    if (!args.binaryPath) {
+      const buildDirectory = `${sourceDir}/${appName}/build/outputs/apk/${variant}`;
+      const apkFile = getInstallApkName(
+        appName,
+        adbPath,
+        variant,
+        device,
+        buildDirectory,
+      );
+      pathToApk = `${buildDirectory}/${apkFile}`;
+    } else {
+      pathToApk = args.binaryPath;
+    }
+
     const adbArgs = ['-s', device, 'install', '-r', '-d', pathToApk];
     logger.info(`Installing the app on the device "${device}"...`);
     logger.debug(

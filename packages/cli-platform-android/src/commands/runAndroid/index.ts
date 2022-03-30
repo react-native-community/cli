@@ -27,6 +27,7 @@ export interface Flags extends BuildFlags {
   mainActivity: string;
   deviceId?: string;
   listDevices?: boolean;
+  binaryPath?: string;
 }
 
 type AndroidProject = NonNullable<Config['project']['android']>;
@@ -35,6 +36,21 @@ type AndroidProject = NonNullable<Config['project']['android']>;
  * Starts the app on a connected Android emulator or device.
  */
 async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
+  if (args.binaryPath) {
+    if (args.tasks) {
+      throw new CLIError(
+        'binary-path and tasks were specified, but they are not compatible. Specify only one',
+      );
+    }
+
+    args.binaryPath = path.join(config.root, args.binaryPath);
+    if (!fs.existsSync(args.binaryPath)) {
+      throw new CLIError(
+        'binary-path was specified, but the file was not found.',
+      );
+    }
+  }
+
   const androidProject = getAndroidProject(config);
 
   await runPackager(args, config);
@@ -124,7 +140,9 @@ function runOnSpecificDevice(
       if (args.extraParams) {
         gradleArgs = [...gradleArgs, ...args.extraParams];
       }
-      build(gradleArgs, androidProject.sourceDir);
+      if (!args.binaryPath) {
+        build(gradleArgs, androidProject.sourceDir);
+      }
       installAndLaunchOnDevice(args, deviceId, adbPath, androidProject);
     } else {
       logger.error(
@@ -187,6 +205,11 @@ export default {
       description:
         'Lists all available Android devices and simulators and let you choose one to run the app',
       default: false,
+    },
+    {
+      name: '--binary-path <string>',
+      description:
+        'Path relative to project root where pre-built .apk binary lives.',
     },
   ],
 };

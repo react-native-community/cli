@@ -43,7 +43,10 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
       );
     }
 
-    args.binaryPath = path.join(config.root, args.binaryPath);
+    args.binaryPath = path.isAbsolute(args.binaryPath)
+      ? args.binaryPath
+      : path.join(config.root, args.binaryPath);
+
     if (!fs.existsSync(args.binaryPath)) {
       throw new CLIError(
         'binary-path was specified, but the file was not found.',

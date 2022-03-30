@@ -51,7 +51,10 @@ function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   }
 
   if (args.binaryPath) {
-    args.binaryPath = path.join(ctx.root, args.binaryPath);
+    args.binaryPath = path.isAbsolute(args.binaryPath)
+      ? args.binaryPath
+      : path.join(ctx.root, args.binaryPath);
+
     if (!fs.existsSync(args.binaryPath)) {
       throw new CLIError(
         'binary-path was specified, but the file was not found.',

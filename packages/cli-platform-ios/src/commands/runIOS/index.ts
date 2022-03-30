@@ -264,6 +264,12 @@ async function runOnDevice(
   xcodeProject: IOSProjectInfo,
   args: FlagsT,
 ) {
+  if (args.binaryPath && selectedDevice.type === 'catalyst') {
+    throw new CLIError(
+      'binary-path was specified for catalyst device, which is not supported.',
+    );
+  }
+
   const isIOSDeployInstalled = child_process.spawnSync(
     'ios-deploy',
     ['--version'],

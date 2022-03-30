@@ -12,6 +12,7 @@ import child_process, {
   SpawnOptionsWithoutStdio,
 } from 'child_process';
 import path from 'path';
+import fs from 'fs';
 import chalk from 'chalk';
 import {Config, IOSProjectInfo} from '@react-native-community/cli-types';
 import parseIOSDevicesList from './parseIOSDevicesList';

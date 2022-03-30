@@ -3,6 +3,7 @@ import fs from 'fs';
 import {logger, CLIError} from '@react-native-community/cli-tools';
 
 import adb from './adb';
+import type {AndroidProject, Flags} from './';
 
 function tryInstallAppOnDevice(
   args: Flags,

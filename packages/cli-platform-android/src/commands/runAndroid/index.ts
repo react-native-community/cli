@@ -30,7 +30,7 @@ export interface Flags extends BuildFlags {
   binaryPath?: string;
 }
 
-type AndroidProject = NonNullable<Config['project']['android']>;
+export type AndroidProject = NonNullable<Config['project']['android']>;
 
 /**
  * Starts the app on a connected Android emulator or device.

@@ -349,6 +349,12 @@ Example: `yarn react-native run-android --tasks clean,installDebug`.
 > default: false
 
 Do not run [jetifier](https://www.npmjs.com/package/jetifier) – the AndroidX transition tool. By default it runs before Gradle to ease working with libraries that don't support AndroidX yet.
+  
+#### `--active-arch-only`
+
+> default: false
+
+Build native libraries only for the current device architecture for debug builds.
 
 ### `run-ios`
 

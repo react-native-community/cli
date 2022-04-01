@@ -24,6 +24,7 @@
     "testEnvironment": "node"
   },
   "dependencies": {
+    "@react-native-community/cli-clean": "^8.0.0-alpha.0",
     "@react-native-community/cli-config": "^8.0.0-alpha.0",
     "@react-native-community/cli-debugger-ui": "^8.0.0-alpha.0",
     "@react-native-community/cli-doctor": "^8.0.0-alpha.0",

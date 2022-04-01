@@ -20,6 +20,8 @@ import {changePlaceholderInTemplate} from './editTemplate';
 import * as PackageManager from '../../tools/packageManager';
 import {installPods} from '@react-native-community/cli-doctor';
 import banner from './banner';
+import ConflictingFilesError from './errors/ConflictingFilesError';
+import walk from '../../tools/walk';
 
 const DEFAULT_VERSION = 'latest';
 
@@ -45,12 +47,33 @@ function doesDirectoryExist(dir: string) {
   return fs.existsSync(dir);
 }
 
+function getDirectoryFilesRecursive(dir: string): string[] {
+  try {
+    return walk(dir, true)
+      .map((file) => file.replace(dir, ''))
+      .filter(Boolean);
+  } catch (err) {
+    return [];
+  }
+}
+
+async function checkDirectoriesForConflicts(dirLeft: string, dirRight: string) {
+  const dirLeftFiles = getDirectoryFilesRecursive(dirLeft);
+  const dirRightFiles = getDirectoryFilesRecursive(dirRight);
+
+  const conflictingFiles: string[] = dirLeftFiles.filter((fileName) =>
+    dirRightFiles.includes(fileName),
+  );
+  if (conflictingFiles.length > 0) {
+    throw new ConflictingFilesError(dirLeft, conflictingFiles);
+  }
+}
+
 async function setProjectDirectory(directory: string) {
   const projectDirectory = path.join(process.cwd(), directory);
   if (!doesDirectoryExist(projectDirectory)) {
     try {
       fs.mkdirSync(directory, {recursive: true});
-      process.chdir(directory);
     } catch (error) {
       throw new CLIError(
         'Error occurred while trying to create project directory.',
@@ -101,6 +124,17 @@ async function createFromTemplate({
 
     const templateName = getTemplateName(templateSourceDir);
     const templateConfig = getTemplateConfig(templateName, templateSourceDir);
+
+    await checkDirectoriesForConflicts(
+      projectDirectory,
+      path.resolve(
+        templateSourceDir,
+        'node_modules',
+        templateName,
+        templateConfig.templateDir,
+      ),
+    );
+
     await copyTemplate(
       templateName,
       templateConfig.templateDir,

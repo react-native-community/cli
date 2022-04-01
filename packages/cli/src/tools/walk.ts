@@ -9,7 +9,7 @@
 import fs from 'fs';
 import path from 'path';
 
-function walk(current: string): string[] {
+function walk(current: string, filesOnly: boolean = false): string[] {
   if (!fs.lstatSync(current).isDirectory()) {
     return [current];
   }
@@ -18,7 +18,7 @@ function walk(current: string): string[] {
     .readdirSync(current)
     .map((child) => walk(path.join(current, child)));
   const result: string[] = [];
-  return result.concat.apply([current], files);
+  return result.concat.apply(!filesOnly ? [current] : [], files);
 }
 
 export default walk;

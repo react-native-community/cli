@@ -4,10 +4,11 @@ import {spawn} from 'child_process';
 import {existsSync as fileExists, rmdir} from 'fs';
 import os from 'os';
 import path from 'path';
+import prompts from 'prompts';
 import {promisify} from 'util';
 
 type Args = {
-  include: string;
+  include?: string;
   projectRoot: string;
   verifyCache?: boolean;
 };
@@ -69,6 +70,24 @@ function findPath(startPath: string, files: string[]): string | undefined {
   }
 
   return undefined;
+}
+
+async function promptForCaches(
+  commands: CLICommand,
+): Promise<string[] | undefined> {
+  const names: string[] = Object.keys(commands);
+  const {caches} = await prompts({
+    type: 'multiselect',
+    name: 'caches',
+    message: 'Select all caches to clean',
+    choices: names.map((cmd) => ({
+      title: cmd,
+      value: cmd,
+      selected: DEFAULT_CATEGORIES.includes(cmd),
+    })),
+    min: 1,
+  });
+  return caches;
 }
 
 export async function clean(
@@ -164,8 +183,15 @@ export async function clean(
     ],
   };
 
+  const categories = include
+    ? include.split(',')
+    : await promptForCaches(COMMANDS);
+  if (!categories || categories.length === 0) {
+    return;
+  }
+
   const spinner = getLoader();
-  for (const category of include.split(',')) {
+  for (const category of categories) {
     const commands = COMMANDS[category];
     if (!commands) {
       spinner.warn(`Unknown category: ${category}`);
@@ -194,8 +220,7 @@ export default {
     {
       name: '--include <string>',
       description:
-        'Comma-separated flag of caches to clear e.g. `npm,yarn`. When not specified , only non-platform specific caches are cleared. Valid values are android, cocoapods, npm, metro, watchman, yarn.',
-      default: DEFAULT_CATEGORIES.join(','),
+        'Comma-separated flag of caches to clear e.g. `npm,yarn`. If omitted, an interactive prompt will appear.',
     },
     {
       name: '--project-root <string>',

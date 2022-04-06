@@ -22,7 +22,7 @@ type CLICommand = {
   [key: string]: Task[];
 };
 
-const DEFAULT_CATEGORIES = ['metro', 'npm', 'watchman', 'yarn'];
+const DEFAULT_CATEGORIES = ['metro', 'watchman'];
 
 const rmdirAsync = promisify(rmdir);
 

@@ -9,6 +9,7 @@
   "types": "build/index.d.ts",
   "dependencies": {
     "@react-native-community/cli-tools": "^8.0.0-alpha.0",
+    "execa": "^1.0.0",
     "prompts": "^2.4.0"
   },
   "files": [
@@ -18,6 +19,7 @@
   ],
   "devDependencies": {
     "@react-native-community/cli-types": "^8.0.0-alpha.0",
+    "@types/execa": "^0.9.0",
     "@types/prompts": "^2.0.9"
   },
   "homepage": "https://github.com/react-native-community/cli/tree/master/packages/cli-clean",

@@ -1,6 +1,6 @@
 import {getLoader} from '@react-native-community/cli-tools';
 import type {Config as CLIConfig} from '@react-native-community/cli-types';
-import {spawn} from 'child_process';
+import execa from 'execa';
 import {existsSync as fileExists, rmdir} from 'fs';
 import os from 'os';
 import path from 'path';
@@ -32,32 +32,6 @@ function cleanDir(directory: string): Promise<void> {
   }
 
   return rmdirAsync(directory, {maxRetries: 3, recursive: true});
-}
-
-function execute(command: string, args: string[], cwd: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const process = spawn(command, args, {
-      cwd,
-      stdio: ['inherit', null, null],
-    });
-
-    const stderr: Buffer[] = [];
-    process.stderr.on('data', (data) => {
-      stderr.push(data);
-    });
-
-    process.on('close', (code, signal) => {
-      if (code === 0) {
-        resolve();
-      } else if (stderr) {
-        reject(Buffer.concat(stderr).toString().trimEnd());
-      } else if (signal) {
-        reject(`Failed with signal ${signal}`);
-      } else {
-        reject(`Failed with exit code ${code}`);
-      }
-    });
-  });
 }
 
 function findPath(startPath: string, files: string[]): string | undefined {
@@ -100,14 +74,11 @@ export async function clean(
     throw new Error(`Invalid path provided! ${projectRoot}`);
   }
 
-  const npm = os.platform() === 'win32' ? 'npm.cmd' : 'npm';
-  const yarn = os.platform() === 'win32' ? 'yarn.cmd' : 'yarn';
-
   const COMMANDS: CLICommand = {
     android: [
       {
         label: 'Clean Gradle cache',
-        action: () => {
+        action: async () => {
           const candidates =
             os.platform() === 'win32'
               ? ['android/gradlew.bat', 'gradlew.bat']
@@ -115,13 +86,11 @@ export async function clean(
           const gradlew = findPath(projectRoot, candidates);
           if (gradlew) {
             const script = path.basename(gradlew);
-            return execute(
+            await execa(
               os.platform() === 'win32' ? script : `./${script}`,
               ['clean'],
-              path.dirname(gradlew),
+              {cwd: path.dirname(gradlew)},
             );
-          } else {
-            return Promise.resolve();
           }
         },
       },
@@ -129,7 +98,9 @@ export async function clean(
     cocoapods: [
       {
         label: 'Clean CocoaPods cache',
-        action: () => execute('pod', ['cache', 'clean', '--all'], projectRoot),
+        action: async () => {
+          await execa('pod', ['cache', 'clean', '--all'], {cwd: projectRoot});
+        },
       },
     ],
     metro: [
@@ -155,7 +126,9 @@ export async function clean(
         ? [
             {
               label: 'Verify npm cache',
-              action: () => execute(npm, ['cache', 'verify'], projectRoot),
+              action: async () => {
+                await execa('npm', ['cache', 'verify'], {cwd: projectRoot});
+              },
             },
           ]
         : []),
@@ -163,22 +136,27 @@ export async function clean(
     watchman: [
       {
         label: 'Stop Watchman',
-        action: () =>
-          execute(
+        action: async () => {
+          await execa(
             os.platform() === 'win32' ? 'tskill' : 'killall',
             ['watchman'],
-            projectRoot,
-          ),
+            {cwd: projectRoot},
+          );
+        },
       },
       {
         label: 'Delete Watchman cache',
-        action: () => execute('watchman', ['watch-del-all'], projectRoot),
+        action: async () => {
+          await execa('watchman', ['watch-del-all'], {cwd: projectRoot});
+        },
       },
     ],
     yarn: [
       {
         label: 'Clean Yarn cache',
-        action: () => execute(yarn, ['cache', 'clean'], projectRoot),
+        action: async () => {
+          await execa('yarn', ['cache', 'clean'], {cwd: projectRoot});
+        },
       },
     ],
   };

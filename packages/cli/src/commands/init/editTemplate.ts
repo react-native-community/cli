@@ -69,6 +69,7 @@ const UNDERSCORED_DOTFILES = [
   'editorconfig',
   'bundle',
   'ruby-version',
+  'xcode.env',
 ];
 
 async function processDotfiles(filePath: string) {

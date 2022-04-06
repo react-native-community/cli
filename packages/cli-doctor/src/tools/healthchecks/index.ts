@@ -11,6 +11,7 @@ import cocoaPods from './cocoaPods';
 import iosDeploy from './iosDeploy';
 import {Healthchecks, HealthCheckCategory} from '../../types';
 import loadConfig from '@react-native-community/cli-config';
+import xcodeEnv from './xcodeEnv';
 
 export const HEALTHCHECK_TYPES = {
   ERROR: 'ERROR',
@@ -55,7 +56,7 @@ export const getHealthchecks = ({contributor}: Options): Healthchecks => {
       ? {
           ios: {
             label: 'iOS',
-            healthchecks: [xcode, cocoaPods, iosDeploy],
+            healthchecks: [xcode, cocoaPods, iosDeploy, xcodeEnv],
           },
         }
       : {}),

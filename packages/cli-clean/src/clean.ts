@@ -1,5 +1,6 @@
 import {getLoader} from '@react-native-community/cli-tools';
 import type {Config as CLIConfig} from '@react-native-community/cli-types';
+import chalk from 'chalk';
 import execa from 'execa';
 import {existsSync as fileExists, rmdir} from 'fs';
 import os from 'os';
@@ -57,7 +58,7 @@ async function promptForCaches(
     name: 'caches',
     message: 'Select all caches to clean',
     choices: Object.entries(groups).map(([cmd, group]) => ({
-      title: `${cmd} (${group.description})`,
+      title: `${cmd} ${chalk.dim(`(${group.description})`)}`,
       value: cmd,
       selected: DEFAULT_GROUPS.includes(cmd),
     })),

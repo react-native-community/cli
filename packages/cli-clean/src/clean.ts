@@ -22,7 +22,7 @@ type CLICommand = {
   [key: string]: Task[];
 };
 
-const DEFAULT_CATEGORIES = ['metro', 'watchman'];
+const DEFAULT_GROUPS = ['metro', 'watchman'];
 
 const rmdirAsync = promisify(rmdir);
 
@@ -57,7 +57,7 @@ async function promptForCaches(
     choices: names.map((cmd) => ({
       title: cmd,
       value: cmd,
-      selected: DEFAULT_CATEGORIES.includes(cmd),
+      selected: DEFAULT_GROUPS.includes(cmd),
     })),
     min: 1,
   });
@@ -92,14 +92,6 @@ export async function clean(
               {cwd: path.dirname(gradlew)},
             );
           }
-        },
-      },
-    ],
-    cocoapods: [
-      {
-        label: 'Clean CocoaPods cache',
-        action: async () => {
-          await execa('pod', ['cache', 'clean', '--all'], {cwd: projectRoot});
         },
       },
     ],
@@ -159,20 +151,32 @@ export async function clean(
         },
       },
     ],
+    ...(os.platform() === 'darwin'
+      ? {
+          cocoapods: [
+            {
+              label: 'Clean CocoaPods cache',
+              action: async () => {
+                await execa('pod', ['cache', 'clean', '--all'], {
+                  cwd: projectRoot,
+                });
+              },
+            },
+          ],
+        }
+      : undefined),
   };
 
-  const categories = include
-    ? include.split(',')
-    : await promptForCaches(COMMANDS);
-  if (!categories || categories.length === 0) {
+  const groups = include ? include.split(',') : await promptForCaches(COMMANDS);
+  if (!groups || groups.length === 0) {
     return;
   }
 
   const spinner = getLoader();
-  for (const category of categories) {
-    const commands = COMMANDS[category];
+  for (const group of groups) {
+    const commands = COMMANDS[group];
     if (!commands) {
-      spinner.warn(`Unknown category: ${category}`);
+      spinner.warn(`Unknown group: ${group}`);
       return;
     }
 

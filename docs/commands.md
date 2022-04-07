@@ -133,7 +133,7 @@ Usage:
 react-native clean
 ```
 
-Clean caches. Commonly used to ensure build failures are not due to stale cache.
+Cleans caches. Commonly used to ensure build failures are not due to stale cache. By default, it will prompt which caches to purge, with Watchman and Metro already checked.
 
 #### Options
 

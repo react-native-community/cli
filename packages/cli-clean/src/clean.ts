@@ -18,8 +18,11 @@ type Task = {
   action: () => Promise<void>;
 };
 
-type CLICommand = {
-  [key: string]: Task[];
+type CleanGroups = {
+  [key: string]: {
+    description: string;
+    tasks: Task[];
+  };
 };
 
 const DEFAULT_GROUPS = ['metro', 'watchman'];
@@ -47,15 +50,14 @@ function findPath(startPath: string, files: string[]): string | undefined {
 }
 
 async function promptForCaches(
-  commands: CLICommand,
+  groups: CleanGroups,
 ): Promise<string[] | undefined> {
-  const names: string[] = Object.keys(commands);
   const {caches} = await prompts({
     type: 'multiselect',
     name: 'caches',
     message: 'Select all caches to clean',
-    choices: names.map((cmd) => ({
-      title: cmd,
+    choices: Object.entries(groups).map(([cmd, group]) => ({
+      title: `${cmd} (${group.description})`,
       value: cmd,
       selected: DEFAULT_GROUPS.includes(cmd),
     })),
@@ -74,97 +76,116 @@ export async function clean(
     throw new Error(`Invalid path provided! ${projectRoot}`);
   }
 
-  const COMMANDS: CLICommand = {
-    android: [
-      {
-        label: 'Clean Gradle cache',
-        action: async () => {
-          const candidates =
-            os.platform() === 'win32'
-              ? ['android/gradlew.bat', 'gradlew.bat']
-              : ['android/gradlew', 'gradlew'];
-          const gradlew = findPath(projectRoot, candidates);
-          if (gradlew) {
-            const script = path.basename(gradlew);
-            await execa(
-              os.platform() === 'win32' ? script : `./${script}`,
-              ['clean'],
-              {cwd: path.dirname(gradlew)},
-            );
-          }
+  const COMMANDS: CleanGroups = {
+    android: {
+      description: 'Android build caches, e.g. Gradle',
+      tasks: [
+        {
+          label: 'Clean Gradle cache',
+          action: async () => {
+            const candidates =
+              os.platform() === 'win32'
+                ? ['android/gradlew.bat', 'gradlew.bat']
+                : ['android/gradlew', 'gradlew'];
+            const gradlew = findPath(projectRoot, candidates);
+            if (gradlew) {
+              const script = path.basename(gradlew);
+              await execa(
+                os.platform() === 'win32' ? script : `./${script}`,
+                ['clean'],
+                {cwd: path.dirname(gradlew)},
+              );
+            }
+          },
         },
-      },
-    ],
-    metro: [
-      {
-        label: 'Clean Metro cache',
-        action: () => cleanDir(`${os.tmpdir()}/metro-*`),
-      },
-      {
-        label: 'Clean Haste cache',
-        action: () => cleanDir(`${os.tmpdir()}/haste-map-*`),
-      },
-      {
-        label: 'Clean React Native cache',
-        action: () => cleanDir(`${os.tmpdir()}/react-*`),
-      },
-    ],
-    npm: [
-      {
-        label: 'Remove node_modules',
-        action: () => cleanDir(`${projectRoot}/node_modules`),
-      },
-      ...(verifyCache
-        ? [
-            {
-              label: 'Verify npm cache',
-              action: async () => {
-                await execa('npm', ['cache', 'verify'], {cwd: projectRoot});
-              },
-            },
-          ]
-        : []),
-    ],
-    watchman: [
-      {
-        label: 'Stop Watchman',
-        action: async () => {
-          await execa(
-            os.platform() === 'win32' ? 'tskill' : 'killall',
-            ['watchman'],
-            {cwd: projectRoot},
-          );
-        },
-      },
-      {
-        label: 'Delete Watchman cache',
-        action: async () => {
-          await execa('watchman', ['watch-del-all'], {cwd: projectRoot});
-        },
-      },
-    ],
-    yarn: [
-      {
-        label: 'Clean Yarn cache',
-        action: async () => {
-          await execa('yarn', ['cache', 'clean'], {cwd: projectRoot});
-        },
-      },
-    ],
+      ],
+    },
     ...(os.platform() === 'darwin'
       ? {
-          cocoapods: [
-            {
-              label: 'Clean CocoaPods cache',
-              action: async () => {
-                await execa('pod', ['cache', 'clean', '--all'], {
-                  cwd: projectRoot,
-                });
+          cocoapods: {
+            description: 'CocoaPods cache',
+            tasks: [
+              {
+                label: 'Clean CocoaPods cache',
+                action: async () => {
+                  await execa('pod', ['cache', 'clean', '--all'], {
+                    cwd: projectRoot,
+                  });
+                },
               },
-            },
-          ],
+            ],
+          },
         }
       : undefined),
+    metro: {
+      description: 'Metro, haste-map caches',
+      tasks: [
+        {
+          label: 'Clean Metro cache',
+          action: () => cleanDir(`${os.tmpdir()}/metro-*`),
+        },
+        {
+          label: 'Clean Haste cache',
+          action: () => cleanDir(`${os.tmpdir()}/haste-map-*`),
+        },
+        {
+          label: 'Clean React Native cache',
+          action: () => cleanDir(`${os.tmpdir()}/react-*`),
+        },
+      ],
+    },
+    npm: {
+      description:
+        '`node_modules` folder in the current package, and optionally verify npm cache',
+      tasks: [
+        {
+          label: 'Remove node_modules',
+          action: () => cleanDir(`${projectRoot}/node_modules`),
+        },
+        ...(verifyCache
+          ? [
+              {
+                label: 'Verify npm cache',
+                action: async () => {
+                  await execa('npm', ['cache', 'verify'], {cwd: projectRoot});
+                },
+              },
+            ]
+          : []),
+      ],
+    },
+    watchman: {
+      description: 'Stop Watchman and delete its cache',
+      tasks: [
+        {
+          label: 'Stop Watchman',
+          action: async () => {
+            await execa(
+              os.platform() === 'win32' ? 'tskill' : 'killall',
+              ['watchman'],
+              {cwd: projectRoot},
+            );
+          },
+        },
+        {
+          label: 'Delete Watchman cache',
+          action: async () => {
+            await execa('watchman', ['watch-del-all'], {cwd: projectRoot});
+          },
+        },
+      ],
+    },
+    yarn: {
+      description: 'Yarn cache',
+      tasks: [
+        {
+          label: 'Clean Yarn cache',
+          action: async () => {
+            await execa('yarn', ['cache', 'clean'], {cwd: projectRoot});
+          },
+        },
+      ],
+    },
   };
 
   const groups = include ? include.split(',') : await promptForCaches(COMMANDS);
@@ -180,7 +201,7 @@ export async function clean(
       return;
     }
 
-    for (const {action, label} of commands) {
+    for (const {action, label} of commands.tasks) {
       spinner.start(label);
       await action()
         .then(() => {

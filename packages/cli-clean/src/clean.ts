@@ -198,7 +198,7 @@ export async function clean(
     const commands = COMMANDS[group];
     if (!commands) {
       spinner.warn(`Unknown group: ${group}`);
-      return;
+      continue;
     }
 
     for (const {action, label} of commands.tasks) {

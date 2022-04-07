@@ -139,7 +139,7 @@ Cleans caches. Commonly used to ensure build failures are not due to stale cache
 
 #### `--include <string>`
 
-Comma-separated flag of caches to clear e.g. `npm,yarn`. If omitted, an interactive prompt will appear.
+Comma-separated flag of caches to clear e.g. `npm,yarn`. If omitted, an interactive prompt will appear. Valid values include `android`, `cocoapods`, `metro`, `npm`, `watchman`, and `yarn`.
 
 #### `--project-root <string>`
 

@@ -25,9 +25,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name "${{ github.actor }}"
-          git config user.email "${{ github.actor}}@noreply.com"
+          git config user.email "${{ github.actor }}@noreply.com"
           
-          npx lerna version --conventional-commits --conventional-prerelease --preid beta --yes
+          npx lerna version --conventional-commits --conventional-prerelease --preid alpha --yes
           
           npx lerna publish from-git --yes
 
@@ -37,7 +37,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name "${{ github.actor }}"
-          git config user.email "${{ github.actor}}@noreply.com"
+          git config user.email "${{ github.actor }}@noreply.com"
           
           npx lerna version --conventional-commits --conventional-graduate --yes
           

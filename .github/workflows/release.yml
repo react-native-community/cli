@@ -1,0 +1,48 @@
+name: Release
+
+on:
+  release:
+    types: [published, edited]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: "Use Node v16"
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: "Prelease"
+        if: "github.event.release.prerelease"
+        env:
+          GH_TOKEN: ${{ secrets.? }}
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor}}@noreply.com"
+          
+          npx lerna version --conventional-commits --conventional-prerelease --preid beta --yes
+          
+          npx lerna publish from-git --yes
+
+      - name: "Release"
+        if: "!github.event.release.prerelease"
+        env:
+          GH_TOKEN: ${{ secrets.? }}
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor}}@noreply.com"
+          
+          npx lerna version --conventional-commits --conventional-graduate --yes
+          
+          npx lerna publish from-git --yes
+
+
+
+

@@ -2,7 +2,7 @@ name: Release
 
 on:
   release:
-    types: [published, edited]
+    types: [published]
 
 jobs:
   release:
@@ -42,7 +42,3 @@ jobs:
           npx lerna version --conventional-commits --conventional-graduate --yes
           
           npx lerna publish from-git --yes
-
-
-
-

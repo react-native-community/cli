@@ -22,7 +22,7 @@ jobs:
       - name: "Prelease"
         if: "github.event.release.prerelease"
         env:
-          GH_TOKEN: ${{ secrets.? }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor}}@noreply.com"
@@ -34,7 +34,7 @@ jobs:
       - name: "Release"
         if: "!github.event.release.prerelease"
         env:
-          GH_TOKEN: ${{ secrets.? }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor}}@noreply.com"

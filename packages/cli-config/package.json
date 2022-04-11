@@ -1,5 +1,5 @@
 {
-  "name": "@react-native-community/cli-config",
+  "name": "@kbieganowski/cli-config",
   "version": "8.0.0-alpha.0",
   "license": "MIT",
   "main": "build/index.js",

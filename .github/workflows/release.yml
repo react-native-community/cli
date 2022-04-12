@@ -11,8 +11,6 @@ jobs:
     steps:
       - name: "Checkout"
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
 
       - name: "Use Node v16"
         uses: actions/setup-node@v2

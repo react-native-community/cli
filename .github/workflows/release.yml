@@ -36,7 +36,6 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          git switch -c "pull-request"
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor }}@noreply.com"
           

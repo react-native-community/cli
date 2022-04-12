@@ -1,6 +1,6 @@
 {
   "name": "@kbieganowski/cli",
-  "version": "8.0.0-alpha.0",
+  "version": "8.0.0",
   "description": "React Native CLI",
   "license": "MIT",
   "main": "build/index.js",

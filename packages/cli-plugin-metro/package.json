@@ -1,6 +1,6 @@
 {
   "name": "@kbieganowski/cli-plugin-metro",
-  "version": "8.0.0-alpha.0",
+  "version": "8.0.0",
   "license": "MIT",
   "main": "build/index.js",
   "publishConfig": {

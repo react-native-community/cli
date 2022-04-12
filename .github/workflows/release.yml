@@ -11,6 +11,7 @@ jobs:
     steps:
       - name: "Checkout"
         uses: actions/checkout@v2
+        run: git switch -c "pull-request"
         with:
           fetch-depth: 0
 
@@ -38,7 +39,6 @@ jobs:
         run: |
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor }}@noreply.com"
-          git remote set-url origin https://x-access-token:$GITHUB_TOKEN@github.com/kbieganowski/cli
           
           npx lerna version --conventional-commits --conventional-graduate --yes
           

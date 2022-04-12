@@ -6,6 +6,7 @@ import walk from '../../tools/walk';
 // `gracefulify` does not support patching `fs.promises`. Use `fs-extra`, which
 // exposes its own promise-based interface over `graceful-fs`.
 import fs from 'fs-extra';
+import {UNDERSCORED_DOTFILES} from './constants';
 
 interface PlaceholderConfig {
   projectName: string;
@@ -57,19 +58,6 @@ function shouldRenameFile(filePath: string, nameToReplace: string) {
 function shouldIgnoreFile(filePath: string) {
   return filePath.match(/node_modules|yarn.lock|package-lock.json/g);
 }
-
-const UNDERSCORED_DOTFILES = [
-  'buckconfig',
-  'eslintrc.js',
-  'flowconfig',
-  'gitattributes',
-  'gitignore',
-  'prettierrc.js',
-  'watchmanconfig',
-  'editorconfig',
-  'bundle',
-  'ruby-version',
-];
 
 async function processDotfiles(filePath: string) {
   const dotfile = UNDERSCORED_DOTFILES.find((e) => filePath.includes(`_${e}`));

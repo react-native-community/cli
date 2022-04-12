@@ -22,6 +22,7 @@ import {installPods} from '@react-native-community/cli-doctor';
 import banner from './banner';
 import ConflictingFilesError from './errors/ConflictingFilesError';
 import walk from '../../tools/walk';
+import {UNDERSCORED_DOTFILES} from './constants';
 
 const DEFAULT_VERSION = 'latest';
 
@@ -52,20 +53,47 @@ function getDirectoryFilesRecursive(dir: string): string[] {
     return walk(dir, true)
       .map((file) => file.replace(dir, ''))
       .filter(Boolean);
-  } catch (err) {
-    return [];
+  } catch (error) {
+    throw new CLIError(
+      'Error occurred while trying to create project directory.',
+      error,
+    );
   }
 }
 
-async function checkDirectoriesForConflicts(dirLeft: string, dirRight: string) {
-  const dirLeftFiles = getDirectoryFilesRecursive(dirLeft);
-  const dirRightFiles = getDirectoryFilesRecursive(dirRight);
+function checkProjectDirectoryForConflictsWithTemplate(
+  projectDirectory: string,
+  templateName: string,
+  templateDir: string,
+  templateSourceDir: string,
+) {
+  const projectDirectoryFiles = getDirectoryFilesRecursive(projectDirectory);
 
-  const conflictingFiles: string[] = dirLeftFiles.filter((fileName) =>
-    dirRightFiles.includes(fileName),
+  const templatePath = path.resolve(
+    templateSourceDir,
+    'node_modules',
+    templateName,
+    templateDir,
+  );
+  const templateFiles: string[] = [];
+  getDirectoryFilesRecursive(templatePath).forEach((fileName) => {
+    templateFiles.push(fileName);
+
+    // We first copy template into project folder, and then we rename underscored files,
+    // so here we are taking both options into account
+    const dotfile = UNDERSCORED_DOTFILES.find((e) =>
+      fileName.includes(`_${e}`),
+    );
+    if (dotfile) {
+      templateFiles.push(dotfile);
+    }
+  });
+
+  const conflictingFiles: string[] = projectDirectoryFiles.filter((fileName) =>
+    templateFiles.includes(fileName),
   );
   if (conflictingFiles.length > 0) {
-    throw new ConflictingFilesError(dirLeft, conflictingFiles);
+    throw new ConflictingFilesError(projectDirectory, conflictingFiles);
   }
 }
 
@@ -125,14 +153,11 @@ async function createFromTemplate({
     const templateName = getTemplateName(templateSourceDir);
     const templateConfig = getTemplateConfig(templateName, templateSourceDir);
 
-    await checkDirectoriesForConflicts(
+    await checkProjectDirectoryForConflictsWithTemplate(
       projectDirectory,
-      path.resolve(
-        templateSourceDir,
-        'node_modules',
-        templateName,
-        templateConfig.templateDir,
-      ),
+      templateName,
+      templateConfig.templateDir,
+      templateSourceDir,
     );
 
     await copyTemplate(

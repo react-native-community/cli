@@ -16,7 +16,7 @@ function walk(current: string, filesOnly: boolean = false): string[] {
 
   const files = fs
     .readdirSync(current)
-    .map((child) => walk(path.join(current, child)));
+    .map((child) => walk(path.join(current, child), filesOnly));
   const result: string[] = [];
   return result.concat.apply(!filesOnly ? [current] : [], files);
 }

@@ -49,16 +49,9 @@ function doesDirectoryExist(dir: string) {
 }
 
 function getDirectoryFilesRecursive(dir: string): string[] {
-  try {
-    return walk(dir, true)
-      .map((file) => file.replace(dir, ''))
-      .filter(Boolean);
-  } catch (error) {
-    throw new CLIError(
-      'Error occurred while trying to create project directory.',
-      error,
-    );
-  }
+  return walk(dir, true)
+    .map((file) => file.replace(dir, ''))
+    .filter(Boolean);
 }
 
 function checkProjectDirectoryForConflictsWithTemplate(

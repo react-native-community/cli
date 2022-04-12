@@ -1,5 +1,5 @@
 {
-  "name": "@kbieganowski/cli-tools",
+  "name": "@react-native-community/cli-tools",
   "version": "8.0.0",
   "license": "MIT",
   "main": "build/index.js",

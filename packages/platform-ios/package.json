@@ -1,5 +1,5 @@
 {
-  "name": "@kbieganowski/cli-platform-ios",
+  "name": "@react-native-community/cli-platform-ios",
   "version": "8.0.0",
   "license": "MIT",
   "main": "build/index.js",

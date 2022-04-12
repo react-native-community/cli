@@ -1,5 +1,5 @@
 {
-  "name": "@kbieganowski/cli-plugin-metro",
+  "name": "@react-native-community/cli-plugin-metro",
   "version": "8.0.0",
   "license": "MIT",
   "main": "build/index.js",

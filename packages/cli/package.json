@@ -1,5 +1,5 @@
 {
-  "name": "@kbieganowski/cli",
+  "name": "@react-native-community/cli",
   "version": "8.0.0",
   "description": "React Native CLI",
   "license": "MIT",

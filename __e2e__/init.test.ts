@@ -47,6 +47,33 @@ test('init passes if the directory already exists', () => {
   expect(stdout).toContain('Run instructions');
 });
 
+test('init fails if the directory contains conflicting files/sub-directories', () => {
+  const projectName = 'TestInit';
+  const directoryName = 'custom-path';
+  const targetDirectory = path.resolve(DIR, directoryName);
+  // pre existing directory structure
+  writeFiles(targetDirectory, {
+    'package.json': '',
+    'package-lock.json': '',
+    'yarn.lock': '',
+    'babel.config.js': '',
+    'android/gradlew': '',
+    [`ios/${projectName}/AppDelegate.h`]: '',
+  });
+
+  const {stderr} = runCLI(
+    DIR,
+    ['init', '--directory', directoryName, projectName],
+    {expectedFailure: true},
+  );
+
+  expect(stderr).not.toContain('ios');
+  expect(stderr).toContain('package.json');
+  expect(stderr).toContain(
+    'Either try using a new directory name, or remove the files listed above.',
+  );
+});
+
 test('init --template fails without package name', () => {
   const {stderr} = runCLI(
     DIR,

@@ -3,4 +3,4 @@
  */
 
 export {default as commands} from './commands';
-export {projectConfig, dependencyConfig} from './config';
+export {projectConfig, dependencyConfig, findPodfilePaths} from './config';

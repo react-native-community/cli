@@ -7,8 +7,8 @@
  */
 
 import {inlineString, logger} from '@react-native-community/cli-tools';
-import glob from 'glob';
 import path from 'path';
+import findAllPodfilePaths from './findAllPodfilePaths';
 
 // Regexp matching all test projects
 const TEST_PROJECTS = /test|example|sample/i;
@@ -16,18 +16,8 @@ const TEST_PROJECTS = /test|example|sample/i;
 // Base iOS folder
 const IOS_BASE = 'ios';
 
-// These folders will be excluded from search to speed it up
-const GLOB_EXCLUDE_PATTERN = ['**/@(Pods|node_modules|Carthage)/**'];
-
 export default function findPodfilePath(cwd: string) {
-  /**
-   * First, we're going to look for all Podfiles within the `cwd`
-   */
-  const podfiles = glob
-    .sync('**/Podfile', {
-      cwd,
-      ignore: GLOB_EXCLUDE_PATTERN,
-    })
+  const podfiles = findAllPodfilePaths(cwd)
     /**
      * Then, we will run a simple test to rule out most example projects,
      * unless they are located in a `ios` folder

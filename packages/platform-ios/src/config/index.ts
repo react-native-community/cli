@@ -10,6 +10,7 @@ import fs from 'fs';
 import findPodfilePath from './findPodfilePath';
 import findXcodeProject from './findXcodeProject';
 import findPodspec from './findPodspec';
+import findAllPodfilePaths from './findAllPodfilePaths';
 import {
   IOSProjectParams,
   IOSDependencyParams,
@@ -65,3 +66,5 @@ export function dependencyConfig(
     scriptPhases: userConfig.scriptPhases || [],
   };
 }
+
+export const findPodfilePaths = findAllPodfilePaths;

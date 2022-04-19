@@ -228,7 +228,6 @@ const doctorCommand = (async (_, options) => {
       removeKeyPressListener();
 
       process.exit(0);
-      return;
     }
 
     if (

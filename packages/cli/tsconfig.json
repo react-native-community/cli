@@ -5,13 +5,14 @@
     "outDir": "build"
   },
   "references": [
-    {"path": "../tools"},
-    {"path": "../cli-types"},
-    {"path": "../debugger-ui"},
-    {"path": "../cli-server-api"},
+    {"path": "../cli-clean"},
+    {"path": "../cli-config"},
+    {"path": "../cli-doctor"},
     {"path": "../cli-hermes"},
     {"path": "../cli-plugin-metro"},
-    {"path": "../cli-doctor"},
-    {"path": "../cli-config"}
+    {"path": "../cli-server-api"},
+    {"path": "../cli-types"},
+    {"path": "../debugger-ui"},
+    {"path": "../tools"}
   ]
 }

@@ -9,4 +9,5 @@ export const UNDERSCORED_DOTFILES = [
   'editorconfig',
   'bundle',
   'ruby-version',
+  'xcode.env',
 ];

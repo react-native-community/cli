@@ -3,6 +3,7 @@
 React Native CLI comes with following commands:
 
 - [`bundle`](#bundle)
+- [`clean`](#clean)
 - [`config`](#config)
 - [`doctor`](#doctor)
 - [`init`](#init)
@@ -123,6 +124,34 @@ Try to fetch transformed JS code from the global cache, if configured.
 #### `--config <string>`
 
 Path to the CLI configuration file.
+
+### `clean`
+
+Usage:
+
+```sh
+react-native clean
+```
+
+Cleans caches. Commonly used to ensure build failures are not due to stale cache. By default, it will prompt which caches to purge, with Watchman and Metro already checked. To omit interactive prompt (e.g. in scripts), please use `--include` flag.
+
+#### Options
+
+#### `--include <string>`
+
+Comma-separated flag of caches to clear e.g. `npm,yarn`. If omitted, an interactive prompt will appear. Valid values include `android`, `cocoapods`, `metro`, `npm`, `watchman`, and `yarn`.
+
+#### `--project-root <string>`
+
+> default: current working directory
+
+Root path to your React Native project. When not specified, defaults to current working directory.
+
+#### `--verify-cache`
+
+> default: false
+
+Whether to verify the cache. Currently only applies to npm cache.
 
 ### `config`
 
@@ -349,6 +378,12 @@ Example: `yarn react-native run-android --tasks clean,installDebug`.
 > default: false
 
 Do not run [jetifier](https://www.npmjs.com/package/jetifier) – the AndroidX transition tool. By default it runs before Gradle to ease working with libraries that don't support AndroidX yet.
+
+#### `--active-arch-only`
+
+> default: false
+
+Build native libraries only for the current device architecture for debug builds.
 
 ### `run-ios`
 

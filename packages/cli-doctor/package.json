@@ -10,6 +10,7 @@
   "dependencies": {
     "@react-native-community/cli-config": "^8.0.0-alpha.0",
     "@react-native-community/cli-tools": "^8.0.0-alpha.0",
+    "@react-native-community/cli-platform-ios": "^8.0.0-alpha.0",
     "chalk": "^4.1.2",
     "command-exists": "^1.2.8",
     "envinfo": "^7.7.2",

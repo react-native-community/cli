@@ -228,7 +228,10 @@ async function runOnSimulator(
   if (result.status === 0) {
     logger.success('Successfully launched the app on the simulator');
   } else {
-    logger.error('Failed to launch the app on simulator', result.stderr);
+    logger.error(
+      'Failed to launch the app on simulator',
+      result.stderr.toString(),
+    );
   }
 }
 

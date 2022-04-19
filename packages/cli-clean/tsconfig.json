@@ -7,7 +7,6 @@
   "references": [
     {"path": "../tools"},
     {"path": "../cli-types"},
-    {"path": "../cli-config"},
-    {"path": "../platform-ios"}
+    {"path": "../cli-config"}
   ]
 }

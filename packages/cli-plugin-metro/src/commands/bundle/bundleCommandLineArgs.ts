@@ -26,7 +26,7 @@ export interface CommandLineArgs {
   sourcemapUseAbsolutePath: boolean;
   verbose: boolean;
   unstableTransformProfile?: string;
-  generateStaticViewConfigs?: boolean;
+  generateStaticViewConfigs: boolean;
 }
 
 export default [

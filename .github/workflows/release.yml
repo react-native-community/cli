@@ -1,8 +1,9 @@
 name: Release
 
-on:
-  release:
-    types: [published]
+# Temporarily disable until issues resolved
+# on:
+#   release:
+#     types: [published]
 
 jobs:
   release:

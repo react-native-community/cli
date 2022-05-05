@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import glob from 'glob';
 
-const CODEGEN_NATIVE_COMPONENT_REGEX = /codegenNativeComponent(<.*>)?\(\s+["'`](\w+)["'`]\s+\)/m;
+const CODEGEN_NATIVE_COMPONENT_REGEX = /codegenNativeComponent(<.*>)?\s*\(\s*["'`](\w+)["'`]/m;
 
 export function findComponentNames(packageRoot: string) {
   const files = glob.sync('**/+(*.js|*.jsx|*.ts|*.tsx)', {cwd: packageRoot});
@@ -14,5 +14,5 @@ export function findComponentNames(packageRoot: string) {
     .map((match) => (match ? match[2] : match))
     .filter(Boolean);
 
-  return codegenComponent as string[];
+  return Array.from(new Set(codegenComponent as string[]));
 }

@@ -19,6 +19,7 @@ import {
 } from '@react-native-community/cli-types';
 import {getPackageName} from './getAndroidProject';
 import {findLibraryName} from './findLibraryName';
+import {findComponentNames} from './findComponentNames';
 
 /**
  * Gets android project config by analyzing given folder and taking some
@@ -116,6 +117,10 @@ export function dependencyConfig(
   const buildTypes = userConfig.buildTypes || [];
   const dependencyConfiguration = userConfig.dependencyConfiguration;
   const libraryName = userConfig.libraryName || findLibraryName(sourceDir);
+  const componentNames = userConfig.componentNames || findComponentNames(root);
+  const componentDescriptors =
+    userConfig.componentDescriptors ||
+    componentNames.map((name) => `${name}ComponentDescriptor`);
 
   return {
     sourceDir,
@@ -124,5 +129,7 @@ export function dependencyConfig(
     buildTypes,
     dependencyConfiguration,
     libraryName,
+    componentNames,
+    componentDescriptors,
   };
 }

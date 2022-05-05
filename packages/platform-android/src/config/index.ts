@@ -121,6 +121,9 @@ export function dependencyConfig(
   const componentDescriptors =
     userConfig.componentDescriptors ||
     componentNames.map((name) => `${name}ComponentDescriptor`);
+  const androidMkPath = userConfig.androidMkPath
+    ? path.join(sourceDir, userConfig.androidMkPath)
+    : path.join(sourceDir, 'build/generated/source/codegen/jni/Android.mk');
 
   return {
     sourceDir,
@@ -131,5 +134,6 @@ export function dependencyConfig(
     libraryName,
     componentNames,
     componentDescriptors,
+    androidMkPath,
   };
 }

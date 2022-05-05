@@ -86,6 +86,7 @@ export const dependencyConfig = t
                 libraryName: t.string(),
                 componentNames: t.array().items(t.string()),
                 componentDescriptors: t.array().items(t.string()),
+                androidMkPath: t.string(),
               })
               .default({}),
           })
@@ -137,6 +138,7 @@ export const projectConfig = t
                 libraryName: t.string(),
                 componentNames: t.array().items(t.string()),
                 componentDescriptors: t.array().items(t.string()),
+                androidMkPath: t.string(),
               })
               .allow(null),
           }),

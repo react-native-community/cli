@@ -253,11 +253,10 @@ class ReactNativeModules {
     String packageName = this.packageName
     String libraryIncludes = ""
     String libraryModules = ""
-    String androidMkPath = "android/build/generated/source/codegen/jni/Android.mk"
 
     if (packages.size() > 0) {
       libraryIncludes = packages.collect {
-        "include \$(NODE_MODULES_DIR)/${it.name}/${androidMkPath}"
+        "include ${it.androidMkPath}"
       }.join('\n')
       libraryModules = packages.collect {
         "libreact_codegen_${it.libraryName}"
@@ -410,6 +409,7 @@ class ReactNativeModules {
         reactNativeModuleConfig.put("packageImportPath", androidConfig["packageImportPath"])
         reactNativeModuleConfig.put("libraryName", androidConfig["libraryName"])
         reactNativeModuleConfig.put("componentDescriptors", androidConfig["componentDescriptors"])
+        reactNativeModuleConfig.put("androidMkPath", androidConfig["androidMkPath"])
 
         if (androidConfig["buildTypes"] && !androidConfig["buildTypes"].isEmpty()) {
           reactNativeModulesBuildVariants.put(nameCleansed, androidConfig["buildTypes"])

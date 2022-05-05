@@ -83,6 +83,7 @@ export const dependencyConfig = t
                 packageInstance: t.string(),
                 dependencyConfiguration: t.string(),
                 buildTypes: t.array().items(t.string()).default([]),
+                libraryName: t.string(),
               })
               .default({}),
           })
@@ -131,6 +132,7 @@ export const projectConfig = t
                 packageInstance: t.string(),
                 dependencyConfiguration: t.string(),
                 buildTypes: t.array().items(t.string()).default([]),
+                libraryName: t.string(),
               })
               .allow(null),
           }),

@@ -18,6 +18,7 @@ import {
   AndroidDependencyConfig,
 } from '@react-native-community/cli-types';
 import {getPackageName} from './getAndroidProject';
+import {findLibraryName} from './findLibraryName';
 
 /**
  * Gets android project config by analyzing given folder and taking some
@@ -114,6 +115,7 @@ export function dependencyConfig(
 
   const buildTypes = userConfig.buildTypes || [];
   const dependencyConfiguration = userConfig.dependencyConfiguration;
+  const libraryName = userConfig.libraryName || findLibraryName(sourceDir);
 
   return {
     sourceDir,
@@ -121,5 +123,6 @@ export function dependencyConfig(
     packageInstance,
     buildTypes,
     dependencyConfiguration,
+    libraryName,
   };
 }

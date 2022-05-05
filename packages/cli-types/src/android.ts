@@ -19,6 +19,7 @@ export type AndroidDependencyConfig = {
   packageInstance: string;
   dependencyConfiguration?: string;
   buildTypes: string[];
+  libraryName?: string;
 };
 
 export type AndroidDependencyParams = {
@@ -29,4 +30,5 @@ export type AndroidDependencyParams = {
   packageImportPath?: string;
   packageInstance?: string;
   buildTypes?: string[];
+  libraryName?: string;
 };

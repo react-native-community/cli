@@ -20,7 +20,6 @@ export type AndroidDependencyConfig = {
   dependencyConfiguration?: string;
   buildTypes: string[];
   libraryName?: string;
-  componentNames?: string[];
   componentDescriptors?: string[];
   androidMkPath?: string;
 };
@@ -34,7 +33,6 @@ export type AndroidDependencyParams = {
   packageInstance?: string;
   buildTypes?: string[];
   libraryName?: string;
-  componentNames?: string[];
   componentDescriptors?: string[];
   androidMkPath?: string;
 };

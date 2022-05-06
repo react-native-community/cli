@@ -48,6 +48,10 @@ The [native_modules.gradle](https://github.com/react-native-community/cli/blob/m
 1. At build time, before the build script is run:
    1. A first Gradle plugin (in `settings.gradle`) runs `applyNativeModulesSettingsGradle` method. It uses the package metadata from `react-native config` to add Android projects.
    1. A second Gradle plugin (in `app/build.gradle`) runs `applyNativeModulesAppBuildGradle` method. It creates a list of React Native packages to include in the generated `/android/build/generated/rn/src/main/java/com/facebook/react/PackageList.java` file.
+      1. When the new architecture is turned on, the `generateNewArchitectureFiles` task is fired, generating `/android/build/generated/rn/src/main/jni` directory with the following files:
+         - `Android-rncli.mk` – creates a list of codegen'd libs. Used by the project's `Android.mk`.
+         - `rncli.cpp` – registers codegen'd Turbo Modules and Fabric component providers. Used by `MainApplicationModuleProvider.cpp` and `MainComponentsRegistry.cpp`.
+         - `rncli.h` - a header file for `rncli.cpp`.
 1. At runtime, the list of React Native packages generated in step 1.2 is registered by `getPackages` method of `ReactNativeHost` in `MainApplication.java`.
    1. You can optionally pass in an instance of `MainPackageConfig` when initializing `PackageList` if you want to override the default configuration of `MainReactPackage`.
 
@@ -124,6 +128,7 @@ correct location and update them accordingly:
 - path to `native_modules.gradle` in your `android/app/build.gradle`
 
 Dependencies are only linked if they are listed in the package.json of the mobile workspace, where "react-native" dependency is defined. For example, with this file structure:
+
 ```
 /root
   /packages
@@ -135,4 +140,5 @@ Dependencies are only linked if they are listed in the package.json of the mobil
       package.json <-- Dependencies here are ignored when auto-linking
   package.json
 ```
+
 In this example, if you add a package with native code as a dependency of `components`, you need to also add it as a dependency of `mobile` for auto-linking to work.

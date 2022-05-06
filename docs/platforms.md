@@ -118,5 +118,8 @@ type AndroidDependencyConfig = {
   packageInstance: string;
   dependencyConfiguration?: string;
   buildTypes: string[];
+  libraryName?: string;
+  componentDescriptors?: string[];
+  androidMkPath?: string;
 };
 ```

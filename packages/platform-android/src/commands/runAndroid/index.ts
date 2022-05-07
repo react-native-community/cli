@@ -78,6 +78,7 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
           args.port,
           args.terminal,
           config.reactNativePath,
+          androidProject.folder,
         );
       } catch (error) {
         logger.warn(
@@ -214,6 +215,7 @@ function startServerInNewWindow(
   port: number,
   terminal: string,
   reactNativePath: string,
+  projectRoot: string,
 ) {
   /**
    * Set up OS-specific filenames and commands
@@ -226,6 +228,9 @@ function startServerInNewWindow(
   const portExportContent = isWindows
     ? `set RCT_METRO_PORT=${port}`
     : `export RCT_METRO_PORT=${port}`;
+    const projectRootExportContent = isWindows
+      ? `set PROJECT_ROOT=${projectRoot}`
+      : `export PROJECT_ROOT=${projectRoot}`;
 
   /**
    * Set up the `.packager.(env|bat)` file to ensure the packager starts on the right port.
@@ -246,7 +251,7 @@ function startServerInNewWindow(
   /**
    * Ensure we overwrite file by passing the `w` flag
    */
-  fs.writeFileSync(packagerEnvFile, portExportContent, {
+  fs.writeFileSync(packagerEnvFile, portExportContent + "\n" + projectRootExportContent, {
     encoding: 'utf8',
     flag: 'w',
   });

@@ -15,6 +15,13 @@ yarn react-native run-android
 
 That's it. No more editing build config files to use native code.
 
+Also, removing a library is similar to adding a library:
+```sh
+# uninstall
+yarn remove react-native-webview
+cd ios && pod install && cd .. # CocoaPods on iOS needs this extra step
+```
+
 ## How does it work
 
 Each platform defines its own [`platforms`](./platforms.md) configuration. It instructs the CLI on how to find information about native dependencies. This information is exposed through the [`config`](./commands.md#config) command in a JSON format. It's then used by the scripts run by the platform's build tools. Each script applies the logic to link native dependencies specific to its platform.

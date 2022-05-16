@@ -55,9 +55,9 @@ type AndroidDependencyParams = {
   packageImportPath?: string;
   packageInstance?: string;
   buildTypes?: string[];
-  libraryName?: string;
-  componentDescriptors?: string[];
-  androidMkPath?: string;
+  libraryName?: string | null;
+  componentDescriptors?: string[] | null;
+  androidMkPath?: string | null;
 };
 ```
 

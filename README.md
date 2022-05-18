@@ -25,15 +25,18 @@ _Note: CLI has been extracted from core `react-native` as a part of "[Lean Core]
 
 Our release cycle is independent of `react-native`. We follow semver and here is the compatibility table:
 
-| `@react-native-community/cli`                                      | `react-native` |
-| ------------------------------------------------------------------ | -------------- |
-| [^6.1.0 (`master`)](https://github.com/react-native-community/cli) | ^0.66.0        |
-| [^6.0.0](https://github.com/react-native-community/cli)            | ^0.65.0        |
-| [^5.0.0](https://github.com/react-native-community/cli/tree/5.x)   | ^0.64.0        |
-| [^4.0.0](https://github.com/react-native-community/cli/tree/4.x)   | ^0.62.0        |
-| [^3.0.0](https://github.com/react-native-community/cli/tree/3.x)   | ^0.61.0        |
-| [^2.0.0](https://github.com/react-native-community/cli/tree/2.x)   | ^0.60.0        |
-| [^1.0.0](https://github.com/react-native-community/cli/tree/1.x)   | ^0.59.0        |
+| `@react-native-community/cli`                                    | `react-native` |
+| ---------------------------------------------------------------- | -------------- |
+| [`master`](https://github.com/react-native-community/cli)        | ^0.69.0        |
+| [^8.0.0](https://github.com/react-native-community/cli/tree/8.x) | ^0.68.0        |
+| [^7.0.0](https://github.com/react-native-community/cli/tree/7.x) | ^0.67.0        |
+| [^6.1.0](https://github.com/react-native-community/cli/tree/6.x) | ^0.66.0        |
+| [^6.0.0](https://github.com/react-native-community/cli/tree/6.x) | ^0.65.0        |
+| [^5.0.0](https://github.com/react-native-community/cli/tree/5.x) | ^0.64.0        |
+| [^4.0.0](https://github.com/react-native-community/cli/tree/4.x) | ^0.62.0        |
+| [^3.0.0](https://github.com/react-native-community/cli/tree/3.x) | ^0.61.0        |
+| [^2.0.0](https://github.com/react-native-community/cli/tree/2.x) | ^0.60.0        |
+| [^1.0.0](https://github.com/react-native-community/cli/tree/1.x) | ^0.59.0        |
 
 ## Documentation
 

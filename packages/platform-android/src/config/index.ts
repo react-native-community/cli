@@ -18,6 +18,8 @@ import {
   AndroidDependencyConfig,
 } from '@react-native-community/cli-types';
 import {getPackageName} from './getAndroidProject';
+import {findLibraryName} from './findLibraryName';
+import {findComponentDescriptors} from './findComponentDescriptors';
 
 /**
  * Gets android project config by analyzing given folder and taking some
@@ -114,6 +116,12 @@ export function dependencyConfig(
 
   const buildTypes = userConfig.buildTypes || [];
   const dependencyConfiguration = userConfig.dependencyConfiguration;
+  const libraryName = userConfig.libraryName || findLibraryName(sourceDir);
+  const componentDescriptors =
+    userConfig.componentDescriptors || findComponentDescriptors(root);
+  const androidMkPath = userConfig.androidMkPath
+    ? path.join(sourceDir, userConfig.androidMkPath)
+    : path.join(sourceDir, 'build/generated/source/codegen/jni/Android.mk');
 
   return {
     sourceDir,
@@ -121,5 +129,8 @@ export function dependencyConfig(
     packageInstance,
     buildTypes,
     dependencyConfiguration,
+    libraryName,
+    componentDescriptors,
+    androidMkPath,
   };
 }

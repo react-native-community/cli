@@ -83,6 +83,9 @@ export const dependencyConfig = t
                 packageInstance: t.string(),
                 dependencyConfiguration: t.string(),
                 buildTypes: t.array().items(t.string()).default([]),
+                libraryName: t.string().allow(null),
+                componentDescriptors: t.array().items(t.string()).allow(null),
+                androidMkPath: t.string().allow(null),
               })
               .default({}),
           })
@@ -131,6 +134,9 @@ export const projectConfig = t
                 packageInstance: t.string(),
                 dependencyConfiguration: t.string(),
                 buildTypes: t.array().items(t.string()).default([]),
+                libraryName: t.string().allow(null),
+                componentDescriptors: t.array().items(t.string()).allow(null),
+                androidMkPath: t.string().allow(null),
               })
               .allow(null),
           }),

@@ -16,6 +16,7 @@ yarn react-native run-android
 That's it. No more editing build config files to use native code.
 
 Also, removing a library is similar to adding a library:
+
 ```sh
 # uninstall
 yarn remove react-native-webview
@@ -95,6 +96,27 @@ module.exports = {
     'some-unsupported-package': {
       platforms: {
         android: null, // disable Android platform, other platforms will still autolink if provided
+      },
+    },
+  },
+};
+```
+
+## How can I disable autolinking for new architecture (Fabric, TurboModules)?
+
+It happens that packages come with their own linking setup for the new architecture. To disable autolinking in such cases (currently `react-native-screens`, `react-native-safe-area-context`, `react-native-reanimated`, `react-native-gesture-handler`), update your `react-native.config.js`'s `dependencies` entry to look like this:
+
+```js
+// react-native.config.js
+module.exports = {
+  dependencies: {
+    'fabric-or-tm-library': {
+      platforms: {
+        android: {
+          libraryName: null,
+          componentDescriptors: null,
+          androidMkPath: null,
+        },
       },
     },
   },

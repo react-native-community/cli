@@ -97,7 +97,20 @@ test('should read a config of a dependency and use it to load other settings', (
       dependency: {
         platforms: {
           ios: {
-            scriptPhases: ["./customLocation/custom.sh"]
+            scriptPhases: [
+              {
+                name: "[TEST] Some Configuration",
+                path: "./customLocation/custom.sh",
+                execution_position: "after_compile",
+                input_files: ["input_file"],
+                shell_path: "some/shell/path/bash",
+                output_files: ["output_file"],
+                input_file_lists: ["input_file_1", "input_file_2"],
+                output_file_lists: ["output_file_1", "output_file_2"],
+                show_env_vars_in_log: false,
+                dependency_file: "/path/to/dependency/file"
+              }
+            ]
           }
         }
       }

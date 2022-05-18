@@ -123,7 +123,35 @@ export const projectConfig = t
               .object({
                 podspecPath: t.string(),
                 configurations: t.array().items(t.string()).default([]),
-                scriptPhases: t.array().items(t.string()).default([]),
+                scriptPhases: t
+                  .array()
+                  .items(
+                    t.alternatives().try(
+                      t.string(),
+                      map(t.string(), t.any()).keys({
+                        name: t.string(),
+                        path: t.string(),
+                        execution_position: t
+                          .string()
+                          .valid('before_compile', 'after_compile', 'any')
+                          .allow(null),
+                        input_files: t.array().items(t.string()).allow(null),
+                        shell_path: t.string().allow(null),
+                        output_files: t.array().items(t.string()).allow(null),
+                        input_file_lists: t
+                          .array()
+                          .items(t.string())
+                          .allow(null),
+                        output_file_lists: t
+                          .array()
+                          .items(t.string())
+                          .allow(null),
+                        show_env_vars_in_log: t.bool().allow(null),
+                        dependency_file: t.string().allow(null),
+                      }),
+                    ),
+                  )
+                  .default([]),
               })
               .allow(null),
             android: t

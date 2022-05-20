@@ -123,7 +123,7 @@ export const projectConfig = t
               .object({
                 podspecPath: t.string(),
                 configurations: t.array().items(t.string()).default([]),
-                scriptPhases: t.array().items(t.object()),
+                scriptPhases: t.array().items(t.object()).default([]),
               })
               .allow(null),
             android: t

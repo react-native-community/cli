@@ -145,3 +145,14 @@ Object {
   "root": "<<REPLACED>>/node_modules/react-native-test",
 }
 `;
+
+exports[`supports disabling dependency for ios platform 1`] = `
+Object {
+  "name": "react-native-test",
+  "platforms": Object {
+    "android": null,
+    "ios": null,
+  },
+  "root": "<<REPLACED>>/node_modules/react-native-test",
+}
+`;

@@ -69,7 +69,7 @@ export const dependencyConfig = t
             ios: t
               // IOSDependencyParams
               .object({
-                scriptPhases: t.array().items(t.string()),
+                scriptPhases: t.array().items(t.object()),
                 configurations: t.array().items(t.string()).default([]),
               })
               .default({}),
@@ -123,7 +123,7 @@ export const projectConfig = t
               .object({
                 podspecPath: t.string(),
                 configurations: t.array().items(t.string()).default([]),
-                scriptPhases: t.array().items(t.string()).default([]),
+                scriptPhases: t.array().items(t.object()).default([]),
               })
               .allow(null),
             android: t

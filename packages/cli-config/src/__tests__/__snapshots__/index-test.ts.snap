@@ -51,7 +51,10 @@ Object {
       "configurations": Array [],
       "podspecPath": "<<REPLACED>>/node_modules/react-native-test/ReactNativeTest.podspec",
       "scriptPhases": Array [
-        "./abc",
+        Object {
+          "name": "abc",
+          "path": "./phase.sh",
+        },
       ],
     },
   },
@@ -68,7 +71,28 @@ Object {
       "configurations": Array [],
       "podspecPath": "<<REPLACED>>/node_modules/react-native-test/ReactNativeTest.podspec",
       "scriptPhases": Array [
-        "./customLocation/custom.sh",
+        Object {
+          "dependency_file": "/path/to/dependency/file",
+          "execution_position": "after_compile",
+          "input_file_lists": Array [
+            "input_file_1",
+            "input_file_2",
+          ],
+          "input_files": Array [
+            "input_file",
+          ],
+          "name": "[TEST] Some Configuration",
+          "output_file_lists": Array [
+            "output_file_1",
+            "output_file_2",
+          ],
+          "output_files": Array [
+            "output_file",
+          ],
+          "path": "./customLocation/custom.sh",
+          "shell_path": "some/shell/path/bash",
+          "show_env_vars_in_log": false,
+        },
       ],
     },
   },

@@ -80,8 +80,12 @@ function getAppName(sourceDir: string, userConfigAppName: string | undefined) {
  */
 export function dependencyConfig(
   root: string,
-  userConfig: AndroidDependencyParams = {},
+  userConfig: AndroidDependencyParams | null = {},
 ): AndroidDependencyConfig | null {
+  if (userConfig === null) {
+    return null;
+  }
+
   const src = userConfig.sourceDir || findAndroidDir(root);
 
   if (!src) {

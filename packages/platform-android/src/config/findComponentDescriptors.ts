@@ -4,7 +4,7 @@ import glob from 'glob';
 import {extractComponentDescriptors} from './extractComponentDescriptors';
 
 export function findComponentDescriptors(packageRoot: string) {
-  const files = glob.sync('**/+(*.js|*.jsx|*.ts|*.tsx)', {cwd: packageRoot});
+  const files = glob.sync('**/+(*.js|*.jsx|*.ts|*.tsx)', {cwd: packageRoot, nodir: true});
   const codegenComponent = files
     .map((filePath) =>
       fs.readFileSync(path.join(packageRoot, filePath), 'utf8'),

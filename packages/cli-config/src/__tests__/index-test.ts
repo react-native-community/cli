@@ -339,3 +339,32 @@ test('supports dependencies from user configuration with custom build type', () 
     removeString(dependencies['react-native-test'], DIR),
   ).toMatchSnapshot();
 });
+
+test('supports disabling dependency for ios platform', () => {
+  DIR = getTempDirectory('config_test_disable_dependency_platform');
+  writeFiles(DIR, {
+    ...REACT_NATIVE_MOCK,
+    'node_modules/react-native-test/package.json': '{}',
+    'node_modules/react-native-test/ReactNativeTest.podspec': '',
+    'node_modules/react-native-test/react-native.config.js': `
+      module.exports = {
+        dependency: {
+          platforms: {
+            ios: null
+          }
+        }
+      }
+    `,
+    'package.json': `{
+      "dependencies": {
+        "react-native": "0.0.1",
+        "react-native-test": "0.0.1"
+      }
+    }`,
+  });
+
+  const {dependencies} = loadConfig(DIR);
+  expect(
+    removeString(dependencies['react-native-test'], DIR),
+  ).toMatchSnapshot();
+});

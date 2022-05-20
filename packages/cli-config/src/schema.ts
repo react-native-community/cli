@@ -72,7 +72,7 @@ export const dependencyConfig = t
                 scriptPhases: t.array().items(t.object()),
                 configurations: t.array().items(t.string()).default([]),
               })
-              .default({}),
+              .allow(null),
             android: t
               // AndroidDependencyParams
               .object({
@@ -84,7 +84,7 @@ export const dependencyConfig = t
                 dependencyConfiguration: t.string(),
                 buildTypes: t.array().items(t.string()).default([]),
               })
-              .default({}),
+              .allow(null),
           })
           .default(),
       })

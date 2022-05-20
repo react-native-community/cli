@@ -52,8 +52,12 @@ export function projectConfig(
 
 export function dependencyConfig(
   folder: string,
-  userConfig: IOSDependencyParams,
+  userConfig: IOSDependencyParams | null = {},
 ): IOSDependencyConfig | null {
+  if (userConfig === null) {
+    return null;
+  }
+
   const podspecPath = findPodspec(folder);
 
   if (!podspecPath) {

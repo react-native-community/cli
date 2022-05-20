@@ -146,7 +146,7 @@ test('should merge project configuration with default values', () => {
         "react-native-test": {
           platforms: {
             ios: {
-              scriptPhases: ["./abc"]
+              scriptPhases: [{name: "abc", path: "./phase.sh"}]
             }
           },
         }

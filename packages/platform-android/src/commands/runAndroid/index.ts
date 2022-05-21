@@ -78,7 +78,7 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
           args.port,
           args.terminal,
           config.reactNativePath,
-          androidProject.folder,
+          path.join(androidProject.sourceDir, '..'),
         );
       } catch (error) {
         logger.warn(

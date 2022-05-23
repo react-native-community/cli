@@ -13,8 +13,7 @@ import logger from './logger';
 
 async function launchDefaultBrowser(url: string) {
   try {
-    const isSafeToOpenUrlInBrowser = isValidBrowserUrl(url);
-    if (!isSafeToOpenUrlInBrowser) throw new Error("invalid url, missing http/https protocol");
+    isValidBrowserUrl(url);
 
     await open(url);
   } catch (err) {

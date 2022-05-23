@@ -3,7 +3,7 @@
  */
 export default function isValidBrowserUrl(
     url: string,
-): boolean {
+) {
     try {
         const _url = new URL(url);
 
@@ -16,8 +16,10 @@ export default function isValidBrowserUrl(
         }
 
         const isFromExpectedProtocol = expectedProtocol[urlProtocol];
-        return isFromExpectedProtocol;
+
+        if (!isFromExpectedProtocol) throw new Error("invalid url, missing http/https protocol");
+
     } catch (error) {
-        return false
+        throw error;
     }
 }

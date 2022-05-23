@@ -8,10 +8,14 @@
  */
 
 import open from 'open';
+import isValidBrowserUrl from './isValidUrl';
 import logger from './logger';
 
 async function launchDefaultBrowser(url: string) {
   try {
+    const isSafeToOpenUrlInBrowser = isValidBrowserUrl(url);
+    if (!isSafeToOpenUrlInBrowser) throw new Error("invalid url, missing http/https protocol");
+
     await open(url);
   } catch (err) {
     if (err) {

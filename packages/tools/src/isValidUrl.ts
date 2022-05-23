@@ -4,22 +4,18 @@
 export default function isValidBrowserUrl(
     url: string,
 ) {
-    try {
-        const _url = new URL(url);
+    const _url = new URL(url);
 
-        const urlProtocol = _url.protocol;
+    const urlProtocol = _url.protocol;
 
-        const expectedProtocol = {
-            [urlProtocol]: false,
-            "http:": true,
-            "https:": true,
-        }
-
-        const isFromExpectedProtocol = expectedProtocol[urlProtocol];
-
-        if (!isFromExpectedProtocol) throw new Error("invalid url, missing http/https protocol");
-
-    } catch (error) {
-        throw error;
+    const expectedProtocol = {
+        [urlProtocol]: false,
+        "http:": true,
+        "https:": true,
     }
+
+    const isFromExpectedProtocol = expectedProtocol[urlProtocol];
+
+    if (!isFromExpectedProtocol) throw new Error("invalid url, missing http/https protocol");
+
 }

@@ -8,10 +8,13 @@
  */
 
 import open from 'open';
+import throwIfNonHttpProtocol from './throwIfNonHttpProtocol';
 import logger from './logger';
 
 async function launchDefaultBrowser(url: string) {
   try {
+    throwIfNonHttpProtocol(url);
+
     await open(url);
   } catch (err) {
     if (err) {

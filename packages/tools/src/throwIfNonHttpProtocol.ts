@@ -1,7 +1,7 @@
 /**
  * Check if a string is an http/https url
  */
-export default function isValidBrowserUrl(
+export default function throwIfNonHttpProtocol(
     url: string,
 ) {
     const _url = new URL(url);

@@ -228,9 +228,9 @@ function startServerInNewWindow(
   const portExportContent = isWindows
     ? `set RCT_METRO_PORT=${port}`
     : `export RCT_METRO_PORT=${port}`;
-    const projectRootExportContent = isWindows
-      ? `set PROJECT_ROOT=${projectRoot}`
-      : `export PROJECT_ROOT=${projectRoot}`;
+  const projectRootExportContent = isWindows
+    ? `set PROJECT_ROOT=${projectRoot}`
+    : `export PROJECT_ROOT=${projectRoot}`;
 
   /**
    * Set up the `.packager.(env|bat)` file to ensure the packager starts on the right port.
@@ -251,10 +251,14 @@ function startServerInNewWindow(
   /**
    * Ensure we overwrite file by passing the `w` flag
    */
-  fs.writeFileSync(packagerEnvFile, portExportContent + "\n" + projectRootExportContent, {
-    encoding: 'utf8',
-    flag: 'w',
-  });
+  fs.writeFileSync(
+    packagerEnvFile,
+    portExportContent + '\n' + projectRootExportContent,
+    {
+      encoding: 'utf8',
+      flag: 'w',
+    },
+  );
 
   if (process.platform === 'darwin') {
     try {

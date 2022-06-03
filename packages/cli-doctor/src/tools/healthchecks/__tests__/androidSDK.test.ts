@@ -141,12 +141,12 @@ describe('androidSDK', () => {
     // 2. Install all required components
     const requiredComponents = [
       'platform-tools',
-      'build-tools;29.0.3',
-      'platforms;android-29',
+      'build-tools;31.0.0',
+      'platforms;android-31',
       'build-tools;28.0.3',
       'platforms;android-28',
       'emulator',
-      'system-images;android-28;google_apis;x86_64',
+      'system-images;android-31;google_apis;x86_64',
       '--licenses',
     ];
     // Make sure we are installing the right number

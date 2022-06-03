@@ -90,14 +90,14 @@ export default {
   win32AutomaticFix: async ({loader}) => {
     // Need a GitHub action to update automatically. See #1180
     const cliToolsUrl =
-      'https://dl.google.com/android/repository/commandlinetools-win-6200805_latest.zip';
+      'https://dl.google.com/android/repository/commandlinetools-win-8512546_latest.zip';
 
-    const systemImage = 'system-images;android-28;google_apis;x86_64';
+    const systemImage = 'system-images;android-31;google_apis;x86_64';
     // Installing 29 as well so Android Studio does not complain on first boot
     const componentsToInstall = [
       'platform-tools',
-      'build-tools;29.0.3',
-      'platforms;android-29',
+      'build-tools;31.0.0',
+      'platforms;android-31',
       // Is 28 still needed?
       'build-tools;28.0.3',
       'platforms;android-28',
@@ -182,7 +182,7 @@ export default {
 
     return logManualInstallation({
       healthcheck: 'Android SDK',
-      url: 'https://reactnative.dev/docs/getting-started',
+      url: 'https://reactnative.dev/docs/environment-setup',
     });
   },
 } as HealthCheckInterface;

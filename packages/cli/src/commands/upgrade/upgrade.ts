@@ -248,7 +248,8 @@ const applyPatch = async (
   tmpPatchFile: string,
   repoName: RepoNameType,
 ) => {
-  const defaultExcludes = ['package.json'];
+  const defaultExcludes = ['package.json', (process.env?.UPGRADE_PATCH_EXCLUDE || '').split(',')]
+    .map(e => `${relativePathFromRoot}${e}`);
   let filesThatDontExist: Array<string> = [];
   let filesThatFailedToApply: Array<string> = [];
 
@@ -273,6 +274,8 @@ const applyPatch = async (
         '-p2',
         '--3way',
         `--directory=${relativePathFromRoot}`,
+        '--whitespace',
+        'nowarn',
       ]);
       logger.info('Applying diff...');
     } catch (error) {
@@ -314,7 +317,7 @@ const applyPatch = async (
         ...defaultExcludes,
         ...filesThatDontExist,
         ...filesThatFailedToApply,
-      ].map((e) => `--exclude=${path.join(relativePathFromRoot, e)}`);
+      ].map((e) => `--exclude=${e}`);
       await execa('git', [
         'apply',
         tmpPatchFile,
@@ -322,6 +325,8 @@ const applyPatch = async (
         '-p2',
         '--3way',
         `--directory=${relativePathFromRoot}`,
+        '--whitespace',
+        'nowarn',
       ]);
     }
   } catch (error) {

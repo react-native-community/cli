@@ -269,7 +269,11 @@ class ReactNativeModules {
 
     if (packages.size() > 0) {
       libraryIncludes = packages.collect {
-        it.androidMkPath ? "include ${it.androidMkPath}" : null
+        if (it.androidMkPath != null && it.libraryName != null) {
+          "include ${it.androidMkPath}"
+        } else {
+          null
+        }
       }.minus(null).join('\n')
       libraryModules = packages.collect {
         it.libraryName ? "${codegenLibPrefix}${it.libraryName}" : null

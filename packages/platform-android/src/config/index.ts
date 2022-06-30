@@ -120,7 +120,8 @@ export function dependencyConfig(
 
   const buildTypes = userConfig.buildTypes || [];
   const dependencyConfiguration = userConfig.dependencyConfiguration;
-  const libraryName = userConfig.libraryName || findLibraryName(sourceDir);
+  const libraryName =
+    userConfig.libraryName || findLibraryName(root, sourceDir);
   const componentDescriptors =
     userConfig.componentDescriptors || findComponentDescriptors(root);
   const androidMkPath = userConfig.androidMkPath

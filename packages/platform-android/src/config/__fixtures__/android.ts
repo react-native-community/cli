@@ -15,9 +15,13 @@ const manifest = fs.readFileSync(
 const mainJavaClass = fs.readFileSync(
   path.join(__dirname, './files/Main.java'),
 );
+const buildGradle = fs.readFileSync(
+  path.join(__dirname, './files/build.gradle'),
+);
 
 function generateValidFileStructure(classFileName: string) {
   return {
+    'build.gradle': buildGradle,
     src: {
       'AndroidManifest.xml': manifest,
       main: {

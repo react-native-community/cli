@@ -1,5 +1,4 @@
 import path from 'path';
-import chalk from 'chalk';
 import {
   UserDependencyConfig,
   ProjectConfig,
@@ -8,8 +7,6 @@ import {
   Config,
 } from '@react-native-community/cli-types';
 import {
-  logger,
-  inlineString,
   findProjectRoot,
   resolveNodeModuleDir,
 } from '@react-native-community/cli-tools';
@@ -101,24 +98,9 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
     const localDependencyRoot =
       userConfig.dependencies[dependencyName] &&
       userConfig.dependencies[dependencyName].root;
-    let root: string;
-    let config: UserDependencyConfig;
-    try {
-      root =
-        localDependencyRoot ||
-        resolveNodeModuleDir(projectRoot, dependencyName);
-      config = readDependencyConfigFromDisk(root);
-    } catch (error) {
-      logger.warn(
-        inlineString(`
-          Package ${chalk.bold(
-            dependencyName,
-          )} has been ignored because it contains invalid configuration.
-
-          Reason: ${chalk.dim(error.message)}`),
-      );
-      return acc;
-    }
+    let root =
+      localDependencyRoot || resolveNodeModuleDir(projectRoot, dependencyName);
+    let config = readDependencyConfigFromDisk(root, dependencyName);
 
     const isPlatform = Object.keys(config.platforms).length > 0;
 

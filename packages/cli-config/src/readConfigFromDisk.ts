@@ -5,6 +5,8 @@ import {
   UserConfig,
   UserDependencyConfig,
 } from '@react-native-community/cli-types';
+import {logger, inlineString} from '@react-native-community/cli-tools';
+import chalk from 'chalk';
 
 /**
  * Places to look for the configuration file.
@@ -38,6 +40,7 @@ export function readConfigFromDisk(rootFolder: string): UserConfig {
  */
 export function readDependencyConfigFromDisk(
   rootFolder: string,
+  dependencyName: string,
 ): UserDependencyConfig {
   const explorer = cosmiconfig('react-native', {
     stopDir: rootFolder,
@@ -47,10 +50,20 @@ export function readDependencyConfigFromDisk(
   const searchResult = explorer.searchSync(rootFolder);
   const config = searchResult ? searchResult.config : emptyDependencyConfig;
 
-  const result = schema.dependencyConfig.validate(config);
+  const result = schema.dependencyConfig.validate(config, {abortEarly: false});
 
   if (result.error) {
-    throw new JoiError(result.error);
+    const validationError = new JoiError(result.error);
+    logger.warn(
+      inlineString(`
+        Package ${chalk.bold(
+          dependencyName,
+        )} contains invalid configuration: ${chalk.bold(
+        validationError.message,
+      )}.
+      
+      Please verify it's properly linked using "react-native config" command and contact the package maintainers about this.`),
+    );
   }
 
   return result.value as UserDependencyConfig;

@@ -148,6 +148,7 @@ function translateFilePath(filePath: string) {
     .replace('_prettierrc.js', '.prettierrc.js')
     .replace('_bundle', '.bundle')
     .replace('_ruby-version', '.ruby-version')
+    .replace('_node-version', '.node-version')
     .replace('_watchmanconfig', '.watchmanconfig')
     .replace('_xcode.env', '.xcode.env');
 }

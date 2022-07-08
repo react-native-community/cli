@@ -9,11 +9,11 @@
 /* global __fbBatchedBridge, self, importScripts, postMessage, onmessage: true */
 /* eslint no-unused-vars: 0 */
 
-onmessage = (function() {
+onmessage = (function () {
   var visibilityState;
-  var showVisibilityWarning = (function() {
+  var showVisibilityWarning = (function () {
     var hasWarned = false;
-    return function() {
+    return function () {
       // Wait until `YellowBox` gets initialized before displaying the warning.
       if (hasWarned || console.warn.toString().includes('[native code]')) {
         return;
@@ -28,7 +28,7 @@ onmessage = (function() {
   })();
 
   var messageHandlers = {
-    executeApplicationScript: function(message, sendReply) {
+    executeApplicationScript: function (message, sendReply) {
       for (var key in message.inject) {
         self[key] = JSON.parse(message.inject[key]);
       }
@@ -40,19 +40,19 @@ onmessage = (function() {
       }
       sendReply(null /* result */, error);
     },
-    setDebuggerVisibility: function(message) {
+    setDebuggerVisibility: function (message) {
       visibilityState = message.visibilityState;
     },
   };
 
-  return function(message) {
+  return function (message) {
     if (visibilityState === 'hidden') {
       showVisibilityWarning();
     }
 
     var object = message.data;
 
-    var sendReply = function(result, error) {
+    var sendReply = function (result, error) {
       postMessage({replyID: object.id, result: result, error: error});
     };
 

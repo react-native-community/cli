@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import {promisify} from 'util';
 import {findProjectRoot} from '@react-native-community/cli-tools';
-import {findPodfilePaths} from '@react-native-community/cli-platform-ios';
+import {findPodfilePaths} from '../../../../cli-platform-ios/build';
 
 const xcodeEnvFile = '.xcode.env';
 const pathSeparator = '/';

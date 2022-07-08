@@ -7,6 +7,6 @@
   "references": [
     {"path": "../cli-types"},
     {"path": "../cli-server-api"},
-    {"path": "../tools"},
+    {"path": "../cli-tools"},
   ]
 }

@@ -4,5 +4,5 @@
     "rootDir": "src",
     "outDir": "build"
   },
-  "references": [{"path": "../tools"}, {"path": "../cli-types"}]
+  "references": [{"path": "../cli-tools"}, {"path": "../cli-types"}]
 }

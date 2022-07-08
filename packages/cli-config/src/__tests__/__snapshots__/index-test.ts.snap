@@ -62,6 +62,18 @@ Object {
 }
 `;
 
+exports[`should not skip packages that have invalid configuration (to avoid breaking users): dependencies config 1`] = `
+Object {
+  "react-native": Object {
+    "name": "react-native",
+    "platforms": Object {},
+    "root": "<<REPLACED>>/node_modules/react-native",
+  },
+}
+`;
+
+exports[`should not skip packages that have invalid configuration (to avoid breaking users): logged warning 1`] = `"warn Package react-native contains invalid configuration: \\"dependency.invalidProperty\\" is not allowed. Please verify it's properly linked using \\"react-native config\\" command and contact the package maintainers about this."`;
+
 exports[`should read a config of a dependency and use it to load other settings 1`] = `
 Object {
   "name": "react-native-test",
@@ -124,10 +136,6 @@ Object {
   },
 }
 `;
-
-exports[`should skip packages that have invalid configuration: dependencies config 1`] = `Object {}`;
-
-exports[`should skip packages that have invalid configuration: logged warning 1`] = `"warn Package react-native has been ignored because it contains invalid configuration. Reason: \\"dependency.invalidProperty\\" is not allowed"`;
 
 exports[`supports dependencies from user configuration with custom build type 1`] = `
 Object {

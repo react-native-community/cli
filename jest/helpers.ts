@@ -53,7 +53,7 @@ export async function runUntil(
     ...options,
   });
 
-  spawnPromise.stderr.pipe(
+  spawnPromise.stderr?.pipe(
     new Writable({
       write(chunk: any, _encoding: string, callback: () => void) {
         const output = chunk.toString('utf8');

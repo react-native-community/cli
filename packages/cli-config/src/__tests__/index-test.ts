@@ -191,7 +191,7 @@ test('should load commands from "react-native-foo" and "react-native-bar" packag
   expect(commands).toMatchSnapshot();
 });
 
-test('should skip packages that have invalid configuration', () => {
+test('should not skip packages that have invalid configuration (to avoid breaking users)', () => {
   process.env.FORCE_COLOR = '0'; // To disable chalk
   DIR = getTempDirectory('config_test_skip');
   writeFiles(DIR, {
@@ -208,7 +208,9 @@ test('should skip packages that have invalid configuration', () => {
     }`,
   });
   const {dependencies} = loadConfig(DIR);
-  expect(dependencies).toMatchSnapshot('dependencies config');
+  expect(removeString(dependencies, DIR)).toMatchSnapshot(
+    'dependencies config',
+  );
   expect(spy.mock.calls[0][0]).toMatchSnapshot('logged warning');
 });
 

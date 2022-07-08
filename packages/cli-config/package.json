@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/cli-config",
-  "version": "9.0.0-alpha.2",
+  "version": "9.0.0-alpha.3",
   "license": "MIT",
   "main": "build/index.js",
   "publishConfig": {
@@ -8,7 +8,7 @@
   },
   "types": "build/index.d.ts",
   "dependencies": {
-    "@react-native-community/cli-tools": "^9.0.0-alpha.0",
+    "@react-native-community/cli-tools": "^9.0.0-alpha.3",
     "cosmiconfig": "^5.1.0",
     "deepmerge": "^3.2.0",
     "glob": "^7.1.3",

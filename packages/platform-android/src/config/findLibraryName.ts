@@ -9,7 +9,7 @@ export function findLibraryName(root: string, sourceDir: string) {
   // We first check if there is a codegenConfig.name inside the package.json file.
   if (fs.existsSync(packageJsonPath)) {
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-    if (packageJson.codegenConfig.name) {
+    if (packageJson.codegenConfig?.name) {
       return packageJson.codegenConfig.name;
     }
   }

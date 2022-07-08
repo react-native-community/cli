@@ -42,6 +42,13 @@ const packageJsonWithCodegenConfig = `
   }
   `;
 
+const packageJsonWithoutCodegenConfig = `
+  {
+    "name": "my-awesome-library",
+    "version": "0.0.1"
+  }
+  `;
+
 describe('android::findLibraryName', () => {
   beforeAll(() => {
     fs.__setMockFilesystem({
@@ -56,6 +63,12 @@ describe('android::findLibraryName', () => {
         },
         withcodegenconfig: {
           'package.json': packageJsonWithCodegenConfig,
+          android: {
+            'build.gradle': buildGradleWithSingleQuotes,
+          },
+        },
+        withoutcodegenconfig: {
+          'package.json': packageJsonWithoutCodegenConfig,
           android: {
             'build.gradle': buildGradleWithSingleQuotes,
           },
@@ -83,6 +96,15 @@ describe('android::findLibraryName', () => {
         '/valid/withcodegenconfig/android',
       ),
     ).toBe('my-awesome-library');
+  });
+
+  it('falls back to reading from build.gradle when codegenConfig is not there', () => {
+    expect(
+      findLibraryName(
+        '/valid/withoutcodegenconfig',
+        '/valid/withoutcodegenconfig/android',
+      ),
+    ).toBe('justalibrary');
   });
 
   it('returns null if there is no build.gradle file', () => {

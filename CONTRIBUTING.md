@@ -11,13 +11,6 @@ All work on React Native CLI happens directly on GitHub. Contributors send pull 
 1. Run `yarn watch` to automatically build the changed files.
 1. Now you are ready to do the changes.
 
-## Repository
-
-This repository is split into two packages:
-
-- `cli` - Historically, it was included in `react-native` package. Contains all the commands code.
-- `global-cli` - Historically, it was a `react-native-cli` package and the only reason this package existed was to initialize an empty project.
-
 ## Testing your changes
 
 > Please make sure the version of React Native matches the one present in devDependencies of the CLI. Otherwise, you may get unexpected errors.

@@ -14,14 +14,14 @@ import orangeIcon from './assets/orange-icon.png';
 
 const isMacLike = /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform);
 const refreshShortcut = isMacLike ? '⌘R' : 'Ctrl R';
-window.onload = function() {
+window.onload = function () {
   if (!isMacLike) {
     document.getElementById('shortcut').innerHTML = 'Ctrl⇧J';
   }
   Page.render();
 };
 
-window.onReloadClicked = function() {
+window.onReloadClicked = function () {
   var xhr = new XMLHttpRequest();
   xhr.open('GET', `${window.location.origin}/reload`, true);
   xhr.send();
@@ -119,10 +119,10 @@ function connectToDebuggerProxy() {
     // making sure that it's run in an environment without a global
     // document, to make it consistent with the JSC executor environment.
     worker = new Worker('./debuggerWorker.js');
-    worker.onmessage = function(message) {
+    worker.onmessage = function (message) {
       ws.send(JSON.stringify(message.data));
     };
-    window.onbeforeunload = function() {
+    window.onbeforeunload = function () {
       return (
         'If you reload this page, it is going to break the debugging session. ' +
         'Press ' +
@@ -151,11 +151,11 @@ function connectToDebuggerProxy() {
     Page.setState({visibilityState: document.visibilityState});
   }
 
-  ws.onopen = function() {
+  ws.onopen = function () {
     Page.setState({status: {type: 'connecting'}});
   };
 
-  ws.onmessage = async function(message) {
+  ws.onmessage = async function (message) {
     if (!message.data) {
       return;
     }
@@ -186,7 +186,7 @@ function connectToDebuggerProxy() {
     }
   };
 
-  ws.onclose = function(error) {
+  ws.onclose = function (error) {
     shutdownJSRuntime();
     Page.setState({status: {type: 'error', error}});
     if (error.reason) {

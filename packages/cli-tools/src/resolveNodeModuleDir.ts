@@ -1,4 +1,5 @@
-import path from 'path';
+import {findPackageDependencyDir} from '@rnx-kit/tools-node';
+import {CLIError} from './errors';
 
 /**
  * Finds a path inside `node_modules`
@@ -7,9 +8,14 @@ export default function resolveNodeModuleDir(
   root: string,
   packageName: string,
 ): string {
-  return path.dirname(
-    require.resolve(path.join(packageName, 'package.json'), {
-      paths: [root],
-    }),
-  );
+  const packageDependencyDirectory = findPackageDependencyDir(packageName, {
+    startDir: root,
+  });
+  if (packageDependencyDirectory === undefined) {
+    throw new CLIError(
+      `Node module directory for package ${packageName} was not found`,
+    );
+  } else {
+    return packageDependencyDirectory;
+  }
 }

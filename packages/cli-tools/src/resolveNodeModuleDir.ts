@@ -1,4 +1,4 @@
-import {findPackageDependencyDir} from '@rnx-kit/tools-node';
+import {findPackageDependencyDir} from './findPackageDependencyDir';
 import {CLIError} from './errors';
 
 /**

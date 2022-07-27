@@ -16,6 +16,6 @@ afterEach(() => {
 });
 
 test('shows up help information without passing in any args', () => {
-  const {stdout} = runCLI(DIR);
-  expect(stdout).toMatchSnapshot();
+  const {stderr} = runCLI(DIR);
+  expect(stderr).toMatchSnapshot();
 });

@@ -9,7 +9,7 @@ export default function findDependencies(root: string): Array<string> {
 
   try {
     pjson = JSON.parse(
-      fs.readFileSync(path.join(root, 'package.json'), 'UTF-8'),
+      fs.readFileSync(path.join(root, 'package.json'), 'utf8'),
     );
   } catch (e) {
     return [];

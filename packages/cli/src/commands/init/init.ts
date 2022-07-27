@@ -1,7 +1,6 @@
 import os from 'os';
 import path from 'path';
 import fs from 'fs-extra';
-import minimist from 'minimist';
 import {validateProjectName} from './validate';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
 import printRunInstructions from './printRunInstructions';
@@ -31,6 +30,7 @@ type Options = {
   displayName?: string;
   title?: string;
   skipInstall?: boolean;
+  version?: string;
 };
 
 interface TemplateOptions {
@@ -196,16 +196,10 @@ export default (async function initialize(
   [projectName]: Array<string>,
   options: Options,
 ) {
-  const root = process.cwd();
-
   validateProjectName(projectName);
 
-  /**
-   * Commander is stripping `version` from options automatically.
-   * We have to use `minimist` to take that directly from `process.argv`
-   */
-  const version: string = minimist(process.argv).version || DEFAULT_VERSION;
-
+  const root = process.cwd();
+  const version = options.version || DEFAULT_VERSION;
   const directoryName = path.relative(root, options.directory || projectName);
 
   try {

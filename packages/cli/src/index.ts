@@ -1,30 +1,21 @@
 import chalk from 'chalk';
 import childProcess from 'child_process';
-import commander from 'commander';
-import leven from 'leven';
+import {Command as CommanderCommand} from 'commander';
 import path from 'path';
-
 import {Command, Config} from '@react-native-community/cli-types';
 import {logger, CLIError} from '@react-native-community/cli-tools';
-
 import {detachedCommands, projectCommands} from './commands';
 import loadConfig from '@react-native-community/cli-config';
-
 const pkgJson = require('../package.json');
 
-commander
-  .usage('<command> [options]')
-  .option('--version', 'Print CLI version')
+const program = new CommanderCommand()
+  .usage('[command] [options]')
+  .version(pkgJson.version, '-v', 'Output the current version')
   .option('--verbose', 'Increase logging verbosity');
-
-commander.arguments('<command>').action((cmd) => {
-  printUnknownCommand(cmd);
-  process.exit(1);
-});
 
 const handleError = (err: Error) => {
   logger.enable();
-  if (commander.verbose) {
+  if (program.opts().verbose) {
     logger.error(err.message);
   } else {
     // Some error messages (esp. custom ones) might have `.` at the end already.
@@ -34,7 +25,7 @@ const handleError = (err: Error) => {
   if (err.stack) {
     logger.log(err.stack);
   }
-  if (!commander.verbose) {
+  if (!program.opts().verbose) {
     logger.info(
       chalk.dim(
         `Run CLI with ${chalk.reset('--verbose')} ${chalk.dim(
@@ -46,35 +37,8 @@ const handleError = (err: Error) => {
   process.exit(1);
 };
 
-/**
- * Custom printHelpInformation command inspired by internal Commander.js
- * one modified to suit our needs
- */
-function printHelpInformation(
-  this: commander.Command,
-  examples: Command['examples'],
-  pkg: Command['pkg'],
-) {
-  let cmdName = this._name;
-  const argsList = (this._args as Array<{required: boolean; name: string}>)
-    .map((arg) => (arg.required ? `<${arg.name}>` : `[${arg.name}]`))
-    .join(' ');
-
-  if (this._alias) {
-    cmdName = `${cmdName}|${this._alias}`;
-  }
-
-  const sourceInformation = pkg
-    ? [`${chalk.bold('Source:')} ${pkg.name}@${pkg.version}`, '']
-    : [];
-
-  let output = [
-    chalk.bold(`react-native ${cmdName} ${argsList}`),
-    this._description ? `\n${this._description}\n` : '',
-    ...sourceInformation,
-    `${chalk.bold('Options:')}`,
-    this.optionHelp().replace(/^/gm, '  '),
-  ];
+function printExamples(examples: Command['examples']) {
+  let output: string[] = [];
 
   if (examples && examples.length > 0) {
     const formattedUsage = examples
@@ -85,27 +49,6 @@ function printHelpInformation(
   }
 
   return output.join('\n').concat('\n');
-}
-
-function printUnknownCommand(cmdName: string) {
-  const availableCommands = commander.commands.map((cmd: any) => cmd._name);
-  const suggestion = availableCommands.find((cmd: string) => {
-    return leven(cmd, cmdName) < cmd.length * 0.4;
-  });
-  let errorMsg = `Unrecognized command "${chalk.bold(cmdName)}".`;
-  if (suggestion) {
-    errorMsg += ` Did you mean "${suggestion}"?`;
-  }
-  if (cmdName) {
-    logger.error(errorMsg);
-    logger.info(
-      `Run ${chalk.bold(
-        '"react-native --help"',
-      )} to see a list of all available commands.`,
-    );
-  } else {
-    commander.outputHelp();
-  }
 }
 
 /**
@@ -128,10 +71,10 @@ function attachCommand<IsDetached extends boolean>(
   command: Command<IsDetached>,
   ...rest: IsDetached extends false ? [Config] : []
 ): void {
-  const cmd = commander
+  const cmd = program
     .command(command.name)
     .action(async function handleAction(
-      this: commander.Command,
+      this: CommanderCommand,
       ...args: string[]
     ) {
       const passedOptions = this.opts();
@@ -152,16 +95,12 @@ function attachCommand<IsDetached extends boolean>(
     cmd.description(command.description);
   }
 
-  cmd.helpInformation = printHelpInformation.bind(
-    cmd,
-    command.examples,
-    command.pkg,
-  );
+  cmd.addHelpText('after', printExamples(command.examples));
 
   for (const opt of command.options || []) {
     cmd.option(
       opt.name,
-      opt.description,
+      opt.description ?? '',
       opt.parse || ((val: any) => val),
       typeof opt.default === 'function'
         ? opt.default(rest[0] as Config)
@@ -238,18 +177,7 @@ async function setupAndRun() {
     }
   }
 
-  commander.parse(process.argv);
-
-  if (commander.rawArgs.length === 2) {
-    commander.outputHelp();
-  }
-
-  // We handle --version as a special case like this because both `commander`
-  // and `yargs` append it to every command and we don't want to do that.
-  // E.g. outside command `init` has --version flag and we want to preserve it.
-  if (commander.args.length === 0 && commander.rawArgs.includes('--version')) {
-    console.log(pkgJson.version);
-  }
+  program.parse(process.argv);
 }
 
 const bin = require.resolve('./bin');

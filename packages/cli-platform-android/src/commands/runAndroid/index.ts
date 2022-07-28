@@ -7,7 +7,6 @@
  */
 import path from 'path';
 import execa from 'execa';
-import chalk from 'chalk';
 import fs from 'fs';
 import {Config} from '@react-native-community/cli-types';
 import adb from './adb';
@@ -33,7 +32,6 @@ export interface Flags {
   packager: boolean;
   port: number;
   terminal: string;
-  jetifier: boolean;
   activeArchOnly: boolean;
 }
 
@@ -44,22 +42,6 @@ type AndroidProject = NonNullable<Config['project']['android']>;
  */
 async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
   const androidProject = getAndroidProject(config);
-
-  if (args.jetifier) {
-    logger.info(
-      `Running ${chalk.bold(
-        'jetifier',
-      )} to migrate libraries to AndroidX. ${chalk.dim(
-        'You can disable it using "--no-jetifier" flag.',
-      )}`,
-    );
-
-    try {
-      await execa(require.resolve('jetifier/bin/jetify'), {stdio: 'inherit'});
-    } catch (error) {
-      throw new CLIError('Failed to run jetifier.', error);
-    }
-  }
 
   if (!args.packager) {
     return buildAndRun(args, androidProject);
@@ -339,11 +321,6 @@ export default {
       name: '--tasks <list>',
       description: 'Run custom Gradle tasks. By default it\'s "installDebug"',
       parse: (val: string) => val.split(','),
-    },
-    {
-      name: '--no-jetifier',
-      description:
-        'Do not run "jetifier" – the AndroidX transition tool. By default it runs before Gradle to ease working with libraries that don\'t support AndroidX yet. See more at: https://www.npmjs.com/package/jetifier.',
     },
     {
       name: '--active-arch-only',

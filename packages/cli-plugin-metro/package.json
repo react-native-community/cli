@@ -1,14 +1,14 @@
 {
   "name": "@react-native-community/cli-plugin-metro",
-  "version": "9.0.0-alpha.5",
+  "version": "9.0.0-alpha.6",
   "license": "MIT",
   "main": "build/index.js",
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "@react-native-community/cli-server-api": "^9.0.0-alpha.5",
-    "@react-native-community/cli-tools": "^9.0.0-alpha.5",
+    "@react-native-community/cli-server-api": "^9.0.0-alpha.6",
+    "@react-native-community/cli-tools": "^9.0.0-alpha.6",
     "chalk": "^4.1.2",
     "metro": "^0.71.3",
     "metro-config": "^0.71.3",

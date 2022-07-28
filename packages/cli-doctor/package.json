@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/cli-doctor",
-  "version": "9.0.0-alpha.5",
+  "version": "9.0.0-alpha.6",
   "license": "MIT",
   "main": "build/index.js",
   "publishConfig": {
@@ -8,9 +8,9 @@
   },
   "types": "build/index.d.ts",
   "dependencies": {
-    "@react-native-community/cli-config": "^9.0.0-alpha.5",
-    "@react-native-community/cli-platform-ios": "^9.0.0-alpha.5",
-    "@react-native-community/cli-tools": "^9.0.0-alpha.5",
+    "@react-native-community/cli-config": "^9.0.0-alpha.6",
+    "@react-native-community/cli-platform-ios": "^9.0.0-alpha.6",
+    "@react-native-community/cli-tools": "^9.0.0-alpha.6",
     "chalk": "^4.1.2",
     "command-exists": "^1.2.8",
     "envinfo": "^7.7.2",

@@ -310,7 +310,7 @@ class ReactNativeModules {
       }.minus(null).join('\n')
       libraryModules = packages.collect {
         it.libraryName ? "${codegenLibPrefix}${it.libraryName}" : null
-      }.minus(null).join(" \\\n  ")
+      }.minus(null).join('\n  ')
     }
 
     String generatedFileContents = generatedFileContentsTemplate

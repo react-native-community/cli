@@ -47,6 +47,6 @@ export function getPackageName(manifestPath: string) {
 }
 
 // Validates that the package name is correct
-function validatePackageName(packageName: string) {
-  return /^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/.test(packageName);
+export function validatePackageName(packageName: string) {
+  return /^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/i.test(packageName);
 }

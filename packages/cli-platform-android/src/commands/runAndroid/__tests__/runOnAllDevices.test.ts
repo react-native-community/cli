@@ -26,7 +26,6 @@ describe('--appFolder', () => {
     packager: true,
     port: 8081,
     terminal: 'iTerm2',
-    jetifier: true,
     activeArchOnly: false,
   };
   const androidProject: AndroidProjectConfig = {

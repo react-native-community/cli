@@ -29,7 +29,7 @@ Each platform defines its own [`platforms`](./platforms.md) configuration. It in
 
 ## Platform iOS
 
-The [native_modules.rb](https://github.com/react-native-community/cli/blob/master/packages/platform-ios/native_modules.rb) script required by `Podfile` gets the package metadata from `react-native config` during install phase and:
+The [native_modules.rb](https://github.com/react-native-community/cli/blob/main/packages/cli-platform-ios/native_modules.rb) script required by `Podfile` gets the package metadata from `react-native config` during install phase and:
 
 1. Adds dependencies via CocoaPods dev pods (using files from a local path).
 1. Adds build phase scripts to the App project’s build phase. (see examples below)
@@ -44,7 +44,7 @@ See example usage in React Native template's [Podfile](https://github.com/facebo
 
 ## Platform Android
 
-The [native_modules.gradle](https://github.com/react-native-community/cli/blob/master/packages/platform-android/native_modules.gradle) script is included in your project's `settings.gradle` and `app/build.gradle` files and:
+The [native_modules.gradle](https://github.com/react-native-community/cli/blob/main/packages/cli-platform-android/native_modules.gradle) script is included in your project's `settings.gradle` and `app/build.gradle` files and:
 
 1. At build time, before the build script is run:
    1. A first Gradle plugin (in `settings.gradle`) runs `applyNativeModulesSettingsGradle` method. It uses the package metadata from `react-native config` to add Android projects.

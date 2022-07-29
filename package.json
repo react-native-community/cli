@@ -45,7 +45,7 @@
     "jest-circus": "^26.6.2",
     "jest-snapshot-serializer-raw": "^1.1.0",
     "lerna": "^4.0.0",
-    "metro-memory-fs": "^0.71.3",
+    "metro-memory-fs": "^0.72.0",
     "micromatch": "^4.0.4",
     "rimraf": "^3.0.2",
     "slash": "^3.0.0",

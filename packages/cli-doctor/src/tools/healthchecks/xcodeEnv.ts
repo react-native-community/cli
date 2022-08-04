@@ -44,24 +44,28 @@ export default {
     };
   },
   runAutomaticFix: async ({loader}) => {
-    loader.stop();
-    const templateXcodeEnv = '_xcode.env';
-    const projectRoot = findProjectRoot();
-    const templateIosPath = resolveNodeModuleDir(
-      projectRoot,
-      'react-native/template/ios',
-    );
-    const src = templateIosPath + pathSeparator + templateXcodeEnv;
-    const copyFileAsync = promisify(fs.copyFile);
+    try {
+      loader.stop();
+      const templateXcodeEnv = '_xcode.env';
+      const projectRoot = findProjectRoot();
+      const templateIosPath = resolveNodeModuleDir(
+        projectRoot,
+        'react-native/template/ios',
+      );
+      const src = templateIosPath + pathSeparator + templateXcodeEnv;
+      const copyFileAsync = promisify(fs.copyFile);
 
-    findPodfilePaths(projectRoot)
-      .map(removeLastPathComponent)
-      // avoid overriding existing .xcode.env
-      .filter(pathDoesNotHaveXcodeEnvFile)
-      .forEach(async (pathString: string) => {
-        const destFilePath = pathString + pathSeparator + xcodeEnvFile;
-        await copyFileAsync(src, destFilePath);
-      });
-    loader.succeed();
+      findPodfilePaths(projectRoot)
+        .map(removeLastPathComponent)
+        // avoid overriding existing .xcode.env
+        .filter(pathDoesNotHaveXcodeEnvFile)
+        .forEach(async (pathString: string) => {
+          const destFilePath = pathString + pathSeparator + xcodeEnvFile;
+          await copyFileAsync(src, destFilePath);
+        });
+      loader.succeed('.xcode.env file have been created!');
+    } catch (e) {
+      loader.fail(e);
+    }
   },
 } as HealthCheckInterface;

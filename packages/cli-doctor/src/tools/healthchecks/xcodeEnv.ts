@@ -26,7 +26,6 @@ export default {
   label: '.xcode.env',
   description: 'File to customize Xcode environment',
   getDiagnostics: async (_, projectRoot) => {
-    console.log('projectRoot @ getDiagnostics', projectRoot);
     const allPathsHasXcodeEnvFile = findPodfilePaths(projectRoot)
       .map((pathString) => {
         const basePath = removeLastPathComponent(pathString);

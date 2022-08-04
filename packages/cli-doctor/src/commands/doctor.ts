@@ -1,5 +1,9 @@
 import chalk from 'chalk';
-import {logger, getLoader} from '@react-native-community/cli-tools';
+import {
+  logger,
+  getLoader,
+  findProjectRoot,
+} from '@react-native-community/cli-tools';
 import {getHealthchecks, HEALTHCHECK_TYPES} from '../tools/healthchecks';
 import printFixOptions, {KEYS} from '../tools/printFixOptions';
 import runAutomaticFix, {AUTOMATIC_FIX_LEVELS} from '../tools/runAutomaticFix';
@@ -116,6 +120,8 @@ const doctorCommand = (async (_, options) => {
 
   const environmentInfo = await getEnvironmentInfo();
 
+  const projectRoot = findProjectRoot();
+
   const iterateOverHealthChecks = async ({
     label,
     healthchecks,
@@ -133,7 +139,7 @@ const doctorCommand = (async (_, options) => {
             version,
             versions,
             versionRange,
-          } = await healthcheck.getDiagnostics(environmentInfo);
+          } = await healthcheck.getDiagnostics(environmentInfo, projectRoot);
 
           // Assume that it's required unless specified otherwise
           const isRequired = healthcheck.isRequired !== false;
@@ -213,6 +219,7 @@ const doctorCommand = (async (_, options) => {
       stats,
       loader,
       environmentInfo,
+      projectRoot,
     });
   }
 
@@ -248,6 +255,7 @@ const doctorCommand = (async (_, options) => {
           stats,
           loader,
           environmentInfo,
+          projectRoot,
         });
 
         process.exit(0);

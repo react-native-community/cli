@@ -20,6 +20,7 @@ interface RunAutomaticFixArgs {
   };
   loader: Loader;
   environmentInfo: EnvironmentInfo;
+  projectRoot: string;
 }
 
 export default async function ({
@@ -27,6 +28,7 @@ export default async function ({
   automaticFixLevel,
   stats,
   environmentInfo,
+  projectRoot,
 }: RunAutomaticFixArgs) {
   // Remove the fix options from screen
   if (process.stdout.isTTY) {
@@ -90,6 +92,7 @@ export default async function ({
           loader: spinner,
           logManualInstallation,
           environmentInfo,
+          projectRoot,
         });
       } catch (error) {
         // TODO: log the error in a meaningful way

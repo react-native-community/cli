@@ -75,6 +75,7 @@ export type RunAutomaticFix = (args: {
     message?: string;
   }) => void;
   environmentInfo: EnvironmentInfo;
+  projectRoot: string;
 }) => Promise<void> | void;
 
 export type HealthCheckInterface = {
@@ -84,6 +85,7 @@ export type HealthCheckInterface = {
   description?: string;
   getDiagnostics: (
     environmentInfo: EnvironmentInfo,
+    projectRoot: string,
   ) => Promise<{
     version?: string;
     versions?: [string];

@@ -1,8 +1,10 @@
 import {HealthCheckInterface} from '../../types';
 import fs from 'fs';
-import path from 'path';
 import {promisify} from 'util';
-import {findProjectRoot} from '@react-native-community/cli-tools';
+import {
+  findProjectRoot,
+  resolveNodeModuleDir,
+} from '@react-native-community/cli-tools';
 import {findPodfilePaths} from '@react-native-community/cli-platform-ios';
 
 const xcodeEnvFile = '.xcode.env';
@@ -29,33 +31,37 @@ export default {
   getDiagnostics: async () => {
     const projectRoot = findProjectRoot();
     const allPathsHasXcodeEnvFile = findPodfilePaths(projectRoot)
-      .map((pathString) => {
+      .map((pathString: string) => {
         const basePath = removeLastPathComponent(pathString);
         return pathHasXcodeEnvFile(basePath);
       })
-      .reduce((previousValue, currentValue) => previousValue && currentValue);
+      .reduce(
+        (previousValue: boolean, currentValue: boolean) =>
+          previousValue && currentValue,
+      );
     return {
       needsToBeFixed: !allPathsHasXcodeEnvFile,
     };
   },
-  runAutomaticFix: async () => {
+  runAutomaticFix: async ({loader}) => {
+    loader.stop();
     const templateXcodeEnv = '_xcode.env';
     const projectRoot = findProjectRoot();
-
-    const templateIosPath = path.dirname(
-      require.resolve('react-native/template/ios'),
+    const templateIosPath = resolveNodeModuleDir(
+      projectRoot,
+      'react-native/template/ios',
     );
-
-    const src = templateIosPath + templateXcodeEnv;
+    const src = templateIosPath + pathSeparator + templateXcodeEnv;
     const copyFileAsync = promisify(fs.copyFile);
 
     findPodfilePaths(projectRoot)
       .map(removeLastPathComponent)
       // avoid overriding existing .xcode.env
       .filter(pathDoesNotHaveXcodeEnvFile)
-      .forEach(async (pathString) => {
+      .forEach(async (pathString: string) => {
         const destFilePath = pathString + pathSeparator + xcodeEnvFile;
         await copyFileAsync(src, destFilePath);
       });
+    loader.succeed();
   },
 } as HealthCheckInterface;

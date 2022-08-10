@@ -30,7 +30,7 @@ export function projectConfig(
     return null;
   }
 
-  const src = path.join(folder, userConfig.sourceDir ?? '')
+  const src = path.join(folder, userConfig.sourceDir ?? '');
   const podfile = findPodfilePath(src);
 
   /**

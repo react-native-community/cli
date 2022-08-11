@@ -370,3 +370,54 @@ test('supports disabling dependency for ios platform', () => {
     removeString(dependencies['react-native-test'], DIR),
   ).toMatchSnapshot();
 });
+
+test('should convert project sourceDir relative path to absolute', () => {
+  DIR = getTempDirectory('config_test_absolute_project_source_dir');
+  const iosProjectDir = './ios2';
+  const androidProjectDir = './android2';
+  writeFiles(DIR, {
+    ...REACT_NATIVE_MOCK,
+    'react-native.config.js': `
+      module.exports = {
+        project: {
+          ios: {
+            sourceDir: '${iosProjectDir}',
+          },
+          android: {
+            sourceDir: '${androidProjectDir}',
+          }
+        }
+      }
+    `,
+    'package.json': `{
+      "dependencies": {
+        "react-native": "0.0.1"
+      }
+    }`,
+    'ios/Podfile': `
+      platform :ios, '12.4'
+    `,
+    'ios2/Podfile': `
+      platform :ios, '12.4'
+    `,
+    'android/AndroidManifest.xml': `
+      <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        package="com.coinbase.android">
+      </manifest>
+    `,
+    'android2/AndroidManifest.xml': `
+      <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        package="com.coinbase.android">
+      </manifest>
+    `,
+  });
+
+  const config = loadConfig(DIR);
+
+  expect(config.project.ios?.sourceDir).toBe(path.join(DIR, iosProjectDir));
+  expect(config.project.android?.sourceDir).toBe(
+    path.join(DIR, androidProjectDir),
+  );
+});

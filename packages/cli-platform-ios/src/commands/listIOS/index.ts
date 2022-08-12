@@ -51,9 +51,8 @@ async function listIOS() {
       name: 'device',
       message: 'Select the device you want to use',
       choices: availableDevices.map((deviceName) => ({
-        title: `${chalk.dim(`(${deviceName})`)}`,
+        title: `${chalk.bold(`(${deviceName})`)}`,
         value: deviceName,
-        // selected: DEFAULT_GROUPS.includes(cmd),
       })),
       min: 1,
     });

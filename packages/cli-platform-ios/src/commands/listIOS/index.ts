@@ -7,6 +7,8 @@
  */
 
 import {execFileSync} from 'child_process';
+import prompts from 'prompts';
+import chalk from 'chalk';
 import {logger} from '@react-native-community/cli-tools';
 import {Device} from '../../types';
 
@@ -42,7 +44,23 @@ async function listIOS() {
     logger.error('No available iOS devices found');
     return;
   }
-  logger.info(JSON.stringify(availableDevices));
+
+  async function promptForDeviceSelection(): Promise<string[] | undefined> {
+    const {device} = await prompts({
+      type: 'select',
+      name: 'device',
+      message: 'Select the device you want to use',
+      choices: availableDevices.map((deviceName) => ({
+        title: `${chalk.dim(`(${deviceName})`)}`,
+        value: deviceName,
+        // selected: DEFAULT_GROUPS.includes(cmd),
+      })),
+      min: 1,
+    });
+    return device;
+  }
+
+  promptForDeviceSelection();
 }
 
 export default {

@@ -15,7 +15,11 @@ import {Device} from '../../types';
 function findAvailableDevice(devices: {[index: string]: Array<Device>}) {
   for (const key of Object.keys(devices)) {
     for (const device of devices[key]) {
-      if (device.availability === '(available)' && device.state === 'Booted') {
+      if (
+        (device.availability === '(available)' ||
+          device.isAvailable === true) &&
+        device.state === 'Booted'
+      ) {
         return device;
       }
     }

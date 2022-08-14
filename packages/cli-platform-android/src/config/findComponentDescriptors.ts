@@ -7,6 +7,7 @@ export function findComponentDescriptors(packageRoot: string) {
   const files = glob.sync('**/+(*.js|*.jsx|*.ts|*.tsx)', {
     cwd: packageRoot,
     nodir: true,
+    ignore: '**/node_modules/**',
   });
   const codegenComponent = files
     .map((filePath) =>

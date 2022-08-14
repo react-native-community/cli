@@ -373,12 +373,6 @@ Launches the Metro Bundler in a new window using the specified terminal path.
 Run custom gradle tasks. If this argument is provided, then `--variant` option is ignored.
 Example: `yarn react-native run-android --tasks clean,installDebug`.
 
-#### `--no-jetifier`
-
-> default: false
-
-Do not run [jetifier](https://www.npmjs.com/package/jetifier) – the AndroidX transition tool. By default it runs before Gradle to ease working with libraries that don't support AndroidX yet.
-
 #### `--active-arch-only`
 
 > default: false

@@ -37,7 +37,9 @@ function findWorkspacesDependencies(from: string): Array<string> {
     const packages = glob.sync(path.join(root!, workspaceName));
     packages.forEach((pkg) => {
       try {
-        const pjson = require(path.join(pkg, 'package.json'));
+        const pjson = JSON.parse(
+          fs.readFileSync(path.join(pkg, 'package.json'), 'utf8'),
+        );
         dependencies = dependencies.concat(
           ...Object.keys(pjson.dependencies || {}),
           ...Object.keys(pjson.devDependencies || {}),
@@ -58,7 +60,9 @@ export default function findDependencies(root: string): Array<string> {
   let pjson;
 
   try {
-    pjson = require(path.join(root, 'package.json'));
+    pjson = JSON.parse(
+      fs.readFileSync(path.join(root, 'package.json'), 'utf8'),
+    );
   } catch (e) {
     return [];
   }

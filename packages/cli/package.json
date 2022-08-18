@@ -42,9 +42,6 @@
     "prompts": "^2.4.0",
     "semver": "^6.3.0"
   },
-  "peerDependencies": {
-    "react-native": "*"
-  },
   "devDependencies": {
     "@types/fs-extra": "^8.1.0",
     "@types/graceful-fs": "^4.1.3",

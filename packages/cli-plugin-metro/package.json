@@ -10,7 +10,7 @@
     "@react-native-community/cli-server-api": "^9.0.0-alpha.10",
     "@react-native-community/cli-tools": "^9.0.0-alpha.10",
     "chalk": "^4.1.2",
-    "metro": "^0.72.0",
+    "metro": "^0.72.1",
     "metro-config": "^0.72.1",
     "metro-core": "^0.72.1",
     "metro-react-native-babel-transformer": "^0.72.1",

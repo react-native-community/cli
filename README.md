@@ -119,6 +119,7 @@ After performing these steps you should be on the latest CLI version. Feel free 
 ## Maintainers
 
 - Michał Pierzchała ([**@thymikee**](https://github.com/thymikee)) - [Callstack](https://callstack.com)
+- Adam Trzciński ([**@adamTrz**](https://github.com/adamTrz)) - [Callstack](https://callstack.com)
 - Mike Grabowski ([**@grabbou**](https://github.com/grabbou)) - [Callstack](https://callstack.com)
 - Kacper Wiszczuk ([**@esemesek**](https://github.com/esemesek))
 

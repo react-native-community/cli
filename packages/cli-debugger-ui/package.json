@@ -15,7 +15,7 @@
   ],
   "devDependencies": {
     "@babel/core": "^7.6.4",
-    "parcel-bundler": "^1.12.4"
+    "parcel-bundler": "^1.12.5"
   },
   "dependencies": {
     "serve-static": "^1.13.1"

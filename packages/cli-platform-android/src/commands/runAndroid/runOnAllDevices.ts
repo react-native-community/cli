@@ -64,7 +64,9 @@ async function runOnAllDevices(
         .map((device) => {
           return adb.getCPU(adbPath, device);
         })
-        .filter((arch) => arch != null);
+        .filter(
+          (arch, index, array) => arch != null && array.indexOf(arch) === index,
+        );
       if (architectures.length > 0) {
         logger.info(`Detected architectures ${architectures.join(', ')}`);
         // `reactNativeDebugArchitectures` was renamed to `reactNativeArchitectures` in 0.68.

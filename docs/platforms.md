@@ -121,5 +121,6 @@ type AndroidDependencyConfig = {
   libraryName?: string | null;
   componentDescriptors?: string[] | null;
   androidMkPath?: string | null;
+  cmakePath?: string | null;
 };
 ```

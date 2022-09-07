@@ -58,6 +58,7 @@ type AndroidDependencyParams = {
   libraryName?: string | null;
   componentDescriptors?: string[] | null;
   androidMkPath?: string | null;
+  cmakeListsPath?: string | null;
 };
 ```
 
@@ -140,3 +141,9 @@ An array of custom component descriptor strings. By default they're generated ba
 > Note: Only applicable when new architecture is turned on.
 
 A relative path to a custom _Android.mk_ file not registered by codegen. Relative to `sourceDir`.
+
+#### platforms.android.cmakeListsPath
+
+> Note: Only applicable when new architecture is turned on.
+
+A relative path to a custom _CMakeLists.txt_ file not registered by codegen. Relative to `sourceDir`.

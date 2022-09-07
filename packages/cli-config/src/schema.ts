@@ -86,6 +86,7 @@ export const dependencyConfig = t
                 libraryName: t.string().allow(null),
                 componentDescriptors: t.array().items(t.string()).allow(null),
                 androidMkPath: t.string().allow(null),
+                cmakeListsPath: t.string().allow(null),
               })
               .allow(null),
           })
@@ -137,6 +138,7 @@ export const projectConfig = t
                 libraryName: t.string().allow(null),
                 componentDescriptors: t.array().items(t.string()).allow(null),
                 androidMkPath: t.string().allow(null),
+                cmakeListsPath: t.string().allow(null),
               })
               .allow(null),
           }),

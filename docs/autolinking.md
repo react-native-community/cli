@@ -116,6 +116,7 @@ module.exports = {
           libraryName: null,
           componentDescriptors: null,
           androidMkPath: null,
+          cmakeListsPath: null,
         },
       },
     },

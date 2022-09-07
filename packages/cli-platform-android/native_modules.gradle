@@ -300,9 +300,9 @@ class ReactNativeModules {
 
     if (packages.size() > 0) {
       libraryIncludes = packages.collect {
-        if (it.libraryName != null && it.cmakePath != null) {
-          // If user provided a custom CMakePath, let's honor it.
-          String nativeFolderPath = it.cmakePath.replace("CMakeLists.txt", "")
+        if (it.libraryName != null && it.cmakeListsPath != null) {
+          // If user provided a custom cmakeListsPath, let's honor it.
+          String nativeFolderPath = it.cmakeListsPath.replace("CMakeLists.txt", "")
           "add_subdirectory($nativeFolderPath ${it.libraryName}_autolinked_build)"
         } else if (it.libraryName != null && it.androidMkPath != null) {
           // Fallback to previous behavior: reusing androidMkPath.
@@ -475,7 +475,7 @@ class ReactNativeModules {
         reactNativeModuleConfig.put("libraryName", androidConfig["libraryName"])
         reactNativeModuleConfig.put("componentDescriptors", androidConfig["componentDescriptors"])
         reactNativeModuleConfig.put("androidMkPath", androidConfig["androidMkPath"])
-        reactNativeModuleConfig.put("cmakePath", androidConfig["cmakePath"])
+        reactNativeModuleConfig.put("cmakeListsPath", androidConfig["cmakeListsPath"])
 
         if (androidConfig["buildTypes"] && !androidConfig["buildTypes"].isEmpty()) {
           reactNativeModulesBuildVariants.put(nameCleansed, androidConfig["buildTypes"])

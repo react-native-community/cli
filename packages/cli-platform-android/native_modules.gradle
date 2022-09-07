@@ -544,7 +544,7 @@ ext.applyNativeModulesAppBuildGradle = { Project project, String root = null ->
 
   preBuild.dependsOn generatePackageList
 
-  if (isNewArchitectureEnabled()) {
+  if (project.hasProperty("newArchEnabled") && project.newArchEnabled == "true") {
     preBuild.dependsOn generateNewArchitectureFiles
   }
 

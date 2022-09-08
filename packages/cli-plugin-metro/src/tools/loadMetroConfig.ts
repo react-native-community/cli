@@ -14,9 +14,14 @@ const INTERNAL_CALLSITES_REGEX = new RegExp(
     '/Libraries/YellowBox/.+\\.js$',
     '/Libraries/LogBox/.+\\.js$',
     '/Libraries/Core/Timers/.+\\.js$',
+    "/Libraries/WebSocket/.+\\.js",
+    "/Libraries/vendor/.+\\.js",
     '/node_modules/react-devtools-core/.+\\.js$',
     '/node_modules/react-refresh/.+\\.js$',
     '/node_modules/scheduler/.+\\.js$',
+    '/node_modules/event-target-shim/.+\\.js$',
+    "/metro-runtime/.+\\.js$",
+    "\\[native code\\]",
   ].join('|'),
 );
 

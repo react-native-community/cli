@@ -3,7 +3,6 @@ export default {
   NODE_JS: '>= 14',
   YARN: '>= 1.10.x',
   NPM: '>= 4.x',
-  WATCHMAN: '>= 4.x',
   JAVA: '>= 11',
   // Android
   ANDROID_SDK: '>= 31.x',

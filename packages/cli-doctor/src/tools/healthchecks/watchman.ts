@@ -1,5 +1,3 @@
-import versionRanges from '../versionRanges';
-import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
 import {install} from '../install';
 import {HealthCheckInterface} from '../../types';
 
@@ -7,16 +5,11 @@ const label = 'Watchman';
 
 export default {
   label,
+  isRequired: false,
   description:
     'Used for watching changes in the filesystem when in development mode',
   getDiagnostics: async ({Binaries}) => ({
-    needsToBeFixed: doesSoftwareNeedToBeFixed({
-      version: Binaries.Watchman.version,
-      versionRange: versionRanges.WATCHMAN,
-      looseRange: true,
-    }),
-    version: Binaries.Watchman.version,
-    versionRange: versionRanges.WATCHMAN,
+    needsToBeFixed: !Binaries.Watchman.version,
   }),
   runAutomaticFix: async ({loader}) =>
     await install({

@@ -9,7 +9,7 @@ export default {
   description:
     'Used for watching changes in the filesystem when in development mode',
   getDiagnostics: async ({Binaries}) => ({
-    needsToBeFixed: !Binaries.Watchman.version,
+    needsToBeFixed: Boolean(Binaries.Watchman.version),
   }),
   runAutomaticFix: async ({loader}) =>
     await install({

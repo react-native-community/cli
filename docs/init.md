@@ -12,7 +12,7 @@ npx react-native init ProjectName
 
 > Note: If you have both `yarn` and `npm` installed on your machine, React Native CLI will always try to use `yarn`, so even if you use `npx` utility, only `react-native` executable will be installed using `npm` and the rest of the work will be delegated to `yarn`. You can force usage of `npm` adding `--npm` flag to the command.
 
-> Note: for Yarn users, `yarn dlx` command similar to `npx` will be featured in Yarn 2.0: https://github.com/yarnpkg/berry/pull/40 so we’ll be able to use it in a similar fashion.
+> Note: for Yarn users, `yarn dlx` command similar to `npx` will be featured in Yarn 2.0: <https://github.com/yarnpkg/berry/pull/40> so we’ll be able to use it in a similar fashion.
 
 #### Installing `react-native` and invoking `init` command:
 
@@ -32,18 +32,18 @@ npx react-native@${VERSION} init ProjectName
 
 #### Initializing project with custom template
 
-It is possible to initialise a new application with a custom template with
+It is possible to initialize a new application with a custom template with
 a `--template` option.
 
-It should point to a valid package that can be installed with `yarn` or `npm` (if you're using `--npm` option). 
+It should point to a valid package that can be installed with `yarn` or `npm` (if you're using `--npm` option).
 
 The most common options are:
+
 - Full package name, eg. `react-native-template-typescript`.
 - Absolute path to directory containing template, eg. `file:///Users/username/project/some-template`.
 - Absolute path to a tarball created using `npm pack`.
 
 For all available options, please check [Yarn documentation](https://classic.yarnpkg.com/en/docs/cli/add/#toc-adding-dependencies) and [Npm](https://docs.npmjs.com/cli/v6/commands/npm-install#synopsis).
-
 
 ```sh
 # This will initialize new project using template from `react-native-template-typescript` package
@@ -70,7 +70,7 @@ react-native init ProjectName
 
 > Note: It is not recommended, but you can also use legacy `react-native-cli` package to initialize projects using latest `react-native` versions.
 
-# Creating custom template
+## Creating custom template
 
 Every custom template needs to have configuration file called `template.config.js` in the root of the project:
 
@@ -92,7 +92,8 @@ module.exports = {
 ```
 
 ## Post init script loading
-The responsibility of showing the user progress of the "Executing post init script" goes to the implementor. In the cli, the `ora` package is used to display progress. 
+
+The responsibility of showing the user progress of the "Executing post init script" goes to the implementor. In the cli, the `ora` package is used to display progress.
 For a simple usage in a custom template, `ora` can be used like this in a postInitScript :
 
 ```javascript

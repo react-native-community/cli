@@ -8,4 +8,5 @@ export interface Device {
   availabilityError?: string;
   type?: 'simulator' | 'device' | 'catalyst';
   booted?: boolean;
+  lastBootedAt?: string;
 }

@@ -13,12 +13,19 @@ import {Device} from '../../types';
  * name can optionally include the iOS version in between parenthesis after the device name. Ex: "iPhone 6 (9.2)" in
  * which case it'll attempt to find a simulator with the exact version specified.
  *
- * If the simulatorString argument is null, we'll go into default mode and return the currently booted simulator, or if
- * none is booted, it will be the first in the list.
+ * If the simulatorString argument is null, we'll go into default mode and return the currently booted simulator,
+ * the last booted simulator or
+ * if none is booted, it will be the first in the list.
  *
  * @param simulators a parsed list from `xcrun simctl list --json devices` command
- * @param simulatorString the string with the name of desired simulator. If null, it will use the currently
- *        booted simulator, or if none are booted, the first in the list.
+ * @param findOptions null or an object containing:
+ * ```
+ * {
+ *    simulator: name of desired simulator
+ *    udid: udid of desired simulator
+ * }
+ * ```
+ * If null, it will use the currently booted simulator, or if none are booted, the first in the list.
  */
 function findMatchingSimulator(
   simulators: {devices: {[index: string]: Array<Device>}},
@@ -75,6 +82,7 @@ function findMatchingSimulator(
         continue;
       }
       const booted = simulator.state === 'Booted';
+      const lastBootedAt = simulator.lastBootedAt;
       const simulatorDescriptor = {
         udid: simulator.udid,
         name: simulator.name,
@@ -92,6 +100,10 @@ function findMatchingSimulator(
         if (simulator.name === simulatorName && !match) {
           match = simulatorDescriptor;
         }
+        // If no match found, use first available simulator that was booted before
+        if (!!lastBootedAt && !match) {
+          match = simulatorDescriptor;
+        }
         // Keeps track of the first available simulator for use if we can't find one above.
         if (simulatorName === null && !match) {
           match = simulatorDescriptor;
@@ -99,10 +111,8 @@ function findMatchingSimulator(
       }
     }
   }
-  if (match) {
-    return match;
-  }
-  return null;
+
+  return match ?? null;
 }
 
 export default findMatchingSimulator;

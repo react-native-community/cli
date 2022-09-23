@@ -33,23 +33,23 @@ At the end, an array of commands concatenated from all plugins is passed on to t
 
 ```ts
 type Command = {
-  name: string,
-  description?: string,
-  func: (argv: Array<string>, config: ConfigT, args: Object) => ?Promise<void>,
+  name: string;
+  description?: string;
+  func: (argv: Array<string>, config: ConfigT, args: Object) => ?Promise<void>;
   options?: Array<{
-    name: string,
-    description?: string,
-    parse?: (val: string) => any,
+    name: string;
+    description?: string;
+    parse?: (val: string) => any;
     default?:
       | string
       | boolean
       | number
-      | ((config: ConfigT) => string | boolean | number),
-  }>,
+      | ((config: ConfigT) => string | boolean | number);
+  }>;
   examples?: Array<{
-    desc: string,
-    cmd: string,
-  }>,
+    desc: string;
+    cmd: string;
+  }>;
 };
 ```
 
@@ -84,7 +84,7 @@ For example, a `--reset-cache` option will result in a `resetCache: true` or `re
 Just like with a [command name](#name), your option can require a value (e.g. `--port <port>`) or accept an optional one (e.g. `--host [host]`). In this case, you may find [`default`](#optionsdefault) value useful.
 
 > Note: Almost all names are accepted, but **there's an exception** for `--version`, we consider it a reserved word and do not guarantee that it will
-work as expected, so avoid using it. (see [this](https://github.com/react-native-community/cli/issues/1300) for further details)
+> work as expected, so avoid using it. (see [this](https://github.com/react-native-community/cli/issues/1300) for further details)
 
 ##### `options.description`
 
@@ -111,50 +111,3 @@ String that describes this particular usage.
 ##### `examples.cmd`
 
 A command with arguments and options (if applicable) that can be run in order to achieve the desired goal.
-
-
-## Migrating from `rnpm` configuration
-
-The changes are mostly cosmetic so the migration should be pretty straight-forward.
-
-### Changing the configuration
-
-A `plugin` property should be renamed to `commands`.
-
-For example, the following `rnpm` configuration inside `package.json`:
-
-```json
-{
-  "rnpm": {
-    "plugin": "./path-to-commands.js"
-  }
-}
-```
-
-should be moved to a `react-native.config.js`:
-
-```js
-module.exports = {
-  commands: require('./path-to-commands.js'),
-};
-```
-
-provided that `./path-to-commands.js` returns an array of commands.
-
-### Renaming command options
-
-If your command accepts options, rename `command` property of each of them to `name`.
-
-```diff
- module.exports = {
-   name: 'foo',
-   func: () => console.log('My work'),
-   options: [
-     {
--      command: '--reset-cache, --resetCache',
-+      name: '--reset-cache, --resetCache',
-       description: 'Removes cached files',
-     }
-   ]
- }
-```

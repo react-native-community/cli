@@ -1,0 +1,32 @@
+{
+  "name": "@react-native-community/cli-clean",
+  "version": "9.1.0",
+  "license": "MIT",
+  "main": "build/index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "types": "build/index.d.ts",
+  "dependencies": {
+    "@react-native-community/cli-tools": "^9.1.0",
+    "chalk": "^4.1.2",
+    "execa": "^1.0.0",
+    "prompts": "^2.4.0"
+  },
+  "files": [
+    "build",
+    "!*.d.ts",
+    "!*.map"
+  ],
+  "devDependencies": {
+    "@react-native-community/cli-types": "^9.1.0",
+    "@types/execa": "^0.9.0",
+    "@types/prompts": "^2.0.9"
+  },
+  "homepage": "https://github.com/react-native-community/cli/tree/master/packages/cli-clean",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/react-native-community/cli.git",
+    "directory": "packages/cli-clean"
+  }
+}

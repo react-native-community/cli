@@ -8,18 +8,19 @@ Projects can provide additional properties to alter the CLI behavior, such as cu
 
 A project can define a `react-native.config.js` at the root with custom configuration to be picked up by the CLI.
 
-For example, below configuration informs CLI of the additional assets to link and about a custom project location.
+For example, below configuration informs CLI about a source directory with iOS files.
 
 ```js
 module.exports = {
   project: {
     ios: {
-      project: './CustomProject.xcodeproj',
+      sourceDir: './custom-ios-location',
     },
   },
-  assets: ['./assets'],
 };
 ```
+
+> Note: You may find this useful in scenarios where multiple `Podfile` files are present and CLI chooses the wrong one. When that happens, CLI will print a warning asking you to verify its selection.
 
 You can check all available options below.
 
@@ -27,28 +28,23 @@ You can check all available options below.
 
 ```ts
 type ProjectConfigT = {
-  reactNativePath: ?string,
+  reactNativePath: ?string;
   project: {
-    android?: ProjectParamsAndroidT,
-    ios?: IOSProjectParams,
-    [key: string]: any,
-  },
-  assets: string[],
-  platforms: PlatformT,
+    android?: AndroidProjectParams;
+    ios?: IOSProjectParams;
+    // Any additional platforms would appear here
+    [key: string]: any;
+  };
+  platforms: {
+    android: AndroidPlatformConfig;
+    ios: IOSPlatformConfig;
+    // Any additional platforms would appear here
+    [key: string]: any;
+  };
   dependencies: {
-    [key: string]: {
-      name: string,
-      root: string,
-      platforms: {
-        [key: string]: PlatformSettingsT
-      },
-      assets: string[],
-      hooks: {
-        [key: string]: string
-      }
-    },
-  },
-  commands: CommandT[]
+    [key: string]: DependencyConfig;
+  };
+  commands: Command[];
 };
 ```
 
@@ -66,33 +62,43 @@ In most cases, as a React Native developer, you should not need to define any of
 The following settings are available on iOS and Android:
 
 ```ts
-type AndroidProjectParams = {
+type IOSProjectParams = {
   sourceDir?: string;
-  manifestPath?: string;
-  packageName?: string;
-  packageFolder?: string;
-  mainFilePath?: string;
-  stringsPath?: string;
-  settingsGradlePath?: string;
-  assetsPath?: string;
-  buildGradlePath?: string;
-  appName?: string; // A name of the app in the Android `sourceDir`, equivalent to Gradle project name. By default it's `app`.
-  dependencyConfiguration?: string;
 };
 
-type IOSProjectParams = {
-  project?: string;
-  podspecPath?: string;
-  sharedLibraries?: string[];
-  libraryFolder?: string;
-  plist: Array<any>;
-  scriptPhases?: Array<any>;
+type AndroidProjectParams = {
+  sourceDir?: string;
+  appName?: string;
+  manifestPath?: string;
+  packageName?: string;
+  dependencyConfiguration?: string;
 };
 ```
 
-### assets
+#### project.ios.sourceDir
 
-An array of folders to check for project assets
+A path to a directory where iOS source files are located. In most cases, you shouldn't need to set it, unless you have
+multiple `Podfile` files in your project.
+
+#### project.android.appName
+
+A name of the app in the Android `sourceDir`, equivalent to Gradle project name. By default it's `app`.
+
+#### project.android.sourceDir
+
+See [`dependency.platforms.android.sourceDir`](dependencies.md#platformsandroidsourcedir)
+
+#### project.android.manifestPath
+
+See [`dependency.platforms.android.manifestPath`](dependencies.md#platformsandroidmanifestpath)
+
+#### project.android.packageName
+
+See [`dependency.platforms.android.packageName`](dependencies.md#platformsandroidpackagename)
+
+#### project.android.dependencyConfiguration
+
+See [`dependency.platforms.android.configuration`](dependencies.md#platformsandroiddependencyconfiguration)
 
 ### platforms
 
@@ -155,34 +161,4 @@ module.exports = {
 
 The object provided here is deep merged with the dependency config. Check [`projectConfig`](platforms.md#projectconfig) and [`dependencyConfig`](platforms.md#dependencyConfig) return values for a full list of properties that you can override.
 
-> Note: This is an advanced feature and you should not need to use it mos of the time.
-
-## Migrating from `rnpm` configuration
-
-The changes are mostly cosmetic so the migration should be pretty straight-forward.
-
-### Changing the configuration
-
-Properties `ios` and `android` were moved under `project`. Take a look at the following example for the differences.
-
-```json
-{
-  "rnpm": {
-    "ios": {},
-    "android": {},
-    "assets": ["./path-to-assets"]
-  }
-}
-```
-
-to a `react-native.config.js`
-
-```js
-module.exports = {
-  project: {
-    ios: {},
-    android: {},
-  },
-  assets: ['./path-to-assets'],
-};
-```
+> Note: This is an advanced feature and you should not need to use it most of the time.

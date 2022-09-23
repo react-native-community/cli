@@ -1,19 +1,19 @@
 import execa from 'execa';
 import path from 'path';
+import merge from 'deepmerge';
 import fs from 'fs';
 import snapshotDiff from 'snapshot-diff';
 import stripAnsi from 'strip-ansi';
 import upgrade from '../upgrade';
 import {fetch, logger} from '@react-native-community/cli-tools';
-import loadConfig from '../../../tools/config';
-import merge from '../../../tools/merge';
+import loadConfig from '@react-native-community/cli-config';
 
 jest.mock('https');
 jest.mock('fs');
 jest.mock('path');
 jest.mock('execa');
 
-jest.mock('../../../tools/config');
+jest.mock('@react-native-community/cli-config');
 jest.mock('../../../tools/packageManager', () => ({
   install: (args) => {
     mockPushLog('$ yarn add', ...args);
@@ -152,7 +152,7 @@ const fetchesRegularPatchInstallRemoteAppliesPatchInstallsDepsRemovesRemote = as
     [newVersion],
     merge(ctx, {
       project: {
-        ios: {projectName: 'TestApp.xcodeproj'},
+        ios: {xcodeProject: {name: 'TestApp.xcodeproj'}},
         android: {packageName: 'com.testapp'},
       },
     }),
@@ -218,7 +218,7 @@ const worksWithNameIosAndNameAndroid = async (newVersion) => {
     [newVersion],
     merge(ctx, {
       project: {
-        ios: {projectName: 'CustomIos.xcodeproj'},
+        ios: {xcodeProject: {name: 'CustomIos.xcodeproj'}},
         android: {packageName: 'co.uk.customandroid.app'},
       },
     }),

@@ -6,17 +6,10 @@ All work on React Native CLI happens directly on GitHub. Contributors send pull 
 
 > **Working on your first pull request?** You can learn how from this _free_ series: [How to Contribute to an Open Source Project on GitHub](https://egghead.io/series/how-to-contribute-to-an-open-source-project-on-github).
 
-1. Fork the repo and create your branch from `master` (a guide on [how to fork a repository](https://help.github.com/articles/fork-a-repo/)).
+1. Fork the repo and create your branch from `main` (a guide on [how to fork a repository](https://help.github.com/articles/fork-a-repo/)).
 1. Run `yarn` or `npm install` to install all required dependencies.
 1. Run `yarn watch` to automatically build the changed files.
 1. Now you are ready to do the changes.
-
-## Repository
-
-This repository is split into two packages:
-
-- `cli` - Historically, it was included in `react-native` package. Contains all the commands code.
-- `global-cli` - Historically, it was a `react-native-cli` package and the only reason this package existed was to initialize an empty project.
 
 ## Testing your changes
 
@@ -39,7 +32,7 @@ And then:
 
 ```sh
 cd /my/new/react-native/project/
-yarn link "@react-native-community/cli-platform-ios" "@react-native-community/cli-platform-android" "@react-native-community/cli" "@react-native-community/cli-server-api" "@react-native-community/cli-types" "@react-native-community/cli-tools" "@react-native-community/cli-debugger-ui" "@react-native-community/cli-hermes"
+yarn link "@react-native-community/cli-platform-ios" "@react-native-community/cli-platform-android" "@react-native-community/cli" "@react-native-community/cli-server-api" "@react-native-community/cli-types" "@react-native-community/cli-tools" "@react-native-community/cli-debugger-ui" "@react-native-community/cli-hermes" "@react-native-community/cli-plugin-metro" "@react-native-community/cli-clean"
 ```
 
 Once you're done with testing and you'd like to get back to regular setup, run `yarn unlink` instead of `yarn link` from above command. Then `yarn install --force`.
@@ -74,11 +67,11 @@ First make sure you have RN repo checked out and CLI repo checked out and built.
 
 1. Check out `react-native` repo. Then update template in local `react-native/template/package.json`, replacing dependency version of `react-native` with the absolute path of the react native repo, for example: "react-native": "file:///Users/username/react-native" (you can find the absolute path using `pwd` command)
 
-1. Go back up and create a new RN project: `node ./cli/packages/cli/build/index.js init --template=file:///path/to/local/react-native RNTestProject`
+1. Go back up and create a new RN project: `node ./cli/packages/cli/build/bin.js init --template=file:///path/to/local/react-native RNTestProject`
 
 1. To work with android, update gradle config in the newly created project following the second part of [Christoph's instructions](https://gist.github.com/cpojer/38a91f90614f35769e88410e3a387b48)
 
-1. Run start (as described above) and compile your app eg `node ../cli/packages/cli/build/index.js run-android` (make sure you definitely have NDK r17c installed before building android)
+1. Run start (as described above) and compile your app eg `node ../cli/packages/cli/build/bin.js run-android` (make sure you definitely have NDK r17c installed before building android)
 
 ## Typechecking, linting and testing
 

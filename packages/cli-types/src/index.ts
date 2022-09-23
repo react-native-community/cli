@@ -3,7 +3,7 @@ import {
   IOSProjectParams,
   IOSDependencyConfig,
   IOSDependencyParams,
-  IOSNativeModulesConfig,
+  IOSProjectInfo,
 } from './ios';
 import {
   AndroidProjectConfig,
@@ -11,7 +11,6 @@ import {
   AndroidDependencyConfig,
   AndroidDependencyParams,
 } from './android';
-import {Ora} from 'ora';
 
 export type Prompt = any;
 
@@ -74,185 +73,57 @@ interface PlatformConfig<
     dependency: string,
     params: DependencyParams,
   ) => DependencyConfig | void;
-  linkConfig: () => {
-    isInstalled: (
-      projectConfig: ProjectConfig,
-      packageName: string,
-      dependencyConfig: DependencyConfig,
-    ) => boolean;
-    register: (
-      name: string,
-      dependencyConfig: DependencyConfig,
-      params: Object,
-      projectConfig: ProjectConfig,
-    ) => void;
-    unregister: (
-      name: string,
-      dependencyConfig: DependencyConfig,
-      projectConfig: ProjectConfig,
-      otherDependencies: Array<DependencyConfig>,
-    ) => void;
-    copyAssets: (assets: string[], projectConfig: ProjectConfig) => void;
-    unlinkAssets: (assets: string[], projectConfig: ProjectConfig) => void;
-  };
 }
 
-export interface Dependency {
-  name: string;
-  root: string;
-  platforms: {
-    android?: AndroidDependencyConfig | null;
-    ios?: IOSDependencyConfig | null;
-    [key: string]: any;
-  };
-  assets: string[];
-  hooks: {
-    prelink?: string;
-    postlink?: string;
-    preunlink?: string;
-    postunlink?: string;
-  };
-  params: Prompt[];
-}
+type AndroidPlatformConfig = PlatformConfig<
+  AndroidProjectConfig,
+  AndroidProjectParams,
+  AndroidDependencyConfig,
+  AndroidDependencyParams
+>;
+
+type IOSPlatformConfig = PlatformConfig<
+  IOSProjectConfig,
+  IOSProjectParams,
+  IOSDependencyConfig,
+  IOSDependencyParams
+>;
 
 export type ProjectConfig = {
-  android?: AndroidProjectConfig;
-  ios?: IOSProjectConfig;
+  android?: Exclude<ReturnType<AndroidPlatformConfig['projectConfig']>, void>;
+  ios?: Exclude<ReturnType<IOSPlatformConfig['projectConfig']>, void>;
   [key: string]: any;
 };
 
-export type NotFound = 'Not Found';
-type AvailableInformation = {
-  version: string;
-  path: string;
-};
-
-type Information = AvailableInformation | NotFound;
-
-export type EnvironmentInfo = {
-  System: {
-    OS: string;
-    CPU: string;
-    Memory: string;
-    Shell: AvailableInformation;
+export interface DependencyConfig {
+  name: string;
+  root: string;
+  platforms: {
+    android?: Exclude<
+      ReturnType<AndroidPlatformConfig['dependencyConfig']>,
+      void
+    >;
+    ios?: Exclude<ReturnType<IOSPlatformConfig['dependencyConfig']>, void>;
+    [key: string]: any;
   };
-  Binaries: {
-    Node: AvailableInformation;
-    Yarn: AvailableInformation;
-    npm: AvailableInformation;
-    Watchman: AvailableInformation;
-  };
-  SDKs: {
-    'iOS SDK': {
-      Platforms: string[];
-    };
-    'Android SDK':
-      | {
-          'API Levels': string[] | NotFound;
-          'Build Tools': string[] | NotFound;
-          'System Images': string[] | NotFound;
-          'Android NDK': string | NotFound;
-        }
-      | NotFound;
-  };
-  IDEs: {
-    'Android Studio': AvailableInformation | NotFound;
-    Emacs: AvailableInformation;
-    Nano: AvailableInformation;
-    VSCode: AvailableInformation;
-    Vim: AvailableInformation;
-    Xcode: AvailableInformation;
-  };
-  Languages: {
-    Java: Information;
-  };
-};
+}
 
-export type HealthCheckCategory = {
-  label: string;
-  healthchecks: HealthCheckInterface[];
-};
-
-export type Healthchecks = {
-  common: HealthCheckCategory;
-  android: HealthCheckCategory;
-  ios?: HealthCheckCategory;
-};
-
-export type RunAutomaticFix = (args: {
-  loader: Ora;
-  logManualInstallation: ({
-    healthcheck,
-    url,
-    command,
-    message,
-  }: {
-    healthcheck?: string;
-    url?: string;
-    command?: string;
-    message?: string;
-  }) => void;
-  environmentInfo: EnvironmentInfo;
-}) => Promise<void> | void;
-
-export type HealthCheckInterface = {
-  label: string;
-  visible?: boolean | void;
-  isRequired?: boolean;
-  description?: string;
-  getDiagnostics: (
-    environmentInfo: EnvironmentInfo,
-  ) => Promise<{
-    version?: string;
-    versions?: [string];
-    versionRange?: string;
-    needsToBeFixed: boolean | string;
-  }>;
-  win32AutomaticFix?: RunAutomaticFix;
-  darwinAutomaticFix?: RunAutomaticFix;
-  linuxAutomaticFix?: RunAutomaticFix;
-  runAutomaticFix: RunAutomaticFix;
-};
-
-/**
- * @property root - Root where the configuration has been resolved from
- * @property reactNativePath - Path to React Native source
- * @property project - Object that contains configuration for a project (null, when platform not available)
- * @property assets - An array of assets as defined by the user
- * @property dependencies - Map of the dependencies that are present in the project
- * @property platforms - Map of available platforms (build-ins and dynamically loaded)
- * @property commands - An array of commands that are present in 3rd party packages
- * @property healthChecks - An array of health check categories to add to doctor command
- */
-export interface Config extends IOSNativeModulesConfig {
+export interface Config {
   root: string;
   reactNativePath: string;
   project: ProjectConfig;
-  assets: string[];
-  dependencies: {[key: string]: Dependency};
+  dependencies: {
+    [key: string]: DependencyConfig;
+  };
   platforms: {
-    android: PlatformConfig<
-      AndroidProjectConfig,
-      AndroidProjectParams,
-      AndroidDependencyConfig,
-      AndroidDependencyParams
-    >;
-    ios: PlatformConfig<
-      IOSProjectConfig,
-      IOSProjectParams,
-      IOSDependencyConfig,
-      IOSDependencyParams
-    >;
+    android: AndroidPlatformConfig;
+    ios: IOSPlatformConfig;
     [name: string]: PlatformConfig<any, any, any, any>;
   };
   commands: Command[];
-  healthChecks: HealthCheckCategory[];
+  // @todo this should be removed: https://github.com/react-native-community/cli/issues/1261
+  healthChecks: [];
 }
-
-/**
- * Shares some structure with Config, except that root is calculated and can't
- * be defined
- */
 
 export type UserConfig = Omit<Config, 'root'> & {
   reactNativePath: string | void;
@@ -266,13 +137,13 @@ export type UserConfig = Omit<Config, 'root'> & {
 
 export type UserDependencyConfig = {
   // Additional dependency settings
-  dependency: Omit<Dependency, 'name' | 'root'>;
+  dependency: Omit<DependencyConfig, 'name' | 'root'>;
   // An array of commands that ship with the dependency
   commands: Command[];
   // An array of extra platforms to load
   platforms: Config['platforms'];
   // Additional health checks
-  healthChecks: HealthCheckCategory[];
+  healthChecks: [];
 };
 
 export {
@@ -280,7 +151,7 @@ export {
   IOSProjectParams,
   IOSDependencyConfig,
   IOSDependencyParams,
-  IOSNativeModulesConfig,
+  IOSProjectInfo,
 };
 
 export {

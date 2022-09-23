@@ -21,7 +21,6 @@
 const fs = require('fs');
 const path = require('path');
 const glob = require('glob');
-const mkdirp = require('mkdirp');
 const babel = require('@babel/core');
 const chalk = require('chalk');
 const micromatch = require('micromatch');
@@ -78,7 +77,7 @@ function buildFile(file, silent) {
     return;
   }
 
-  mkdirp.sync(path.dirname(destPath), '777');
+  fs.mkdirSync(path.dirname(destPath), {mode: 0o777, recursive: true});
 
   if (
     !micromatch.isMatch(file, JS_FILES_PATTERN) &&

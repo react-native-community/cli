@@ -32,7 +32,6 @@ exports[`shows up current config without unnecessary output 1`] = `
       ]
     }
   ],
-  "assets": [],
   "healthChecks": [],
   "platforms": {
     "ios": {},
@@ -41,30 +40,15 @@ exports[`shows up current config without unnecessary output 1`] = `
   "project": {
     "ios": {
       "sourceDir": "<<REPLACED_ROOT>>/TestProject/ios",
-      "folder": "<<REPLACED_ROOT>>/TestProject",
-      "pbxprojPath": "<<REPLACED_ROOT>>/TestProject/ios/TestProject.xcodeproj/project.pbxproj",
-      "podfile": "<<REPLACED_ROOT>>/TestProject/ios/Podfile",
-      "podspecPath": null,
-      "projectPath": "<<REPLACED_ROOT>>/TestProject/ios/TestProject.xcodeproj",
-      "projectName": "TestProject.xcodeproj",
-      "libraryFolder": "Libraries",
-      "sharedLibraries": [],
-      "plist": [],
-      "scriptPhases": []
+      "xcodeProject": {
+        "name": "TestProject.xcodeproj",
+        "isWorkspace": false
+      }
     },
     "android": {
       "sourceDir": "<<REPLACED_ROOT>>/TestProject/android",
-      "isFlat": true,
-      "folder": "<<REPLACED_ROOT>>/TestProject",
-      "stringsPath": "<<REPLACED_ROOT>>/TestProject/android/app/src/main/res/values/strings.xml",
-      "manifestPath": "<<REPLACED_ROOT>>/TestProject/android/app/src/main/AndroidManifest.xml",
-      "buildGradlePath": "<<REPLACED_ROOT>>/TestProject/android/build.gradle",
-      "settingsGradlePath": "<<REPLACED_ROOT>>/TestProject/android/settings.gradle",
-      "assetsPath": "<<REPLACED_ROOT>>/TestProject/android/app/src/main/assets",
-      "mainFilePath": "<<REPLACED_ROOT>>/TestProject/android/app/src/main/java/com/testproject/MainApplication.java",
-      "packageName": "com.testproject",
-      "packageFolder": "com/testproject",
-      "appName": "app"
+      "appName": "app",
+      "packageName": "com.testproject"
     }
   }
 }

@@ -1,26 +1,22 @@
 import {Command, DetachedCommand} from '@react-native-community/cli-types';
+import {commands as cleanCommands} from '@react-native-community/cli-clean';
+import {commands as doctorCommands} from '@react-native-community/cli-doctor';
+import {commands as configCommands} from '@react-native-community/cli-config';
 import {commands as metroCommands} from '@react-native-community/cli-plugin-metro';
-import link from './link/link';
-import unlink from './link/unlink';
-import install from './install/install';
-import uninstall from './install/uninstall';
-import upgrade from './upgrade/upgrade';
-import info from './info/info';
-import config from './config/config';
-import init from './init';
-import doctor from './doctor';
 import profileHermes from '@react-native-community/cli-hermes';
+import upgrade from './upgrade/upgrade';
+import init from './init';
 
 export const projectCommands = [
   ...metroCommands,
-  link,
-  unlink,
-  install,
-  uninstall,
+  ...configCommands,
+  cleanCommands.clean,
+  doctorCommands.info,
   upgrade,
-  info,
-  config,
   profileHermes,
 ] as Command[];
 
-export const detachedCommands = [init, doctor] as DetachedCommand[];
+export const detachedCommands = [
+  init,
+  doctorCommands.doctor,
+] as DetachedCommand[];

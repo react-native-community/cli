@@ -17,12 +17,10 @@ const android = require('@react-native-community/cli-platform-android');
 module.exports = {
   platforms: {
     ios: {
-      linkConfig: ios.linkConfig,
       projectConfig: ios.projectConfig,
       dependencyConfig: ios.dependencyConfig,
     },
     android: {
-      linkConfig: android.linkConfig,
       projectConfig: android.projectConfig,
       dependencyConfig: android.dependencyConfig,
     },
@@ -41,20 +39,8 @@ At the end, a map of available platforms is passed to the bundler (Metro) to mak
 ```ts
 type PlatformConfig<ProjectParams, ProjectConfig, DependencyConfig> = {
   npmPackageName?: string;
-  projectConfig: (string, ProjectParams) => ?ProjectConfig,
-  dependencyConfig: (string, ProjectParams) => ?DependencyConfig,
-  linkConfig: () => {
-    isInstalled: (ProjectConfig, string, DependencyConfig) => boolean,
-    register: (string, DependencyConfig, Object, ProjectConfig) => void,
-    unregister: (
-      string,
-      DependencyConfig,
-      ProjectConfig,
-      Array<DependencyConfig>,
-    ) => void,
-    copyAssets: (string[], ProjectConfig) => void,
-    unlinkAssets: (string[], ProjectConfig) => void,
-  },
+  projectConfig: (string, ProjectParams) => ?ProjectConfig;
+  dependencyConfig: (string, ProjectParams) => ?DependencyConfig;
 };
 ```
 
@@ -66,7 +52,7 @@ If this property is not specified, it is assumed that the code in core `react-na
 
 ### projectConfig
 
-Returns a project configuration for a given platform or `null`, when no project found. This is later used inside `linkConfig` to perform linking and unlinking.
+Returns a project configuration for a given platform or `null`, when no project found.
 
 First argument is a root folder where the project is located.
 
@@ -80,42 +66,26 @@ module.exports = {
 };
 ```
 
-> Note: You may find this useful in order to alter the default behavior of your function. For example, on iOS, we find an `.xcodeproj` by globbing the project files and taking the first match. There's a possibility we pick the wrong one in case the project has multiple `.xcodeproj` files. In order to support this use-case, we have allowed users to define an exact path to an iOS project in order to overwrite our `glob` mechanism.
+> Note: You may find this useful in order to alter the default behavior of your function. For example, on iOS, we find a `Podfile` by globbing the project files and taking the first match. There's a possibility we pick the wrong one in case the project has multiple `Podfile` files. In order to support this use-case, we have allowed users to define an iOS directory where the desired `Podfile` is located.
 
 On Android and iOS, this function returns:
 
 ```ts
-type ProjectConfigIOST = {
+type IOSProjectConfig = {
   sourceDir: string;
-  folder: string;
-  pbxprojPath: string;
-  podfile: null;
-  podspecPath: null;
-  projectPath: string;
-  projectName: string;
-  libraryFolder: string;
-  sharedLibraries: Array<any>;
-  plist: Array<any>;
+  xcodeProject: {
+    name: string;
+    isWorkspace: boolean;
+  } | null;
 };
 
-type ProjectConfigAndroidT = {
+type AndroidProjectConfig = {
   sourceDir: string;
-  isFlat: boolean;
-  folder: string;
-  stringsPath: string;
-  manifestPath: string;
-  buildGradlePath: string;
-  settingsGradlePath: string;
-  assetsPath: string;
-  mainFilePath: string;
-  packageName: string;
-  packageFolder: string;
   appName: string;
+  packageName: string;
   dependencyConfiguration?: string;
 };
 ```
-
-We suggest performing all side-effects inside this function (such as resolving paths to native files) and making `linkConfig` functions pure, operating on provided data.
 
 ### dependencyConfig
 
@@ -133,140 +103,24 @@ module.exports = {
 };
 ```
 
-On Android and iOS, this function returns:
+On Android and iOS, this function returns a dependency configuration for:
 
 ```ts
-type DependencyConfigIOST = ProjectConfigIOST;
+type IOSDependencyConfig = {
+  podspecPath: string;
+  scriptPhases: Array<IOSScriptPhase>;
+  configurations: string[];
+};
 
-type DependencyConfigAndroidT = {
+type AndroidDependencyConfig = {
   sourceDir: string;
-  folder: string;
   packageImportPath: string;
   packageInstance: string;
-  manifestPath: string;
-  packageName: string;
   dependencyConfiguration?: string;
+  buildTypes: string[];
+  libraryName?: string | null;
+  componentDescriptors?: string[] | null;
+  androidMkPath?: string | null;
+  cmakeListsPath?: string | null;
 };
 ```
-
-### linkConfig
-
-Returns an object with utilities that are run by the CLI while linking.
-
-> Note: The following is deprecated and will stop working in the future. Consider providing a [`autolinking`](./autolinking.md) support.
-
-#### linkConfig.isInstalled
-
-Returns true if a library is already linked to a given project. False otherwise.
-
-#### linkConfig.register
-
-Performs platform-specific steps in order to link a library.
-
-#### linkConfig.unregister
-
-Performs platform-specific steps in order to unlink a library.
-
-#### linkConfig.copyAssets
-
-Performs platform-specific steps in order to copy assets of a library to a project.
-
-#### linkConfig.unlinkAssets
-
-Performs platform-specific steps in order to unlink assets of a library from a project.
-
-## Migrating from `rnpm` configuration
-
-The changes are mostly cosmetic so the migration should be pretty straight-forward.
-
-### Changing the configuration for a platform
-
-A `platform` property would need to be renamed to `platforms`. `haste` is no longer supported - we are able to infer that automatically.
-
-For example:
-
-```json
-{
-  "rnpm": {
-    "haste": {
-      "platforms": ["windows"],
-      "providesModuleNodeModules": ["react-native-windows"]
-    },
-    "platform": "./local-cli/platform.js"
-  }
-}
-```
-
-to `react-native.config.js`
-
-```js
-module.exports = {
-  platforms: {
-    windows: require('./local-cli/platform.js').windows,
-  },
-};
-```
-
-> The above configuration is taken from `react-native-windows` and adds support for `windows` platform.
-
-### Changing platform configuration for a [`dependency`](./dependencies.md)
-
-Platform keys are now under `dependency.platforms`.
-
-For example:
-
-```json
-{
-  "rnpm": {
-    "ios": {
-      "project": "PathToCustomProject.xcodeproj"
-    }
-  }
-}
-```
-
-to `react-native.config.js`
-
-```js
-module.exports = {
-  dependency: {
-    platforms: {
-      ios: {
-        project: 'PathToCustomProject.xcodeproj',
-      },
-    },
-  },
-};
-```
-
-> The above is a configuration of a dependency that explicitly sets a path to `.xcodeproj`.
-
-### Changing platform configuration for a [`project`](./projects.md)
-
-Platform keys are now under `project.platforms`.
-
-For example:
-
-```json
-{
-  "rnpm": {
-    "ios": {
-      "project": "PathToCustomProject.xcodeproj"
-    }
-  }
-}
-```
-
-to `react-native.config.js`
-
-```js
-module.exports = {
-  project: {
-    ios: {
-      project: 'PathToCustomProject.xcodeproj',
-    },
-  },
-};
-```
-
-> The above is a configuration of a project that explicitly sets its main `.xcodeproj` project.

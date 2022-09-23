@@ -1,13 +1,15 @@
 import os from 'os';
 import path from 'path';
 import fs from 'fs-extra';
-import minimist from 'minimist';
-import ora from 'ora';
-import mkdirp from 'mkdirp';
 import {validateProjectName} from './validate';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
 import printRunInstructions from './printRunInstructions';
-import {CLIError, logger} from '@react-native-community/cli-tools';
+import {
+  CLIError,
+  logger,
+  getLoader,
+  Loader,
+} from '@react-native-community/cli-tools';
 import {
   installTemplatePackage,
   getTemplateConfig,
@@ -16,9 +18,8 @@ import {
 } from './template';
 import {changePlaceholderInTemplate} from './editTemplate';
 import * as PackageManager from '../../tools/packageManager';
-import installPods from '../../tools/installPods';
+import {installPods} from '@react-native-community/cli-doctor';
 import banner from './banner';
-import {getLoader} from '../../tools/loader';
 
 const DEFAULT_VERSION = 'latest';
 
@@ -29,6 +30,7 @@ type Options = {
   displayName?: string;
   title?: string;
   skipInstall?: boolean;
+  version?: string;
 };
 
 interface TemplateOptions {
@@ -50,7 +52,7 @@ async function setProjectDirectory(directory: string) {
   }
 
   try {
-    mkdirp.sync(directory);
+    fs.mkdirSync(directory, {recursive: true});
     process.chdir(directory);
   } catch (error) {
     throw new CLIError(
@@ -86,8 +88,7 @@ async function createFromTemplate({
 
   const projectDirectory = await setProjectDirectory(directory);
 
-  const Loader = getLoader();
-  const loader = new Loader({text: 'Downloading template'});
+  const loader = getLoader({text: 'Downloading template'});
   const templateSourceDir = fs.mkdtempSync(
     path.join(os.tmpdir(), 'rncli-init-template-'),
   );
@@ -111,7 +112,7 @@ async function createFromTemplate({
     loader.succeed();
     loader.start('Processing template');
 
-    changePlaceholderInTemplate({
+    await changePlaceholderInTemplate({
       projectName,
       projectTitle,
       placeholderName: templateConfig.placeholderName,
@@ -121,14 +122,12 @@ async function createFromTemplate({
     loader.succeed();
     const {postInitScript} = templateConfig;
     if (postInitScript) {
-      // Leaving trailing space because there may be stdout from the script
-      loader.start('Executing post init script ');
+      loader.info('Executing post init script ');
       await executePostInitScript(
         templateName,
         postInitScript,
         templateSourceDir,
       );
-      loader.succeed();
     }
 
     if (!skipInstall) {
@@ -157,7 +156,7 @@ async function installDependencies({
 }: {
   directory: string;
   npm?: boolean;
-  loader: ora.Ora;
+  loader: Loader;
   root: string;
 }) {
   loader.start('Installing dependencies');
@@ -197,16 +196,10 @@ export default (async function initialize(
   [projectName]: Array<string>,
   options: Options,
 ) {
-  const root = process.cwd();
-
   validateProjectName(projectName);
 
-  /**
-   * Commander is stripping `version` from options automatically.
-   * We have to use `minimist` to take that directly from `process.argv`
-   */
-  const version: string = minimist(process.argv).version || DEFAULT_VERSION;
-
+  const root = process.cwd();
+  const version = options.version || DEFAULT_VERSION;
   const directoryName = path.relative(root, options.directory || projectName);
 
   try {

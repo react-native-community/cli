@@ -10,24 +10,14 @@ module.exports = {
     [
       require.resolve('@babel/preset-env'),
       {
-        targets: {node: '12'},
+        targets: {node: '14'},
         useBuiltIns: 'entry',
         corejs: '2.x',
       },
     ],
   ],
   plugins: [
-    require.resolve('@babel/plugin-proposal-class-properties'),
-    require.resolve('@babel/plugin-transform-strict-mode'),
     [require.resolve('@babel/plugin-transform-modules-commonjs'), {lazy: true}],
-    [
-      require.resolve('babel-plugin-module-resolver', {
-        root: ['.'],
-        alias: {
-          types: './types',
-        },
-      }),
-    ],
   ],
   sourceMaps: true,
 };

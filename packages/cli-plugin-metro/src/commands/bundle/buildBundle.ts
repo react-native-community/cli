@@ -28,6 +28,7 @@ interface RequestOptions {
   minify: boolean;
   platform: string | undefined;
   unstable_transformProfile: string | undefined;
+  generateStaticViewConfigs: boolean;
 }
 
 export interface AssetData {
@@ -101,6 +102,7 @@ export async function buildBundleWithConfig(
     minify: args.minify !== undefined ? args.minify : !args.dev,
     platform: args.platform,
     unstable_transformProfile: args.unstableTransformProfile,
+    generateStaticViewConfigs: args.generateStaticViewConfigs,
   };
   const server = new Server(config);
 

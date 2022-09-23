@@ -1,14 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`shows up help information without passing in any args 1`] = `
-"Usage: bin <command> [options]
+"Usage: bin [command] [options]
 
 Options:
-  --version                     Print CLI version
+  -v                            Output the current version
   --verbose                     Increase logging verbosity
-  -h, --help                    output usage information
+  -h, --help                    display help for command
 
 Commands:
-  init [options] <projectName>  Initialize a new React Native project named <projectName> in a directory of the same name.
-  doctor [options]              [EXPERIMENTAL] Diagnose and fix common Node.js, iOS, Android & React Native issues."
+  init [options] <projectName>  Initialize a new React Native project named
+                                <projectName> in a directory of the same name.
+  doctor [options]              Diagnose and fix common Node.js, iOS, Android &
+                                React Native issues.
+  help [command]                display help for command
+"
 `;

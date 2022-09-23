@@ -6,7 +6,6 @@
  *
  */
 
-import mkdirp from 'mkdirp';
 import path from 'path';
 import fs from 'fs';
 
@@ -84,7 +83,7 @@ function copy(
   callback: (error: NodeJS.ErrnoException) => void,
 ): void {
   const destDir = path.dirname(dest);
-  mkdirp(destDir, (err?: NodeJS.ErrnoException) => {
+  fs.mkdir(destDir, {recursive: true}, (err?) => {
     if (err) {
       callback(err);
       return;

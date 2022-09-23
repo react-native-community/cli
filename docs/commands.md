@@ -3,20 +3,17 @@
 React Native CLI comes with following commands:
 
 - [`bundle`](#bundle)
+- [`clean`](#clean)
 - [`config`](#config)
 - [`doctor`](#doctor)
 - [`init`](#init)
 - [`info`](#info)
-- [`install`](#install)
-- [`link`](#link)
 - [`log-android`](#log-android)
 - [`log-ios`](#log-ios)
 - [`ram-bundle`](#ram-bundle)
 - [`run-android`](#run-android)
 - [`run-ios`](#run-ios)
 - [`start`](#start)
-- [`uninstall`](#uninstall)
-- [`unlink`](#unlink)
 - [`upgrade`](#upgrade)
 - [`profile-hermes`](#profile-hermes)
 
@@ -127,6 +124,34 @@ Try to fetch transformed JS code from the global cache, if configured.
 #### `--config <string>`
 
 Path to the CLI configuration file.
+
+### `clean`
+
+Usage:
+
+```sh
+react-native clean
+```
+
+Cleans caches. Commonly used to ensure build failures are not due to stale cache. By default, it will prompt which caches to purge, with Watchman and Metro already checked. To omit interactive prompt (e.g. in scripts), please use `--include` flag.
+
+#### Options
+
+#### `--include <string>`
+
+Comma-separated flag of caches to clear e.g. `npm,yarn`. If omitted, an interactive prompt will appear. Valid values include `android`, `cocoapods`, `metro`, `npm`, `watchman`, and `yarn`.
+
+#### `--project-root <string>`
+
+> default: current working directory
+
+Root path to your React Native project. When not specified, defaults to current working directory.
+
+#### `--verify-cache`
+
+> default: false
+
+Whether to verify the cache. Currently only applies to npm cache.
 
 ### `config`
 
@@ -239,38 +264,6 @@ react-native info
 
 Get relevant version info about OS, toolchain and libraries. Useful when sending bug reports.
 
-### `install`
-
-Usage:
-
-```sh
-react-native install <packageName>
-```
-
-Installs single package from npm and then links native dependencies. If `install` detects `yarn.lock` in your project, it will use Yarn as package manager. Otherwise `npm` will be used.
-
-### `link`
-
-> Will be replaced by [autolinking](./autolinking.md) soon.
-
-Usage:
-
-```sh
-react-native link [packageName]
-```
-
-Links assets and optionally native modules.
-
-#### Options
-
-#### `--all`
-
-Link all native modules and assets.
-
-#### `--platforms [list]`
-
-Pass comma-separated list of platforms to scope `link` to.
-
 ### `log-android`
 
 Usage:
@@ -380,11 +373,11 @@ Launches the Metro Bundler in a new window using the specified terminal path.
 Run custom gradle tasks. If this argument is provided, then `--variant` option is ignored.
 Example: `yarn react-native run-android --tasks clean,installDebug`.
 
-#### `--no-jetifier`
+#### `--active-arch-only`
 
 > default: false
 
-Do not run [jetifier](https://www.npmjs.com/package/jetifier) – the AndroidX transition tool. By default it runs before Gradle to ease working with libraries that don't support AndroidX yet.
+Build native libraries only for the current device architecture for debug builds.
 
 ### `run-ios`
 
@@ -424,10 +417,6 @@ Explicitly set the scheme configuration to use default: 'Debug'.
 #### `--scheme <string>`
 
 Explicitly set Xcode scheme to use.
-
-#### `--project-path <string>`
-
-Path relative to project root where the Xcode project (.xcodeproj) lives. default: 'ios'.
 
 #### `--device [string]`
 
@@ -519,34 +508,6 @@ Path to the CLI configuration file
 
 Disables interactive mode
 
-### `uninstall`
-
-Usage:
-
-```sh
-react-native uninstall <packageName>
-```
-
-Unlinks single package native dependencies and then uninstalls it from `package.json`. If `uninstall` detects `yarn.lock` in your project, it will use Yarn as package manager. Otherwise `npm` will be used.
-
-### `unlink`
-
-> Will be replaced by [autolinking](./autolinking.md) soon.
-
-Usage:
-
-```
-react-native unlink <packageName> [options]
-```
-
-Unlink native dependency linked with the `link` command.
-
-#### Options
-
-#### `--platforms [list]`
-
-Scope unlinking to specified platforms
-
 ### `upgrade`
 
 Usage:
@@ -599,6 +560,14 @@ Generate the JS bundle and source map in `os.tmpdir()`
 The running metro server port number
 
 > default: 8081
+
+#### `--appId <string>`
+
+Specify an `applicationId` to launch after build. If not specified, `package` from AndroidManifest.xml will be used.
+
+#### `--appIdSuffix <string>`
+
+Specify an `applicationIdSuffix` to launch after build.
 
 ### Notes on source map
 

@@ -1,17 +1,17 @@
 {
   "name": "@react-native-community/cli-types",
-  "version": "6.0.0",
+  "version": "9.1.0",
   "main": "build",
   "publishConfig": {
     "access": "public"
-  },
-  "dependencies": {
-    "ora": "^3.4.0"
   },
   "files": [
     "build",
     "!*.map"
   ],
+  "dependencies": {
+    "joi": "^17.2.1"
+  },
   "types": "build/index.d.ts",
   "license": "MIT",
   "homepage": "https://github.com/react-native-community/cli/tree/master/packages/cli-types",

@@ -1,4 +1,7 @@
 {
   "name": "PlaceholderName",
-  "version": "0.0.1"
+  "version": "0.0.1",
+  "scripts": {
+    "run-ios": "react-native run-ios --scheme PlaceholderNameDevelopment"
+  }
 }

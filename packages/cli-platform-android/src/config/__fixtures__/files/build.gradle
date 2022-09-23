@@ -1,0 +1,6 @@
+apply package: "com.android.application"
+apply package: "com.facebook.react"
+
+react {
+    libraryName = "justalibrary"
+}

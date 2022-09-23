@@ -6,7 +6,7 @@ import execa from 'execa';
 import {Config} from '@react-native-community/cli-types';
 import {logger, CLIError, fetch} from '@react-native-community/cli-tools';
 import * as PackageManager from '../../tools/packageManager';
-import installPods from '../../tools/installPods';
+import {installPods} from '@react-native-community/cli-doctor';
 
 type UpgradeError = {message: string; stderr: string};
 
@@ -111,10 +111,13 @@ const getPatch = async (
       return;
     }
     if (platform === 'ios') {
-      patchWithRenamedProjects = patchWithRenamedProjects.replace(
-        new RegExp('RnDiffApp', 'g'),
-        config.project[platform]!.projectName.replace('.xcodeproj', ''),
-      );
+      const xcodeProject = config.project.ios!.xcodeProject;
+      if (xcodeProject) {
+        patchWithRenamedProjects = patchWithRenamedProjects.replace(
+          new RegExp('RnDiffApp', 'g'),
+          xcodeProject.name.replace('.xcodeproj', ''),
+        );
+      }
     } else if (platform === 'android') {
       patchWithRenamedProjects = patchWithRenamedProjects
         .replace(

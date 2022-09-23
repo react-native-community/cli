@@ -141,11 +141,11 @@ async function runOnSimulator(
 
   /**
    * If provided simulator does not exist, try simulators in following order
+   * - iPhone 14
    * - iPhone 13
    * - iPhone 12
-   * - iPhone 11
    */
-  const fallbackSimulators = ['iPhone 13', 'iPhone 12', 'iPhone 11'];
+  const fallbackSimulators = ['iPhone 14', 'iPhone 13', 'iPhone 12'];
   const selectedSimulator = fallbackSimulators.reduce((simulator, fallback) => {
     return (
       simulator || findMatchingSimulator(simulators, {simulator: fallback})
@@ -569,8 +569,8 @@ export default {
   func: runIOS,
   examples: [
     {
-      desc: 'Run on a different simulator, e.g. iPhone SE (2nd generation)',
-      cmd: 'react-native run-ios --simulator "iPhone SE (2nd generation)"',
+      desc: 'Run on a different simulator, e.g. iPhone SE (3rd generation)',
+      cmd: 'react-native run-ios --simulator "iPhone SE (3rd generation)"',
     },
     {
       desc: "Run on a connected device, e.g. Max's iPhone",
@@ -587,8 +587,8 @@ export default {
       name: '--simulator <string>',
       description:
         'Explicitly set simulator to use. Optionally include iOS version between ' +
-        'parenthesis at the end to match an exact version: "iPhone 6 (10.0)"',
-      default: 'iPhone 13',
+        'parenthesis at the end to match an exact version: "iPhone 14 (16.0)"',
+      default: 'iPhone 14',
     },
     {
       name: '--configuration <string>',

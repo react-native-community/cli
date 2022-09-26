@@ -141,11 +141,17 @@ async function runOnSimulator(
 
   /**
    * If provided simulator does not exist, try simulators in following order
+   * - iPhone 14
    * - iPhone 13
    * - iPhone 12
    * - iPhone 11
    */
-  const fallbackSimulators = ['iPhone 13', 'iPhone 12', 'iPhone 11'];
+  const fallbackSimulators = [
+    'iPhone 14',
+    'iPhone 13',
+    'iPhone 12',
+    'iPhone 11',
+  ];
   const selectedSimulator = fallbackSimulators.reduce((simulator, fallback) => {
     return (
       simulator || findMatchingSimulator(simulators, {simulator: fallback})

@@ -63,7 +63,7 @@ Alternatively if you want to run <code>react-native bundle</code> manually and t
 For react-native versions 0.57 and above the bundle output path should be:
 <code>android/app/build/generated/assets/react/debug/index.android.js</code>
 
-To find out the correct path for previous react-native versions, take a look at the <code>react.gradle</code> file here: https://github.com/facebook/react-native/blob/0.57-stable/react.gradle or inside your <code>node_modules/react-native</code> directory.
+To find out the correct path for previous react-native versions, take a look at the <code>react.gradle</code> file here: <https://github.com/facebook/react-native/blob/0.57-stable/react.gradle> or inside your <code>node_modules/react-native</code> directory.
 
 The expected path for the js bundle can be found on the line that starts with <code>jsBundleDir = </code>.
 
@@ -73,7 +73,7 @@ The expected path for the js bundle can be found on the line that starts with <c
 
 > default: utf8
 
-Encoding the bundle should be written in (https://nodejs.org/api/buffer.html#buffer_buffer).
+Encoding the bundle should be written in (<https://nodejs.org/api/buffer.html#buffer_buffer>).
 
 #### `--max-workers <number>`
 
@@ -85,7 +85,7 @@ File name where to store the sourcemap file for resulting bundle, ex. `/tmp/grou
 
 #### `--sourcemap-sources-root <string>`
 
-Path to make sourcemaps sources entries relative to, ex. `/root/dir`.
+Path to make sourcemap sources entries relative to, ex. `/root/dir`.
 
 #### `--sourcemap-use-absolute-path`
 
@@ -404,7 +404,7 @@ Notes: If selected simulator does not exist, cli will try to run fallback simula
 
 Notes: `simulator_name` must be a valid iOS simulator name. If in doubt, open your AwesomeApp/ios/AwesomeApp.xcodeproj folder on XCode and unroll the dropdown menu containing the simulator list. The dropdown menu is situated on the right hand side of the play button (top left corner).
 
-Example: this will launch your projet directly onto the iPhone XS Max simulator:
+Example: this will launch your project directly onto the iPhone XS Max simulator:
 
 ```sh
 react-native run-ios --simulator "iPhone XS Max"
@@ -444,7 +444,7 @@ Default: `process.env.RCT_METRO_PORT || 8081`
 
 Usage:
 
-```
+```sh
 react-native start [option]
 ```
 
@@ -555,7 +555,7 @@ The local path to your source map file if you generated it manually, ex. `/tmp/s
 
 Generate the JS bundle and source map in `os.tmpdir()`
 
-#### `--port <number>`,
+#### `--port <number>`
 
 The running metro server port number
 

@@ -152,7 +152,7 @@ correct location and update them accordingly:
 
 Dependencies are only linked if they are listed in the package.json of the mobile workspace, where "react-native" dependency is defined. For example, with this file structure:
 
-```
+```sh
 /root
   /packages
     /mobile

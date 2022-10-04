@@ -51,6 +51,8 @@ function findMatchingSimulator(
   }
 
   let match;
+  let fallbackMatch;
+
   for (const versionDescriptor in devices) {
     const device = devices[versionDescriptor];
     let version = versionDescriptor;
@@ -102,7 +104,7 @@ function findMatchingSimulator(
         }
         // If no match found, use first available simulator that was booted before
         if (!!lastBootedAt && !match) {
-          match = simulatorDescriptor;
+          fallbackMatch = simulatorDescriptor;
         }
         // Keeps track of the first available simulator for use if we can't find one above.
         if (simulatorName === null && !match) {
@@ -112,7 +114,7 @@ function findMatchingSimulator(
     }
   }
 
-  return match ?? null;
+  return match ?? fallbackMatch ?? null;
 }
 
 export default findMatchingSimulator;

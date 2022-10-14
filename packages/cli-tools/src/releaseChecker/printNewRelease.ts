@@ -16,7 +16,11 @@ export default function printNewRelease(
   );
   logger.info(`Changelog: ${chalk.dim.underline(latestRelease.changelogUrl)}`);
   logger.info(`Diff: ${chalk.dim.underline(latestRelease.diffUrl)}`);
-  logger.info(`For more info, check out "${chalk.dim.underline('https://reactnative.dev/docs/upgrading')}".`);
+  logger.info(
+    `For more info, check out "${chalk.dim.underline(
+      'https://reactnative.dev/docs/upgrading',
+    )}".`,
+  );
 
   cacheManager.set(name, 'lastChecked', new Date().toISOString());
 }

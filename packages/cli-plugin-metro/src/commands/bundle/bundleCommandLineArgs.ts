@@ -10,6 +10,7 @@ import path from 'path';
 
 export interface CommandLineArgs {
   assetsDest?: string;
+  assetCatalogDest?: string;
   entryFile: string;
   resetCache: boolean;
   resetGlobalCache: boolean;
@@ -101,6 +102,10 @@ export default [
     name: '--unstable-transform-profile <string>',
     description:
       'Experimental, transform JS for a specific JS engine. Currently supported: hermes, hermes-canary, default',
+  },
+  {
+    name: '--asset-catalog-dest [string]',
+    description: 'Path where to create an iOS Asset Catalog for images',
   },
   {
     name: '--reset-cache',

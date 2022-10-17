@@ -6,14 +6,19 @@
  *
  */
 
-import path from 'path';
+import {logger} from '@react-native-community/cli-tools';
 import fs from 'fs';
-
+import path from 'path';
+import {
+  cleanAssetCatalog,
+  getImageSet,
+  isCatalogAsset,
+  writeImageSet,
+} from './assetCatalogIOS';
+import {AssetData} from './buildBundle';
 import filterPlatformAssetScales from './filterPlatformAssetScales';
 import getAssetDestPathAndroid from './getAssetDestPathAndroid';
 import getAssetDestPathIOS from './getAssetDestPathIOS';
-import {logger} from '@react-native-community/cli-tools';
-import type {AssetData} from './buildBundle';
 
 interface CopiedFiles {
   [src: string]: string;
@@ -23,20 +28,23 @@ function saveAssets(
   assets: AssetData[],
   platform: string,
   assetsDest: string | undefined,
+  assetCatalogDest: string | undefined,
 ) {
   if (!assetsDest) {
     logger.warn('Assets destination folder is not set, skipping...');
-    return Promise.resolve();
+    return;
   }
+
+  const filesToCopy: CopiedFiles = Object.create(null); // Map src -> dest
 
   const getAssetDestPath =
     platform === 'android' ? getAssetDestPathAndroid : getAssetDestPathIOS;
 
-  const filesToCopy: CopiedFiles = Object.create(null); // Map src -> dest
-  assets.forEach((asset) => {
+  const addAssetToCopy = (asset: AssetData) => {
     const validScales = new Set(
       filterPlatformAssetScales(platform, asset.scales),
     );
+
     asset.scales.forEach((scale, idx) => {
       if (!validScales.has(scale)) {
         return;
@@ -45,7 +53,37 @@ function saveAssets(
       const dest = path.join(assetsDest, getAssetDestPath(asset, scale));
       filesToCopy[src] = dest;
     });
-  });
+  };
+
+  if (platform === 'ios' && assetCatalogDest != null) {
+    // Use iOS Asset Catalog for images. This will allow Apple app thinning to
+    // remove unused scales from the optimized bundle.
+    const catalogDir = path.join(assetCatalogDest, 'RNAssets.xcassets');
+    if (!fs.existsSync(catalogDir)) {
+      logger.error(
+        `Could not find asset catalog 'RNAssets.xcassets' in ${assetCatalogDest}. Make sure to create it if it does not exist.`,
+      );
+      return;
+    }
+
+    logger.info('Adding images to asset catalog', catalogDir);
+    cleanAssetCatalog(catalogDir);
+    for (const asset of assets) {
+      if (isCatalogAsset(asset)) {
+        const imageSet = getImageSet(
+          catalogDir,
+          asset,
+          filterPlatformAssetScales(platform, asset.scales),
+        );
+        writeImageSet(imageSet);
+      } else {
+        addAssetToCopy(asset);
+      }
+    }
+    logger.info('Done adding images to asset catalog');
+  } else {
+    assets.forEach(addAssetToCopy);
+  }
 
   return copyAll(filesToCopy);
 }
@@ -57,7 +95,7 @@ function copyAll(filesToCopy: CopiedFiles) {
   }
 
   logger.info(`Copying ${queue.length} asset files`);
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     const copyNext = (error?: NodeJS.ErrnoException) => {
       if (error) {
         reject(error);

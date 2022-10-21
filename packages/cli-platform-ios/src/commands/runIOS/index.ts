@@ -37,6 +37,7 @@ type FlagsT = {
   verbose: boolean;
   port: number;
   terminal: string | undefined;
+  xcconfig?: string;
 };
 
 function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
@@ -318,6 +319,7 @@ function buildProject(
     const xcodebuildArgs = [
       xcodeProject.isWorkspace ? '-workspace' : '-project',
       xcodeProject.name,
+      ...(args.xcconfig ? ['-xcconfig', args.xcconfig] : []),
       '-configuration',
       args.configuration,
       '-scheme',
@@ -632,6 +634,10 @@ export default {
       description:
         'Launches the Metro Bundler in a new window using the specified terminal path.',
       default: getDefaultUserTerminal,
+    },
+    {
+      name: '--xcconfig [string]',
+      description: 'Explicitly set xcconfig to use',
     },
   ],
 };

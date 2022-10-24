@@ -440,6 +440,10 @@ Runs packager on specified port
 
 Default: `process.env.RCT_METRO_PORT || 8081`
 
+#### `--xcconfig <string>`
+
+Explicitly pass `xcconfig` options from the command line 
+
 ### `start`
 
 Usage:

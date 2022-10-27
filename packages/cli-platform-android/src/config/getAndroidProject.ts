@@ -17,22 +17,53 @@ export function getAndroidProject(config: Config) {
 }
 
 /**
- * Get the package name of the running React Native app
- * @param config
+ * Get the package name/namespace of the running React Native app
+ * @param manifestPath The path to the AndroidManifest.xml
+ * @param buildGradlePath The path to the build.gradle[.kts] file.
  */
-export function getPackageName(manifestPath: string) {
+export function getPackageName(
+  manifestPath: string,
+  buildGradlePath: string | null,
+) {
   const androidManifest = fs.readFileSync(manifestPath, 'utf8');
 
-  let packageNameMatchArray = androidManifest.match(/package="(.+?)"/);
-  if (!packageNameMatchArray || packageNameMatchArray.length === 0) {
+  const packageNameFromManifest = parsePackageNameFromAndroidManifestFile(
+    androidManifest,
+  );
+  let packageName;
+  if (packageNameFromManifest) {
+    // We got the package from the AndroidManifest.xml
+    packageName = packageNameFromManifest;
+  } else if (buildGradlePath) {
+    // We didn't get the package from the AndroidManifest.xml,
+    // so we'll try to get it from the build.gradle[.kts] file
+    // via the namespace field.
+    const buildGradle = fs.readFileSync(buildGradlePath, 'utf8');
+    const namespace = parseNamespaceFromBuildGradleFile(buildGradle);
+    if (namespace) {
+      packageName = namespace;
+    } else {
+      throw new CLIError(
+        `Failed to build the app: No package name found. 
+        We couldn't parse the namespace from your build.gradle[.kts] file at ${chalk.underline.dim(
+          `${buildGradlePath}`,
+        )} 
+        and nor your package in the AndroidManifest at ${chalk.underline.dim(
+          `${manifestPath}`,
+        )}
+        `,
+      );
+    }
+  } else {
     throw new CLIError(
-      `Failed to build the app: No package name found. Found errors in ${chalk.underline.dim(
+      `Failed to build the app: No package name found. 
+      We failed to parse your AndroidManifest at ${chalk.underline.dim(
         `${manifestPath}`,
-      )}`,
+      )}
+      and we couldn't find your build.gradle[.kts] file.
+      `,
     );
   }
-
-  let packageName = packageNameMatchArray[1];
 
   if (!validatePackageName(packageName)) {
     logger.warn(
@@ -44,6 +75,27 @@ export function getPackageName(manifestPath: string) {
     );
   }
   return packageName;
+}
+
+export function parsePackageNameFromAndroidManifestFile(
+  androidManifest: string,
+) {
+  const matchArray = androidManifest.match(/package="(.+?)"/);
+  if (matchArray && matchArray.length > 0) {
+    return matchArray[1];
+  } else {
+    return null;
+  }
+}
+
+export function parseNamespaceFromBuildGradleFile(buildGradle: string) {
+  // search for namespace = inside the build.gradle file via regex
+  const matchArray = buildGradle.match(/namespace\s*[=]*\s*"(.+?)"/);
+  if (matchArray && matchArray.length > 0) {
+    return matchArray[1];
+  } else {
+    return null;
+  }
 }
 
 // Validates that the package name is correct

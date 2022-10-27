@@ -20,6 +20,7 @@ import {
 import {getPackageName} from './getAndroidProject';
 import {findLibraryName} from './findLibraryName';
 import {findComponentDescriptors} from './findComponentDescriptors';
+import {findBuildGradle} from './findBuildGradle';
 
 /**
  * Gets android project config by analyzing given folder and taking some
@@ -42,12 +43,14 @@ export function projectConfig(
   const manifestPath = userConfig.manifestPath
     ? path.join(sourceDir, userConfig.manifestPath)
     : findManifest(path.join(sourceDir, appName));
+  const buildGradlePath = findBuildGradle(sourceDir);
 
   if (!manifestPath) {
     return null;
   }
 
-  const packageName = userConfig.packageName || getPackageName(manifestPath);
+  const packageName =
+    userConfig.packageName || getPackageName(manifestPath, buildGradlePath);
 
   if (!packageName) {
     throw new Error(`Package name not found in ${manifestPath}`);
@@ -96,12 +99,14 @@ export function dependencyConfig(
   const manifestPath = userConfig.manifestPath
     ? path.join(sourceDir, userConfig.manifestPath)
     : findManifest(sourceDir);
+  const buildGradlePath = path.join(sourceDir, 'build.gradle');
 
   if (!manifestPath) {
     return null;
   }
 
-  const packageName = userConfig.packageName || getPackageName(manifestPath);
+  const packageName =
+    userConfig.packageName || getPackageName(manifestPath, buildGradlePath);
   const packageClassName = findPackageClassName(sourceDir);
 
   /**

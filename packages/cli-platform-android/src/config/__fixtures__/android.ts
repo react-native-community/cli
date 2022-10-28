@@ -18,8 +18,11 @@ const mainJavaClass = fs.readFileSync(
 const buildGradle = fs.readFileSync(
   path.join(__dirname, './files/build.gradle'),
 );
+const appBuildGradle = fs.readFileSync(
+  path.join(__dirname, './files/appbuild.gradle'),
+);
 
-function generateValidFileStructure(classFileName: string) {
+function generateValidFileStructureForLib(classFileName: string) {
   return {
     'build.gradle': buildGradle,
     src: {
@@ -40,9 +43,23 @@ function generateValidFileStructure(classFileName: string) {
   };
 }
 
-export const valid = generateValidFileStructure('ReactPackage.java');
+function generateValidFileStructureForApp() {
+  return {
+    'build.gradle': buildGradle,
+    app: {
+      'build.gradle': appBuildGradle,
+    },
+    src: {
+      'AndroidManifest.xml': manifest,
+    },
+  };
+}
 
-export const validKotlin = generateValidFileStructure('ReactPackage.kt');
+export const valid = generateValidFileStructureForLib('ReactPackage.java');
+
+export const validKotlin = generateValidFileStructureForLib('ReactPackage.kt');
+
+export const validApp = generateValidFileStructureForApp('ReactPackage.java');
 
 export const userConfigManifest = {
   src: {

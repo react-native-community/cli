@@ -43,7 +43,7 @@ export function projectConfig(
   const manifestPath = userConfig.manifestPath
     ? path.join(sourceDir, userConfig.manifestPath)
     : findManifest(path.join(sourceDir, appName));
-  const buildGradlePath = findBuildGradle(sourceDir);
+  const buildGradlePath = findBuildGradle(sourceDir, false);
 
   if (!manifestPath) {
     return null;
@@ -99,7 +99,7 @@ export function dependencyConfig(
   const manifestPath = userConfig.manifestPath
     ? path.join(sourceDir, userConfig.manifestPath)
     : findManifest(sourceDir);
-  const buildGradlePath = path.join(sourceDir, 'build.gradle');
+  const buildGradlePath = findBuildGradle(sourceDir, true);
 
   if (!manifestPath) {
     return null;

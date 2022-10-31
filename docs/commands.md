@@ -436,13 +436,17 @@ Do not use `xcbeautify` or `xcpretty` even if installed.
 
 #### `--port <number>`
 
-Runs packager on specified port
+Runs packager on specified port.
 
 Default: `process.env.RCT_METRO_PORT || 8081`
 
 #### `--xcconfig <string>`
 
-Explicitly pass `xcconfig` options from the command line 
+Explicitly pass `xcconfig` options from the command line.
+
+#### `--buildFolder <string>`
+
+Location for iOS build artifacts. Corresponds to Xcode's `-derivedDataPath`.
 
 ### `start`
 

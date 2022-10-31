@@ -643,7 +643,8 @@ export default {
     },
     {
       name: '--buildFolder <string>',
-      description: 'Location for iOS build artifacts',
+      description:
+        'Location for iOS build artifacts. Corresponds to Xcode\'s "-derivedDataPath".',
     },
   ],
 };

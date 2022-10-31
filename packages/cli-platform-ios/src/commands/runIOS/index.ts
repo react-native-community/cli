@@ -38,6 +38,7 @@ type FlagsT = {
   port: number;
   terminal: string | undefined;
   xcconfig?: string;
+  buildFolder?: string;
 };
 
 function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
@@ -320,6 +321,7 @@ function buildProject(
       xcodeProject.isWorkspace ? '-workspace' : '-project',
       xcodeProject.name,
       ...(args.xcconfig ? ['-xcconfig', args.xcconfig] : []),
+      ...(args.buildFolder ? ['-derivedDataPath', args.buildFolder] : []),
       '-configuration',
       args.configuration,
       '-scheme',
@@ -638,6 +640,10 @@ export default {
     {
       name: '--xcconfig [string]',
       description: 'Explicitly set xcconfig to use',
+    },
+    {
+      name: '--buildFolder <string>',
+      description: 'Location for iOS build artifacts',
     },
   ],
 };

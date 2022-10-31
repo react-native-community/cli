@@ -594,7 +594,7 @@ export default {
       description:
         'Explicitly set simulator to use. Optionally include iOS version between ' +
         'parenthesis at the end to match an exact version: "iPhone 6 (10.0)"',
-      default: 'iPhone 13',
+      default: 'iPhone 14',
     },
     {
       name: '--configuration <string>',

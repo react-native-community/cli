@@ -20,6 +20,7 @@ import {changePlaceholderInTemplate} from './editTemplate';
 import * as PackageManager from '../../tools/packageManager';
 import {installPods} from '@react-native-community/cli-doctor';
 import banner from './banner';
+import TemplateAndVersionError from './errors/TemplateAndVersionError';
 
 const DEFAULT_VERSION = 'latest';
 
@@ -197,6 +198,10 @@ export default (async function initialize(
   options: Options,
 ) {
   validateProjectName(projectName);
+
+  if (!!options.template && !!options.version) {
+    throw new TemplateAndVersionError(options.template);
+  }
 
   const root = process.cwd();
   const version = options.version || DEFAULT_VERSION;

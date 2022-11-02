@@ -10,10 +10,8 @@
     "@react-native-community/cli-tools": "^10.0.0-alpha.0",
     "chalk": "^4.1.2",
     "execa": "^1.0.0",
-    "fs-extra": "^8.1.0",
     "glob": "^7.1.3",
-    "logkitty": "^0.7.1",
-    "slash": "^3.0.0"
+    "logkitty": "^0.7.1"
   },
   "files": [
     "build",
@@ -25,8 +23,7 @@
     "@react-native-community/cli-types": "^10.0.0-alpha.0",
     "@types/execa": "^0.9.0",
     "@types/fs-extra": "^8.1.0",
-    "@types/glob": "^7.1.1",
-    "@types/lodash": "^4.14.149"
+    "@types/glob": "^7.1.1"
   },
   "homepage": "https://github.com/react-native-community/cli/tree/master/packages/platform-android",
   "repository": {

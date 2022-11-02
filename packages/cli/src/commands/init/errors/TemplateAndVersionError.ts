@@ -1,7 +1,7 @@
 export default class TemplateAndVersionError extends Error {
   constructor(template: string) {
     super(
-      `Passing both "version" and "template" is not supported. Templates are in control of "react-native" version. Please choose only one of these, like so:
+      `Passing both "version" and "template" is not supported. The template you select determines the version of react-native used. Please use only one of these options, for example:
       
       --template ${template}@x.y.z
       

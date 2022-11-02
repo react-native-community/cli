@@ -5,7 +5,7 @@ export default class TemplateAndVersionError extends Error {
       
       --template ${template}@x.y.z
       
-      where x.y.z is the version containing the "react-native" you'd like. Check: https://www.npmjs.com/package/${template} for available versions`,
+      where x.y.z is the release of the template that contains the desired "react-native" version. Check the version tab of https://www.npmjs.com/package/${template} for available versions`,
     );
   }
 }

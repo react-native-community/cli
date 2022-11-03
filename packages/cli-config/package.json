@@ -9,7 +9,7 @@
   "types": "build/index.d.ts",
   "dependencies": {
     "@react-native-community/cli-tools": "^10.0.0-alpha.0",
-    "chalk": "^4.1.2",
+    "chalk": "^5.1.2",
     "cosmiconfig": "^5.1.0",
     "deepmerge": "^3.2.0",
     "glob": "^7.1.3",

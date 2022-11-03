@@ -38,7 +38,16 @@ export function getPackageName(
     // We didn't get the package from the AndroidManifest.xml,
     // so we'll try to get it from the build.gradle[.kts] file
     // via the namespace field.
-    const buildGradle = fs.readFileSync(buildGradlePath, 'utf8');
+    let buildGradle: string;
+    try {
+      buildGradle = fs.readFileSync(buildGradlePath, 'utf8');
+    } catch (error) {
+      throw new CLIError(
+        `we couldn't find your build.gradle[.kts] file at ${chalk.underline.dim(
+          buildGradlePath,
+        )}.`,
+      );
+    }
     const namespace = parseNamespaceFromBuildGradleFile(buildGradle);
     if (namespace) {
       packageName = namespace;
@@ -59,8 +68,7 @@ export function getPackageName(
       `Failed to build the app: No package name found. 
       We failed to parse your AndroidManifest at ${chalk.underline.dim(
         `${manifestPath}`,
-      )}
-      and we couldn't find your build.gradle[.kts] file.
+      )}.
       `,
     );
   }

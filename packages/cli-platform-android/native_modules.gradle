@@ -303,12 +303,12 @@ class ReactNativeModules {
         if (it.libraryName != null && it.cmakeListsPath != null) {
           // If user provided a custom cmakeListsPath, let's honor it.
           String nativeFolderPath = it.cmakeListsPath.replace("CMakeLists.txt", "")
-          "add_subdirectory($nativeFolderPath${it.libraryName}_autolinked_build)"
+          "add_subdirectory($nativeFolderPath ${it.libraryName}_autolinked_build)"
         } else if (it.libraryName != null && it.androidMkPath != null) {
           // Fallback to previous behavior: reusing androidMkPath.
           // We assume CMakeLists.txt file is in the same folder as the Android.mk
           String nativeFolderPath = it.androidMkPath.replace("Android.mk", "")
-          "add_subdirectory($nativeFolderPath${it.libraryName}_autolinked_build)"
+          "add_subdirectory($nativeFolderPath ${it.libraryName}_autolinked_build)"
         } else {
           null
         }

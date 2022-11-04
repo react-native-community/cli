@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/cli-hermes",
-  "version": "10.0.0-alpha.3",
+  "version": "10.0.0-alpha.4",
   "license": "MIT",
   "main": "build/index.js",
   "publishConfig": {
@@ -8,7 +8,7 @@
   },
   "types": "build/index.d.ts",
   "dependencies": {
-    "@react-native-community/cli-platform-android": "^10.0.0-alpha.3",
+    "@react-native-community/cli-platform-android": "^10.0.0-alpha.4",
     "@react-native-community/cli-tools": "^10.0.0-alpha.0",
     "chalk": "^4.1.2",
     "hermes-profile-transformer": "^0.0.6",

@@ -136,7 +136,7 @@ export function dependencyConfig(
     ? path.join(sourceDir, userConfig.cmakeListsPath)
     : path.join(sourceDir, 'build/generated/source/codegen/jni/CMakeLists.txt');
   if(process.platform == "win32") {
-    cmakeListsPath = cmakeListsPath.replaceAll("\\", "/")
+    cmakeListsPath = cmakeListsPath.replace(/\\/g, "/");
   }
   return {
     sourceDir,

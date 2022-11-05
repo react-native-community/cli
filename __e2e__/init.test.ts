@@ -43,7 +43,7 @@ test('init fails if the directory already exists', () => {
   fs.mkdirSync(path.join(DIR, 'TestInit'));
 
   const {stderr} = runCLI(DIR, ['init', 'TestInit'], {expectedFailure: true});
-  expect(stderr).toBe(
+  expect(stderr).toContain(
     'error Cannot initialize new project because directory "TestInit" already exists.',
   );
 });

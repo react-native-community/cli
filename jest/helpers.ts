@@ -204,6 +204,8 @@ ${chalk.bold('args:')}    ${(args || []).join(' ')}
 ${chalk.bold('stderr:')}  ${result.stderr}
 ${chalk.bold('stdout:')}  ${result.stdout}
 ${chalk.bold('code:')}    ${result.code}`);
+  } else if (options.expectedFailure && result.code === 0) {
+    throw new Error("Expected command to fail, but it didn't");
   }
 }
 

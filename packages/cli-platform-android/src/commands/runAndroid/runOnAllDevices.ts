@@ -55,7 +55,9 @@ async function runOnAllDevices(
   }
 
   try {
-    const tasks = args.tasks || ['install' + toPascalCase(args.variant)];
+    const tasks = args.tasks || [
+      'install' + toPascalCase(args.variant ?? 'debug'),
+    ];
     const gradleArgs = getTaskNames(androidProject.appName, tasks);
 
     if (args.port != null) {

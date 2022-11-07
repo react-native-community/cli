@@ -54,10 +54,9 @@ async function buildAndroid(
   const tasks = args.tasks || ['assemble' + toPascalCase(variant)];
   const gradleArgs = getTaskNames(androidProject.appName, tasks);
 
-  const adbPath = getAdbPath();
-  const devices = adb.getDevices(adbPath);
-
   if (args.activeArchOnly) {
+    const adbPath = getAdbPath();
+    const devices = adb.getDevices(adbPath);
     const architectures = devices
       .map((device) => {
         return adb.getCPU(adbPath, device);

@@ -21,6 +21,7 @@ import * as PackageManager from '../../tools/packageManager';
 import {installPods} from '@react-native-community/cli-doctor';
 import banner from './banner';
 import TemplateAndVersionError from './errors/TemplateAndVersionError';
+import semver from 'semver';
 
 const DEFAULT_VERSION = 'latest';
 
@@ -175,13 +176,31 @@ async function installDependencies({
   loader.succeed();
 }
 
+function checkVersionAndTemplate(options: Options, version: string): string {
+  const isTypescriptTemplate = options.template?.includes(
+    'react-native-template-typescript',
+  );
+
+  if (isTypescriptTemplate && options.template?.includes('@')) {
+    const typescriptTemplateVersion = options.template.split('@')[1];
+    if (semver.gte(typescriptTemplateVersion, '0.71.0')) {
+      logger.warn(
+        "Starting from verision '0.71' typescript is used by default.\nDiregarding template and using default react-native",
+      );
+      return `react-native@${version}`;
+    }
+  }
+
+  return options.template || `react-native@${version}`;
+}
+
 async function createProject(
   projectName: string,
   directory: string,
   version: string,
   options: Options,
 ) {
-  const templateUri = options.template || `react-native@${version}`;
+  const templateUri = checkVersionAndTemplate(options, version);
 
   return createFromTemplate({
     projectName,

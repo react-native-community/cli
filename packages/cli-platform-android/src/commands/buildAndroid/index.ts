@@ -24,7 +24,7 @@ export interface BuildFlags {
 
 export async function checkPackager(args: BuildFlags, config: Config) {
   if (!args.packager) {
-    return Promise.resolve();
+    return;
   }
   const result = await isPackagerRunning(args.port);
   if (result === 'running') {

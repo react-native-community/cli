@@ -207,12 +207,8 @@ export default (async function initialize(
   const version = options.version || DEFAULT_VERSION;
   const directoryName = path.relative(root, options.directory || projectName);
 
-  try {
-    await createProject(projectName, directoryName, version, options);
+  await createProject(projectName, directoryName, version, options);
 
-    const projectFolder = path.join(root, directoryName);
-    printRunInstructions(projectFolder, projectName);
-  } catch (e) {
-    logger.error(e.message);
-  }
+  const projectFolder = path.join(root, directoryName);
+  printRunInstructions(projectFolder, projectName);
 });

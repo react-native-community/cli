@@ -42,7 +42,6 @@ export async function checkPackager(args: BuildFlags, config: Config) {
       );
     }
   }
-  return Promise.resolve();
 }
 
 async function buildAndroid(

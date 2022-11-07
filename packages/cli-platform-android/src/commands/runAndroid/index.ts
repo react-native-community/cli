@@ -15,24 +15,18 @@ import tryRunAdbReverse from './tryRunAdbReverse';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
 import getAdbPath from './getAdbPath';
 import {
-  isPackagerRunning,
   logger,
   getDefaultUserTerminal,
   CLIError,
 } from '@react-native-community/cli-tools';
 import {getAndroidProject} from '../../config/getAndroidProject';
+import {build, checkPackager, BuildFlags} from '../buildAndroid';
 
-export interface Flags {
-  tasks?: Array<string>;
-  variant: string;
+export interface Flags extends BuildFlags {
   appId: string;
   appIdSuffix: string;
   mainActivity: string;
   deviceId?: string;
-  packager: boolean;
-  port: number;
-  terminal: string;
-  activeArchOnly: boolean;
 }
 
 type AndroidProject = NonNullable<Config['project']['android']>;
@@ -43,32 +37,8 @@ type AndroidProject = NonNullable<Config['project']['android']>;
 async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
   const androidProject = getAndroidProject(config);
 
-  if (!args.packager) {
-    return buildAndRun(args, androidProject);
-  }
-
-  return isPackagerRunning(args.port).then((result: string) => {
-    if (result === 'running') {
-      logger.info('JS server already running.');
-    } else if (result === 'unrecognized') {
-      logger.warn('JS server not recognized, continuing with build...');
-    } else {
-      // result == 'not_running'
-      logger.info('Starting JS server...');
-      try {
-        startServerInNewWindow(
-          args.port,
-          args.terminal,
-          config.reactNativePath,
-        );
-      } catch (error) {
-        logger.warn(
-          `Failed to automatically start the packager server. Please run "react-native start" manually. Error details: ${error.message}`,
-        );
-      }
-    }
-    return buildAndRun(args, androidProject);
-  });
+  await checkPackager(args, config);
+  return buildAndRun(args, androidProject);
 }
 
 // Builds the app and runs it on a connected emulator / device.
@@ -78,7 +48,7 @@ function buildAndRun(args: Flags, androidProject: AndroidProject) {
 
   const adbPath = getAdbPath();
   if (args.deviceId) {
-    return runOnSpecificDevice(args, cmd, adbPath, androidProject);
+    return runOnSpecificDevice(args, adbPath, androidProject);
   } else {
     return runOnAllDevices(args, cmd, adbPath, androidProject);
   }
@@ -86,7 +56,6 @@ function buildAndRun(args: Flags, androidProject: AndroidProject) {
 
 function runOnSpecificDevice(
   args: Flags,
-  gradlew: 'gradlew.bat' | './gradlew',
   adbPath: string,
   androidProject: AndroidProject,
 ) {
@@ -94,7 +63,9 @@ function runOnSpecificDevice(
   const {deviceId} = args;
   if (devices.length > 0 && deviceId) {
     if (devices.indexOf(deviceId) !== -1) {
-      buildApk(gradlew, androidProject.sourceDir);
+      // using '-x lint' in order to ignore linting errors while building the apk
+      const gradleArgs = ['build', '-x', 'lint'];
+      build(gradleArgs, androidProject.sourceDir);
       installAndLaunchOnDevice(args, deviceId, adbPath, androidProject);
     } else {
       logger.error(
@@ -107,18 +78,6 @@ function runOnSpecificDevice(
   }
 }
 
-function buildApk(gradlew: string, sourceDir: string) {
-  try {
-    // using '-x lint' in order to ignore linting errors while building the apk
-    const gradleArgs = ['build', '-x', 'lint'];
-    logger.info('Building the app...');
-    logger.debug(`Running command "${gradlew} ${gradleArgs.join(' ')}"`);
-    execa.sync(gradlew, gradleArgs, {stdio: 'inherit', cwd: sourceDir});
-  } catch (error) {
-    throw new CLIError('Failed to build the app.', error);
-  }
-}
-
 function tryInstallAppOnDevice(
   args: Flags,
   adbPath: string,
@@ -128,7 +87,7 @@ function tryInstallAppOnDevice(
   try {
     // "app" is usually the default value for Android apps with only 1 app
     const {appName, sourceDir} = androidProject;
-    const variant = args.variant.toLowerCase();
+    const variant = (args.variant ?? (args.mode || 'debug')).toLowerCase();
     const buildDirectory = `${sourceDir}/${appName}/build/outputs/apk/${variant}`;
     const apkFile = getInstallApkName(
       appName,
@@ -192,7 +151,7 @@ function installAndLaunchOnDevice(
   );
 }
 
-function startServerInNewWindow(
+export function startServerInNewWindow(
   port: number,
   terminal: string,
   reactNativePath: string,

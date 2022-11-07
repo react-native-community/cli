@@ -16,7 +16,10 @@ import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
 import tryLaunchEmulator from './tryLaunchEmulator';
 import {Flags} from '.';
 
-function getTaskNames(appName: string, commands: Array<string>): Array<string> {
+export function getTaskNames(
+  appName: string,
+  commands: Array<string>,
+): Array<string> {
   return appName
     ? commands.map((command) => `${appName}:${command}`)
     : commands;

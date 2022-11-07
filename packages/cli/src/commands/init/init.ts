@@ -176,7 +176,7 @@ async function installDependencies({
   loader.succeed();
 }
 
-function checkVersionAndTemplate(options: Options, version: string): string {
+function createTemplateUri(options: Options, version: string): string {
   const isTypescriptTemplate = options.template?.includes(
     'react-native-template-typescript',
   );
@@ -185,7 +185,7 @@ function checkVersionAndTemplate(options: Options, version: string): string {
     const typescriptTemplateVersion = options.template.split('@')[1];
     if (semver.gte(typescriptTemplateVersion, '0.71.0')) {
       logger.warn(
-        "Starting from verision '0.71' typescript is used by default.\nDiregarding template and using default react-native",
+        "Ignoring custom template: 'react-native-template-typescript'. Starting from React Native v0.71 TypeScript is used by default.",
       );
       return `react-native@${version}`;
     }
@@ -200,7 +200,7 @@ async function createProject(
   version: string,
   options: Options,
 ) {
-  const templateUri = checkVersionAndTemplate(options, version);
+  const templateUri = createTemplateUri(options, version);
 
   return createFromTemplate({
     projectName,

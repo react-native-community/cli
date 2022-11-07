@@ -20,7 +20,7 @@ import {
   CLIError,
 } from '@react-native-community/cli-tools';
 import {getAndroidProject} from '../../config/getAndroidProject';
-import {build, checkPackager, BuildFlags} from '../buildAndroid';
+import {build, runPackager, BuildFlags} from '../buildAndroid';
 
 export interface Flags extends BuildFlags {
   appId: string;
@@ -37,7 +37,7 @@ type AndroidProject = NonNullable<Config['project']['android']>;
 async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
   const androidProject = getAndroidProject(config);
 
-  await checkPackager(args, config);
+  await runPackager(args, config);
   return buildAndRun(args, androidProject);
 }
 

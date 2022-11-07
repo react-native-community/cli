@@ -22,7 +22,7 @@ export interface BuildFlags {
   tasks?: Array<string>;
 }
 
-export async function checkPackager(args: BuildFlags, config: Config) {
+export async function runPackager(args: BuildFlags, config: Config) {
   if (!args.packager) {
     return;
   }
@@ -74,7 +74,7 @@ async function buildAndroid(
       gradleArgs.push('-PreactNativeArchitectures=' + architectures.join(','));
     }
   }
-  await checkPackager(args, config);
+  await runPackager(args, config);
   return build(gradleArgs, androidProject.sourceDir);
 }
 

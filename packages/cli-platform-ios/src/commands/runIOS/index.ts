@@ -6,25 +6,21 @@
  *
  */
 
-import child_process, {
-  ChildProcess,
-  // @ts-ignore
-  SpawnOptionsWithoutStdio,
-} from 'child_process';
+import child_process from 'child_process';
 import path from 'path';
 import chalk from 'chalk';
 import {Config, IOSProjectInfo} from '@react-native-community/cli-types';
-import parseIOSDevicesList from './parseIOSDevicesList';
-import parseXctraceIOSDevicesList from './parseXctraceIOSDevicesList';
-import findMatchingSimulator from './findMatchingSimulator';
+import execa from 'execa';
 import {
   logger,
   CLIError,
   getDefaultUserTerminal,
 } from '@react-native-community/cli-tools';
+import parseIOSDevicesList from './parseIOSDevicesList';
+import parseXctraceIOSDevicesList from './parseXctraceIOSDevicesList';
+import findMatchingSimulator from './findMatchingSimulator';
+import {buildProject} from '../buildIOS/buildProject';
 import {Device} from '../../types';
-import ora from 'ora';
-import execa from 'execa';
 
 type FlagsT = {
   simulator?: string;
@@ -310,98 +306,6 @@ async function runOnDevice(
   return logger.success('Installed the app on the device.');
 }
 
-function buildProject(
-  xcodeProject: IOSProjectInfo,
-  udid: string | undefined,
-  scheme: string,
-  args: FlagsT,
-): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const xcodebuildArgs = [
-      xcodeProject.isWorkspace ? '-workspace' : '-project',
-      xcodeProject.name,
-      ...(args.xcconfig ? ['-xcconfig', args.xcconfig] : []),
-      ...(args.buildFolder ? ['-derivedDataPath', args.buildFolder] : []),
-      '-configuration',
-      args.configuration,
-      '-scheme',
-      scheme,
-      '-destination',
-      `id=${udid}`,
-    ];
-    // @todo use `getLoader` from cli-tools package
-    const loader = ora();
-    logger.info(
-      `Building ${chalk.dim(
-        `(using "xcodebuild ${xcodebuildArgs.join(' ')}")`,
-      )}`,
-    );
-    let xcodebuildOutputFormatter: ChildProcess | any;
-    if (!args.verbose) {
-      if (xcbeautifyAvailable()) {
-        xcodebuildOutputFormatter = child_process.spawn('xcbeautify', [], {
-          stdio: ['pipe', process.stdout, process.stderr],
-        });
-      } else if (xcprettyAvailable()) {
-        xcodebuildOutputFormatter = child_process.spawn('xcpretty', [], {
-          stdio: ['pipe', process.stdout, process.stderr],
-        });
-      }
-    }
-    const buildProcess = child_process.spawn(
-      'xcodebuild',
-      xcodebuildArgs,
-      getProcessOptions(args),
-    );
-    let buildOutput = '';
-    let errorOutput = '';
-    buildProcess.stdout.on('data', (data: Buffer) => {
-      const stringData = data.toString();
-      buildOutput += stringData;
-      if (xcodebuildOutputFormatter) {
-        xcodebuildOutputFormatter.stdin.write(data);
-      } else {
-        if (logger.isVerbose()) {
-          logger.debug(stringData);
-        } else {
-          loader.start(
-            `Building the app${'.'.repeat(buildOutput.length % 10)}`,
-          );
-        }
-      }
-    });
-    buildProcess.stderr.on('data', (data: Buffer) => {
-      errorOutput += data;
-    });
-    buildProcess.on('close', (code: number) => {
-      if (xcodebuildOutputFormatter) {
-        xcodebuildOutputFormatter.stdin.end();
-      } else {
-        loader.stop();
-      }
-      if (code !== 0) {
-        reject(
-          new CLIError(
-            `
-            Failed to build iOS project.
-
-            We ran "xcodebuild" command but it exited with error code ${code}. To debug build
-            logs further, consider building your app with Xcode.app, by opening
-            ${xcodeProject.name}.
-          `,
-            xcodebuildOutputFormatter
-              ? undefined
-              : buildOutput + '\n' + errorOutput,
-          ),
-        );
-        return;
-      }
-      logger.success('Successfully built the app');
-      resolve(buildOutput);
-    });
-  });
-}
-
 function bootSimulator(selectedSimulator: Device) {
   const simulatorFullName = formattedDeviceName(selectedSimulator);
   logger.info(`Launching ${simulatorFullName}`);
@@ -478,28 +382,6 @@ function getPlatformName(buildOutput: string) {
   return platformNameMatch[1];
 }
 
-function xcbeautifyAvailable() {
-  try {
-    child_process.execSync('xcbeautify --version', {
-      stdio: [0, 'pipe', 'ignore'],
-    });
-  } catch (error) {
-    return false;
-  }
-  return true;
-}
-
-function xcprettyAvailable() {
-  try {
-    child_process.execSync('xcpretty --version', {
-      stdio: [0, 'pipe', 'ignore'],
-    });
-  } catch (error) {
-    return false;
-  }
-  return true;
-}
-
 function matchingDevice(
   devices: Array<Device>,
   deviceName: string | true | undefined,
@@ -543,34 +425,6 @@ function printFoundDevices(devices: Array<Device>) {
     'Available devices:',
     ...devices.map((device) => `  - ${device.name} (${device.udid})`),
   ].join('\n');
-}
-
-function getProcessOptions({
-  packager,
-  terminal,
-  port,
-}: {
-  packager: boolean;
-  terminal: string | undefined;
-  port: number;
-}): SpawnOptionsWithoutStdio {
-  if (packager) {
-    return {
-      env: {
-        ...process.env,
-        RCT_TERMINAL: terminal,
-        RCT_METRO_PORT: port.toString(),
-      },
-    };
-  }
-
-  return {
-    env: {
-      ...process.env,
-      RCT_TERMINAL: terminal,
-      RCT_NO_LAUNCH_PACKAGER: 'true',
-    },
-  };
 }
 
 export default {

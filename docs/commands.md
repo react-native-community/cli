@@ -13,6 +13,7 @@ React Native CLI comes with following commands:
 - [`ram-bundle`](#ram-bundle)
 - [`run-android`](#run-android)
 - [`run-ios`](#run-ios)
+- [`build-ios`](#build-ios)
 - [`start`](#start)
 - [`upgrade`](#upgrade)
 - [`profile-hermes`](#profile-hermes)
@@ -388,6 +389,23 @@ react-native run-ios [options]
 ```
 
 Builds your app and starts it on iOS simulator.
+
+### `build-ios`
+
+Usage:
+
+```sh
+react-native build-ios [options]
+```
+
+Builds IOS app.
+
+#### Options
+
+#### `--mode <release|debug>`
+
+> default: debug
+Mode to build the app. Either 'debug' (default) or 'release'. 
 
 #### Options
 

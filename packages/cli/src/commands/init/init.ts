@@ -177,9 +177,8 @@ async function installDependencies({
 }
 
 function createTemplateUri(options: Options, version: string): string {
-  const isTypescriptTemplate = options.template?.includes(
-    'react-native-template-typescript',
-  );
+  const isTypescriptTemplate =
+    options.template === 'react-native-template-typescript';
 
   if (isTypescriptTemplate && options.template?.includes('@')) {
     const typescriptTemplateVersion = options.template.split('@')[1];

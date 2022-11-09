@@ -16,9 +16,9 @@ import {
   CLIError,
   getDefaultUserTerminal,
 } from '@react-native-community/cli-tools';
-import parseIOSDevicesList from './parseIOSDevicesList';
-import parseXctraceIOSDevicesList from './parseXctraceIOSDevicesList';
-import findMatchingSimulator from './findMatchingSimulator';
+import parseIOSDevicesList from '../../tools/parseIOSDevicesList';
+import parseXctraceIOSDevicesList from '../../tools/parseXctraceIOSDevicesList';
+import findMatchingSimulator from '../../tools/findMatchingSimulator';
 import {buildProject} from '../buildIOS/buildProject';
 import {Device} from '../../types';
 

@@ -6,7 +6,6 @@
  *
  */
 
-import child_process from 'child_process';
 import path from 'path';
 import chalk from 'chalk';
 import {Config} from '@react-native-community/cli-types';
@@ -15,12 +14,10 @@ import {
   CLIError,
   getDefaultUserTerminal,
 } from '@react-native-community/cli-tools';
-import execa from 'execa';
-import parseXctraceIOSDevicesList from '../runIOS/parseXctraceIOSDevicesList';
-import parseIOSDevicesList from '../runIOS/parseIOSDevicesList';
 import {Device} from '../../types';
 import {buildProject} from './buildProject';
-import findMatchingSimulator from '../runIOS/findMatchingSimulator';
+import {getDestinationSimulator} from '../../tools/getDestinationSimulator';
+import {getDevices} from '../../tools/getDevices';
 
 type FlagsT = {
   configuration: string;
@@ -72,7 +69,22 @@ function buildIOS(_: Array<string>, ctx: Config, args: FlagsT) {
 
   // // No need to load all available devices
   if (!args.device && !args.udid) {
-    const selectedSimulator = getSelectedSimulator(args);
+    /**
+     * If provided simulator does not exist, try simulators in following order
+     * - iPhone 14
+     * - iPhone 13
+     * - iPhone 12
+     * - iPhone 11
+     */
+    const fallbackSimulators = [
+      'iPhone 14',
+      'iPhone 13',
+      'iPhone 12',
+      'iPhone 11',
+    ];
+
+    const selectedSimulator = getDestinationSimulator(args, fallbackSimulators);
+
     return buildProject(
       xcodeProject,
       selectedSimulator.udid,
@@ -87,21 +99,7 @@ function buildIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     );
   }
 
-  let devices;
-  try {
-    const out = execa.sync('xcrun', ['xctrace', 'list', 'devices']);
-    devices = parseXctraceIOSDevicesList(
-      // Xcode 12.5 introduced a change to output the list to stdout instead of stderr
-      out.stderr === '' ? out.stdout : out.stderr,
-    );
-  } catch (e) {
-    logger.warn(
-      'Support for Xcode 11 and older is deprecated. Please upgrade to Xcode 12.',
-    );
-    devices = parseIOSDevicesList(
-      execa.sync('xcrun', ['instruments', '-s']).stdout,
-    );
-  }
+  const devices = getDevices();
 
   if (args.udid) {
     const device = devices.find((d) => d.udid === args.udid);
@@ -153,52 +151,6 @@ function matchingDevice(
     );
   }
   return deviceByName;
-}
-
-function getSelectedSimulator(args: FlagsT) {
-  let simulators: {devices: {[index: string]: Array<Device>}};
-  try {
-    simulators = JSON.parse(
-      child_process.execFileSync(
-        'xcrun',
-        ['simctl', 'list', '--json', 'devices'],
-        {encoding: 'utf8'},
-      ),
-    );
-  } catch (error) {
-    throw new CLIError(
-      'Could not get the simulator list from Xcode. Please open Xcode and try running project directly from there to resolve the remaining issues.',
-      error,
-    );
-  }
-
-  /**
-   * If provided simulator does not exist, try simulators in following order
-   * - iPhone 14
-   * - iPhone 13
-   * - iPhone 12
-   * - iPhone 11
-   */
-  const fallbackSimulators = [
-    'iPhone 14',
-    'iPhone 13',
-    'iPhone 12',
-    'iPhone 11',
-  ];
-  const selectedSimulator = fallbackSimulators.reduce((simulator, fallback) => {
-    return (
-      simulator || findMatchingSimulator(simulators, {simulator: fallback})
-    );
-  }, findMatchingSimulator(simulators, args));
-
-  if (!selectedSimulator) {
-    throw new CLIError(
-      `No simulator available with ${
-        args.simulator ? `name "${args.simulator}"` : `udid "${args.udid}"`
-      }`,
-    );
-  }
-  return selectedSimulator;
 }
 
 function formattedDeviceName(simulator: Device) {

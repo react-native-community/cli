@@ -6,7 +6,7 @@
  *
  */
 
-import {Device} from '../../types';
+import {Device} from '../types';
 
 /**
  * Takes in a parsed simulator list and a desired name, and returns an object with the matching simulator. The desired

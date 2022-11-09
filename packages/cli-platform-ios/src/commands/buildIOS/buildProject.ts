@@ -77,7 +77,7 @@ export function buildProject(
         }
       }
     });
-    logger.info('test ', JSON.stringify(args));
+
     buildProcess.stderr.on('data', (data: Buffer) => {
       errorOutput += data;
     });

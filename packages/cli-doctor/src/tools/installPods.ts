@@ -183,6 +183,10 @@ async function installPods({
       return;
     }
 
+    if (fs.existsSync('../Gemfile')) {
+      await runBundleInstall(loader);
+    }
+
     try {
       // Check if "pod" is available and usable. It happens that there are
       // multiple versions of "pod" command and even though it's there, it exits
@@ -193,7 +197,6 @@ async function installPods({
       await installCocoaPods(loader);
     }
 
-    await runBundleInstall(loader);
     await runPodInstall(loader, directory);
   } catch (error) {
     throw error;

@@ -198,8 +198,6 @@ async function installPods({
     }
 
     await runPodInstall(loader, directory);
-  } catch (error) {
-    throw error;
   } finally {
     process.chdir('..');
   }

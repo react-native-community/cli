@@ -33,7 +33,6 @@ type FlagsT = {
 };
 
 function buildIOS(_: Array<string>, ctx: Config, args: FlagsT) {
-  console.log(JSON.stringify(args));
   if (!ctx.project.ios) {
     throw new CLIError(
       'iOS project folder not found. Are you sure this is a React Native project?',
@@ -176,17 +175,16 @@ export default {
   func: buildIOS,
   examples: [
     {
-      desc: 'Run on a different simulator, e.g. iPhone SE (2nd generation)',
-      cmd: 'react-native run-ios --simulator "iPhone SE (2nd generation)"',
+      desc: 'Build the app for the IOS simulator',
+      cmd: 'react-native build-ios',
     },
     {
-      desc: "Run on a connected device, e.g. Max's iPhone",
-      cmd: 'react-native run-ios --device "Max\'s iPhone"',
+      desc: 'Build the app for all IOS devices',
+      cmd: 'react-native build-ios --configuration "Release"',
     },
     {
-      desc: 'Run on the AppleTV simulator',
-      cmd:
-        'react-native run-ios --simulator "Apple TV"  --scheme "helloworld-tvOS"',
+      desc: 'Build the app for a specific IOS device',
+      cmd: 'react-native build-ios --simulator "IPhone 11"',
     },
   ],
   options: [

@@ -22,9 +22,9 @@ import {getDevices} from '../../tools/getDevices';
 type FlagsT = {
   configuration: string;
   simulator?: string;
-  scheme?: string;
   device?: string | true;
   udid?: string;
+  scheme?: string;
   verbose: boolean;
   port: number;
   terminal: string | undefined;
@@ -69,6 +69,10 @@ function buildIOS(_: Array<string>, ctx: Config, args: FlagsT) {
 
   // // No need to load all available devices
   if (!args.device && !args.udid) {
+    if (!args.simulator) {
+      return buildProject(xcodeProject, undefined, scheme, extendedArgs);
+    }
+
     /**
      * If provided simulator does not exist, try simulators in following order
      * - iPhone 14
@@ -191,7 +195,6 @@ export default {
       description:
         'Explicitly set simulator to use. Optionally include iOS version between ' +
         'parenthesis at the end to match an exact version: "iPhone 6 (10.0)"',
-      default: 'iPhone 14',
     },
     {
       name: '--configuration <string>',

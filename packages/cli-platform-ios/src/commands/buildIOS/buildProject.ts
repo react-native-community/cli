@@ -19,7 +19,7 @@ export type BuildFlags = {
 
 export function buildProject(
   xcodeProject: IOSProjectInfo,
-  udid: string,
+  udid: string | undefined,
   scheme: string,
   args: BuildFlags,
 ): Promise<string> {
@@ -34,7 +34,11 @@ export function buildProject(
       '-scheme',
       scheme,
       '-destination',
-      `id=${udid}`,
+      udid
+        ? `id=${udid}`
+        : args.configuration === 'Debug'
+        ? 'generic/platform=iOS Simulator'
+        : 'generic/platform=iOS',
     ];
     // @todo use `getLoader` from cli-tools package
     const loader = ora();

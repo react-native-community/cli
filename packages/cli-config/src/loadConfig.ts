@@ -98,32 +98,38 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
     const localDependencyRoot =
       userConfig.dependencies[dependencyName] &&
       userConfig.dependencies[dependencyName].root;
-    let root =
-      localDependencyRoot || resolveNodeModuleDir(projectRoot, dependencyName);
-    let config = readDependencyConfigFromDisk(root, dependencyName);
 
-    const isPlatform = Object.keys(config.platforms).length > 0;
+    try {
+      let root =
+        localDependencyRoot ||
+        resolveNodeModuleDir(projectRoot, dependencyName);
+      let config = readDependencyConfigFromDisk(root, dependencyName);
 
-    return assign({}, acc, {
-      dependencies: assign({}, acc.dependencies, {
-        get [dependencyName](): DependencyConfig {
-          return getDependencyConfig(
-            root,
-            dependencyName,
-            finalConfig,
-            config,
-            userConfig,
-            isPlatform,
-          );
+      const isPlatform = Object.keys(config.platforms).length > 0;
+
+      return assign({}, acc, {
+        dependencies: assign({}, acc.dependencies, {
+          get [dependencyName](): DependencyConfig {
+            return getDependencyConfig(
+              root,
+              dependencyName,
+              finalConfig,
+              config,
+              userConfig,
+              isPlatform,
+            );
+          },
+        }),
+        commands: [...acc.commands, ...config.commands],
+        platforms: {
+          ...acc.platforms,
+          ...config.platforms,
         },
-      }),
-      commands: [...acc.commands, ...config.commands],
-      platforms: {
-        ...acc.platforms,
-        ...config.platforms,
-      },
-      healthChecks: [...acc.healthChecks, ...config.healthChecks],
-    }) as Config;
+        healthChecks: [...acc.healthChecks, ...config.healthChecks],
+      }) as Config;
+    } catch {
+      return acc;
+    }
   }, initialConfig);
 
   return finalConfig;

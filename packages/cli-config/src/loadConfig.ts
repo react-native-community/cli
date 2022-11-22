@@ -8,7 +8,6 @@ import {
 } from '@react-native-community/cli-types';
 import {
   findProjectRoot,
-  logger,
   resolveNodeModuleDir,
 } from '@react-native-community/cli-tools';
 import findDependencies from './findDependencies';
@@ -56,7 +55,6 @@ function getDependencyConfig(
  * Loads CLI configuration
  */
 function loadConfig(projectRoot: string = findProjectRoot()): Config {
-  let hasMissingDependencies = false;
   let lazyProject: ProjectConfig;
   const userConfig = readConfigFromDisk(projectRoot);
 
@@ -129,15 +127,10 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
         },
         healthChecks: [...acc.healthChecks, ...config.healthChecks],
       }) as Config;
-    } catch (error) {
-      hasMissingDependencies = true;
+    } catch {
       return acc;
     }
   }, initialConfig);
-
-  if (hasMissingDependencies) {
-    logger.warn('Please check if your project dependencies are installed.');
-  }
 
   return finalConfig;
 }

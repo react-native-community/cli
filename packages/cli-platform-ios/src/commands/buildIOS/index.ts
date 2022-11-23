@@ -20,6 +20,7 @@ import {getDestinationSimulator} from '../../tools/getDestinationSimulator';
 import {getDevices} from '../../tools/getDevices';
 
 interface FlagsT extends BuildFlags {
+  configuration?: string;
   simulator?: string;
   device?: string | true;
   udid?: string;
@@ -31,6 +32,10 @@ function buildIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     throw new CLIError(
       'iOS project folder not found. Are you sure this is a React Native project?',
     );
+  }
+
+  if (args.configuration) {
+    logger.warn('--configuration has been deprecated. Use --mode instead.');
   }
 
   const {xcodeProject, sourceDir} = ctx.project.ios;
@@ -190,8 +195,13 @@ export default {
     },
     {
       name: '--mode <string>',
-      description: 'Explicitly set the scheme mode to use',
+      description: 'Explicitly set the scheme configuration to use',
       default: 'Debug',
+    },
+    {
+      name: '--configuration <string>',
+      description:
+        '[Deprecated] Explicitly set the scheme configuration to use',
     },
     {
       name: '--scheme <string>',

@@ -15,25 +15,18 @@ import {
   CLIError,
   getDefaultUserTerminal,
 } from '@react-native-community/cli-tools';
-import {buildProject} from '../buildIOS/buildProject';
+import {BuildFlags, buildProject} from '../buildIOS/buildProject';
 import {Device} from '../../types';
 import {getDestinationSimulator} from '../../tools/getDestinationSimulator';
 import {getDevices} from '../../tools/getDevices';
 
-type FlagsT = {
+interface FlagsT extends BuildFlags {
   simulator?: string;
-  configuration: string;
   scheme?: string;
   projectPath: string;
   device?: string | true;
   udid?: string;
-  packager: boolean;
-  verbose: boolean;
-  port: number;
-  terminal: string | undefined;
-  xcconfig?: string;
-  buildFolder?: string;
-};
+}
 
 function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   if (!ctx.project.ios) {

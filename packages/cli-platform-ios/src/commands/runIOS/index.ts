@@ -146,12 +146,7 @@ async function runOnSimulator(
     args,
   );
 
-  const appPath = getBuildPath(
-    xcodeProject,
-    args.configuration,
-    buildOutput,
-    scheme,
-  );
+  const appPath = getBuildPath(xcodeProject, args.mode, buildOutput, scheme);
 
   logger.info(`Installing "${chalk.bold(appPath)}"`);
 
@@ -218,7 +213,7 @@ async function runOnDevice(
   if (selectedDevice.type === 'catalyst') {
     const appPath = getBuildPath(
       xcodeProject,
-      args.configuration,
+      args.mode,
       buildOutput,
       scheme,
       true,
@@ -231,7 +226,7 @@ async function runOnDevice(
   } else {
     const iosDeployInstallArgs = [
       '--bundle',
-      getBuildPath(xcodeProject, args.configuration, buildOutput, scheme),
+      getBuildPath(xcodeProject, args.mode, buildOutput, scheme),
       '--id',
       selectedDevice.udid,
       '--justlaunch',
@@ -404,7 +399,7 @@ export default {
       default: 'iPhone 14',
     },
     {
-      name: '--configuration <string>',
+      name: '--mode <string>',
       description: 'Explicitly set the scheme configuration to use',
       default: 'Debug',
     },

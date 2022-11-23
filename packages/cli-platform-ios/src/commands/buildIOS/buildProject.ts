@@ -8,7 +8,7 @@ import {logger, CLIError} from '@react-native-community/cli-tools';
 import ora from 'ora';
 
 export type BuildFlags = {
-  configuration: string;
+  mode: string;
   packager: boolean;
   verbose: boolean;
   xcconfig?: string;
@@ -30,13 +30,13 @@ export function buildProject(
       ...(args.xcconfig ? ['-xcconfig', args.xcconfig] : []),
       ...(args.buildFolder ? ['-derivedDataPath', args.buildFolder] : []),
       '-configuration',
-      args.configuration,
+      args.mode,
       '-scheme',
       scheme,
       '-destination',
       udid
         ? `id=${udid}`
-        : args.configuration === 'Debug'
+        : args.mode === 'Debug'
         ? 'generic/platform=iOS Simulator'
         : 'generic/platform=iOS',
     ];

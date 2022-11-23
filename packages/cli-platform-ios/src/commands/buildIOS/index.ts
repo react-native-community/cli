@@ -174,7 +174,7 @@ export default {
     },
     {
       desc: 'Build the app for all IOS devices',
-      cmd: 'react-native build-ios --configuration "Release"',
+      cmd: 'react-native build-ios --mode "Release"',
     },
     {
       desc: 'Build the app for a specific IOS device',
@@ -189,8 +189,8 @@ export default {
         'parenthesis at the end to match an exact version: "iPhone 6 (10.0)"',
     },
     {
-      name: '--configuration <string>',
-      description: 'Explicitly set the scheme configuration to use',
+      name: '--mode <string>',
+      description: 'Explicitly set the scheme mode to use',
       default: 'Debug',
     },
     {

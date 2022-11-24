@@ -19,7 +19,7 @@ import {BuildFlags, buildProject} from './buildProject';
 import {getDestinationSimulator} from '../../tools/getDestinationSimulator';
 import {getDevices} from '../../tools/getDevices';
 
-interface FlagsT extends BuildFlags {
+export interface FlagsT extends BuildFlags {
   configuration?: string;
   simulator?: string;
   device?: string | true;

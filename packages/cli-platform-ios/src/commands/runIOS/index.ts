@@ -154,18 +154,35 @@ async function runOnSimulator(
     'iPhone 12',
     'iPhone 11',
   ];
-  const selectedSimulator = fallbackSimulators.reduce((simulator, fallback) => {
-    return (
-      simulator || findMatchingSimulator(simulators, {simulator: fallback})
-    );
-  }, findMatchingSimulator(simulators, args));
 
-  if (!selectedSimulator) {
-    throw new CLIError(
-      `No simulator available with ${
-        args.simulator ? `name "${args.simulator}"` : `udid "${args.udid}"`
-      }`,
-    );
+  let selectedSimulator;
+
+  if (args.simulator && args.simulator === 'booted') {
+    Object.values(simulators.devices).forEach((devices) => {
+      const bootedSimulator = devices.find(({state}) => state === 'Booted');
+
+      if (bootedSimulator) {
+        selectedSimulator = bootedSimulator;
+      }
+    });
+
+    if (!selectedSimulator) {
+      throw new CLIError('No booted simulator found.');
+    }
+  } else {
+    selectedSimulator = fallbackSimulators.reduce((simulator, fallback) => {
+      return (
+        simulator || findMatchingSimulator(simulators, {simulator: fallback})
+      );
+    }, findMatchingSimulator(simulators, args));
+
+    if (!selectedSimulator) {
+      throw new CLIError(
+        `No simulator available with ${
+          args.simulator ? `name "${args.simulator}"` : `udid "${args.udid}"`
+        }`,
+      );
+    }
   }
 
   /**

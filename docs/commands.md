@@ -404,6 +404,8 @@ Notes: If selected simulator does not exist, cli will try to run fallback simula
 
 Notes: `simulator_name` must be a valid iOS simulator name. If in doubt, open your AwesomeApp/ios/AwesomeApp.xcodeproj folder on XCode and unroll the dropdown menu containing the simulator list. The dropdown menu is situated on the right hand side of the play button (top left corner).
 
+Notes: You can pass `booted` as the `simulator_name` to launch the currently booted simulator.
+
 Example: this will launch your project directly onto the iPhone XS Max simulator:
 
 ```sh

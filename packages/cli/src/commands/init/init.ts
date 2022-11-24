@@ -183,7 +183,7 @@ function createTemplateUri(options: Options, version: string): string {
     logger.warn(
       "Ignoring custom template: 'react-native-template-typescript'. Starting from React Native v0.71 TypeScript is used by default.",
     );
-    return `react-native@${version}`;
+    return 'react-native';
   }
 
   return options.template || `react-native@${version}`;

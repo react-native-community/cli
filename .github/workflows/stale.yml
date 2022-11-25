@@ -18,5 +18,6 @@ jobs:
           days-before-close: 7
           stale-issue-label: 'stale'
           stale-pr-label: 'stale'
+          operations-per-run: 300
           stale-issue-message: "There hasn't been any activity on this issue in the past 3 months, so it has been marked as stale and it will be closed automatically if no further activity occurs in the next 7 days."
           stale-pr-message: "There hasn't been any activity on this pull request in the past 3 months, so it has been marked as stale and it will be closed automatically if no further activity occurs in the next 7 days."

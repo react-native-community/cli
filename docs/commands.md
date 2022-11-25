@@ -393,14 +393,16 @@ Builds your app and starts it on iOS simulator.
 
 #### `--simulator <simulator_name>`
 
-> default: iPhone 11
+> default: iPhone 14
 
 Explicitly set the simulator to use. Optionally include iOS version between parenthesis at the end to match an exact version, e.g. `"iPhone 6 (10.0)"`.
 
 Notes: If selected simulator does not exist, cli will try to run fallback simulators in following order:
 
-- `iPhone X`
-- `iPhone 8`
+- `iPhone 14`
+- `iPhone 13`
+- `iPhone 12`
+- `iPhone 11`
 
 Notes: `simulator_name` must be a valid iOS simulator name. If in doubt, open your AwesomeApp/ios/AwesomeApp.xcodeproj folder on XCode and unroll the dropdown menu containing the simulator list. The dropdown menu is situated on the right hand side of the play button (top left corner).
 

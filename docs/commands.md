@@ -446,7 +446,7 @@ Default: `process.env.RCT_METRO_PORT || 8081`
 
 #### `--xcconfig <string>`
 
-Explicitly pass `xcconfig` options from the command line.
+Explicitly set `xcconfig` to use in build.
 
 #### `--buildFolder <string>`
 

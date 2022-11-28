@@ -14,12 +14,12 @@ import {startServerInNewWindow} from '../runAndroid';
 
 export interface BuildFlags {
   mode: 'debug' | 'release';
-  variant?: string;
   activeArchOnly?: boolean;
   packager: boolean;
   port: number;
   terminal: string;
   tasks?: Array<string>;
+  extraParams?: Array<string>;
 }
 
 export async function runPackager(args: BuildFlags, config: Config) {
@@ -50,9 +50,21 @@ async function buildAndroid(
   args: BuildFlags,
 ) {
   const androidProject = getAndroidProject(config);
-  const variant = args.variant ?? (args.mode || 'debug');
+  const variant = args.mode || 'debug';
+
+  if (args.tasks && args.mode) {
+    logger.warn(
+      'Both "tasks" and "mode" parameters were passed to "build" command. Using "tasks" for building the app.',
+    );
+  }
+
   const tasks = args.tasks || ['assemble' + toPascalCase(variant)];
-  const gradleArgs = getTaskNames(androidProject.appName, tasks);
+
+  let gradleArgs = getTaskNames(androidProject.appName, tasks);
+
+  if (args.extraParams) {
+    gradleArgs = [...gradleArgs, ...args.extraParams];
+  }
 
   if (args.activeArchOnly) {
     const adbPath = getAdbPath();
@@ -104,10 +116,6 @@ export default {
       default: 'debug',
     },
     {
-      name: '--variant <string>',
-      description: 'Override mode with your custom configuration',
-    },
-    {
       name: '--no-packager',
       description: 'Do not launch packager while building',
     },
@@ -133,6 +141,11 @@ export default {
       description:
         'Build native libraries only for the current device architecture for debug builds.',
       default: false,
+    },
+    {
+      name: '--extra-params <string>',
+      description: 'Custom properties passed to gradle build command',
+      parse: (val: string) => val.split(' '),
     },
   ],
 };

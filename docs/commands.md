@@ -398,14 +398,13 @@ Builds Android app.
 
 Mode to build the app. Either 'debug' (default) or 'release'. 
 
-#### `--variant <string>`
 
-Custom build variant that is set in `build.gradle` file. Will override `mode` option.
+#### `--extra-params <string>`
 
-Example: this will build Android app with Staging variant (run `./gradlew bundleStaging` under the hood):
-
-```bash
-react-native build-android --variant staging
+Custom properties that will be passed to gradle build command. 
+Example: 
+```sh
+react-native build-android --extra-params "-x lint -x test"
 ```
 
 

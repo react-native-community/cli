@@ -64,7 +64,10 @@ function runOnSpecificDevice(
   if (devices.length > 0 && deviceId) {
     if (devices.indexOf(deviceId) !== -1) {
       // using '-x lint' in order to ignore linting errors while building the apk
-      const gradleArgs = ['build', '-x', 'lint'];
+      let gradleArgs = ['build', '-x', 'lint'];
+      if (args.extraParams) {
+        gradleArgs = [...gradleArgs, ...args.extraParams];
+      }
       build(gradleArgs, androidProject.sourceDir);
       installAndLaunchOnDevice(args, deviceId, adbPath, androidProject);
     } else {
@@ -87,7 +90,7 @@ function tryInstallAppOnDevice(
   try {
     // "app" is usually the default value for Android apps with only 1 app
     const {appName, sourceDir} = androidProject;
-    const variant = (args.variant ?? (args.mode || 'debug')).toLowerCase();
+    const variant = (args.mode || 'debug').toLowerCase();
     const buildDirectory = `${sourceDir}/${appName}/build/outputs/apk/${variant}`;
     const apkFile = getInstallApkName(
       appName,
@@ -235,7 +238,7 @@ export default {
   func: runAndroid,
   options: [
     {
-      name: '--variant <string>',
+      name: '--mode <release|debug>',
       description: "Specify your app's build variant",
       default: 'debug',
     },
@@ -286,6 +289,11 @@ export default {
       description:
         'Build native libraries only for the current device architecture for debug builds.',
       default: false,
+    },
+    {
+      name: '--extra-params <string>',
+      description: 'Custom properties passed to gradle build command',
+      parse: (val: string) => val.split(' '),
     },
   ],
 };

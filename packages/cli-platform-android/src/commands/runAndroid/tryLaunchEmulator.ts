@@ -6,7 +6,7 @@ const emulatorCommand = process.env.ANDROID_HOME
   ? `${process.env.ANDROID_HOME}/emulator/emulator`
   : 'emulator';
 
-const getEmulators = () => {
+export const getEmulators = () => {
   try {
     const emulatorsOutput = execa.sync(emulatorCommand, ['-list-avds']).stdout;
     return emulatorsOutput.split(os.EOL).filter((name) => name !== '');
@@ -15,12 +15,22 @@ const getEmulators = () => {
   }
 };
 
-const launchEmulator = async (emulatorName: string, adbPath: string) => {
+export const launchEmulator = async (
+  emulatorName: string,
+  adbPath: string,
+  port?: string,
+) => {
+  console.log('emulatorNAme', emulatorName);
+  console.log('port', port);
   return new Promise((resolve, reject) => {
-    const cp = execa(emulatorCommand, [`@${emulatorName}`], {
-      detached: true,
-      stdio: 'ignore',
-    });
+    const cp = execa(
+      emulatorCommand,
+      [`@${emulatorName}`, port ? '-port' : '', port ? `${port}` : ''],
+      {
+        detached: true,
+        stdio: 'ignore',
+      },
+    );
     cp.unref();
     const timeout = 30;
 
@@ -56,11 +66,13 @@ const launchEmulator = async (emulatorName: string, adbPath: string) => {
 
 export default async function tryLaunchEmulator(
   adbPath: string,
+  emulatorName?: string,
+  port?: string,
 ): Promise<{success: boolean; error?: string}> {
   const emulators = getEmulators();
   if (emulators.length > 0) {
     try {
-      await launchEmulator(emulators[0], adbPath);
+      await launchEmulator(emulatorName ?? emulators[0], adbPath, port);
       return {success: true};
     } catch (error) {
       return {success: false, error};

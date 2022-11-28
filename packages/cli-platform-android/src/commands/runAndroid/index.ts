@@ -21,7 +21,8 @@ import {
   CLIError,
 } from '@react-native-community/cli-tools';
 import {getAndroidProject} from '../../config/getAndroidProject';
-
+import listAndroidDevices from './listAndroidDevices';
+import tryLaunchEmulator, {launchEmulator} from './tryLaunchEmulator';
 export interface Flags {
   tasks?: Array<string>;
   variant: string;
@@ -33,6 +34,7 @@ export interface Flags {
   port: number;
   terminal: string;
   activeArchOnly: boolean;
+  listDevices?: boolean;
 }
 
 type AndroidProject = NonNullable<Config['project']['android']>;
@@ -72,11 +74,46 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
 }
 
 // Builds the app and runs it on a connected emulator / device.
-function buildAndRun(args: Flags, androidProject: AndroidProject) {
+async function buildAndRun(args: Flags, androidProject: AndroidProject) {
   process.chdir(androidProject.sourceDir);
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
 
   const adbPath = getAdbPath();
+  if (args.listDevices) {
+    const device = await listAndroidDevices();
+    console.log('device', device);
+    if (!device) {
+      return logger.error(
+        'Failed to select device, please try to run app without --list-devices command',
+      );
+    }
+
+    if (device.connected) {
+      return runOnSpecificDevice(
+        {...args, deviceId: device.deviceId},
+        cmd,
+        adbPath,
+        androidProject,
+      );
+    }
+
+    try {
+      console.log('launch emu here....');
+      // todo port 5584 can be taken, figure out a way to fix that...
+      // FIXME: await not woking, emu spawning to late and install command is failing... :|
+      await tryLaunchEmulator(adbPath, device.readableName, '5584');
+      console.log('runOnSpecificDevice');
+      // TODO: Get deviceId for launched emulator and then use it
+      return runOnSpecificDevice(
+        {...args, deviceId: 'emulator-5584'},
+        cmd,
+        adbPath,
+        androidProject,
+      );
+    } catch (error) {
+      throw new CLIError(error);
+    }
+  }
   if (args.deviceId) {
     return runOnSpecificDevice(args, cmd, adbPath, androidProject);
   } else {
@@ -326,6 +363,12 @@ export default {
       name: '--active-arch-only',
       description:
         'Build native libraries only for the current device architecture for debug builds.',
+      default: false,
+    },
+    {
+      name: '--list-devices',
+      description:
+        'Will list all available Android devices and simulators and let you choos one to run the app',
       default: false,
     },
   ],

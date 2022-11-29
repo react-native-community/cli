@@ -385,6 +385,7 @@ Build native libraries only for the current device architecture for debug builds
 > default: false
 
 List all available Android devices and simulators and let you choose one to run the app.
+
 ### `build-android`
 
 Usage:
@@ -401,17 +402,20 @@ Builds Android app.
 
 > default: debug
 
-Mode to build the app. Either 'debug' (default) or 'release'. 
-
+Mode to build the app. Either 'debug' (default) or 'release'.
 
 #### `--extra-params <string>`
 
-Custom properties that will be passed to gradle build command. 
-Example: 
+Custom properties that will be passed to gradle build command.
+Example:
+
 ```sh
 react-native build-android --extra-params "-x lint -x test"
 ```
 
+#### `--binary-path <path>`
+
+Installs passed binary instead of building a fresh one. This command is not compatible with `--tasks`.
 
 ### `run-ios`
 
@@ -483,6 +487,10 @@ Explicitly pass `xcconfig` options from the command line.
 #### `--buildFolder <string>`
 
 Location for iOS build artifacts. Corresponds to Xcode's `-derivedDataPath`.
+
+#### `--binary-path <path>`
+
+Installs passed binary instead of building a fresh one.
 
 ### `start`
 

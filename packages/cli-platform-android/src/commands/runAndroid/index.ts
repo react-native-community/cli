@@ -100,6 +100,12 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
 
   const adbPath = getAdbPath();
   if (args.listDevices) {
+    if (args.deviceId) {
+      logger.warn(
+        'Both "deviceId" and "--list-devices" parameters were passed to "run" command. We will list available devices and let you choose from one',
+      );
+    }
+
     const device = await listAndroidDevices();
     if (!device) {
       return logger.error(

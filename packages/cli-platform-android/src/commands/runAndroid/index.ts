@@ -22,7 +22,9 @@ import {
 } from '@react-native-community/cli-tools';
 import {getAndroidProject} from '../../config/getAndroidProject';
 import listAndroidDevices from './listAndroidDevices';
-import tryLaunchEmulator, {launchEmulator} from './tryLaunchEmulator';
+import tryLaunchEmulator from './tryLaunchEmulator';
+import chalk from 'chalk';
+
 export interface Flags {
   tasks?: Array<string>;
   variant: string;
@@ -73,6 +75,24 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
   });
 }
 
+const defaultPort = 5552;
+async function getAvailableDevicePort(
+  port: number = defaultPort,
+): Promise<number> {
+  /**
+   * The default value is 5554 for the first virtual device instance running on your machine. A virtual device normally occupies a pair of adjacent ports: a console port and an adb port. The console of the first virtual device running on a particular machine uses console port 5554 and adb port 5555. Subsequent instances use port numbers increasing by two. For example, 5556/5557, 5558/5559, and so on. The range is 5554 to 5682, allowing for 64 concurrent virtual devices.
+   */
+  const adbPath = getAdbPath();
+  const devices = adb.getDevices(adbPath);
+  if (port > 5682) {
+    throw new CLIError('Failed to launch emulator...');
+  }
+  if (devices.some((d) => d.includes(port.toString()))) {
+    return await getAvailableDevicePort(port + 2);
+  }
+  return port;
+}
+
 // Builds the app and runs it on a connected emulator / device.
 async function buildAndRun(args: Flags, androidProject: AndroidProject) {
   process.chdir(androidProject.sourceDir);
@@ -81,7 +101,6 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
   const adbPath = getAdbPath();
   if (args.listDevices) {
     const device = await listAndroidDevices();
-    console.log('device', device);
     if (!device) {
       return logger.error(
         'Failed to select device, please try to run app without --list-devices command',
@@ -97,21 +116,24 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
       );
     }
 
-    try {
-      console.log('launch emu here....');
-      // todo port 5584 can be taken, figure out a way to fix that...
-      // FIXME: await not woking, emu spawning to late and install command is failing... :|
-      await tryLaunchEmulator(adbPath, device.readableName, '5584');
-      console.log('runOnSpecificDevice');
-      // TODO: Get deviceId for launched emulator and then use it
+    const port = await getAvailableDevicePort();
+    const emulator = `emulator-${port}`;
+    const result = await tryLaunchEmulator(adbPath, device.readableName, port);
+    if (result.success) {
+      logger.info('Successfully launched emulator.');
       return runOnSpecificDevice(
-        {...args, deviceId: 'emulator-5584'},
+        {...args, deviceId: emulator},
         cmd,
         adbPath,
         androidProject,
       );
-    } catch (error) {
-      throw new CLIError(error);
+    } else {
+      logger.error(
+        `Failed to launch emulator. Reason: ${chalk.dim(result.error || '')}.`,
+      );
+      logger.warn(
+        'Please launch an emulator manually or connect a device. Otherwise app may fail to launch.',
+      );
     }
   }
   if (args.deviceId) {
@@ -368,7 +390,7 @@ export default {
     {
       name: '--list-devices',
       description:
-        'Will list all available Android devices and simulators and let you choos one to run the app',
+        'Will list all available Android devices and simulators and let you choose one to run the app',
       default: false,
     },
   ],

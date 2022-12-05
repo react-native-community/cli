@@ -18,6 +18,11 @@ function toPascalCase(value: string) {
   return value !== '' ? value[0].toUpperCase() + value.slice(1) : value;
 }
 
+/**
+ *
+ * @param deviceId string
+ * @returns name of Android emulator
+ */
 function getEmulatorName(deviceId: string) {
   // maybe close it with trycatch block?
   const adbPath = getAdbPath();
@@ -31,6 +36,11 @@ function getEmulatorName(deviceId: string) {
     .trim();
 }
 
+/**
+ *
+ * @param deviceId string
+ * @returns Android device name in readable format
+ */
 function getPhoneName(deviceId: string) {
   const adbPath = getAdbPath();
   const buffer = execSync(
@@ -97,6 +107,7 @@ async function listAndroidDevices() {
 
   // Find not booted ones:
   emulators.forEach((emulatorName) => {
+    // skip those already booted
     if (allDevices.some((device) => device.readableName === emulatorName)) {
       return;
     }
@@ -108,8 +119,6 @@ async function listAndroidDevices() {
     };
     allDevices = [...allDevices, emulatorData];
   });
-
-  console.log('allDevices', allDevices);
 
   const selectedDevice = await promptForDeviceSelection(allDevices);
   return selectedDevice;

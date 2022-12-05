@@ -13,7 +13,8 @@ import getAdbPath from '../runAndroid/getAdbPath';
 import {startServerInNewWindow} from '../runAndroid';
 
 export interface BuildFlags {
-  mode: 'debug' | 'release';
+  mode: string;
+  variant: string;
   activeArchOnly?: boolean;
   packager: boolean;
   port: number;
@@ -50,7 +51,14 @@ async function buildAndroid(
   args: BuildFlags,
 ) {
   const androidProject = getAndroidProject(config);
-  const variant = args.mode || 'debug';
+
+  if (args.variant) {
+    logger.warn(
+      '"variant" flag is deprecated and will be removed in future release. Please switch to "mode" flag.',
+    );
+  }
+
+  const mode = args.variant || args.mode;
 
   if (args.tasks && args.mode) {
     logger.warn(
@@ -58,7 +66,7 @@ async function buildAndroid(
     );
   }
 
-  const tasks = args.tasks || ['assemble' + toPascalCase(variant)];
+  const tasks = args.tasks || ['assemble' + toPascalCase(mode)];
 
   let gradleArgs = getTaskNames(androidProject.appName, tasks);
 
@@ -111,9 +119,14 @@ export default {
   func: buildAndroid,
   options: [
     {
-      name: '--mode <release|debug>',
+      name: '--mode <string>',
       description: "Specify your app's build variant",
       default: 'debug',
+    },
+    {
+      name: '--variant <string>',
+      description:
+        "Specify your app's build variant. Deprecated! Use 'mode' instead",
     },
     {
       name: '--no-packager',

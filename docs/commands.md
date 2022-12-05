@@ -392,7 +392,7 @@ Builds Android app.
 
 #### Options
 
-#### `--mode <release|debug>`
+#### `--mode <string>`
 
 > default: debug
 

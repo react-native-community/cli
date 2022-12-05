@@ -16,8 +16,8 @@ import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
 import getAdbPath from './getAdbPath';
 import {
   logger,
-  getDefaultUserTerminal,
   CLIError,
+  getDefaultUserTerminal,
 } from '@react-native-community/cli-tools';
 import {getAndroidProject} from '../../config/getAndroidProject';
 import {build, runPackager, BuildFlags} from '../buildAndroid';
@@ -238,11 +238,6 @@ export default {
   func: runAndroid,
   options: [
     {
-      name: '--mode <release|debug>',
-      description: "Specify your app's build variant",
-      default: 'debug',
-    },
-    {
       name: '--appId <string>',
       description:
         'Specify an applicationId to launch after build. If not specified, `package` from AndroidManifest.xml will be used.',
@@ -265,6 +260,17 @@ export default {
         'given device id (listed by running "adb devices" on the command line).',
     },
     {
+      name: '--mode <string>',
+      description: "Specify your app's build variant",
+      default: 'debug',
+    },
+    {
+      name: '--variant <string>',
+      description:
+        "Specify your app's build variant. Deprecated! Use 'mode' instead",
+    },
+
+    {
       name: '--no-packager',
       description: 'Do not launch packager while building',
     },
@@ -281,7 +287,8 @@ export default {
     },
     {
       name: '--tasks <list>',
-      description: 'Run custom Gradle tasks. By default it\'s "installDebug"',
+      description:
+        'Run custom Gradle tasks. By default it\'s "assembleDebug". Will override passed mode and variant arguments.',
       parse: (val: string) => val.split(','),
     },
     {

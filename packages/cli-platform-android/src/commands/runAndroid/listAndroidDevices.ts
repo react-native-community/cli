@@ -48,8 +48,7 @@ function getPhoneName(deviceId: string) {
   );
   return buffer
     .toString()
-    .replace(/[[\]:ro/.product/.model]+/g, '')
-    .replace(/(\r\n|\n|\r)/gm, '')
+    .replace(/\[ro\.product\.model\]:\s*\[(.*)\]/, '$1')
     .trim();
 }
 

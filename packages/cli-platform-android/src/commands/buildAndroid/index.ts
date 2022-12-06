@@ -10,7 +10,7 @@ import {getAndroidProject} from '../../config/getAndroidProject';
 import {getTaskNames, toPascalCase} from '../runAndroid/runOnAllDevices';
 import adb from '../runAndroid/adb';
 import getAdbPath from '../runAndroid/getAdbPath';
-import {startServerInNewWindow} from '../runAndroid';
+import {startServerInNewWindow} from './startServerInNewWindow';
 
 export interface BuildFlags {
   mode: string;
@@ -113,52 +113,54 @@ export function build(gradleArgs: string[], sourceDir: string) {
   }
 }
 
+export const options = [
+  {
+    name: '--mode <string>',
+    description: "Specify your app's build variant",
+    default: 'debug',
+  },
+  {
+    name: '--variant <string>',
+    description:
+      "Specify your app's build variant. Deprecated! Use 'mode' instead",
+  },
+  {
+    name: '--no-packager',
+    description: 'Do not launch packager while building',
+  },
+  {
+    name: '--port <number>',
+    default: process.env.RCT_METRO_PORT || 8081,
+    parse: Number,
+  },
+  {
+    name: '--terminal <string>',
+    description:
+      'Launches the Metro Bundler in a new window using the specified terminal path.',
+    default: getDefaultUserTerminal(),
+  },
+  {
+    name: '--tasks <list>',
+    description:
+      'Run custom Gradle tasks. By default it\'s "assembleDebug". Will override passed mode and variant arguments.',
+    parse: (val: string) => val.split(','),
+  },
+  {
+    name: '--active-arch-only',
+    description:
+      'Build native libraries only for the current device architecture for debug builds.',
+    default: false,
+  },
+  {
+    name: '--extra-params <string>',
+    description: 'Custom properties passed to gradle build command',
+    parse: (val: string) => val.split(' '),
+  },
+];
+
 export default {
   name: 'build-android',
   description: 'builds your app',
   func: buildAndroid,
-  options: [
-    {
-      name: '--mode <string>',
-      description: "Specify your app's build variant",
-      default: 'debug',
-    },
-    {
-      name: '--variant <string>',
-      description:
-        "Specify your app's build variant. Deprecated! Use 'mode' instead",
-    },
-    {
-      name: '--no-packager',
-      description: 'Do not launch packager while building',
-    },
-    {
-      name: '--port <number>',
-      default: process.env.RCT_METRO_PORT || 8081,
-      parse: Number,
-    },
-    {
-      name: '--terminal <string>',
-      description:
-        'Launches the Metro Bundler in a new window using the specified terminal path.',
-      default: getDefaultUserTerminal(),
-    },
-    {
-      name: '--tasks <list>',
-      description:
-        'Run custom Gradle tasks. By default it\'s "assembleDebug". Will override passed mode and variant arguments.',
-      parse: (val: string) => val.split(','),
-    },
-    {
-      name: '--active-arch-only',
-      description:
-        'Build native libraries only for the current device architecture for debug builds.',
-      default: false,
-    },
-    {
-      name: '--extra-params <string>',
-      description: 'Custom properties passed to gradle build command',
-      parse: (val: string) => val.split(' '),
-    },
-  ],
+  options: options,
 };

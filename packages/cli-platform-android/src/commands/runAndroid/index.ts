@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import path from 'path';
 import execa from 'execa';
 import fs from 'fs';
 import {Config} from '@react-native-community/cli-types';
@@ -14,13 +13,9 @@ import runOnAllDevices from './runOnAllDevices';
 import tryRunAdbReverse from './tryRunAdbReverse';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
 import getAdbPath from './getAdbPath';
-import {
-  logger,
-  CLIError,
-  getDefaultUserTerminal,
-} from '@react-native-community/cli-tools';
+import {logger, CLIError} from '@react-native-community/cli-tools';
 import {getAndroidProject} from '../../config/getAndroidProject';
-import {build, runPackager, BuildFlags} from '../buildAndroid';
+import {build, runPackager, BuildFlags, options} from '../buildAndroid';
 
 export interface Flags extends BuildFlags {
   appId: string;
@@ -154,89 +149,13 @@ function installAndLaunchOnDevice(
   );
 }
 
-export function startServerInNewWindow(
-  port: number,
-  terminal: string,
-  reactNativePath: string,
-) {
-  /**
-   * Set up OS-specific filenames and commands
-   */
-  const isWindows = /^win/.test(process.platform);
-  const scriptFile = isWindows
-    ? 'launchPackager.bat'
-    : 'launchPackager.command';
-  const packagerEnvFilename = isWindows ? '.packager.bat' : '.packager.env';
-  const portExportContent = isWindows
-    ? `set RCT_METRO_PORT=${port}`
-    : `export RCT_METRO_PORT=${port}`;
-
-  /**
-   * Set up the `.packager.(env|bat)` file to ensure the packager starts on the right port.
-   */
-  const launchPackagerScript = path.join(
-    reactNativePath,
-    `scripts/${scriptFile}`,
-  );
-
-  /**
-   * Set up the `launchpackager.(command|bat)` file.
-   * It lives next to `.packager.(bat|env)`
-   */
-  const scriptsDir = path.dirname(launchPackagerScript);
-  const packagerEnvFile = path.join(scriptsDir, packagerEnvFilename);
-  const procConfig: execa.SyncOptions = {cwd: scriptsDir};
-
-  /**
-   * Ensure we overwrite file by passing the `w` flag
-   */
-  fs.writeFileSync(packagerEnvFile, portExportContent, {
-    encoding: 'utf8',
-    flag: 'w',
-  });
-
-  if (process.platform === 'darwin') {
-    try {
-      return execa.sync(
-        'open',
-        ['-a', terminal, launchPackagerScript],
-        procConfig,
-      );
-    } catch (error) {
-      return execa.sync('open', [launchPackagerScript], procConfig);
-    }
-  }
-  if (process.platform === 'linux') {
-    try {
-      return execa.sync(terminal, ['-e', `sh ${launchPackagerScript}`], {
-        ...procConfig,
-        detached: true,
-      });
-    } catch (error) {
-      // By default, the child shell process will be attached to the parent
-      return execa.sync('sh', [launchPackagerScript], procConfig);
-    }
-  }
-  if (/^win/.test(process.platform)) {
-    // Awaiting this causes the CLI to hang indefinitely, so this must execute without await.
-    return execa('cmd.exe', ['/C', launchPackagerScript], {
-      ...procConfig,
-      detached: true,
-      stdio: 'ignore',
-    });
-  }
-  logger.error(
-    `Cannot start the packager. Unknown platform ${process.platform}`,
-  );
-  return;
-}
-
 export default {
   name: 'run-android',
   description:
     'builds your app and starts it on a connected Android emulator or device',
   func: runAndroid,
   options: [
+    ...options,
     {
       name: '--appId <string>',
       description:
@@ -258,49 +177,6 @@ export default {
       description:
         'builds your app and starts it on a specific device/simulator with the ' +
         'given device id (listed by running "adb devices" on the command line).',
-    },
-    {
-      name: '--mode <string>',
-      description: "Specify your app's build variant",
-      default: 'debug',
-    },
-    {
-      name: '--variant <string>',
-      description:
-        "Specify your app's build variant. Deprecated! Use 'mode' instead",
-    },
-
-    {
-      name: '--no-packager',
-      description: 'Do not launch packager while building',
-    },
-    {
-      name: '--port <number>',
-      default: process.env.RCT_METRO_PORT || 8081,
-      parse: Number,
-    },
-    {
-      name: '--terminal <string>',
-      description:
-        'Launches the Metro Bundler in a new window using the specified terminal path.',
-      default: getDefaultUserTerminal(),
-    },
-    {
-      name: '--tasks <list>',
-      description:
-        'Run custom Gradle tasks. By default it\'s "assembleDebug". Will override passed mode and variant arguments.',
-      parse: (val: string) => val.split(','),
-    },
-    {
-      name: '--active-arch-only',
-      description:
-        'Build native libraries only for the current device architecture for debug builds.',
-      default: false,
-    },
-    {
-      name: '--extra-params <string>',
-      description: 'Custom properties passed to gradle build command',
-      parse: (val: string) => val.split(' '),
     },
   ],
 };

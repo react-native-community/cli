@@ -175,13 +175,27 @@ async function installDependencies({
   loader.succeed();
 }
 
+function createTemplateUri(options: Options, version: string): string {
+  const isTypescriptTemplate =
+    options.template === 'react-native-template-typescript';
+
+  if (isTypescriptTemplate) {
+    logger.warn(
+      "Ignoring custom template: 'react-native-template-typescript'. Starting from React Native v0.71 TypeScript is used by default.",
+    );
+    return 'react-native';
+  }
+
+  return options.template || `react-native@${version}`;
+}
+
 async function createProject(
   projectName: string,
   directory: string,
   version: string,
   options: Options,
 ) {
-  const templateUri = options.template || `react-native@${version}`;
+  const templateUri = createTemplateUri(options, version);
 
   return createFromTemplate({
     projectName,

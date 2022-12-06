@@ -12,6 +12,7 @@ React Native CLI comes with following commands:
 - [`log-ios`](#log-ios)
 - [`ram-bundle`](#ram-bundle)
 - [`run-android`](#run-android)
+- [`build-android`](#build-android)
 - [`run-ios`](#run-ios)
 - [`start`](#start)
 - [`upgrade`](#upgrade)
@@ -384,6 +385,32 @@ Build native libraries only for the current device architecture for debug builds
 > default: false
 
 List all available Android devices and simulators and let you choose one to run the app.
+### `build-android`
+
+Usage:
+
+```sh
+react-native build-android [options]
+```
+
+Builds Android app.
+
+#### Options
+
+#### `--mode <string>`
+
+> default: debug
+
+Mode to build the app. Either 'debug' (default) or 'release'. 
+
+
+#### `--extra-params <string>`
+
+Custom properties that will be passed to gradle build command. 
+Example: 
+```sh
+react-native build-android --extra-params "-x lint -x test"
+```
 
 
 ### `run-ios`
@@ -400,14 +427,16 @@ Builds your app and starts it on iOS simulator.
 
 #### `--simulator <simulator_name>`
 
-> default: iPhone 11
+> default: iPhone 14
 
 Explicitly set the simulator to use. Optionally include iOS version between parenthesis at the end to match an exact version, e.g. `"iPhone 6 (10.0)"`.
 
 Notes: If selected simulator does not exist, cli will try to run fallback simulators in following order:
 
-- `iPhone X`
-- `iPhone 8`
+- `iPhone 14`
+- `iPhone 13`
+- `iPhone 12`
+- `iPhone 11`
 
 Notes: `simulator_name` must be a valid iOS simulator name. If in doubt, open your AwesomeApp/ios/AwesomeApp.xcodeproj folder on XCode and unroll the dropdown menu containing the simulator list. The dropdown menu is situated on the right hand side of the play button (top left corner).
 

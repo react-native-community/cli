@@ -1,0 +1,25 @@
+
+name: Mark issues and PRs as stale
+on:
+  schedule:
+    - cron: '0 3 * * *'
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/stale@v5
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          days-before-stale: 90
+          days-before-close: 7
+          stale-issue-label: 'stale'
+          stale-pr-label: 'stale'
+          exempt-issue-labels: 'no-stale-bot'
+          exempt-pr-labels: 'no-stale-bot'
+          operations-per-run: 300
+          stale-issue-message: "There hasn't been any activity on this issue in the past 3 months, so it has been marked as stale and it will be closed automatically if no further activity occurs in the next 7 days."
+          stale-pr-message: "There hasn't been any activity on this pull request in the past 3 months, so it has been marked as stale and it will be closed automatically if no further activity occurs in the next 7 days."

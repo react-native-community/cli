@@ -19,7 +19,7 @@ describe('--appFolder', () => {
   const args: Flags = {
     appId: '',
     tasks: undefined,
-    variant: 'debug',
+    mode: 'debug',
     appIdSuffix: '',
     mainActivity: 'MainActivity',
     deviceId: undefined,
@@ -39,7 +39,7 @@ describe('--appFolder', () => {
 
   it('uses task "install[Variant]" as default task', async () => {
     await runOnAllDevices(
-      {...args, variant: 'debug'},
+      {...args, mode: 'debug'},
       './gradlew',
       'adb',
       androidProject,
@@ -50,7 +50,7 @@ describe('--appFolder', () => {
   });
 
   it('uses appName and default variant', async () => {
-    await runOnAllDevices({...args, variant: 'debug'}, './gradlew', 'adb', {
+    await runOnAllDevices({...args, mode: 'debug'}, './gradlew', 'adb', {
       ...androidProject,
       appName: 'someApp',
     });
@@ -61,13 +61,13 @@ describe('--appFolder', () => {
   });
 
   it('uses appName and custom variant', async () => {
-    await runOnAllDevices({...args, variant: 'staging'}, './gradlew', 'adb', {
+    await runOnAllDevices({...args, mode: 'release'}, './gradlew', 'adb', {
       ...androidProject,
       appName: 'anotherApp',
     });
 
     expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toContain(
-      'anotherApp:installStaging',
+      'anotherApp:installRelease',
     );
   });
 

@@ -12,6 +12,7 @@ React Native CLI comes with following commands:
 - [`log-ios`](#log-ios)
 - [`ram-bundle`](#ram-bundle)
 - [`run-android`](#run-android)
+- [`build-android`](#build-android)
 - [`run-ios`](#run-ios)
 - [`start`](#start)
 - [`upgrade`](#upgrade)
@@ -378,6 +379,34 @@ Example: `yarn react-native run-android --tasks clean,installDebug`.
 > default: false
 
 Build native libraries only for the current device architecture for debug builds.
+
+### `build-android`
+
+Usage:
+
+```sh
+react-native build-android [options]
+```
+
+Builds Android app.
+
+#### Options
+
+#### `--mode <string>`
+
+> default: debug
+
+Mode to build the app. Either 'debug' (default) or 'release'. 
+
+
+#### `--extra-params <string>`
+
+Custom properties that will be passed to gradle build command. 
+Example: 
+```sh
+react-native build-android --extra-params "-x lint -x test"
+```
+
 
 ### `run-ios`
 

@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import path from 'path';
 import execa from 'execa';
 import fs from 'fs';
 import {Config} from '@react-native-community/cli-types';
@@ -14,25 +13,15 @@ import runOnAllDevices from './runOnAllDevices';
 import tryRunAdbReverse from './tryRunAdbReverse';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
 import getAdbPath from './getAdbPath';
-import {
-  isPackagerRunning,
-  logger,
-  getDefaultUserTerminal,
-  CLIError,
-} from '@react-native-community/cli-tools';
+import {logger, CLIError} from '@react-native-community/cli-tools';
 import {getAndroidProject} from '../../config/getAndroidProject';
+import {build, runPackager, BuildFlags, options} from '../buildAndroid';
 
-export interface Flags {
-  tasks?: Array<string>;
-  variant: string;
+export interface Flags extends BuildFlags {
   appId: string;
   appIdSuffix: string;
   mainActivity: string;
   deviceId?: string;
-  packager: boolean;
-  port: number;
-  terminal: string;
-  activeArchOnly: boolean;
 }
 
 type AndroidProject = NonNullable<Config['project']['android']>;
@@ -43,32 +32,8 @@ type AndroidProject = NonNullable<Config['project']['android']>;
 async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
   const androidProject = getAndroidProject(config);
 
-  if (!args.packager) {
-    return buildAndRun(args, androidProject);
-  }
-
-  return isPackagerRunning(args.port).then((result: string) => {
-    if (result === 'running') {
-      logger.info('JS server already running.');
-    } else if (result === 'unrecognized') {
-      logger.warn('JS server not recognized, continuing with build...');
-    } else {
-      // result == 'not_running'
-      logger.info('Starting JS server...');
-      try {
-        startServerInNewWindow(
-          args.port,
-          args.terminal,
-          config.reactNativePath,
-        );
-      } catch (error) {
-        logger.warn(
-          `Failed to automatically start the packager server. Please run "react-native start" manually. Error details: ${error.message}`,
-        );
-      }
-    }
-    return buildAndRun(args, androidProject);
-  });
+  await runPackager(args, config);
+  return buildAndRun(args, androidProject);
 }
 
 // Builds the app and runs it on a connected emulator / device.
@@ -78,7 +43,7 @@ function buildAndRun(args: Flags, androidProject: AndroidProject) {
 
   const adbPath = getAdbPath();
   if (args.deviceId) {
-    return runOnSpecificDevice(args, cmd, adbPath, androidProject);
+    return runOnSpecificDevice(args, adbPath, androidProject);
   } else {
     return runOnAllDevices(args, cmd, adbPath, androidProject);
   }
@@ -86,7 +51,6 @@ function buildAndRun(args: Flags, androidProject: AndroidProject) {
 
 function runOnSpecificDevice(
   args: Flags,
-  gradlew: 'gradlew.bat' | './gradlew',
   adbPath: string,
   androidProject: AndroidProject,
 ) {
@@ -94,7 +58,12 @@ function runOnSpecificDevice(
   const {deviceId} = args;
   if (devices.length > 0 && deviceId) {
     if (devices.indexOf(deviceId) !== -1) {
-      buildApk(gradlew, androidProject.sourceDir);
+      // using '-x lint' in order to ignore linting errors while building the apk
+      let gradleArgs = ['build', '-x', 'lint'];
+      if (args.extraParams) {
+        gradleArgs = [...gradleArgs, ...args.extraParams];
+      }
+      build(gradleArgs, androidProject.sourceDir);
       installAndLaunchOnDevice(args, deviceId, adbPath, androidProject);
     } else {
       logger.error(
@@ -107,18 +76,6 @@ function runOnSpecificDevice(
   }
 }
 
-function buildApk(gradlew: string, sourceDir: string) {
-  try {
-    // using '-x lint' in order to ignore linting errors while building the apk
-    const gradleArgs = ['build', '-x', 'lint'];
-    logger.info('Building the app...');
-    logger.debug(`Running command "${gradlew} ${gradleArgs.join(' ')}"`);
-    execa.sync(gradlew, gradleArgs, {stdio: 'inherit', cwd: sourceDir});
-  } catch (error) {
-    throw new CLIError('Failed to build the app.', error);
-  }
-}
-
 function tryInstallAppOnDevice(
   args: Flags,
   adbPath: string,
@@ -128,7 +85,7 @@ function tryInstallAppOnDevice(
   try {
     // "app" is usually the default value for Android apps with only 1 app
     const {appName, sourceDir} = androidProject;
-    const variant = args.variant.toLowerCase();
+    const variant = (args.mode || 'debug').toLowerCase();
     const buildDirectory = `${sourceDir}/${appName}/build/outputs/apk/${variant}`;
     const apkFile = getInstallApkName(
       appName,
@@ -192,94 +149,13 @@ function installAndLaunchOnDevice(
   );
 }
 
-function startServerInNewWindow(
-  port: number,
-  terminal: string,
-  reactNativePath: string,
-) {
-  /**
-   * Set up OS-specific filenames and commands
-   */
-  const isWindows = /^win/.test(process.platform);
-  const scriptFile = isWindows
-    ? 'launchPackager.bat'
-    : 'launchPackager.command';
-  const packagerEnvFilename = isWindows ? '.packager.bat' : '.packager.env';
-  const portExportContent = isWindows
-    ? `set RCT_METRO_PORT=${port}`
-    : `export RCT_METRO_PORT=${port}`;
-
-  /**
-   * Set up the `.packager.(env|bat)` file to ensure the packager starts on the right port.
-   */
-  const launchPackagerScript = path.join(
-    reactNativePath,
-    `scripts/${scriptFile}`,
-  );
-
-  /**
-   * Set up the `launchpackager.(command|bat)` file.
-   * It lives next to `.packager.(bat|env)`
-   */
-  const scriptsDir = path.dirname(launchPackagerScript);
-  const packagerEnvFile = path.join(scriptsDir, packagerEnvFilename);
-  const procConfig: execa.SyncOptions = {cwd: scriptsDir};
-
-  /**
-   * Ensure we overwrite file by passing the `w` flag
-   */
-  fs.writeFileSync(packagerEnvFile, portExportContent, {
-    encoding: 'utf8',
-    flag: 'w',
-  });
-
-  if (process.platform === 'darwin') {
-    try {
-      return execa.sync(
-        'open',
-        ['-a', terminal, launchPackagerScript],
-        procConfig,
-      );
-    } catch (error) {
-      return execa.sync('open', [launchPackagerScript], procConfig);
-    }
-  }
-  if (process.platform === 'linux') {
-    try {
-      return execa.sync(terminal, ['-e', `sh ${launchPackagerScript}`], {
-        ...procConfig,
-        detached: true,
-      });
-    } catch (error) {
-      // By default, the child shell process will be attached to the parent
-      return execa.sync('sh', [launchPackagerScript], procConfig);
-    }
-  }
-  if (/^win/.test(process.platform)) {
-    // Awaiting this causes the CLI to hang indefinitely, so this must execute without await.
-    return execa('cmd.exe', ['/C', launchPackagerScript], {
-      ...procConfig,
-      detached: true,
-      stdio: 'ignore',
-    });
-  }
-  logger.error(
-    `Cannot start the packager. Unknown platform ${process.platform}`,
-  );
-  return;
-}
-
 export default {
   name: 'run-android',
   description:
     'builds your app and starts it on a connected Android emulator or device',
   func: runAndroid,
   options: [
-    {
-      name: '--variant <string>',
-      description: "Specify your app's build variant",
-      default: 'debug',
-    },
+    ...options,
     {
       name: '--appId <string>',
       description:
@@ -301,32 +177,6 @@ export default {
       description:
         'builds your app and starts it on a specific device/simulator with the ' +
         'given device id (listed by running "adb devices" on the command line).',
-    },
-    {
-      name: '--no-packager',
-      description: 'Do not launch packager while building',
-    },
-    {
-      name: '--port <number>',
-      default: process.env.RCT_METRO_PORT || 8081,
-      parse: Number,
-    },
-    {
-      name: '--terminal <string>',
-      description:
-        'Launches the Metro Bundler in a new window using the specified terminal path.',
-      default: getDefaultUserTerminal(),
-    },
-    {
-      name: '--tasks <list>',
-      description: 'Run custom Gradle tasks. By default it\'s "installDebug"',
-      parse: (val: string) => val.split(','),
-    },
-    {
-      name: '--active-arch-only',
-      description:
-        'Build native libraries only for the current device architecture for debug builds.',
-      default: false,
     },
   ],
 };

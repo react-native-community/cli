@@ -24,7 +24,6 @@ function toPascalCase(value: string) {
  * @returns name of Android emulator
  */
 function getEmulatorName(deviceId: string) {
-  // maybe close it with trycatch block?
   const adbPath = getAdbPath();
   const buffer = execSync(`${adbPath} -s ${deviceId} emu avd name`);
 

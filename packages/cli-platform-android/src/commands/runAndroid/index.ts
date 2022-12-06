@@ -73,8 +73,8 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
 
     const device = await listAndroidDevices();
     if (!device) {
-      return logger.error(
-        'Failed to select device, please try to run app without --list-devices command',
+      throw new CLIError(
+        'Failed to select device, please try to run app without "list-devices" command.',
       );
     }
 
@@ -88,6 +88,7 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
 
     const port = await getAvailableDevicePort();
     const emulator = `emulator-${port}`;
+    logger.info('Launching emulator...');
     const result = await tryLaunchEmulator(adbPath, device.readableName, port);
     if (result.success) {
       logger.info('Successfully launched emulator.');
@@ -96,14 +97,10 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
         adbPath,
         androidProject,
       );
-    } else {
-      logger.error(
-        `Failed to launch emulator. Reason: ${chalk.dim(result.error || '')}.`,
-      );
-      logger.warn(
-        'Please launch an emulator manually or connect a device. Otherwise app may fail to launch.',
-      );
     }
+    throw new CLIError(
+      `Failed to launch emulator. Reason: ${chalk.dim(result.error || '')}`,
+    );
   }
   if (args.deviceId) {
     return runOnSpecificDevice(args, adbPath, androidProject);

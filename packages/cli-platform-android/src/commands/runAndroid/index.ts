@@ -244,7 +244,7 @@ export default {
     {
       name: '--list-devices',
       description:
-        'Will list all available Android devices and simulators and let you choose one to run the app',
+        'Lists all available Android devices and simulators and let you choose one to run the app',
       default: false,
     },
   ],

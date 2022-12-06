@@ -15,6 +15,9 @@ import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
 import getAdbPath from './getAdbPath';
 import {logger, CLIError} from '@react-native-community/cli-tools';
 import {getAndroidProject} from '../../config/getAndroidProject';
+import listAndroidDevices from './listAndroidDevices';
+import tryLaunchEmulator from './tryLaunchEmulator';
+import chalk from 'chalk';
 import {build, runPackager, BuildFlags, options} from '../buildAndroid';
 
 export interface Flags extends BuildFlags {
@@ -22,6 +25,7 @@ export interface Flags extends BuildFlags {
   appIdSuffix: string;
   mainActivity: string;
   deviceId?: string;
+  listDevices?: boolean;
 }
 
 type AndroidProject = NonNullable<Config['project']['android']>;
@@ -36,12 +40,68 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
   return buildAndRun(args, androidProject);
 }
 
+const defaultPort = 5552;
+async function getAvailableDevicePort(
+  port: number = defaultPort,
+): Promise<number> {
+  /**
+   * The default value is 5554 for the first virtual device instance running on your machine. A virtual device normally occupies a pair of adjacent ports: a console port and an adb port. The console of the first virtual device running on a particular machine uses console port 5554 and adb port 5555. Subsequent instances use port numbers increasing by two. For example, 5556/5557, 5558/5559, and so on. The range is 5554 to 5682, allowing for 64 concurrent virtual devices.
+   */
+  const adbPath = getAdbPath();
+  const devices = adb.getDevices(adbPath);
+  if (port > 5682) {
+    throw new CLIError('Failed to launch emulator...');
+  }
+  if (devices.some((d) => d.includes(port.toString()))) {
+    return await getAvailableDevicePort(port + 2);
+  }
+  return port;
+}
+
 // Builds the app and runs it on a connected emulator / device.
-function buildAndRun(args: Flags, androidProject: AndroidProject) {
+async function buildAndRun(args: Flags, androidProject: AndroidProject) {
   process.chdir(androidProject.sourceDir);
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
 
   const adbPath = getAdbPath();
+  if (args.listDevices) {
+    if (args.deviceId) {
+      logger.warn(
+        'Both "deviceId" and "list-devices" parameters were passed to "run" command. We will list available devices and let you choose from one',
+      );
+    }
+
+    const device = await listAndroidDevices();
+    if (!device) {
+      throw new CLIError(
+        'Failed to select device, please try to run app without "list-devices" command.',
+      );
+    }
+
+    if (device.connected) {
+      return runOnSpecificDevice(
+        {...args, deviceId: device.deviceId},
+        adbPath,
+        androidProject,
+      );
+    }
+
+    const port = await getAvailableDevicePort();
+    const emulator = `emulator-${port}`;
+    logger.info('Launching emulator...');
+    const result = await tryLaunchEmulator(adbPath, device.readableName, port);
+    if (result.success) {
+      logger.info('Successfully launched emulator.');
+      return runOnSpecificDevice(
+        {...args, deviceId: emulator},
+        adbPath,
+        androidProject,
+      );
+    }
+    throw new CLIError(
+      `Failed to launch emulator. Reason: ${chalk.dim(result.error || '')}`,
+    );
+  }
   if (args.deviceId) {
     return runOnSpecificDevice(args, adbPath, androidProject);
   } else {
@@ -177,6 +237,12 @@ export default {
       description:
         'builds your app and starts it on a specific device/simulator with the ' +
         'given device id (listed by running "adb devices" on the command line).',
+    },
+    {
+      name: '--list-devices',
+      description:
+        'Lists all available Android devices and simulators and let you choose one to run the app',
+      default: false,
     },
   ],
 };

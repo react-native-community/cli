@@ -380,6 +380,11 @@ Example: `yarn react-native run-android --tasks clean,installDebug`.
 
 Build native libraries only for the current device architecture for debug builds.
 
+#### `--list-devices`
+
+> default: false
+
+List all available Android devices and simulators and let you choose one to run the app.
 ### `build-android`
 
 Usage:

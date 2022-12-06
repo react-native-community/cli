@@ -107,6 +107,10 @@ When you're sending a pull request:
 
 You can report issues on our [bug tracker](https://github.com/react-native-community/react-native-cli/issues). Please follow the issue template when opening an issue.
 
+## Stale Bot
+
+This repository is using bot to automatically mark issues and PRs as stale and close them. The "stale" label is added after 90 days of inactivity, and it's getting closed 7 days later. If you find the issue important or you want to keep it open for any particular reason, please show any activity in the issue or contact maintainers to add the "no-stale-bot" label, which prevents bot from closing the issues.
+
 ## License
 
 By contributing to React Native CLI, you agree that your contributions will be licensed under its **MIT** license.

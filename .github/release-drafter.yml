@@ -11,9 +11,11 @@ categories:
       - 'bugfix'
       - 'bug'
   - title: '🧰 Maintenance'
+    collapse-after: 3
     labels:
       - 'chore'
       - 'docs'
+      - 'infra'
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
 version-resolver:
@@ -29,7 +31,7 @@ version-resolver:
   patch:
     labels:
       - 'patch'
-      - 'bug'
+      - 'bugfix'
   default: patch
 
 template: |
@@ -46,10 +48,10 @@ autolabeler:
   - label: 'docs'
     files:
       - '*.md'
-  - label: 'chore'
+  - label: 'infra'
     branch:
       - '/chore\/.+/'
-  - label: "bug"
+  - label: "bugfix"
     branch:
       - "/^fix/i"
     body:

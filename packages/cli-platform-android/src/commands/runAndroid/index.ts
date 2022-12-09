@@ -5,19 +5,20 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import execa from 'execa';
 import fs from 'fs';
 import {Config} from '@react-native-community/cli-types';
 import adb from './adb';
 import runOnAllDevices from './runOnAllDevices';
 import tryRunAdbReverse from './tryRunAdbReverse';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
+import tryInstallAppOnDevice from './tryInstallAppOnDevice';
 import getAdbPath from './getAdbPath';
 import {logger, CLIError} from '@react-native-community/cli-tools';
 import {getAndroidProject} from '../../config/getAndroidProject';
 import listAndroidDevices from './listAndroidDevices';
 import tryLaunchEmulator from './tryLaunchEmulator';
 import chalk from 'chalk';
+import path from 'path';
 import {build, runPackager, BuildFlags, options} from '../buildAndroid';
 
 export interface Flags extends BuildFlags {
@@ -26,14 +27,33 @@ export interface Flags extends BuildFlags {
   mainActivity: string;
   deviceId?: string;
   listDevices?: boolean;
+  binaryPath?: string;
 }
 
-type AndroidProject = NonNullable<Config['project']['android']>;
+export type AndroidProject = NonNullable<Config['project']['android']>;
 
 /**
  * Starts the app on a connected Android emulator or device.
  */
 async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
+  if (args.binaryPath) {
+    if (args.tasks) {
+      throw new CLIError(
+        'binary-path and tasks were specified, but they are not compatible. Specify only one',
+      );
+    }
+
+    args.binaryPath = path.isAbsolute(args.binaryPath)
+      ? args.binaryPath
+      : path.join(config.root, args.binaryPath);
+
+    if (args.binaryPath && !fs.existsSync(args.binaryPath)) {
+      throw new CLIError(
+        'binary-path was specified, but the file was not found.',
+      );
+    }
+  }
+
   const androidProject = getAndroidProject(config);
 
   await runPackager(args, config);
@@ -123,7 +143,9 @@ function runOnSpecificDevice(
       if (args.extraParams) {
         gradleArgs = [...gradleArgs, ...args.extraParams];
       }
-      build(gradleArgs, androidProject.sourceDir);
+      if (!args.binaryPath) {
+        build(gradleArgs, androidProject.sourceDir);
+      }
       installAndLaunchOnDevice(args, deviceId, adbPath, androidProject);
     } else {
       logger.error(
@@ -134,63 +156,6 @@ function runOnSpecificDevice(
   } else {
     logger.error('No Android device or emulator connected.');
   }
-}
-
-function tryInstallAppOnDevice(
-  args: Flags,
-  adbPath: string,
-  device: string,
-  androidProject: AndroidProject,
-) {
-  try {
-    // "app" is usually the default value for Android apps with only 1 app
-    const {appName, sourceDir} = androidProject;
-    const variant = (args.mode || 'debug').toLowerCase();
-    const buildDirectory = `${sourceDir}/${appName}/build/outputs/apk/${variant}`;
-    const apkFile = getInstallApkName(
-      appName,
-      adbPath,
-      variant,
-      device,
-      buildDirectory,
-    );
-
-    const pathToApk = `${buildDirectory}/${apkFile}`;
-    const adbArgs = ['-s', device, 'install', '-r', '-d', pathToApk];
-    logger.info(`Installing the app on the device "${device}"...`);
-    logger.debug(
-      `Running command "cd android && adb -s ${device} install -r -d ${pathToApk}"`,
-    );
-    execa.sync(adbPath, adbArgs, {stdio: 'inherit'});
-  } catch (error) {
-    throw new CLIError('Failed to install the app on the device.', error);
-  }
-}
-
-function getInstallApkName(
-  appName: string,
-  adbPath: string,
-  variant: string,
-  device: string,
-  buildDirectory: string,
-) {
-  const availableCPUs = adb.getAvailableCPUs(adbPath, device);
-
-  // check if there is an apk file like app-armeabi-v7a-debug.apk
-  for (const availableCPU of availableCPUs.concat('universal')) {
-    const apkName = `${appName}-${availableCPU}-${variant}.apk`;
-    if (fs.existsSync(`${buildDirectory}/${apkName}`)) {
-      return apkName;
-    }
-  }
-
-  // check if there is a default file like app-debug.apk
-  const apkName = `${appName}-${variant}.apk`;
-  if (fs.existsSync(`${buildDirectory}/${apkName}`)) {
-    return apkName;
-  }
-
-  throw new CLIError('Could not find the correct install APK file.');
 }
 
 function installAndLaunchOnDevice(
@@ -243,6 +208,11 @@ export default {
       description:
         'Lists all available Android devices and simulators and let you choose one to run the app',
       default: false,
+    },
+    {
+      name: '--binary-path <string>',
+      description:
+        'Path relative to project root where pre-built .apk binary lives.',
     },
   ],
 };

@@ -14,6 +14,7 @@ import adb from './adb';
 import tryRunAdbReverse from './tryRunAdbReverse';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
 import tryLaunchEmulator from './tryLaunchEmulator';
+import tryInstallAppOnDevice from './tryInstallAppOnDevice';
 import {Flags} from '.';
 
 export function getTaskNames(
@@ -55,49 +56,53 @@ async function runOnAllDevices(
   }
 
   try {
-    const tasks = args.tasks || [
-      'install' + toPascalCase(args.mode ?? 'debug'),
-    ];
-    let gradleArgs = getTaskNames(androidProject.appName, tasks);
+    if (!args.binaryPath) {
+      const tasks = args.tasks || [
+        'install' + toPascalCase(args.mode ?? 'debug'),
+      ];
+      let gradleArgs = getTaskNames(androidProject.appName, tasks);
 
-    if (args.extraParams) {
-      gradleArgs = [...gradleArgs, ...args.extraParams];
-    }
-
-    if (args.port != null) {
-      gradleArgs.push('-PreactNativeDevServerPort=' + args.port);
-    }
-
-    if (args.activeArchOnly) {
-      const architectures = devices
-        .map((device) => {
-          return adb.getCPU(adbPath, device);
-        })
-        .filter(
-          (arch, index, array) => arch != null && array.indexOf(arch) === index,
-        );
-      if (architectures.length > 0) {
-        logger.info(`Detected architectures ${architectures.join(', ')}`);
-        // `reactNativeDebugArchitectures` was renamed to `reactNativeArchitectures` in 0.68.
-        // Can be removed when 0.67 no longer needs to be supported.
-        gradleArgs.push(
-          '-PreactNativeDebugArchitectures=' + architectures.join(','),
-        );
-        gradleArgs.push(
-          '-PreactNativeArchitectures=' + architectures.join(','),
-        );
+      if (args.extraParams) {
+        gradleArgs = [...gradleArgs, ...args.extraParams];
       }
+
+      if (args.port != null) {
+        gradleArgs.push('-PreactNativeDevServerPort=' + args.port);
+      }
+
+      if (args.activeArchOnly) {
+        const architectures = devices
+          .map((device) => {
+            return adb.getCPU(adbPath, device);
+          })
+          .filter(
+            (arch, index, array) =>
+              arch != null && array.indexOf(arch) === index,
+          );
+
+        if (architectures.length > 0) {
+          logger.info(`Detected architectures ${architectures.join(', ')}`);
+          // `reactNativeDebugArchitectures` was renamed to `reactNativeArchitectures` in 0.68.
+          // Can be removed when 0.67 no longer needs to be supported.
+          gradleArgs.push(
+            '-PreactNativeDebugArchitectures=' + architectures.join(','),
+          );
+          gradleArgs.push(
+            '-PreactNativeArchitectures=' + architectures.join(','),
+          );
+        }
+      }
+
+      logger.info('Installing the app...');
+      logger.debug(
+        `Running command "cd android && ${cmd} ${gradleArgs.join(' ')}"`,
+      );
+
+      await execa(cmd, gradleArgs, {
+        stdio: ['inherit', 'inherit', 'pipe'],
+        cwd: androidProject.sourceDir,
+      });
     }
-
-    logger.info('Installing the app...');
-    logger.debug(
-      `Running command "cd android && ${cmd} ${gradleArgs.join(' ')}"`,
-    );
-
-    await execa(cmd, gradleArgs, {
-      stdio: ['inherit', 'inherit', 'pipe'],
-      cwd: androidProject.sourceDir,
-    });
   } catch (error) {
     throw createInstallError(error);
   }
@@ -105,6 +110,9 @@ async function runOnAllDevices(
   (devices.length > 0 ? devices : [undefined]).forEach(
     (device: string | void) => {
       tryRunAdbReverse(args.port, device);
+      if (args.binaryPath && device) {
+        tryInstallAppOnDevice(args, adbPath, device, androidProject);
+      }
       tryLaunchAppOnDevice(device, androidProject.packageName, adbPath, args);
     },
   );

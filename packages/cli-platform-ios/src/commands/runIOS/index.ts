@@ -12,6 +12,7 @@ import child_process, {
   SpawnOptionsWithoutStdio,
 } from 'child_process';
 import path from 'path';
+import fs from 'fs';
 import chalk from 'chalk';
 import {Config, IOSProjectInfo} from '@react-native-community/cli-types';
 import parseIOSDevicesList from './parseIOSDevicesList';
@@ -36,6 +37,7 @@ type FlagsT = {
   packager: boolean;
   verbose: boolean;
   port: number;
+  binaryPath?: string;
   terminal: string | undefined;
   xcconfig?: string;
   buildFolder?: string;
@@ -46,6 +48,18 @@ function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     throw new CLIError(
       'iOS project folder not found. Are you sure this is a React Native project?',
     );
+  }
+
+  if (args.binaryPath) {
+    args.binaryPath = path.isAbsolute(args.binaryPath)
+      ? args.binaryPath
+      : path.join(ctx.root, args.binaryPath);
+
+    if (!fs.existsSync(args.binaryPath)) {
+      throw new CLIError(
+        'binary-path was specified, but the file was not found.',
+      );
+    }
   }
 
   const {xcodeProject, sourceDir} = ctx.project.ios;
@@ -194,19 +208,24 @@ async function runOnSimulator(
     bootSimulator(selectedSimulator);
   }
 
-  const buildOutput = await buildProject(
-    xcodeProject,
-    selectedSimulator.udid,
-    scheme,
-    args,
-  );
+  let buildOutput, appPath;
+  if (!args.binaryPath) {
+    buildOutput = await buildProject(
+      xcodeProject,
+      selectedSimulator.udid,
+      scheme,
+      args,
+    );
 
-  const appPath = getBuildPath(
-    xcodeProject,
-    args.configuration,
-    buildOutput,
-    scheme,
-  );
+    appPath = getBuildPath(
+      xcodeProject,
+      args.configuration,
+      buildOutput,
+      scheme,
+    );
+  } else {
+    appPath = args.binaryPath;
+  }
 
   logger.info(`Installing "${chalk.bold(appPath)}"`);
 
@@ -249,6 +268,12 @@ async function runOnDevice(
   xcodeProject: IOSProjectInfo,
   args: FlagsT,
 ) {
+  if (args.binaryPath && selectedDevice.type === 'catalyst') {
+    throw new CLIError(
+      'binary-path was specified for catalyst device, which is not supported.',
+    );
+  }
+
   const isIOSDeployInstalled = child_process.spawnSync(
     'ios-deploy',
     ['--version'],
@@ -263,14 +288,14 @@ async function runOnDevice(
     );
   }
 
-  const buildOutput = await buildProject(
-    xcodeProject,
-    selectedDevice.udid,
-    scheme,
-    args,
-  );
-
   if (selectedDevice.type === 'catalyst') {
+    const buildOutput = await buildProject(
+      xcodeProject,
+      selectedDevice.udid,
+      scheme,
+      args,
+    );
+
     const appPath = getBuildPath(
       xcodeProject,
       args.configuration,
@@ -284,9 +309,28 @@ async function runOnDevice(
     });
     appProcess.unref();
   } else {
+    let buildOutput, appPath;
+    if (!args.binaryPath) {
+      buildOutput = await buildProject(
+        xcodeProject,
+        selectedDevice.udid,
+        scheme,
+        args,
+      );
+
+      appPath = getBuildPath(
+        xcodeProject,
+        args.configuration,
+        buildOutput,
+        scheme,
+      );
+    } else {
+      appPath = args.binaryPath;
+    }
+
     const iosDeployInstallArgs = [
       '--bundle',
-      getBuildPath(xcodeProject, args.configuration, buildOutput, scheme),
+      appPath,
       '--id',
       selectedDevice.udid,
       '--justlaunch',
@@ -630,6 +674,11 @@ export default {
       name: '--port <number>',
       default: process.env.RCT_METRO_PORT || 8081,
       parse: Number,
+    },
+    {
+      name: '--binary-path <string>',
+      description:
+        'Path relative to project root where pre-built .app binary lives.',
     },
     {
       name: '--terminal <string>',

@@ -1,17 +1,23 @@
 import execa from 'execa';
-import {isSoftwareNotInstalled} from '../checkInstallation';
+import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
 import {promptCocoaPodsInstallationQuestion, runSudo} from '../installPods';
 import {removeMessage, logError} from './common';
 import {brewInstall} from '../brewInstall';
 import {HealthCheckInterface} from '../../types';
+import versionRanges from '../versionRanges';
 
 const label = 'CocoaPods';
 
 export default {
   label,
   description: 'Required for installing iOS dependencies',
-  getDiagnostics: async () => ({
-    needsToBeFixed: await isSoftwareNotInstalled('pod'),
+  getDiagnostics: async ({Managers}) => ({
+    needsToBeFixed: doesSoftwareNeedToBeFixed({
+      version: Managers.CocoaPods.version,
+      versionRange: versionRanges.COCOAPODS,
+    }),
+    version: Managers.CocoaPods.version,
+    versionRange: versionRanges.COCOAPODS,
   }),
   runAutomaticFix: async ({loader}) => {
     loader.stop();

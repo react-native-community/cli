@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import execa from 'execa';
 import fs from 'fs';
 import {Config} from '@react-native-community/cli-types';
 import adb from './adb';
@@ -19,6 +18,7 @@ import {getAndroidProject} from '../../config/getAndroidProject';
 import listAndroidDevices from './listAndroidDevices';
 import tryLaunchEmulator from './tryLaunchEmulator';
 import chalk from 'chalk';
+import path from 'path';
 import {build, runPackager, BuildFlags, options} from '../buildAndroid';
 
 export interface Flags extends BuildFlags {
@@ -47,7 +47,7 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
       ? args.binaryPath
       : path.join(config.root, args.binaryPath);
 
-    if (!fs.existsSync(args.binaryPath)) {
+    if (args.binaryPath && !fs.existsSync(args.binaryPath)) {
       throw new CLIError(
         'binary-path was specified, but the file was not found.',
       );

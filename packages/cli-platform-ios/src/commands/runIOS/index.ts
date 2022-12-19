@@ -86,7 +86,7 @@ function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   );
 
   if (args.booted) {
-    let devices = getDevices();
+    const devices = getDevices();
     const bootedDevices = devices.filter(({type}) => type === 'device');
 
     const simulators = getSimulators();

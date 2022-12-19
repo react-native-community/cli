@@ -1,5 +1,4 @@
 import readline from 'readline';
-import fs from 'fs';
 import {logger, hookStdout} from '@react-native-community/cli-tools';
 import execa from 'execa';
 import chalk from 'chalk';
@@ -55,12 +54,10 @@ function enableWatchMode(messageSocket: any) {
       messageSocket.broadcast('devMenu', null);
       logger.info('Opening developer menu...');
     } else if (name === 'i' || name === 'a') {
-      const isUsingYarn = fs
-        .readdirSync(`${process.cwd()}`)
-        .includes('yarn.lock');
       logger.info(`Opening the app on ${name === 'i' ? 'iOS' : 'Android'}...`);
-      execa(isUsingYarn ? 'yarn' : 'npm run', [
-        name === 'i' ? 'ios' : 'android',
+      execa('npx', [
+        'react-native',
+        name === 'i' ? 'run-ios' : 'run-android',
       ]).stdout?.pipe(process.stdout);
     } else {
       console.log(_key);

@@ -41,6 +41,7 @@ type FlagsT = {
   terminal: string | undefined;
   xcconfig?: string;
   buildFolder?: string;
+  booted?: boolean;
 };
 
 function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
@@ -84,6 +85,34 @@ function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     } "${chalk.bold(xcodeProject.name)}"`,
   );
 
+  if (args.booted) {
+    let devices = getDevices();
+    const bootedDevices = devices.filter(({type}) => type === 'device');
+
+    const simulators = getSimulators();
+    let bootedSimulators = Object.keys(simulators.devices)
+      .map((key) => simulators.devices[key])
+      .reduce((acc, val) => acc.concat(val), [])
+      .filter(({state}) => state === 'Booted');
+
+    const booted = [...bootedDevices, ...bootedSimulators];
+    if (booted.length === 0) {
+      return logger.error(
+        'No booted devices or simulators found. Boot a device or simulator and try again.',
+      );
+    }
+
+    logger.info(`Found booted ${booted.map(({name}) => name).join(', ')}`);
+
+    return runOnBootedDevicesSimulators(
+      scheme,
+      xcodeProject,
+      args,
+      bootedDevices,
+      bootedSimulators,
+    );
+  }
+
   // No need to load all available devices
   if (!args.device && !args.udid) {
     return runOnSimulator(xcodeProject, scheme, args);
@@ -95,21 +124,7 @@ function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     );
   }
 
-  let devices;
-  try {
-    const out = execa.sync('xcrun', ['xctrace', 'list', 'devices']);
-    devices = parseXctraceIOSDevicesList(
-      // Xcode 12.5 introduced a change to output the list to stdout instead of stderr
-      out.stderr === '' ? out.stdout : out.stderr,
-    );
-  } catch (e) {
-    logger.warn(
-      'Support for Xcode 11 and older is deprecated. Please upgrade to Xcode 12.',
-    );
-    devices = parseIOSDevicesList(
-      execa.sync('xcrun', ['instruments', '-s']).stdout,
-    );
-  }
+  let devices = getDevices();
 
   if (args.udid) {
     const device = devices.find((d) => d.udid === args.udid);
@@ -134,11 +149,26 @@ function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   }
 }
 
-async function runOnSimulator(
-  xcodeProject: IOSProjectInfo,
-  scheme: string,
-  args: FlagsT,
-) {
+const getDevices = () => {
+  let devices;
+  try {
+    const out = execa.sync('xcrun', ['xctrace', 'list', 'devices']);
+    devices = parseXctraceIOSDevicesList(
+      // Xcode 12.5 introduced a change to output the list to stdout instead of stderr
+      out.stderr === '' ? out.stdout : out.stderr,
+    );
+  } catch (e) {
+    logger.warn(
+      'Support for Xcode 11 and older is deprecated. Please upgrade to Xcode 12.',
+    );
+    devices = parseIOSDevicesList(
+      execa.sync('xcrun', ['instruments', '-s']).stdout,
+    );
+  }
+  return devices;
+};
+
+const getSimulators = () => {
   let simulators: {devices: {[index: string]: Array<Device>}};
   try {
     simulators = JSON.parse(
@@ -154,6 +184,32 @@ async function runOnSimulator(
       error,
     );
   }
+  return simulators;
+};
+
+async function runOnBootedDevicesSimulators(
+  scheme: string,
+  xcodeProject: IOSProjectInfo,
+  args: FlagsT,
+  devices: Device[],
+  simulators: Device[],
+) {
+  for (const device of devices) {
+    await runOnDevice(device, scheme, xcodeProject, args);
+  }
+
+  for (const simulator of simulators) {
+    await runOnSimulator(xcodeProject, scheme, args, simulator);
+  }
+}
+
+async function runOnSimulator(
+  xcodeProject: IOSProjectInfo,
+  scheme: string,
+  args: FlagsT,
+  simulator?: Device,
+) {
+  const simulators = getSimulators();
 
   /**
    * If provided simulator does not exist, try simulators in following order
@@ -168,11 +224,17 @@ async function runOnSimulator(
     'iPhone 12',
     'iPhone 11',
   ];
-  const selectedSimulator = fallbackSimulators.reduce((simulator, fallback) => {
-    return (
-      simulator || findMatchingSimulator(simulators, {simulator: fallback})
-    );
-  }, findMatchingSimulator(simulators, args));
+
+  let selectedSimulator;
+  if (simulator) {
+    selectedSimulator = simulator;
+  } else {
+    selectedSimulator = fallbackSimulators.reduce((simulator, fallback) => {
+      return (
+        simulator || findMatchingSimulator(simulators, {simulator: fallback})
+      );
+    }, findMatchingSimulator(simulators, args));
+  }
 
   if (!selectedSimulator) {
     throw new CLIError(
@@ -227,7 +289,9 @@ async function runOnSimulator(
     appPath = args.binaryPath;
   }
 
-  logger.info(`Installing "${chalk.bold(appPath)}"`);
+  logger.info(
+    `Installing "${chalk.bold(appPath)} on ${selectedSimulator.name}"`,
+  );
 
   child_process.spawnSync(
     'xcrun',
@@ -694,6 +758,11 @@ export default {
       name: '--buildFolder <string>',
       description:
         'Location for iOS build artifacts. Corresponds to Xcode\'s "-derivedDataPath".',
+    },
+    {
+      name: '--booted',
+      description:
+        'Builds and runs the app on all booted devices and simulators.',
     },
   ],
 };

@@ -41,7 +41,6 @@ type FlagsT = {
   terminal: string | undefined;
   xcconfig?: string;
   buildFolder?: string;
-  booted?: boolean;
 };
 
 function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
@@ -85,21 +84,23 @@ function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     } "${chalk.bold(xcodeProject.name)}"`,
   );
 
-  if (args.booted) {
-    const devices = getDevices();
+  const devices = getDevices();
+
+  if (!args.device && !args.udid) {
     const bootedDevices = devices.filter(({type}) => type === 'device');
 
     const simulators = getSimulators();
-    let bootedSimulators = Object.keys(simulators.devices)
+    const bootedSimulators = Object.keys(simulators.devices)
       .map((key) => simulators.devices[key])
       .reduce((acc, val) => acc.concat(val), [])
       .filter(({state}) => state === 'Booted');
 
     const booted = [...bootedDevices, ...bootedSimulators];
     if (booted.length === 0) {
-      return logger.error(
-        'No booted devices or simulators found. Boot a device or simulator and try again.',
+      logger.info(
+        'No booted devices or simulators found. Launching first available simulator...',
       );
+      return runOnSimulator(xcodeProject, scheme, args);
     }
 
     logger.info(`Found booted ${booted.map(({name}) => name).join(', ')}`);
@@ -113,18 +114,11 @@ function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     );
   }
 
-  // No need to load all available devices
-  if (!args.device && !args.udid) {
-    return runOnSimulator(xcodeProject, scheme, args);
-  }
-
   if (args.device && args.udid) {
     return logger.error(
       'The `device` and `udid` options are mutually exclusive.',
     );
   }
-
-  let devices = getDevices();
 
   if (args.udid) {
     const device = devices.find((d) => d.udid === args.udid);
@@ -209,31 +203,36 @@ async function runOnSimulator(
   args: FlagsT,
   simulator?: Device,
 ) {
-  const simulators = getSimulators();
-
-  /**
-   * If provided simulator does not exist, try simulators in following order
-   * - iPhone 14
-   * - iPhone 13
-   * - iPhone 12
-   * - iPhone 11
-   */
-  const fallbackSimulators = [
-    'iPhone 14',
-    'iPhone 13',
-    'iPhone 12',
-    'iPhone 11',
-  ];
-
   let selectedSimulator;
+
   if (simulator) {
     selectedSimulator = simulator;
   } else {
-    selectedSimulator = fallbackSimulators.reduce((simulator, fallback) => {
-      return (
-        simulator || findMatchingSimulator(simulators, {simulator: fallback})
-      );
-    }, findMatchingSimulator(simulators, args));
+    const simulators = getSimulators();
+
+    /**
+     * If provided simulator does not exist, try simulators in following order
+     * - iPhone 14
+     * - iPhone 13
+     * - iPhone 12
+     * - iPhone 11
+     */
+    const fallbackSimulators = [
+      'iPhone 14',
+      'iPhone 13',
+      'iPhone 12',
+      'iPhone 11',
+    ];
+
+    selectedSimulator = fallbackSimulators.reduce(
+      (matchingSimulator, fallback) => {
+        return (
+          matchingSimulator ||
+          findMatchingSimulator(simulators, {simulator: fallback})
+        );
+      },
+      findMatchingSimulator(simulators, args),
+    );
   }
 
   if (!selectedSimulator) {
@@ -758,11 +757,6 @@ export default {
       name: '--buildFolder <string>',
       description:
         'Location for iOS build artifacts. Corresponds to Xcode\'s "-derivedDataPath".',
-    },
-    {
-      name: '--booted',
-      description:
-        'Builds and runs the app on all booted devices and simulators.',
     },
   ],
 };

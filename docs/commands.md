@@ -492,10 +492,6 @@ Location for iOS build artifacts. Corresponds to Xcode's `-derivedDataPath`.
 
 Installs passed binary instead of building a fresh one.
 
-#### `--booted`
-
-Builds and runs the app on all booted devices and simulators.
-
 ### `start`
 
 Usage:

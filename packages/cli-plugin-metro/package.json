@@ -10,6 +10,7 @@
     "@react-native-community/cli-server-api": "^10.0.0",
     "@react-native-community/cli-tools": "^10.0.0",
     "chalk": "^4.1.2",
+    "execa": "^1.0.0",
     "metro": "0.73.6",
     "metro-config": "0.73.6",
     "metro-core": "0.73.6",

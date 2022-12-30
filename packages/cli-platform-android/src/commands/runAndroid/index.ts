@@ -140,12 +140,19 @@ function runOnSpecificDevice(
     if (devices.indexOf(deviceId) !== -1) {
       // using '-x lint' in order to ignore linting errors while building the apk
       let gradleArgs = ['build', '-x', 'lint'];
+
       if (args.extraParams) {
         gradleArgs = [...gradleArgs, ...args.extraParams];
       }
+
+      if (args.port) {
+        gradleArgs.push(`-PreactNativeDevServerPort=${args.port}`);
+      }
+
       if (!args.binaryPath) {
         build(gradleArgs, androidProject.sourceDir);
       }
+
       installAndLaunchOnDevice(args, deviceId, adbPath, androidProject);
     } else {
       logger.error(

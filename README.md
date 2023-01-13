@@ -27,7 +27,8 @@ Our release cycle is independent of `react-native`. We follow semver and here is
 
 | `@react-native-community/cli`                                     | `react-native`          |
 | ----------------------------------------------------------------- | ----------------------- |
-| [^9.0.0](https://github.com/react-native-community/cli/tree/main) | ^0.70.0                 |
+| [^10.0.0](https://github.com/react-native-community/cli/tree/main)| ^0.71.0                 |
+| [^9.0.0](https://github.com/react-native-community/cli/tree/9.x)  | ^0.70.0                 |
 | [^8.0.0](https://github.com/react-native-community/cli/tree/8.x)  | ^0.69.0                 |
 | [^7.0.0](https://github.com/react-native-community/cli/tree/7.x)  | ^0.68.0                 |
 | [^6.0.0](https://github.com/react-native-community/cli/tree/6.x)  | ^0.65.0,^0.66.0,^0.67.0 |

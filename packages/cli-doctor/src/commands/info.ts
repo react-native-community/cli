@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-// @ts-ignore untyped
 import getEnvironmentInfo from '../tools/envinfo';
 import {logger, releaseChecker} from '@react-native-community/cli-tools';
 import {Config} from '@react-native-community/cli-types';

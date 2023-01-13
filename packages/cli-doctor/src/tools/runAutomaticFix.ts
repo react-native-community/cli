@@ -30,9 +30,7 @@ export default async function ({
 }: RunAutomaticFixArgs) {
   // Remove the fix options from screen
   if (process.stdout.isTTY) {
-    // @ts-ignore
     process.stdout.moveCursor(0, -6);
-    // @ts-ignore
     process.stdout.clearScreenDown();
   }
 

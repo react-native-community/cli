@@ -11,7 +11,6 @@ import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
 import {execSync, spawn, ChildProcess} from 'child_process';
-// @ts-ignore @types not installed
 import shellQuote from 'shell-quote';
 import logger from './logger';
 
@@ -91,7 +90,7 @@ function getArgumentsForLineNumber(
     case 'rmate':
     case 'mate':
     case 'mine':
-      return ['--line', lineNumber, fileName];
+      return ['--line', String(lineNumber), fileName];
     case 'code':
       return addWorkspaceToArgumentsIfExists(
         ['-g', `${fileName}:${lineNumber}`],
@@ -126,7 +125,7 @@ function getArgumentsForFileName(
 function guessEditor() {
   // Explicit config always wins
   if (process.env.REACT_EDITOR) {
-    return shellQuote.parse(process.env.REACT_EDITOR);
+    return shellQuote.parse(process.env.REACT_EDITOR) as string[];
   }
 
   try {
@@ -167,7 +166,7 @@ function guessEditor() {
     return [process.env.EDITOR];
   }
 
-  return [null];
+  return [];
 }
 
 function printInstructions(title: string) {

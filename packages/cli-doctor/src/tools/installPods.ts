@@ -3,7 +3,6 @@ import execa from 'execa';
 import chalk from 'chalk';
 import prompts from 'prompts';
 import {logger, NoopLoader} from '@react-native-community/cli-tools';
-// @ts-ignore untyped
 import sudo from 'sudo-prompt';
 import runBundleInstall from './runBundleInstall';
 import {brewInstall} from './brewInstall';

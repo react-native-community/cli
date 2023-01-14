@@ -1,4 +1,3 @@
-// @ts-ignore
 import envinfo from 'envinfo';
 import {platform} from 'os';
 import {EnvironmentInfo} from '../types';

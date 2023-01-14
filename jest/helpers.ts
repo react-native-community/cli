@@ -3,12 +3,10 @@ import os from 'os';
 import path from 'path';
 import {promisify} from 'util';
 import {createDirectory} from 'jest-util';
-// @ts-ignore jsfile
 import rimraf from 'rimraf';
 import execa from 'execa';
 import chalk from 'chalk';
 import slash from 'slash';
-// @ts-ignore jsfile
 import {Writable} from 'readable-stream';
 
 const rimrafAsync = promisify(rimraf);

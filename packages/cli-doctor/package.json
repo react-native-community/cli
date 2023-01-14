@@ -33,6 +33,7 @@
   "devDependencies": {
     "@react-native-community/cli-types": "^10.0.0",
     "@types/command-exists": "^1.2.0",
+    "@types/envinfo": "^7.8.1",
     "@types/ip": "^1.1.0",
     "@types/prompts": "^2.0.9",
     "@types/semver": "^6.0.2",

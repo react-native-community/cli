@@ -27,6 +27,13 @@ function parseIOSDevicesList(text: string): Array<Device> {
   const devices: Array<Device> = [];
   let isSimulator = false;
 
+  if (
+    text.indexOf('== Simulators ==') === -1 &&
+    text.indexOf('== Devices ==') === -1
+  ) {
+    return [];
+  }
+
   text.split('\n').forEach((line) => {
     if (line === '== Simulators ==') {
       isSimulator = true;

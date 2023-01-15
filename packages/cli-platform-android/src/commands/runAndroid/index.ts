@@ -149,6 +149,18 @@ function runOnSpecificDevice(
         gradleArgs.push(`-PreactNativeDevServerPort=${args.port}`);
       }
 
+      if (args.activeArchOnly) {
+        const architecture = adb.getCPU(adbPath, deviceId);
+
+        if (architecture !== null) {
+          logger.info(`Detected architecture ${architecture}`);
+          // `reactNativeDebugArchitectures` was renamed to `reactNativeArchitectures` in 0.68.
+          // Can be removed when 0.67 no longer needs to be supported.
+          gradleArgs.push(`-PreactNativeDebugArchitectures=${architecture}`);
+          gradleArgs.push(`-PreactNativeArchitectures=${architecture}`);
+        }
+      }
+
       if (!args.binaryPath) {
         build(gradleArgs, androidProject.sourceDir);
       }

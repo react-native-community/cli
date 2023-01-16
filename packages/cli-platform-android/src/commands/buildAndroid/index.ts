@@ -7,7 +7,7 @@ import {
 import {Config} from '@react-native-community/cli-types';
 import execa from 'execa';
 import {getAndroidProject} from '../../config/getAndroidProject';
-import {getTaskNames, toPascalCase} from '../runAndroid/runOnAllDevices';
+import {toPascalCase} from '../runAndroid/runOnAllDevices';
 import adb from '../runAndroid/adb';
 import getAdbPath from '../runAndroid/getAdbPath';
 import {startServerInNewWindow} from './startServerInNewWindow';
@@ -21,6 +21,21 @@ export interface BuildFlags {
   terminal: string;
   tasks?: Array<string>;
   extraParams?: Array<string>;
+}
+
+export function getTaskNames(
+  appName: string,
+  mode: BuildFlags['mode'],
+  variant: BuildFlags['variant'],
+  tasks: BuildFlags['tasks'],
+  taskPrefix: 'assemble' | 'install',
+): Array<string> {
+  const appMode = mode || variant || 'debug';
+  const appTasks = tasks || [taskPrefix + toPascalCase(appMode)];
+
+  return appName
+    ? appTasks.map((command) => `${appName}:${command}`)
+    : appTasks;
 }
 
 export async function runPackager(args: BuildFlags, config: Config) {
@@ -58,17 +73,19 @@ async function buildAndroid(
     );
   }
 
-  const mode = args.variant || args.mode;
-
   if (args.tasks && args.mode) {
     logger.warn(
       'Both "tasks" and "mode" parameters were passed to "build" command. Using "tasks" for building the app.',
     );
   }
 
-  const tasks = args.tasks || ['assemble' + toPascalCase(mode)];
-
-  let gradleArgs = getTaskNames(androidProject.appName, tasks);
+  let gradleArgs = getTaskNames(
+    androidProject.appName,
+    args.mode,
+    args.variant,
+    args.tasks,
+    'assemble',
+  );
 
   if (args.extraParams) {
     gradleArgs = [...gradleArgs, ...args.extraParams];
@@ -117,7 +134,6 @@ export const options = [
   {
     name: '--mode <string>',
     description: "Specify your app's build variant",
-    default: 'debug',
   },
   {
     name: '--variant <string>',

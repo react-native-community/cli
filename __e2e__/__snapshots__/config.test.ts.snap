@@ -30,6 +30,13 @@ exports[`shows up current config without unnecessary output 1`] = `
       "options": [
         "<<REPLACED>>"
       ]
+    },
+    {
+      "name": "build-android",
+      "description": "builds your app",
+      "options": [
+        "<<REPLACED>>"
+      ]
     }
   ],
   "healthChecks": [],

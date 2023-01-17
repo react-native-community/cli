@@ -7,7 +7,7 @@ import {
 import {Config} from '@react-native-community/cli-types';
 import execa from 'execa';
 import {getAndroidProject} from '../../config/getAndroidProject';
-import {toPascalCase} from '../runAndroid/runOnAllDevices';
+import {toPascalCase} from '../runAndroid/toPascalCase';
 import adb from '../runAndroid/adb';
 import getAdbPath from '../runAndroid/getAdbPath';
 import {startServerInNewWindow} from './startServerInNewWindow';

@@ -18,10 +18,6 @@ import tryInstallAppOnDevice from './tryInstallAppOnDevice';
 import {Flags} from '.';
 import {getTaskNames} from '../buildAndroid';
 
-export function toPascalCase(value: string) {
-  return value !== '' ? value[0].toUpperCase() + value.slice(1) : value;
-}
-
 type AndroidProject = NonNullable<Config['project']['android']>;
 
 async function runOnAllDevices(

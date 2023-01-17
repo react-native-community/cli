@@ -2,6 +2,7 @@ import {execSync} from 'child_process';
 import adb from './adb';
 import getAdbPath from './getAdbPath';
 import {getEmulators} from './tryLaunchEmulator';
+import {toPascalCase} from './toPascalCase';
 import os from 'os';
 import prompts from 'prompts';
 import chalk from 'chalk';
@@ -13,10 +14,6 @@ type DeviceData = {
   connected: boolean;
   type: 'emulator' | 'phone';
 };
-
-function toPascalCase(value: string) {
-  return value !== '' ? value[0].toUpperCase() + value.slice(1) : value;
-}
 
 /**
  *

@@ -7,35 +7,20 @@ import {
 import {Config} from '@react-native-community/cli-types';
 import execa from 'execa';
 import {getAndroidProject} from '../../config/getAndroidProject';
-import {toPascalCase} from '../runAndroid/toPascalCase';
 import adb from '../runAndroid/adb';
 import getAdbPath from '../runAndroid/getAdbPath';
 import {startServerInNewWindow} from './startServerInNewWindow';
+import {getTaskNames} from '../runAndroid/getTaskNames';
 
 export interface BuildFlags {
-  mode: string;
-  variant: string;
+  mode?: string;
+  variant?: string;
   activeArchOnly?: boolean;
-  packager: boolean;
+  packager?: boolean;
   port: number;
   terminal: string;
   tasks?: Array<string>;
   extraParams?: Array<string>;
-}
-
-export function getTaskNames(
-  appName: string,
-  mode: BuildFlags['mode'],
-  variant: BuildFlags['variant'],
-  tasks: BuildFlags['tasks'],
-  taskPrefix: 'assemble' | 'install',
-): Array<string> {
-  const appMode = mode || variant || 'debug';
-  const appTasks = tasks || [taskPrefix + toPascalCase(appMode)];
-
-  return appName
-    ? appTasks.map((command) => `${appName}:${command}`)
-    : appTasks;
 }
 
 export async function runPackager(args: BuildFlags, config: Config) {
@@ -81,8 +66,7 @@ async function buildAndroid(
 
   let gradleArgs = getTaskNames(
     androidProject.appName,
-    args.mode,
-    args.variant,
+    args.mode || args.variant,
     args.tasks,
     'assemble',
   );

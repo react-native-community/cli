@@ -15,8 +15,8 @@ import tryRunAdbReverse from './tryRunAdbReverse';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
 import tryLaunchEmulator from './tryLaunchEmulator';
 import tryInstallAppOnDevice from './tryInstallAppOnDevice';
-import {Flags} from '.';
-import {getTaskNames} from '../buildAndroid';
+import {getTaskNames} from './getTaskNames';
+import type {Flags} from '.';
 
 type AndroidProject = NonNullable<Config['project']['android']>;
 
@@ -52,8 +52,7 @@ async function runOnAllDevices(
     if (!args.binaryPath) {
       let gradleArgs = getTaskNames(
         androidProject.appName,
-        args.mode,
-        args.variant,
+        args.mode || args.variant,
         args.tasks,
         'install',
       );

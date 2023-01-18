@@ -45,7 +45,7 @@ export function projectConfig(
     : findManifest(path.join(sourceDir, appName));
   const buildGradlePath = findBuildGradle(sourceDir, false);
 
-  if (!manifestPath) {
+  if (!manifestPath && !buildGradlePath) {
     return null;
   }
 
@@ -53,7 +53,9 @@ export function projectConfig(
     userConfig.packageName || getPackageName(manifestPath, buildGradlePath);
 
   if (!packageName) {
-    throw new Error(`Package name not found in ${manifestPath}`);
+    throw new Error(
+      `Package name not found in neither ${manifestPath} nor ${buildGradlePath}`,
+    );
   }
 
   return {
@@ -101,7 +103,7 @@ export function dependencyConfig(
     : findManifest(sourceDir);
   const buildGradlePath = findBuildGradle(sourceDir, true);
 
-  if (!manifestPath) {
+  if (!manifestPath && !buildGradlePath) {
     return null;
   }
 

@@ -30,22 +30,22 @@ describe('android::getProjectConfig', () => {
       multiple: {
         android: mocks.userConfigManifest,
       },
-      noManifest: {
+      noManifestNoGradle: {
         android: {},
       },
     });
   });
 
-  it("returns `null` if manifest file hasn't been found and userConfig is not defined", () => {
+  it("returns `null` if neither manifest nor gradle file hasn't been found and userConfig is not defined", () => {
     const userConfig = undefined;
-    const folder = '/noManifest';
+    const folder = '/noManifestNoGradle';
 
     expect(getProjectConfig(folder, userConfig)).toBeNull();
   });
 
-  it("returns `null` if manifest file hasn't been found", () => {
+  it("returns `null` if neither manifest nor gradle file hasn't been found", () => {
     const userConfig = {};
-    const folder = '/noManifest';
+    const folder = '/noManifestNoGradle';
 
     expect(getProjectConfig(folder, userConfig)).toBeNull();
   });

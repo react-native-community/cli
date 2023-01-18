@@ -7,16 +7,16 @@ import {
 import {Config} from '@react-native-community/cli-types';
 import execa from 'execa';
 import {getAndroidProject} from '../../config/getAndroidProject';
-import {getTaskNames, toPascalCase} from '../runAndroid/runOnAllDevices';
 import adb from '../runAndroid/adb';
 import getAdbPath from '../runAndroid/getAdbPath';
 import {startServerInNewWindow} from './startServerInNewWindow';
+import {getTaskNames} from '../runAndroid/getTaskNames';
 
 export interface BuildFlags {
-  mode: string;
-  variant: string;
+  mode?: string;
+  variant?: string;
   activeArchOnly?: boolean;
-  packager: boolean;
+  packager?: boolean;
   port: number;
   terminal: string;
   tasks?: Array<string>;
@@ -58,17 +58,18 @@ async function buildAndroid(
     );
   }
 
-  const mode = args.variant || args.mode;
-
   if (args.tasks && args.mode) {
     logger.warn(
       'Both "tasks" and "mode" parameters were passed to "build" command. Using "tasks" for building the app.',
     );
   }
 
-  const tasks = args.tasks || ['assemble' + toPascalCase(mode)];
-
-  let gradleArgs = getTaskNames(androidProject.appName, tasks);
+  let gradleArgs = getTaskNames(
+    androidProject.appName,
+    args.mode || args.variant,
+    args.tasks,
+    'assemble',
+  );
 
   if (args.extraParams) {
     gradleArgs = [...gradleArgs, ...args.extraParams];
@@ -117,7 +118,6 @@ export const options = [
   {
     name: '--mode <string>',
     description: "Specify your app's build variant",
-    default: 'debug',
   },
   {
     name: '--variant <string>',

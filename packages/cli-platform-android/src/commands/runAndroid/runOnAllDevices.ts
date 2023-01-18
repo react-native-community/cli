@@ -15,20 +15,8 @@ import tryRunAdbReverse from './tryRunAdbReverse';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
 import tryLaunchEmulator from './tryLaunchEmulator';
 import tryInstallAppOnDevice from './tryInstallAppOnDevice';
-import {Flags} from '.';
-
-export function getTaskNames(
-  appName: string,
-  commands: Array<string>,
-): Array<string> {
-  return appName
-    ? commands.map((command) => `${appName}:${command}`)
-    : commands;
-}
-
-export function toPascalCase(value: string) {
-  return value !== '' ? value[0].toUpperCase() + value.slice(1) : value;
-}
+import {getTaskNames} from './getTaskNames';
+import type {Flags} from '.';
 
 type AndroidProject = NonNullable<Config['project']['android']>;
 
@@ -54,13 +42,20 @@ async function runOnAllDevices(
       );
     }
   }
+  if (args.variant) {
+    logger.warn(
+      '"variant" flag is deprecated and will be removed in future release. Please switch to "mode" flag.',
+    );
+  }
 
   try {
     if (!args.binaryPath) {
-      const tasks = args.tasks || [
-        'install' + toPascalCase(args.mode ?? 'debug'),
-      ];
-      let gradleArgs = getTaskNames(androidProject.appName, tasks);
+      let gradleArgs = getTaskNames(
+        androidProject.appName,
+        args.mode || args.variant,
+        args.tasks,
+        'install',
+      );
 
       if (args.extraParams) {
         gradleArgs = [...gradleArgs, ...args.extraParams];

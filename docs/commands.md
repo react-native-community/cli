@@ -323,6 +323,8 @@ Override the root directory for the Android build (which contains the android di
 
 #### `--variant <string>`
 
+> **DEPRECATED** – use "mode" instead
+
 > default: 'debug'
 
 Specify your app's build variant.

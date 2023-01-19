@@ -21,15 +21,14 @@ const launchEmulator = async (
   port?: number,
 ): Promise<boolean> => {
   const manualCommand = `${emulatorCommand} @${emulatorName}`;
+  const command = port
+    ? [`@${emulatorName}`, '-port', `${port}`]
+    : [`@${emulatorName}`];
 
-  const cp = execa(
-    emulatorCommand,
-    [`@${emulatorName}`, port ? '-port' : '', port ? `${port}` : ''],
-    {
-      detached: true,
-      stdio: 'ignore',
-    },
-  );
+  const cp = execa(emulatorCommand, command, {
+    detached: true,
+    stdio: 'ignore',
+  });
   cp.unref();
   const timeout = 30;
 

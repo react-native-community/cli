@@ -24,7 +24,7 @@ const launchEmulator = async (
 
   const cp = execa(
     emulatorCommand,
-    [`@${emulatorName}`, port ? '-port' : '', port ? `${port}` : ''],
+    port ? [`@${emulatorName}`, '-port', `${port}`] : [`@${emulatorName}`],
     {
       detached: true,
       stdio: 'ignore',

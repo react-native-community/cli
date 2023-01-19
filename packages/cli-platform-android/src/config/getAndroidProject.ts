@@ -17,59 +17,63 @@ export function getAndroidProject(config: Config) {
 }
 
 /**
- * Get the package name/namespace of the running React Native app
+ * Util function to discover the package name from either the Manifest file or the build.gradle file.
  * @param manifestPath The path to the AndroidManifest.xml
  * @param buildGradlePath The path to the build.gradle[.kts] file.
  */
-export function getPackageName(
-  manifestPath: string,
+function discoverPackageName(
+  manifestPath: string | null,
   buildGradlePath: string | null,
 ) {
-  const androidManifest = fs.readFileSync(manifestPath, 'utf8');
-
-  const packageNameFromManifest = parsePackageNameFromAndroidManifestFile(
-    androidManifest,
-  );
-  let packageName;
-  if (packageNameFromManifest) {
+  if (manifestPath) {
+    const androidManifest = fs.readFileSync(manifestPath, 'utf8');
+    const packageNameFromManifest = parsePackageNameFromAndroidManifestFile(
+      androidManifest,
+    );
     // We got the package from the AndroidManifest.xml
-    packageName = packageNameFromManifest;
-  } else if (buildGradlePath) {
+    if (packageNameFromManifest) {
+      return packageNameFromManifest;
+    }
+  }
+
+  if (buildGradlePath) {
     // We didn't get the package from the AndroidManifest.xml,
     // so we'll try to get it from the build.gradle[.kts] file
     // via the namespace field.
     const buildGradle = fs.readFileSync(buildGradlePath, 'utf8');
     const namespace = parseNamespaceFromBuildGradleFile(buildGradle);
     if (namespace) {
-      packageName = namespace;
-    } else {
-      throw new CLIError(
-        `Failed to build the app: No package name found. 
-        We couldn't parse the namespace from your build.gradle[.kts] file at ${chalk.underline.dim(
-          `${buildGradlePath}`,
-        )} 
-        and nor your package in the AndroidManifest at ${chalk.underline.dim(
-          `${manifestPath}`,
-        )}
-        `,
-      );
+      return namespace;
     }
-  } else {
-    throw new CLIError(
-      `Failed to build the app: No package name found. 
-      We failed to parse your AndroidManifest at ${chalk.underline.dim(
-        `${manifestPath}`,
-      )}
-      and we couldn't find your build.gradle[.kts] file.
-      `,
-    );
   }
 
+  throw new CLIError(
+    `Failed to build the app: No package name found. 
+    We couldn't parse the namespace from neither your build.gradle[.kts] file at ${chalk.underline.dim(
+      `${buildGradlePath}`,
+    )} 
+    nor your package in the AndroidManifest at ${chalk.underline.dim(
+      `${manifestPath}`,
+    )}
+    `,
+  );
+}
+
+/**
+ * Get the package name/namespace of the running React Native app
+ * @param manifestPath The path to the AndroidManifest.xml
+ * @param buildGradlePath The path to the build.gradle[.kts] file.
+ */
+export function getPackageName(
+  manifestPath: string | null,
+  buildGradlePath: string | null,
+) {
+  let packageName = discoverPackageName(manifestPath, buildGradlePath);
   if (!validatePackageName(packageName)) {
     logger.warn(
       `Invalid application's package name "${chalk.bgRed(
         packageName,
-      )}" in 'AndroidManifest.xml'. Read guidelines for setting the package name here: ${chalk.underline.dim(
+      )}" in either 'AndroidManifest.xml' or 'build.gradle'. Read guidelines for setting the package name here: ${chalk.underline.dim(
         'https://developer.android.com/studio/build/application-id',
       )}`,
     );

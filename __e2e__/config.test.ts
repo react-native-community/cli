@@ -89,5 +89,9 @@ test('should log only valid JSON config if setting up env throws an error', () =
 
   restoreOriginalSetupEnvScript();
   expect(isValidJSON(stdout)).toBe(true);
-  expect(stderr).toBe('');
+  expect(stderr).toBe(
+    process.platform === 'darwin'
+      ? 'warn Multiple Podfiles were found: ios/Podfile,vendor/bundle/ruby/2.7.0/gems/cocoapods-core-1.11.3/lib/cocoapods-core/Podfile. Choosing ios/Podfile automatically. If you would like to select a different one, you can configure it via "project.ios.sourceDir". You can learn more about it here: https://github.com/react-native-community/cli/blob/master/docs/configuration.md'
+      : '',
+  );
 });

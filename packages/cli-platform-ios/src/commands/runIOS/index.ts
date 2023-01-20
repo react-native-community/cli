@@ -104,6 +104,8 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     }
   }
 
+  const devices = await listIOSDevices();
+
   // No need to load all available devices
   if (!args.device && !args.udid) {
     const bootedDevices = devices.filter(({type}) => type === 'device');
@@ -138,8 +140,6 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
       'The `device` and `udid` options are mutually exclusive.',
     );
   }
-
-  const devices = await listIOSDevices();
 
   if (args.udid) {
     const device = devices.find((d) => d.udid === args.udid);

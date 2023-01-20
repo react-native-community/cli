@@ -98,7 +98,7 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
       );
     }
     if (selectedDevice.type === 'simulator') {
-      return runOnSimulator(xcodeProject, scheme, args);
+      return runOnSimulator(xcodeProject, scheme, args, selectedDevice);
     } else {
       return runOnDevice(selectedDevice, scheme, xcodeProject, args);
     }

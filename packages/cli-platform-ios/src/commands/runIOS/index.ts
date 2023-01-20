@@ -164,25 +164,6 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   }
 }
 
-// const getDevices = () => {
-//   let devices;
-//   try {
-//     const out = execa.sync('xcrun', ['xctrace', 'list', 'devices']);
-//     devices = parseXctraceIOSDevicesList(
-//       // Xcode 12.5 introduced a change to output the list to stdout instead of stderr
-//       out.stderr === '' ? out.stdout : out.stderr,
-//     );
-//   } catch (e) {
-//     logger.warn(
-//       'Support for Xcode 11 and older is deprecated. Please upgrade to Xcode 12.',
-//     );
-//     devices = parseIOSDevicesList(
-//       execa.sync('xcrun', ['instruments', '-s']).stdout,
-//     );
-//   }
-//   return devices;
-// };
-
 const getSimulators = () => {
   let simulators: {devices: {[index: string]: Array<Device>}};
   try {

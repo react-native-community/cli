@@ -20,6 +20,7 @@ import {
 import {getPackageName} from './getAndroidProject';
 import {findLibraryName} from './findLibraryName';
 import {findComponentDescriptors} from './findComponentDescriptors';
+import {findBuildGradle} from './findBuildGradle';
 
 /**
  * Gets android project config by analyzing given folder and taking some
@@ -42,15 +43,19 @@ export function projectConfig(
   const manifestPath = userConfig.manifestPath
     ? path.join(sourceDir, userConfig.manifestPath)
     : findManifest(path.join(sourceDir, appName));
+  const buildGradlePath = findBuildGradle(sourceDir, false);
 
-  if (!manifestPath) {
+  if (!manifestPath && !buildGradlePath) {
     return null;
   }
 
-  const packageName = userConfig.packageName || getPackageName(manifestPath);
+  const packageName =
+    userConfig.packageName || getPackageName(manifestPath, buildGradlePath);
 
   if (!packageName) {
-    throw new Error(`Package name not found in ${manifestPath}`);
+    throw new Error(
+      `Package name not found in neither ${manifestPath} nor ${buildGradlePath}`,
+    );
   }
 
   return {
@@ -96,12 +101,14 @@ export function dependencyConfig(
   const manifestPath = userConfig.manifestPath
     ? path.join(sourceDir, userConfig.manifestPath)
     : findManifest(sourceDir);
+  const buildGradlePath = findBuildGradle(sourceDir, true);
 
-  if (!manifestPath) {
+  if (!manifestPath && !buildGradlePath) {
     return null;
   }
 
-  const packageName = userConfig.packageName || getPackageName(manifestPath);
+  const packageName =
+    userConfig.packageName || getPackageName(manifestPath, buildGradlePath);
   const packageClassName = findPackageClassName(sourceDir);
 
   /**
@@ -127,7 +134,12 @@ export function dependencyConfig(
   const androidMkPath = userConfig.androidMkPath
     ? path.join(sourceDir, userConfig.androidMkPath)
     : path.join(sourceDir, 'build/generated/source/codegen/jni/Android.mk');
-
+  let cmakeListsPath = userConfig.cmakeListsPath
+    ? path.join(sourceDir, userConfig.cmakeListsPath)
+    : path.join(sourceDir, 'build/generated/source/codegen/jni/CMakeLists.txt');
+  if (process.platform === 'win32') {
+    cmakeListsPath = cmakeListsPath.replace(/\\/g, '/');
+  }
   return {
     sourceDir,
     packageImportPath,
@@ -137,5 +149,6 @@ export function dependencyConfig(
     libraryName,
     componentDescriptors,
     androidMkPath,
+    cmakeListsPath,
   };
 }

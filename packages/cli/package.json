@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/cli",
-  "version": "9.0.0-alpha.12",
+  "version": "10.1.3",
   "description": "React Native CLI",
   "license": "MIT",
   "main": "build/index.js",
@@ -24,26 +24,23 @@
     "testEnvironment": "node"
   },
   "dependencies": {
-    "@react-native-community/cli-clean": "^9.0.0-alpha.10",
-    "@react-native-community/cli-config": "^9.0.0-alpha.12",
-    "@react-native-community/cli-debugger-ui": "^9.0.0-alpha.4",
-    "@react-native-community/cli-doctor": "^9.0.0-alpha.12",
-    "@react-native-community/cli-hermes": "^9.0.0-alpha.11",
-    "@react-native-community/cli-plugin-metro": "^9.0.0-alpha.10",
-    "@react-native-community/cli-server-api": "^9.0.0-alpha.10",
-    "@react-native-community/cli-tools": "^9.0.0-alpha.10",
-    "@react-native-community/cli-types": "^9.0.0-alpha.0",
+    "@react-native-community/cli-clean": "^10.1.1",
+    "@react-native-community/cli-config": "^10.1.1",
+    "@react-native-community/cli-debugger-ui": "^10.0.0",
+    "@react-native-community/cli-doctor": "^10.1.1",
+    "@react-native-community/cli-hermes": "^10.1.3",
+    "@react-native-community/cli-plugin-metro": "^10.1.1",
+    "@react-native-community/cli-server-api": "^10.1.1",
+    "@react-native-community/cli-tools": "^10.1.1",
+    "@react-native-community/cli-types": "^10.0.0",
     "chalk": "^4.1.2",
-    "commander": "^9.4.0",
+    "commander": "^9.4.1",
     "execa": "^1.0.0",
     "find-up": "^4.1.0",
     "fs-extra": "^8.1.0",
     "graceful-fs": "^4.1.3",
     "prompts": "^2.4.0",
     "semver": "^6.3.0"
-  },
-  "peerDependencies": {
-    "react-native": "*"
   },
   "devDependencies": {
     "@types/fs-extra": "^8.1.0",

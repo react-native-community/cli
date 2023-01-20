@@ -976,4 +976,92 @@ describe('findMatchingSimulator', () => {
       version: 'iOS 12.1',
     });
   });
+
+  it('should return last booted simulator in list if none is defined (multi ios versions)', () => {
+    expect(
+      findMatchingSimulator(
+        {
+          devices: {
+            'com.apple.CoreSimulator.SimRuntime.iOS-16-0': [
+              {
+                udid: 'E1C0E452-2671-4EB5-B875-58E3DDC6EE81',
+                isAvailable: false,
+                state: 'Shutdown',
+                name: 'iPhone SE (3rd generation)',
+              },
+              {
+                lastBootedAt: '2022-09-21T11:38:28Z',
+                udid: '3AA90A75-D9C3-41A6-8DE1-43BE74A0C32B',
+                isAvailable: true,
+                state: 'Shutdown',
+                name: 'iPhone 14',
+              },
+              {
+                udid: '6F2FA108-AC7D-4D3C-BD13-56C5E7FCEDFE',
+                isAvailable: true,
+                state: 'Shutdown',
+                name: 'iPhone 14 Plus',
+              },
+              {
+                udid: 'D87B6D9E-F5B0-486F-BBE3-6EEC5A6D0C22',
+                isAvailable: false,
+                state: 'Shutdown',
+                name: 'iPhone 14 Pro',
+              },
+            ],
+          },
+        },
+        null,
+      ),
+    ).toEqual({
+      udid: '3AA90A75-D9C3-41A6-8DE1-43BE74A0C32B',
+      name: 'iPhone 14',
+      booted: false,
+      version: 'iOS 16.0',
+    });
+  });
+
+  it('should return picked simulator instead of last booted simulator in list (multi ios versions)', () => {
+    expect(
+      findMatchingSimulator(
+        {
+          devices: {
+            'com.apple.CoreSimulator.SimRuntime.iOS-16-0': [
+              {
+                udid: 'E1C0E452-2671-4EB5-B875-58E3DDC6EE81',
+                isAvailable: false,
+                state: 'Shutdown',
+                name: 'iPhone SE (3rd generation)',
+              },
+              {
+                lastBootedAt: '2022-09-21T11:38:28Z',
+                udid: '3AA90A75-D9C3-41A6-8DE1-43BE74A0C32B',
+                isAvailable: true,
+                state: 'Shutdown',
+                name: 'iPhone 14',
+              },
+              {
+                udid: '6F2FA108-AC7D-4D3C-BD13-56C5E7FCEDFE',
+                isAvailable: true,
+                state: 'Shutdown',
+                name: 'iPhone 14 Plus',
+              },
+              {
+                udid: 'D87B6D9E-F5B0-486F-BBE3-6EEC5A6D0C22',
+                isAvailable: false,
+                state: 'Shutdown',
+                name: 'iPhone 14 Pro',
+              },
+            ],
+          },
+        },
+        {simulator: 'iPhone 14 Plus'},
+      ),
+    ).toEqual({
+      udid: '6F2FA108-AC7D-4D3C-BD13-56C5E7FCEDFE',
+      name: 'iPhone 14 Plus',
+      booted: false,
+      version: 'iOS 16.0',
+    });
+  });
 });

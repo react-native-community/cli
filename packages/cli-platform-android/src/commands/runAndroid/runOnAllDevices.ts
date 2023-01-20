@@ -14,17 +14,9 @@ import adb from './adb';
 import tryRunAdbReverse from './tryRunAdbReverse';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
 import tryLaunchEmulator from './tryLaunchEmulator';
-import {Flags} from '.';
-
-function getTaskNames(appName: string, commands: Array<string>): Array<string> {
-  return appName
-    ? commands.map((command) => `${appName}:${command}`)
-    : commands;
-}
-
-function toPascalCase(value: string) {
-  return value !== '' ? value[0].toUpperCase() + value.slice(1) : value;
-}
+import tryInstallAppOnDevice from './tryInstallAppOnDevice';
+import {getTaskNames} from './getTaskNames';
+import type {Flags} from '.';
 
 type AndroidProject = NonNullable<Config['project']['android']>;
 
@@ -50,43 +42,62 @@ async function runOnAllDevices(
       );
     }
   }
+  if (args.variant) {
+    logger.warn(
+      '"variant" flag is deprecated and will be removed in future release. Please switch to "mode" flag.',
+    );
+  }
 
   try {
-    const tasks = args.tasks || ['install' + toPascalCase(args.variant)];
-    const gradleArgs = getTaskNames(androidProject.appName, tasks);
+    if (!args.binaryPath) {
+      let gradleArgs = getTaskNames(
+        androidProject.appName,
+        args.mode || args.variant,
+        args.tasks,
+        'install',
+      );
 
-    if (args.port != null) {
-      gradleArgs.push('-PreactNativeDevServerPort=' + args.port);
-    }
-
-    if (args.activeArchOnly) {
-      const architectures = devices
-        .map((device) => {
-          return adb.getCPU(adbPath, device);
-        })
-        .filter((arch) => arch != null);
-      if (architectures.length > 0) {
-        logger.info(`Detected architectures ${architectures.join(', ')}`);
-        // `reactNativeDebugArchitectures` was renamed to `reactNativeArchitectures` in 0.68.
-        // Can be removed when 0.67 no longer needs to be supported.
-        gradleArgs.push(
-          '-PreactNativeDebugArchitectures=' + architectures.join(','),
-        );
-        gradleArgs.push(
-          '-PreactNativeArchitectures=' + architectures.join(','),
-        );
+      if (args.extraParams) {
+        gradleArgs = [...gradleArgs, ...args.extraParams];
       }
+
+      if (args.port != null) {
+        gradleArgs.push('-PreactNativeDevServerPort=' + args.port);
+      }
+
+      if (args.activeArchOnly) {
+        const architectures = devices
+          .map((device) => {
+            return adb.getCPU(adbPath, device);
+          })
+          .filter(
+            (arch, index, array) =>
+              arch != null && array.indexOf(arch) === index,
+          );
+
+        if (architectures.length > 0) {
+          logger.info(`Detected architectures ${architectures.join(', ')}`);
+          // `reactNativeDebugArchitectures` was renamed to `reactNativeArchitectures` in 0.68.
+          // Can be removed when 0.67 no longer needs to be supported.
+          gradleArgs.push(
+            '-PreactNativeDebugArchitectures=' + architectures.join(','),
+          );
+          gradleArgs.push(
+            '-PreactNativeArchitectures=' + architectures.join(','),
+          );
+        }
+      }
+
+      logger.info('Installing the app...');
+      logger.debug(
+        `Running command "cd android && ${cmd} ${gradleArgs.join(' ')}"`,
+      );
+
+      await execa(cmd, gradleArgs, {
+        stdio: ['inherit', 'inherit', 'pipe'],
+        cwd: androidProject.sourceDir,
+      });
     }
-
-    logger.info('Installing the app...');
-    logger.debug(
-      `Running command "cd android && ${cmd} ${gradleArgs.join(' ')}"`,
-    );
-
-    await execa(cmd, gradleArgs, {
-      stdio: ['inherit', 'inherit', 'pipe'],
-      cwd: androidProject.sourceDir,
-    });
   } catch (error) {
     throw createInstallError(error);
   }
@@ -94,6 +105,9 @@ async function runOnAllDevices(
   (devices.length > 0 ? devices : [undefined]).forEach(
     (device: string | void) => {
       tryRunAdbReverse(args.port, device);
+      if (args.binaryPath && device) {
+        tryInstallAppOnDevice(args, adbPath, device, androidProject);
+      }
       tryLaunchAppOnDevice(device, androidProject.packageName, adbPath, args);
     },
   );

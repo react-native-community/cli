@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/cli-debugger-ui",
-  "version": "9.0.0-alpha.4",
+  "version": "10.0.0",
   "license": "MIT",
   "main": "./build/middleware",
   "scripts": {
@@ -15,7 +15,7 @@
   ],
   "devDependencies": {
     "@babel/core": "^7.6.4",
-    "parcel-bundler": "^1.12.4"
+    "parcel-bundler": "^1.12.5"
   },
   "dependencies": {
     "serve-static": "^1.13.1"

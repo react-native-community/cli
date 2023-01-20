@@ -1,9 +1,15 @@
 import readline from 'readline';
 import {logger, hookStdout} from '@react-native-community/cli-tools';
+import execa from 'execa';
+import chalk from 'chalk';
 
 function printWatchModeInstructions() {
   logger.log(
-    '\n\nTo reload the app press "r"\nTo open developer menu press "d"',
+    `${chalk.bold('r')} - reload the app\n${chalk.bold(
+      'd',
+    )} - open developer menu\n${chalk.bold('i')} - run on iOS\n${chalk.bold(
+      'a',
+    )} - run on Android`,
   );
 }
 
@@ -47,6 +53,12 @@ function enableWatchMode(messageSocket: any) {
     } else if (name === 'd') {
       messageSocket.broadcast('devMenu', null);
       logger.info('Opening developer menu...');
+    } else if (name === 'i' || name === 'a') {
+      logger.info(`Opening the app on ${name === 'i' ? 'iOS' : 'Android'}...`);
+      execa('npx', [
+        'react-native',
+        name === 'i' ? 'run-ios' : 'run-android',
+      ]).stdout?.pipe(process.stdout);
     } else {
       console.log(_key);
     }

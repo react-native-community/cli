@@ -8,10 +8,10 @@
 
 import child_process, {
   ChildProcess,
-  // @ts-ignore
   SpawnOptionsWithoutStdio,
 } from 'child_process';
 import path from 'path';
+import fs from 'fs';
 import chalk from 'chalk';
 import {Config, IOSProjectInfo} from '@react-native-community/cli-types';
 import findMatchingSimulator from './findMatchingSimulator';
@@ -34,7 +34,10 @@ type FlagsT = {
   packager: boolean;
   verbose: boolean;
   port: number;
+  binaryPath?: string;
   terminal: string | undefined;
+  xcconfig?: string;
+  buildFolder?: string;
   listDevices?: boolean;
 };
 
@@ -43,6 +46,18 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     throw new CLIError(
       'iOS project folder not found. Are you sure this is a React Native project?',
     );
+  }
+
+  if (args.binaryPath) {
+    args.binaryPath = path.isAbsolute(args.binaryPath)
+      ? args.binaryPath
+      : path.join(ctx.root, args.binaryPath);
+
+    if (!fs.existsSync(args.binaryPath)) {
+      throw new CLIError(
+        'binary-path was specified, but the file was not found.',
+      );
+    }
   }
 
   const {xcodeProject, sourceDir} = ctx.project.ios;
@@ -91,7 +106,31 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
 
   // No need to load all available devices
   if (!args.device && !args.udid) {
-    return runOnSimulator(xcodeProject, scheme, args);
+    const bootedDevices = devices.filter(({type}) => type === 'device');
+
+    const simulators = getSimulators();
+    const bootedSimulators = Object.keys(simulators.devices)
+      .map((key) => simulators.devices[key])
+      .reduce((acc, val) => acc.concat(val), [])
+      .filter(({state}) => state === 'Booted');
+
+    const booted = [...bootedDevices, ...bootedSimulators];
+    if (booted.length === 0) {
+      logger.info(
+        'No booted devices or simulators found. Launching first available simulator...',
+      );
+      return runOnSimulator(xcodeProject, scheme, args);
+    }
+
+    logger.info(`Found booted ${booted.map(({name}) => name).join(', ')}`);
+
+    return runOnBootedDevicesSimulators(
+      scheme,
+      xcodeProject,
+      args,
+      bootedDevices,
+      bootedSimulators,
+    );
   }
 
   if (args.device && args.udid) {
@@ -125,11 +164,26 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   }
 }
 
-async function runOnSimulator(
-  xcodeProject: IOSProjectInfo,
-  scheme: string,
-  args: FlagsT,
-) {
+// const getDevices = () => {
+//   let devices;
+//   try {
+//     const out = execa.sync('xcrun', ['xctrace', 'list', 'devices']);
+//     devices = parseXctraceIOSDevicesList(
+//       // Xcode 12.5 introduced a change to output the list to stdout instead of stderr
+//       out.stderr === '' ? out.stdout : out.stderr,
+//     );
+//   } catch (e) {
+//     logger.warn(
+//       'Support for Xcode 11 and older is deprecated. Please upgrade to Xcode 12.',
+//     );
+//     devices = parseIOSDevicesList(
+//       execa.sync('xcrun', ['instruments', '-s']).stdout,
+//     );
+//   }
+//   return devices;
+// };
+
+const getSimulators = () => {
   let simulators: {devices: {[index: string]: Array<Device>}};
   try {
     simulators = JSON.parse(
@@ -145,19 +199,62 @@ async function runOnSimulator(
       error,
     );
   }
+  return simulators;
+};
 
-  /**
-   * If provided simulator does not exist, try simulators in following order
-   * - iPhone 13
-   * - iPhone 12
-   * - iPhone 11
-   */
-  const fallbackSimulators = ['iPhone 13', 'iPhone 12', 'iPhone 11'];
-  const selectedSimulator = fallbackSimulators.reduce((simulator, fallback) => {
-    return (
-      simulator || findMatchingSimulator(simulators, {simulator: fallback})
+async function runOnBootedDevicesSimulators(
+  scheme: string,
+  xcodeProject: IOSProjectInfo,
+  args: FlagsT,
+  devices: Device[],
+  simulators: Device[],
+) {
+  for (const device of devices) {
+    await runOnDevice(device, scheme, xcodeProject, args);
+  }
+
+  for (const simulator of simulators) {
+    await runOnSimulator(xcodeProject, scheme, args, simulator);
+  }
+}
+
+async function runOnSimulator(
+  xcodeProject: IOSProjectInfo,
+  scheme: string,
+  args: FlagsT,
+  simulator?: Device,
+) {
+  let selectedSimulator;
+
+  if (simulator) {
+    selectedSimulator = simulator;
+  } else {
+    const simulators = getSimulators();
+
+    /**
+     * If provided simulator does not exist, try simulators in following order
+     * - iPhone 14
+     * - iPhone 13
+     * - iPhone 12
+     * - iPhone 11
+     */
+    const fallbackSimulators = [
+      'iPhone 14',
+      'iPhone 13',
+      'iPhone 12',
+      'iPhone 11',
+    ];
+
+    selectedSimulator = fallbackSimulators.reduce(
+      (matchingSimulator, fallback) => {
+        return (
+          matchingSimulator ||
+          findMatchingSimulator(simulators, {simulator: fallback})
+        );
+      },
+      findMatchingSimulator(simulators, args),
     );
-  }, findMatchingSimulator(simulators, args));
+  }
 
   if (!selectedSimulator) {
     throw new CLIError(
@@ -193,21 +290,28 @@ async function runOnSimulator(
     bootSimulator(selectedSimulator);
   }
 
-  const buildOutput = await buildProject(
-    xcodeProject,
-    selectedSimulator.udid,
-    scheme,
-    args,
-  );
+  let buildOutput, appPath;
+  if (!args.binaryPath) {
+    buildOutput = await buildProject(
+      xcodeProject,
+      selectedSimulator.udid,
+      scheme,
+      args,
+    );
 
-  const appPath = getBuildPath(
-    xcodeProject,
-    args.configuration,
-    buildOutput,
-    scheme,
-  );
+    appPath = getBuildPath(
+      xcodeProject,
+      args.configuration,
+      buildOutput,
+      scheme,
+    );
+  } else {
+    appPath = args.binaryPath;
+  }
 
-  logger.info(`Installing "${chalk.bold(appPath)}"`);
+  logger.info(
+    `Installing "${chalk.bold(appPath)} on ${selectedSimulator.name}"`,
+  );
 
   child_process.spawnSync(
     'xcrun',
@@ -248,6 +352,12 @@ async function runOnDevice(
   xcodeProject: IOSProjectInfo,
   args: FlagsT,
 ) {
+  if (args.binaryPath && selectedDevice.type === 'catalyst') {
+    throw new CLIError(
+      'binary-path was specified for catalyst device, which is not supported.',
+    );
+  }
+
   const isIOSDeployInstalled = child_process.spawnSync(
     'ios-deploy',
     ['--version'],
@@ -262,14 +372,14 @@ async function runOnDevice(
     );
   }
 
-  const buildOutput = await buildProject(
-    xcodeProject,
-    selectedDevice.udid,
-    scheme,
-    args,
-  );
-
   if (selectedDevice.type === 'catalyst') {
+    const buildOutput = await buildProject(
+      xcodeProject,
+      selectedDevice.udid,
+      scheme,
+      args,
+    );
+
     const appPath = getBuildPath(
       xcodeProject,
       args.configuration,
@@ -283,9 +393,28 @@ async function runOnDevice(
     });
     appProcess.unref();
   } else {
+    let buildOutput, appPath;
+    if (!args.binaryPath) {
+      buildOutput = await buildProject(
+        xcodeProject,
+        selectedDevice.udid,
+        scheme,
+        args,
+      );
+
+      appPath = getBuildPath(
+        xcodeProject,
+        args.configuration,
+        buildOutput,
+        scheme,
+      );
+    } else {
+      appPath = args.binaryPath;
+    }
+
     const iosDeployInstallArgs = [
       '--bundle',
-      getBuildPath(xcodeProject, args.configuration, buildOutput, scheme),
+      appPath,
       '--id',
       selectedDevice.udid,
       '--justlaunch',
@@ -319,6 +448,8 @@ function buildProject(
     const xcodebuildArgs = [
       xcodeProject.isWorkspace ? '-workspace' : '-project',
       xcodeProject.name,
+      ...(args.xcconfig ? ['-xcconfig', args.xcconfig] : []),
+      ...(args.buildFolder ? ['-derivedDataPath', args.buildFolder] : []),
       '-configuration',
       args.configuration,
       '-scheme',
@@ -595,7 +726,7 @@ export default {
       description:
         'Explicitly set simulator to use. Optionally include iOS version between ' +
         'parenthesis at the end to match an exact version: "iPhone 6 (10.0)"',
-      default: 'iPhone 13',
+      default: 'iPhone 14',
     },
     {
       name: '--configuration <string>',
@@ -629,6 +760,11 @@ export default {
       parse: Number,
     },
     {
+      name: '--binary-path <string>',
+      description:
+        'Path relative to project root where pre-built .app binary lives.',
+    },
+    {
       name: '--terminal <string>',
       description:
         'Launches the Metro Bundler in a new window using the specified terminal path.',
@@ -638,6 +774,15 @@ export default {
       name: '--list-devices',
       description:
         'List all available iOS devices and simulators and let you choose one to run the app. ',
+    },
+    {
+      name: '--xcconfig [string]',
+      description: 'Explicitly set xcconfig to use',
+    },
+    {
+      name: '--buildFolder <string>',
+      description:
+        'Location for iOS build artifacts. Corresponds to Xcode\'s "-derivedDataPath".',
     },
   ],
 };

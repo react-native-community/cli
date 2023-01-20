@@ -20,6 +20,7 @@ import {changePlaceholderInTemplate} from './editTemplate';
 import * as PackageManager from '../../tools/packageManager';
 import {installPods} from '@react-native-community/cli-doctor';
 import banner from './banner';
+import TemplateAndVersionError from './errors/TemplateAndVersionError';
 
 const DEFAULT_VERSION = 'latest';
 
@@ -174,13 +175,27 @@ async function installDependencies({
   loader.succeed();
 }
 
+function createTemplateUri(options: Options, version: string): string {
+  const isTypescriptTemplate =
+    options.template === 'react-native-template-typescript';
+
+  if (isTypescriptTemplate) {
+    logger.warn(
+      "Ignoring custom template: 'react-native-template-typescript'. Starting from React Native v0.71 TypeScript is used by default.",
+    );
+    return 'react-native';
+  }
+
+  return options.template || `react-native@${version}`;
+}
+
 async function createProject(
   projectName: string,
   directory: string,
   version: string,
   options: Options,
 ) {
-  const templateUri = options.template || `react-native@${version}`;
+  const templateUri = createTemplateUri(options, version);
 
   return createFromTemplate({
     projectName,
@@ -198,16 +213,16 @@ export default (async function initialize(
 ) {
   validateProjectName(projectName);
 
+  if (!!options.template && !!options.version) {
+    throw new TemplateAndVersionError(options.template);
+  }
+
   const root = process.cwd();
   const version = options.version || DEFAULT_VERSION;
   const directoryName = path.relative(root, options.directory || projectName);
 
-  try {
-    await createProject(projectName, directoryName, version, options);
+  await createProject(projectName, directoryName, version, options);
 
-    const projectFolder = path.join(root, directoryName);
-    printRunInstructions(projectFolder, projectName);
-  } catch (e) {
-    logger.error(e.message);
-  }
+  const projectFolder = path.join(root, directoryName);
+  printRunInstructions(projectFolder, projectName);
 });

@@ -6,7 +6,7 @@ All work on React Native CLI happens directly on GitHub. Contributors send pull 
 
 > **Working on your first pull request?** You can learn how from this _free_ series: [How to Contribute to an Open Source Project on GitHub](https://egghead.io/series/how-to-contribute-to-an-open-source-project-on-github).
 
-1. Fork the repo and create your branch from `master` (a guide on [how to fork a repository](https://help.github.com/articles/fork-a-repo/)).
+1. Fork the repo and create your branch from `main` (a guide on [how to fork a repository](https://help.github.com/articles/fork-a-repo/)).
 1. Run `yarn` or `npm install` to install all required dependencies.
 1. Run `yarn watch` to automatically build the changed files.
 1. Now you are ready to do the changes.
@@ -15,8 +15,7 @@ All work on React Native CLI happens directly on GitHub. Contributors send pull 
 
 > Please make sure the version of React Native matches the one present in devDependencies of the CLI. Otherwise, you may get unexpected errors.
 
-_Note: you must use the `--watchFolders` flag with the `start` command when testing the CLI with `yarn link` like this. Otherwise Metro can't find the symlinked folder and this may result in errors such as `ReferenceError: SHA-1 for file ... is not computed`._
-
+_Note: you must use the `--watchFolders` flag with the `start` command when testing the CLI with `yarn link` like this. Otherwise Metro can't find the symlinked folder and this may result in errors such as `ReferenceError: SHA-1 for file ... is not computed`. If you are experiencing this error while using Release configuration, please add `watchFolders: ["path/to/cloned/cli/"]` to your `metro.config.js` file._
 ### Setup
 
 Because of a modular design of the CLI, we recommend developing using symbolic links to its packages. This way you can use it seamlessly in the tested project, as you'd use the locally installed CLI. Here's what you need to run in the terminal:
@@ -106,6 +105,10 @@ When you're sending a pull request:
 ## Reporting issues
 
 You can report issues on our [bug tracker](https://github.com/react-native-community/react-native-cli/issues). Please follow the issue template when opening an issue.
+
+## Stale Bot
+
+This repository is using bot to automatically mark issues and PRs as stale and close them. The "stale" label is added after 90 days of inactivity, and it's getting closed 7 days later. If you find the issue important or you want to keep it open for any particular reason, please show any activity in the issue or contact maintainers to add the "no-stale-bot" label, which prevents bot from closing the issues.
 
 ## License
 

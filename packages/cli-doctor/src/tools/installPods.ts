@@ -3,8 +3,8 @@ import execa from 'execa';
 import chalk from 'chalk';
 import prompts from 'prompts';
 import {logger, NoopLoader} from '@react-native-community/cli-tools';
-// @ts-ignore untyped
 import sudo from 'sudo-prompt';
+import runBundleInstall from './runBundleInstall';
 import {brewInstall} from './brewInstall';
 import {Loader} from '../types';
 
@@ -24,7 +24,8 @@ async function runPodInstall(
         '(this may take a few minutes)',
       )}`,
     );
-    await execa('pod', ['install']);
+
+    await execa('bundle', ['exec', 'pod', 'install']);
   } catch (error) {
     // "pod" command outputs errors to stdout (at least some of them)
     const stderr = error.stderr || error.stdout;
@@ -41,10 +42,10 @@ async function runPodInstall(
       await runPodInstall(loader, directory, false);
     } else {
       loader.fail();
+      logger.error(stderr);
+
       throw new Error(
-        `Failed to install CocoaPods dependencies for iOS project, which is required by this template.\nPlease try again manually: "cd ./${directory}/ios && pod install".\nCocoaPods documentation: ${chalk.dim.underline(
-          'https://cocoapods.org/',
-        )}`,
+        'Looks like your iOS environment is not properly set. Please go to https://reactnative.dev/docs/next/environment-setup and follow the React Native CLI QuickStart guide for macOS and iOS.',
       );
     }
   }
@@ -181,6 +182,10 @@ async function installPods({
       return;
     }
 
+    if (fs.existsSync('../Gemfile')) {
+      await runBundleInstall(loader);
+    }
+
     try {
       // Check if "pod" is available and usable. It happens that there are
       // multiple versions of "pod" command and even though it's there, it exits
@@ -192,8 +197,6 @@ async function installPods({
     }
 
     await runPodInstall(loader, directory);
-  } catch (error) {
-    throw error;
   } finally {
     process.chdir('..');
   }

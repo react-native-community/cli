@@ -24,6 +24,9 @@ export type EnvironmentInfo = {
     npm: AvailableInformation;
     Watchman: AvailableInformation;
   };
+  Managers: {
+    CocoaPods: AvailableInformation;
+  };
   SDKs: {
     'iOS SDK': {
       Platforms: string[];

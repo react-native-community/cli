@@ -101,8 +101,7 @@ export async function changePlaceholderInTemplate({
     }
     if (shouldRenameFile(filePath, placeholderName)) {
       await renameFile(filePath, placeholderName, projectName);
-    }
-    if (shouldRenameFile(filePath, placeholderName.toLowerCase())) {
+    } else if (shouldRenameFile(filePath, placeholderName.toLowerCase())) {
       await renameFile(
         filePath,
         placeholderName.toLowerCase(),

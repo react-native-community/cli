@@ -80,7 +80,9 @@ test('shows up current config without unnecessary output', () => {
     JSON.stringify(parsedStdout, null, 2).replace(/\\\\/g, '\\'),
     DIR,
   );
-  expect(wrap(configWithReplacedProjectRoots)).toMatchSnapshot();
+  expect(wrap(configWithReplacedProjectRoots)).toMatchSnapshot(
+    process.platform === 'darwin' ? 'macOS' : undefined,
+  );
 });
 
 test('should log only valid JSON config if setting up env throws an error', () => {

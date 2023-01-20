@@ -60,3 +60,64 @@ exports[`shows up current config without unnecessary output 1`] = `
   }
 }
 `;
+
+exports[`shows up current config without unnecessary output: macOS 1`] = `
+{
+  "root": "<<REPLACED_ROOT>>/TestProject",
+  "reactNativePath": "<<REPLACED_ROOT>>/TestProject/node_modules/react-native",
+  "dependencies": {},
+  "commands": [
+    {
+      "name": "log-ios",
+      "description": "starts iOS device syslog tail"
+    },
+    {
+      "name": "run-ios",
+      "description": "builds your app and starts it on iOS simulator",
+      "examples": [
+        "<<REPLACED>>"
+      ],
+      "options": [
+        "<<REPLACED>>"
+      ]
+    },
+    {
+      "name": "log-android",
+      "description": "starts logkitty"
+    },
+    {
+      "name": "run-android",
+      "description": "builds your app and starts it on a connected Android emulator or device",
+      "options": [
+        "<<REPLACED>>"
+      ]
+    },
+    {
+      "name": "build-android",
+      "description": "builds your app",
+      "options": [
+        "<<REPLACED>>"
+      ]
+    }
+  ],
+  "healthChecks": [],
+  "platforms": {
+    "ios": {},
+    "android": {}
+  },
+  "project": {
+    "ios": {
+      "sourceDir": "<<REPLACED_ROOT>>/TestProject/ios",
+      "xcodeProject": {
+        "name": "TestProject.xcworkspace",
+        "isWorkspace": true
+      }
+    },
+    "android": {
+      "sourceDir": "<<REPLACED_ROOT>>/TestProject/android",
+      "appName": "app",
+      "packageName": "com.testproject"
+    }
+  }
+}
+`;

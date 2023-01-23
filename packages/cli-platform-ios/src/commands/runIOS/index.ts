@@ -236,7 +236,7 @@ async function runOnSimulator(
       },
       findMatchingSimulator(simulators, {
         ...args,
-        simulator: args.simulator ?? defaultSimulator,
+        simulator: args.simulator ?? fallbackSimulators[0],
       }),
     );
   }

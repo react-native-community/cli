@@ -211,8 +211,6 @@ async function runOnSimulator(
   } else {
     const simulators = getSimulators();
 
-    const defaultSimulator = 'iPhone 14';
-
     /**
      * If provided simulator does not exist, try simulators in following order
      * - iPhone 14
@@ -235,7 +233,7 @@ async function runOnSimulator(
         );
       },
       findMatchingSimulator(simulators, {
-        ...args,
+        udid: args.udid,
         simulator: args.simulator ?? fallbackSimulators[0],
       }),
     );

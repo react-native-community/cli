@@ -97,7 +97,20 @@ test('should read a config of a dependency and use it to load other settings', (
       dependency: {
         platforms: {
           ios: {
-            scriptPhases: ["./customLocation/custom.sh"]
+            scriptPhases: [
+              {
+                name: "[TEST] Some Configuration",
+                path: "./customLocation/custom.sh",
+                execution_position: "after_compile",
+                input_files: ["input_file"],
+                shell_path: "some/shell/path/bash",
+                output_files: ["output_file"],
+                input_file_lists: ["input_file_1", "input_file_2"],
+                output_file_lists: ["output_file_1", "output_file_2"],
+                show_env_vars_in_log: false,
+                dependency_file: "/path/to/dependency/file"
+              }
+            ]
           }
         }
       }
@@ -133,7 +146,7 @@ test('should merge project configuration with default values', () => {
         "react-native-test": {
           platforms: {
             ios: {
-              scriptPhases: ["./abc"]
+              scriptPhases: [{name: "abc", path: "./phase.sh"}]
             }
           },
         }
@@ -178,7 +191,7 @@ test('should load commands from "react-native-foo" and "react-native-bar" packag
   expect(commands).toMatchSnapshot();
 });
 
-test('should skip packages that have invalid configuration', () => {
+test('should not skip packages that have invalid configuration (to avoid breaking users)', () => {
   process.env.FORCE_COLOR = '0'; // To disable chalk
   DIR = getTempDirectory('config_test_skip');
   writeFiles(DIR, {
@@ -195,7 +208,9 @@ test('should skip packages that have invalid configuration', () => {
     }`,
   });
   const {dependencies} = loadConfig(DIR);
-  expect(dependencies).toMatchSnapshot('dependencies config');
+  expect(removeString(dependencies, DIR)).toMatchSnapshot(
+    'dependencies config',
+  );
   expect(spy.mock.calls[0][0]).toMatchSnapshot('logged warning');
 });
 
@@ -325,4 +340,84 @@ test('supports dependencies from user configuration with custom build type', () 
   expect(
     removeString(dependencies['react-native-test'], DIR),
   ).toMatchSnapshot();
+});
+
+test('supports disabling dependency for ios platform', () => {
+  DIR = getTempDirectory('config_test_disable_dependency_platform');
+  writeFiles(DIR, {
+    ...REACT_NATIVE_MOCK,
+    'node_modules/react-native-test/package.json': '{}',
+    'node_modules/react-native-test/ReactNativeTest.podspec': '',
+    'node_modules/react-native-test/react-native.config.js': `
+      module.exports = {
+        dependency: {
+          platforms: {
+            ios: null
+          }
+        }
+      }
+    `,
+    'package.json': `{
+      "dependencies": {
+        "react-native": "0.0.1",
+        "react-native-test": "0.0.1"
+      }
+    }`,
+  });
+
+  const {dependencies} = loadConfig(DIR);
+  expect(
+    removeString(dependencies['react-native-test'], DIR),
+  ).toMatchSnapshot();
+});
+
+test('should convert project sourceDir relative path to absolute', () => {
+  DIR = getTempDirectory('config_test_absolute_project_source_dir');
+  const iosProjectDir = './ios2';
+  const androidProjectDir = './android2';
+  writeFiles(DIR, {
+    ...REACT_NATIVE_MOCK,
+    'react-native.config.js': `
+      module.exports = {
+        project: {
+          ios: {
+            sourceDir: '${iosProjectDir}',
+          },
+          android: {
+            sourceDir: '${androidProjectDir}',
+          }
+        }
+      }
+    `,
+    'package.json': `{
+      "dependencies": {
+        "react-native": "0.0.1"
+      }
+    }`,
+    'ios/Podfile': `
+      platform :ios, '12.4'
+    `,
+    'ios2/Podfile': `
+      platform :ios, '12.4'
+    `,
+    'android/AndroidManifest.xml': `
+      <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        package="com.coinbase.android">
+      </manifest>
+    `,
+    'android2/AndroidManifest.xml': `
+      <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        package="com.coinbase.android">
+      </manifest>
+    `,
+  });
+
+  const config = loadConfig(DIR);
+
+  expect(config.project.ios?.sourceDir).toBe(path.join(DIR, iosProjectDir));
+  expect(config.project.android?.sourceDir).toBe(
+    path.join(DIR, androidProjectDir),
+  );
 });

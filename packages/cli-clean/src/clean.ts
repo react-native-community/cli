@@ -107,12 +107,20 @@ export async function clean(
             description: 'CocoaPods cache',
             tasks: [
               {
-                label: 'Clean CocoaPods cache',
+                label: 'Clean CocoaPods pod cache',
                 action: async () => {
                   await execa('pod', ['cache', 'clean', '--all'], {
                     cwd: projectRoot,
                   });
                 },
+              },
+              {
+                label: 'Remove installed CocoaPods',
+                action: () => cleanDir('ios/Pods'),
+              },
+              {
+                label: 'Remove CocoaPods spec cache',
+                action: () => cleanDir('~/.cocoapods'),
               },
             ],
           },

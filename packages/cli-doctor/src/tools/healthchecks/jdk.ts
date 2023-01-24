@@ -57,7 +57,7 @@ export default {
     loader.fail();
     logManualInstallation({
       healthcheck: 'JDK',
-      url: 'https://openjdk.java.net/',
+      url: 'https://reactnative.dev/docs/environment-setup',
     });
   },
 } as HealthCheckInterface;

@@ -55,6 +55,10 @@ type AndroidDependencyParams = {
   packageImportPath?: string;
   packageInstance?: string;
   buildTypes?: string[];
+  libraryName?: string | null;
+  componentDescriptors?: string[] | null;
+  androidMkPath?: string | null;
+  cmakeListsPath?: string | null;
 };
 ```
 
@@ -119,3 +123,27 @@ An array of build variants or flavors which will include the dependency. If the 
 
 A string that defines which method other than `implementation` do you want to use
 for autolinking inside `build.gradle` i.e: `'embed project(path: ":$dependencyName", configuration: "default")',` - `"dependencyName` will be replaced by the actual package's name. You can achieve the same result by directly defining this key per `dependency` _(without placeholder)_ and it will have higher priority than this option.
+
+#### platforms.android.libraryName
+
+> Note: Only applicable when new architecture is turned on.
+
+A string indicating your custom library name. By default it's taken from the `libraryName` variable in your library's `build.gradle`.
+
+#### platforms.android.componentDescriptors
+
+> Note: Only applicable when new architecture is turned on.
+
+An array of custom component descriptor strings. By default they're generated based on `codegenNativeComponent` calls.
+
+#### platforms.android.androidMkPath
+
+> Note: Only applicable when new architecture is turned on.
+
+A relative path to a custom _Android.mk_ file not registered by codegen. Relative to `sourceDir`.
+
+#### platforms.android.cmakeListsPath
+
+> Note: Only applicable when new architecture is turned on.
+
+A relative path to a custom _CMakeLists.txt_ file not registered by codegen. Relative to `sourceDir`.

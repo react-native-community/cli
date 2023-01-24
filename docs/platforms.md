@@ -118,5 +118,9 @@ type AndroidDependencyConfig = {
   packageInstance: string;
   dependencyConfiguration?: string;
   buildTypes: string[];
+  libraryName?: string | null;
+  componentDescriptors?: string[] | null;
+  androidMkPath?: string | null;
+  cmakeListsPath?: string | null;
 };
 ```

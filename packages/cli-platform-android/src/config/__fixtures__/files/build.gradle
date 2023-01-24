@@ -1,0 +1,10 @@
+apply package: "com.android.application"
+apply package: "com.facebook.react"
+
+android {
+    namespace 'com.some.example'
+}
+
+react {
+    libraryName = "justalibrary"
+}

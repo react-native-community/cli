@@ -12,7 +12,7 @@
     {"path": "../cli-plugin-metro"},
     {"path": "../cli-server-api"},
     {"path": "../cli-types"},
-    {"path": "../debugger-ui"},
-    {"path": "../tools"}
+    {"path": "../cli-debugger-ui"},
+    {"path": "../cli-tools"}
   ]
 }

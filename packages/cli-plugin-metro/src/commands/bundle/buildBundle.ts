@@ -28,6 +28,7 @@ interface RequestOptions {
   minify: boolean;
   platform: string | undefined;
   unstable_transformProfile: string | undefined;
+  generateStaticViewConfigs: boolean;
 }
 
 export interface AssetData {
@@ -101,6 +102,7 @@ export async function buildBundleWithConfig(
     minify: args.minify !== undefined ? args.minify : !args.dev,
     platform: args.platform,
     unstable_transformProfile: args.unstableTransformProfile,
+    generateStaticViewConfigs: args.generateStaticViewConfigs,
   };
   const server = new Server(config);
 
@@ -117,7 +119,12 @@ export async function buildBundleWithConfig(
     });
 
     // When we're done saving bundle output and the assets, we're done.
-    return await saveAssets(outputAssets, args.platform, args.assetsDest);
+    return await saveAssets(
+      outputAssets,
+      args.platform,
+      args.assetsDest,
+      args.assetCatalogDest,
+    );
   } finally {
     server.end();
   }

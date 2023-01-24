@@ -4,7 +4,6 @@ Plugins can be used to extend the health checks that `react-native doctor` runs.
 
 See [`Plugins`](./plugins.md) for information about how plugins work.  
 
-
 ## How does it work?
 
 To provide additional health checks, a package needs to have a `react-native.config.js` at the root folder in order to be discovered by the CLI as a plugin.
@@ -34,7 +33,6 @@ At the startup, React Native CLI reads configuration from all dependencies liste
 
 At the end, an array of health check categories is concatenated to be checked when `react-native doctor` is run.
 
-
 ## HealthCheckCategory interface
 
 ```ts
@@ -50,8 +48,7 @@ Name of the category for this health check. This will be used to group health ch
 
 ##### `healthChecks`
 
-Array of health checks to perorm in this category
-
+Array of health checks to perform in this category
 
 ## HealthCheckInterface interface
 
@@ -92,7 +89,6 @@ Is this health check required or optional?
 
 Longer description of this health check
 
-
 ##### `getDiagnostics`
 
 Functions which performs the actual check.  Simple checks can just return `needsToBeFixed`.  Checks which are looking at versions of an installed component (such as the version of node), can also return `version`, `versions` and `versionRange` to provide better information to be displayed in `react-native doctor` when running the check
@@ -112,7 +108,6 @@ This function will be used to try to fix the issue when `react-native doctor` is
 ##### `runAutomaticFix`
 
 This function will be used to try to fix the issue when `react-native doctor` is run and no more platform specific automatic fix function was provided.
-
 
 ## RunAutomaticFix interface
 
@@ -146,7 +141,6 @@ If an automated fix cannot be performed, this function should be used to provide
 
 Provides information about the current system
 
-
 ### Examples of RunAutomaticFix implementations
 
 A health check that requires the user to manually go download/install something.  This check will immediately display a message to notify the user how to fix the issue.
@@ -165,7 +159,6 @@ async function needToInstallFoo({loader, logManualInstallation}) {
 A health check that runs some commands locally which may fix the issue.  This check will display a spinner while the exec commands are running.  Then once the commands are complete, the spinner will change to a checkmark.
 
 ```ts
-
 import { exec } from 'promisify-child-process';
 async function fixFoo({loader}) {
   await exec(`foo --install`);

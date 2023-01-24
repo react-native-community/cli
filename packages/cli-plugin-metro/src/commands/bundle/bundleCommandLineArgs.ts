@@ -10,6 +10,7 @@ import path from 'path';
 
 export interface CommandLineArgs {
   assetsDest?: string;
+  assetCatalogDest?: string;
   entryFile: string;
   resetCache: boolean;
   resetGlobalCache: boolean;
@@ -26,6 +27,7 @@ export interface CommandLineArgs {
   sourcemapUseAbsolutePath: boolean;
   verbose: boolean;
   unstableTransformProfile?: string;
+  generateStaticViewConfigs: boolean;
 }
 
 export default [
@@ -102,6 +104,10 @@ export default [
       'Experimental, transform JS for a specific JS engine. Currently supported: hermes, hermes-canary, default',
   },
   {
+    name: '--asset-catalog-dest [string]',
+    description: 'Path where to create an iOS Asset Catalog for images',
+  },
+  {
     name: '--reset-cache',
     description: 'Removes cached files',
     default: false,
@@ -116,5 +122,12 @@ export default [
     name: '--config <string>',
     description: 'Path to the CLI configuration file',
     parse: (val: string) => path.resolve(val),
+  },
+  {
+    name: '--generate-static-view-configs',
+    description:
+      'Generate static view configs for Fabric components. ' +
+      'If there are no Fabric components in the bundle or Fabric is disabled, this is just no-op.',
+    default: true,
   },
 ];

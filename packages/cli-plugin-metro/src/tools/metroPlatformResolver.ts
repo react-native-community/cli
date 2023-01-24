@@ -12,38 +12,21 @@
  *    macos: 'react-native-macos'
  * }
  */
-// @ts-ignore - no typed definition for the package
-import {resolve} from 'metro-resolver';
 
 export function reactNativePlatformResolver(platformImplementations: {
   [platform: string]: string;
 }) {
-  return (
-    context: any,
-    _realModuleName: string,
-    platform: string,
-    moduleName: string,
-  ) => {
-    let backupResolveRequest = context.resolveRequest;
-    delete context.resolveRequest;
-
-    try {
-      let modifiedModuleName = moduleName;
-      if (platformImplementations[platform]) {
-        if (moduleName === 'react-native') {
-          modifiedModuleName = platformImplementations[platform];
-        } else if (moduleName.startsWith('react-native/')) {
-          modifiedModuleName = `${
-            platformImplementations[platform]
-          }/${modifiedModuleName.slice('react-native/'.length)}`;
-        }
+  return (context: any, moduleName: string, platform: string) => {
+    let modifiedModuleName = moduleName;
+    if (platformImplementations[platform]) {
+      if (moduleName === 'react-native') {
+        modifiedModuleName = platformImplementations[platform];
+      } else if (moduleName.startsWith('react-native/')) {
+        modifiedModuleName = `${
+          platformImplementations[platform]
+        }/${modifiedModuleName.slice('react-native/'.length)}`;
       }
-      let result = resolve(context, modifiedModuleName, platform);
-      return result;
-    } catch (e) {
-      throw e;
-    } finally {
-      context.resolveRequest = backupResolveRequest;
     }
+    return context.resolveRequest(context, modifiedModuleName, platform);
   };
 }

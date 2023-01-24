@@ -1,6 +1,10 @@
 name: Node.js CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: ['**']
 
 jobs:
   lint:
@@ -8,10 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js 16
+      - name: Use Node.js 18
         uses: actions/setup-node@v2
         with:
-          node-version: 16
+          node-version: 18
           cache: yarn
       - name: Install dependencies
         run: yarn --frozen-lockfile
@@ -23,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [12, 14, 16]
+        node-version: [14, 16, 18]
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
@@ -40,17 +44,17 @@ jobs:
     name: E2E Tests
     strategy:
       matrix:
-        node-version: [16]
+        node-version: [18]
         os: [ubuntu-latest]
         # TODO: add macos, windows
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
-          distribution: adopt
-          java-version: 8
-          cache: gradle
+          distribution: 'zulu'
+          java-version: 11
+          cache: 'gradle'
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2

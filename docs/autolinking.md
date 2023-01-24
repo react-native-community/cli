@@ -15,13 +15,21 @@ yarn react-native run-android
 
 That's it. No more editing build config files to use native code.
 
+Also, removing a library is similar to adding a library:
+
+```sh
+# uninstall
+yarn remove react-native-webview
+cd ios && pod install && cd .. # CocoaPods on iOS needs this extra step
+```
+
 ## How does it work
 
 Each platform defines its own [`platforms`](./platforms.md) configuration. It instructs the CLI on how to find information about native dependencies. This information is exposed through the [`config`](./commands.md#config) command in a JSON format. It's then used by the scripts run by the platform's build tools. Each script applies the logic to link native dependencies specific to its platform.
 
 ## Platform iOS
 
-The [native_modules.rb](https://github.com/react-native-community/cli/blob/master/packages/platform-ios/native_modules.rb) script required by `Podfile` gets the package metadata from `react-native config` during install phase and:
+The [native_modules.rb](https://github.com/react-native-community/cli/blob/main/packages/cli-platform-ios/native_modules.rb) script required by `Podfile` gets the package metadata from `react-native config` during install phase and:
 
 1. Adds dependencies via CocoaPods dev pods (using files from a local path).
 1. Adds build phase scripts to the App project’s build phase. (see examples below)
@@ -36,11 +44,16 @@ See example usage in React Native template's [Podfile](https://github.com/facebo
 
 ## Platform Android
 
-The [native_modules.gradle](https://github.com/react-native-community/cli/blob/master/packages/platform-android/native_modules.gradle) script is included in your project's `settings.gradle` and `app/build.gradle` files and:
+The [native_modules.gradle](https://github.com/react-native-community/cli/blob/main/packages/cli-platform-android/native_modules.gradle) script is included in your project's `settings.gradle` and `app/build.gradle` files and:
 
 1. At build time, before the build script is run:
    1. A first Gradle plugin (in `settings.gradle`) runs `applyNativeModulesSettingsGradle` method. It uses the package metadata from `react-native config` to add Android projects.
    1. A second Gradle plugin (in `app/build.gradle`) runs `applyNativeModulesAppBuildGradle` method. It creates a list of React Native packages to include in the generated `/android/build/generated/rn/src/main/java/com/facebook/react/PackageList.java` file.
+      1. When the new architecture is turned on, the `generateNewArchitectureFiles` task is fired, generating `/android/build/generated/rn/src/main/jni` directory with the following files:
+         - `Android-rncli.mk` – creates a list of codegen'd libs. Used by the project's `Android.mk`.
+         - `Android-rncli.cmake` – creates a list of codegen'd libs. Used by the project's `CMakeLists.txt`.
+         - `rncli.cpp` – registers codegen'd Turbo Modules and Fabric component providers. Used by `MainApplicationModuleProvider.cpp` and `MainComponentsRegistry.cpp`.
+         - `rncli.h` - a header file for `rncli.cpp`.
 1. At runtime, the list of React Native packages generated in step 1.2 is registered by `getPackages` method of `ReactNativeHost` in `MainApplication.java`.
    1. You can optionally pass in an instance of `MainPackageConfig` when initializing `PackageList` if you want to override the default configuration of `MainReactPackage`.
 
@@ -90,6 +103,28 @@ module.exports = {
 };
 ```
 
+## How can I disable autolinking for new architecture (Fabric, TurboModules)?
+
+It happens that packages come with their own linking setup for the new architecture. To disable autolinking in such cases (currently `react-native-screens`, `react-native-safe-area-context`, `react-native-reanimated`, `react-native-gesture-handler`), update your `react-native.config.js`'s `dependencies` entry to look like this:
+
+```js
+// react-native.config.js
+module.exports = {
+  dependencies: {
+    'fabric-or-tm-library': {
+      platforms: {
+        android: {
+          libraryName: null,
+          componentDescriptors: null,
+          androidMkPath: null,
+          cmakeListsPath: null,
+        },
+      },
+    },
+  },
+};
+```
+
 ## How can I autolink a local library?
 
 We can leverage CLI configuration to make it "see" React Native libraries that are not part of our 3rd party dependencies. To do so, update your `react-native.config.js`'s `dependencies` entry to look like this:
@@ -117,7 +152,8 @@ correct location and update them accordingly:
 - path to `native_modules.gradle` in your `android/app/build.gradle`
 
 Dependencies are only linked if they are listed in the package.json of the mobile workspace, where "react-native" dependency is defined. For example, with this file structure:
-```
+
+```sh
 /root
   /packages
     /mobile
@@ -128,4 +164,5 @@ Dependencies are only linked if they are listed in the package.json of the mobil
       package.json <-- Dependencies here are ignored when auto-linking
   package.json
 ```
+
 In this example, if you add a package with native code as a dependency of `components`, you need to also add it as a dependency of `mobile` for auto-linking to work.

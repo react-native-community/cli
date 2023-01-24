@@ -3,12 +3,10 @@ import os from 'os';
 import path from 'path';
 import {promisify} from 'util';
 import {createDirectory} from 'jest-util';
-// @ts-ignore jsfile
 import rimraf from 'rimraf';
 import execa from 'execa';
 import chalk from 'chalk';
 import slash from 'slash';
-// @ts-ignore jsfile
 import {Writable} from 'readable-stream';
 
 const rimrafAsync = promisify(rimraf);
@@ -53,7 +51,7 @@ export async function runUntil(
     ...options,
   });
 
-  spawnPromise.stderr.pipe(
+  spawnPromise.stderr?.pipe(
     new Writable({
       write(chunk: any, _encoding: string, callback: () => void) {
         const output = chunk.toString('utf8');
@@ -204,6 +202,8 @@ ${chalk.bold('args:')}    ${(args || []).join(' ')}
 ${chalk.bold('stderr:')}  ${result.stderr}
 ${chalk.bold('stdout:')}  ${result.stdout}
 ${chalk.bold('code:')}    ${result.code}`);
+  } else if (options.expectedFailure && result.code === 0) {
+    throw new Error("Expected command to fail, but it didn't");
   }
 }
 

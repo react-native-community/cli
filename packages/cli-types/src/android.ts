@@ -19,6 +19,10 @@ export type AndroidDependencyConfig = {
   packageInstance: string;
   dependencyConfiguration?: string;
   buildTypes: string[];
+  libraryName?: string | null;
+  componentDescriptors?: string[] | null;
+  androidMkPath?: string | null;
+  cmakeListsPath?: string | null;
 };
 
 export type AndroidDependencyParams = {
@@ -29,4 +33,8 @@ export type AndroidDependencyParams = {
   packageImportPath?: string;
   packageInstance?: string;
   buildTypes?: string[];
+  libraryName?: string | null;
+  componentDescriptors?: string[] | null;
+  androidMkPath?: string | null;
+  cmakeListsPath?: string | null;
 };

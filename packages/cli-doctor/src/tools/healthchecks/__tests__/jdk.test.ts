@@ -38,27 +38,27 @@ describe('jdk', () => {
   it('returns false if JDK version is in range (JDK 9+ version number format)', async () => {
     // @ts-ignore
     environmentInfo.Languages.Java = {
-      version: '9.0.4',
+      version: '14.0.4',
     };
 
     const diagnostics = await jdk.getDiagnostics(environmentInfo);
     expect(diagnostics.needsToBeFixed).toBe(false);
   });
 
-  it('returns false if JDK version is in range (JDK 8 version number format)', async () => {
+  it('returns true if JDK version is not in range (JDK <= 8 version number format)', async () => {
     // @ts-ignore
     environmentInfo.Languages.Java = {
       version: '1.8.0_282',
     };
 
     const diagnostics = await jdk.getDiagnostics(environmentInfo);
-    expect(diagnostics.needsToBeFixed).toBe(false);
+    expect(diagnostics.needsToBeFixed).toBe(true);
   });
 
-  it('returns true if JDK version is not in range', async () => {
+  it('returns true if JDK version is not in range (JDK 9+ verison number format)', async () => {
     // @ts-ignore
     environmentInfo.Languages.Java = {
-      version: '7',
+      version: '10.0.15+10',
     };
 
     const diagnostics = await jdk.getDiagnostics(environmentInfo);

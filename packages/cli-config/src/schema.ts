@@ -69,10 +69,10 @@ export const dependencyConfig = t
             ios: t
               // IOSDependencyParams
               .object({
-                scriptPhases: t.array().items(t.string()),
+                scriptPhases: t.array().items(t.object()),
                 configurations: t.array().items(t.string()).default([]),
               })
-              .default({}),
+              .allow(null),
             android: t
               // AndroidDependencyParams
               .object({
@@ -83,8 +83,12 @@ export const dependencyConfig = t
                 packageInstance: t.string(),
                 dependencyConfiguration: t.string(),
                 buildTypes: t.array().items(t.string()).default([]),
+                libraryName: t.string().allow(null),
+                componentDescriptors: t.array().items(t.string()).allow(null),
+                androidMkPath: t.string().allow(null),
+                cmakeListsPath: t.string().allow(null),
               })
-              .default({}),
+              .allow(null),
           })
           .default(),
       })
@@ -120,7 +124,7 @@ export const projectConfig = t
               .object({
                 podspecPath: t.string(),
                 configurations: t.array().items(t.string()).default([]),
-                scriptPhases: t.array().items(t.string()).default([]),
+                scriptPhases: t.array().items(t.object()).default([]),
               })
               .allow(null),
             android: t
@@ -131,6 +135,10 @@ export const projectConfig = t
                 packageInstance: t.string(),
                 dependencyConfiguration: t.string(),
                 buildTypes: t.array().items(t.string()).default([]),
+                libraryName: t.string().allow(null),
+                componentDescriptors: t.array().items(t.string()).allow(null),
+                androidMkPath: t.string().allow(null),
+                cmakeListsPath: t.string().allow(null),
               })
               .allow(null),
           }),

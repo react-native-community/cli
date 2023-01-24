@@ -12,6 +12,7 @@ React Native CLI comes with following commands:
 - [`log-ios`](#log-ios)
 - [`ram-bundle`](#ram-bundle)
 - [`run-android`](#run-android)
+- [`build-android`](#build-android)
 - [`run-ios`](#run-ios)
 - [`start`](#start)
 - [`upgrade`](#upgrade)
@@ -63,7 +64,7 @@ Alternatively if you want to run <code>react-native bundle</code> manually and t
 For react-native versions 0.57 and above the bundle output path should be:
 <code>android/app/build/generated/assets/react/debug/index.android.js</code>
 
-To find out the correct path for previous react-native versions, take a look at the <code>react.gradle</code> file here: https://github.com/facebook/react-native/blob/0.57-stable/react.gradle or inside your <code>node_modules/react-native</code> directory.
+To find out the correct path for previous react-native versions, take a look at the <code>react.gradle</code> file here: <https://github.com/facebook/react-native/blob/0.57-stable/react.gradle> or inside your <code>node_modules/react-native</code> directory.
 
 The expected path for the js bundle can be found on the line that starts with <code>jsBundleDir = </code>.
 
@@ -73,7 +74,7 @@ The expected path for the js bundle can be found on the line that starts with <c
 
 > default: utf8
 
-Encoding the bundle should be written in (https://nodejs.org/api/buffer.html#buffer_buffer).
+Encoding the bundle should be written in (<https://nodejs.org/api/buffer.html#buffer_buffer>).
 
 #### `--max-workers <number>`
 
@@ -85,7 +86,7 @@ File name where to store the sourcemap file for resulting bundle, ex. `/tmp/grou
 
 #### `--sourcemap-sources-root <string>`
 
-Path to make sourcemaps sources entries relative to, ex. `/root/dir`.
+Path to make sourcemap sources entries relative to, ex. `/root/dir`.
 
 #### `--sourcemap-use-absolute-path`
 
@@ -322,6 +323,8 @@ Override the root directory for the Android build (which contains the android di
 
 #### `--variant <string>`
 
+> **DEPRECATED** – use "mode" instead
+
 > default: 'debug'
 
 Specify your app's build variant.
@@ -373,17 +376,48 @@ Launches the Metro Bundler in a new window using the specified terminal path.
 Run custom gradle tasks. If this argument is provided, then `--variant` option is ignored.
 Example: `yarn react-native run-android --tasks clean,installDebug`.
 
-#### `--no-jetifier`
-
-> default: false
-
-Do not run [jetifier](https://www.npmjs.com/package/jetifier) – the AndroidX transition tool. By default it runs before Gradle to ease working with libraries that don't support AndroidX yet.
-
 #### `--active-arch-only`
 
 > default: false
 
 Build native libraries only for the current device architecture for debug builds.
+
+#### `--list-devices`
+
+> default: false
+
+List all available Android devices and simulators and let you choose one to run the app.
+
+### `build-android`
+
+Usage:
+
+```sh
+react-native build-android [options]
+```
+
+Builds Android app.
+
+#### Options
+
+#### `--mode <string>`
+
+> default: debug
+
+Mode to build the app. Either 'debug' (default) or 'release'.
+
+#### `--extra-params <string>`
+
+Custom properties that will be passed to gradle build command.
+Example:
+
+```sh
+react-native build-android --extra-params "-x lint -x test"
+```
+
+#### `--binary-path <path>`
+
+Installs passed binary instead of building a fresh one. This command is not compatible with `--tasks`.
 
 ### `run-ios`
 
@@ -399,18 +433,20 @@ Builds your app and starts it on iOS simulator.
 
 #### `--simulator <simulator_name>`
 
-> default: iPhone 11
+> default: iPhone 14
 
 Explicitly set the simulator to use. Optionally include iOS version between parenthesis at the end to match an exact version, e.g. `"iPhone 6 (10.0)"`.
 
 Notes: If selected simulator does not exist, cli will try to run fallback simulators in following order:
 
-- `iPhone X`
-- `iPhone 8`
+- `iPhone 14`
+- `iPhone 13`
+- `iPhone 12`
+- `iPhone 11`
 
 Notes: `simulator_name` must be a valid iOS simulator name. If in doubt, open your AwesomeApp/ios/AwesomeApp.xcodeproj folder on XCode and unroll the dropdown menu containing the simulator list. The dropdown menu is situated on the right hand side of the play button (top left corner).
 
-Example: this will launch your projet directly onto the iPhone XS Max simulator:
+Example: this will launch your project directly onto the iPhone XS Max simulator:
 
 ```sh
 react-native run-ios --simulator "iPhone XS Max"
@@ -442,15 +478,27 @@ Do not use `xcbeautify` or `xcpretty` even if installed.
 
 #### `--port <number>`
 
-Runs packager on specified port
+Runs packager on specified port.
 
 Default: `process.env.RCT_METRO_PORT || 8081`
+
+#### `--xcconfig <string>`
+
+Explicitly pass `xcconfig` options from the command line.
+
+#### `--buildFolder <string>`
+
+Location for iOS build artifacts. Corresponds to Xcode's `-derivedDataPath`.
+
+#### `--binary-path <path>`
+
+Installs passed binary instead of building a fresh one.
 
 ### `start`
 
 Usage:
 
-```
+```sh
 react-native start [option]
 ```
 
@@ -561,7 +609,7 @@ The local path to your source map file if you generated it manually, ex. `/tmp/s
 
 Generate the JS bundle and source map in `os.tmpdir()`
 
-#### `--port <number>`,
+#### `--port <number>`
 
 The running metro server port number
 

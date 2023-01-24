@@ -1,5 +1,3 @@
-const prettierConfig = require('./.prettierrc');
-
 module.exports = {
   extends: ['@react-native-community', 'plugin:import/errors'],
   env: {
@@ -15,9 +13,6 @@ module.exports = {
       version: 'latest',
     },
     'import/resolver': {
-      alias: {
-        map: [['types', './types/index.js']],
-      },
       // Use <rootDir>/tsconfig.json for typescript resolution
       typescript: {},
     },
@@ -32,12 +27,6 @@ module.exports = {
       ],
       env: {
         jest: true,
-      },
-    },
-    {
-      files: ['*.ts', '**/*.ts'],
-      rules: {
-        'prettier/prettier': [2, {prettierConfig, parser: 'typescript'}],
       },
     },
   ],

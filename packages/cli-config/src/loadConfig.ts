@@ -1,5 +1,4 @@
 import path from 'path';
-import chalk from 'chalk';
 import {
   UserDependencyConfig,
   ProjectConfig,
@@ -8,8 +7,6 @@ import {
   Config,
 } from '@react-native-community/cli-types';
 import {
-  logger,
-  inlineString,
   findProjectRoot,
   resolveNodeModuleDir,
 } from '@react-native-community/cli-tools';
@@ -101,47 +98,38 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
     const localDependencyRoot =
       userConfig.dependencies[dependencyName] &&
       userConfig.dependencies[dependencyName].root;
-    let root: string;
-    let config: UserDependencyConfig;
+
     try {
-      root =
+      let root =
         localDependencyRoot ||
         resolveNodeModuleDir(projectRoot, dependencyName);
-      config = readDependencyConfigFromDisk(root);
-    } catch (error) {
-      logger.warn(
-        inlineString(`
-          Package ${chalk.bold(
-            dependencyName,
-          )} has been ignored because it contains invalid configuration.
+      let config = readDependencyConfigFromDisk(root, dependencyName);
 
-          Reason: ${chalk.dim(error.message)}`),
-      );
+      const isPlatform = Object.keys(config.platforms).length > 0;
+
+      return assign({}, acc, {
+        dependencies: assign({}, acc.dependencies, {
+          get [dependencyName](): DependencyConfig {
+            return getDependencyConfig(
+              root,
+              dependencyName,
+              finalConfig,
+              config,
+              userConfig,
+              isPlatform,
+            );
+          },
+        }),
+        commands: [...acc.commands, ...config.commands],
+        platforms: {
+          ...acc.platforms,
+          ...config.platforms,
+        },
+        healthChecks: [...acc.healthChecks, ...config.healthChecks],
+      }) as Config;
+    } catch {
       return acc;
     }
-
-    const isPlatform = Object.keys(config.platforms).length > 0;
-
-    return assign({}, acc, {
-      dependencies: assign({}, acc.dependencies, {
-        get [dependencyName](): DependencyConfig {
-          return getDependencyConfig(
-            root,
-            dependencyName,
-            finalConfig,
-            config,
-            userConfig,
-            isPlatform,
-          );
-        },
-      }),
-      commands: [...acc.commands, ...config.commands],
-      platforms: {
-        ...acc.platforms,
-        ...config.platforms,
-      },
-      healthChecks: [...acc.healthChecks, ...config.healthChecks],
-    }) as Config;
   }, initialConfig);
 
   return finalConfig;

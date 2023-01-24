@@ -6,7 +6,7 @@ Command line tools that ship with [`react-native`](https://github.com/facebook/r
 
 [![Build Status][build-badge]][build] [![Version][version-badge]][package] [![MIT License][license-badge]][license] [![PRs Welcome][prs-welcome-badge]][prs-welcome] [![Lean Core Extracted][lean-core-badge]][lean-core]
 
-_Note: CLI has been extracted from core `react-native` as a part of "[Lean Core](https://github.com/facebook/react-native/issues/23313)" effort. Please read [this blog post](https://blog.callstack.io/the-react-native-cli-has-a-new-home-79b63838f0e6) for more details._
+_Note: CLI has been extracted from core `react-native` as a part of "[Lean Core](https://github.com/facebook/react-native/issues/23313)" effort. Please read [this blog post](https://www.callstack.com/blog/the-react-native-cli-has-a-new-home) for more details._
 
 ## Contents
 
@@ -25,15 +25,18 @@ _Note: CLI has been extracted from core `react-native` as a part of "[Lean Core]
 
 Our release cycle is independent of `react-native`. We follow semver and here is the compatibility table:
 
-| `@react-native-community/cli`                                      | `react-native` |
-| ------------------------------------------------------------------ | -------------- |
-| [^6.1.0 (`master`)](https://github.com/react-native-community/cli) | ^0.66.0        |
-| [^6.0.0](https://github.com/react-native-community/cli)            | ^0.65.0        |
-| [^5.0.0](https://github.com/react-native-community/cli/tree/5.x)   | ^0.64.0        |
-| [^4.0.0](https://github.com/react-native-community/cli/tree/4.x)   | ^0.62.0        |
-| [^3.0.0](https://github.com/react-native-community/cli/tree/3.x)   | ^0.61.0        |
-| [^2.0.0](https://github.com/react-native-community/cli/tree/2.x)   | ^0.60.0        |
-| [^1.0.0](https://github.com/react-native-community/cli/tree/1.x)   | ^0.59.0        |
+| `@react-native-community/cli`                                     | `react-native`          |
+| ----------------------------------------------------------------- | ----------------------- |
+| [^10.0.0](https://github.com/react-native-community/cli/tree/main)| ^0.71.0                 |
+| [^9.0.0](https://github.com/react-native-community/cli/tree/9.x)  | ^0.70.0                 |
+| [^8.0.0](https://github.com/react-native-community/cli/tree/8.x)  | ^0.69.0                 |
+| [^7.0.0](https://github.com/react-native-community/cli/tree/7.x)  | ^0.68.0                 |
+| [^6.0.0](https://github.com/react-native-community/cli/tree/6.x)  | ^0.65.0,^0.66.0,^0.67.0 |
+| [^5.0.0](https://github.com/react-native-community/cli/tree/5.x)  | ^0.64.0                 |
+| [^4.0.0](https://github.com/react-native-community/cli/tree/4.x)  | ^0.62.0,^0.63.0         |
+| [^3.0.0](https://github.com/react-native-community/cli/tree/3.x)  | ^0.61.0                 |
+| [^2.0.0](https://github.com/react-native-community/cli/tree/2.x)  | ^0.60.0                 |
+| [^1.0.0](https://github.com/react-native-community/cli/tree/1.x)  | ^0.59.0                 |
 
 ## Documentation
 
@@ -45,26 +48,11 @@ Our release cycle is independent of `react-native`. We follow semver and here is
 
 ## About
 
-This repository contains tools and helpers for React Native projects in form of a command line tool. There's been quite some confusion around that since the extraction from React Native core. Let's clear them up:
-
-- There are currently two CLIs:
-  - [`@react-native-community/cli`](./packages/cli) – **the one used directly by `react-native`**. That makes it a transitive dependency of your project.
-  - [`react-native-cli`](./packages/global-cli) – an optional global convenience package, which is a proxy to [`@react-native-community/cli`](./packages/cli) and global installation helper. **Please consider it legacy, because it's not necessary anymore**.
-- When we say "the CLI" we mean `@react-native-community/cli`.
-- We update the CLI independently of React Native itself. Please see [how to use the latest version](#updating-the-cli).
-- This is a monorepo to keep stuff organized.
-
-We're actively working to make any indirections gone.
+This monorepository contains tools and helpers for React Native projects in form of a Command Line Tool (or CLI). This CLI is used directly by the `react-native` package and is not intended for use directly. We update it independently of React Native itself.
 
 ## Creating a new React Native project
 
-There are two ways to start a React Native project.
-
-### Using `npx` (_recommended_)
-
-> Available since `react-native@0.60`
-
-This method is preferred if you don't want to install global packages.
+Run the following command in your terminal prompt:
 
 ```sh
 npx react-native init MyApp
@@ -80,8 +68,6 @@ Example running `start` command in terminal:
 yarn react-native start
 # or:
 npx react-native start
-# or
-node ./node_modules/.bin/react-native start
 ```
 
 You can also add npm scripts to call it with whichever package manager you use:
@@ -133,7 +119,11 @@ After performing these steps you should be on the latest CLI version. Feel free 
 
 ## Maintainers
 
+- Adam Trzciński ([**@adamTrz**](https://github.com/adamTrz)) - [Callstack](https://callstack.com)
 - Michał Pierzchała ([**@thymikee**](https://github.com/thymikee)) - [Callstack](https://callstack.com)
+
+Previously:
+
 - Mike Grabowski ([**@grabbou**](https://github.com/grabbou)) - [Callstack](https://callstack.com)
 - Kacper Wiszczuk ([**@esemesek**](https://github.com/esemesek))
 

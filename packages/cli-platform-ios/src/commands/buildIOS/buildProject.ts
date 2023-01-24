@@ -5,7 +5,7 @@ import child_process, {
 import chalk from 'chalk';
 import {IOSProjectInfo} from '@react-native-community/cli-types';
 import {logger, CLIError} from '@react-native-community/cli-tools';
-import ora from 'ora';
+import {getLoader} from '@react-native-community/cli-tools';
 
 export type BuildFlags = {
   mode: string;
@@ -40,8 +40,7 @@ export function buildProject(
         ? 'generic/platform=iOS Simulator'
         : 'generic/platform=iOS',
     ];
-    // @todo use `getLoader` from cli-tools package
-    const loader = ora();
+    const loader = getLoader();
     logger.info(
       `Building ${chalk.dim(
         `(using "xcodebuild ${xcodebuildArgs.join(' ')}")`,

@@ -36,6 +36,10 @@ function buildIOS(_: Array<string>, ctx: Config, args: FlagsT) {
 
   if (args.configuration) {
     logger.warn('--configuration has been deprecated. Use --mode instead.');
+    logger.warn(
+      'Parameters were automatically reassigned to --mode on this run.',
+    );
+    args.mode = args.configuration;
   }
 
   const {xcodeProject, sourceDir} = ctx.project.ios;
@@ -229,7 +233,7 @@ export default {
       name: '--terminal <string>',
       description:
         'Launches the Metro Bundler in a new window using the specified terminal path.',
-      default: getDefaultUserTerminal,
+      default: getDefaultUserTerminal(),
     },
     {
       name: '--xcconfig [string]',

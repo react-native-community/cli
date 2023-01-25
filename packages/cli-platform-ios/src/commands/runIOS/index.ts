@@ -6,40 +6,29 @@
  *
  */
 
-import child_process, {
-  ChildProcess,
-  SpawnOptionsWithoutStdio,
-} from 'child_process';
+import child_process from 'child_process';
 import path from 'path';
 import fs from 'fs';
 import chalk from 'chalk';
 import {Config, IOSProjectInfo} from '@react-native-community/cli-types';
-import findMatchingSimulator from './findMatchingSimulator';
-import {
-  logger,
-  CLIError,
-  getDefaultUserTerminal,
-} from '@react-native-community/cli-tools';
+import {getDestinationSimulator} from '../../tools/getDestinationSimulator';
+import {logger, CLIError} from '@react-native-community/cli-tools';
+import {BuildFlags, buildProject} from '../buildIOS/buildProject';
+import {iosBuildOptions} from '../buildIOS';
 import {Device} from '../../types';
-import ora from 'ora';
+
 import listIOSDevices, {promptForDeviceSelection} from './listIOSDevices';
 
-type FlagsT = {
+export interface FlagsT extends BuildFlags {
   simulator?: string;
   configuration: string;
   scheme?: string;
   projectPath: string;
   device?: string | true;
   udid?: string;
-  packager: boolean;
-  verbose: boolean;
-  port: number;
   binaryPath?: string;
-  terminal: string | undefined;
-  xcconfig?: string;
-  buildFolder?: string;
   listDevices?: boolean;
-};
+}
 
 async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   if (!ctx.project.ios) {
@@ -60,6 +49,13 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     }
   }
 
+  if (args.configuration) {
+    logger.warn('--configuration has been deprecated. Use --mode instead.');
+    logger.warn(
+      'Parameters were automatically reassigned to --mode on this run.',
+    );
+    args.mode = args.configuration;
+  }
   const {xcodeProject, sourceDir} = ctx.project.ios;
 
   process.chdir(sourceDir);
@@ -206,39 +202,26 @@ async function runOnSimulator(
   args: FlagsT,
   simulator?: Device,
 ) {
-  let selectedSimulator;
+  // let selectedSimulator;
+  /**
+   * If provided simulator does not exist, try simulators in following order
+   * - iPhone 14
+   * - iPhone 13
+   * - iPhone 12
+   * - iPhone 11
+   */
 
+  let selectedSimulator;
   if (simulator) {
     selectedSimulator = simulator;
   } else {
-    const simulators = getSimulators();
-
-    /**
-     * If provided simulator does not exist, try simulators in following order
-     * - iPhone 14
-     * - iPhone 13
-     * - iPhone 12
-     * - iPhone 11
-     */
     const fallbackSimulators = [
       'iPhone 14',
       'iPhone 13',
       'iPhone 12',
       'iPhone 11',
     ];
-
-    selectedSimulator = fallbackSimulators.reduce(
-      (matchingSimulator, fallback) => {
-        return (
-          matchingSimulator ||
-          findMatchingSimulator(simulators, {simulator: fallback})
-        );
-      },
-      findMatchingSimulator(simulators, {
-        udid: args.udid,
-        simulator: args.simulator ?? fallbackSimulators[0],
-      }),
-    );
+    selectedSimulator = getDestinationSimulator(args, fallbackSimulators);
   }
 
   if (!selectedSimulator) {
@@ -286,7 +269,7 @@ async function runOnSimulator(
 
     appPath = getBuildPath(
       xcodeProject,
-      args.configuration,
+      args.mode || args.configuration,
       buildOutput,
       scheme,
     );
@@ -367,7 +350,7 @@ async function runOnDevice(
 
     const appPath = getBuildPath(
       xcodeProject,
-      args.configuration,
+      args.mode || args.configuration,
       buildOutput,
       scheme,
       true,
@@ -389,7 +372,7 @@ async function runOnDevice(
 
       appPath = getBuildPath(
         xcodeProject,
-        args.configuration,
+        args.mode || args.configuration,
         buildOutput,
         scheme,
       );
@@ -423,98 +406,6 @@ async function runOnDevice(
   return logger.success('Installed the app on the device.');
 }
 
-function buildProject(
-  xcodeProject: IOSProjectInfo,
-  udid: string | undefined,
-  scheme: string,
-  args: FlagsT,
-): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const xcodebuildArgs = [
-      xcodeProject.isWorkspace ? '-workspace' : '-project',
-      xcodeProject.name,
-      ...(args.xcconfig ? ['-xcconfig', args.xcconfig] : []),
-      ...(args.buildFolder ? ['-derivedDataPath', args.buildFolder] : []),
-      '-configuration',
-      args.configuration,
-      '-scheme',
-      scheme,
-      '-destination',
-      `id=${udid}`,
-    ];
-    // @todo use `getLoader` from cli-tools package
-    const loader = ora();
-    logger.info(
-      `Building ${chalk.dim(
-        `(using "xcodebuild ${xcodebuildArgs.join(' ')}")`,
-      )}`,
-    );
-    let xcodebuildOutputFormatter: ChildProcess | any;
-    if (!args.verbose) {
-      if (xcbeautifyAvailable()) {
-        xcodebuildOutputFormatter = child_process.spawn('xcbeautify', [], {
-          stdio: ['pipe', process.stdout, process.stderr],
-        });
-      } else if (xcprettyAvailable()) {
-        xcodebuildOutputFormatter = child_process.spawn('xcpretty', [], {
-          stdio: ['pipe', process.stdout, process.stderr],
-        });
-      }
-    }
-    const buildProcess = child_process.spawn(
-      'xcodebuild',
-      xcodebuildArgs,
-      getProcessOptions(args),
-    );
-    let buildOutput = '';
-    let errorOutput = '';
-    buildProcess.stdout.on('data', (data: Buffer) => {
-      const stringData = data.toString();
-      buildOutput += stringData;
-      if (xcodebuildOutputFormatter) {
-        xcodebuildOutputFormatter.stdin.write(data);
-      } else {
-        if (logger.isVerbose()) {
-          logger.debug(stringData);
-        } else {
-          loader.start(
-            `Building the app${'.'.repeat(buildOutput.length % 10)}`,
-          );
-        }
-      }
-    });
-    buildProcess.stderr.on('data', (data: Buffer) => {
-      errorOutput += data;
-    });
-    buildProcess.on('close', (code: number) => {
-      if (xcodebuildOutputFormatter) {
-        xcodebuildOutputFormatter.stdin.end();
-      } else {
-        loader.stop();
-      }
-      if (code !== 0) {
-        reject(
-          new CLIError(
-            `
-            Failed to build iOS project.
-
-            We ran "xcodebuild" command but it exited with error code ${code}. To debug build
-            logs further, consider building your app with Xcode.app, by opening
-            ${xcodeProject.name}.
-          `,
-            xcodebuildOutputFormatter
-              ? undefined
-              : buildOutput + '\n' + errorOutput,
-          ),
-        );
-        return;
-      }
-      logger.success('Successfully built the app');
-      resolve(buildOutput);
-    });
-  });
-}
-
 function bootSimulator(selectedSimulator: Device) {
   const simulatorFullName = formattedDeviceName(selectedSimulator);
   logger.info(`Launching ${simulatorFullName}`);
@@ -542,7 +433,7 @@ function getTargetPaths(buildSettings: string) {
 
 function getBuildPath(
   xcodeProject: IOSProjectInfo,
-  configuration: string,
+  mode: BuildFlags['mode'],
   buildOutput: string,
   scheme: string,
   isCatalyst: boolean = false,
@@ -557,7 +448,7 @@ function getBuildPath(
       '-sdk',
       getPlatformName(buildOutput),
       '-configuration',
-      configuration,
+      mode,
       '-showBuildSettings',
       '-json',
     ],
@@ -589,28 +480,6 @@ function getPlatformName(buildOutput: string) {
     );
   }
   return platformNameMatch[1];
-}
-
-function xcbeautifyAvailable() {
-  try {
-    child_process.execSync('xcbeautify --version', {
-      stdio: [0, 'pipe', 'ignore'],
-    });
-  } catch (error) {
-    return false;
-  }
-  return true;
-}
-
-function xcprettyAvailable() {
-  try {
-    child_process.execSync('xcpretty --version', {
-      stdio: [0, 'pipe', 'ignore'],
-    });
-  } catch (error) {
-    return false;
-  }
-  return true;
 }
 
 function matchingDevice(
@@ -658,34 +527,6 @@ function printFoundDevices(devices: Array<Device>) {
   ].join('\n');
 }
 
-function getProcessOptions({
-  packager,
-  terminal,
-  port,
-}: {
-  packager: boolean;
-  terminal: string | undefined;
-  port: number;
-}): SpawnOptionsWithoutStdio {
-  if (packager) {
-    return {
-      env: {
-        ...process.env,
-        RCT_TERMINAL: terminal,
-        RCT_METRO_PORT: port.toString(),
-      },
-    };
-  }
-
-  return {
-    env: {
-      ...process.env,
-      RCT_TERMINAL: terminal,
-      RCT_NO_LAUNCH_PACKAGER: 'true',
-    },
-  };
-}
-
 export default {
   name: 'run-ios',
   description: 'builds your app and starts it on iOS simulator',
@@ -706,67 +547,15 @@ export default {
     },
   ],
   options: [
-    {
-      name: '--simulator <string>',
-      description:
-        'Explicitly set simulator to use. Optionally include iOS version between ' +
-        'parenthesis at the end to match an exact version: "iPhone 6 (10.0)"',
-    },
-    {
-      name: '--configuration <string>',
-      description: 'Explicitly set the scheme configuration to use',
-      default: 'Debug',
-    },
-    {
-      name: '--scheme <string>',
-      description: 'Explicitly set Xcode scheme to use',
-    },
-    {
-      name: '--device [string]',
-      description:
-        'Explicitly set device to use by name.  The value is not required if you have a single device connected.',
-    },
-    {
-      name: '--udid <string>',
-      description: 'Explicitly set device to use by udid',
-    },
+    ...iosBuildOptions,
     {
       name: '--no-packager',
       description: 'Do not launch packager while building',
     },
     {
-      name: '--verbose',
-      description: 'Do not use xcbeautify or xcpretty even if installed',
-    },
-    {
-      name: '--port <number>',
-      default: process.env.RCT_METRO_PORT || 8081,
-      parse: Number,
-    },
-    {
       name: '--binary-path <string>',
       description:
         'Path relative to project root where pre-built .app binary lives.',
-    },
-    {
-      name: '--terminal <string>',
-      description:
-        'Launches the Metro Bundler in a new window using the specified terminal path.',
-      default: getDefaultUserTerminal(),
-    },
-    {
-      name: '--list-devices',
-      description:
-        'List all available iOS devices and simulators and let you choose one to run the app. ',
-    },
-    {
-      name: '--xcconfig [string]',
-      description: 'Explicitly set xcconfig to use',
-    },
-    {
-      name: '--buildFolder <string>',
-      description:
-        'Location for iOS build artifacts. Corresponds to Xcode\'s "-derivedDataPath".',
     },
   ],
 };

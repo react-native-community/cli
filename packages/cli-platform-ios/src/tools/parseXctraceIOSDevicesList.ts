@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import {Device} from '../../types';
+import {Device} from '../types';
 
 /**
  * Parses the output of the `xcrun instruments -s` command and returns metadata
@@ -15,21 +15,27 @@ import {Device} from '../../types';
  * Expected text looks roughly like this:
  *
  * ```
- * Known Devices:
+ * == Devices ==
  * this-mac-device [UDID]
- * A Physical Device (OS Version) [UDID]
- * A Simulator Device (OS Version) [UDID] (Simulator)
+ * A Physical Device (OS Version) (UDID)
+ *
+ * == Simulators ==
+ * A Simulator Device (OS Version) (UDID)
  * ```
  */
 function parseIOSDevicesList(text: string): Array<Device> {
   const devices: Array<Device> = [];
-
+  let isSimulator = false;
+  if (text.indexOf('== Simulators ==') === -1) {
+    return [];
+  }
   text.split('\n').forEach((line) => {
-    const device = line.match(
-      /(.*?) (\(([0-9.]+)\) )?\[([0-9A-F-]+)\]( \(Simulator\))?/i,
-    );
+    if (line === '== Simulators ==') {
+      isSimulator = true;
+    }
+    const device = line.match(/(.*?) (\(([0-9.]+)\) )?\(([0-9A-F-]+)\)/i);
     if (device) {
-      const [, name, , version, udid, isSimulator] = device;
+      const [, name, , version, udid] = device;
       const metadata: Device = {name, udid};
       if (version) {
         metadata.version = version;

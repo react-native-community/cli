@@ -106,8 +106,7 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
 
   const devices = await listIOSDevices();
 
-  // No need to load all available devices
-  if (!args.device && !args.udid) {
+  if (!args.device && !args.udid && !args.simulator) {
     const bootedDevices = devices.filter(({type}) => type === 'device');
 
     const simulators = getSimulators();
@@ -155,12 +154,14 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     } else {
       return runOnDevice(device, scheme, xcodeProject, args);
     }
-  } else {
+  } else if (args.device) {
     const physicalDevices = devices.filter((d) => d.type !== 'simulator');
     const device = matchingDevice(physicalDevices, args.device);
     if (device) {
       return runOnDevice(device, scheme, xcodeProject, args);
     }
+  } else {
+    runOnSimulator(xcodeProject, scheme, args);
   }
 }
 
@@ -233,7 +234,10 @@ async function runOnSimulator(
           findMatchingSimulator(simulators, {simulator: fallback})
         );
       },
-      findMatchingSimulator(simulators, args),
+      findMatchingSimulator(simulators, {
+        udid: args.udid,
+        simulator: args.simulator ?? fallbackSimulators[0],
+      }),
     );
   }
 
@@ -707,7 +711,6 @@ export default {
       description:
         'Explicitly set simulator to use. Optionally include iOS version between ' +
         'parenthesis at the end to match an exact version: "iPhone 6 (10.0)"',
-      default: 'iPhone 14',
     },
     {
       name: '--configuration <string>',

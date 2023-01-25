@@ -18,7 +18,8 @@
     "postinstall": "yarn build",
     "link-packages": "node ./scripts/linkPackages.js",
     "publish": "yarn build-clean-all && yarn install && lerna publish",
-    "publish:next": "yarn build-clean-all && yarn install && lerna publish --dist-tag next"
+    "publish:next": "yarn build-clean-all && yarn install && lerna publish --dist-tag next",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
@@ -31,6 +32,8 @@
     "@types/jest": "^26.0.15",
     "@types/node": "^14.0.0",
     "@types/node-fetch": "^2.3.7",
+    "@types/rimraf": "^3.0.2",
+    "@types/readable-stream": "^2.3.0",
     "babel-jest": "^26.6.2",
     "babel-plugin-module-resolver": "^3.2.0",
     "chalk": "^4.1.2",
@@ -41,11 +44,13 @@
     "eslint-plugin-import": "^2.25.3",
     "execa": "^1.0.0",
     "glob": "^7.1.3",
+    "husky": "^8.0.2",
     "jest": "^26.6.2",
     "jest-circus": "^26.6.2",
     "jest-snapshot-serializer-raw": "^1.1.0",
     "lerna": "^4.0.0",
-    "metro-memory-fs": "0.72.3",
+    "lint-staged": "^13.1.0",
+    "metro-memory-fs": "0.73.7",
     "micromatch": "^4.0.4",
     "rimraf": "^3.0.2",
     "slash": "^3.0.0",
@@ -54,5 +59,10 @@
   },
   "resolutions": {
     "@types/node": "^14.0.0"
+  },
+  "lint-staged": {
+    "./packages/**/*.{ts}": [
+      "yarn lint"
+    ]
   }
 }

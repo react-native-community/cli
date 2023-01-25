@@ -5,9 +5,10 @@ import parseXctraceIOSDevicesList from './parseXctraceIOSDevicesList';
 import {Device} from '../types';
 
 export function getDevices(): Device[] {
+  let devices;
   try {
     const out = execa.sync('xcrun', ['xctrace', 'list', 'devices']);
-    return parseXctraceIOSDevicesList(
+    devices = parseXctraceIOSDevicesList(
       // Xcode 12.5 introduced a change to output the list to stdout instead of stderr
       out.stderr === '' ? out.stdout : out.stderr,
     );
@@ -15,8 +16,9 @@ export function getDevices(): Device[] {
     logger.warn(
       'Support for Xcode 11 and older is deprecated. Please upgrade to Xcode 12.',
     );
-    return parseIOSDevicesList(
+    devices = parseIOSDevicesList(
       execa.sync('xcrun', ['instruments', '-s']).stdout,
     );
   }
+  return devices;
 }

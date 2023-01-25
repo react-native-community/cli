@@ -12,6 +12,7 @@ React Native CLI comes with following commands:
 - [`log-ios`](#log-ios)
 - [`ram-bundle`](#ram-bundle)
 - [`run-android`](#run-android)
+- [`build-android`](#build-android)
 - [`run-ios`](#run-ios)
 - [`build-ios`](#build-ios)
 - [`start`](#start)
@@ -323,6 +324,8 @@ Override the root directory for the Android build (which contains the android di
 
 #### `--variant <string>`
 
+> **DEPRECATED** – use "mode" instead
+
 > default: 'debug'
 
 Specify your app's build variant.
@@ -379,6 +382,43 @@ Example: `yarn react-native run-android --tasks clean,installDebug`.
 > default: false
 
 Build native libraries only for the current device architecture for debug builds.
+
+#### `--list-devices`
+
+> default: false
+
+List all available Android devices and simulators and let you choose one to run the app.
+
+### `build-android`
+
+Usage:
+
+```sh
+react-native build-android [options]
+```
+
+Builds Android app.
+
+#### Options
+
+#### `--mode <string>`
+
+> default: debug
+
+Mode to build the app. Either 'debug' (default) or 'release'.
+
+#### `--extra-params <string>`
+
+Custom properties that will be passed to gradle build command.
+Example:
+
+```sh
+react-native build-android --extra-params "-x lint -x test"
+```
+
+#### `--binary-path <path>`
+
+Installs passed binary instead of building a fresh one. This command is not compatible with `--tasks`.
 
 ### `run-ios`
 
@@ -521,6 +561,10 @@ Explicitly pass `xcconfig` options from the command line.
 #### `--buildFolder <string>`
 
 Location for iOS build artifacts. Corresponds to Xcode's `-derivedDataPath`.
+
+#### `--binary-path <path>`
+
+Installs passed binary instead of building a fresh one.
 
 ### `start`
 

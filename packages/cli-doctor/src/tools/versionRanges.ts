@@ -9,4 +9,5 @@ export default {
   ANDROID_NDK: '>= 19.x',
   // iOS
   XCODE: '>= 12.x',
+  COCOAPODS: '>= 1.10.0',
 };

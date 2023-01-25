@@ -14,8 +14,6 @@ import path from 'path';
 import fs from 'fs';
 import chalk from 'chalk';
 import {Config, IOSProjectInfo} from '@react-native-community/cli-types';
-import parseIOSDevicesList from './parseIOSDevicesList';
-import parseXctraceIOSDevicesList from './parseXctraceIOSDevicesList';
 import findMatchingSimulator from './findMatchingSimulator';
 import {
   logger,
@@ -24,7 +22,7 @@ import {
 } from '@react-native-community/cli-tools';
 import {Device} from '../../types';
 import ora from 'ora';
-import execa from 'execa';
+import listIOSDevices, {promptForDeviceSelection} from './listIOSDevices';
 
 type FlagsT = {
   simulator?: string;
@@ -40,9 +38,10 @@ type FlagsT = {
   terminal: string | undefined;
   xcconfig?: string;
   buildFolder?: string;
+  listDevices?: boolean;
 };
 
-function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
+async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   if (!ctx.project.ios) {
     throw new CLIError(
       'iOS project folder not found. Are you sure this is a React Native project?',
@@ -83,7 +82,29 @@ function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     } "${chalk.bold(xcodeProject.name)}"`,
   );
 
-  const devices = getDevices();
+  if (args.listDevices) {
+    if (args.device || args.udid) {
+      logger.warn(
+        `Both ${
+          args.device ? 'device' : 'udid'
+        } and "list-devices" parameters were passed to "run" command. We will list available devices and let you choose from one.`,
+      );
+    }
+    const availableDevices = await listIOSDevices();
+    const selectedDevice = await promptForDeviceSelection(availableDevices);
+    if (!selectedDevice) {
+      throw new CLIError(
+        'Failed to select device, please try to run app without "list-devices" command.',
+      );
+    }
+    if (selectedDevice.type === 'simulator') {
+      return runOnSimulator(xcodeProject, scheme, args, selectedDevice);
+    } else {
+      return runOnDevice(selectedDevice, scheme, xcodeProject, args);
+    }
+  }
+
+  const devices = await listIOSDevices();
 
   if (!args.device && !args.udid && !args.simulator) {
     const bootedDevices = devices.filter(({type}) => type === 'device');
@@ -143,25 +164,6 @@ function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     runOnSimulator(xcodeProject, scheme, args);
   }
 }
-
-const getDevices = () => {
-  let devices;
-  try {
-    const out = execa.sync('xcrun', ['xctrace', 'list', 'devices']);
-    devices = parseXctraceIOSDevicesList(
-      // Xcode 12.5 introduced a change to output the list to stdout instead of stderr
-      out.stderr === '' ? out.stdout : out.stderr,
-    );
-  } catch (e) {
-    logger.warn(
-      'Support for Xcode 11 and older is deprecated. Please upgrade to Xcode 12.',
-    );
-    devices = parseIOSDevicesList(
-      execa.sync('xcrun', ['instruments', '-s']).stdout,
-    );
-  }
-  return devices;
-};
 
 const getSimulators = () => {
   let simulators: {devices: {[index: string]: Array<Device>}};
@@ -750,7 +752,12 @@ export default {
       name: '--terminal <string>',
       description:
         'Launches the Metro Bundler in a new window using the specified terminal path.',
-      default: getDefaultUserTerminal,
+      default: getDefaultUserTerminal(),
+    },
+    {
+      name: '--list-devices',
+      description:
+        'List all available iOS devices and simulators and let you choose one to run the app. ',
     },
     {
       name: '--xcconfig [string]',

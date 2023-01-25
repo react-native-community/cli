@@ -456,7 +456,7 @@ react-native run-ios --simulator "iPhone XS Max"
 
 #### `--configuration <string>`
 
-Explicitly set the scheme configuration to use default: 'Debug'.
+[Deprecated] Explicitly set the scheme configuration to use default: 'Debug'.
 
 #### `--scheme <string>`
 
@@ -526,7 +526,7 @@ react-native run-ios --simulator "iPhone XS Max"
 
 #### `--configuration <string>`
 
-Explicitly set the scheme configuration to use default: 'Debug'.
+[Deprecated] Explicitly set the scheme configuration to use default: 'Debug'.
 
 #### `--scheme <string>`
 

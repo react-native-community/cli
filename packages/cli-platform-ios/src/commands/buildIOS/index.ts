@@ -172,6 +172,61 @@ function printFoundDevices(devices: Array<Device>) {
   ].join('\n');
 }
 
+export const iosBuildOptions = [
+  {
+    name: '--simulator <string>',
+    description:
+      'Explicitly set simulator to use. Optionally include iOS version between ' +
+      'parenthesis at the end to match an exact version: "iPhone 6 (10.0)"',
+  },
+  {
+    name: '--mode <string>',
+    description: 'Explicitly set the scheme configuration to use',
+    default: 'Debug',
+  },
+  {
+    name: '--configuration <string>',
+    description: '[Deprecated] Explicitly set the scheme configuration to use',
+  },
+  {
+    name: '--scheme <string>',
+    description: 'Explicitly set Xcode scheme to use',
+  },
+  {
+    name: '--device [string]',
+    description:
+      'Explicitly set device to use by name.  The value is not required if you have a single device connected.',
+  },
+  {
+    name: '--udid <string>',
+    description: 'Explicitly set device to use by udid',
+  },
+  {
+    name: '--verbose',
+    description: 'Do not use xcbeautify or xcpretty even if installed',
+  },
+  {
+    name: '--port <number>',
+    default: process.env.RCT_METRO_PORT || 8081,
+    parse: Number,
+  },
+  {
+    name: '--terminal <string>',
+    description:
+      'Launches the Metro Bundler in a new window using the specified terminal path.',
+    default: getDefaultUserTerminal(),
+  },
+  {
+    name: '--xcconfig [string]',
+    description: 'Explicitly set xcconfig to use',
+  },
+  {
+    name: '--buildFolder <string>',
+    description:
+      'Location for iOS build artifacts. Corresponds to Xcode\'s "-derivedDataPath".',
+  },
+];
+
 export default {
   name: 'build-ios',
   description: 'builds your app on iOS simulator',
@@ -190,59 +245,5 @@ export default {
       cmd: 'react-native build-ios --simulator "IPhone 11"',
     },
   ],
-  options: [
-    {
-      name: '--simulator <string>',
-      description:
-        'Explicitly set simulator to use. Optionally include iOS version between ' +
-        'parenthesis at the end to match an exact version: "iPhone 6 (10.0)"',
-    },
-    {
-      name: '--mode <string>',
-      description: 'Explicitly set the scheme configuration to use',
-      default: 'Debug',
-    },
-    {
-      name: '--configuration <string>',
-      description:
-        '[Deprecated] Explicitly set the scheme configuration to use',
-    },
-    {
-      name: '--scheme <string>',
-      description: 'Explicitly set Xcode scheme to use',
-    },
-    {
-      name: '--device [string]',
-      description:
-        'Explicitly set device to use by name.  The value is not required if you have a single device connected.',
-    },
-    {
-      name: '--udid <string>',
-      description: 'Explicitly set device to use by udid',
-    },
-    {
-      name: '--verbose',
-      description: 'Do not use xcbeautify or xcpretty even if installed',
-    },
-    {
-      name: '--port <number>',
-      default: process.env.RCT_METRO_PORT || 8081,
-      parse: Number,
-    },
-    {
-      name: '--terminal <string>',
-      description:
-        'Launches the Metro Bundler in a new window using the specified terminal path.',
-      default: getDefaultUserTerminal(),
-    },
-    {
-      name: '--xcconfig [string]',
-      description: 'Explicitly set xcconfig to use',
-    },
-    {
-      name: '--buildFolder <string>',
-      description:
-        'Location for iOS build artifacts. Corresponds to Xcode\'s "-derivedDataPath".',
-    },
-  ],
+  options: iosBuildOptions,
 };

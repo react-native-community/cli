@@ -13,13 +13,10 @@ import chalk from 'chalk';
 import {Config, IOSProjectInfo} from '@react-native-community/cli-types';
 import {getDestinationSimulator} from '../../tools/getDestinationSimulator';
 import {getDevices} from '../../tools/getDevices';
-import {
-  logger,
-  CLIError,
-  getDefaultUserTerminal,
-} from '@react-native-community/cli-tools';
+import {logger, CLIError} from '@react-native-community/cli-tools';
 import {Device} from '../../types';
 import {BuildFlags, buildProject} from '../buildIOS/buildProject';
+import {iosBuildOptions} from '../buildIOS';
 
 export interface FlagsT extends BuildFlags {
   simulator?: string;
@@ -248,7 +245,7 @@ async function runOnSimulator(
 
     appPath = getBuildPath(
       xcodeProject,
-      args.configuration,
+      args.mode || args.configuration,
       buildOutput,
       scheme,
     );
@@ -329,7 +326,7 @@ async function runOnDevice(
 
     const appPath = getBuildPath(
       xcodeProject,
-      args.configuration,
+      args.mode || args.configuration,
       buildOutput,
       scheme,
       true,
@@ -351,7 +348,7 @@ async function runOnDevice(
 
       appPath = getBuildPath(
         xcodeProject,
-        args.configuration,
+        args.mode || args.configuration,
         buildOutput,
         scheme,
       );
@@ -412,7 +409,7 @@ function getTargetPaths(buildSettings: string) {
 
 function getBuildPath(
   xcodeProject: IOSProjectInfo,
-  configuration: string,
+  mode: BuildFlags['mode'],
   buildOutput: string,
   scheme: string,
   isCatalyst: boolean = false,
@@ -427,7 +424,7 @@ function getBuildPath(
       '-sdk',
       getPlatformName(buildOutput),
       '-configuration',
-      configuration,
+      mode,
       '-showBuildSettings',
       '-json',
     ],
@@ -526,62 +523,15 @@ export default {
     },
   ],
   options: [
-    {
-      name: '--simulator <string>',
-      description:
-        'Explicitly set simulator to use. Optionally include iOS version between ' +
-        'parenthesis at the end to match an exact version: "iPhone 6 (10.0)"',
-    },
-    {
-      name: '--configuration <string>',
-      description: 'Explicitly set the scheme configuration to use',
-      default: 'Debug',
-    },
-    {
-      name: '--scheme <string>',
-      description: 'Explicitly set Xcode scheme to use',
-    },
-    {
-      name: '--device [string]',
-      description:
-        'Explicitly set device to use by name.  The value is not required if you have a single device connected.',
-    },
-    {
-      name: '--udid <string>',
-      description: 'Explicitly set device to use by udid',
-    },
+    ...iosBuildOptions,
     {
       name: '--no-packager',
       description: 'Do not launch packager while building',
     },
     {
-      name: '--verbose',
-      description: 'Do not use xcbeautify or xcpretty even if installed',
-    },
-    {
-      name: '--port <number>',
-      default: process.env.RCT_METRO_PORT || 8081,
-      parse: Number,
-    },
-    {
       name: '--binary-path <string>',
       description:
         'Path relative to project root where pre-built .app binary lives.',
-    },
-    {
-      name: '--terminal <string>',
-      description:
-        'Launches the Metro Bundler in a new window using the specified terminal path.',
-      default: getDefaultUserTerminal,
-    },
-    {
-      name: '--xcconfig [string]',
-      description: 'Explicitly set xcconfig to use',
-    },
-    {
-      name: '--buildFolder <string>',
-      description:
-        'Location for iOS build artifacts. Corresponds to Xcode\'s "-derivedDataPath".',
     },
   ],
 };

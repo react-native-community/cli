@@ -12,11 +12,12 @@ import fs from 'fs';
 import chalk from 'chalk';
 import {Config, IOSProjectInfo} from '@react-native-community/cli-types';
 import {getDestinationSimulator} from '../../tools/getDestinationSimulator';
-import {getDevices} from '../../tools/getDevices';
 import {logger, CLIError} from '@react-native-community/cli-tools';
-import {Device} from '../../types';
 import {BuildFlags, buildProject} from '../buildIOS/buildProject';
 import {iosBuildOptions} from '../buildIOS';
+import {Device} from '../../types';
+
+import listIOSDevices, {promptForDeviceSelection} from './listIOSDevices';
 
 export interface FlagsT extends BuildFlags {
   simulator?: string;
@@ -26,9 +27,10 @@ export interface FlagsT extends BuildFlags {
   device?: string | true;
   udid?: string;
   binaryPath?: string;
+  listDevices?: boolean;
 }
 
-function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
+async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   if (!ctx.project.ios) {
     throw new CLIError(
       'iOS project folder not found. Are you sure this is a React Native project?',
@@ -76,7 +78,29 @@ function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     } "${chalk.bold(xcodeProject.name)}"`,
   );
 
-  const devices = getDevices();
+  if (args.listDevices) {
+    if (args.device || args.udid) {
+      logger.warn(
+        `Both ${
+          args.device ? 'device' : 'udid'
+        } and "list-devices" parameters were passed to "run" command. We will list available devices and let you choose from one.`,
+      );
+    }
+    const availableDevices = await listIOSDevices();
+    const selectedDevice = await promptForDeviceSelection(availableDevices);
+    if (!selectedDevice) {
+      throw new CLIError(
+        'Failed to select device, please try to run app without "list-devices" command.',
+      );
+    }
+    if (selectedDevice.type === 'simulator') {
+      return runOnSimulator(xcodeProject, scheme, args, selectedDevice);
+    } else {
+      return runOnDevice(selectedDevice, scheme, xcodeProject, args);
+    }
+  }
+
+  const devices = await listIOSDevices();
 
   if (!args.device && !args.udid && !args.simulator) {
     const bootedDevices = devices.filter(({type}) => type === 'device');

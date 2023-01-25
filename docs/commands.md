@@ -566,6 +566,12 @@ Location for iOS build artifacts. Corresponds to Xcode's `-derivedDataPath`.
 
 Installs passed binary instead of building a fresh one.
 
+#### `--list-devices`
+
+> default: false
+
+List all available iOS devices and simulators and let you choose one to run the app.
+
 ### `start`
 
 Usage:

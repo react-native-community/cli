@@ -10,3 +10,10 @@ export interface Device {
   booted?: boolean;
   lastBootedAt?: string;
 }
+
+export interface IosProjectInfo {
+  configurations: string[];
+  name: string;
+  schemes: string[];
+  targets: string[];
+}

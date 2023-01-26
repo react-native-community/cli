@@ -18,6 +18,8 @@ import {Device} from '../../types';
 import {BuildFlags, buildProject} from './buildProject';
 import {getDestinationSimulator} from '../../tools/getDestinationSimulator';
 import {getDevices} from '../../tools/getDevices';
+import {getProjectInfo} from '../../tools/getProjectInfo';
+import {checkIfConfigurationExists} from '../../tools/checkIfConfigurationExists';
 
 export interface FlagsT extends BuildFlags {
   configuration?: string;
@@ -43,6 +45,8 @@ function buildIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   }
 
   const {xcodeProject, sourceDir} = ctx.project.ios;
+  const projectInfo = getProjectInfo();
+  checkIfConfigurationExists(projectInfo, args.mode);
 
   process.chdir(sourceDir);
 

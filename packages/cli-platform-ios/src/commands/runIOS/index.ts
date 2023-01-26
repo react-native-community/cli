@@ -11,19 +11,15 @@ import path from 'path';
 import fs from 'fs';
 import chalk from 'chalk';
 import {Config, IOSProjectInfo} from '@react-native-community/cli-types';
-import parseIOSDevicesList from './parseIOSDevicesList';
-import parseXctraceIOSDevicesList from './parseXctraceIOSDevicesList';
-import findMatchingSimulator from './findMatchingSimulator';
-import {
-  logger,
-  CLIError,
-  getDefaultUserTerminal,
-} from '@react-native-community/cli-tools';
-import {Device, IosProjectInfo} from '../../types';
-import ora from 'ora';
-import execa from 'execa';
+import {getDestinationSimulator} from '../../tools/getDestinationSimulator';
+import {logger, CLIError} from '@react-native-community/cli-tools';
+import {BuildFlags, buildProject} from '../buildIOS/buildProject';
+import {iosBuildOptions} from '../buildIOS';
+import {Device} from '../../types';
 
 import listIOSDevices, {promptForDeviceSelection} from './listIOSDevices';
+import {checkIfConfigurationExists} from '../../tools/checkIfConfigurationExists';
+import {getProjectInfo} from '../../tools/getProjectInfo';
 
 export interface FlagsT extends BuildFlags {
   simulator?: string;
@@ -63,8 +59,8 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     args.mode = args.configuration;
   }
   const {xcodeProject, sourceDir} = ctx.project.ios;
-
-  checkIfConfigurationExists(args);
+  const projectInfo = getProjectInfo();
+  checkIfConfigurationExists(projectInfo, args.mode);
 
   process.chdir(sourceDir);
 
@@ -533,60 +529,6 @@ function printFoundDevices(devices: Array<Device>) {
     'Available devices:',
     ...devices.map((device) => `  - ${device.name} (${device.udid})`),
   ].join('\n');
-}
-
-function checkIfConfigurationExists(args: FlagsT) {
-  if (args.configuration) {
-    const project = getProjectInfo();
-
-    if (!project.configurations.includes(args.configuration)) {
-      throw new CLIError(
-        `Configuration "${
-          args.configuration
-        }" does not exist in your project. Please use one of the existing configurations: ${project.configurations.join(
-          ', ',
-        )}`,
-      );
-    }
-  }
-}
-
-function getProjectInfo(): IosProjectInfo {
-  process.chdir('./ios');
-  const {project} = JSON.parse(
-    execa.sync('xcodebuild', ['-list', '-json']).stdout,
-  );
-  process.chdir('..');
-
-  return project;
-}
-
-function getProcessOptions({
-  packager,
-  terminal,
-  port,
-}: {
-  packager: boolean;
-  terminal: string | undefined;
-  port: number;
-}): SpawnOptionsWithoutStdio {
-  if (packager) {
-    return {
-      env: {
-        ...process.env,
-        RCT_TERMINAL: terminal,
-        RCT_METRO_PORT: port.toString(),
-      },
-    };
-  }
-
-  return {
-    env: {
-      ...process.env,
-      RCT_TERMINAL: terminal,
-      RCT_NO_LAUNCH_PACKAGER: 'true',
-    },
-  };
 }
 
 export default {

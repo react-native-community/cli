@@ -18,6 +18,8 @@ import {Device} from '../../types';
 import {BuildFlags, buildProject} from './buildProject';
 import {getDestinationSimulator} from '../../tools/getDestinationSimulator';
 import {getDevices} from '../../tools/getDevices';
+import {getProjectInfo} from '../../tools/getProjectInfo';
+import {checkIfConfigurationExists} from '../../tools/checkIfConfigurationExists';
 
 export interface FlagsT extends BuildFlags {
   configuration?: string;
@@ -34,6 +36,16 @@ function buildIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     );
   }
 
+  const {xcodeProject, sourceDir} = ctx.project.ios;
+
+  if (!xcodeProject) {
+    throw new CLIError(
+      `Could not find Xcode project files in "${sourceDir}" folder`,
+    );
+  }
+
+  process.chdir(sourceDir);
+
   if (args.configuration) {
     logger.warn('--configuration has been deprecated. Use --mode instead.');
     logger.warn(
@@ -42,15 +54,8 @@ function buildIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     args.mode = args.configuration;
   }
 
-  const {xcodeProject, sourceDir} = ctx.project.ios;
-
-  process.chdir(sourceDir);
-
-  if (!xcodeProject) {
-    throw new CLIError(
-      `Could not find Xcode project files in "${sourceDir}" folder`,
-    );
-  }
+  const projectInfo = getProjectInfo();
+  checkIfConfigurationExists(projectInfo, args.mode);
 
   const inferredSchemeName = path.basename(
     xcodeProject.name,

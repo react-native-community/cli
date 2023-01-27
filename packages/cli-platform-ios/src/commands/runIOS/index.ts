@@ -18,6 +18,8 @@ import {iosBuildOptions} from '../buildIOS';
 import {Device} from '../../types';
 
 import listIOSDevices, {promptForDeviceSelection} from './listIOSDevices';
+import {checkIfConfigurationExists} from '../../tools/checkIfConfigurationExists';
+import {getProjectInfo} from '../../tools/getProjectInfo';
 
 export interface FlagsT extends BuildFlags {
   simulator?: string;
@@ -36,6 +38,16 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
       'iOS project folder not found. Are you sure this is a React Native project?',
     );
   }
+
+  const {xcodeProject, sourceDir} = ctx.project.ios;
+
+  if (!xcodeProject) {
+    throw new CLIError(
+      `Could not find Xcode project files in "${sourceDir}" folder`,
+    );
+  }
+
+  process.chdir(sourceDir);
 
   if (args.binaryPath) {
     args.binaryPath = path.isAbsolute(args.binaryPath)
@@ -56,15 +68,9 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     );
     args.mode = args.configuration;
   }
-  const {xcodeProject, sourceDir} = ctx.project.ios;
 
-  process.chdir(sourceDir);
-
-  if (!xcodeProject) {
-    throw new CLIError(
-      `Could not find Xcode project files in "${sourceDir}" folder`,
-    );
-  }
+  const projectInfo = getProjectInfo();
+  checkIfConfigurationExists(projectInfo, args.mode);
 
   const inferredSchemeName = path.basename(
     xcodeProject.name,

@@ -59,7 +59,7 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     args.mode = args.configuration;
   }
   const {xcodeProject, sourceDir} = ctx.project.ios;
-  const projectInfo = getProjectInfo();
+  const projectInfo = getProjectInfo(sourceDir);
   checkIfConfigurationExists(projectInfo, args.mode);
 
   process.chdir(sourceDir);

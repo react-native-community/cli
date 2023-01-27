@@ -9,7 +9,6 @@
 import child_process from 'child_process';
 import path from 'path';
 import fs from 'fs';
-import {XMLParser} from 'fast-xml-parser';
 import chalk from 'chalk';
 import {Config, IOSProjectInfo} from '@react-native-community/cli-types';
 import {getDestinationSimulator} from '../../tools/getDestinationSimulator';
@@ -17,10 +16,10 @@ import {logger, CLIError} from '@react-native-community/cli-tools';
 import {BuildFlags, buildProject} from '../buildIOS/buildProject';
 import {iosBuildOptions} from '../buildIOS';
 import {Device} from '../../types';
-
 import listIOSDevices, {promptForDeviceSelection} from './listIOSDevices';
 import {checkIfConfigurationExists} from '../../tools/checkIfConfigurationExists';
 import {getProjectInfo} from '../../tools/getProjectInfo';
+import {getConfigurationScheme} from '../../tools/getConfigurationScheme';
 
 export interface FlagsT extends BuildFlags {
   simulator?: string;
@@ -32,8 +31,6 @@ export interface FlagsT extends BuildFlags {
   binaryPath?: string;
   listDevices?: boolean;
 }
-
-const xmlParser = new XMLParser({ignoreAttributes: false});
 
 async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   if (!ctx.project.ios) {
@@ -73,7 +70,10 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   }
 
   const projectInfo = getProjectInfo();
-  checkIfConfigurationExists(projectInfo, args.mode);
+
+  if (args.mode) {
+    checkIfConfigurationExists(projectInfo, args.mode);
+  }
 
   const inferredSchemeName = path.basename(
     xcodeProject.name,
@@ -81,7 +81,10 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   );
   const scheme = args.scheme || inferredSchemeName;
 
-  args.configuration = getConfigurationScheme(args, sourceDir);
+  args.mode = getConfigurationScheme(
+    {scheme: args.scheme, mode: args.mode},
+    sourceDir,
+  );
 
   logger.info(
     `Found Xcode ${
@@ -536,52 +539,6 @@ function printFoundDevices(devices: Array<Device>) {
     'Available devices:',
     ...devices.map((device) => `  - ${device.name} (${device.udid})`),
   ].join('\n');
-}
-
-function getBuildConfigurationFromXcScheme(
-  {scheme, configuration}: FlagsT,
-  sourceDir: string,
-) {
-  try {
-    const xcProject = fs
-      .readdirSync(sourceDir)
-      .find((dir) => dir.includes('.xcodeproj'));
-
-    if (xcProject) {
-      const xmlScheme = fs.readFileSync(
-        path.join(
-          sourceDir,
-          xcProject,
-          'xcshareddata',
-          'xcschemes',
-          `${scheme}.xcscheme`,
-        ),
-        {
-          encoding: 'utf-8',
-        },
-      );
-
-      const {Scheme} = xmlParser.parse(xmlScheme);
-
-      return Scheme.LaunchAction['@_buildConfiguration'];
-    }
-  } catch {
-    throw new CLIError(
-      `Could not find scheme ${scheme}. Please make sure the schema you want to run exists.`,
-    );
-  }
-
-  return configuration;
-}
-
-function getConfigurationScheme(args: FlagsT, sourceDir: string) {
-  if (args.scheme && args.configuration) {
-    return args.configuration;
-  } else if (args.scheme) {
-    return getBuildConfigurationFromXcScheme(args, sourceDir);
-  }
-
-  return args.configuration || 'Debug';
 }
 
 export default {

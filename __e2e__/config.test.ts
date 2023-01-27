@@ -76,6 +76,23 @@ test('shows up current config without unnecessary output', () => {
     options: command.options && ['<<REPLACED>>'],
   }));
 
+  const expectedXcodeProject =
+    process.platform === 'darwin'
+      ? {
+          name: 'TestProject.xcworkspace',
+          isWorkspace: true,
+        }
+      : {
+          name: 'TestProject.xcodeproj',
+          isWorkspace: false,
+        };
+
+  expect(parsedStdout.project.ios.xcodeProject).toStrictEqual(
+    expectedXcodeProject,
+  );
+
+  delete parsedStdout.project.ios.xcodeProject;
+
   const configWithReplacedProjectRoots = replaceProjectRootInOutput(
     JSON.stringify(parsedStdout, null, 2).replace(/\\\\/g, '\\'),
     DIR,

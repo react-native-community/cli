@@ -46,11 +46,7 @@ exports[`shows up current config without unnecessary output 1`] = `
   },
   "project": {
     "ios": {
-      "sourceDir": "<<REPLACED_ROOT>>/TestProject/ios",
-      "xcodeProject": {
-        "name": "TestProject.xcodeproj",
-        "isWorkspace": false
-      }
+      "sourceDir": "<<REPLACED_ROOT>>/TestProject/ios"
     },
     "android": {
       "sourceDir": "<<REPLACED_ROOT>>/TestProject/android",

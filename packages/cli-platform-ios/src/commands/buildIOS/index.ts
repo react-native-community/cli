@@ -187,7 +187,6 @@ export const iosBuildOptions = [
   {
     name: '--mode <string>',
     description: 'Explicitly set the scheme configuration to use',
-    default: 'Debug',
   },
   {
     name: '--configuration <string>',

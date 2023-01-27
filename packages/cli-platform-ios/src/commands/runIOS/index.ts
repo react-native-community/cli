@@ -6,7 +6,7 @@
  *
  */
 
-import child_process, {SpawnOptionsWithoutStdio} from 'child_process';
+import child_process from 'child_process';
 import path from 'path';
 import fs from 'fs';
 import {XMLParser} from 'fast-xml-parser';
@@ -538,34 +538,6 @@ function printFoundDevices(devices: Array<Device>) {
   ].join('\n');
 }
 
-function getProcessOptions({
-  packager,
-  terminal,
-  port,
-}: {
-  packager: boolean;
-  terminal: string | undefined;
-  port: number;
-}): SpawnOptionsWithoutStdio {
-  if (packager) {
-    return {
-      env: {
-        ...process.env,
-        RCT_TERMINAL: terminal,
-        RCT_METRO_PORT: port.toString(),
-      },
-    };
-  }
-
-  return {
-    env: {
-      ...process.env,
-      RCT_TERMINAL: terminal,
-      RCT_NO_LAUNCH_PACKAGER: 'true',
-    },
-  };
-}
-
 function getBuildConfigurationFromXcScheme(
   {scheme, configuration}: FlagsT,
   sourceDir: string,
@@ -594,7 +566,9 @@ function getBuildConfigurationFromXcScheme(
       return Scheme.LaunchAction['@_buildConfiguration'];
     }
   } catch {
-    logger.error(`Could not find scheme ${scheme}.`);
+    throw new CLIError(
+      `Could not find scheme ${scheme}. Please make sure the schema you want to run exists.`,
+    );
   }
 
   return configuration;

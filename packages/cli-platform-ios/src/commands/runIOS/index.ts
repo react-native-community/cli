@@ -39,6 +39,16 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     );
   }
 
+  const {xcodeProject, sourceDir} = ctx.project.ios;
+
+  if (!xcodeProject) {
+    throw new CLIError(
+      `Could not find Xcode project files in "${sourceDir}" folder`,
+    );
+  }
+
+  process.chdir(sourceDir);
+
   if (args.binaryPath) {
     args.binaryPath = path.isAbsolute(args.binaryPath)
       ? args.binaryPath
@@ -58,17 +68,9 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     );
     args.mode = args.configuration;
   }
-  const {xcodeProject, sourceDir} = ctx.project.ios;
-  const projectInfo = getProjectInfo(sourceDir);
+
+  const projectInfo = getProjectInfo();
   checkIfConfigurationExists(projectInfo, args.mode);
-
-  process.chdir(sourceDir);
-
-  if (!xcodeProject) {
-    throw new CLIError(
-      `Could not find Xcode project files in "${sourceDir}" folder`,
-    );
-  }
 
   const inferredSchemeName = path.basename(
     xcodeProject.name,

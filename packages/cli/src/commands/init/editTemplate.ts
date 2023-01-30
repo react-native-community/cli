@@ -131,20 +131,24 @@ async function createAndroidPackagePaths(
       const initialDir = process.cwd();
       process.chdir(filePath);
 
-      fs.rename(
-        `${filePath}/${segmentsList.join('.')}`,
-        `${filePath}/${segmentsList[segmentsList.length - 1]}`,
-      );
+      try {
+        await fs.rename(
+          `${filePath}/${segmentsList.join('.')}`,
+          `${filePath}/${segmentsList[segmentsList.length - 1]}`,
+        );
 
-      for (const segment of segmentsList) {
-        fs.mkdirSync(segment);
-        process.chdir(segment);
+        for (const segment of segmentsList) {
+          fs.mkdirSync(segment);
+          process.chdir(segment);
+        }
+
+        await fs.rename(
+          `${filePath}/${segmentsList[segmentsList.length - 1]}`,
+          process.cwd(),
+        );
+      } catch {
+        throw 'Failed to create correct paths for Android.';
       }
-
-      fs.rename(
-        `${filePath}/${segmentsList[segmentsList.length - 1]}`,
-        process.cwd(),
-      );
 
       process.chdir(initialDir);
     }
@@ -228,8 +232,11 @@ export async function replacePlaceholderWithPackageName({
         fileName.toLowerCase(),
       );
     }
-
-    createAndroidPackagePaths(filePath, packageName);
+    try {
+      await createAndroidPackagePaths(filePath, packageName);
+    } catch (error) {
+      throw new CLIError('Failed to create correct paths for Android.');
+    }
 
     await processDotfiles(filePath);
   }

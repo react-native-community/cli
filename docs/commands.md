@@ -256,6 +256,11 @@ Skip dependencies installation
 
 Force use of npm during initialization
 
+#### `--package-name <string>`
+
+Create project with custom package name for Android and bundle identifier for iOS. The correct package name should:
+- contain at least two segments separated by dots, e.g. `com.example`
+- contain only alphanumeric characters and dots
 ### `info`
 
 Usage:

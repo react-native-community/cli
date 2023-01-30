@@ -1,7 +1,6 @@
 import path from 'path';
 import {CLIError, logger} from '@react-native-community/cli-tools';
 import walk from '../../tools/walk';
-import chalk from 'chalk';
 
 // We need `graceful-fs` behavior around async file renames on Win32.
 // `gracefulify` does not support patching `fs.promises`. Use `fs-extra`, which
@@ -22,24 +21,16 @@ interface PlaceholderConfig {
 */
 const DEFAULT_TITLE_PLACEHOLDER = 'Hello App Display Name';
 
-function validatePackageName(packageName: string) {
+export function validatePackageName(packageName: string) {
   const packageNameParts = packageName.split('.');
   const packageNameRegex = /^([a-zA-Z]([a-zA-Z0-9_])*\.)+[a-zA-Z]([a-zA-Z0-9_])*$/u;
 
   if (packageNameParts.length < 2) {
-    throw new CLIError(
-      `The package name ${chalk.bold(
-        packageName,
-      )} is invalid. It should contain at least two segments, e.g. com.app`,
-    );
+    throw `The package name ${packageName} is invalid. It should contain at least two segments, e.g. com.app`;
   }
 
   if (!packageNameRegex.test(packageName)) {
-    throw new CLIError(
-      `The ${chalk.bold(
-        packageName,
-      )} package name is not valid. It can contain only alphanumeric characters and dots.`,
-    );
+    throw `The ${packageName} package name is not valid. It can contain only alphanumeric characters and dots.`;
   }
 }
 
@@ -133,7 +124,6 @@ async function createAndroidPackagePaths(
     packageName,
   );
   const pathFolders = filePath.split('/').slice(-2);
-
   if (pathFolders[0] === 'java' && pathFolders[1] === 'com') {
     const segmentsList = startsWithCom ? segments : packageNameArray;
 
@@ -161,7 +151,7 @@ async function createAndroidPackagePaths(
   }
 }
 
-async function replacePlaceholderWithPackageName({
+export async function replacePlaceholderWithPackageName({
   projectName,
   placeholderName,
   placeholderTitle,
@@ -255,12 +245,16 @@ export async function changePlaceholderInTemplate({
   logger.debug(`Changing ${placeholderName} for ${projectName} in template`);
 
   if (packageName) {
-    replacePlaceholderWithPackageName({
-      projectName,
-      placeholderName,
-      placeholderTitle,
-      packageName,
-    });
+    try {
+      await replacePlaceholderWithPackageName({
+        projectName,
+        placeholderName,
+        placeholderTitle,
+        packageName,
+      });
+    } catch (error) {
+      throw new CLIError(error);
+    }
   } else {
     for (const filePath of walk(process.cwd()).reverse()) {
       if (shouldIgnoreFile(filePath)) {

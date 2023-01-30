@@ -5,7 +5,11 @@ import snapshotDiff from 'snapshot-diff';
 import slash from 'slash';
 import walk from '../../../tools/walk';
 import copyFiles from '../../../tools/copyFiles';
-import {changePlaceholderInTemplate} from '../editTemplate';
+import {
+  changePlaceholderInTemplate,
+  replacePlaceholderWithPackageName,
+  validatePackageName,
+} from '../editTemplate';
 
 const FIXTURE_DIR = path.resolve(
   __dirname,
@@ -16,6 +20,7 @@ const FIXTURE_DIR = path.resolve(
 const PLACEHOLDER_NAME = 'PlaceholderName';
 const PROJECT_NAME = 'ProjectName';
 const PROJECT_TITLE = 'ProjectTitle';
+const PACKAGE_NAME = 'com.example.app';
 
 async function createTestEnv() {
   const TEST_DIR = `rncli-should-edit-template-${Date.now()}`;
@@ -152,5 +157,86 @@ describe('changePlaceholderInTemplate', () => {
     expect(
       snapshotDiff(oldPackageJsonFile, newPackageJsonFile, {contextLines: 1}),
     ).toMatchSnapshot();
+  });
+});
+
+describe('replacePlaceholderWithPackageName', () => {
+  beforeEach(() => {
+    jest.spyOn(process, 'cwd').mockImplementation(() => testPath);
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
+  test(`should replace name in package.json with ${PACKAGE_NAME} value`, async () => {
+    await replacePlaceholderWithPackageName({
+      projectName: PROJECT_NAME,
+      placeholderName: PLACEHOLDER_NAME,
+      placeholderTitle: 'Test',
+      packageName: PACKAGE_NAME,
+    });
+    const packageJsonFile = fs.readFileSync(
+      path.resolve(testPath, 'package.json'),
+      'utf8',
+    );
+
+    expect(JSON.parse(packageJsonFile).name).toBe(PACKAGE_NAME);
+  });
+
+  test('should update the bundle ID for iOS', async () => {
+    await replacePlaceholderWithPackageName({
+      projectName: PROJECT_NAME,
+      placeholderName: PLACEHOLDER_NAME,
+      placeholderTitle: 'Test',
+      packageName: PACKAGE_NAME,
+    });
+
+    const xcodeProjectFile = fs.readFileSync(
+      path.resolve(testPath, 'ios', PROJECT_NAME, 'project.pbxproj'),
+      'utf8',
+    );
+    expect(
+      xcodeProjectFile.includes(
+        `PRODUCT_BUNDLE_IDENTIFIER = "${PACKAGE_NAME}"`,
+      ),
+    ).toBeTruthy();
+  });
+
+  test(`should rename Main component name for Android with ${PROJECT_NAME}`, async () => {
+    await replacePlaceholderWithPackageName({
+      projectName: PROJECT_NAME,
+      placeholderName: PLACEHOLDER_NAME,
+      placeholderTitle: 'Test',
+      packageName: PACKAGE_NAME,
+    });
+    const [prefix, ...segments] = PACKAGE_NAME.split('.');
+
+    const mainActivityFile = fs.readFileSync(
+      path.resolve(
+        testPath,
+        'android',
+        prefix,
+        segments.join('.'),
+        'MainActivity.java',
+      ),
+      'utf8',
+    );
+
+    expect(mainActivityFile.includes(`return "${PROJECT_NAME}"`)).toBeTruthy();
+  });
+});
+
+describe('validatePackageName', () => {
+  test('should throw an error when package name contains only one segment', () => {
+    expect(() => validatePackageName('example')).toThrowError(
+      'The package name example is invalid. It should contain at least two segments, e.g. com.app',
+    );
+  });
+
+  test('should throw an error when package name contains special characters other than dots', () => {
+    expect(() => validatePackageName('com.organization.a@pp')).toThrowError(
+      'The com.organization.a@pp package name is not valid. It can contain only alphanumeric characters and dots.',
+    );
   });
 });

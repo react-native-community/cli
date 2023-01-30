@@ -32,6 +32,7 @@ type Options = {
   title?: string;
   skipInstall?: boolean;
   version?: string;
+  packageName?: string;
 };
 
 interface TemplateOptions {
@@ -41,6 +42,7 @@ interface TemplateOptions {
   directory: string;
   projectTitle?: string;
   skipInstall?: boolean;
+  packageName?: string;
 }
 
 function doesDirectoryExist(dir: string) {
@@ -83,6 +85,7 @@ async function createFromTemplate({
   directory,
   projectTitle,
   skipInstall,
+  packageName,
 }: TemplateOptions) {
   logger.debug('Initializing new project');
   logger.log(banner);
@@ -118,6 +121,7 @@ async function createFromTemplate({
       projectTitle,
       placeholderName: templateConfig.placeholderName,
       placeholderTitle: templateConfig.titlePlaceholder,
+      packageName,
     });
 
     loader.succeed();
@@ -204,6 +208,7 @@ async function createProject(
     directory,
     projectTitle: options.title,
     skipInstall: options.skipInstall,
+    packageName: options.packageName,
   });
 }
 

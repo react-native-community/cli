@@ -1,6 +1,7 @@
 import path from 'path';
-import {logger} from '@react-native-community/cli-tools';
+import {CLIError, logger} from '@react-native-community/cli-tools';
 import walk from '../../tools/walk';
+import chalk from 'chalk';
 
 // We need `graceful-fs` behavior around async file renames on Win32.
 // `gracefulify` does not support patching `fs.promises`. Use `fs-extra`, which
@@ -12,6 +13,7 @@ interface PlaceholderConfig {
   placeholderName: string;
   placeholderTitle?: string;
   projectTitle?: string;
+  packageName?: string;
 }
 
 /**
@@ -19,6 +21,27 @@ interface PlaceholderConfig {
   We should get rid of this once custom templates adapt `placeholderTitle` in their configurations.
 */
 const DEFAULT_TITLE_PLACEHOLDER = 'Hello App Display Name';
+
+function validatePackageName(packageName: string) {
+  const packageNameParts = packageName.split('.');
+  const packageNameRegex = /^([a-zA-Z]([a-zA-Z0-9_])*\.)+[a-zA-Z]([a-zA-Z0-9_])*$/u;
+
+  if (packageNameParts.length < 2) {
+    throw new CLIError(
+      `The package name ${chalk.bold(
+        packageName,
+      )} is invalid. It should contain at least two segments, e.g. com.app`,
+    );
+  }
+
+  if (!packageNameRegex.test(packageName)) {
+    throw new CLIError(
+      `The ${chalk.bold(
+        packageName,
+      )} package name is not valid. It can contain only alphanumeric characters and dots.`,
+    );
+  }
+}
 
 async function replaceNameInUTF8File(
   filePath: string,
@@ -58,6 +81,10 @@ function shouldIgnoreFile(filePath: string) {
   return filePath.match(/node_modules|yarn.lock|package-lock.json/g);
 }
 
+function isIosFile(filePath: string) {
+  return filePath.includes('ios');
+}
+
 const UNDERSCORED_DOTFILES = [
   'buckconfig',
   'eslintrc.js',
@@ -83,32 +110,177 @@ async function processDotfiles(filePath: string) {
   await renameFile(filePath, `_${dotfile}`, `.${dotfile}`);
 }
 
-export async function changePlaceholderInTemplate({
+function getPackageNameDetails(packageName: string) {
+  const cleanPackageName = packageName.replace(/[^\p{L}\p{N}.]+/gu, '');
+  const packageNameArray = cleanPackageName.split('.');
+  const [prefix, ...segments] = packageNameArray;
+  const startsWithCom = prefix === 'com';
+
+  return {
+    cleanPackageName,
+    packageNameArray,
+    prefix,
+    segments,
+    startsWithCom,
+  };
+}
+
+async function createAndroidPackagePaths(
+  filePath: string,
+  packageName: string,
+) {
+  const {startsWithCom, segments, packageNameArray} = getPackageNameDetails(
+    packageName,
+  );
+  const pathFolders = filePath.split('/').slice(-2);
+
+  if (pathFolders[0] === 'java' && pathFolders[1] === 'com') {
+    const segmentsList = startsWithCom ? segments : packageNameArray;
+
+    if (segmentsList.length > 1) {
+      const initialDir = process.cwd();
+      process.chdir(filePath);
+
+      fs.rename(
+        `${filePath}/${segmentsList.join('.')}`,
+        `${filePath}/${segmentsList[segmentsList.length - 1]}`,
+      );
+
+      for (const segment of segmentsList) {
+        fs.mkdirSync(segment);
+        process.chdir(segment);
+      }
+
+      fs.rename(
+        `${filePath}/${segmentsList[segmentsList.length - 1]}`,
+        process.cwd(),
+      );
+
+      process.chdir(initialDir);
+    }
+  }
+}
+
+async function replacePlaceholderWithPackageName({
   projectName,
   placeholderName,
-  placeholderTitle = DEFAULT_TITLE_PLACEHOLDER,
-  projectTitle = projectName,
-}: PlaceholderConfig) {
-  logger.debug(`Changing ${placeholderName} for ${projectName} in template`);
+  placeholderTitle,
+  packageName,
+}: Omit<Required<PlaceholderConfig>, 'projectTitle'>) {
+  validatePackageName(packageName);
+
+  const {cleanPackageName, segments, startsWithCom} = getPackageNameDetails(
+    packageName,
+  );
 
   for (const filePath of walk(process.cwd()).reverse()) {
     if (shouldIgnoreFile(filePath)) {
       continue;
     }
+
+    const iosFile = isIosFile(filePath);
+
     if (!(await fs.stat(filePath)).isDirectory()) {
-      await replaceNameInUTF8File(filePath, projectName, placeholderName);
-      await replaceNameInUTF8File(filePath, projectTitle, placeholderTitle);
+      let newName = startsWithCom
+        ? cleanPackageName
+        : `com.${cleanPackageName}`;
+
+      if (iosFile) {
+        newName = projectName;
+      }
+
+      //replace bundleID for iOS
+      await replaceNameInUTF8File(
+        filePath,
+        `PRODUCT_BUNDLE_IDENTIFIER = "${
+          startsWithCom ? cleanPackageName : `com.${cleanPackageName}`
+        }"`,
+        'PRODUCT_BUNDLE_IDENTIFIER = "(.*)"',
+      );
+
+      if (filePath.includes('app.json')) {
+        await replaceNameInUTF8File(filePath, projectName, placeholderName);
+      } else {
+        // replace main component name for Android package
+        await replaceNameInUTF8File(
+          filePath,
+          `return "${projectName}"`,
+          `return "${placeholderName}"`,
+        );
+        await replaceNameInUTF8File(
+          filePath,
+          `<string name="app_name">${projectName}</string>`,
+          `<string name="app_name">${placeholderTitle}</string>`,
+        );
+
+        await replaceNameInUTF8File(
+          filePath,
+          newName,
+          `com.${placeholderName}`,
+        );
+        await replaceNameInUTF8File(filePath, newName, placeholderName);
+        await replaceNameInUTF8File(filePath, newName, placeholderTitle);
+      }
     }
+
+    let fileName = startsWithCom ? segments.join('.') : cleanPackageName;
+
     if (shouldRenameFile(filePath, placeholderName)) {
-      await renameFile(filePath, placeholderName, projectName);
+      if (iosFile) {
+        fileName = projectName;
+      }
+
+      await renameFile(filePath, placeholderName, fileName);
     } else if (shouldRenameFile(filePath, placeholderName.toLowerCase())) {
       await renameFile(
         filePath,
         placeholderName.toLowerCase(),
-        projectName.toLowerCase(),
+        fileName.toLowerCase(),
       );
     }
 
+    createAndroidPackagePaths(filePath, packageName);
+
     await processDotfiles(filePath);
+  }
+}
+
+export async function changePlaceholderInTemplate({
+  projectName,
+  placeholderName,
+  placeholderTitle = DEFAULT_TITLE_PLACEHOLDER,
+  projectTitle = projectName,
+  packageName,
+}: PlaceholderConfig) {
+  logger.debug(`Changing ${placeholderName} for ${projectName} in template`);
+
+  if (packageName) {
+    replacePlaceholderWithPackageName({
+      projectName,
+      placeholderName,
+      placeholderTitle,
+      packageName,
+    });
+  } else {
+    for (const filePath of walk(process.cwd()).reverse()) {
+      if (shouldIgnoreFile(filePath)) {
+        continue;
+      }
+      if (!(await fs.stat(filePath)).isDirectory()) {
+        await replaceNameInUTF8File(filePath, projectName, placeholderName);
+        await replaceNameInUTF8File(filePath, projectTitle, placeholderTitle);
+      }
+      if (shouldRenameFile(filePath, placeholderName)) {
+        await renameFile(filePath, placeholderName, projectName);
+      } else if (shouldRenameFile(filePath, placeholderName.toLowerCase())) {
+        await renameFile(
+          filePath,
+          placeholderName.toLowerCase(),
+          projectName.toLowerCase(),
+        );
+      }
+
+      await processDotfiles(filePath);
+    }
   }
 }

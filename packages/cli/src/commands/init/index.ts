@@ -32,5 +32,10 @@ export default {
       name: '--skip-install',
       description: 'Skips dependencies installation step',
     },
+    {
+      name: '--package-name <string>',
+      description:
+        'Inits a project with a custom package name (Android) and bundle ID (iOS), e.g. com.example.app',
+    },
   ],
 };

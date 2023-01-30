@@ -20,6 +20,7 @@ import {getDestinationSimulator} from '../../tools/getDestinationSimulator';
 import {getDevices} from '../../tools/getDevices';
 import {getProjectInfo} from '../../tools/getProjectInfo';
 import {checkIfConfigurationExists} from '../../tools/checkIfConfigurationExists';
+import {getConfigurationScheme} from '../../tools/getConfigurationScheme';
 
 export interface FlagsT extends BuildFlags {
   configuration?: string;
@@ -62,6 +63,11 @@ function buildIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     path.extname(xcodeProject.name),
   );
   const scheme = args.scheme || inferredSchemeName;
+
+  args.mode = getConfigurationScheme(
+    {scheme: args.scheme, mode: args.mode},
+    sourceDir,
+  );
 
   logger.info(
     `Found Xcode ${
@@ -187,7 +193,6 @@ export const iosBuildOptions = [
   {
     name: '--mode <string>',
     description: 'Explicitly set the scheme configuration to use',
-    default: 'Debug',
   },
   {
     name: '--configuration <string>',

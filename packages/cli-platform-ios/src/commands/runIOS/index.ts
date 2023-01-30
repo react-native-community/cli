@@ -16,10 +16,10 @@ import {logger, CLIError} from '@react-native-community/cli-tools';
 import {BuildFlags, buildProject} from '../buildIOS/buildProject';
 import {iosBuildOptions} from '../buildIOS';
 import {Device} from '../../types';
-
 import listIOSDevices, {promptForDeviceSelection} from './listIOSDevices';
 import {checkIfConfigurationExists} from '../../tools/checkIfConfigurationExists';
 import {getProjectInfo} from '../../tools/getProjectInfo';
+import {getConfigurationScheme} from '../../tools/getConfigurationScheme';
 
 export interface FlagsT extends BuildFlags {
   simulator?: string;
@@ -70,13 +70,21 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   }
 
   const projectInfo = getProjectInfo();
-  checkIfConfigurationExists(projectInfo, args.mode);
+
+  if (args.mode) {
+    checkIfConfigurationExists(projectInfo, args.mode);
+  }
 
   const inferredSchemeName = path.basename(
     xcodeProject.name,
     path.extname(xcodeProject.name),
   );
   const scheme = args.scheme || inferredSchemeName;
+
+  args.mode = getConfigurationScheme(
+    {scheme: args.scheme, mode: args.mode},
+    sourceDir,
+  );
 
   logger.info(
     `Found Xcode ${

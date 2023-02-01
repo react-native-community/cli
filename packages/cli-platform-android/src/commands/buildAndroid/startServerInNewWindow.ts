@@ -6,9 +6,12 @@ import {logger} from '@react-native-community/cli-tools';
 export function startServerInNewWindow(
   port: number,
   terminal: string,
-  reactNativeCliPath: string,
   projectRoot: string,
 ) {
+  const reactNativeCliPath = path.dirname(
+    require.resolve('@react-native-community/cli-plugin-metro/package.json'),
+  );
+
   /**
    * Set up OS-specific filenames and commands
    */
@@ -24,10 +27,7 @@ export function startServerInNewWindow(
   /**
    * Set up the `.packager.(env|bat)` file to ensure the packager starts on the right port.
    */
-  const launchPackagerScript = path.join(
-    reactNativeCliPath,
-    `/cli-plugin-metro/${scriptFile}`,
-  );
+  const launchPackagerScript = path.join(reactNativeCliPath, `${scriptFile}`);
 
   /**
    * Set up the `launchPackager.(command|bat)` file.

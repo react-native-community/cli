@@ -13,7 +13,6 @@ import getAdbPath from '../runAndroid/getAdbPath';
 import {startServerInNewWindow} from './startServerInNewWindow';
 import {getTaskNames} from '../runAndroid/getTaskNames';
 import {promptForTaskSelection} from '../runAndroid/listAndroidTasks';
-import path from 'path';
 
 export interface BuildFlags {
   mode?: string;
@@ -40,15 +39,8 @@ export async function runPackager(args: BuildFlags, config: Config) {
     // result == 'not_running'
     logger.info('Starting JS server...');
 
-    const reactNativeCliPath = path.join(__dirname, '../../../..');
-
     try {
-      startServerInNewWindow(
-        args.port,
-        args.terminal,
-        reactNativeCliPath,
-        config.root,
-      );
+      startServerInNewWindow(args.port, args.terminal, config.root);
     } catch (error) {
       logger.warn(
         `Failed to automatically start the packager server. Please run "react-native start" manually. Error details: ${error.message}`,

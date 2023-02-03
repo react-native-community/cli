@@ -15,12 +15,11 @@ import {getDestinationSimulator} from '../../tools/getDestinationSimulator';
 import {logger, CLIError} from '@react-native-community/cli-tools';
 import {BuildFlags, buildProject} from '../buildIOS/buildProject';
 import {iosBuildOptions} from '../buildIOS';
-import {Device, IosProjectInfo} from '../../types';
+import {Device} from '../../types';
 import listIOSDevices, {promptForDeviceSelection} from './listIOSDevices';
 import {checkIfConfigurationExists} from '../../tools/checkIfConfigurationExists';
 import {getProjectInfo} from '../../tools/getProjectInfo';
 import {getConfigurationScheme} from '../../tools/getConfigurationScheme';
-import prompts from 'prompts';
 
 export interface FlagsT extends BuildFlags {
   simulator?: string;
@@ -34,19 +33,6 @@ export interface FlagsT extends BuildFlags {
 }
 
 async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
-  if (args.explicit) {
-    // add info about ignoring scheme and configuration, if they are used
-    const {scheme, mode} = await runExplicitBuildMode(args);
-
-    if (scheme) {
-      args.scheme = scheme;
-    }
-
-    if (mode) {
-      args.mode = mode;
-    }
-  }
-
   if (!ctx.project.ios) {
     throw new CLIError(
       'iOS project folder not found. Are you sure this is a React Native project?',
@@ -88,6 +74,23 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   if (args.mode) {
     checkIfConfigurationExists(projectInfo, args.mode);
   }
+
+  if (args.explicit) {
+    const {scheme, mode} = await runExplicitMode({
+      scheme: args.scheme,
+      mode: args.mode,
+    });
+
+    if (scheme) {
+      args.scheme = scheme;
+    }
+
+    if (mode) {
+      args.mode = mode;
+    }
+  }
+
+  process.chdir(sourceDir);
 
   const inferredSchemeName = path.basename(
     xcodeProject.name,
@@ -554,70 +557,6 @@ function printFoundDevices(devices: Array<Device>) {
     'Available devices:',
     ...devices.map((device) => `  - ${device.name} (${device.udid})`),
   ].join('\n');
-}
-
-async function promptForSchemeSelection(
-  project: IosProjectInfo,
-): Promise<string> {
-  const {scheme} = await prompts({
-    name: 'scheme',
-    type: 'select',
-    message: 'Select the scheme you want to use',
-    choices: project.schemes.map((value) => ({
-      title: value,
-      value: value,
-    })),
-  });
-
-  return scheme;
-}
-
-async function promptForConfigurationSelection(
-  project: IosProjectInfo,
-): Promise<string> {
-  const {configuration} = await prompts({
-    name: 'configuration',
-    type: 'select',
-    message: 'Select the configuration you want to use',
-    choices: project.configurations.map((value) => ({
-      title: value,
-      value: value,
-    })),
-  });
-
-  return configuration;
-}
-
-async function runExplicitBuildMode(
-  args: FlagsT,
-): Promise<Pick<Partial<FlagsT>, 'scheme' | 'mode'>> {
-  const project = getProjectInfo();
-
-  let scheme = args.scheme;
-  let mode = args.mode;
-
-  if (project.schemes.length > 1) {
-    scheme = await promptForSchemeSelection(project);
-  } else {
-    logger.info(
-      `Automatically selected ${chalk.bold(project.schemes[0])} scheme.`,
-    );
-  }
-
-  if (project.configurations.length > 1) {
-    mode = await promptForConfigurationSelection(project);
-  } else {
-    logger.info(
-      `Automatically selected ${chalk.bold(
-        project.configurations[0],
-      )} configuration.`,
-    );
-  }
-
-  return {
-    scheme,
-    mode,
-  };
 }
 
 export default {

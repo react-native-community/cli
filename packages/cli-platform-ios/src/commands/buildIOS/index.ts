@@ -21,6 +21,7 @@ import {getDevices} from '../../tools/getDevices';
 import {getProjectInfo} from '../../tools/getProjectInfo';
 import {checkIfConfigurationExists} from '../../tools/checkIfConfigurationExists';
 import {getConfigurationScheme} from '../../tools/getConfigurationScheme';
+import {runExplicitMode} from '../../tools/runExplicitMode';
 
 export interface FlagsT extends BuildFlags {
   configuration?: string;
@@ -30,7 +31,7 @@ export interface FlagsT extends BuildFlags {
   scheme?: string;
 }
 
-function buildIOS(_: Array<string>, ctx: Config, args: FlagsT) {
+async function buildIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   if (!ctx.project.ios) {
     throw new CLIError(
       'iOS project folder not found. Are you sure this is a React Native project?',
@@ -53,6 +54,21 @@ function buildIOS(_: Array<string>, ctx: Config, args: FlagsT) {
       'Parameters were automatically reassigned to --mode on this run.',
     );
     args.mode = args.configuration;
+  }
+
+  if (args.explicit) {
+    const {scheme, mode} = await runExplicitMode({
+      scheme: args.scheme,
+      mode: args.mode,
+    });
+
+    if (scheme) {
+      args.scheme = scheme;
+    }
+
+    if (mode) {
+      args.mode = mode;
+    }
   }
 
   const projectInfo = getProjectInfo();

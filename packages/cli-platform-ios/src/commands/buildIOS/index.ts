@@ -56,23 +56,11 @@ async function buildIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     args.mode = args.configuration;
   }
 
-  if (args.explicit) {
-    const {scheme, mode} = await runExplicitMode({
-      scheme: args.scheme,
-      mode: args.mode,
-    });
-
-    if (scheme) {
-      args.scheme = scheme;
-    }
-
-    if (mode) {
-      args.mode = mode;
-    }
-  }
-
   const projectInfo = getProjectInfo();
-  checkIfConfigurationExists(projectInfo, args.mode);
+
+  if (args.mode) {
+    checkIfConfigurationExists(projectInfo, args.mode);
+  }
 
   const inferredSchemeName = path.basename(
     xcodeProject.name,
@@ -83,10 +71,7 @@ async function buildIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   let mode = args.mode;
 
   if (args.interactive) {
-    const selection = await selectFromInteractiveMode(
-      {scheme, mode},
-      sourceDir,
-    );
+    const selection = await selectFromInteractiveMode({scheme, mode});
 
     if (selection.scheme) {
       scheme = selection.scheme;

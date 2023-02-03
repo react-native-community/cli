@@ -21,6 +21,7 @@ import {checkIfConfigurationExists} from '../../tools/checkIfConfigurationExists
 import {getProjectInfo} from '../../tools/getProjectInfo';
 import {getConfigurationScheme} from '../../tools/getConfigurationScheme';
 import {selectFromInteractiveMode} from '../../tools/selectFromInteractiveMode';
+import {promptForDeviceSelection} from '../../tools/prompts';
 
 export interface FlagsT extends BuildFlags {
   simulator?: string;
@@ -76,8 +77,6 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     checkIfConfigurationExists(projectInfo, args.mode);
   }
 
-  process.chdir(sourceDir);
-
   const inferredSchemeName = path.basename(
     xcodeProject.name,
     path.extname(xcodeProject.name),
@@ -87,10 +86,7 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   let mode = args.mode;
 
   if (args.interactive) {
-    const selection = await selectFromInteractiveMode(
-      {scheme, mode},
-      sourceDir,
-    );
+    const selection = await selectFromInteractiveMode({scheme, mode});
 
     if (selection.scheme) {
       scheme = selection.scheme;

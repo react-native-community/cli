@@ -11,14 +11,14 @@ interface Args {
   mode: string;
 }
 
-export async function selectFromInteractiveMode(
-  {scheme, mode}: Args,
-  sourceDir: string,
-): Promise<Args> {
+export async function selectFromInteractiveMode({
+  scheme,
+  mode,
+}: Args): Promise<Args> {
   let newScheme = scheme;
   let newMode = mode;
 
-  const project = getProjectInfo(sourceDir);
+  const project = getProjectInfo();
 
   if (project.schemes.length > 1) {
     newScheme = await promptForSchemeSelection(project);

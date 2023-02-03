@@ -16,10 +16,11 @@ import {logger, CLIError} from '@react-native-community/cli-tools';
 import {BuildFlags, buildProject} from '../buildIOS/buildProject';
 import {iosBuildOptions} from '../buildIOS';
 import {Device} from '../../types';
-import listIOSDevices, {promptForDeviceSelection} from './listIOSDevices';
+import listIOSDevices from './listIOSDevices';
 import {checkIfConfigurationExists} from '../../tools/checkIfConfigurationExists';
 import {getProjectInfo} from '../../tools/getProjectInfo';
 import {getConfigurationScheme} from '../../tools/getConfigurationScheme';
+import {selectFromInteractiveMode} from '../../tools/selectFromInteractiveMode';
 
 export interface FlagsT extends BuildFlags {
   simulator?: string;
@@ -75,28 +76,32 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     checkIfConfigurationExists(projectInfo, args.mode);
   }
 
-  if (args.explicit) {
-    const {scheme, mode} = await runExplicitMode({
-      scheme: args.scheme,
-      mode: args.mode,
-    });
-
-    if (scheme) {
-      args.scheme = scheme;
-    }
-
-    if (mode) {
-      args.mode = mode;
-    }
-  }
-
   process.chdir(sourceDir);
 
   const inferredSchemeName = path.basename(
     xcodeProject.name,
     path.extname(xcodeProject.name),
   );
-  const scheme = args.scheme || inferredSchemeName;
+
+  let scheme = args.scheme || inferredSchemeName;
+  let mode = args.mode;
+
+  if (args.interactive) {
+    const selection = await selectFromInteractiveMode(
+      {scheme, mode},
+      sourceDir,
+    );
+
+    if (selection.scheme) {
+      scheme = selection.scheme;
+    }
+
+    if (selection.mode) {
+      mode = selection.mode;
+    }
+  }
+
+  const modifiedArgs = {...args, scheme, mode};
 
   args.mode = getConfigurationScheme(
     {scheme: args.scheme, mode: args.mode},
@@ -125,9 +130,9 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
       );
     }
     if (selectedDevice.type === 'simulator') {
-      return runOnSimulator(xcodeProject, scheme, args, selectedDevice);
+      return runOnSimulator(xcodeProject, scheme, modifiedArgs, selectedDevice);
     } else {
-      return runOnDevice(selectedDevice, scheme, xcodeProject, args);
+      return runOnDevice(selectedDevice, scheme, xcodeProject, modifiedArgs);
     }
   }
 
@@ -147,7 +152,7 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
       logger.info(
         'No booted devices or simulators found. Launching first available simulator...',
       );
-      return runOnSimulator(xcodeProject, scheme, args);
+      return runOnSimulator(xcodeProject, scheme, modifiedArgs);
     }
 
     logger.info(`Found booted ${booted.map(({name}) => name).join(', ')}`);
@@ -155,7 +160,7 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     return runOnBootedDevicesSimulators(
       scheme,
       xcodeProject,
-      args,
+      modifiedArgs,
       bootedDevices,
       bootedSimulators,
     );
@@ -177,18 +182,18 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
       );
     }
     if (device.type === 'simulator') {
-      return runOnSimulator(xcodeProject, scheme, args);
+      return runOnSimulator(xcodeProject, scheme, modifiedArgs);
     } else {
-      return runOnDevice(device, scheme, xcodeProject, args);
+      return runOnDevice(device, scheme, xcodeProject, modifiedArgs);
     }
   } else if (args.device) {
     const physicalDevices = devices.filter((d) => d.type !== 'simulator');
     const device = matchingDevice(physicalDevices, args.device);
     if (device) {
-      return runOnDevice(device, scheme, xcodeProject, args);
+      return runOnDevice(device, scheme, xcodeProject, modifiedArgs);
     }
   } else {
-    runOnSimulator(xcodeProject, scheme, args);
+    runOnSimulator(xcodeProject, scheme, modifiedArgs);
   }
 }
 

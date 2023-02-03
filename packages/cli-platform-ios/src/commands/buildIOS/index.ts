@@ -17,11 +17,11 @@ import {
 import {Device} from '../../types';
 import {BuildFlags, buildProject} from './buildProject';
 import {getDestinationSimulator} from '../../tools/getDestinationSimulator';
+import {selectFromInteractiveMode} from '../../tools/selectFromInteractiveMode';
 import {getDevices} from '../../tools/getDevices';
 import {getProjectInfo} from '../../tools/getProjectInfo';
 import {checkIfConfigurationExists} from '../../tools/checkIfConfigurationExists';
 import {getConfigurationScheme} from '../../tools/getConfigurationScheme';
-import {runExplicitMode} from '../../tools/runExplicitMode';
 
 export interface FlagsT extends BuildFlags {
   configuration?: string;
@@ -78,7 +78,26 @@ async function buildIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     xcodeProject.name,
     path.extname(xcodeProject.name),
   );
-  const scheme = args.scheme || inferredSchemeName;
+
+  let scheme = args.scheme || inferredSchemeName;
+  let mode = args.mode;
+
+  if (args.interactive) {
+    const selection = await selectFromInteractiveMode(
+      {scheme, mode},
+      sourceDir,
+    );
+
+    if (selection.scheme) {
+      scheme = selection.scheme;
+    }
+
+    if (selection.mode) {
+      mode = selection.mode;
+    }
+  }
+
+  const modifiedArgs = {...args, scheme, mode};
 
   args.mode = getConfigurationScheme(
     {scheme: args.scheme, mode: args.mode},
@@ -92,7 +111,7 @@ async function buildIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   );
 
   const extendedArgs = {
-    ...args,
+    ...modifiedArgs,
     packager: false,
   };
 
@@ -252,7 +271,7 @@ export const iosBuildOptions = [
       'Location for iOS build artifacts. Corresponds to Xcode\'s "-derivedDataPath".',
   },
   {
-    name: '--explicit',
+    name: '--interactive',
     description:
       'Explicitly select which scheme and configuration to use before running a build',
   },

@@ -1,5 +1,6 @@
+import chalk from 'chalk';
 import prompts from 'prompts';
-import {IosProjectInfo} from '../types';
+import {Device, IosProjectInfo} from '../types';
 
 export async function promptForSchemeSelection(
   project: IosProjectInfo,
@@ -31,4 +32,22 @@ export async function promptForConfigurationSelection(
   });
 
   return configuration;
+}
+
+export async function promptForDeviceSelection(
+  availableDevices: Device[],
+): Promise<Device | undefined> {
+  const {device} = await prompts({
+    type: 'select',
+    name: 'device',
+    message: 'Select the device you want to use',
+    choices: availableDevices
+      .filter((d) => d.type === 'device' || d.type === 'simulator')
+      .map((d) => ({
+        title: `${chalk.bold(d.name)}`,
+        value: d,
+      })),
+    min: 1,
+  });
+  return device;
 }

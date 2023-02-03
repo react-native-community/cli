@@ -45,8 +45,8 @@ jobs:
     strategy:
       matrix:
         node-version: [18]
-        os: [ubuntu-latest]
-        # TODO: add macos, windows
+        os: [ubuntu-latest, macos-latest]
+        # TODO: add windows
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
@@ -55,6 +55,16 @@ jobs:
           distribution: 'zulu'
           java-version: 11
           cache: 'gradle'
+
+      - uses: ruby/setup-ruby@v1
+        if: runner.os == 'macOS'
+        with:
+          ruby-version: '2.7.6'
+
+      - uses: actions/setup-python@v4
+        if: runner.os == 'macOS'
+        with:
+          python-version: '3.10'
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2

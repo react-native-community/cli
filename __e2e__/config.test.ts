@@ -76,6 +76,23 @@ test('shows up current config without unnecessary output', () => {
     options: command.options && ['<<REPLACED>>'],
   }));
 
+  const expectedXcodeProject =
+    process.platform === 'darwin'
+      ? {
+          name: 'TestProject.xcworkspace',
+          isWorkspace: true,
+        }
+      : {
+          name: 'TestProject.xcodeproj',
+          isWorkspace: false,
+        };
+
+  expect(parsedStdout.project.ios.xcodeProject).toStrictEqual(
+    expectedXcodeProject,
+  );
+
+  delete parsedStdout.project.ios.xcodeProject;
+
   const configWithReplacedProjectRoots = replaceProjectRootInOutput(
     JSON.stringify(parsedStdout, null, 2).replace(/\\\\/g, '\\'),
     DIR,
@@ -87,7 +104,17 @@ test('should log only valid JSON config if setting up env throws an error', () =
   const restoreOriginalSetupEnvScript = createCorruptedSetupEnvScript();
   const {stdout, stderr} = runCLI(path.join(DIR, 'TestProject'), ['config']);
 
+  const filteredStderr =
+    process.platform === 'darwin'
+      ? stderr
+          .split('\n')
+          .filter(
+            (line) => !line.startsWith('warn Multiple Podfiles were found'),
+          )
+          .join('\n')
+      : stderr;
+
   restoreOriginalSetupEnvScript();
   expect(isValidJSON(stdout)).toBe(true);
-  expect(stderr).toBe('');
+  expect(filteredStderr).toBe('');
 });

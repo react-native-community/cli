@@ -235,6 +235,11 @@ export const iosBuildOptions = [
     description:
       'Location for iOS build artifacts. Corresponds to Xcode\'s "-derivedDataPath".',
   },
+  {
+    name: '--explicit',
+    description:
+      'Explicitly select which scheme and configuration to use before running a build',
+  },
 ];
 
 export default {

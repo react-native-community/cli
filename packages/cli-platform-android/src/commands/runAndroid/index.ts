@@ -20,6 +20,7 @@ import tryLaunchEmulator from './tryLaunchEmulator';
 import chalk from 'chalk';
 import path from 'path';
 import {build, runPackager, BuildFlags, options} from '../buildAndroid';
+import {promptForTaskSelection} from './listAndroidTasks';
 
 export interface Flags extends BuildFlags {
   appId: string;
@@ -84,6 +85,19 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
 
   const adbPath = getAdbPath();
+
+  let tasks = args.tasks;
+
+  if (args.interactive) {
+    const selectedTask = await promptForTaskSelection(
+      'install',
+      androidProject.sourceDir,
+    );
+    if (selectedTask) {
+      tasks = [selectedTask];
+    }
+  }
+
   if (args.listDevices) {
     if (args.deviceId) {
       logger.warn(
@@ -123,9 +137,9 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
     );
   }
   if (args.deviceId) {
-    return runOnSpecificDevice(args, adbPath, androidProject);
+    return runOnSpecificDevice({...args, tasks}, adbPath, androidProject);
   } else {
-    return runOnAllDevices(args, cmd, adbPath, androidProject);
+    return runOnAllDevices({...args, tasks}, cmd, adbPath, androidProject);
   }
 }
 

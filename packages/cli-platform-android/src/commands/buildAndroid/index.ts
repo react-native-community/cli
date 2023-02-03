@@ -11,6 +11,7 @@ import adb from '../runAndroid/adb';
 import getAdbPath from '../runAndroid/getAdbPath';
 import {startServerInNewWindow} from './startServerInNewWindow';
 import {getTaskNames} from '../runAndroid/getTaskNames';
+import {promptForTaskSelection} from '../runAndroid/listAndroidTasks';
 
 export interface BuildFlags {
   mode?: string;
@@ -21,6 +22,7 @@ export interface BuildFlags {
   terminal: string;
   tasks?: Array<string>;
   extraParams?: Array<string>;
+  interactive?: boolean;
 }
 
 export async function runPackager(args: BuildFlags, config: Config) {
@@ -64,10 +66,22 @@ async function buildAndroid(
     );
   }
 
+  let tasks = args.tasks;
+
+  if (args.interactive) {
+    const selectedTask = await promptForTaskSelection(
+      'build',
+      androidProject.sourceDir,
+    );
+    if (selectedTask) {
+      tasks = [selectedTask];
+    }
+  }
+
   let gradleArgs = getTaskNames(
     androidProject.appName,
     args.mode || args.variant,
-    args.tasks,
+    tasks,
     'assemble',
   );
 
@@ -155,6 +169,11 @@ export const options = [
     name: '--extra-params <string>',
     description: 'Custom properties passed to gradle build command',
     parse: (val: string) => val.split(' '),
+  },
+  {
+    name: '--interactive',
+    description:
+      'Explicitly select build type and flavour to use before running a build',
   },
 ];
 

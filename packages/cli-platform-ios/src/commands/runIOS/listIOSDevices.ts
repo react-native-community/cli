@@ -3,26 +3,6 @@ import parseIOSDevicesList from '../../tools/parseIOSDevicesList';
 import parseXctraceIOSDevicesList from '../../tools/parseXctraceIOSDevicesList';
 import execa from 'execa';
 import {logger} from '@react-native-community/cli-tools';
-import prompts from 'prompts';
-import chalk from 'chalk';
-
-export async function promptForDeviceSelection(
-  availableDevices: Device[],
-): Promise<Device | undefined> {
-  const {device} = await prompts({
-    type: 'select',
-    name: 'device',
-    message: 'Select the device you want to use',
-    choices: availableDevices
-      .filter((d) => d.type === 'device' || d.type === 'simulator')
-      .map((d) => ({
-        title: `${chalk.bold(d.name)}`,
-        value: d,
-      })),
-    min: 1,
-  });
-  return device;
-}
 
 async function listIOSDevices(): Promise<Device[]> {
   let devices;

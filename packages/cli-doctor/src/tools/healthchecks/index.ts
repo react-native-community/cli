@@ -2,6 +2,7 @@ import nodeJS from './nodeJS';
 import {yarn, npm} from './packageManagers';
 import jdk from './jdk';
 import watchman from './watchman';
+import ruby from './ruby';
 import androidHomeEnvVariable from './androidHomeEnvVariable';
 import androidStudio from './androidStudio';
 import androidSDK from './androidSDK';
@@ -37,6 +38,7 @@ export const getHealthchecks = ({contributor}: Options): Healthchecks => {
       label: 'Common',
       healthchecks: [
         nodeJS,
+        ruby,
         yarn,
         npm,
         ...(process.platform === 'darwin' ? [watchman] : []),

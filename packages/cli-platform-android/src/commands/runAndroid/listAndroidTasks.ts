@@ -8,7 +8,7 @@ type GradleTask = {
   description: string;
 };
 
-const parseTasksFromGradleFile = (
+export const parseTasksFromGradleFile = (
   taskType: 'install' | 'build',
   text: string,
 ): Array<GradleTask> => {

@@ -66,7 +66,7 @@ async function buildAndroid(
     );
   }
 
-  let tasks = args.tasks;
+  let {tasks} = args;
 
   if (args.interactive) {
     const selectedTask = await promptForTaskSelection(

@@ -39,7 +39,7 @@ export const promptForTaskSelection = async (
   }).stdout;
   const installTasks = parseTasksFromGradleFile(taskType, out);
   if (!installTasks.length) {
-    throw new CLIError('No actionable install tasks were found...');
+    throw new CLIError(`No actionable ${taskType} tasks were found...`);
   }
   const {task} = await prompts({
     type: 'select',

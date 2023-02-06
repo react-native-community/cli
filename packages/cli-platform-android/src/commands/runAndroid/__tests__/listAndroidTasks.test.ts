@@ -107,7 +107,7 @@ describe('promptForTaskSelection', () => {
     (execa.sync as jest.Mock).mockReturnValueOnce({stdout: gradleTaskOutput});
     prompts.mockReturnValue({task: []});
 
-    promptForTaskSelection('install', 'sourceDit');
+    promptForTaskSelection('install', 'sourceDir');
 
     expect(prompts).toHaveBeenCalledWith({
       choices: tasksList.map((t) => ({

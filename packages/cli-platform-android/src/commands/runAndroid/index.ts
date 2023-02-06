@@ -86,7 +86,7 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
 
   const adbPath = getAdbPath();
 
-  let tasks = args.tasks;
+  let {tasks} = args;
 
   if (args.interactive) {
     const selectedTask = await promptForTaskSelection(

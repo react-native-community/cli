@@ -44,8 +44,13 @@ export async function promptForDeviceSelection(
     choices: availableDevices
       .filter((d) => d.type === 'device' || d.type === 'simulator')
       .map((d) => ({
-        title: `${chalk.bold(d.name)}`,
+        title: `${chalk.bold(d.name)} ${
+          !d.isAvailable && !!d.availabilityError
+            ? chalk.red(`(unavailable - ${d.availabilityError})`)
+            : ''
+        }`,
         value: d,
+        disabled: !d.isAvailable,
       })),
     min: 1,
   });

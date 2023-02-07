@@ -99,7 +99,7 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
 
   const modifiedArgs = {...args, scheme, mode};
 
-  args.mode = getConfigurationScheme(
+  modifiedArgs.mode = getConfigurationScheme(
     {scheme: args.scheme, mode: args.mode},
     sourceDir,
   );
@@ -111,12 +111,11 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   );
 
   const availableDevices = await listIOSDevices();
-
-  if (args.listDevices) {
-    if (args.device || args.udid) {
+  if (modifiedArgs.listDevices) {
+    if (modifiedArgs.device || modifiedArgs.udid) {
       logger.warn(
         `Both ${
-          args.device ? 'device' : 'udid'
+          modifiedArgs.device ? 'device' : 'udid'
         } and "list-devices" parameters were passed to "run" command. We will list available devices and let you choose from one.`,
       );
     }
@@ -133,7 +132,7 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     }
   }
 
-  if (!args.device && !args.udid && !args.simulator) {
+  if (!modifiedArgs.device && !modifiedArgs.udid && !modifiedArgs.simulator) {
     const bootedDevices = availableDevices.filter(
       ({type, isAvailable}) => type === 'device' && isAvailable,
     );
@@ -163,18 +162,18 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     );
   }
 
-  if (args.device && args.udid) {
+  if (modifiedArgs.device && modifiedArgs.udid) {
     return logger.error(
       'The `device` and `udid` options are mutually exclusive.',
     );
   }
 
-  if (args.udid) {
-    const device = availableDevices.find((d) => d.udid === args.udid);
+  if (modifiedArgs.udid) {
+    const device = availableDevices.find((d) => d.udid === modifiedArgs.udid);
     if (!device) {
       return logger.error(
         `Could not find a device with udid: "${chalk.bold(
-          args.udid,
+          modifiedArgs.udid,
         )}". ${printFoundDevices(availableDevices)}`,
       );
     }
@@ -183,11 +182,11 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     } else {
       return runOnDevice(device, scheme, xcodeProject, modifiedArgs);
     }
-  } else if (args.device) {
+  } else if (modifiedArgs.device) {
     const physicalDevices = availableDevices.filter(
       (d) => d.type !== 'simulator',
     );
-    const device = matchingDevice(physicalDevices, args.device);
+    const device = matchingDevice(physicalDevices, modifiedArgs.device);
     if (device) {
       return runOnDevice(device, scheme, xcodeProject, modifiedArgs);
     }

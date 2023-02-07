@@ -40,6 +40,7 @@ const parseXcdeviceList = (text: string): Device[] => {
         !device.platform.includes('appletv') &&
         !device.platform.includes('macos'),
     )
+    .sort((device) => (device.simulator ? 1 : -1))
     .map((device) => ({
       isAvailable: device.available,
       name: device.name,

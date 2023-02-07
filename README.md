@@ -25,18 +25,19 @@ _Note: CLI has been extracted from core `react-native` as a part of "[Lean Core]
 
 Our release cycle is independent of `react-native`. We follow semver and here is the compatibility table:
 
-| `@react-native-community/cli`                                     | `react-native`          |
-| ----------------------------------------------------------------- | ----------------------- |
-| [^10.0.0](https://github.com/react-native-community/cli/tree/main)| ^0.71.0                 |
-| [^9.0.0](https://github.com/react-native-community/cli/tree/9.x)  | ^0.70.0                 |
-| [^8.0.0](https://github.com/react-native-community/cli/tree/8.x)  | ^0.69.0                 |
-| [^7.0.0](https://github.com/react-native-community/cli/tree/7.x)  | ^0.68.0                 |
-| [^6.0.0](https://github.com/react-native-community/cli/tree/6.x)  | ^0.65.0,^0.66.0,^0.67.0 |
-| [^5.0.0](https://github.com/react-native-community/cli/tree/5.x)  | ^0.64.0                 |
-| [^4.0.0](https://github.com/react-native-community/cli/tree/4.x)  | ^0.62.0,^0.63.0         |
-| [^3.0.0](https://github.com/react-native-community/cli/tree/3.x)  | ^0.61.0                 |
-| [^2.0.0](https://github.com/react-native-community/cli/tree/2.x)  | ^0.60.0                 |
-| [^1.0.0](https://github.com/react-native-community/cli/tree/1.x)  | ^0.59.0                 |
+| `@react-native-community/cli`                                      | `react-native`          |
+| ------------------------------------------------------------------ | ----------------------- |
+| [^11.0.0](https://github.com/react-native-community/cli/tree/main) | ^0.72.0                 |
+| [^10.0.0](https://github.com/react-native-community/cli/tree/10.x) | ^0.71.0                 |
+| [^9.0.0](https://github.com/react-native-community/cli/tree/9.x)   | ^0.70.0                 |
+| [^8.0.0](https://github.com/react-native-community/cli/tree/8.x)   | ^0.69.0                 |
+| [^7.0.0](https://github.com/react-native-community/cli/tree/7.x)   | ^0.68.0                 |
+| [^6.0.0](https://github.com/react-native-community/cli/tree/6.x)   | ^0.65.0,^0.66.0,^0.67.0 |
+| [^5.0.0](https://github.com/react-native-community/cli/tree/5.x)   | ^0.64.0                 |
+| [^4.0.0](https://github.com/react-native-community/cli/tree/4.x)   | ^0.62.0,^0.63.0         |
+| [^3.0.0](https://github.com/react-native-community/cli/tree/3.x)   | ^0.61.0                 |
+| [^2.0.0](https://github.com/react-native-community/cli/tree/2.x)   | ^0.60.0                 |
+| [^1.0.0](https://github.com/react-native-community/cli/tree/1.x)   | ^0.59.0                 |
 
 ## Documentation
 

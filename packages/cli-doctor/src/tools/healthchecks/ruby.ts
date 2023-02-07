@@ -18,7 +18,7 @@ export default {
 
     logManualInstallation({
       healthcheck: 'Ruby',
-      url: 'https://www.ruby-lang.org/en/downloads/',
+      url: 'https://reactnative.dev/docs/environment-setup#ruby',
     });
   },
 } as HealthCheckInterface;

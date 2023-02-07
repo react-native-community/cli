@@ -15,6 +15,7 @@ export type BuildFlags = {
   buildFolder?: string;
   port: number;
   terminal: string | undefined;
+  interactive?: boolean;
 };
 
 export function buildProject(

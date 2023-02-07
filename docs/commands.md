@@ -497,6 +497,10 @@ Explicitly set `xcconfig` to use in build.
 
 Location for iOS build artifacts. Corresponds to Xcode's `-derivedDataPath`.
 
+#### `--extra-params <string>`
+
+Custom properties that will be passed to `xcodebuild` command.
+
 ### `build-ios`
 
 Usage:
@@ -576,6 +580,10 @@ Installs passed binary instead of building a fresh one.
 > default: false
 
 List all available iOS devices and simulators and let you choose one to run the app.
+
+#### `--extra-params <string>`
+
+Custom properties that will be passed to `xcodebuild` command.
 
 ### `start`
 

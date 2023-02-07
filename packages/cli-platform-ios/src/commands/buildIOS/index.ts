@@ -260,6 +260,11 @@ export const iosBuildOptions = [
     description:
       'Explicitly select which scheme and configuration to use before running a build',
   },
+  {
+    name: '--extra-params <string>',
+    description: 'Custom properties that will be passed to xcodebuild command.',
+    parse: (val: string) => val.split(' '),
+  },
 ];
 
 export default {

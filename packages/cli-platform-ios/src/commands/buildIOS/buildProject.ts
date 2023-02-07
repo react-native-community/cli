@@ -16,6 +16,7 @@ export type BuildFlags = {
   port: number;
   terminal: string | undefined;
   interactive?: boolean;
+  extraParams?: string[];
 };
 
 export function buildProject(
@@ -41,6 +42,11 @@ export function buildProject(
         ? 'generic/platform=iOS Simulator'
         : 'generic/platform=iOS',
     ];
+
+    if (args.extraParams) {
+      xcodebuildArgs.push(...args.extraParams);
+    }
+
     const loader = getLoader();
     logger.info(
       `Building ${chalk.dim(

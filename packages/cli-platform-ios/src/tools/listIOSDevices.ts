@@ -54,8 +54,7 @@ const parseXcdeviceList = (text: string): Device[] => {
 
 async function listIOSDevices(): Promise<Device[]> {
   const out = execa.sync('xcrun', ['xcdevice', 'list']).stdout;
-  const devices = parseXcdeviceList(out);
-  return devices;
+  return parseXcdeviceList(out);
 }
 
 export default listIOSDevices;

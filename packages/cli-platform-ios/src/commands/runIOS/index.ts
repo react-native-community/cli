@@ -184,7 +184,7 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     }
   } else if (modifiedArgs.device) {
     const physicalDevices = availableDevices.filter(
-      (d) => d.type !== 'simulator',
+      ({type}) => type !== 'simulator',
     );
     const device = matchingDevice(physicalDevices, modifiedArgs.device);
     if (device) {

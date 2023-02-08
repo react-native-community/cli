@@ -262,7 +262,7 @@ export const iosBuildOptions = [
   },
   {
     name: '--extra-params <string>',
-    description: 'Custom properties that will be passed to xcodebuild command.',
+    description: 'Custom params that will be passed to xcodebuild command.',
     parse: (val: string) => val.split(' '),
   },
 ];

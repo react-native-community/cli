@@ -153,7 +153,7 @@ export const options = [
   },
   {
     name: '--extra-params <string>',
-    description: 'Custom properties passed to gradle build command',
+    description: 'Custom params passed to gradle build command',
     parse: (val: string) => val.split(' '),
   },
 ];

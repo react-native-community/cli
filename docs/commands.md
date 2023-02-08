@@ -414,7 +414,7 @@ Mode to build the app. Either 'debug' (default) or 'release'.
 
 #### `--extra-params <string>`
 
-Custom properties that will be passed to gradle build command.
+Custom params that will be passed to gradle build command.
 Example:
 
 ```sh
@@ -499,7 +499,12 @@ Location for iOS build artifacts. Corresponds to Xcode's `-derivedDataPath`.
 
 #### `--extra-params <string>`
 
-Custom properties that will be passed to `xcodebuild` command.
+Custom params that will be passed to `xcodebuild` command.
+Example:
+
+```sh
+react-native run-ios --extra-params "-jobs 4"
+```
 
 ### `build-ios`
 
@@ -583,7 +588,12 @@ List all available iOS devices and simulators and let you choose one to run the 
 
 #### `--extra-params <string>`
 
-Custom properties that will be passed to `xcodebuild` command.
+Custom params that will be passed to `xcodebuild` command.
+Example:
+
+```sh
+react-native build-ios --extra-params "-jobs 4"
+```
 
 ### `start`
 

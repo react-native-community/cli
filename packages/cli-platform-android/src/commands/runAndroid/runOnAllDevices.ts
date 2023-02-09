@@ -17,6 +17,7 @@ import tryLaunchEmulator from './tryLaunchEmulator';
 import tryInstallAppOnDevice from './tryInstallAppOnDevice';
 import {getTaskNames} from './getTaskNames';
 import type {Flags} from '.';
+import {printRunDoctorTip} from '@react-native-community/cli-doctor';
 
 type AndroidProject = NonNullable<Config['project']['android']>;
 
@@ -99,6 +100,7 @@ async function runOnAllDevices(
       });
     }
   } catch (error) {
+    printRunDoctorTip();
     throw createInstallError(error);
   }
 
@@ -115,10 +117,7 @@ async function runOnAllDevices(
 
 function createInstallError(error: Error & {stderr: string}) {
   const stderr = (error.stderr || '').toString();
-  const docs = 'https://reactnative.dev/docs/environment-setup';
-  let message = `Make sure you have the Android development environment set up: ${chalk.underline.dim(
-    docs,
-  )}`;
+  let message = '';
 
   // Pass the error message from the command to stdout because we pipe it to
   // parent process so it's not visible
@@ -127,17 +126,17 @@ function createInstallError(error: Error & {stderr: string}) {
   // Handle some common failures and make the errors more helpful
   if (stderr.includes('No connected devices')) {
     message =
-      'Make sure you have an Android emulator running or a device connected';
+      'Make sure you have an Android emulator running or a device connected.';
   } else if (
     stderr.includes('licences have not been accepted') ||
     stderr.includes('accept the SDK license')
   ) {
     message = `Please accept all necessary Android SDK licenses using Android SDK Manager: "${chalk.bold(
       '$ANDROID_HOME/tools/bin/sdkmanager --licenses',
-    )}"`;
+    )}."`;
   }
 
-  return new CLIError(`Failed to install the app. ${message}.`, error);
+  return new CLIError(`Failed to install the app. ${message}`, error);
 }
 
 export default runOnAllDevices;

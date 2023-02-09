@@ -11,6 +11,7 @@ import adb from '../runAndroid/adb';
 import getAdbPath from '../runAndroid/getAdbPath';
 import {startServerInNewWindow} from './startServerInNewWindow';
 import {getTaskNames} from '../runAndroid/getTaskNames';
+import {printRunDoctorTip} from '@react-native-community/cli-doctor';
 
 export interface BuildFlags {
   mode?: string;
@@ -110,6 +111,7 @@ export function build(gradleArgs: string[], sourceDir: string) {
       cwd: sourceDir,
     });
   } catch (error) {
+    printRunDoctorTip();
     throw new CLIError('Failed to build the app.', error);
   }
 }

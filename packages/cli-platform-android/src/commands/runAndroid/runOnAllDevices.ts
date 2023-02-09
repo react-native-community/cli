@@ -9,7 +9,11 @@
 import chalk from 'chalk';
 import execa from 'execa';
 import {Config} from '@react-native-community/cli-types';
-import {logger, CLIError} from '@react-native-community/cli-tools';
+import {
+  logger,
+  CLIError,
+  printRunDoctorTip,
+} from '@react-native-community/cli-tools';
 import adb from './adb';
 import tryRunAdbReverse from './tryRunAdbReverse';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
@@ -17,7 +21,6 @@ import tryLaunchEmulator from './tryLaunchEmulator';
 import tryInstallAppOnDevice from './tryInstallAppOnDevice';
 import {getTaskNames} from './getTaskNames';
 import type {Flags} from '.';
-import {printRunDoctorTip} from '@react-native-community/cli-tools';
 
 type AndroidProject = NonNullable<Config['project']['android']>;
 

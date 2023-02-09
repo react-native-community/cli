@@ -11,7 +11,7 @@ import adb from '../runAndroid/adb';
 import getAdbPath from '../runAndroid/getAdbPath';
 import {startServerInNewWindow} from './startServerInNewWindow';
 import {getTaskNames} from '../runAndroid/getTaskNames';
-import {printRunDoctorTip} from '@react-native-community/cli-doctor';
+import {printRunDoctorTip} from '@react-native-community/cli-tools';
 
 export interface BuildFlags {
   mode?: string;

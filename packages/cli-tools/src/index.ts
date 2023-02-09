@@ -10,5 +10,6 @@ export {default as resolveNodeModuleDir} from './resolveNodeModuleDir';
 export {default as hookStdout} from './hookStdout';
 export {getLoader, NoopLoader, Loader} from './loader';
 export {default as findProjectRoot} from './findProjectRoot';
+export {default as printRunDoctorTip} from './printRunDoctorTip';
 
 export * from './errors';

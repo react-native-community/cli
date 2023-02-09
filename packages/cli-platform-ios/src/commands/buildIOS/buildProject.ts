@@ -6,7 +6,7 @@ import chalk from 'chalk';
 import {IOSProjectInfo} from '@react-native-community/cli-types';
 import {logger, CLIError} from '@react-native-community/cli-tools';
 import {getLoader} from '@react-native-community/cli-tools';
-import {printRunDoctorTip} from '@react-native-community/cli-doctor';
+import {printRunDoctorTip} from '@react-native-community/cli-tools';
 
 export type BuildFlags = {
   mode: string;

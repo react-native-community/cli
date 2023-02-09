@@ -10,4 +10,3 @@ export const commands = {info, doctor};
  */
 export {default as versionRanges} from './tools/versionRanges';
 export {default as installPods} from './tools/installPods';
-export {default as printRunDoctorTip} from './tools/printRunDoctorTip';

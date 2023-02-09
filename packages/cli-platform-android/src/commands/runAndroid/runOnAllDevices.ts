@@ -17,7 +17,7 @@ import tryLaunchEmulator from './tryLaunchEmulator';
 import tryInstallAppOnDevice from './tryInstallAppOnDevice';
 import {getTaskNames} from './getTaskNames';
 import type {Flags} from '.';
-import {printRunDoctorTip} from '@react-native-community/cli-doctor';
+import {printRunDoctorTip} from '@react-native-community/cli-tools';
 
 type AndroidProject = NonNullable<Config['project']['android']>;
 

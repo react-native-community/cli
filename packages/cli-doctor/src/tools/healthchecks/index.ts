@@ -38,7 +38,6 @@ export const getHealthchecks = ({contributor}: Options): Healthchecks => {
       label: 'Common',
       healthchecks: [
         nodeJS,
-        ruby,
         yarn,
         npm,
         ...(process.platform === 'darwin' ? [watchman] : []),
@@ -58,7 +57,7 @@ export const getHealthchecks = ({contributor}: Options): Healthchecks => {
       ? {
           ios: {
             label: 'iOS',
-            healthchecks: [xcode, cocoaPods, iosDeploy, xcodeEnv],
+            healthchecks: [xcode, ruby, cocoaPods, iosDeploy, xcodeEnv],
           },
         }
       : {}),

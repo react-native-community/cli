@@ -33,7 +33,7 @@ async function getEnvironmentInfo(
       System: ['OS', 'CPU', 'Memory', 'Shell'],
       Binaries: ['Node', 'Yarn', 'npm', 'Watchman'],
       IDEs: ['Xcode', 'Android Studio', 'Visual Studio'],
-      Managers: ['CocoaPods'],
+      Managers: ['CocoaPods', 'RubyGems'],
       Languages: ['Java'],
       SDKs: ['iOS SDK', 'Android SDK', 'Windows SDK'],
       npmPackages: packages,

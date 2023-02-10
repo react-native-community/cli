@@ -26,6 +26,7 @@ export type EnvironmentInfo = {
   };
   Managers: {
     CocoaPods: AvailableInformation;
+    RubyGems: AvailableInformation;
   };
   SDKs: {
     'iOS SDK': {

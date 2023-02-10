@@ -9,7 +9,11 @@
 import chalk from 'chalk';
 import execa from 'execa';
 import {Config} from '@react-native-community/cli-types';
-import {logger, CLIError} from '@react-native-community/cli-tools';
+import {
+  logger,
+  CLIError,
+  printRunDoctorTip,
+} from '@react-native-community/cli-tools';
 import adb from './adb';
 import tryRunAdbReverse from './tryRunAdbReverse';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
@@ -99,6 +103,7 @@ async function runOnAllDevices(
       });
     }
   } catch (error) {
+    printRunDoctorTip();
     throw createInstallError(error);
   }
 
@@ -115,10 +120,7 @@ async function runOnAllDevices(
 
 function createInstallError(error: Error & {stderr: string}) {
   const stderr = (error.stderr || '').toString();
-  const docs = 'https://reactnative.dev/docs/environment-setup';
-  let message = `Make sure you have the Android development environment set up: ${chalk.underline.dim(
-    docs,
-  )}`;
+  let message = '';
 
   // Pass the error message from the command to stdout because we pipe it to
   // parent process so it's not visible
@@ -127,17 +129,17 @@ function createInstallError(error: Error & {stderr: string}) {
   // Handle some common failures and make the errors more helpful
   if (stderr.includes('No connected devices')) {
     message =
-      'Make sure you have an Android emulator running or a device connected';
+      'Make sure you have an Android emulator running or a device connected.';
   } else if (
     stderr.includes('licences have not been accepted') ||
     stderr.includes('accept the SDK license')
   ) {
     message = `Please accept all necessary Android SDK licenses using Android SDK Manager: "${chalk.bold(
       '$ANDROID_HOME/tools/bin/sdkmanager --licenses',
-    )}"`;
+    )}."`;
   }
 
-  return new CLIError(`Failed to install the app. ${message}.`, error);
+  return new CLIError(`Failed to install the app. ${message}`, error);
 }
 
 export default runOnAllDevices;

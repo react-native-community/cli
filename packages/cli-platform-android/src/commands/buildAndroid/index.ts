@@ -3,6 +3,7 @@ import {
   getDefaultUserTerminal,
   isPackagerRunning,
   logger,
+  printRunDoctorTip,
 } from '@react-native-community/cli-tools';
 import {Config} from '@react-native-community/cli-types';
 import execa from 'execa';
@@ -110,6 +111,7 @@ export function build(gradleArgs: string[], sourceDir: string) {
       cwd: sourceDir,
     });
   } catch (error) {
+    printRunDoctorTip();
     throw new CLIError('Failed to build the app.', error);
   }
 }

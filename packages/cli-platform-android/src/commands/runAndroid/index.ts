@@ -21,6 +21,7 @@ import chalk from 'chalk';
 import path from 'path';
 import {build, runPackager, BuildFlags, options} from '../buildAndroid';
 import {promptForTaskSelection} from './listAndroidTasks';
+import {getTaskNames} from './getTaskNames';
 
 export interface Flags extends BuildFlags {
   appId: string;
@@ -86,19 +87,19 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
 
   const adbPath = getAdbPath();
 
-  let {tasks} = args;
+  let selectedTask;
 
   if (args.interactive) {
-    const selectedTask = await promptForTaskSelection(
+    const task = await promptForTaskSelection(
       'install',
       androidProject.sourceDir,
     );
-    if (selectedTask) {
-      tasks = [selectedTask];
+    if (task) {
+      selectedTask = task;
     }
   }
 
-  if (args.listDevices) {
+  if (args.listDevices || args.interactive) {
     if (args.deviceId) {
       logger.warn(
         'Both "deviceId" and "list-devices" parameters were passed to "run" command. We will list available devices and let you choose from one',
@@ -108,15 +109,18 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
     const device = await listAndroidDevices();
     if (!device) {
       throw new CLIError(
-        'Failed to select device, please try to run app without "list-devices" command.',
+        `Failed to select device, please try to run app without ${
+          args.listDevices ? 'list-devices' : 'interactive'
+        } command.`,
       );
     }
-
+    console.log('selectedTask', selectedTask);
     if (device.connected) {
       return runOnSpecificDevice(
         {...args, deviceId: device.deviceId},
         adbPath,
         androidProject,
+        selectedTask,
       );
     }
 
@@ -130,16 +134,23 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
         {...args, deviceId: emulator},
         adbPath,
         androidProject,
+        selectedTask,
       );
     }
     throw new CLIError(
       `Failed to launch emulator. Reason: ${chalk.dim(result.error || '')}`,
     );
   }
+
   if (args.deviceId) {
-    return runOnSpecificDevice({...args, tasks}, adbPath, androidProject);
+    return runOnSpecificDevice(
+      {...args},
+      adbPath,
+      androidProject,
+      selectedTask,
+    );
   } else {
-    return runOnAllDevices({...args, tasks}, cmd, adbPath, androidProject);
+    return runOnAllDevices({...args}, cmd, adbPath, androidProject);
   }
 }
 
@@ -147,13 +158,31 @@ function runOnSpecificDevice(
   args: Flags,
   adbPath: string,
   androidProject: AndroidProject,
+  selectedTask?: string,
 ) {
   const devices = adb.getDevices(adbPath);
   const {deviceId} = args;
+
+  // if coming from run-android command and we have selected task
+  // from intearcitve mode we need to create appropriate build task
+  // eg 'installRelease' -> 'assembleRelease'
+  const buildTask = selectedTask?.replace('install', 'assemble') ?? 'build';
+  console.log('buildTask @ runOnSpecificDevice', buildTask);
   if (devices.length > 0 && deviceId) {
     if (devices.indexOf(deviceId) !== -1) {
+      let gradleArgs = getTaskNames(
+        androidProject.appName,
+        args.mode || args.variant,
+        args.tasks ?? [buildTask],
+        'install',
+        androidProject.sourceDir,
+      );
+      console.log('gradleArgs', gradleArgs);
       // using '-x lint' in order to ignore linting errors while building the apk
-      let gradleArgs = ['build', '-x', 'lint'];
+      gradleArgs.push('-x', 'lint');
+      if (args.extraParams) {
+        gradleArgs = [...gradleArgs, ...args.extraParams];
+      }
 
       if (args.extraParams) {
         gradleArgs = [...gradleArgs, ...args.extraParams];
@@ -179,7 +208,13 @@ function runOnSpecificDevice(
         build(gradleArgs, androidProject.sourceDir);
       }
 
-      installAndLaunchOnDevice(args, deviceId, adbPath, androidProject);
+      installAndLaunchOnDevice(
+        args,
+        deviceId,
+        adbPath,
+        androidProject,
+        selectedTask,
+      );
     } else {
       logger.error(
         `Could not find device with the id: "${deviceId}". Please choose one of the following:`,
@@ -196,9 +231,17 @@ function installAndLaunchOnDevice(
   selectedDevice: string,
   adbPath: string,
   androidProject: AndroidProject,
+  selectedTask: string | undefined,
 ) {
   tryRunAdbReverse(args.port, selectedDevice);
-  tryInstallAppOnDevice(args, adbPath, selectedDevice, androidProject);
+
+  tryInstallAppOnDevice(
+    args,
+    adbPath,
+    selectedDevice,
+    androidProject,
+    selectedTask,
+  );
   tryLaunchAppOnDevice(
     selectedDevice,
     androidProject.packageName,
@@ -246,6 +289,11 @@ export default {
       name: '--binary-path <string>',
       description:
         'Path relative to project root where pre-built .apk binary lives.',
+    },
+    {
+      name: '--interactive',
+      description:
+        'Explicitly select build type and flavour to build and device to install the application on.',
     },
   ],
 };

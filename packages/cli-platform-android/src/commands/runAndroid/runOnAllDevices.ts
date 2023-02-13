@@ -59,8 +59,9 @@ async function runOnAllDevices(
         args.mode || args.variant,
         args.tasks,
         'install',
+        androidProject.sourceDir,
       );
-
+      console.log('gradleArgs @ runOnAllDevices', gradleArgs);
       if (args.extraParams) {
         gradleArgs = [...gradleArgs, ...args.extraParams];
       }
@@ -120,8 +121,7 @@ async function runOnAllDevices(
 
 function createInstallError(error: Error & {stderr: string}) {
   const stderr = (error.stderr || '').toString();
-  let message = '';
-
+  let message = error.message ?? '';
   // Pass the error message from the command to stdout because we pipe it to
   // parent process so it's not visible
   logger.log(stderr);

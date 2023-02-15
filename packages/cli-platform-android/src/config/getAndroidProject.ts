@@ -96,7 +96,7 @@ export function parseNamespaceFromBuildGradleFile(buildGradle: string) {
   // search for namespace = inside the build.gradle file via regex
   const matchArray = buildGradle.match(/namespace\s*[=]*\s*("(.+?)"|'(.+?)')/);
   if (matchArray && matchArray.length > 0) {
-    return matchArray[1];
+    return matchArray[2];
   } else {
     return null;
   }

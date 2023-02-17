@@ -21,6 +21,16 @@ exports[`shows up current config without unnecessary output 1`] = `
       ]
     },
     {
+      "name": "build-ios",
+      "description": "builds your app on iOS simulator",
+      "examples": [
+        "<<REPLACED>>"
+      ],
+      "options": [
+        "<<REPLACED>>"
+      ]
+    },
+    {
       "name": "log-android",
       "description": "starts logkitty"
     },

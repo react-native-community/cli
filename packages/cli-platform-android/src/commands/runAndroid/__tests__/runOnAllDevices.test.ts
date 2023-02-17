@@ -11,6 +11,41 @@ import execa from 'execa';
 import {Flags} from '..';
 import {AndroidProjectConfig} from '@react-native-community/cli-types';
 
+const gradleTaskOutput = `
+> Task :tasks
+
+------------------------------------------------------------
+Tasks runnable from root project 'Bar'
+------------------------------------------------------------
+
+Android tasks
+-------------
+androidDependencies - Displays the Android dependencies of the project.
+signingReport - Displays the signing info for the base and test modules
+sourceSets - Prints out all the source sets defined in this project.
+
+Build tasks
+-----------
+assemble - Assemble main outputs for all the variants.
+assembleAndroidTest - Assembles all the Test applications.
+assembleDebug - Assembles main outputs for all Debug variants.
+assembleRelease - Assembles main outputs for all Release variants.
+build - Assembles and tests this project.
+buildDependents - Assembles and tests this project and all projects that depend on it.
+buildNeeded - Assembles and tests this project and all projects it depends on.
+bundle - Assemble bundles for all the variants.
+bundleDebug - Assembles bundles for all Debug variants.
+bundleRelease - Assembles bundles for all Release variants.
+
+
+Install tasks
+-------------
+installDebug - Installs the Debug build.
+installDebugAndroidTest - Installs the android (on device) tests for the Debug build.
+installRelease - Installs the Release build.
+uninstallAll - Uninstall all applications.
+`;
+
 jest.mock('execa');
 jest.mock('../getAdbPath');
 jest.mock('../tryLaunchEmulator');
@@ -35,6 +70,7 @@ describe('--appFolder', () => {
   };
   beforeEach(() => {
     jest.clearAllMocks();
+    (execa.sync as jest.Mock).mockReturnValueOnce({stdout: gradleTaskOutput});
   });
 
   it('uses task "install[Variant]" as default task', async () => {

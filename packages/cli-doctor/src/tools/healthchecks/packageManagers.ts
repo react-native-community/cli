@@ -21,6 +21,7 @@ const packageManager = (() => {
 
 const yarn: HealthCheckInterface = {
   label: 'yarn',
+  description: 'Required to install NPM dependencies',
   getDiagnostics: async ({Binaries}) => ({
     needsToBeFixed: doesSoftwareNeedToBeFixed({
       version: Binaries.Yarn.version,
@@ -44,6 +45,7 @@ const yarn: HealthCheckInterface = {
 
 const npm: HealthCheckInterface = {
   label: 'npm',
+  description: 'Required to install NPM dependencies',
   getDiagnostics: async ({Binaries}) => ({
     needsToBeFixed: doesSoftwareNeedToBeFixed({
       version: Binaries.npm.version,

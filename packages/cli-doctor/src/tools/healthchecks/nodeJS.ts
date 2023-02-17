@@ -4,6 +4,7 @@ import {HealthCheckInterface} from '../../types';
 
 export default {
   label: 'Node.js',
+  description: 'Required to execute JavaScript code',
   getDiagnostics: async ({Binaries}) => ({
     needsToBeFixed: doesSoftwareNeedToBeFixed({
       version: Binaries.Node.version,

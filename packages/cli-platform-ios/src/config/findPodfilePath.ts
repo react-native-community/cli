@@ -16,16 +16,34 @@ const TEST_PROJECTS = /test|example|sample/i;
 // Base iOS folder
 const IOS_BASE = 'ios';
 
+// Podfile in the bundle package
+const BUNDLE_VENDORED_PODFILE = 'vendor/bundle/ruby';
+
 export default function findPodfilePath(cwd: string) {
   const podfiles = findAllPodfilePaths(cwd)
     /**
      * Then, we will run a simple test to rule out most example projects,
      * unless they are located in a `ios` folder
      */
-    .filter(
-      (project) =>
-        path.dirname(project) === IOS_BASE || !TEST_PROJECTS.test(project),
-    )
+    .filter((project) => {
+      if (path.dirname(project) === IOS_BASE) {
+        // Pick the Podfile in the default project (in the iOS folder)
+        return true;
+      }
+
+      if (TEST_PROJECTS.test(project)) {
+        // Ignore the Podfile in test and example projects
+        return false;
+      }
+
+      if (project.indexOf(BUNDLE_VENDORED_PODFILE) > -1) {
+        // Ignore the podfile shipped with Cocoapods in bundle
+        return false;
+      }
+
+      // Accept all the others
+      return true;
+    })
     /**
      * Podfile from `ios` folder will be picked up as a first one.
      */

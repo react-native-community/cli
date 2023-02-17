@@ -10,6 +10,7 @@ import {
 
 export default {
   label: 'JDK',
+  description: 'Required to compile Java code',
   getDiagnostics: async ({Languages}) => ({
     needsToBeFixed: doesSoftwareNeedToBeFixed({
       version:

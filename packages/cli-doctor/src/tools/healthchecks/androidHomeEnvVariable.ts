@@ -9,6 +9,8 @@ const URLS = {
 };
 
 const label = 'ANDROID_HOME';
+const description =
+  'Environment variable that points to your Android SDK installation';
 
 // Force the options for the platform to avoid providing a link
 // for `ANDROID_HOME` for every platform NodeJS supports
@@ -20,6 +22,7 @@ const message = `Read more about how to set the ${label} at ${chalk.dim(
 
 export default {
   label,
+  description,
   getDiagnostics: async () => ({
     needsToBeFixed: !process.env.ANDROID_HOME,
   }),

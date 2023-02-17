@@ -11,8 +11,7 @@ export function getTaskNames(
   sourceDir: string,
 ): Array<string> {
   let appTasks = tasks || [taskPrefix + toPascalCase(mode)];
-  console.log('appTasks', appTasks);
-  console.log('taskPrefixe', taskPrefix);
+
   // Check against build flavors for "install" task ("assemble" don't care about it so much and will build all)
   if (!tasks && taskPrefix === 'install') {
     const actionableInstallTasks = getGradleTasks('install', sourceDir);
@@ -22,8 +21,12 @@ export function getTaskNames(
       );
       if (!installTasksForMode.length) {
         throw new CLIError(
-          `Couldn't find "${appTasks}" build variant. Available tasks are: ${actionableInstallTasks
-            .map((t) => `"${t.task}"`)
+          `Couldn't find "${appTasks
+            .map((taskName) => taskName.replace(taskPrefix, ''))
+            .join(
+              ', ',
+            )}" build variant. Available variants are: ${actionableInstallTasks
+            .map((t) => `"${t.task.replace(taskPrefix, '')}"`)
             .join(', ')}.`,
         );
       }

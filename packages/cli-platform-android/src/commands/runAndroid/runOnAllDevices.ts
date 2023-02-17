@@ -61,7 +61,7 @@ async function runOnAllDevices(
         'install',
         androidProject.sourceDir,
       );
-      console.log('gradleArgs @ runOnAllDevices', gradleArgs);
+
       if (args.extraParams) {
         gradleArgs = [...gradleArgs, ...args.extraParams];
       }

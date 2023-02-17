@@ -37,8 +37,7 @@ export const getGradleTasks = (
   const out = execa.sync(cmd, ['tasks'], {
     cwd: sourceDir,
   }).stdout;
-  const tasks = parseTasksFromGradleFile(taskType, out);
-  return tasks;
+  return parseTasksFromGradleFile(taskType, out);
 };
 
 export const promptForTaskSelection = async (

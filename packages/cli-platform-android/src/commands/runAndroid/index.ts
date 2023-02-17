@@ -114,7 +114,7 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
         } command.`,
       );
     }
-    console.log('selectedTask', selectedTask);
+
     if (device.connected) {
       return runOnSpecificDevice(
         {...args, deviceId: device.deviceId},
@@ -143,14 +143,9 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
   }
 
   if (args.deviceId) {
-    return runOnSpecificDevice(
-      {...args},
-      adbPath,
-      androidProject,
-      selectedTask,
-    );
+    return runOnSpecificDevice(args, adbPath, androidProject, selectedTask);
   } else {
-    return runOnAllDevices({...args}, cmd, adbPath, androidProject);
+    return runOnAllDevices(args, cmd, adbPath, androidProject);
   }
 }
 
@@ -164,10 +159,10 @@ function runOnSpecificDevice(
   const {deviceId} = args;
 
   // if coming from run-android command and we have selected task
-  // from intearcitve mode we need to create appropriate build task
+  // from interactive mode we need to create appropriate build task
   // eg 'installRelease' -> 'assembleRelease'
   const buildTask = selectedTask?.replace('install', 'assemble') ?? 'build';
-  console.log('buildTask @ runOnSpecificDevice', buildTask);
+
   if (devices.length > 0 && deviceId) {
     if (devices.indexOf(deviceId) !== -1) {
       let gradleArgs = getTaskNames(
@@ -177,7 +172,7 @@ function runOnSpecificDevice(
         'install',
         androidProject.sourceDir,
       );
-      console.log('gradleArgs', gradleArgs);
+
       // using '-x lint' in order to ignore linting errors while building the apk
       gradleArgs.push('-x', 'lint');
       if (args.extraParams) {
@@ -231,7 +226,7 @@ function installAndLaunchOnDevice(
   selectedDevice: string,
   adbPath: string,
   androidProject: AndroidProject,
-  selectedTask: string | undefined,
+  selectedTask?: string,
 ) {
   tryRunAdbReverse(args.port, selectedDevice);
 

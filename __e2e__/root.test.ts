@@ -12,7 +12,7 @@ const cwd = getTempDirectory('test_different_roots');
 
 beforeAll(() => {
   // Register all packages to be linked
-  for (const pkg of ['platform-ios', 'platform-android']) {
+  for (const pkg of ['cli-platform-ios', 'cli-platform-android']) {
     spawnScript('yarn', ['link'], {
       cwd: path.join(__dirname, `../packages/${pkg}`),
     });

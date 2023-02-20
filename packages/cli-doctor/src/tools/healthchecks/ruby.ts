@@ -5,6 +5,7 @@ import {HealthCheckInterface} from '../../types';
 export default {
   label: 'Ruby',
   isRequired: false,
+  description: 'Required for installing iOS dependencies',
   getDiagnostics: async ({Managers}) => ({
     needsToBeFixed: doesSoftwareNeedToBeFixed({
       version: Managers.RubyGems.version,

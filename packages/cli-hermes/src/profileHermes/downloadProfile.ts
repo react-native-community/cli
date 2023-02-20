@@ -17,7 +17,7 @@ function getLatestFile(packageNameWithSuffix: string): string {
         `);
     return file.toString().trim();
   } catch (e) {
-    throw new Error(e);
+    throw e;
   }
 }
 

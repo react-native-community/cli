@@ -60,7 +60,7 @@ async function setProjectDirectory(directory: string) {
   } catch (error) {
     throw new CLIError(
       'Error occurred while trying to create project directory.',
-      error,
+      error as Error,
     );
   }
 
@@ -147,7 +147,7 @@ async function createFromTemplate({
     }
   } catch (e) {
     loader.fail();
-    throw new Error(e);
+    throw e;
   } finally {
     fs.removeSync(templateSourceDir);
   }

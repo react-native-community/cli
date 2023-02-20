@@ -17,8 +17,8 @@ async function launchDefaultBrowser(url: string) {
 
     await open(url);
   } catch (err) {
-    if (err) {
-      logger.error('Browser exited with error:', err);
+    if (err instanceof Error) {
+      logger.error('Browser exited with error:', err.message);
     }
   }
 }

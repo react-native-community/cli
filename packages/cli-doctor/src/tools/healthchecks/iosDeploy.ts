@@ -44,7 +44,7 @@ const installLibrary = async ({
     logError({
       healthcheck: label,
       loader,
-      error,
+      error: error as Error,
       command: installationCommand,
     });
   }

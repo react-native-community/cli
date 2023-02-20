@@ -16,7 +16,7 @@ function loadCache(name: string): Cache | undefined {
     const cache = JSON.parse(cacheRaw);
     return cache;
   } catch (e) {
-    if (e.code === 'ENOENT') {
+    if ((e as any).code === 'ENOENT') {
       // Create cache file since it doesn't exist.
       saveCache(name, {});
     }

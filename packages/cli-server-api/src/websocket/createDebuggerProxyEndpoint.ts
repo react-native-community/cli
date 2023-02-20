@@ -30,7 +30,7 @@ export default function createDebuggerProxyEndpoint(): {
     try {
       dest.send(message);
     } catch (e) {
-      logger.warn(e);
+      logger.warn(e as any);
       // Sometimes this call throws 'not opened'
     }
   }

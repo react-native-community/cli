@@ -5,8 +5,13 @@ import deepmerge from 'deepmerge';
  * We define custom merging function for arrays to change that behaviour
  */
 export default function merge<X, Y>(x: X, y: Y) {
-  return deepmerge(x, y, {
-    arrayMerge: (_destinationArray: any[], sourceArray: any[]): any[] =>
-      sourceArray,
-  });
+  return deepmerge(
+    // @ts-ignore todo
+    x,
+    y,
+    {
+      arrayMerge: (_destinationArray: any[], sourceArray: any[]): any[] =>
+        sourceArray,
+    },
+  );
 }

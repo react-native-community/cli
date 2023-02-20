@@ -18,7 +18,7 @@ const unzip = async (source: string, destination: string) => {
           return reject(err);
         }
 
-        resolve();
+        resolve(undefined);
       });
     });
   });

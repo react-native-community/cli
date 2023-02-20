@@ -65,7 +65,7 @@ export default {
         });
       loader.succeed('.xcode.env file have been created!');
     } catch (e) {
-      loader.fail(e);
+      loader.fail(e as any);
     }
   },
 } as HealthCheckInterface;

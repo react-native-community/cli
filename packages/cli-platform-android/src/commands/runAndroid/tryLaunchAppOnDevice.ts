@@ -42,7 +42,7 @@ function tryLaunchAppOnDevice(
     logger.debug(`Running command "${adbPath} ${adbArgs.join(' ')}"`);
     execa.sync(adbPath, adbArgs, {stdio: 'inherit'});
   } catch (error) {
-    throw new CLIError('Failed to start the app.', error);
+    throw new CLIError('Failed to start the app.', error as any);
   }
 }
 

@@ -109,7 +109,7 @@ export default function createMessageSocketEndpoint(): {
         } catch (e) {
           logger.error(
             `Failed to send broadcast to client: '${otherId}' ` +
-              `due to:\n ${e.toString()}`,
+              `due to:\n ${(e as any).toString()}`,
           );
         }
       }
@@ -147,7 +147,7 @@ export default function createMessageSocketEndpoint(): {
           logger.error(
             `Failed to reply to ${clientId} with error:\n${error}` +
               `\nmessage:\n${JSON.stringify(errorMessage)}` +
-              `\ndue to error: ${e.toString()}`,
+              `\ndue to error: ${(e as any).toString()}`,
           );
         }
       }
@@ -237,7 +237,7 @@ export default function createMessageSocketEndpoint(): {
           throw new Error('Invalid message, did not match the protocol');
         }
       } catch (e) {
-        handleCaughtError(message, e.toString());
+        handleCaughtError(message, (e as any).toString());
       }
     };
   });

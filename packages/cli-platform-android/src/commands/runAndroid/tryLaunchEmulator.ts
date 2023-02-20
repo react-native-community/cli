@@ -83,7 +83,7 @@ export default async function tryLaunchEmulator(
       await launchEmulator(emulatorName ?? emulators[0], adbPath, port);
       return {success: true};
     } catch (error) {
-      return {success: false, error: error?.message};
+      return {success: false, error: (error as any)?.message};
     }
   }
   return {

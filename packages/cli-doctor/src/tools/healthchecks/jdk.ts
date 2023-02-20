@@ -51,7 +51,7 @@ export default {
         'JDK installed successfully. Please restart your shell to see the changes',
       );
     } catch (e) {
-      loader.fail(e);
+      loader.fail(e as any);
     }
   },
   runAutomaticFix: async ({logManualInstallation, loader}) => {

@@ -260,7 +260,7 @@ export async function changePlaceholderInTemplate({
         packageName,
       });
     } catch (error) {
-      throw new CLIError(error);
+      throw new CLIError((error as Error).message);
     }
   } else {
     for (const filePath of walk(process.cwd()).reverse()) {

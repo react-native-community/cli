@@ -10,7 +10,7 @@ module.exports = {
     [
       require.resolve('@babel/preset-env'),
       {
-        targets: {node: '14'},
+        targets: {node: '16'},
         useBuiltIns: 'entry',
         corejs: '2.x',
       },

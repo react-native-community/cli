@@ -35,7 +35,7 @@ async function brewInstall({
     logError({
       healthcheck: label || pkg,
       loader,
-      error,
+      error: error as any,
       command: `brew install ${pkg}`,
     });
   }

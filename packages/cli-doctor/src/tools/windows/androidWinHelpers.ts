@@ -59,7 +59,7 @@ export const installComponent = (component: string, androidSdkRoot: string) => {
 
     child.on('close', (exitStatus) => {
       if (exitStatus === 0) {
-        done();
+        done(undefined);
       } else {
         error({stderr});
       }
@@ -161,7 +161,7 @@ const getEmulatorAccelOutputInformation = async (androidSDKRoot: string) => {
 
     return stdout;
   } catch (e) {
-    const {stdout} = e;
+    const {stdout} = e as any;
 
     return stdout;
   }
@@ -205,7 +205,7 @@ export const createAVD = async (
 
     return stdout;
   } catch (e) {
-    const {stderr} = e;
+    const {stderr} = e as any;
 
     return stderr;
   }

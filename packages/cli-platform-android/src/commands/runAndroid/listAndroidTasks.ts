@@ -28,7 +28,7 @@ export const parseTasksFromGradleFile = (
   return instalTasks;
 };
 
-export const promptForTaskSelection = async (
+export const getGradleTasks = (
   taskType: 'install' | 'build',
   sourceDir: string,
 ) => {
@@ -37,15 +37,22 @@ export const promptForTaskSelection = async (
   const out = execa.sync(cmd, ['tasks'], {
     cwd: sourceDir,
   }).stdout;
-  const installTasks = parseTasksFromGradleFile(taskType, out);
-  if (!installTasks.length) {
+  return parseTasksFromGradleFile(taskType, out);
+};
+
+export const promptForTaskSelection = async (
+  taskType: 'install' | 'build',
+  sourceDir: string,
+): Promise<string | undefined> => {
+  const tasks = getGradleTasks(taskType, sourceDir);
+  if (!tasks.length) {
     throw new CLIError(`No actionable ${taskType} tasks were found...`);
   }
-  const {task} = await prompts({
+  const {task}: {task: string} = await prompts({
     type: 'select',
     name: 'task',
     message: `Select ${taskType} task you want to perform`,
-    choices: installTasks.map((t: GradleTask) => ({
+    choices: tasks.map((t: GradleTask) => ({
       title: `${chalk.bold(t.task)} - ${t.description}`,
       value: t.task,
     })),

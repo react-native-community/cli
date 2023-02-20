@@ -100,7 +100,7 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   const modifiedArgs = {...args, scheme, mode};
 
   modifiedArgs.mode = getConfigurationScheme(
-    {scheme: args.scheme, mode: args.mode},
+    {scheme: modifiedArgs.scheme, mode: modifiedArgs.mode},
     sourceDir,
   );
 
@@ -111,7 +111,7 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   );
 
   const availableDevices = await listIOSDevices();
-  if (modifiedArgs.listDevices) {
+  if (modifiedArgs.listDevices || modifiedArgs.interactive) {
     if (modifiedArgs.device || modifiedArgs.udid) {
       logger.warn(
         `Both ${
@@ -122,7 +122,9 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     const selectedDevice = await promptForDeviceSelection(availableDevices);
     if (!selectedDevice) {
       throw new CLIError(
-        'Failed to select device, please try to run app without "list-devices" command.',
+        `Failed to select device, please try to run app without ${
+          args.listDevices ? 'list-devices' : 'interactive'
+        } command.`,
       );
     }
     if (selectedDevice.type === 'simulator') {
@@ -596,6 +598,11 @@ export default {
       name: '--list-devices',
       description:
         'List all available iOS devices and simulators and let you choose one to run the app. ',
+    },
+    {
+      name: '--interactive',
+      description:
+        'Explicitly select which scheme and configuration to use before running a build and select device to run the application.',
     },
   ],
 };

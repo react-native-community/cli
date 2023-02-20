@@ -256,11 +256,6 @@ export const iosBuildOptions = [
       'Location for iOS build artifacts. Corresponds to Xcode\'s "-derivedDataPath".',
   },
   {
-    name: '--interactive',
-    description:
-      'Explicitly select which scheme and configuration to use before running a build',
-  },
-  {
     name: '--extra-params <string>',
     description: 'Custom params that will be passed to xcodebuild command.',
     parse: (val: string) => val.split(' '),
@@ -285,5 +280,12 @@ export default {
       cmd: 'react-native build-ios --simulator "IPhone 11"',
     },
   ],
-  options: iosBuildOptions,
+  options: [
+    ...iosBuildOptions,
+    {
+      name: '--interactive',
+      description:
+        'Explicitly select which scheme and configuration to use before running a build',
+    },
+  ],
 };

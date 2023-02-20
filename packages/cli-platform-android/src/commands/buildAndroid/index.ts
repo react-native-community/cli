@@ -84,10 +84,11 @@ async function buildAndroid(
     args.mode || args.variant,
     tasks,
     'assemble',
+    androidProject.sourceDir,
   );
 
   if (args.extraParams) {
-    gradleArgs = [...gradleArgs, ...args.extraParams];
+    gradleArgs.push(...args.extraParams);
   }
 
   if (args.activeArchOnly) {
@@ -183,5 +184,5 @@ export default {
   name: 'build-android',
   description: 'builds your app',
   func: buildAndroid,
-  options: options,
+  options,
 };

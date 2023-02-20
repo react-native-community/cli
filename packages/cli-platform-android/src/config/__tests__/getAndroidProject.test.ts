@@ -79,6 +79,19 @@ android {
     );
   });
 
+  it('should parse namespace with single quotes from build.gradle', () => {
+    const buildGradle = `apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 31
+    namespace 'com.example.app'
+}`;
+
+    expect(parseNamespaceFromBuildGradleFile(buildGradle)).toBe(
+      'com.example.app',
+    );
+  });
+
   // Test that it can parse a namespace from a build.gradle.kts file
   it('should parse namespace from build.gradle.kts', () => {
     const buildGradle = `plugins {

@@ -88,7 +88,7 @@ async function buildAndroid(
   );
 
   if (args.extraParams) {
-    gradleArgs = [...gradleArgs, ...args.extraParams];
+    gradleArgs.push(...args.extraParams);
   }
 
   if (args.activeArchOnly) {
@@ -173,18 +173,16 @@ export const options = [
     description: 'Custom params passed to gradle build command',
     parse: (val: string) => val.split(' '),
   },
+  {
+    name: '--interactive',
+    description:
+      'Explicitly select build type and flavour to use before running a build',
+  },
 ];
 
 export default {
   name: 'build-android',
   description: 'builds your app',
   func: buildAndroid,
-  options: [
-    ...options,
-    {
-      name: '--interactive',
-      description:
-        'Explicitly select build type and flavour to use before running a build',
-    },
-  ],
+  options,
 };

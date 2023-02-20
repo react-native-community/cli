@@ -63,7 +63,7 @@ async function runOnAllDevices(
       );
 
       if (args.extraParams) {
-        gradleArgs = [...gradleArgs, ...args.extraParams];
+        gradleArgs.push(...args.extraParams);
       }
 
       if (args.port != null) {

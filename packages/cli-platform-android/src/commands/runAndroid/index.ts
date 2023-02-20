@@ -176,11 +176,7 @@ function runOnSpecificDevice(
       // using '-x lint' in order to ignore linting errors while building the apk
       gradleArgs.push('-x', 'lint');
       if (args.extraParams) {
-        gradleArgs = [...gradleArgs, ...args.extraParams];
-      }
-
-      if (args.extraParams) {
-        gradleArgs = [...gradleArgs, ...args.extraParams];
+        gradleArgs.push(...args.extraParams);
       }
 
       if (args.port) {
@@ -284,11 +280,6 @@ export default {
       name: '--binary-path <string>',
       description:
         'Path relative to project root where pre-built .apk binary lives.',
-    },
-    {
-      name: '--interactive',
-      description:
-        'Explicitly select build type and flavour to build and device to install the application on.',
     },
   ],
 };

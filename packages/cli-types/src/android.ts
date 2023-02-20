@@ -21,7 +21,6 @@ export type AndroidDependencyConfig = {
   buildTypes: string[];
   libraryName?: string | null;
   componentDescriptors?: string[] | null;
-  androidMkPath?: string | null;
   cmakeListsPath?: string | null;
 };
 
@@ -35,6 +34,5 @@ export type AndroidDependencyParams = {
   buildTypes?: string[];
   libraryName?: string | null;
   componentDescriptors?: string[] | null;
-  androidMkPath?: string | null;
   cmakeListsPath?: string | null;
 };

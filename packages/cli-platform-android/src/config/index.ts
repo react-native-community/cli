@@ -131,9 +131,6 @@ export function dependencyConfig(
     userConfig.libraryName || findLibraryName(root, sourceDir);
   const componentDescriptors =
     userConfig.componentDescriptors || findComponentDescriptors(root);
-  const androidMkPath = userConfig.androidMkPath
-    ? path.join(sourceDir, userConfig.androidMkPath)
-    : path.join(sourceDir, 'build/generated/source/codegen/jni/Android.mk');
   let cmakeListsPath = userConfig.cmakeListsPath
     ? path.join(sourceDir, userConfig.cmakeListsPath)
     : path.join(sourceDir, 'build/generated/source/codegen/jni/CMakeLists.txt');
@@ -148,7 +145,6 @@ export function dependencyConfig(
     dependencyConfiguration,
     libraryName,
     componentDescriptors,
-    androidMkPath,
     cmakeListsPath,
   };
 }

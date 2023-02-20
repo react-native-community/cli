@@ -85,7 +85,7 @@ export type HealthCheckInterface = {
   label: string;
   visible?: boolean | void;
   isRequired?: boolean;
-  description?: string;
+  description: string;
   getDiagnostics: (
     environmentInfo: EnvironmentInfo,
   ) => Promise<{

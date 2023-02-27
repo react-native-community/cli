@@ -94,6 +94,8 @@ def rncliCppTemplate = """/**
 namespace facebook {
 namespace react {
 
+{{ rncliReactLegacyComponentNames }}
+
 std::shared_ptr<TurboModule> rncli_ModuleProvider(const std::string moduleName, const JavaTurboModule::InitParams &params) {
 {{ rncliCppModuleProviders }}
   return nullptr;
@@ -101,6 +103,7 @@ std::shared_ptr<TurboModule> rncli_ModuleProvider(const std::string moduleName, 
 
 void rncli_registerProviders(std::shared_ptr<ComponentDescriptorProviderRegistry const> providerRegistry) {
 {{ rncliCppComponentDescriptors }}
+{{ rncliReactLegacyComponentDescriptors }}
   return;
 }
 
@@ -138,6 +141,7 @@ class ReactNativeModules {
   private String packageName
   private File root
   private ArrayList<HashMap<String, String>> reactNativeModules
+  private ArrayList<String> unstable_reactLegacyComponent
   private HashMap<String, ArrayList> reactNativeModulesBuildVariants
 
   private static String LOG_PREFIX = ":ReactNative:"
@@ -146,10 +150,11 @@ class ReactNativeModules {
     this.logger = logger
     this.root = root
 
-    def (nativeModules, reactNativeModulesBuildVariants, packageName) = this.getReactNativeConfig()
+    def (nativeModules, reactNativeModulesBuildVariants, androidProject) = this.getReactNativeConfig()
     this.reactNativeModules = nativeModules
     this.reactNativeModulesBuildVariants = reactNativeModulesBuildVariants
-    this.packageName = packageName
+    this.packageName = androidProject["packageName"]
+    this.unstable_reactLegacyComponent = androidProject["unstable_reactLegacyComponent"]
   }
 
   /**
@@ -287,9 +292,12 @@ class ReactNativeModules {
 
   void generateRncliCpp(File outputDir, String generatedFileName, String generatedFileContentsTemplate) {
     ArrayList<HashMap<String, String>> packages = this.reactNativeModules
+    ArrayList<String> unstable_reactLegacyComponent = this.unstable_reactLegacyComponent
     String rncliCppIncludes = ""
     String rncliCppModuleProviders = ""
     String rncliCppComponentDescriptors = ""
+    String rncliReactLegacyComponentDescriptors = ""
+    String rncliReactLegacyComponentNames = ""
     String codegenComponentDescriptorsHeaderFile = "ComponentDescriptors.h"
     String codegenReactComponentsDir = "react/renderer/components"
 
@@ -321,10 +329,22 @@ class ReactNativeModules {
       }.join("\n")
     }
 
+    rncliReactLegacyComponentDescriptors = unstable_reactLegacyComponent.collect {
+      "  providerRegistry->add(concreteComponentDescriptorProvider<UnstableLegacyViewManagerInteropComponentDescriptor<${it}>>());"
+    }.join("\n")
+    rncliReactLegacyComponentNames = unstable_reactLegacyComponent.collect {
+      "extern const char ${it}[] = \"${it}\";"
+    }.join("\n")
+    if (unstable_reactLegacyComponent && unstable_reactLegacyComponent.size() > 0) {
+      rncliCppIncludes += "\n#include <react/renderer/components/legacyviewmanagerinterop/UnstableLegacyViewManagerInteropComponentDescriptor.h>"
+    }
+
     String generatedFileContents = generatedFileContentsTemplate
       .replace("{{ rncliCppIncludes }}", rncliCppIncludes)
       .replace("{{ rncliCppModuleProviders }}", rncliCppModuleProviders)
       .replace("{{ rncliCppComponentDescriptors }}", rncliCppComponentDescriptors)
+      .replace("{{ rncliReactLegacyComponentDescriptors }}", rncliReactLegacyComponentDescriptors)
+      .replace("{{ rncliReactLegacyComponentNames }}", rncliReactLegacyComponentNames)
 
     outputDir.mkdirs()
     final FileTreeBuilder treeBuilder = new FileTreeBuilder(outputDir)
@@ -452,7 +472,7 @@ class ReactNativeModules {
       }
     }
 
-    return [reactNativeModules, reactNativeModulesBuildVariants, json["project"]["android"]["packageName"]];
+    return [reactNativeModules, reactNativeModulesBuildVariants, json["project"]["android"]];
   }
 }
 

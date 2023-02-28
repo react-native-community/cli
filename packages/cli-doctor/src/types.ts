@@ -1,3 +1,4 @@
+import type {Config} from '@react-native-community/cli-types';
 import type {Ora} from 'ora';
 
 export type Loader = Ora;
@@ -79,6 +80,7 @@ export type RunAutomaticFix = (args: {
     message?: string;
   }) => void;
   environmentInfo: EnvironmentInfo;
+  config: Config;
 }) => Promise<void> | void;
 
 export type HealthCheckInterface = {
@@ -88,6 +90,7 @@ export type HealthCheckInterface = {
   description: string;
   getDiagnostics: (
     environmentInfo: EnvironmentInfo,
+    config: Config,
   ) => Promise<{
     version?: string;
     versions?: [string];

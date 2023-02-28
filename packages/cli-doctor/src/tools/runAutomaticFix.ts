@@ -1,6 +1,7 @@
+import {logger} from '@react-native-community/cli-tools';
+import type {Config} from '@react-native-community/cli-types';
 import chalk from 'chalk';
 import ora from 'ora';
-import {logger} from '@react-native-community/cli-tools';
 import {EnvironmentInfo, HealthCheckCategoryResult, Loader} from '../types';
 import {HEALTHCHECK_TYPES} from './healthchecks';
 import {logManualInstallation} from './healthchecks/common';
@@ -20,6 +21,7 @@ interface RunAutomaticFixArgs {
   };
   loader: Loader;
   environmentInfo: EnvironmentInfo;
+  config: Config;
 }
 
 export default async function ({
@@ -27,6 +29,7 @@ export default async function ({
   automaticFixLevel,
   stats,
   environmentInfo,
+  config,
 }: RunAutomaticFixArgs) {
   // Remove the fix options from screen
   if (process.stdout.isTTY) {
@@ -88,6 +91,7 @@ export default async function ({
           loader: spinner,
           logManualInstallation,
           environmentInfo,
+          config,
         });
       } catch (error) {
         // TODO: log the error in a meaningful way

@@ -32,6 +32,7 @@ export type CommandOption<T = (ctx: Config) => OptionValue> = {
 export type DetachedCommandFunction<Args = Object> = (
   argv: string[],
   args: Args,
+  ctx: Config,
 ) => Promise<void> | void;
 
 export type Command<IsDetached extends boolean = false> = {

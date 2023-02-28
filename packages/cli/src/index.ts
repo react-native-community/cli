@@ -55,11 +55,17 @@ function printExamples(examples: Command['examples']) {
  * Custom type assertion needed for the `makeCommand` conditional
  * types to be properly resolved.
  */
-const isDetachedCommand = (
+function isDetachedCommand(
   command: Command<boolean>,
-): command is Command<true> => {
+): command is Command<true> {
   return command.detached === true;
-};
+}
+
+function isAttachedCommand(
+  command: Command<boolean>,
+): command is Command<false> {
+  return !isDetachedCommand(command);
+}
 
 /**
  * Attaches a new command onto global `commander` instance.
@@ -67,10 +73,7 @@ const isDetachedCommand = (
  * Note that this function takes additional argument of `Config` type in case
  * passed `command` needs it for its execution.
  */
-function attachCommand<IsDetached extends boolean>(
-  command: Command<IsDetached>,
-  ...rest: IsDetached extends false ? [Config] : []
-): void {
+function attachCommand(command: Command<boolean>, config: Config): void {
   const cmd = program
     .command(command.name)
     .action(async function handleAction(
@@ -82,9 +85,11 @@ function attachCommand<IsDetached extends boolean>(
 
       try {
         if (isDetachedCommand(command)) {
-          await command.func(argv, passedOptions);
+          await command.func(argv, passedOptions, config);
+        } else if (isAttachedCommand(command)) {
+          await command.func(argv, config, passedOptions);
         } else {
-          await command.func(argv, rest[0] as Config, passedOptions);
+          throw new Error('A command must be either attached or detached');
         }
       } catch (error) {
         handleError(error);
@@ -102,9 +107,7 @@ function attachCommand<IsDetached extends boolean>(
       opt.name,
       opt.description ?? '',
       opt.parse || ((val: any) => val),
-      typeof opt.default === 'function'
-        ? opt.default(rest[0] as Config)
-        : opt.default,
+      typeof opt.default === 'function' ? opt.default(config) : opt.default,
     );
   }
 }
@@ -147,14 +150,14 @@ async function setupAndRun() {
     }
   }
 
-  for (const command of detachedCommands) {
-    attachCommand(command);
-  }
-
   try {
     const config = loadConfig();
 
     logger.enable();
+
+    for (const command of detachedCommands) {
+      attachCommand(command, config);
+    }
 
     for (const command of [...projectCommands, ...config.commands]) {
       attachCommand(command, config);

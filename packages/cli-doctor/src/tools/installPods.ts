@@ -1,17 +1,10 @@
 import fs from 'fs';
 import execa from 'execa';
 import chalk from 'chalk';
-import prompts from 'prompts';
 import {logger, NoopLoader} from '@react-native-community/cli-tools';
 import sudo from 'sudo-prompt';
 import runBundleInstall from './runBundleInstall';
-import {brewInstall} from './brewInstall';
 import {Loader} from '../types';
-
-type PromptCocoaPodsInstallation = {
-  installMethod: 'gem' | 'homebrew';
-  promptQuestion: string;
-};
 
 async function runPodInstall(
   loader: Loader,
@@ -84,38 +77,6 @@ function runSudo(command: string): Promise<void> {
   });
 }
 
-async function promptCocoaPodsInstallationQuestion(): Promise<
-  PromptCocoaPodsInstallation
-> {
-  const promptQuestion = `CocoaPods ${chalk.dim.underline(
-    '(https://cocoapods.org/)',
-  )} ${chalk.reset.bold(
-    'is not installed. CocoaPods is necessary for the iOS project to run correctly. Do you want to install it?',
-  )}`;
-  const installWithGem = 'Yes, with gem (may require sudo)';
-  const installWithHomebrew = 'Yes, with Homebrew';
-
-  const {installMethod} = await prompts([
-    {
-      type: 'select',
-      name: 'installMethod',
-      message: promptQuestion,
-      choices: [
-        {title: installWithGem, value: 'gem'},
-        {title: installWithHomebrew, value: 'homebrew'},
-      ],
-    },
-  ]);
-
-  return {
-    installMethod,
-    // This is used for removing the message in `doctor` after it's answered
-    promptQuestion: `? ${promptQuestion} ${
-      installMethod === 'gem' ? installWithGem : installWithHomebrew
-    }`,
-  };
-}
-
 async function installCocoaPodsWithGem() {
   const options = ['install', 'cocoapods', '--no-document'];
 
@@ -131,33 +92,21 @@ async function installCocoaPodsWithGem() {
 async function installCocoaPods(loader: Loader) {
   loader.stop();
 
-  const {installMethod} = await promptCocoaPodsInstallationQuestion();
+  loader.start('Installing CocoaPods');
 
-  if (installMethod === 'gem') {
-    loader.start('Installing CocoaPods');
+  try {
+    await installCocoaPodsWithGem();
 
-    try {
-      await installCocoaPodsWithGem();
+    return loader.succeed();
+  } catch (error) {
+    loader.fail();
+    logger.error((error as any).stderr);
 
-      return loader.succeed();
-    } catch (error) {
-      loader.fail();
-      logger.error((error as any).stderr);
-
-      throw new Error(
-        `An error occured while trying to install CocoaPods, which is required by this template.\nPlease try again manually: sudo gem install cocoapods.\nCocoaPods documentation: ${chalk.dim.underline(
-          'https://cocoapods.org/',
-        )}`,
-      );
-    }
-  }
-
-  if (installMethod === 'homebrew') {
-    return await brewInstall({
-      pkg: 'cocoapods',
-      label: 'Installing CocoaPods',
-      loader,
-    });
+    throw new Error(
+      `An error occured while trying to install CocoaPods, which is required by this template.\nPlease try again manually: sudo gem install cocoapods.\nCocoaPods documentation: ${chalk.dim.underline(
+        'https://cocoapods.org/',
+      )}`,
+    );
   }
 }
 
@@ -202,6 +151,6 @@ async function installPods({
   }
 }
 
-export {promptCocoaPodsInstallationQuestion, runSudo, installCocoaPods};
+export {runSudo, installCocoaPods};
 
 export default installPods;

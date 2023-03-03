@@ -16,7 +16,7 @@ async function getEnvironmentInfo(
 ): Promise<string | EnvironmentInfo> {
   const options = {json, showNotFound: true};
 
-  let packages = ['react', 'react-native', '@react-native-community/cli'];
+  const packages = ['react', 'react-native', '@react-native-community/cli'];
 
   const outOfTreePlatforms: {[key: string]: string} = {
     darwin: 'react-native-macos',

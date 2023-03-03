@@ -1,34 +1,34 @@
+import {findProjectRoot, logger} from '@react-native-community/cli-tools';
 import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
-import {logger, findProjectRoot} from '@react-native-community/cli-tools';
-import {HealthCheckInterface, EnvironmentInfo} from '../../types';
+import {EnvironmentInfo, HealthCheckInterface} from '../../types';
+import {downloadAndUnzip} from '../downloadAndUnzip';
 import {
-  getAndroidSdkRootInstallation,
-  installComponent,
-  getBestHypervisor,
+  createAVD,
   enableAMDH,
   enableHAXM,
   enableWHPX,
-  createAVD,
+  getAndroidSdkRootInstallation,
+  getBestHypervisor,
+  installComponent,
 } from '../windows/androidWinHelpers';
-import {downloadAndUnzip} from '../downloadAndUnzip';
 import {
   setEnvironment,
   updateEnvironment,
 } from '../windows/environmentVariables';
 
-const getBuildToolsVersion = (): string => {
-  let projectRoot = '';
+const getBuildToolsVersion = (projectRoot = ''): string => {
   try {
     // doctor is a detached command, so we may not be in a RN project.
-    projectRoot = findProjectRoot();
+    projectRoot = projectRoot || findProjectRoot();
   } catch {
     logger.log(); // for extra space
     logger.warn(
       "We couldn't find a package.json in this directory. Android SDK checks may fail. Doctor works best in a React Native project root.",
     );
   }
+
   const gradleBuildFilePath = path.join(projectRoot, 'android/build.gradle');
 
   const buildToolsVersionEntry = 'buildToolsVersion';
@@ -68,8 +68,8 @@ const isSDKInstalled = (environmentInfo: EnvironmentInfo) => {
 export default {
   label: 'Android SDK',
   description: 'Required for building and installing your app on Android',
-  getDiagnostics: async ({SDKs}) => {
-    const requiredVersion = getBuildToolsVersion();
+  getDiagnostics: async ({SDKs}, config) => {
+    const requiredVersion = getBuildToolsVersion(config?.root);
     const buildTools =
       typeof SDKs['Android SDK'] === 'string'
         ? SDKs['Android SDK']

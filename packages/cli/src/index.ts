@@ -1,11 +1,16 @@
+import loadConfig from '@react-native-community/cli-config';
+import {CLIError, logger} from '@react-native-community/cli-tools';
+import type {
+  Command,
+  Config,
+  DetachedCommand,
+} from '@react-native-community/cli-types';
 import chalk from 'chalk';
 import childProcess from 'child_process';
 import {Command as CommanderCommand} from 'commander';
 import path from 'path';
-import {Command, Config} from '@react-native-community/cli-types';
-import {logger, CLIError} from '@react-native-community/cli-tools';
 import {detachedCommands, projectCommands} from './commands';
-import loadConfig from '@react-native-community/cli-config';
+
 const pkgJson = require('../package.json');
 
 const program = new CommanderCommand()
@@ -55,11 +60,17 @@ function printExamples(examples: Command['examples']) {
  * Custom type assertion needed for the `makeCommand` conditional
  * types to be properly resolved.
  */
-const isDetachedCommand = (
+function isDetachedCommand(
   command: Command<boolean>,
-): command is Command<true> => {
+): command is DetachedCommand {
   return command.detached === true;
-};
+}
+
+function isAttachedCommand(
+  command: Command<boolean>,
+): command is Command<false> {
+  return !isDetachedCommand(command);
+}
 
 /**
  * Attaches a new command onto global `commander` instance.
@@ -67,9 +78,9 @@ const isDetachedCommand = (
  * Note that this function takes additional argument of `Config` type in case
  * passed `command` needs it for its execution.
  */
-function attachCommand<IsDetached extends boolean>(
-  command: Command<IsDetached>,
-  ...rest: IsDetached extends false ? [Config] : []
+function attachCommand<C extends Command<boolean>>(
+  command: C,
+  config: C extends DetachedCommand ? Config | undefined : Config,
 ): void {
   const cmd = program
     .command(command.name)
@@ -82,9 +93,11 @@ function attachCommand<IsDetached extends boolean>(
 
       try {
         if (isDetachedCommand(command)) {
-          await command.func(argv, passedOptions);
+          await command.func(argv, passedOptions, config);
+        } else if (isAttachedCommand(command)) {
+          await command.func(argv, config, passedOptions);
         } else {
-          await command.func(argv, rest[0] as Config, passedOptions);
+          throw new Error('A command must be either attached or detached');
         }
       } catch (error) {
         handleError(error);
@@ -102,9 +115,7 @@ function attachCommand<IsDetached extends boolean>(
       opt.name,
       opt.description ?? '',
       opt.parse || ((val: any) => val),
-      typeof opt.default === 'function'
-        ? opt.default(rest[0] as Config)
-        : opt.default,
+      typeof opt.default === 'function' ? opt.default(config) : opt.default,
     );
   }
 }
@@ -147,12 +158,9 @@ async function setupAndRun() {
     }
   }
 
-  for (const command of detachedCommands) {
-    attachCommand(command);
-  }
-
+  let config: Config | undefined;
   try {
-    const config = loadConfig();
+    config = loadConfig();
 
     logger.enable();
 
@@ -174,6 +182,10 @@ async function setupAndRun() {
         'Failed to load configuration of your project.',
         error,
       );
+    }
+  } finally {
+    for (const command of detachedCommands) {
+      attachCommand(command, config);
     }
   }
 

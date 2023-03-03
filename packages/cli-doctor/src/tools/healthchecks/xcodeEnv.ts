@@ -1,19 +1,18 @@
-import {HealthCheckInterface} from '../../types';
-import fs from 'fs';
-import {promisify} from 'util';
+import {findPodfilePaths} from '@react-native-community/cli-platform-ios';
 import {
   findProjectRoot,
   resolveNodeModuleDir,
 } from '@react-native-community/cli-tools';
-import {findPodfilePaths} from '@react-native-community/cli-platform-ios';
+import fs from 'fs';
+import path from 'path';
+import {promisify} from 'util';
+import {HealthCheckInterface} from '../../types';
 
 const xcodeEnvFile = '.xcode.env';
 const pathSeparator = '/';
 
 function removeLastPathComponent(pathString: string): string {
-  const components = pathString.split(pathSeparator);
-  components.splice(components.length - 1, 1);
-  return components.join(pathSeparator);
+  return path.dirname(pathString);
 }
 
 function pathHasXcodeEnvFile(pathString: string): boolean {
@@ -28,26 +27,27 @@ function pathDoesNotHaveXcodeEnvFile(pathString: string): boolean {
 export default {
   label: '.xcode.env',
   description: 'File to customize Xcode environment',
-  getDiagnostics: async () => {
-    const projectRoot = findProjectRoot();
-    const allPathsHasXcodeEnvFile = findPodfilePaths(projectRoot)
-      .map((pathString: string) => {
-        const basePath = removeLastPathComponent(pathString);
-        return pathHasXcodeEnvFile(basePath);
-      })
-      .reduce(
-        (previousValue: boolean, currentValue: boolean) =>
-          previousValue && currentValue,
-      );
-    return {
-      needsToBeFixed: !allPathsHasXcodeEnvFile,
-    };
+  getDiagnostics: async (_, config) => {
+    try {
+      const projectRoot = config?.root ?? findProjectRoot();
+      const missingXcodeEnvFile = findPodfilePaths(projectRoot).some((p) => {
+        const basePath = path.dirname(p);
+        return !pathHasXcodeEnvFile(basePath);
+      });
+      return {
+        needsToBeFixed: missingXcodeEnvFile,
+      };
+    } catch (e) {
+      return {
+        needsToBeFixed: e.message,
+      };
+    }
   },
-  runAutomaticFix: async ({loader}) => {
+  runAutomaticFix: async ({loader, config}) => {
     try {
       loader.stop();
       const templateXcodeEnv = '_xcode.env';
-      const projectRoot = findProjectRoot();
+      const projectRoot = config?.root ?? findProjectRoot();
       const templateIosPath = resolveNodeModuleDir(
         projectRoot,
         'react-native/template/ios',

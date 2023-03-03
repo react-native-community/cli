@@ -4,6 +4,7 @@ import {
   resolveNodeModuleDir,
 } from '@react-native-community/cli-tools';
 import fs from 'fs';
+import path from 'path';
 import {promisify} from 'util';
 import {HealthCheckInterface} from '../../types';
 
@@ -11,9 +12,7 @@ const xcodeEnvFile = '.xcode.env';
 const pathSeparator = '/';
 
 function removeLastPathComponent(pathString: string): string {
-  const components = pathString.split(pathSeparator);
-  components.splice(components.length - 1, 1);
-  return components.join(pathSeparator);
+  return path.dirname(pathString);
 }
 
 function pathHasXcodeEnvFile(pathString: string): boolean {
@@ -29,19 +28,20 @@ export default {
   label: '.xcode.env',
   description: 'File to customize Xcode environment',
   getDiagnostics: async (_, config) => {
-    const projectRoot = config?.root ?? findProjectRoot();
-    const allPathsHasXcodeEnvFile = findPodfilePaths(projectRoot)
-      .map((pathString: string) => {
-        const basePath = removeLastPathComponent(pathString);
-        return pathHasXcodeEnvFile(basePath);
-      })
-      .reduce(
-        (previousValue: boolean, currentValue: boolean) =>
-          previousValue && currentValue,
-      );
-    return {
-      needsToBeFixed: !allPathsHasXcodeEnvFile,
-    };
+    try {
+      const projectRoot = config?.root ?? findProjectRoot();
+      const missingXcodeEnvFile = findPodfilePaths(projectRoot).some((p) => {
+        const basePath = path.dirname(p);
+        return !pathHasXcodeEnvFile(basePath);
+      });
+      return {
+        needsToBeFixed: missingXcodeEnvFile,
+      };
+    } catch (e) {
+      return {
+        needsToBeFixed: e.message,
+      };
+    }
   },
   runAutomaticFix: async ({loader, config}) => {
     try {

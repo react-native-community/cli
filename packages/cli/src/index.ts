@@ -1,11 +1,16 @@
+import loadConfig from '@react-native-community/cli-config';
+import {CLIError, logger} from '@react-native-community/cli-tools';
+import type {
+  Command,
+  Config,
+  DetachedCommand,
+} from '@react-native-community/cli-types';
 import chalk from 'chalk';
 import childProcess from 'child_process';
 import {Command as CommanderCommand} from 'commander';
 import path from 'path';
-import {Command, Config} from '@react-native-community/cli-types';
-import {logger, CLIError} from '@react-native-community/cli-tools';
 import {detachedCommands, projectCommands} from './commands';
-import loadConfig from '@react-native-community/cli-config';
+
 const pkgJson = require('../package.json');
 
 const program = new CommanderCommand()
@@ -57,7 +62,7 @@ function printExamples(examples: Command['examples']) {
  */
 function isDetachedCommand(
   command: Command<boolean>,
-): command is Command<true> {
+): command is DetachedCommand {
   return command.detached === true;
 }
 
@@ -73,7 +78,10 @@ function isAttachedCommand(
  * Note that this function takes additional argument of `Config` type in case
  * passed `command` needs it for its execution.
  */
-function attachCommand(command: Command<boolean>, config: Config): void {
+function attachCommand<C extends Command<boolean>>(
+  command: C,
+  config: C extends DetachedCommand ? Config | undefined : Config,
+): void {
   const cmd = program
     .command(command.name)
     .action(async function handleAction(
@@ -150,14 +158,11 @@ async function setupAndRun() {
     }
   }
 
+  let config: Config | undefined;
   try {
-    const config = loadConfig();
+    config = loadConfig();
 
     logger.enable();
-
-    for (const command of detachedCommands) {
-      attachCommand(command, config);
-    }
 
     for (const command of [...projectCommands, ...config.commands]) {
       attachCommand(command, config);
@@ -177,6 +182,10 @@ async function setupAndRun() {
         'Failed to load configuration of your project.',
         error,
       );
+    }
+  } finally {
+    for (const command of detachedCommands) {
+      attachCommand(command, config);
     }
   }
 

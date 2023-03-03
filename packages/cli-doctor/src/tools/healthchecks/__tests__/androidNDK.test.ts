@@ -33,7 +33,7 @@ describe('androidNDK', () => {
     // To avoid having to provide fake versions for all the Android SDK tools
     // @ts-ignore
     environmentInfo.SDKs['Android SDK'] = {
-      'Android NDK': '18',
+      'Android NDK': '22',
     };
     const diagnostics = await androidNDK.getDiagnostics(environmentInfo);
     expect(diagnostics.needsToBeFixed).toBe(true);
@@ -43,7 +43,7 @@ describe('androidNDK', () => {
     // To avoid having to provide fake versions for all the Android SDK tools
     // @ts-ignore
     environmentInfo.SDKs['Android SDK'] = {
-      'Android NDK': '19',
+      'Android NDK': '23',
     };
     const diagnostics = await androidNDK.getDiagnostics(environmentInfo);
     expect(diagnostics.needsToBeFixed).toBe(false);

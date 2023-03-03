@@ -3,7 +3,7 @@ export interface AndroidProjectConfig {
   appName: string;
   packageName: string;
   dependencyConfiguration?: string;
-  unstable_reactLegacyComponent?: string[] | null;
+  unstable_reactLegacyComponentNames?: string[] | null;
 }
 
 export type AndroidProjectParams = {
@@ -12,7 +12,7 @@ export type AndroidProjectParams = {
   manifestPath?: string;
   packageName?: string;
   dependencyConfiguration?: string;
-  unstable_reactLegacyComponent?: string[] | null;
+  unstable_reactLegacyComponentNames?: string[] | null;
 };
 
 export type AndroidDependencyConfig = {

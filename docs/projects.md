@@ -72,7 +72,7 @@ type AndroidProjectParams = {
   manifestPath?: string;
   packageName?: string;
   dependencyConfiguration?: string;
-  unstable_reactLegacyComponent?: string[] | null;
+  unstable_reactLegacyComponentNames?: string[] | null;
 };
 ```
 
@@ -101,7 +101,7 @@ See [`dependency.platforms.android.packageName`](dependencies.md#platformsandroi
 
 See [`dependency.platforms.android.configuration`](dependencies.md#platformsandroiddependencyconfiguration)
 
-#### project.android.unstable_reactLegacyComponent
+#### project.android.unstable_reactLegacyComponentNames
 
 > Note: Only applicable when new architecture is turned on.
 

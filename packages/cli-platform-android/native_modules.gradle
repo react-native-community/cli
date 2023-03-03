@@ -141,7 +141,7 @@ class ReactNativeModules {
   private String packageName
   private File root
   private ArrayList<HashMap<String, String>> reactNativeModules
-  private ArrayList<String> unstable_reactLegacyComponent
+  private ArrayList<String> unstable_reactLegacyComponentNames
   private HashMap<String, ArrayList> reactNativeModulesBuildVariants
 
   private static String LOG_PREFIX = ":ReactNative:"
@@ -154,7 +154,7 @@ class ReactNativeModules {
     this.reactNativeModules = nativeModules
     this.reactNativeModulesBuildVariants = reactNativeModulesBuildVariants
     this.packageName = androidProject["packageName"]
-    this.unstable_reactLegacyComponent = androidProject["unstable_reactLegacyComponent"]
+    this.unstable_reactLegacyComponentNames = androidProject["unstable_reactLegacyComponentNames"]
   }
 
   /**
@@ -292,7 +292,7 @@ class ReactNativeModules {
 
   void generateRncliCpp(File outputDir, String generatedFileName, String generatedFileContentsTemplate) {
     ArrayList<HashMap<String, String>> packages = this.reactNativeModules
-    ArrayList<String> unstable_reactLegacyComponent = this.unstable_reactLegacyComponent
+    ArrayList<String> unstable_reactLegacyComponentNames = this.unstable_reactLegacyComponentNames
     String rncliCppIncludes = ""
     String rncliCppModuleProviders = ""
     String rncliCppComponentDescriptors = ""
@@ -329,13 +329,13 @@ class ReactNativeModules {
       }.join("\n")
     }
 
-    rncliReactLegacyComponentDescriptors = unstable_reactLegacyComponent.collect {
+    rncliReactLegacyComponentDescriptors = unstable_reactLegacyComponentNames.collect {
       "  providerRegistry->add(concreteComponentDescriptorProvider<UnstableLegacyViewManagerInteropComponentDescriptor<${it}>>());"
     }.join("\n")
-    rncliReactLegacyComponentNames = unstable_reactLegacyComponent.collect {
+    rncliReactLegacyComponentNames = unstable_reactLegacyComponentNames.collect {
       "extern const char ${it}[] = \"${it}\";"
     }.join("\n")
-    if (unstable_reactLegacyComponent && unstable_reactLegacyComponent.size() > 0) {
+    if (unstable_reactLegacyComponentNames && unstable_reactLegacyComponentNames.size() > 0) {
       rncliCppIncludes += "\n#include <react/renderer/components/legacyviewmanagerinterop/UnstableLegacyViewManagerInteropComponentDescriptor.h>"
     }
 

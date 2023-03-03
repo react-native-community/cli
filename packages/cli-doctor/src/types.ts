@@ -80,7 +80,7 @@ export type RunAutomaticFix = (args: {
     message?: string;
   }) => void;
   environmentInfo: EnvironmentInfo;
-  config: Config;
+  config?: Config;
 }) => Promise<void> | void;
 
 export type HealthCheckInterface = {
@@ -90,7 +90,7 @@ export type HealthCheckInterface = {
   description: string;
   getDiagnostics: (
     environmentInfo: EnvironmentInfo,
-    config: Config,
+    config?: Config,
   ) => Promise<{
     version?: string;
     versions?: [string];

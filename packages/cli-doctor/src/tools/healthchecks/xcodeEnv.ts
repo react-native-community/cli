@@ -1,5 +1,8 @@
 import {findPodfilePaths} from '@react-native-community/cli-platform-ios';
-import {resolveNodeModuleDir} from '@react-native-community/cli-tools';
+import {
+  findProjectRoot,
+  resolveNodeModuleDir,
+} from '@react-native-community/cli-tools';
 import fs from 'fs';
 import {promisify} from 'util';
 import {HealthCheckInterface} from '../../types';
@@ -26,7 +29,8 @@ export default {
   label: '.xcode.env',
   description: 'File to customize Xcode environment',
   getDiagnostics: async (_, config) => {
-    const allPathsHasXcodeEnvFile = findPodfilePaths(config.root)
+    const projectRoot = config?.root ?? findProjectRoot();
+    const allPathsHasXcodeEnvFile = findPodfilePaths(projectRoot)
       .map((pathString: string) => {
         const basePath = removeLastPathComponent(pathString);
         return pathHasXcodeEnvFile(basePath);
@@ -43,14 +47,15 @@ export default {
     try {
       loader.stop();
       const templateXcodeEnv = '_xcode.env';
+      const projectRoot = config?.root ?? findProjectRoot();
       const templateIosPath = resolveNodeModuleDir(
-        config.root,
+        projectRoot,
         'react-native/template/ios',
       );
       const src = templateIosPath + pathSeparator + templateXcodeEnv;
       const copyFileAsync = promisify(fs.copyFile);
 
-      findPodfilePaths(config.root)
+      findPodfilePaths(projectRoot)
         .map(removeLastPathComponent)
         // avoid overriding existing .xcode.env
         .filter(pathDoesNotHaveXcodeEnvFile)

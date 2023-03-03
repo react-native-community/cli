@@ -21,7 +21,7 @@ interface RunAutomaticFixArgs {
   };
   loader: Loader;
   environmentInfo: EnvironmentInfo;
-  config: Config;
+  config?: Config;
 }
 
 export default async function ({

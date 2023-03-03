@@ -104,4 +104,28 @@ function removeMessage(message: string) {
   readline.clearScreenDown(process.stdout);
 }
 
-export {logMessage, logManualInstallation, logError, removeMessage};
+/**
+ * Inline a series of Ruby statements:
+ *
+ * In:
+ *  puts "a"
+ *  puts "b"
+ *
+ * Out:
+ *  puts "a"; puts "b";
+ */
+function inline(
+  strings: TemplateStringsArray,
+  ...values: {toString(): string}[]
+) {
+  const zipped = strings.map((str, i) => `${str}${values[i] ?? ''}`).join('');
+
+  return zipped
+    .trim()
+    .split('\n')
+    .filter((line) => !/^\W*$/.test(line))
+    .map((line) => line.trim())
+    .join('; ');
+}
+
+export {logMessage, logManualInstallation, logError, removeMessage, inline};

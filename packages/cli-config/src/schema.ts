@@ -160,6 +160,10 @@ export const projectConfig = t
             manifestPath: t.string(),
             packageName: t.string(),
             dependencyConfiguration: t.string(),
+            unstable_reactLegacyComponentNames: t
+              .array()
+              .items(t.string())
+              .default([]),
           })
           .default({}),
       })

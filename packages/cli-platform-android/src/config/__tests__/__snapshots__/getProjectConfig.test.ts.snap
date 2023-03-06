@@ -6,6 +6,7 @@ Object {
   "dependencyConfiguration": undefined,
   "packageName": "com.some.example",
   "sourceDir": "/flat/android",
+  "unstable_reactLegacyComponentNames": undefined,
 }
 `;
 
@@ -15,6 +16,7 @@ Object {
   "dependencyConfiguration": undefined,
   "packageName": "com.some.example",
   "sourceDir": "/multiple/android",
+  "unstable_reactLegacyComponentNames": undefined,
 }
 `;
 
@@ -24,5 +26,6 @@ Object {
   "dependencyConfiguration": undefined,
   "packageName": "com.some.example",
   "sourceDir": "/nested/android",
+  "unstable_reactLegacyComponentNames": undefined,
 }
 `;

@@ -63,6 +63,8 @@ export function projectConfig(
     appName,
     packageName,
     dependencyConfiguration: userConfig.dependencyConfiguration,
+    unstable_reactLegacyComponentNames:
+      userConfig.unstable_reactLegacyComponentNames,
   };
 }
 

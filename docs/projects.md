@@ -72,6 +72,7 @@ type AndroidProjectParams = {
   manifestPath?: string;
   packageName?: string;
   dependencyConfiguration?: string;
+  unstable_reactLegacyComponentNames?: string[] | null;
 };
 ```
 
@@ -99,6 +100,18 @@ See [`dependency.platforms.android.packageName`](dependencies.md#platformsandroi
 #### project.android.dependencyConfiguration
 
 See [`dependency.platforms.android.configuration`](dependencies.md#platformsandroiddependencyconfiguration)
+
+#### project.android.unstable_reactLegacyComponentNames
+
+> Note: Only applicable when new architecture is turned on.
+
+Please note that this is part of the **Unstable Fabric Interop Layer**, and might be subject to breaking change in the future,
+hence the `unstable_` prefix.
+
+An array with a list of Legacy Component Name that you want to be registered with the Fabric Interop Layer.
+This will allow you to use on the New Architecture, libreries that are legacy and haven't been migrated yet.
+
+The list should contain the name of the components, as they're registered in the ViewManagers (i.e. just `"Button"`).
 
 ### platforms
 

@@ -40,7 +40,12 @@ export async function runPackager(args: BuildFlags, config: Config) {
     logger.info('Starting JS server...');
 
     try {
-      startServerInNewWindow(args.port, args.terminal, config.root);
+      startServerInNewWindow(
+        args.port,
+        args.terminal,
+        config.root,
+        config.reactNativePath,
+      );
     } catch (error) {
       logger.warn(
         `Failed to automatically start the packager server. Please run "react-native start" manually. Error details: ${error.message}`,

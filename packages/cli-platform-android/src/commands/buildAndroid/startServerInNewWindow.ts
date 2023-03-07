@@ -7,11 +7,8 @@ export function startServerInNewWindow(
   port: number,
   terminal: string,
   projectRoot: string,
+  reactNativePath: string,
 ) {
-  const reactNativeCliPath = path.dirname(
-    require.resolve('@react-native-community/cli-plugin-metro/package.json'),
-  );
-
   /**
    * Set up OS-specific filenames and commands
    */
@@ -20,30 +17,49 @@ export function startServerInNewWindow(
     ? 'launchPackager.bat'
     : 'launchPackager.command';
   const packagerEnvFilename = isWindows ? '.packager.bat' : '.packager.env';
-  const portExportContent = isWindows
-    ? `set RCT_METRO_PORT=${port}\nset PROJECT_ROOT=${projectRoot}`
-    : `export RCT_METRO_PORT=${port}\nexport PROJECT_ROOT=${projectRoot}`;
+  const packagerEnvFileExportContent = isWindows
+    ? `set RCT_METRO_PORT=${port}\nset PROJECT_ROOT=${projectRoot}\nset REACT_NATIVE_PATH=${reactNativePath}`
+    : `export RCT_METRO_PORT=${port}\nexport PROJECT_ROOT=${projectRoot}\nexport REACT_NATIVE_PATH=${reactNativePath}`;
+  const nodeModulesPath = path.join(projectRoot, 'node_modules/.bin');
+  const cliPluginMetroPath = path.dirname(
+    require.resolve('@react-native-community/cli-plugin-metro/package.json'),
+  );
 
   /**
-   * Set up the `.packager.(env|bat)` file to ensure the packager starts on the right port.
+   * Set up the `.packager.(env|bat)` file to ensure the packager starts on the right port and in right directory.
    */
-  const launchPackagerScript = path.join(reactNativeCliPath, `${scriptFile}`);
+  const packagerEnvFile = path.join(nodeModulesPath, `${packagerEnvFilename}`);
 
   /**
    * Set up the `launchPackager.(command|bat)` file.
    * It lives next to `.packager.(bat|env)`
    */
-  const scriptsDir = path.dirname(launchPackagerScript);
-  const packagerEnvFile = path.join(scriptsDir, packagerEnvFilename);
-  const procConfig: execa.SyncOptions = {cwd: scriptsDir};
+  const launchPackagerScript = path.join(nodeModulesPath, scriptFile);
+  const procConfig: execa.SyncOptions = {cwd: path.dirname(packagerEnvFile)};
 
   /**
    * Ensure we overwrite file by passing the `w` flag
    */
-  fs.writeFileSync(packagerEnvFile, portExportContent, {
+  fs.writeFileSync(packagerEnvFile, packagerEnvFileExportContent, {
     encoding: 'utf8',
     flag: 'w',
   });
+
+  /**
+   * Copy files into `node_modules/.bin`.
+   */
+  fs.copyFileSync(
+    path.join(cliPluginMetroPath, 'launchPackager.command'),
+    path.join(nodeModulesPath, 'launchPackager.command'),
+  );
+  fs.copyFileSync(
+    path.join(cliPluginMetroPath, 'launchPackager.bat'),
+    path.join(nodeModulesPath, 'launchPackager.bat'),
+  );
+  fs.copyFileSync(
+    path.join(cliPluginMetroPath, 'launchPackager.sh'),
+    path.join(nodeModulesPath, 'launchPackager.sh'),
+  );
 
   if (process.platform === 'darwin') {
     try {

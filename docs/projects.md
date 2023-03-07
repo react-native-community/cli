@@ -64,6 +64,7 @@ The following settings are available on iOS and Android:
 ```ts
 type IOSProjectParams = {
   sourceDir?: string;
+  unstable_reactLegacyComponentNames?: string[] | null;
 };
 
 type AndroidProjectParams = {
@@ -80,6 +81,18 @@ type AndroidProjectParams = {
 
 A path to a directory where iOS source files are located. In most cases, you shouldn't need to set it, unless you have
 multiple `Podfile` files in your project.
+
+#### project.ios.unstable_reactLegacyComponentNames
+
+> Note: Only applicable when new architecture is turned on.
+
+Please note that this is part of the **Unstable Fabric Interop Layer**, and might be subject to breaking change in the future,
+hence the `unstable_` prefix.
+
+An array with a list of Legacy Component Name that you want to be registered with the Fabric Interop Layer.
+This will allow you to use libraries that haven't been migrated yet on the New Architecture.
+
+The list should contain the name of the components, as they're registered in the ViewManagers (i.e. just `"Button"`).
 
 #### project.android.appName
 
@@ -109,7 +122,7 @@ Please note that this is part of the **Unstable Fabric Interop Layer**, and migh
 hence the `unstable_` prefix.
 
 An array with a list of Legacy Component Name that you want to be registered with the Fabric Interop Layer.
-This will allow you to use on the New Architecture, libreries that are legacy and haven't been migrated yet.
+This will allow you to use libraries that haven't been migrated yet on the New Architecture.
 
 The list should contain the name of the components, as they're registered in the ViewManagers (i.e. just `"Button"`).
 

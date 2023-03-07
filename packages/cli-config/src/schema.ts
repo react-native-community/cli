@@ -150,6 +150,10 @@ export const projectConfig = t
           // IOSProjectParams
           .object({
             sourceDir: t.string(),
+            unstable_reactLegacyComponentNames: t
+              .array()
+              .items(t.string())
+              .default([]),
           })
           .default({}),
         android: t

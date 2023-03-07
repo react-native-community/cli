@@ -44,6 +44,7 @@ export interface MetroConfig {
     ) => any;
     resolverMainFields: string[];
     platforms: string[];
+    unstable_conditionNames: string[];
   };
   serializer: {
     getModulesRunBeforeMainModule: () => string[];
@@ -91,6 +92,7 @@ export const getDefaultConfig = (ctx: ConfigLoadingContext): MetroConfig => {
             ),
       resolverMainFields: ['react-native', 'browser', 'main'],
       platforms: [...Object.keys(ctx.platforms), 'native'],
+      unstable_conditionNames: ['import', 'require', 'react-native'],
     },
     serializer: {
       // We can include multiple copies of InitializeCore here because metro will

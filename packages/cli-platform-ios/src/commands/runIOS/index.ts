@@ -16,7 +16,9 @@ import {logger, CLIError} from '@react-native-community/cli-tools';
 import {BuildFlags, buildProject} from '../buildIOS/buildProject';
 import {iosBuildOptions} from '../buildIOS';
 import {Device} from '../../types';
-import listIOSDevices, {promptForDeviceSelection} from './listIOSDevices';
+import listIOSDevices, {
+  promptForDeviceSelection,
+} from '../../tools/listIOSDevices';
 import {checkIfConfigurationExists} from '../../tools/checkIfConfigurationExists';
 import {getProjectInfo} from '../../tools/getProjectInfo';
 import {getConfigurationScheme} from '../../tools/getConfigurationScheme';
@@ -92,6 +94,8 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     } "${chalk.bold(xcodeProject.name)}"`,
   );
 
+  const availableDevices = listIOSDevices();
+
   if (args.listDevices) {
     if (args.device || args.udid) {
       logger.warn(
@@ -100,7 +104,6 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
         } and "list-devices" parameters were passed to "run" command. We will list available devices and let you choose from one.`,
       );
     }
-    const availableDevices = await listIOSDevices();
     const selectedDevice = await promptForDeviceSelection(availableDevices);
     if (!selectedDevice) {
       throw new CLIError(
@@ -114,10 +117,10 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     }
   }
 
-  const devices = await listIOSDevices();
-
   if (!args.device && !args.udid && !args.simulator) {
-    const bootedDevices = devices.filter(({type}) => type === 'device');
+    const bootedDevices = availableDevices.filter(
+      ({type, isAvailable}) => type === 'device' && isAvailable,
+    );
 
     const simulators = getSimulators();
     const bootedSimulators = Object.keys(simulators.devices)
@@ -151,12 +154,12 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   }
 
   if (args.udid) {
-    const device = devices.find((d) => d.udid === args.udid);
+    const device = availableDevices.find((d) => d.udid === args.udid);
     if (!device) {
       return logger.error(
         `Could not find a device with udid: "${chalk.bold(
           args.udid,
-        )}". ${printFoundDevices(devices)}`,
+        )}". ${printFoundDevices(availableDevices)}`,
       );
     }
     if (device.type === 'simulator') {
@@ -165,7 +168,9 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
       return runOnDevice(device, scheme, xcodeProject, args);
     }
   } else if (args.device) {
-    const physicalDevices = devices.filter((d) => d.type !== 'simulator');
+    const physicalDevices = availableDevices.filter(
+      (d) => d.type !== 'simulator',
+    );
     const device = matchingDevice(physicalDevices, args.device);
     if (device) {
       return runOnDevice(device, scheme, xcodeProject, args);
@@ -570,6 +575,11 @@ export default {
       name: '--binary-path <string>',
       description:
         'Path relative to project root where pre-built .app binary lives.',
+    },
+    {
+      name: '--list-devices',
+      description:
+        'List all available iOS devices and simulators and let you choose one to run the app. ',
     },
   ],
 };

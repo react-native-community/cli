@@ -66,7 +66,7 @@ function findMatchingSimulator(
     }
 
     // Making sure the version of the simulator is an iOS or tvOS (Removes Apple Watch, etc)
-    if (!version.includes('iOS') && !version.includes('tvOS')) {
+    if (!version.includes('iOS')) {
       continue;
     }
     if (simulatorVersion && !version.endsWith(simulatorVersion)) {

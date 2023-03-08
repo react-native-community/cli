@@ -17,10 +17,10 @@ import {
 import {Device} from '../../types';
 import {BuildFlags, buildProject} from './buildProject';
 import {getDestinationSimulator} from '../../tools/getDestinationSimulator';
-import {getDevices} from '../../tools/getDevices';
 import {getProjectInfo} from '../../tools/getProjectInfo';
 import {checkIfConfigurationExists} from '../../tools/checkIfConfigurationExists';
 import {getConfigurationScheme} from '../../tools/getConfigurationScheme';
+import listIOSDevices from '../../tools/listIOSDevices';
 
 export interface FlagsT extends BuildFlags {
   configuration?: string;
@@ -116,7 +116,7 @@ function buildIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     );
   }
 
-  const devices = getDevices();
+  const devices = listIOSDevices();
 
   if (args.udid) {
     const device = devices.find((d) => d.udid === args.udid);

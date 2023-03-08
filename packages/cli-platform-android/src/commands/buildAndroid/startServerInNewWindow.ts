@@ -13,9 +13,7 @@ export function startServerInNewWindow(
    * Set up OS-specific filenames and commands
    */
   const isWindows = /^win/.test(process.platform);
-  const scriptFile = isWindows
-    ? 'launchPackager.bat'
-    : 'launchPackager.command';
+  const scriptFile = isWindows ? 'launchPackager.bat' : 'launchPackager.sh';
   const packagerEnvFilename = isWindows ? '.packager.bat' : '.packager.env';
   const packagerEnvFileExportContent = isWindows
     ? `set RCT_METRO_PORT=${port}\nset PROJECT_ROOT=${projectRoot}\nset REACT_NATIVE_PATH=${reactNativePath}`
@@ -48,10 +46,6 @@ export function startServerInNewWindow(
   /**
    * Copy files into `node_modules/.bin`.
    */
-  fs.copyFileSync(
-    path.join(cliPluginMetroPath, 'launchPackager.command'),
-    path.join(nodeModulesPath, 'launchPackager.command'),
-  );
   fs.copyFileSync(
     path.join(cliPluginMetroPath, 'launchPackager.bat'),
     path.join(nodeModulesPath, 'launchPackager.bat'),

@@ -27,7 +27,6 @@ export type EnvironmentInfo = {
   };
   Managers: {
     CocoaPods: AvailableInformation;
-    RubyGems: AvailableInformation;
   };
   SDKs: {
     'iOS SDK': {
@@ -52,6 +51,7 @@ export type EnvironmentInfo = {
   };
   Languages: {
     Java: Information;
+    Ruby: AvailableInformation;
   };
 };
 
@@ -92,6 +92,7 @@ export type HealthCheckInterface = {
     environmentInfo: EnvironmentInfo,
     config?: Config,
   ) => Promise<{
+    description?: string;
     version?: string;
     versions?: [string];
     versionRange?: string;

@@ -129,6 +129,7 @@ const doctorCommand = (async (_, options, config) => {
           }
 
           const {
+            description,
             needsToBeFixed,
             version,
             versions,
@@ -145,7 +146,7 @@ const doctorCommand = (async (_, options, config) => {
             version,
             versions,
             versionRange,
-            description: healthcheck.description,
+            description: description ?? healthcheck.description,
             runAutomaticFix: getAutomaticFixForPlatform(
               healthcheck,
               process.platform,

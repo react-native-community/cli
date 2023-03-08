@@ -20,7 +20,7 @@ export function startServerInNewWindow(
   const packagerEnvFileExportContent = isWindows
     ? `set RCT_METRO_PORT=${port}\nset PROJECT_ROOT=${projectRoot}\nset REACT_NATIVE_PATH=${reactNativePath}`
     : `export RCT_METRO_PORT=${port}\nexport PROJECT_ROOT=${projectRoot}\nexport REACT_NATIVE_PATH=${reactNativePath}`;
-  const nodeModulesPath = path.join(projectRoot, 'node_modules/.bin');
+  const nodeModulesPath = path.join(projectRoot, 'node_modules', '.bin');
   const cliPluginMetroPath = path.dirname(
     require.resolve('@react-native-community/cli-plugin-metro/package.json'),
   );

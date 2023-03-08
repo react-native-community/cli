@@ -16,12 +16,11 @@ import {logger, CLIError} from '@react-native-community/cli-tools';
 import {BuildFlags, buildProject} from '../buildIOS/buildProject';
 import {iosBuildOptions} from '../buildIOS';
 import {Device} from '../../types';
-import listIOSDevices, {
-  promptForDeviceSelection,
-} from '../../tools/listIOSDevices';
+import listIOSDevices from '../../tools/listIOSDevices';
 import {checkIfConfigurationExists} from '../../tools/checkIfConfigurationExists';
 import {getProjectInfo} from '../../tools/getProjectInfo';
 import {getConfigurationScheme} from '../../tools/getConfigurationScheme';
+import {promptForDeviceSelection} from '../../tools/prompts';
 
 export interface FlagsT extends BuildFlags {
   simulator?: string;

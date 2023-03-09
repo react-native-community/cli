@@ -150,7 +150,7 @@ export default function createEventsSocketEndpoint(
         ws.send(serialized);
       } catch (e) {
         logger.error(
-          `Failed to send broadcast to client due to:\n ${e.toString()}`,
+          `Failed to send broadcast to client due to:\n ${(e as any).toString()}`,
         );
       }
     }
@@ -178,7 +178,7 @@ export default function createEventsSocketEndpoint(
            */
           broadcast(message.command, message.params);
         } catch (e) {
-          logger.error('Failed to forward message to clients: ', e);
+          logger.error('Failed to forward message to clients: ', e as any);
         }
       } else {
         logger.error('Unknown message type: ', message.type);

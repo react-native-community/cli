@@ -10,6 +10,6 @@ export function getProjectInfo(): IosProjectInfo {
 
     return project;
   } catch (error) {
-    throw new CLIError(error);
+    throw new CLIError(error as any);
   }
 }

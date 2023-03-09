@@ -105,7 +105,7 @@ async function runOnAllDevices(
     }
   } catch (error) {
     printRunDoctorTip();
-    throw createInstallError(error);
+    throw createInstallError(error as any);
   }
 
   (devices.length > 0 ? devices : [undefined]).forEach(

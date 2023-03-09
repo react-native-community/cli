@@ -41,9 +41,11 @@ export async function runPackager(args: BuildFlags, config: Config) {
     try {
       startServerInNewWindow(args.port, args.terminal, config.reactNativePath);
     } catch (error) {
-      logger.warn(
-        `Failed to automatically start the packager server. Please run "react-native start" manually. Error details: ${error.message}`,
-      );
+      if (error instanceof Error) {
+        logger.warn(
+          `Failed to automatically start the packager server. Please run "react-native start" manually. Error details: ${error.message}`,
+        );
+      }
     }
   }
 }
@@ -127,7 +129,7 @@ export function build(gradleArgs: string[], sourceDir: string) {
     });
   } catch (error) {
     printRunDoctorTip();
-    throw new CLIError('Failed to build the app.', error);
+    throw new CLIError('Failed to build the app.', error as Error);
   }
 }
 

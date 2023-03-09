@@ -52,7 +52,10 @@ function tryInstallAppOnDevice(
     );
     execa.sync(adbPath, adbArgs, {stdio: 'inherit'});
   } catch (error) {
-    throw new CLIError('Failed to install the app on the device.', error);
+    throw new CLIError(
+      'Failed to install the app on the device.',
+      error as any,
+    );
   }
 }
 

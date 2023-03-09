@@ -17,14 +17,14 @@ function writeJsonSync(targetPath: string, data: any) {
   } catch (e) {
     throw new CLIError(
       `Failed to serialize data to json before writing to ${targetPath}`,
-      e,
+      e as Error,
     );
   }
 
   try {
     fs.writeFileSync(targetPath, json, 'utf-8');
   } catch (e) {
-    throw new CLIError(`Failed to write json to ${targetPath}`, e);
+    throw new CLIError(`Failed to write json to ${targetPath}`, e as Error);
   }
 }
 

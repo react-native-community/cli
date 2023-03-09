@@ -100,7 +100,7 @@ function attachCommand<C extends Command<boolean>>(
           throw new Error('A command must be either attached or detached');
         }
       } catch (error) {
-        handleError(error);
+        handleError(error as Error);
       }
     });
 
@@ -124,7 +124,7 @@ async function run() {
   try {
     await setupAndRun();
   } catch (e) {
-    handleError(e);
+    handleError(e as Error);
   }
 }
 
@@ -172,15 +172,15 @@ async function setupAndRun() {
      * When there is no `package.json` found, the CLI will enter `detached` mode and a subset
      * of commands will be available. That's why we don't throw on such kind of error.
      */
-    if (error.message.includes("We couldn't find a package.json")) {
-      logger.debug(error.message);
+    if ((error as Error).message.includes("We couldn't find a package.json")) {
+      logger.debug((error as Error).message);
       logger.debug(
         'Failed to load configuration of your project. Only a subset of commands will be available.',
       );
     } else {
       throw new CLIError(
         'Failed to load configuration of your project.',
-        error,
+        error as any,
       );
     }
   } finally {

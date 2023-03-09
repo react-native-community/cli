@@ -58,11 +58,13 @@ export function createDevServerMiddleware(options: MiddlewareOptions) {
     .use('/open-url', openURLMiddleware)
     .use('/status', statusPageMiddleware)
     .use('/symbolicate', rawBodyMiddleware)
+    // @ts-ignore mismatch
     .use('/systrace', systraceProfileMiddleware)
     .use('/reload', (_req: http.IncomingMessage, res: http.ServerResponse) => {
       broadcast('reload');
       res.end('OK');
     })
+    // @ts-ignore mismatch
     .use(errorhandler());
 
   options.watchFolders.forEach((folder) => {

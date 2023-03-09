@@ -58,7 +58,7 @@ export default {
           logError({
             healthcheck: label,
             loader,
-            error,
+            error: error as any,
             command: 'sudo gem install cocoapods',
           });
         }

@@ -24,6 +24,6 @@ export default async function releaseChecker(root: string) {
       'Cannot detect current version of React Native, ' +
         'skipping check for a newer release',
     );
-    logger.debug(e);
+    logger.debug(e as any);
   }
 }

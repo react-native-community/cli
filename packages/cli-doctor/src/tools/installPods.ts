@@ -28,7 +28,7 @@ async function runPodInstall(
     await execa('bundle', ['exec', 'pod', 'install']);
   } catch (error) {
     // "pod" command outputs errors to stdout (at least some of them)
-    const stderr = error.stderr || error.stdout;
+    const stderr = (error as any).stderr || (error as any).stdout;
 
     /**
      * If CocoaPods failed due to repo being out of date, it will
@@ -61,7 +61,7 @@ async function runPodUpdate(loader: Loader) {
     await execa('pod', ['repo', 'update']);
   } catch (error) {
     // "pod" command outputs errors to stdout (at least some of them)
-    logger.log(error.stderr || error.stdout);
+    logger.log((error as any).stderr || (error as any).stdout);
     loader.fail();
 
     throw new Error(
@@ -142,7 +142,7 @@ async function installCocoaPods(loader: Loader) {
       return loader.succeed();
     } catch (error) {
       loader.fail();
-      logger.error(error.stderr);
+      logger.error((error as any).stderr);
 
       throw new Error(
         `An error occured while trying to install CocoaPods, which is required by this template.\nPlease try again manually: sudo gem install cocoapods.\nCocoaPods documentation: ${chalk.dim.underline(

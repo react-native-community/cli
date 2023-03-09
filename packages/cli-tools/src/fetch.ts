@@ -47,7 +47,7 @@ const fetchToTemp = (url: string): Promise<string> => {
       });
     });
   } catch (e) {
-    logger.error(e);
+    logger.error(e as any);
     throw e;
   }
 };

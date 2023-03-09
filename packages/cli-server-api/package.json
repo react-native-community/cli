@@ -11,16 +11,16 @@
     "@react-native-community/cli-tools": "^11.0.0-alpha.2",
     "compression": "^1.7.1",
     "connect": "^3.6.5",
-    "errorhandler": "^1.5.0",
+    "errorhandler": "^1.5.1",
     "nocache": "^3.0.1",
     "pretty-format": "^26.6.2",
     "serve-static": "^1.13.1",
     "ws": "^7.5.1"
   },
   "devDependencies": {
-    "@types/compression": "^1.0.1",
+    "@types/compression": "^1.7.2",
     "@types/connect": "^3.4.33",
-    "@types/errorhandler": "^0.0.32",
+    "@types/errorhandler": "^1.5.0",
     "@types/ws": "^7.4.7"
   },
   "files": [

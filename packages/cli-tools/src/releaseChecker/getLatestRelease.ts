@@ -66,7 +66,7 @@ export default async function getLatestRelease(
     logger.debug(
       'Something went wrong with remote version checking, moving on',
     );
-    logger.debug(e);
+    logger.debug(e as any);
   }
 }
 

@@ -92,15 +92,15 @@ async function checkRubyGemfileRequirement(
     });
     return [output.OK];
   } catch (e) {
-    switch (e.code) {
+    switch ((e as any).code) {
       case 'ENOENT':
         return [output.NO_RUBY];
       case 1:
         return [output.NO_GEMFILE];
       case 2:
-        return [output.BUNDLE_INVALID_RUBY, e.stderr];
+        return [output.BUNDLE_INVALID_RUBY, (e as any).stderr];
       default:
-        return [output.UNKNOWN, e.message];
+        return [output.UNKNOWN, (e as any).message];
     }
   }
 }
@@ -114,7 +114,7 @@ export default {
     try {
       projectRoot = findProjectRoot();
     } catch (e) {
-      logger.debug(e.message);
+      logger.debug((e as any).message);
     }
 
     const fallbackResult = {

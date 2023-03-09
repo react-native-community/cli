@@ -39,7 +39,7 @@ export default {
       };
     } catch (e) {
       return {
-        needsToBeFixed: e.message,
+        needsToBeFixed: (e as any).message,
       };
     }
   },

@@ -4,7 +4,7 @@ React Native CLI comes with following commands:
 
 - [`bundle`](/packages/cli-plugin-metro/README.md#bundle)
 - [`clean`](/packages/cli-clean/README.md#clean)
-- [`config`](#config)
+- [`config`](/packages/cli-config/README.md#config)
 - [`doctor`](#doctor)
 - [`init`](#init)
 - [`info`](#info)
@@ -18,16 +18,6 @@ React Native CLI comes with following commands:
 - [`start`](/packages/cli-plugin-metro/README.md#start)
 - [`upgrade`](#upgrade)
 - [`profile-hermes`](#profile-hermes)
-
-### `config`
-
-Usage:
-
-```sh
-react-native config
-```
-
-Output project and dependencies configuration in JSON format to stdout. Used by [autolinking](./autolinking.md).
 
 ### `doctor`
 

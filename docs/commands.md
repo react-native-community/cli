@@ -17,7 +17,7 @@ React Native CLI comes with following commands:
 - [`build-ios`](/packages/cli-platform-ios/README.md#build-ios)
 - [`start`](/packages/cli-plugin-metro/README.md#start)
 - [`upgrade`](#upgrade)
-- [`profile-hermes`](#profile-hermes)
+- [`profile-hermes`](/packages/cli-platform-android/README.md#profile-hermes)
 
 ### `init`
 
@@ -120,56 +120,3 @@ Upgrade your app's template files to the specified or latest npm version using [
 Using this command is a recommended way of upgrading relatively simple React Native apps with not too many native libraries linked. The more iOS and Android build files are modified, the higher chance for a conflicts. The command will guide you on how to continue upgrade process manually in case of failure.
 
 _Note: If you'd like to upgrade using this method from React Native version lower than 0.59.0, you may use a standalone version of this CLI: `npx @react-native-community/cli upgrade`._
-
-### `profile-hermes`
-
-Usage:
-
-```sh
-react-native profile-hermes [destinationDir] <flag>
-```
-
-Pull and convert a Hermes tracing profile to Chrome tracing profile, then store it in the directory <destinationDir> of the local machine.
-
-- `destinationDir` is optional, if provided, pull the file to that directory
-  > default: pull to the current React Native app root directory
-
-#### Options
-
-#### `--filename <string>`
-
-File name of the profile to be downloaded, eg. sampling-profiler-trace8593107139682635366.cpuprofile.
-
-> default: pull the latest file
-
-#### `--raw`
-
-Pulls the original Hermes tracing profile without any transformation
-
-#### `--sourcemap-path <string>`
-
-The local path to your source map file if you generated it manually, ex. `/tmp/sourcemap.json`
-
-#### `--generate-sourcemap`
-
-Generate the JS bundle and source map in `os.tmpdir()`
-
-#### `--port <number>`
-
-The running metro server port number
-
-> default: 8081
-
-#### `--appId <string>`
-
-Specify an `applicationId` to launch after build. If not specified, `package` from AndroidManifest.xml will be used.
-
-#### `--appIdSuffix <string>`
-
-Specify an `applicationIdSuffix` to launch after build.
-
-### Notes on source map
-
-This step is recommended in order for the source map to be generated:
-
-If you are planning on building a debug APK, that will run without the packager, by invoking `./gradlew assembleDebug` you can simply set `bundleInDebug: true` in your app/build.gradle file, inside the `project.ext.react` map.

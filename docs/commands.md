@@ -5,9 +5,9 @@ React Native CLI comes with following commands:
 - [`bundle`](/packages/cli-plugin-metro/README.md#bundle)
 - [`clean`](/packages/cli-clean/README.md#clean)
 - [`config`](/packages/cli-config/README.md#config)
-- [`doctor`](#doctor)
+- [`doctor`](/packages/cli-doctor/README.md#doctor)
 - [`init`](#init)
-- [`info`](#info)
+- [`info`](/packages/cli-doctor/README.md#info)
 - [`log-android`](/packages/cli-platform-android/README.md#log-android)
 - [`log-ios`](/packages/cli-platform-ios/README.md#log-ios)
 - [`ram-bundle`](/packages/cli-plugin-metro/README.md#ram-bundle)
@@ -18,16 +18,6 @@ React Native CLI comes with following commands:
 - [`start`](/packages/cli-plugin-metro/README.md#start)
 - [`upgrade`](#upgrade)
 - [`profile-hermes`](#profile-hermes)
-
-### `doctor`
-
-Usage:
-
-```sh
-react-native doctor
-```
-
-[EXPERIMENTAL] Diagnose and fix common Node.js, iOS, Android & React Native issues.
 
 ### `init`
 
@@ -116,16 +106,6 @@ Create project with custom package name for Android and bundle identifier for iO
 
 - contain at least two segments separated by dots, e.g. `com.example`
 - contain only alphanumeric characters and dots
-
-### `info`
-
-Usage:
-
-```sh
-react-native info
-```
-
-Get relevant version info about OS, toolchain and libraries. Useful when sending bug reports.
 
 ### `upgrade`
 

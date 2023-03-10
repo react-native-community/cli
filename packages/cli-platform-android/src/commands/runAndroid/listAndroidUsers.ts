@@ -13,7 +13,7 @@ export function checkUsers(device: string, adbPath: string) {
 
     logger.debug(`Checking users on "${device}"...`);
     const {stdout} = spawnSync(adbPath, adbArgs, {encoding: 'utf-8'});
-    const regex = new RegExp(/UserInfo{([0-9]*):([^:]*):[0-9]*}/, 'g');
+    const regex = new RegExp(/UserInfo{([0-9]*):([^:]*):[\w]*}/, 'g');
     const users: User[] = [];
     let end = false;
 
@@ -56,17 +56,6 @@ export async function promptForUser(users: User[]) {
     })),
     min: 1,
   });
-
-  // const {chosenUserName} = await prompts ([
-  //   {
-  //     type: 'list',
-  //     name: 'chosenUserName',
-  //     message:
-  //       'Which profile would you like to launch your app into?\n(This behaviour can be avoided using the --no-interactive flag)',
-  //     choices: users,
-  //   },
-  // ]);
-  // const chosenUser = users.find(user => user.name === chosenUserName);
 
   return selectedUser;
 }

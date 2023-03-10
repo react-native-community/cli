@@ -1,7 +1,7 @@
 import execa from 'execa';
 import chalk from 'chalk';
 
-import {logger, findProjectRoot} from '@react-native-community/cli-tools';
+import {logger, findProjectRoot, link} from '@react-native-community/cli-tools';
 
 import versionRanges from '../versionRanges';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
@@ -174,7 +174,11 @@ export default {
 
     logManualInstallation({
       healthcheck: 'Ruby',
-      url: 'https://reactnative.dev/docs/environment-setup#ruby',
+      url: link.docs('environment-setup', {
+        hash: 'ruby',
+        guide: 'native',
+        platform: 'ios',
+      }),
     });
   },
 } as HealthCheckInterface;

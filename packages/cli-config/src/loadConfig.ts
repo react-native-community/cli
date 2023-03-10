@@ -1,4 +1,6 @@
 import path from 'path';
+import fs from 'fs';
+import semver from 'semver';
 import {
   UserDependencyConfig,
   ProjectConfig,
@@ -65,6 +67,7 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
         ? path.resolve(projectRoot, userConfig.reactNativePath)
         : resolveReactNativePath(projectRoot);
     },
+    reactNativeVersion: 'unknown',
     dependencies: userConfig.dependencies,
     commands: userConfig.commands,
     healthChecks: [],
@@ -88,6 +91,25 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
       return lazyProject;
     },
   };
+
+  // Try our best to figure out what version of React Native we're running. This is
+  // currently being used to get our deeplinks working, so it's only worried with
+  // the major and minor version.
+  try {
+    const {version} = JSON.parse(
+      fs.readFileSync(
+        path.join(initialConfig.reactNativePath, 'package.json'),
+        {encoding: 'utf8'},
+      ),
+    );
+    const out = semver.parse(version);
+    if (out) {
+      // Retain only these version, since they correspond with our documentation.
+      initialConfig.reactNativeVersion = `${out.major}.${out.minor}`;
+    }
+  } catch (_) {
+    // We don't seem to be in a well formed project, give up quietly.
+  }
 
   const finalConfig = Array.from(
     new Set([

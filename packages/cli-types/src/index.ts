@@ -112,6 +112,7 @@ export interface DependencyConfig {
 export interface Config {
   root: string;
   reactNativePath: string;
+  reactNativeVersion: string;
   project: ProjectConfig;
   dependencies: {
     [key: string]: DependencyConfig;

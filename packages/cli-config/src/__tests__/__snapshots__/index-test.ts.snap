@@ -25,6 +25,7 @@ Object {
   "platforms": Object {},
   "project": Object {},
   "reactNativePath": "<<REPLACED>>",
+  "reactNativeVersion": "unknown",
   "root": "<<REPLACED>>",
 }
 `;

@@ -1,4 +1,7 @@
 import chalk from 'chalk';
+
+import * as link from '../doclink';
+
 import logger from '../logger';
 import {Release} from './getLatestRelease';
 import cacheManager from './releaseCacheManager';
@@ -18,7 +21,7 @@ export default function printNewRelease(
   logger.info(`Diff: ${chalk.dim.underline(latestRelease.diffUrl)}`);
   logger.info(
     `For more info, check out "${chalk.dim.underline(
-      'https://reactnative.dev/docs/upgrading',
+      link.docs('upgrading'),
     )}".`,
   );
 

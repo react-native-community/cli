@@ -12,7 +12,7 @@ import fs from 'fs';
 import chalk from 'chalk';
 import {Config, IOSProjectInfo} from '@react-native-community/cli-types';
 import {getDestinationSimulator} from '../../tools/getDestinationSimulator';
-import {logger, CLIError} from '@react-native-community/cli-tools';
+import {logger, CLIError, link} from '@react-native-community/cli-tools';
 import {BuildFlags, buildProject} from '../buildIOS/buildProject';
 import {iosBuildOptions} from '../buildIOS';
 import {Device} from '../../types';
@@ -35,6 +35,12 @@ export interface FlagsT extends BuildFlags {
 }
 
 async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
+  link.setPlatform('ios');
+
+  if (ctx.reactNativeVersion !== 'unknown') {
+    link.setVersion(ctx.reactNativeVersion);
+  }
+
   if (!ctx.project.ios) {
     throw new CLIError(
       'iOS project folder not found. Are you sure this is a React Native project?',

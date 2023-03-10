@@ -8,11 +8,11 @@ React Native CLI comes with following commands:
 - [`doctor`](#doctor)
 - [`init`](#init)
 - [`info`](#info)
-- [`log-android`](#log-android)
+- [`log-android`](/packages/cli-platform-android/README.md#log-android)
 - [`log-ios`](/packages/cli-platform-ios/README.md#log-ios)
 - [`ram-bundle`](#ram-bundle)
-- [`run-android`](#run-android)
-- [`build-android`](#build-android)
+- [`run-android`](/packages/cli-platform-android/README.md#run-android)
+- [`build-android`](/packages/cli-platform-android/README.md#build-android)
 - [`run-ios`](/packages/cli-platform-ios/README.md#run-ios)
 - [`build-ios`](/packages/cli-platform-ios/README.md#build-ios)
 - [`start`](#start)
@@ -273,16 +273,6 @@ react-native info
 
 Get relevant version info about OS, toolchain and libraries. Useful when sending bug reports.
 
-### `log-android`
-
-Usage:
-
-```sh
-react-native log-android
-```
-
-Starts [`logkitty`](https://github.com/zamotany/logkitty) displaying pretty Android logs.
-
 ### `ram-bundle`
 
 Usage:
@@ -300,122 +290,6 @@ Accepts all of [bundle commands](#bundle) and following:
 #### `--indexed-ram-bundle`
 
 Force the "Indexed RAM" bundle file format, even when building for Android.
-
-### `run-android`
-
-Usage:
-
-```sh
-react-native run-android [options]
-```
-
-Builds your app and starts it on a connected Android emulator or device.
-
-#### Options
-
-#### `--root <string>`
-
-> **DEPRECATED** – root is discovered automatically
-
-Override the root directory for the Android build (which contains the android directory)'.
-
-#### `--variant <string>`
-
-> **DEPRECATED** – use "mode" instead
-
-> default: 'debug'
-
-Specify your app's build variant.
-
-#### `--appFolder <string>`
-
-> **DEPRECATED** – use "project.android.appName" in react-native.config.js
-
-> default: 'app'
-
-Specify a different application folder name for the Android source. If not, we assume is "app".
-
-#### `--appId <string>`
-
-Specify an `applicationId` to launch after build. If not specified, `package` from AndroidManifest.xml will be used.
-
-#### `--appIdSuffix <string>`
-
-Specify an `applicationIdSuffix` to launch after build.
-
-#### `--main-activity <string>`
-
-> default: 'MainActivity'
-
-Name of the activity to start.
-
-#### `--deviceId <string>`
-
-builds your app and starts it on a specific device/simulator with the given device id (listed by running "adb devices" on the command line).
-
-#### `--no-packager`
-
-Do not launch packager while building.
-
-#### `--port <number>`
-
-> default: process.env.RCT_METRO_PORT || 8081
-
-#### `--terminal <string>`
-
-> default: process.env.REACT_TERMINAL || process.env.TERM_PROGRAM
-
-Launches the Metro Bundler in a new window using the specified terminal path.
-
-#### `--tasks <list>`
-
-> default: 'installDebug'
-
-Run custom gradle tasks. If this argument is provided, then `--variant` option is ignored.
-Example: `yarn react-native run-android --tasks clean,installDebug`.
-
-#### `--active-arch-only`
-
-> default: false
-
-Build native libraries only for the current device architecture for debug builds.
-
-#### `--list-devices`
-
-> default: false
-
-List all available Android devices and simulators and let you choose one to run the app.
-
-### `build-android`
-
-Usage:
-
-```sh
-react-native build-android [options]
-```
-
-Builds Android app.
-
-#### Options
-
-#### `--mode <string>`
-
-> default: debug
-
-Mode to build the app. Either 'debug' (default) or 'release'.
-
-#### `--extra-params <string>`
-
-Custom params that will be passed to gradle build command.
-Example:
-
-```sh
-react-native build-android --extra-params "-x lint -x test"
-```
-
-#### `--binary-path <path>`
-
-Installs passed binary instead of building a fresh one. This command is not compatible with `--tasks`.
 
 ### `start`
 

@@ -8,8 +8,8 @@
 
 import path from 'path';
 import fs from 'fs-extra';
+import type {AssetData} from 'metro';
 import assetPathUtils from './assetPathUtils';
-import {AssetData} from './buildBundle';
 
 export function cleanAssetCatalog(catalogDir: string): void {
   const files = fs

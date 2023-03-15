@@ -7,7 +7,8 @@
 
 // @ts-ignore untyped metro
 import Metro from 'metro';
-// @ts-ignore untyped metro
+import type {Server} from 'metro';
+import type {Middleware} from 'metro-config';
 import {Terminal} from 'metro-core';
 import path from 'path';
 import {
@@ -65,6 +66,7 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
   });
 
   if (args.assetPlugins) {
+    // @ts-ignore - assigning to readonly property
     metroConfig.transformer.assetPlugins = args.assetPlugins.map((plugin) =>
       require.resolve(plugin),
     );
@@ -83,9 +85,10 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
   middleware.use(indexPageMiddleware);
 
   const customEnhanceMiddleware = metroConfig.server.enhanceMiddleware;
+  // @ts-ignore - assigning to readonly property
   metroConfig.server.enhanceMiddleware = (
-    metroMiddleware: any,
-    server: unknown,
+    metroMiddleware: Middleware,
+    server: Server,
   ) => {
     if (customEnhanceMiddleware) {
       metroMiddleware = customEnhanceMiddleware(metroMiddleware, server);
@@ -99,6 +102,7 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
     secureCert: args.cert,
     secureKey: args.key,
     hmrEnabled: true,
+    // @ts-ignore - ws.Server types are incompatible
     websocketEndpoints,
   });
 

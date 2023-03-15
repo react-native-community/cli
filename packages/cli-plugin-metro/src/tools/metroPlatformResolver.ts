@@ -13,12 +13,14 @@
  * }
  */
 
+import type {CustomResolver} from 'metro-resolver';
+
 export function reactNativePlatformResolver(platformImplementations: {
   [platform: string]: string;
-}) {
-  return (context: any, moduleName: string, platform: string) => {
+}): CustomResolver {
+  return (context, moduleName, platform) => {
     let modifiedModuleName = moduleName;
-    if (platformImplementations[platform]) {
+    if (platform != null && platformImplementations[platform]) {
       if (moduleName === 'react-native') {
         modifiedModuleName = platformImplementations[platform];
       } else if (moduleName.startsWith('react-native/')) {

@@ -1,30 +1,7 @@
-/**
- * Configuration file of Metro.
- */
 import path from 'path';
 import {ConfigT, InputConfigT, loadConfig} from 'metro-config';
 import type {Config} from '@react-native-community/cli-types';
 import {reactNativePlatformResolver} from './metroPlatformResolver';
-
-const INTERNAL_CALLSITES_REGEX = new RegExp(
-  [
-    '/Libraries/Renderer/implementations/.+\\.js$',
-    '/Libraries/BatchedBridge/MessageQueue\\.js$',
-    '/Libraries/YellowBox/.+\\.js$',
-    '/Libraries/LogBox/.+\\.js$',
-    '/Libraries/Core/Timers/.+\\.js$',
-    '/Libraries/WebSocket/.+\\.js$',
-    '/Libraries/vendor/.+\\.js$',
-    '/node_modules/react-devtools-core/.+\\.js$',
-    '/node_modules/react-refresh/.+\\.js$',
-    '/node_modules/scheduler/.+\\.js$',
-    '/node_modules/event-target-shim/.+\\.js$',
-    '/node_modules/invariant/.+\\.js$',
-    '/node_modules/react-native/index.js$',
-    '/metro-runtime/.+\\.js$',
-    '^\\[native code\\]$',
-  ].join('|'),
-);
 
 export type {Config};
 
@@ -34,9 +11,9 @@ export type ConfigLoadingContext = Pick<
 >;
 
 /**
- * Default configuration
+ * Get the config options to override based on RN CLI inputs.
  */
-export const getDefaultConfig = (ctx: ConfigLoadingContext): InputConfigT => {
+function getOverrideConfig(ctx: ConfigLoadingContext): InputConfigT {
   const outOfTreePlatforms = Object.keys(ctx.platforms).filter(
     (platform) => ctx.platforms[platform].npmPackageName,
   );
@@ -55,9 +32,7 @@ export const getDefaultConfig = (ctx: ConfigLoadingContext): InputConfigT => {
                 {},
               ),
             ),
-      resolverMainFields: ['react-native', 'browser', 'main'],
       platforms: [...Object.keys(ctx.platforms), 'native'],
-      unstable_conditionNames: ['import', 'require', 'react-native'],
     },
     serializer: {
       // We can include multiple copies of InitializeCore here because metro will
@@ -73,33 +48,9 @@ export const getDefaultConfig = (ctx: ConfigLoadingContext): InputConfigT => {
           ),
         ),
       ],
-      getPolyfills: () =>
-        require(path.join(ctx.reactNativePath, 'rn-get-polyfills'))(),
     },
-    server: {
-      port: Number(process.env.RCT_METRO_PORT) || 8081,
-    },
-    symbolicator: {
-      customizeFrame: (frame) => {
-        const collapse = Boolean(
-          frame.file && INTERNAL_CALLSITES_REGEX.test(frame.file),
-        );
-        return {collapse};
-      },
-    },
-    transformer: {
-      allowOptionalDependencies: true,
-      babelTransformerPath: require.resolve(
-        'metro-react-native-babel-transformer',
-      ),
-      assetRegistryPath: 'react-native/Libraries/Image/AssetRegistry',
-      asyncRequireModulePath: require.resolve(
-        'metro-runtime/src/modules/asyncRequire',
-      ),
-    },
-    watchFolders: [],
   };
-};
+}
 
 export interface ConfigOptionsT {
   maxWorkers?: number;
@@ -113,17 +64,18 @@ export interface ConfigOptionsT {
 }
 
 /**
- * Loads Metro Config and applies `options` on top of the resolved config.
+ * Load Metro config.
  *
- * This allows the CLI to always overwrite the file settings.
+ * Allows the CLI to override certain defaults in the base `metro.config.js`
+ * based on dynamic user options in `ctx`.
  */
 export default function loadMetroConfig(
   ctx: ConfigLoadingContext,
   options?: ConfigOptionsT,
 ): Promise<ConfigT> {
-  const defaultConfig = {...getDefaultConfig(ctx)};
+  const overrideConfig = getOverrideConfig(ctx);
   if (options && options.reporter) {
-    defaultConfig.reporter = options.reporter;
+    overrideConfig.reporter = options.reporter;
   }
-  return loadConfig({cwd: ctx.root, ...options}, defaultConfig);
+  return loadConfig({cwd: ctx.root, ...options}, overrideConfig);
 }

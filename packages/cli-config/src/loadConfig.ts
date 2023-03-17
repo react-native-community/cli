@@ -1,6 +1,4 @@
 import path from 'path';
-import fs from 'fs';
-import semver from 'semver';
 import {
   UserDependencyConfig,
   ProjectConfig,
@@ -10,7 +8,9 @@ import {
 } from '@react-native-community/cli-types';
 import {
   findProjectRoot,
+  version,
   resolveNodeModuleDir,
+  UnknownProjectError,
 } from '@react-native-community/cli-tools';
 import findDependencies from './findDependencies';
 import resolveReactNativePath from './resolveReactNativePath';
@@ -96,19 +96,16 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
   // currently being used to get our deeplinks working, so it's only worried with
   // the major and minor version.
   try {
-    const {version} = JSON.parse(
-      fs.readFileSync(
-        path.join(initialConfig.reactNativePath, 'package.json'),
-        {encoding: 'utf8'},
-      ),
-    );
-    const out = semver.parse(version);
-    if (out) {
+    let semver = version.current(initialConfig.reactNativePath);
+    if (semver) {
       // Retain only these version, since they correspond with our documentation.
-      initialConfig.reactNativeVersion = `${out.major}.${out.minor}`;
+      initialConfig.reactNativeVersion = `${semver.major}.${semver.minor}`;
     }
-  } catch (_) {
-    // We don't seem to be in a well formed project, give up quietly.
+  } catch (e) {
+    // If we don't seem to be in a well formed project, give up quietly.
+    if (!(e instanceof UnknownProjectError)) {
+      throw e;
+    }
   }
 
   const finalConfig = Array.from(

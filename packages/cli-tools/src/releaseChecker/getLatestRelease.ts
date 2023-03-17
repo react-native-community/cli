@@ -19,7 +19,7 @@ export type Release = {
 export default async function getLatestRelease(
   name: string,
   currentVersion: string,
-): Promise<Release | void> {
+): Promise<Release | undefined> {
   logger.debug('Checking for a newer version of React Native');
   try {
     logger.debug(`Current version: ${currentVersion}`);
@@ -68,6 +68,7 @@ export default async function getLatestRelease(
     );
     logger.debug(e as any);
   }
+  return undefined;
 }
 
 function buildChangelogUrl(version: string) {

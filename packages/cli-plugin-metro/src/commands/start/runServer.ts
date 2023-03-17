@@ -18,7 +18,7 @@ import {
 import {Config} from '@react-native-community/cli-types';
 
 import loadMetroConfig from '../../tools/loadMetroConfig';
-import {releaseChecker} from '@react-native-community/cli-tools';
+import {version} from '@react-native-community/cli-tools';
 import enableWatchMode from './watchMode';
 
 export type Args = {
@@ -124,7 +124,7 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
   //
   serverInstance.keepAliveTimeout = 30000;
 
-  await releaseChecker(ctx.root);
+  await version.logIfUpdateAvailable(ctx.root);
 }
 
 function getReporterImpl(customLogReporterPath: string | undefined) {

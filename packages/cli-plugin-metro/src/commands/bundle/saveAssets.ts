@@ -8,6 +8,7 @@
 
 import {logger} from '@react-native-community/cli-tools';
 import fs from 'fs';
+import type {AssetData} from 'metro';
 import path from 'path';
 import {
   cleanAssetCatalog,
@@ -15,7 +16,6 @@ import {
   isCatalogAsset,
   writeImageSet,
 } from './assetCatalogIOS';
-import {AssetData} from './buildBundle';
 import filterPlatformAssetScales from './filterPlatformAssetScales';
 import getAssetDestPathAndroid from './getAssetDestPathAndroid';
 import getAssetDestPathIOS from './getAssetDestPathIOS';
@@ -25,7 +25,7 @@ interface CopiedFiles {
 }
 
 function saveAssets(
-  assets: AssetData[],
+  assets: ReadonlyArray<AssetData>,
   platform: string,
   assetsDest: string | undefined,
   assetCatalogDest: string | undefined,

@@ -12,6 +12,6 @@ describe('getDefaultConfig', () => {
       platforms: {},
     });
 
-    expect(config.transformer.allowOptionalDependencies).toBe(true);
+    expect(config.transformer?.allowOptionalDependencies).toBe(true);
   });
 });

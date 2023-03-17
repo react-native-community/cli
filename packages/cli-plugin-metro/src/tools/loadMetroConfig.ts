@@ -2,8 +2,7 @@
  * Configuration file of Metro.
  */
 import path from 'path';
-// @ts-ignore - no typed definition for the package
-import {loadConfig} from 'metro-config';
+import {ConfigT, InputConfigT, loadConfig} from 'metro-config';
 import type {Config} from '@react-native-community/cli-types';
 import {reactNativePlatformResolver} from './metroPlatformResolver';
 
@@ -34,44 +33,10 @@ export type ConfigLoadingContext = Pick<
   'root' | 'reactNativePath' | 'platforms'
 >;
 
-export interface MetroConfig {
-  resolver: {
-    resolveRequest?: (
-      context: any,
-      realModuleName: string,
-      platform: string,
-      moduleName: string,
-    ) => any;
-    resolverMainFields: string[];
-    platforms: string[];
-    unstable_conditionNames: string[];
-  };
-  serializer: {
-    getModulesRunBeforeMainModule: () => string[];
-    getPolyfills: () => any;
-  };
-  server: {
-    port: number;
-    enhanceMiddleware?: Function;
-  };
-  symbolicator: {
-    customizeFrame: (frame: {file: string | null}) => {collapse: boolean};
-  };
-  transformer: {
-    allowOptionalDependencies?: boolean;
-    babelTransformerPath: string;
-    assetRegistryPath: string;
-    assetPlugins?: Array<string>;
-    asyncRequireModulePath?: string;
-  };
-  watchFolders: ReadonlyArray<string>;
-  reporter?: any;
-}
-
 /**
  * Default configuration
  */
-export const getDefaultConfig = (ctx: ConfigLoadingContext): MetroConfig => {
+export const getDefaultConfig = (ctx: ConfigLoadingContext): InputConfigT => {
   const outOfTreePlatforms = Object.keys(ctx.platforms).filter(
     (platform) => ctx.platforms[platform].npmPackageName,
   );
@@ -115,7 +80,7 @@ export const getDefaultConfig = (ctx: ConfigLoadingContext): MetroConfig => {
       port: Number(process.env.RCT_METRO_PORT) || 8081,
     },
     symbolicator: {
-      customizeFrame: (frame: {file: string | null}) => {
+      customizeFrame: (frame) => {
         const collapse = Boolean(
           frame.file && INTERNAL_CALLSITES_REGEX.test(frame.file),
         );
@@ -155,8 +120,8 @@ export interface ConfigOptionsT {
 export default function loadMetroConfig(
   ctx: ConfigLoadingContext,
   options?: ConfigOptionsT,
-): Promise<MetroConfig> {
-  const defaultConfig = getDefaultConfig(ctx);
+): Promise<ConfigT> {
+  const defaultConfig = {...getDefaultConfig(ctx)};
   if (options && options.reporter) {
     defaultConfig.reporter = options.reporter;
   }

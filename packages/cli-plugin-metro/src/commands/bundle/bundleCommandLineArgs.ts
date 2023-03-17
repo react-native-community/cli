@@ -26,7 +26,7 @@ export interface CommandLineArgs {
   sourcemapSourcesRoot?: string;
   sourcemapUseAbsolutePath: boolean;
   verbose: boolean;
-  unstableTransformProfile?: string;
+  unstableTransformProfile: string;
   generateStaticViewConfigs: boolean;
 }
 
@@ -102,6 +102,7 @@ export default [
     name: '--unstable-transform-profile <string>',
     description:
       'Experimental, transform JS for a specific JS engine. Currently supported: hermes, hermes-canary, default',
+    default: 'default',
   },
   {
     name: '--asset-catalog-dest [string]',

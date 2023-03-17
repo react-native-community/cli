@@ -6,19 +6,17 @@
  *
  */
 
-// @ts-ignore - no typed definition for the package
 import Server from 'metro/src/Server';
 // @ts-ignore - no typed definition for the package
 const outputBundle = require('metro/src/shared/output/bundle');
+import type {BundleOptions} from 'metro/shared/types';
+import type {ConfigT} from 'metro-config';
 import path from 'path';
 import chalk from 'chalk';
 import {CommandLineArgs} from './bundleCommandLineArgs';
 import type {Config} from '@react-native-community/cli-types';
 import saveAssets from './saveAssets';
-import {
-  default as loadMetroConfig,
-  MetroConfig,
-} from '../../tools/loadMetroConfig';
+import {default as loadMetroConfig} from '../../tools/loadMetroConfig';
 import {logger} from '@react-native-community/cli-tools';
 
 interface RequestOptions {
@@ -27,21 +25,8 @@ interface RequestOptions {
   dev: boolean;
   minify: boolean;
   platform: string | undefined;
-  unstable_transformProfile: string | undefined;
+  unstable_transformProfile: BundleOptions['unstable_transformProfile'];
   generateStaticViewConfigs: boolean;
-}
-
-export interface AssetData {
-  __packager_asset: boolean;
-  fileSystemLocation: string;
-  hash: string;
-  height: number | null;
-  httpServerLocation: string;
-  name: string;
-  scales: number[];
-  type: string;
-  width: number | null;
-  files: string[];
 }
 
 async function buildBundle(
@@ -65,7 +50,7 @@ async function buildBundle(
  */
 export async function buildBundleWithConfig(
   args: CommandLineArgs,
-  config: MetroConfig,
+  config: ConfigT,
   output: typeof outputBundle = outputBundle,
 ) {
   if (config.resolver.platforms.indexOf(args.platform) === -1) {
@@ -101,7 +86,7 @@ export async function buildBundleWithConfig(
     dev: args.dev,
     minify: args.minify !== undefined ? args.minify : !args.dev,
     platform: args.platform,
-    unstable_transformProfile: args.unstableTransformProfile,
+    unstable_transformProfile: args.unstableTransformProfile as BundleOptions['unstable_transformProfile'],
     generateStaticViewConfigs: args.generateStaticViewConfigs,
   };
   const server = new Server(config);
@@ -112,7 +97,7 @@ export async function buildBundleWithConfig(
     await output.save(bundle, args, logger.info);
 
     // Save the assets of the bundle
-    const outputAssets: AssetData[] = await server.getAssets({
+    const outputAssets = await server.getAssets({
       ...Server.DEFAULT_BUNDLE_OPTIONS,
       ...requestOpts,
       bundleType: 'todo',

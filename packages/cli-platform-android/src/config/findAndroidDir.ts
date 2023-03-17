@@ -14,5 +14,12 @@ export default function findAndroidDir(root: string) {
     return 'android';
   }
 
+  if (
+    fs.existsSync(path.join(root, 'build.gradle'))
+    || fs.existsSync(path.join(root, 'build.gradle.kts'))
+  ) {
+    return '.';
+  }
+
   return null;
 }

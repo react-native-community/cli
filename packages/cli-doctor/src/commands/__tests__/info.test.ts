@@ -2,7 +2,13 @@ import info from '../info';
 import {logger} from '@react-native-community/cli-tools';
 import loadConfig from '@react-native-community/cli-config';
 
-jest.mock('@react-native-community/cli-config');
+jest.mock('@react-native-community/cli-config', () => ({
+  __esModule: true,
+  default: () => ({
+    project: {},
+    root: '.',
+  }),
+}));
 
 beforeEach(() => {
   jest.resetAllMocks();

@@ -15,7 +15,7 @@ export default function printNewRelease(
   currentVersion: string,
 ) {
   logger.info(
-    `React Native v${latestRelease.version} is now available (your project is running on v${currentVersion}).`,
+    `React Native v${latestRelease.stable} is now available (your project is running on v${currentVersion}).`,
   );
   logger.info(`Changelog: ${chalk.dim.underline(latestRelease.changelogUrl)}`);
   logger.info(`Diff: ${chalk.dim.underline(latestRelease.diffUrl)}`);

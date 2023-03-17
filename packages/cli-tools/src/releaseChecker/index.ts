@@ -17,15 +17,21 @@ const getReactNativeVersion = (projectRoot: string): string | undefined =>
  * Logs out a message if the user's version is behind a stable version of React Native
  */
 export async function logIfUpdateAvailable(projectRoot: string): Promise<void> {
-  const hasUpdate = await latest(projectRoot);
-  if (hasUpdate) {
-    printNewRelease(hasUpdate.name, hasUpdate.upgrade, hasUpdate.current);
+  const versions = await latest(projectRoot);
+  if (!versions?.upgrade) {
+    return;
+  }
+  if (semver.gt(versions.upgrade.stable, versions.current)) {
+    printNewRelease(versions.name, versions.upgrade, versions.current);
   }
 }
 
 type Update = {
-  upgrade: Release;
+  // Only populated if an upgrade is available
+  upgrade?: Release;
+  // The project's package's current version
   current: string;
+  // The project's package's name
   name: string;
 };
 
@@ -39,13 +45,13 @@ export async function latest(projectRoot: string): Promise<Update | undefined> {
       return;
     }
     const {name} = require(path.join(projectRoot, 'package.json'));
-    const latestRelease = await getLatestRelease(name, currentVersion);
+    const upgrade = await getLatestRelease(name, currentVersion);
 
-    if (latestRelease) {
+    if (upgrade) {
       return {
         name,
         current: currentVersion,
-        upgrade: latestRelease,
+        upgrade,
       };
     }
   } catch (e) {
@@ -57,7 +63,7 @@ export async function latest(projectRoot: string): Promise<Update | undefined> {
     );
     logger.debug(e as any);
   }
-  return undefined;
+  return;
 }
 
 /**

@@ -1,7 +1,12 @@
 import fs from 'fs';
 import execa from 'execa';
 import chalk from 'chalk';
-import {logger, NoopLoader, link} from '@react-native-community/cli-tools';
+import {
+  logger,
+  NoopLoader,
+  link,
+  CLIError,
+} from '@react-native-community/cli-tools';
 import sudo from 'sudo-prompt';
 import runBundleInstall from './runBundleInstall';
 import {Loader} from '../types';
@@ -37,7 +42,7 @@ async function runPodInstall(
       loader.fail();
       logger.error(stderr);
 
-      throw new Error(
+      throw new CLIError(
         `Looks like your iOS environment is not properly set. Please go to ${link.docs(
           'environment-setup',
         )} and follow the React Native CLI QuickStart guide for macOS and iOS.`,
@@ -59,7 +64,7 @@ async function runPodUpdate(loader: Loader) {
     logger.log((error as any).stderr || (error as any).stdout);
     loader.fail();
 
-    throw new Error(
+    throw new CLIError(
       `Failed to update CocoaPods repositories for iOS project.\nPlease try again manually: "pod repo update".\nCocoaPods documentation: ${chalk.dim.underline(
         'https://cocoapods.org/',
       )}`,
@@ -104,7 +109,7 @@ async function installCocoaPods(loader: Loader) {
     loader.fail();
     logger.error((error as any).stderr);
 
-    throw new Error(
+    throw new CLIError(
       `An error occured while trying to install CocoaPods, which is required by this template.\nPlease try again manually: sudo gem install cocoapods.\nCocoaPods documentation: ${chalk.dim.underline(
         'https://cocoapods.org/',
       )}`,

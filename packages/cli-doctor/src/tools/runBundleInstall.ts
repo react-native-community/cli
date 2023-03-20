@@ -13,7 +13,6 @@ async function runBundleInstall(loader: Loader) {
     logger.error((error as any).stderr || (error as any).stdout);
     throw new CLIError(
       'Looks like your iOS environment is not properly set. Please go to https://reactnative.dev/docs/next/environment-setup and follow the React Native CLI QuickStart guide for macOS and iOS.',
-      error as Error,
     );
   }
 

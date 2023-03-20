@@ -1,7 +1,7 @@
 import fs from 'fs';
 import execa from 'execa';
 import chalk from 'chalk';
-import {logger, NoopLoader} from '@react-native-community/cli-tools';
+import {logger, NoopLoader, link} from '@react-native-community/cli-tools';
 import sudo from 'sudo-prompt';
 import runBundleInstall from './runBundleInstall';
 import {Loader} from '../types';
@@ -38,7 +38,9 @@ async function runPodInstall(
       logger.error(stderr);
 
       throw new Error(
-        'Looks like your iOS environment is not properly set. Please go to https://reactnative.dev/docs/next/environment-setup and follow the React Native CLI QuickStart guide for macOS and iOS.',
+        `Looks like your iOS environment is not properly set. Please go to ${link.docs(
+          'environment-setup',
+        )} and follow the React Native CLI QuickStart guide for macOS and iOS.`,
       );
     }
   }

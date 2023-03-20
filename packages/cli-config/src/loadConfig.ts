@@ -8,7 +8,9 @@ import {
 } from '@react-native-community/cli-types';
 import {
   findProjectRoot,
+  version,
   resolveNodeModuleDir,
+  UnknownProjectError,
 } from '@react-native-community/cli-tools';
 import findDependencies from './findDependencies';
 import resolveReactNativePath from './resolveReactNativePath';
@@ -65,6 +67,7 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
         ? path.resolve(projectRoot, userConfig.reactNativePath)
         : resolveReactNativePath(projectRoot);
     },
+    reactNativeVersion: 'unknown',
     dependencies: userConfig.dependencies,
     commands: userConfig.commands,
     healthChecks: [],
@@ -88,6 +91,22 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
       return lazyProject;
     },
   };
+
+  // Try our best to figure out what version of React Native we're running. This is
+  // currently being used to get our deeplinks working, so it's only worried with
+  // the major and minor version.
+  try {
+    let semver = version.current(initialConfig.reactNativePath);
+    if (semver) {
+      // Retain only these version, since they correspond with our documentation.
+      initialConfig.reactNativeVersion = `${semver.major}.${semver.minor}`;
+    }
+  } catch (e) {
+    // If we don't seem to be in a well formed project, give up quietly.
+    if (!(e instanceof UnknownProjectError)) {
+      throw e;
+    }
+  }
 
   const finalConfig = Array.from(
     new Set([

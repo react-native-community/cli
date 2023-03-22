@@ -46,12 +46,11 @@ export default {
 
     logManualInstallation({
       healthcheck: 'Adb',
-      url:
-      link.docs('running-on-device', {
+      url: link.docs('running-on-device', {
         hash: 'method-1-using-adb-reverse-recommended-1',
         guide: 'native',
         platform: 'android',
-        os: 'windows'
+        os: 'windows',
       }),
     });
   },

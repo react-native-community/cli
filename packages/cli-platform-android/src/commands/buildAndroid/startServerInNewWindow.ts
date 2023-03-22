@@ -1,7 +1,11 @@
 import path from 'path';
 import fs from 'fs';
 import execa from 'execa';
-import {logger} from '@react-native-community/cli-tools';
+import {
+  CLIError,
+  logger,
+  resolveNodeModuleDir,
+} from '@react-native-community/cli-tools';
 
 export function startServerInNewWindow(
   port: number,
@@ -18,7 +22,7 @@ export function startServerInNewWindow(
   const packagerEnvFileExportContent = isWindows
     ? `set RCT_METRO_PORT=${port}\nset PROJECT_ROOT=${projectRoot}\nset REACT_NATIVE_PATH=${reactNativePath}`
     : `export RCT_METRO_PORT=${port}\nexport PROJECT_ROOT=${projectRoot}\nexport REACT_NATIVE_PATH=${reactNativePath}`;
-  const nodeModulesPath = path.join(projectRoot, 'node_modules', '.bin');
+  const nodeModulesPath = resolveNodeModuleDir(projectRoot, '.bin');
   const cliPluginMetroPath = path.dirname(
     require.resolve('@react-native-community/cli-plugin-metro/package.json'),
   );
@@ -46,14 +50,25 @@ export function startServerInNewWindow(
   /**
    * Copy files into `node_modules/.bin`.
    */
-  fs.copyFileSync(
-    path.join(cliPluginMetroPath, 'launchPackager.bat'),
-    path.join(nodeModulesPath, 'launchPackager.bat'),
-  );
-  fs.copyFileSync(
-    path.join(cliPluginMetroPath, 'launchPackager.sh'),
-    path.join(nodeModulesPath, 'launchPackager.sh'),
-  );
+
+  try {
+    if (isWindows) {
+      fs.copyFileSync(
+        path.join(cliPluginMetroPath, 'launchPackager.bat'),
+        path.join(nodeModulesPath, 'launchPackager.bat'),
+      );
+    } else {
+      fs.copyFileSync(
+        path.join(cliPluginMetroPath, 'launchPackager.sh'),
+        path.join(nodeModulesPath, 'launchPackager.sh'),
+      );
+    }
+  } catch (error) {
+    return new CLIError(
+      `Couldn't copy the script for running bundler. Please check if the "${scriptFile}" file exists in the "node_modules/@react-native-community/cli-plugin-metro" folder and try again.`,
+      error as any,
+    );
+  }
 
   if (process.platform === 'darwin') {
     try {
@@ -77,7 +92,7 @@ export function startServerInNewWindow(
       return execa.sync('sh', [launchPackagerScript], procConfig);
     }
   }
-  if (/^win/.test(process.platform)) {
+  if (isWindows) {
     // Awaiting this causes the CLI to hang indefinitely, so this must execute without await.
     return execa('cmd.exe', ['/C', launchPackagerScript], {
       ...procConfig,

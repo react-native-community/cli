@@ -39,8 +39,8 @@ export default {
   },
   runAutomaticFix: async ({loader, logManualInstallation}) => {
     loader.fail();
-    let hash : string;
-    switch(link.getOS()){
+    let hash: string;
+    switch (link.getOS()) {
       case 'macos':
         hash = 'method-1-using-adb-reverse-recommended';
         break;

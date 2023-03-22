@@ -39,19 +39,23 @@ export default {
   },
   runAutomaticFix: async ({loader, logManualInstallation}) => {
     loader.fail();
-    const device = await listAndroidDevices();
-    if (device && device.connected) {
-      tryRunAdbReverse(process.env.RCT_METRO_PORT || 8081, device.deviceId);
+    try {
+      const device = await listAndroidDevices();
+      if (device && device.connected) {
+        tryRunAdbReverse(process.env.RCT_METRO_PORT || 8081, device.deviceId);
+      }
+      return loader.succeed();
     }
-
-    logManualInstallation({
-      healthcheck: 'Adb',
-      url: link.docs('running-on-device', {
-        hash: 'method-1-using-adb-reverse-recommended-1',
-        guide: 'native',
-        platform: 'android',
-        os: 'windows',
-      }),
-    });
+    catch(e){
+      return logManualInstallation({
+        healthcheck: 'Adb',
+        url: link.docs('running-on-device', {
+          hash: 'method-1-using-adb-reverse-recommended-1',
+          guide: 'native',
+          platform: 'android',
+          os: 'windows',
+        }),
+      });
+    }
   },
 } as HealthCheckInterface;

@@ -3,7 +3,7 @@ import assert from 'assert';
 
 type Platforms = 'android' | 'ios';
 
-function getOS(): string {
+export function getOS(): string {
   // Using os.platform instead of process.platform so we can test more easily. Once jest upgrades
   // to ^29.4 we could use process.platforms and jest.replaceProperty(process, 'platforms', 'someplatform');
   switch (os.platform()) {

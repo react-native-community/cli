@@ -39,6 +39,21 @@ export default {
   },
   runAutomaticFix: async ({loader, logManualInstallation}) => {
     loader.fail();
+    let hash : string;
+    switch(link.getOS()){
+      case 'macos':
+        hash = 'method-1-using-adb-reverse-recommended';
+        break;
+      case 'windows':
+        hash = 'method-1-using-adb-reverse-recommended-1';
+        break;
+      case 'linux':
+        hash = 'method-1-using-adb-reverse-recommended-2';
+        break;
+      default:
+        hash = '';
+        break;
+    }
     try {
       const device = await listAndroidDevices();
       if (device && device.connected) {
@@ -49,7 +64,7 @@ export default {
       return logManualInstallation({
         healthcheck: 'Adb',
         url: link.docs('running-on-device', {
-          hash: 'method-1-using-adb-reverse-recommended-1',
+          hash: hash,
           guide: 'native',
           platform: 'android',
         }),

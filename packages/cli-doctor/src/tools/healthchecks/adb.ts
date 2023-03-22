@@ -45,8 +45,7 @@ export default {
         tryRunAdbReverse(process.env.RCT_METRO_PORT || 8081, device.deviceId);
       }
       return loader.succeed();
-    }
-    catch(e){
+    } catch (e) {
       return logManualInstallation({
         healthcheck: 'Adb',
         url: link.docs('running-on-device', {

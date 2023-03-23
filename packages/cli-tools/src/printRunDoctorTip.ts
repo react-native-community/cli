@@ -3,7 +3,7 @@ import chalk from 'chalk';
 
 const printRunDoctorTip = () => {
   const linkToDocs =
-    'https://github.com/react-native-community/cli/blob/main/docs/commands.md#doctor';
+    'https://github.com/react-native-community/cli/blob/main/packages/cli-doctor/README.md#doctor';
 
   logger.log('');
   logger.info(

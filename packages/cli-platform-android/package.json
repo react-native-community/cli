@@ -21,6 +21,7 @@
   ],
   "devDependencies": {
     "@react-native-community/cli-types": "^11.0.0-alpha.2",
+    "@react-native-community/cli-plugin-metro": "^11.0.0-alpha.2",
     "@types/execa": "^0.9.0",
     "@types/fs-extra": "^8.1.0",
     "@types/glob": "^7.1.1"

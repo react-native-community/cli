@@ -16,14 +16,14 @@ afterEach(() => {
 });
 
 test('warn for passing in unknown commands', () => {
-  const {code, stderr} = runCLI(DIR, ['unknown'], {expectedFailure: true});
-  expect(code).toBe(1);
+  const {exitCode, stderr} = runCLI(DIR, ['unknown'], {expectedFailure: true});
+  expect(exitCode).toBe(1);
   expect(stderr).toContain("error: unknown command 'unknown'");
 });
 
 test('suggest matching command', () => {
-  const {code, stderr} = runCLI(DIR, ['ini'], {expectedFailure: true});
-  expect(code).toBe(1);
+  const {exitCode, stderr} = runCLI(DIR, ['ini'], {expectedFailure: true});
+  expect(exitCode).toBe(1);
   expect(stderr).toContain(
     `error: unknown command 'ini'
 (Did you mean init?)`,

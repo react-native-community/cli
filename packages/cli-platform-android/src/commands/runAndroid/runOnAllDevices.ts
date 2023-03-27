@@ -139,7 +139,10 @@ function createInstallError(error: Error & {stderr: string}) {
     )}."`;
   }
 
-  return new CLIError(`Failed to install the app. ${message}`, error);
+  return new CLIError(
+    `Failed to install the app. ${message}`,
+    message.length > 0 ? undefined : error,
+  );
 }
 
 export default runOnAllDevices;

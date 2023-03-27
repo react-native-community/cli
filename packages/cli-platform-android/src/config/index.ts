@@ -21,6 +21,7 @@ import {getPackageName} from './getAndroidProject';
 import {findLibraryName} from './findLibraryName';
 import {findComponentDescriptors} from './findComponentDescriptors';
 import {findBuildGradle} from './findBuildGradle';
+import {CLIError} from '@react-native-community/cli-tools';
 
 /**
  * Gets android project config by analyzing given folder and taking some
@@ -53,7 +54,7 @@ export function projectConfig(
     userConfig.packageName || getPackageName(manifestPath, buildGradlePath);
 
   if (!packageName) {
-    throw new Error(
+    throw new CLIError(
       `Package name not found in neither ${manifestPath} nor ${buildGradlePath}`,
     );
   }

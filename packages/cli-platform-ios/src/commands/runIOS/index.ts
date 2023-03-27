@@ -217,7 +217,6 @@ const getSimulators = () => {
   } catch (error) {
     throw new CLIError(
       'Could not get the simulator list from Xcode. Please open Xcode and try running project directly from there to resolve the remaining issues.',
-      error as Error,
     );
   }
   return simulators;

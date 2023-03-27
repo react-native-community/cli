@@ -203,7 +203,7 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   }
 }
 
-const getSimulators = () => {
+export const getSimulators = () => {
   let simulators: {devices: {[index: string]: Array<Device>}};
 
   try {

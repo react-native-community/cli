@@ -1,5 +1,6 @@
 import path from 'path';
-import {ConfigT, InputConfigT, loadConfig} from 'metro-config';
+import {ConfigT, InputConfigT, loadConfig, resolveConfig} from 'metro-config';
+import {CLIError, logger} from '@react-native-community/cli-tools';
 import type {Config} from '@react-native-community/cli-types';
 import {reactNativePlatformResolver} from './metroPlatformResolver';
 
@@ -69,13 +70,36 @@ export interface ConfigOptionsT {
  * Allows the CLI to override certain defaults in the base `metro.config.js`
  * based on dynamic user options in `ctx`.
  */
-export default function loadMetroConfig(
+export default async function loadMetroConfig(
   ctx: ConfigLoadingContext,
-  options?: ConfigOptionsT,
+  options: ConfigOptionsT = {},
 ): Promise<ConfigT> {
   const overrideConfig = getOverrideConfig(ctx);
-  if (options && options.reporter) {
+  if (options.reporter) {
     overrideConfig.reporter = options.reporter;
   }
+
+  const projectConfig = await resolveConfig(undefined, ctx.root);
+
+  // @ts-ignore resolveConfig return value is mistyped
+  if (projectConfig.isEmpty) {
+    throw new CLIError(`No metro config found in ${ctx.root}`);
+  }
+
+  // @ts-ignore resolveConfig return value is mistyped
+  logger.debug(`Reading Metro config from ${projectConfig.filepath}`);
+
+  try {
+    require.resolve('@react-native/metro-config', {
+      paths: [ctx.root],
+    });
+  } catch (e) {
+    console.warn(
+      'warning: From React Native 0.72, your metro.config.js file should ' +
+        "extend '@react-native/metro-config', however this is not in your " +
+        "project's devDependencies.",
+    );
+  }
+
   return loadConfig({cwd: ctx.root, ...options}, overrideConfig);
 }

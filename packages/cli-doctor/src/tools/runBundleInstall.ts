@@ -5,7 +5,7 @@ import {Loader} from '../types';
 
 async function runBundleInstall(loader: Loader) {
   try {
-    loader.start('Installing Bundler');
+    loader.start('Installing Ruby Gems');
 
     await execa('bundle', ['install']);
   } catch (error) {

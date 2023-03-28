@@ -7,7 +7,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@react-native-community/cli-tools": "^11.0.0",
+    "@react-native-community/cli-tools": "11.0.0",
     "chalk": "^4.1.2",
     "execa": "^5.0.0",
     "fast-xml-parser": "^4.0.12",
@@ -15,7 +15,7 @@
     "ora": "^5.4.1"
   },
   "devDependencies": {
-    "@react-native-community/cli-types": "^11.0.0",
+    "@react-native-community/cli-types": "11.0.0",
     "@types/glob": "^7.1.1",
     "@types/lodash": "^4.14.149",
     "hasbin": "^1.2.3"

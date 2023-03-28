@@ -9,7 +9,10 @@ exports[`shows up current config without unnecessary output 1`] = `
   "commands": [
     {
       "name": "log-ios",
-      "description": "starts iOS device syslog tail"
+      "description": "starts iOS device syslog tail",
+      "options": [
+        "<<REPLACED>>"
+      ]
     },
     {
       "name": "run-ios",

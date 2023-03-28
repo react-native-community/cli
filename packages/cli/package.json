@@ -35,7 +35,7 @@
     "@react-native-community/cli-types": "^11.0.0",
     "chalk": "^4.1.2",
     "commander": "^9.4.1",
-    "execa": "^1.0.0",
+    "execa": "^5.0.0",
     "find-up": "^4.1.0",
     "fs-extra": "^8.1.0",
     "graceful-fs": "^4.1.3",

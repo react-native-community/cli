@@ -22,6 +22,7 @@ import {getProjectInfo} from '../../tools/getProjectInfo';
 import {getConfigurationScheme} from '../../tools/getConfigurationScheme';
 import {selectFromInteractiveMode} from '../../tools/selectFromInteractiveMode';
 import {promptForDeviceSelection} from '../../tools/prompts';
+import getSimulators from '../../tools/getSimulators';
 
 export interface FlagsT extends BuildFlags {
   simulator?: string;
@@ -202,25 +203,6 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     runOnSimulator(xcodeProject, scheme, modifiedArgs);
   }
 }
-
-export const getSimulators = () => {
-  let simulators: {devices: {[index: string]: Array<Device>}};
-
-  try {
-    simulators = JSON.parse(
-      child_process.execFileSync(
-        'xcrun',
-        ['simctl', 'list', '--json', 'devices'],
-        {encoding: 'utf8'},
-      ),
-    );
-  } catch (error) {
-    throw new CLIError(
-      'Could not get the simulator list from Xcode. Please open Xcode and try running project directly from there to resolve the remaining issues.',
-    );
-  }
-  return simulators;
-};
 
 async function runOnBootedDevicesSimulators(
   scheme: string,

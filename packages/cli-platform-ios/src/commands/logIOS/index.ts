@@ -11,12 +11,19 @@ import os from 'os';
 import path from 'path';
 import {logger} from '@react-native-community/cli-tools';
 import listIOSDevices from '../../tools/listIOSDevices';
-import {getSimulators} from '../runIOS';
+import getSimulators from '../../tools/getSimulators';
+import {Config} from '@react-native-community/cli-types';
+import prompts from 'prompts';
 
 /**
  * Starts iOS device syslog tail
  */
-async function logIOS() {
+
+type Args = {
+  interactive: boolean;
+};
+
+async function logIOS(_argv: Array<string>, _ctx: Config, args: Args) {
   // Here we're using two command because first command `xcrun simctl list --json devices` outputs `state` but doesn't return `available`. But second command `xcrun xcdevice list` outputs `available` but doesn't output `state`. So we need to connect outputs of both commands.
   const simulators = getSimulators();
   const bootedSimulators = Object.keys(simulators.devices)
@@ -41,7 +48,21 @@ async function logIOS() {
     return;
   }
 
-  tailDeviceLogs(bootedAndAvailableSimulators[0].udid);
+  if (args.interactive && bootedAndAvailableSimulators.length > 1) {
+    const {udid} = await prompts({
+      type: 'select',
+      name: 'udid',
+      message: 'Select iOS simulators to tail logs from',
+      choices: bootedAndAvailableSimulators.map((simulator) => ({
+        title: simulator.name,
+        value: simulator.udid,
+      })),
+    });
+
+    tailDeviceLogs(udid);
+  } else {
+    tailDeviceLogs(bootedAndAvailableSimulators[0].udid);
+  }
 }
 
 function tailDeviceLogs(udid: string) {
@@ -67,4 +88,11 @@ export default {
   name: 'log-ios',
   description: 'starts iOS device syslog tail',
   func: logIOS,
+  options: [
+    {
+      name: '--interactive',
+      description:
+        'Explicitly select simulator to tail logs from. By default it will tail logs from the first booted and available simulator.',
+    },
+  ],
 };

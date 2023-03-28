@@ -192,6 +192,12 @@ react-native log-ios
 
 Starts iOS device syslog tail.
 
+#### Options
+
+#### `--interactive`
+
+Explicitly select simulator to tail logs from. By default it will tail logs from the first booted and available simulator.
+
 ## License
 
 Everything inside this repository is [MIT licensed](./LICENSE).

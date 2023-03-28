@@ -94,8 +94,8 @@ export default async function loadMetroConfig(
       paths: [ctx.root],
     });
   } catch (e) {
-    console.warn(
-      'warning: From React Native 0.72, your metro.config.js file should ' +
+    logger.warn(
+      "From React Native 0.72, your 'metro.config.js' file should " +
         "extend '@react-native/metro-config', however it's not present in your " +
         "project's devDependencies. Please install '@react-native/metro-config'.",
     );

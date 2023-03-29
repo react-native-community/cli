@@ -17,7 +17,9 @@ export function startServerInNewWindow(
    * Set up OS-specific filenames and commands
    */
   const isWindows = /^win/.test(process.platform);
-  const scriptFile = isWindows ? 'launchPackager.bat' : 'launchPackager.sh';
+  const scriptFile = isWindows
+    ? 'launchPackager.bat'
+    : 'launchPackager.command';
   const packagerEnvFilename = isWindows ? '.packager.bat' : '.packager.env';
   const packagerEnvFileExportContent = isWindows
     ? `set RCT_METRO_PORT=${port}\nset PROJECT_ROOT=${projectRoot}\nset REACT_NATIVE_PATH=${reactNativePath}`
@@ -59,8 +61,8 @@ export function startServerInNewWindow(
       );
     } else {
       fs.copyFileSync(
-        path.join(cliPluginMetroPath, 'launchPackager.sh'),
-        path.join(nodeModulesPath, 'launchPackager.sh'),
+        path.join(cliPluginMetroPath, 'launchPackager.command'),
+        path.join(nodeModulesPath, 'launchPackager.command'),
       );
     }
   } catch (error) {

@@ -1,13 +1,13 @@
 {
   "name": "@react-native-community/cli-platform-ios",
-  "version": "11.0.0",
+  "version": "11.0.1",
   "license": "MIT",
   "main": "build/index.js",
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "@react-native-community/cli-tools": "11.0.0",
+    "@react-native-community/cli-tools": "^11.0.1",
     "chalk": "^4.1.2",
     "execa": "^5.0.0",
     "fast-xml-parser": "^4.0.12",

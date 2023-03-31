@@ -46,8 +46,8 @@ function tryInstallAppOnDevice(
     }
 
     const installArgs = ['-s', device, 'install', '-r', '-d'];
-    if (args.userId !== undefined) {
-      installArgs.push('--user', `${args.userId}`);
+    if (args.user !== undefined) {
+      installArgs.push('--user', `${args.user}`);
     }
     const adbArgs = [...installArgs, pathToApk];
     logger.info(`Installing the app on the device "${device}"...`);

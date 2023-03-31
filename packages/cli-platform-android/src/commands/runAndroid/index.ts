@@ -125,7 +125,6 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
 
     if (args.interactive) {
       const users = checkUsers(device.deviceId as string, adbPath);
-      console.log('users', users);
       if (users && users.length > 1) {
         const user = await promptForUser(users);
 

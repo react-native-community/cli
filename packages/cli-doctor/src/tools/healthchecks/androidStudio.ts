@@ -1,5 +1,7 @@
 import {join} from 'path';
 
+import {link} from '@react-native-community/cli-tools';
+
 import {HealthCheckInterface} from '../../types';
 
 import {downloadAndUnzip} from '../downloadAndUnzip';
@@ -74,7 +76,11 @@ export default {
 
     return logManualInstallation({
       healthcheck: 'Android Studio',
-      url: 'https://reactnative.dev/docs/environment-setup',
+      url: link.docs('environment-setup', {
+        hash: 'android-studio',
+        guide: 'native',
+        platform: 'android',
+      }),
     });
   },
 } as HealthCheckInterface;

@@ -38,8 +38,14 @@ export async function runPackager(args: BuildFlags, config: Config) {
   } else {
     // result == 'not_running'
     logger.info('Starting JS server...');
+
     try {
-      startServerInNewWindow(args.port, args.terminal, config.reactNativePath);
+      startServerInNewWindow(
+        args.port,
+        args.terminal,
+        config.root,
+        config.reactNativePath,
+      );
     } catch (error) {
       if (error instanceof Error) {
         logger.warn(

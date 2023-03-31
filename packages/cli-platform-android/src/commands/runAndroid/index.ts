@@ -13,7 +13,7 @@ import tryRunAdbReverse from './tryRunAdbReverse';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
 import tryInstallAppOnDevice from './tryInstallAppOnDevice';
 import getAdbPath from './getAdbPath';
-import {logger, CLIError} from '@react-native-community/cli-tools';
+import {logger, CLIError, link} from '@react-native-community/cli-tools';
 import {getAndroidProject} from '../../config/getAndroidProject';
 import listAndroidDevices from './listAndroidDevices';
 import tryLaunchEmulator from './tryLaunchEmulator';
@@ -40,6 +40,12 @@ export type AndroidProject = NonNullable<Config['project']['android']>;
  * Starts the app on a connected Android emulator or device.
  */
 async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
+  link.setPlatform('android');
+
+  if (config.reactNativeVersion !== 'unknown') {
+    link.setVersion(config.reactNativeVersion);
+  }
+
   if (args.binaryPath) {
     if (args.tasks) {
       throw new CLIError(
@@ -304,3 +310,5 @@ export default {
     },
   ],
 };
+
+export {adb, getAdbPath, listAndroidDevices, tryRunAdbReverse};

@@ -1,4 +1,4 @@
-import {findProjectRoot, logger} from '@react-native-community/cli-tools';
+import {findProjectRoot, logger, link} from '@react-native-community/cli-tools';
 import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
@@ -182,7 +182,11 @@ export default {
 
     return logManualInstallation({
       healthcheck: 'Android SDK',
-      url: 'https://reactnative.dev/docs/environment-setup',
+      url: link.docs('environment-setup', {
+        hash: 'android-sdk',
+        guide: 'native',
+        platform: 'android',
+      }),
     });
   },
 } as HealthCheckInterface;

@@ -1,4 +1,7 @@
 import {join} from 'path';
+
+import {link} from '@react-native-community/cli-tools';
+
 import versionRanges from '../versionRanges';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
 import {HealthCheckInterface} from '../../types';
@@ -58,7 +61,11 @@ export default {
     loader.fail();
     logManualInstallation({
       healthcheck: 'JDK',
-      url: 'https://reactnative.dev/docs/environment-setup',
+      url: link.docs('environment-setup', {
+        hash: 'jdk-studio',
+        guide: 'native',
+        platform: 'android',
+      }),
     });
   },
 } as HealthCheckInterface;

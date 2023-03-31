@@ -162,6 +162,7 @@ test('should merge project configuration with default values', () => {
 test('should load commands from "react-native-foo" and "react-native-bar" packages', () => {
   DIR = getTempDirectory('config_test_packages');
   writeFiles(DIR, {
+    'react-native.config.js': 'module.exports = { reactNativePath: "." }',
     'node_modules/react-native-foo/package.json': '{}',
     'node_modules/react-native-foo/react-native.config.js': `module.exports = {
       commands: [
@@ -220,6 +221,7 @@ test('does not use restricted "react-native" key to resolve config from package.
     'node_modules/react-native-netinfo/package.json': `{
       "react-native": "src/index.js"
     }`,
+    'react-native.config.js': 'module.exports = { reactNativePath: "." }',
     'package.json': `{
       "dependencies": {
         "react-native-netinfo": "0.0.1"

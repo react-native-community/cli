@@ -1,7 +1,7 @@
 import execa from 'execa';
 import chalk from 'chalk';
 
-import {logger, findProjectRoot} from '@react-native-community/cli-tools';
+import {logger, findProjectRoot, link} from '@react-native-community/cli-tools';
 
 import versionRanges from '../versionRanges';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
@@ -92,15 +92,15 @@ async function checkRubyGemfileRequirement(
     });
     return [output.OK];
   } catch (e) {
-    switch (e.code) {
+    switch ((e as any).code) {
       case 'ENOENT':
         return [output.NO_RUBY];
       case 1:
         return [output.NO_GEMFILE];
       case 2:
-        return [output.BUNDLE_INVALID_RUBY, e.stderr];
+        return [output.BUNDLE_INVALID_RUBY, (e as any).stderr];
       default:
-        return [output.UNKNOWN, e.message];
+        return [output.UNKNOWN, (e as any).message];
     }
   }
 }
@@ -114,7 +114,7 @@ export default {
     try {
       projectRoot = findProjectRoot();
     } catch (e) {
-      logger.debug(e.message);
+      logger.debug((e as any).message);
     }
 
     const fallbackResult = {
@@ -174,7 +174,11 @@ export default {
 
     logManualInstallation({
       healthcheck: 'Ruby',
-      url: 'https://reactnative.dev/docs/environment-setup#ruby',
+      url: link.docs('environment-setup', {
+        hash: 'ruby',
+        guide: 'native',
+        platform: 'ios',
+      }),
     });
   },
 } as HealthCheckInterface;

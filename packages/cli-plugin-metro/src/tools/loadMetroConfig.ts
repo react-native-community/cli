@@ -1,31 +1,8 @@
-/**
- * Configuration file of Metro.
- */
 import path from 'path';
-// @ts-ignore - no typed definition for the package
-import {loadConfig} from 'metro-config';
+import {ConfigT, InputConfigT, loadConfig, resolveConfig} from 'metro-config';
+import {CLIError, logger} from '@react-native-community/cli-tools';
 import type {Config} from '@react-native-community/cli-types';
 import {reactNativePlatformResolver} from './metroPlatformResolver';
-
-const INTERNAL_CALLSITES_REGEX = new RegExp(
-  [
-    '/Libraries/Renderer/implementations/.+\\.js$',
-    '/Libraries/BatchedBridge/MessageQueue\\.js$',
-    '/Libraries/YellowBox/.+\\.js$',
-    '/Libraries/LogBox/.+\\.js$',
-    '/Libraries/Core/Timers/.+\\.js$',
-    '/Libraries/WebSocket/.+\\.js$',
-    '/Libraries/vendor/.+\\.js$',
-    '/node_modules/react-devtools-core/.+\\.js$',
-    '/node_modules/react-refresh/.+\\.js$',
-    '/node_modules/scheduler/.+\\.js$',
-    '/node_modules/event-target-shim/.+\\.js$',
-    '/node_modules/invariant/.+\\.js$',
-    '/node_modules/react-native/index.js$',
-    '/metro-runtime/.+\\.js$',
-    '^\\[native code\\]$',
-  ].join('|'),
-);
 
 export type {Config};
 
@@ -34,43 +11,10 @@ export type ConfigLoadingContext = Pick<
   'root' | 'reactNativePath' | 'platforms'
 >;
 
-export interface MetroConfig {
-  resolver: {
-    resolveRequest?: (
-      context: any,
-      realModuleName: string,
-      platform: string,
-      moduleName: string,
-    ) => any;
-    resolverMainFields: string[];
-    platforms: string[];
-  };
-  serializer: {
-    getModulesRunBeforeMainModule: () => string[];
-    getPolyfills: () => any;
-  };
-  server: {
-    port: number;
-    enhanceMiddleware?: Function;
-  };
-  symbolicator: {
-    customizeFrame: (frame: {file: string | null}) => {collapse: boolean};
-  };
-  transformer: {
-    allowOptionalDependencies?: boolean;
-    babelTransformerPath: string;
-    assetRegistryPath: string;
-    assetPlugins?: Array<string>;
-    asyncRequireModulePath?: string;
-  };
-  watchFolders: ReadonlyArray<string>;
-  reporter?: any;
-}
-
 /**
- * Default configuration
+ * Get the config options to override based on RN CLI inputs.
  */
-export const getDefaultConfig = (ctx: ConfigLoadingContext): MetroConfig => {
+function getOverrideConfig(ctx: ConfigLoadingContext): InputConfigT {
   const outOfTreePlatforms = Object.keys(ctx.platforms).filter(
     (platform) => ctx.platforms[platform].npmPackageName,
   );
@@ -89,7 +33,6 @@ export const getDefaultConfig = (ctx: ConfigLoadingContext): MetroConfig => {
                 {},
               ),
             ),
-      resolverMainFields: ['react-native', 'browser', 'main'],
       platforms: [...Object.keys(ctx.platforms), 'native'],
     },
     serializer: {
@@ -106,33 +49,9 @@ export const getDefaultConfig = (ctx: ConfigLoadingContext): MetroConfig => {
           ),
         ),
       ],
-      getPolyfills: () =>
-        require(path.join(ctx.reactNativePath, 'rn-get-polyfills'))(),
     },
-    server: {
-      port: Number(process.env.RCT_METRO_PORT) || 8081,
-    },
-    symbolicator: {
-      customizeFrame: (frame: {file: string | null}) => {
-        const collapse = Boolean(
-          frame.file && INTERNAL_CALLSITES_REGEX.test(frame.file),
-        );
-        return {collapse};
-      },
-    },
-    transformer: {
-      allowOptionalDependencies: true,
-      babelTransformerPath: require.resolve(
-        'metro-react-native-babel-transformer',
-      ),
-      assetRegistryPath: 'react-native/Libraries/Image/AssetRegistry',
-      asyncRequireModulePath: require.resolve(
-        'metro-runtime/src/modules/asyncRequire',
-      ),
-    },
-    watchFolders: [],
   };
-};
+}
 
 export interface ConfigOptionsT {
   maxWorkers?: number;
@@ -146,17 +65,41 @@ export interface ConfigOptionsT {
 }
 
 /**
- * Loads Metro Config and applies `options` on top of the resolved config.
+ * Load Metro config.
  *
- * This allows the CLI to always overwrite the file settings.
+ * Allows the CLI to override certain defaults in the base `metro.config.js`
+ * based on dynamic user options in `ctx`.
  */
-export default function loadMetroConfig(
+export default async function loadMetroConfig(
   ctx: ConfigLoadingContext,
-  options?: ConfigOptionsT,
-): Promise<MetroConfig> {
-  const defaultConfig = getDefaultConfig(ctx);
-  if (options && options.reporter) {
-    defaultConfig.reporter = options.reporter;
+  options: ConfigOptionsT = {},
+): Promise<ConfigT> {
+  const overrideConfig = getOverrideConfig(ctx);
+  if (options.reporter) {
+    overrideConfig.reporter = options.reporter;
   }
-  return loadConfig({cwd: ctx.root, ...options}, defaultConfig);
+
+  const projectConfig = await resolveConfig(undefined, ctx.root);
+
+  // @ts-ignore resolveConfig return value is mistyped
+  if (projectConfig.isEmpty) {
+    throw new CLIError(`No metro config found in ${ctx.root}`);
+  }
+
+  // @ts-ignore resolveConfig return value is mistyped
+  logger.debug(`Reading Metro config from ${projectConfig.filepath}`);
+
+  try {
+    require.resolve('@react-native/metro-config', {
+      paths: [ctx.root],
+    });
+  } catch (e) {
+    logger.warn(
+      "From React Native 0.72, your 'metro.config.js' file should " +
+        "extend '@react-native/metro-config', however it's not present in your " +
+        "project's devDependencies. Please install '@react-native/metro-config'.",
+    );
+  }
+
+  return loadConfig({cwd: ctx.root, ...options}, overrideConfig);
 }

@@ -1,11 +1,16 @@
 import path from 'path';
 import fs from 'fs';
 import execa from 'execa';
-import {logger} from '@react-native-community/cli-tools';
+import {
+  CLIError,
+  logger,
+  resolveNodeModuleDir,
+} from '@react-native-community/cli-tools';
 
 export function startServerInNewWindow(
   port: number,
   terminal: string,
+  projectRoot: string,
   reactNativePath: string,
 ) {
   /**
@@ -16,33 +21,56 @@ export function startServerInNewWindow(
     ? 'launchPackager.bat'
     : 'launchPackager.command';
   const packagerEnvFilename = isWindows ? '.packager.bat' : '.packager.env';
-  const portExportContent = isWindows
-    ? `set RCT_METRO_PORT=${port}`
-    : `export RCT_METRO_PORT=${port}`;
-
-  /**
-   * Set up the `.packager.(env|bat)` file to ensure the packager starts on the right port.
-   */
-  const launchPackagerScript = path.join(
-    reactNativePath,
-    `scripts/${scriptFile}`,
+  const packagerEnvFileExportContent = isWindows
+    ? `set RCT_METRO_PORT=${port}\nset PROJECT_ROOT=${projectRoot}\nset REACT_NATIVE_PATH=${reactNativePath}`
+    : `export RCT_METRO_PORT=${port}\nexport PROJECT_ROOT=${projectRoot}\nexport REACT_NATIVE_PATH=${reactNativePath}`;
+  const nodeModulesPath = resolveNodeModuleDir(projectRoot, '.bin');
+  const cliPluginMetroPath = path.dirname(
+    require.resolve('@react-native-community/cli-plugin-metro/package.json'),
   );
 
   /**
-   * Set up the `launchpackager.(command|bat)` file.
+   * Set up the `.packager.(env|bat)` file to ensure the packager starts on the right port and in right directory.
+   */
+  const packagerEnvFile = path.join(nodeModulesPath, `${packagerEnvFilename}`);
+
+  /**
+   * Set up the `launchPackager.(command|bat)` file.
    * It lives next to `.packager.(bat|env)`
    */
-  const scriptsDir = path.dirname(launchPackagerScript);
-  const packagerEnvFile = path.join(scriptsDir, packagerEnvFilename);
-  const procConfig: execa.SyncOptions = {cwd: scriptsDir};
+  const launchPackagerScript = path.join(nodeModulesPath, scriptFile);
+  const procConfig: execa.SyncOptions = {cwd: path.dirname(packagerEnvFile)};
 
   /**
    * Ensure we overwrite file by passing the `w` flag
    */
-  fs.writeFileSync(packagerEnvFile, portExportContent, {
+  fs.writeFileSync(packagerEnvFile, packagerEnvFileExportContent, {
     encoding: 'utf8',
     flag: 'w',
   });
+
+  /**
+   * Copy files into `node_modules/.bin`.
+   */
+
+  try {
+    if (isWindows) {
+      fs.copyFileSync(
+        path.join(cliPluginMetroPath, 'launchPackager.bat'),
+        path.join(nodeModulesPath, 'launchPackager.bat'),
+      );
+    } else {
+      fs.copyFileSync(
+        path.join(cliPluginMetroPath, 'launchPackager.command'),
+        path.join(nodeModulesPath, 'launchPackager.command'),
+      );
+    }
+  } catch (error) {
+    return new CLIError(
+      `Couldn't copy the script for running bundler. Please check if the "${scriptFile}" file exists in the "node_modules/@react-native-community/cli-plugin-metro" folder and try again.`,
+      error as any,
+    );
+  }
 
   if (process.platform === 'darwin') {
     try {
@@ -66,7 +94,7 @@ export function startServerInNewWindow(
       return execa.sync('sh', [launchPackagerScript], procConfig);
     }
   }
-  if (/^win/.test(process.platform)) {
+  if (isWindows) {
     // Awaiting this causes the CLI to hang indefinitely, so this must execute without await.
     return execa('cmd.exe', ['/C', launchPackagerScript], {
       ...procConfig,

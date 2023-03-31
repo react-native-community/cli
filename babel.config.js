@@ -18,6 +18,7 @@ module.exports = {
   ],
   plugins: [
     [require.resolve('@babel/plugin-transform-modules-commonjs'), {lazy: true}],
+    '@babel/plugin-proposal-export-namespace-from',
   ],
   sourceMaps: true,
 };

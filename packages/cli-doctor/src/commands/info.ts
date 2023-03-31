@@ -6,7 +6,7 @@
  */
 
 import getEnvironmentInfo from '../tools/envinfo';
-import {logger, releaseChecker} from '@react-native-community/cli-tools';
+import {logger, version} from '@react-native-community/cli-tools';
 import {Config} from '@react-native-community/cli-types';
 
 const info = async function getInfo(_argv: Array<string>, ctx: Config) {
@@ -17,7 +17,7 @@ const info = async function getInfo(_argv: Array<string>, ctx: Config) {
   } catch (err) {
     logger.error(`Unable to print environment info.\n${err}`);
   } finally {
-    await releaseChecker(ctx.root);
+    await version.logIfUpdateAvailable(ctx.root);
   }
 };
 

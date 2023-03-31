@@ -13,6 +13,5 @@ Commands:
                                 <projectName> in a directory of the same name.
   doctor [options]              Diagnose and fix common Node.js, iOS, Android &
                                 React Native issues.
-  help [command]                display help for command
-"
+  help [command]                display help for command"
 `;

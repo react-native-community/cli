@@ -6,44 +6,63 @@
  *
  */
 
-import {execFileSync, spawnSync} from 'child_process';
+import {spawnSync} from 'child_process';
 import os from 'os';
 import path from 'path';
 import {logger} from '@react-native-community/cli-tools';
-import {Device} from '../../types';
-
-function findAvailableDevice(devices: {[index: string]: Array<Device>}) {
-  for (const key of Object.keys(devices)) {
-    for (const device of devices[key]) {
-      if (device.availability === '(available)' && device.state === 'Booted') {
-        return device;
-      }
-    }
-  }
-  return null;
-}
+import listIOSDevices from '../../tools/listIOSDevices';
+import getSimulators from '../../tools/getSimulators';
+import {Config} from '@react-native-community/cli-types';
+import prompts from 'prompts';
 
 /**
  * Starts iOS device syslog tail
  */
-async function logIOS() {
-  const rawDevices = execFileSync(
-    'xcrun',
-    ['simctl', 'list', 'devices', '--json'],
-    {encoding: 'utf8'},
+
+type Args = {
+  interactive: boolean;
+};
+
+async function logIOS(_argv: Array<string>, _ctx: Config, args: Args) {
+  // Here we're using two command because first command `xcrun simctl list --json devices` outputs `state` but doesn't return `available`. But second command `xcrun xcdevice list` outputs `available` but doesn't output `state`. So we need to connect outputs of both commands.
+  const simulators = getSimulators();
+  const bootedSimulators = Object.keys(simulators.devices)
+    .map((key) => simulators.devices[key])
+    .reduce((acc, val) => acc.concat(val), [])
+    .filter(({state}) => state === 'Booted');
+
+  const devices = await listIOSDevices();
+  const availableSimulators = devices.filter(
+    ({type, isAvailable}) => type === 'simulator' && isAvailable,
   );
 
-  const {devices} = JSON.parse(rawDevices) as {
-    devices: {[index: string]: Array<Device>};
-  };
+  const bootedAndAvailableSimulators = bootedSimulators.map((booted) => {
+    const available = availableSimulators.find(
+      ({udid}) => udid === booted.udid,
+    );
+    return {...available, ...booted};
+  });
 
-  const device = findAvailableDevice(devices);
-  if (device === null) {
+  if (bootedAndAvailableSimulators.length === 0) {
     logger.error('No active iOS device found');
     return;
   }
 
-  tailDeviceLogs(device.udid);
+  if (args.interactive && bootedAndAvailableSimulators.length > 1) {
+    const {udid} = await prompts({
+      type: 'select',
+      name: 'udid',
+      message: 'Select iOS simulators to tail logs from',
+      choices: bootedAndAvailableSimulators.map((simulator) => ({
+        title: simulator.name,
+        value: simulator.udid,
+      })),
+    });
+
+    tailDeviceLogs(udid);
+  } else {
+    tailDeviceLogs(bootedAndAvailableSimulators[0].udid);
+  }
 }
 
 function tailDeviceLogs(udid: string) {
@@ -69,4 +88,11 @@ export default {
   name: 'log-ios',
   description: 'starts iOS device syslog tail',
   func: logIOS,
+  options: [
+    {
+      name: '--interactive',
+      description:
+        'Explicitly select simulator to tail logs from. By default it will tail logs from the first booted and available simulator.',
+    },
+  ],
 };

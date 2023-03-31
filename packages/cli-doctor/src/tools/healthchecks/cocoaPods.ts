@@ -1,8 +1,7 @@
 import execa from 'execa';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
-import {promptCocoaPodsInstallationQuestion, runSudo} from '../installPods';
-import {removeMessage, logError} from './common';
-import {brewInstall} from '../brewInstall';
+import {runSudo} from '../installPods';
+import {logError} from './common';
 import {HealthCheckInterface} from '../../types';
 import versionRanges from '../versionRanges';
 
@@ -22,56 +21,34 @@ export default {
   runAutomaticFix: async ({loader}) => {
     loader.stop();
 
-    const {
-      installMethod,
-      promptQuestion,
-    } = await promptCocoaPodsInstallationQuestion();
-
-    // Capitalise `Homebrew` when printing on the screen
-    const installMethodCapitalized =
-      installMethod === 'homebrew'
-        ? installMethod.substr(0, 1).toUpperCase() + installMethod.substr(1)
-        : installMethod;
+    const installMethodCapitalized = 'Gem';
     const loaderInstallationMessage = `${label} (installing with ${installMethodCapitalized})`;
     const loaderSucceedMessage = `${label} (installed with ${installMethodCapitalized})`;
 
-    // Remove the prompt after the question of how to install CocoaPods is answered
-    removeMessage(promptQuestion);
+    loader.start(loaderInstallationMessage);
 
-    if (installMethod === 'gem') {
-      loader.start(loaderInstallationMessage);
+    const options = ['install', 'cocoapods', '--no-document'];
 
-      const options = ['install', 'cocoapods', '--no-document'];
+    try {
+      // First attempt to install `cocoapods`
+      await execa('gem', options);
 
+      return loader.succeed(loaderSucceedMessage);
+    } catch (_error) {
+      // If that doesn't work then try with sudo
       try {
-        // First attempt to install `cocoapods`
-        await execa('gem', options);
+        await runSudo(`gem ${options.join(' ')}`);
 
         return loader.succeed(loaderSucceedMessage);
-      } catch (_error) {
-        // If that doesn't work then try with sudo
-        try {
-          await runSudo(`gem ${options.join(' ')}`);
-
-          return loader.succeed(loaderSucceedMessage);
-        } catch (error) {
-          logError({
-            healthcheck: label,
-            loader,
-            error: error as any,
-            command: 'sudo gem install cocoapods',
-          });
-        }
+      } catch (error) {
+        logError({
+          healthcheck: label,
+          loader,
+          error: error as any,
+          command: 'sudo gem install cocoapods',
+        });
       }
     }
-
-    if (installMethod === 'homebrew') {
-      return await brewInstall({
-        pkg: 'cocoapods',
-        label: loaderInstallationMessage,
-        loader,
-        onSuccess: () => loader.succeed(loaderSucceedMessage),
-      });
-    }
+    return;
   },
 } as HealthCheckInterface;

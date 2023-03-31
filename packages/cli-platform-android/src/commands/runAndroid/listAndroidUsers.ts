@@ -1,5 +1,5 @@
 import {logger} from '@react-native-community/cli-tools';
-import {spawnSync} from 'child_process';
+import execa from 'execa';
 import prompts from 'prompts';
 
 type User = {
@@ -12,21 +12,17 @@ export function checkUsers(device: string, adbPath: string) {
     const adbArgs = ['-s', device, 'shell', 'pm', 'list', 'users'];
 
     logger.debug(`Checking users on "${device}"...`);
-    const {stdout} = spawnSync(adbPath, adbArgs, {encoding: 'utf-8'});
-    const regex = new RegExp(/UserInfo{([0-9]*):([^:]*):[\w]*}/, 'g');
+    const {stdout} = execa.sync(adbPath, adbArgs, {encoding: 'utf-8'});
+    const regex = new RegExp(
+      /^\s*UserInfo\{(?<userId>\d+):(?<userName>.*):(?<userFlags>[0-9a-f]*)}/,
+    );
     const users: User[] = [];
-    let end = false;
 
-    while (!end && stdout) {
-      const result = regex.exec(stdout.toString());
-
-      if (!result) {
-        end = true;
-      } else {
-        users.push({
-          id: result[1],
-          name: result[2],
-        });
+    const lines = stdout.split('\n');
+    for (const line of lines) {
+      const res = regex.exec(line);
+      if (res?.groups) {
+        users.push({id: res.groups.userId, name: res.groups.userName});
       }
     }
 

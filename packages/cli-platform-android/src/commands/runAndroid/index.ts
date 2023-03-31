@@ -31,7 +31,7 @@ export interface Flags extends BuildFlags {
   deviceId?: string;
   listDevices?: boolean;
   binaryPath?: string;
-  userId?: number | string;
+  user?: number | string;
 }
 
 export type AndroidProject = NonNullable<Config['project']['android']>;
@@ -119,12 +119,12 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
 
     if (args.interactive) {
       const users = checkUsers(device.deviceId as string, adbPath);
-
+      console.log('users', users);
       if (users && users.length > 1) {
         const user = await promptForUser(users);
 
         if (user) {
-          args.userId = user.id;
+          args.user = user.id;
         }
       }
     }
@@ -298,7 +298,7 @@ export default {
         'Path relative to project root where pre-built .apk binary lives.',
     },
     {
-      name: '--userId <number>',
+      name: '--user <number>',
       description: 'Id of the User Profile you want to install the app on.',
       parse: Number,
     },

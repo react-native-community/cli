@@ -24,7 +24,8 @@
     "semver": "^6.3.0",
     "strip-ansi": "^5.2.0",
     "sudo-prompt": "^9.0.0",
-    "wcwidth": "^1.0.1"
+    "wcwidth": "^1.0.1",
+    "yaml": "^2.2.1"
   },
   "files": [
     "build",

@@ -1,5 +1,13 @@
+import fs from 'fs';
 import path from 'path';
-import {ConfigT, InputConfigT, loadConfig, resolveConfig} from 'metro-config';
+import {
+  ConfigT,
+  InputConfigT,
+  loadConfig,
+  mergeConfig,
+  resolveConfig,
+} from 'metro-config';
+import {getDefaultConfig} from '@react-native/metro-config';
 import {CLIError, logger} from '@react-native-community/cli-tools';
 import type {Config} from '@react-native-community/cli-types';
 import {reactNativePlatformResolver} from './metroPlatformResolver';
@@ -67,8 +75,8 @@ export interface ConfigOptionsT {
 /**
  * Load Metro config.
  *
- * Allows the CLI to override certain defaults in the base `metro.config.js`
- * based on dynamic user options in `ctx`.
+ * Allows the CLI to override select values in `metro.config.js` based on
+ * dynamic user options in `ctx`.
  */
 export default async function loadMetroConfig(
   ctx: ConfigLoadingContext,
@@ -89,17 +97,32 @@ export default async function loadMetroConfig(
   // @ts-ignore resolveConfig return value is mistyped
   logger.debug(`Reading Metro config from ${projectConfig.filepath}`);
 
-  try {
-    require.resolve('@react-native/metro-config', {
-      paths: [ctx.root],
-    });
-  } catch (e) {
+  if (
+    !/['"']@react-native\/metro-config['"']/.test(
+      fs
+        // @ts-ignore resolveConfig return value is mistyped
+        .readFileSync(projectConfig.filepath, 'utf8'),
+    )
+  ) {
     logger.warn(
-      "From React Native 0.72, your 'metro.config.js' file should " +
-        "extend '@react-native/metro-config', however it's not present in your " +
-        "project's devDependencies. Please install '@react-native/metro-config'.",
+      'From React Native 0.72, your metro.config.js file should extend' +
+        "'@react-native/metro-config'. Please see the React Native 0.72 " +
+        'changelog, or copy the template at:\n' +
+        'https://github.com/facebook/react-native/blob/main/packages/react-native/template/metro.config.js',
     );
+    logger.warn('Falling back to internal defaults.');
+
+    const loadedConfig = await loadConfig(
+      {cwd: ctx.root, ...options},
+      // Provide @react-native/metro-config defaults on top of Metro defaults
+      getDefaultConfig(ctx.root),
+    );
+
+    return mergeConfig(loadedConfig, overrideConfig);
   }
 
-  return loadConfig({cwd: ctx.root, ...options}, overrideConfig);
+  return mergeConfig(
+    await loadConfig({cwd: ctx.root, ...options}),
+    overrideConfig,
+  );
 }

@@ -17,8 +17,8 @@
     "lint": "eslint --ext .js,.ts . --cache --report-unused-disable-directives",
     "postinstall": "yarn build",
     "link-packages": "node ./scripts/linkPackages.js",
-    "publish": "yarn build-clean-all && yarn install && lerna publish",
-    "publish:next": "yarn build-clean-all && yarn install && lerna publish --dist-tag next",
+    "publish": "yarn build-clean-all && yarn install && lerna publish --force-publish",
+    "publish:next": "yarn build-clean-all && yarn install && lerna publish --force-publish --dist-tag next",
     "prepare": "husky install"
   },
   "devDependencies": {

@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/cli-config",
-  "version": "11.1.1",
+  "version": "12.0.0-alpha.0",
   "license": "MIT",
   "main": "build/index.js",
   "publishConfig": {
@@ -8,7 +8,7 @@
   },
   "types": "build/index.d.ts",
   "dependencies": {
-    "@react-native-community/cli-tools": "11.1.1",
+    "@react-native-community/cli-tools": "12.0.0-alpha.0",
     "chalk": "^4.1.2",
     "cosmiconfig": "^5.1.0",
     "deepmerge": "^4.3.0",
@@ -21,7 +21,7 @@
     "!*.map"
   ],
   "devDependencies": {
-    "@react-native-community/cli-types": "11.1.1",
+    "@react-native-community/cli-types": "12.0.0-alpha.0",
     "@types/cosmiconfig": "^5.0.3",
     "@types/glob": "^7.1.1"
   },

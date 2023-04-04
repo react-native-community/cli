@@ -9,7 +9,7 @@
   "dependencies": {
     "@react-native-community/cli-server-api": "11.1.1",
     "@react-native-community/cli-tools": "11.1.1",
-    "@react-native/metro-config": "^0.72.1",
+    "@react-native/metro-config": "^0.73.0",
     "chalk": "^4.1.2",
     "execa": "^5.0.0",
     "metro": "0.76.0",

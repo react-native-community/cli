@@ -2673,17 +2673,17 @@
   resolved "https://registry.yarnpkg.com/@react-native-community/eslint-plugin/-/eslint-plugin-1.1.0.tgz#e42b1bef12d2415411519fd528e64b593b1363dc"
   integrity sha512-W/J0fNYVO01tioHjvYWQ9m6RgndVtbElzYozBq1ZPrHO/iCzlqoySHl4gO/fpCl9QEFjvJfjPgtPMTMlsoq5DQ==
 
-"@react-native/js-polyfills@^0.72.1":
-  version "0.72.1"
-  resolved "https://registry.yarnpkg.com/@react-native/js-polyfills/-/js-polyfills-0.72.1.tgz#905343ef0c51256f128256330fccbdb35b922291"
-  integrity sha512-cRPZh2rBswFnGt5X5EUEPs0r+pAsXxYsifv/fgy9ZLQokuT52bPH+9xjDR+7TafRua5CttGW83wP4TntRcWNDA==
+"@react-native/js-polyfills@^0.73.0":
+  version "0.73.0"
+  resolved "https://registry.yarnpkg.com/@react-native/js-polyfills/-/js-polyfills-0.73.0.tgz#d1becae77740c705392122684a55b373e610ab63"
+  integrity sha512-3/+q+l86xvV8xjx29On9/Dn0eWjo5MHYuuALHqyOlQIs3vLk/rQB4rn4izObiurhH3utXxqVnbOk+TB9yJo4ng==
 
-"@react-native/metro-config@^0.72.1":
-  version "0.72.1"
-  resolved "https://registry.yarnpkg.com/@react-native/metro-config/-/metro-config-0.72.1.tgz#57f212700db2d160e8beff6163558310c2c82220"
-  integrity sha512-BxGfuMK/cXwJxChE4/T6nE4qOdwGLM9iUFFKpcyh9Nks0702qTTvwpjkFbJvlkpe4yulAZh8CKLJrRDVzGGbfQ==
+"@react-native/metro-config@^0.73.0":
+  version "0.73.0"
+  resolved "https://registry.yarnpkg.com/@react-native/metro-config/-/metro-config-0.73.0.tgz#7601d2f4ba2252a4e359f8fda21008daf5f31eb2"
+  integrity sha512-b+q8Ot6nxPE2PXEua20Q0vhXYpVtVjUaTX/hv+7mL5hLzKeIWq/bIxF04GLWT93BBjGSlL0xaZ7iGIQNN75Hog==
   dependencies:
-    "@react-native/js-polyfills" "^0.72.1"
+    "@react-native/js-polyfills" "^0.73.0"
     metro-config "0.76.0"
     metro-react-native-babel-transformer "0.76.0"
     metro-runtime "0.76.0"

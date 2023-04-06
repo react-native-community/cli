@@ -25,8 +25,11 @@ export function startServerInNewWindow(
     ? `set RCT_METRO_PORT=${port}\nset PROJECT_ROOT=${projectRoot}\nset REACT_NATIVE_PATH=${reactNativePath}`
     : `export RCT_METRO_PORT=${port}\nexport PROJECT_ROOT=${projectRoot}\nexport REACT_NATIVE_PATH=${reactNativePath}`;
   const nodeModulesPath = resolveNodeModuleDir(projectRoot, '.bin');
-  const cliPluginMetroPath = path.dirname(
-    require.resolve('@react-native-community/cli-plugin-metro/package.json'),
+  const cliPluginMetroPath = path.join(
+    path.dirname(
+      require.resolve('@react-native-community/cli-plugin-metro/package.json'),
+    ),
+    'build',
   );
 
   /**

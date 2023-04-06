@@ -7,9 +7,9 @@ import {
   mergeConfig,
   resolveConfig,
 } from 'metro-config';
-import {getDefaultConfig} from '@react-native/metro-config';
 import {CLIError, logger} from '@react-native-community/cli-tools';
 import type {Config} from '@react-native-community/cli-types';
+import getDefaultMetroConfig from './getDefaultMetroConfig';
 import {reactNativePlatformResolver} from './metroPlatformResolver';
 
 export type {Config};
@@ -114,8 +114,8 @@ export default async function loadMetroConfig(
 
     const loadedConfig = await loadConfig(
       {cwd: ctx.root, ...options},
-      // Provide @react-native/metro-config defaults on top of Metro defaults
-      getDefaultConfig(ctx.root),
+      // Provide React Native defaults on top of Metro defaults
+      getDefaultMetroConfig(ctx),
     );
 
     return mergeConfig(loadedConfig, overrideConfig);

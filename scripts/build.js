@@ -36,6 +36,7 @@ const BUILD_DIR = 'build';
 const JS_FILES_PATTERN = '**/*.js';
 const TS_FILE_PATTERN = '**/*.ts';
 const IGNORE_PATTERN = '**/__{tests,mocks,fixtures}__/**';
+const FILES_WITH_755_PERMISSION = ['launchPackager.command'];
 
 const transformOptions = require('../babel.config.js');
 
@@ -79,11 +80,19 @@ function buildFile(file, silent) {
 
   fs.mkdirSync(path.dirname(destPath), {mode: 0o777, recursive: true});
 
+  const fileName = path.basename(file);
+
   if (
     !micromatch.isMatch(file, JS_FILES_PATTERN) &&
     !micromatch.isMatch(file, TS_FILE_PATTERN)
   ) {
-    fs.createReadStream(file).pipe(fs.createWriteStream(destPath));
+    if (FILES_WITH_755_PERMISSION.includes(fileName)) {
+      fs.createReadStream(file).pipe(
+        fs.createWriteStream(destPath, {mode: 0o755}),
+      );
+    } else {
+      fs.createReadStream(file).pipe(fs.createWriteStream(destPath));
+    }
     silent ||
       process.stdout.write(
         `${
@@ -95,12 +104,11 @@ function buildFile(file, silent) {
       );
   } else {
     const options = Object.assign({}, transformOptions);
-    const filename = path.basename(destPath);
 
     let {code, map} = babel.transformFileSync(file, options);
 
     if (!file.endsWith('.d.ts') && map.sources.length > 0) {
-      code = `${code}\n\n//# sourceMappingURL=${filename}.map`;
+      code = `${code}\n\n//# sourceMappingURL=${fileName}.map`;
       map.sources = [path.relative(path.dirname(destPath), file)];
       fs.writeFileSync(`${destPath}.map`, JSON.stringify(map));
     }

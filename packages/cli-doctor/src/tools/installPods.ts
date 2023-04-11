@@ -13,7 +13,6 @@ import {Loader} from '../types';
 
 async function runPodInstall(
   loader: Loader,
-  directory: string,
   shouldHandleRepoUpdate: boolean = true,
 ) {
   try {
@@ -37,7 +36,7 @@ async function runPodInstall(
      */
     if (stderr.includes('pod repo update') && shouldHandleRepoUpdate) {
       await runPodUpdate(loader);
-      await runPodInstall(loader, directory, false);
+      await runPodInstall(loader, false);
     } else {
       loader.fail();
       logger.error(stderr);
@@ -117,13 +116,7 @@ async function installCocoaPods(loader: Loader) {
   }
 }
 
-async function installPods({
-  directory,
-  loader,
-}: {
-  directory: string;
-  loader?: Loader;
-}) {
+async function installPods(loader?: Loader) {
   loader = loader || new NoopLoader();
   try {
     if (!fs.existsSync('ios')) {
@@ -152,7 +145,7 @@ async function installPods({
       await installCocoaPods(loader);
     }
 
-    await runPodInstall(loader, directory);
+    await runPodInstall(loader);
   } finally {
     process.chdir('..');
   }

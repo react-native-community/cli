@@ -140,7 +140,6 @@ async function createFromTemplate({
         npm,
         loader,
         root: projectDirectory,
-        directory,
       });
     } else {
       loader.succeed('Dependencies installation skipped');
@@ -154,12 +153,10 @@ async function createFromTemplate({
 }
 
 async function installDependencies({
-  directory,
   npm,
   loader,
   root,
 }: {
-  directory: string;
   npm?: boolean;
   loader: Loader;
   root: string;
@@ -173,7 +170,7 @@ async function installDependencies({
   });
 
   if (process.platform === 'darwin') {
-    await installPods({directory, loader});
+    await installPods(loader);
   }
 
   loader.succeed();

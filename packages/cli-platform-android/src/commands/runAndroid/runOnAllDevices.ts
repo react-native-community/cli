@@ -10,6 +10,7 @@ import chalk from 'chalk';
 import execa from 'execa';
 import {Config} from '@react-native-community/cli-types';
 import {
+  link,
   logger,
   CLIError,
   printRunDoctorTip,
@@ -137,6 +138,14 @@ function createInstallError(error: Error & {stderr: string}) {
     message = `Please accept all necessary Android SDK licenses using Android SDK Manager: "${chalk.bold(
       '$ANDROID_HOME/tools/bin/sdkmanager --licenses',
     )}."`;
+  } else if (stderr.includes('requires Java')) {
+    message = `Looks like your Android environment is not properly set. Please go to ${chalk.dim.underline(
+      link.docs('environment-setup', {
+        hash: 'jdk-studio',
+        guide: 'native',
+        platform: 'android',
+      }),
+    )} and follow the React Native CLI QuickStart guide to install the compatible version of JDK.`;
   }
 
   return new CLIError(

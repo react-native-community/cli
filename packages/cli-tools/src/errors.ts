@@ -24,5 +24,5 @@ export class CLIError extends Error {
  */
 export class UnknownProjectError extends Error {}
 
-export const inlineString = (str: string) =>
+export const inlineString = (str: string = '') =>
   str.replace(/(\s{2,})/gm, ' ').trim();

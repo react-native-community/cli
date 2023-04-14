@@ -89,19 +89,15 @@ export default async function loadMetroConfig(
 
   const projectConfig = await resolveConfig(undefined, ctx.root);
 
-  // @ts-ignore resolveConfig return value is mistyped
   if (projectConfig.isEmpty) {
     throw new CLIError(`No metro config found in ${ctx.root}`);
   }
 
-  // @ts-ignore resolveConfig return value is mistyped
   logger.debug(`Reading Metro config from ${projectConfig.filepath}`);
 
   if (
     !/['"']@react-native\/metro-config['"']/.test(
-      fs
-        // @ts-ignore resolveConfig return value is mistyped
-        .readFileSync(projectConfig.filepath, 'utf8'),
+      fs.readFileSync(projectConfig.filepath, 'utf8'),
     )
   ) {
     logger.warn(

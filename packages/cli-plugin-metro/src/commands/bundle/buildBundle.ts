@@ -9,7 +9,7 @@
 import Server from 'metro/src/Server';
 // @ts-ignore - no typed definition for the package
 const outputBundle = require('metro/src/shared/output/bundle');
-import type {BundleOptions} from 'metro/shared/types';
+import type {BundleOptions} from 'metro/src/shared/types';
 import type {ConfigT} from 'metro-config';
 import path from 'path';
 import chalk from 'chalk';

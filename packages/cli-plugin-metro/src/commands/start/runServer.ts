@@ -7,7 +7,7 @@
 
 // @ts-ignore untyped metro
 import Metro from 'metro';
-import type {Server} from 'metro';
+import type Server from 'metro/src/Server';
 import type {Middleware} from 'metro-config';
 import {Terminal} from 'metro-core';
 import path from 'path';
@@ -101,7 +101,6 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
     secure: args.https,
     secureCert: args.cert,
     secureKey: args.key,
-    hmrEnabled: true,
     // @ts-ignore - ws.Server types are incompatible
     websocketEndpoints,
   });

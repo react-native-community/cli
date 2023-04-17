@@ -175,20 +175,12 @@ export async function replacePlaceholderWithPackageName({
     const iosFile = isIosFile(filePath);
 
     if (!(await fs.stat(filePath)).isDirectory()) {
-      let newName = startsWithCom
-        ? cleanPackageName
-        : `com.${cleanPackageName}`;
-
-      if (iosFile) {
-        newName = projectName;
-      }
+      let newName = iosFile ? projectName : cleanPackageName;
 
       //replace bundleID for iOS
       await replaceNameInUTF8File(
         filePath,
-        `PRODUCT_BUNDLE_IDENTIFIER = "${
-          startsWithCom ? cleanPackageName : `com.${cleanPackageName}`
-        }"`,
+        `PRODUCT_BUNDLE_IDENTIFIER = "${cleanPackageName}"`,
         'PRODUCT_BUNDLE_IDENTIFIER = "(.*)"',
       );
 

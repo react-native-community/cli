@@ -216,7 +216,7 @@ const installDeps = async (
   }
 };
 
-const installCocoaPodsDeps = async (projectDir: string) => {
+const installCocoaPodsDeps = async () => {
   if (process.platform === 'darwin') {
     try {
       logger.info(
@@ -224,9 +224,7 @@ const installCocoaPodsDeps = async (projectDir: string) => {
           '(this may take a few minutes)',
         )}`,
       );
-      await installPods({
-        directory: projectDir.split('/').pop() || '',
-      });
+      await installPods();
     } catch (error) {
       if ((error as UpgradeError).stderr) {
         logger.debug(
@@ -372,7 +370,7 @@ async function upgrade(argv: Array<string>, ctx: Config) {
   if (patch === '') {
     logger.info('Diff has no changes to apply, proceeding further');
     await installDeps(projectDir, newVersion, repoName);
-    await installCocoaPodsDeps(projectDir);
+    await installCocoaPodsDeps();
 
     logger.success(
       `Upgraded React Native to v${newVersion} 🎉. Now you can review and commit the changes`,
@@ -413,7 +411,7 @@ async function upgrade(argv: Array<string>, ctx: Config) {
       }
     } else {
       await installDeps(projectDir, newVersion, repoName);
-      await installCocoaPodsDeps(projectDir);
+      await installCocoaPodsDeps();
       logger.info('Running "git status" to check what changed...');
       await execa('git', ['status'], {stdio: 'inherit'});
     }

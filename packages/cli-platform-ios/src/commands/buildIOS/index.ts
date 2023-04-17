@@ -212,7 +212,8 @@ export const iosBuildOptions = [
   },
   {
     name: '--mode <string>',
-    description: 'Explicitly set the scheme configuration to use',
+    description:
+      'Explicitly set the scheme configuration to use. This option is case sensitive.',
   },
   {
     name: '--configuration <string>',

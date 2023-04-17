@@ -26,13 +26,19 @@ function tryLaunchAppOnDevice(
     : [packageName, args.mainActivity].filter(Boolean).join('.');
 
   try {
+    // Here we're using the same flags as Android Studio to launch the app
     const adbArgs = [
       'shell',
       'am',
       'start',
       '-n',
       `${packageNameWithSuffix}/${activityToLaunch}`,
+      '-a',
+      'android.intent.action.MAIN',
+      '-c',
+      'android.intent.category.LAUNCHER',
     ];
+
     if (device) {
       adbArgs.unshift('-s', device);
       logger.info(`Starting the app on "${device}"...`);

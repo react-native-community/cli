@@ -91,7 +91,7 @@ async function buildAndroid(
     androidProject.appName,
     args.mode || args.variant,
     tasks,
-    'assemble',
+    'bundle',
     androidProject.sourceDir,
   );
 

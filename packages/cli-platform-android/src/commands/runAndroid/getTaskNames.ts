@@ -7,7 +7,7 @@ export function getTaskNames(
   appName: string,
   mode: BuildFlags['mode'] = 'debug',
   tasks: BuildFlags['tasks'],
-  taskPrefix: 'assemble' | 'install',
+  taskPrefix: 'assemble' | 'install' | 'bundle',
   sourceDir: string,
 ): Array<string> {
   let appTasks = tasks || [taskPrefix + toPascalCase(mode)];

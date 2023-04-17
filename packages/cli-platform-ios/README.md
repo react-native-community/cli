@@ -47,6 +47,16 @@ react-native run-ios --simulator "iPhone 14"
 
 [Deprecated] Explicitly set the scheme configuration to use default: 'Debug'.
 
+#### `--mode <string>`
+
+Explicitly set the scheme configuration to use. This option is case sensitive.
+
+Example:
+
+```sh
+react-native run-ios --mode "Release"
+```
+
 #### `--scheme <string>`
 
 Explicitly set Xcode scheme to use.
@@ -126,6 +136,16 @@ react-native build-ios --simulator "iPhone 14"
 #### `--configuration <string>`
 
 [Deprecated] Explicitly set the scheme configuration to use default: 'Debug'.
+
+#### `--mode <string>`
+
+Explicitly set the scheme configuration to use. This option is case sensitive.
+
+Example:
+
+```sh
+react-native build-ios --mode "Release"
+```
 
 #### `--scheme <string>`
 

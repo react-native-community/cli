@@ -101,49 +101,33 @@ async function processDotfiles(filePath: string) {
   await renameFile(filePath, `_${dotfile}`, `.${dotfile}`);
 }
 
-function getPackageNameDetails(packageName: string) {
-  const cleanPackageName = packageName.replace(/[^\p{L}\p{N}.]+/gu, '');
-  const packageNameArray = cleanPackageName.split('.');
-  const [prefix, ...segments] = packageNameArray;
-  const startsWithCom = prefix === 'com';
-
-  return {
-    cleanPackageName,
-    packageNameArray,
-    prefix,
-    segments,
-    startsWithCom,
-  };
-}
-
 async function createAndroidPackagePaths(
   filePath: string,
   packageName: string,
 ) {
-  const {startsWithCom, segments, packageNameArray} = getPackageNameDetails(
-    packageName,
-  );
-  const pathFolders = filePath.split('/').slice(-2);
-  if (pathFolders[0] === 'java' && pathFolders[1] === 'com') {
-    const segmentsList = startsWithCom ? segments : packageNameArray;
+  const pathParts = filePath.split('/').slice(-2);
+
+  if (pathParts[0] === 'java' && pathParts[1] === 'com') {
+    const pathToFolders = filePath.split('/').slice(0, -2).join('/');
+    const segmentsList = packageName.split('.');
 
     if (segmentsList.length > 1) {
       const initialDir = process.cwd();
-      process.chdir(filePath);
+      process.chdir(filePath.split('/').slice(0, -1).join('/'));
 
       try {
         await fs.rename(
           `${filePath}/${segmentsList.join('.')}`,
-          `${filePath}/${segmentsList[segmentsList.length - 1]}`,
+          `${pathToFolders}/${segmentsList[segmentsList.length - 1]}`,
         );
+        await fs.rmdir(filePath);
 
         for (const segment of segmentsList) {
           fs.mkdirSync(segment);
           process.chdir(segment);
         }
-
         await fs.rename(
-          `${filePath}/${segmentsList[segmentsList.length - 1]}`,
+          `${pathToFolders}/${segmentsList[segmentsList.length - 1]}`,
           process.cwd(),
         );
       } catch {
@@ -162,10 +146,7 @@ export async function replacePlaceholderWithPackageName({
   packageName,
 }: Omit<Required<PlaceholderConfig>, 'projectTitle'>) {
   validatePackageName(packageName);
-
-  const {cleanPackageName, segments, startsWithCom} = getPackageNameDetails(
-    packageName,
-  );
+  const cleanPackageName = packageName.replace(/[^\p{L}\p{N}.]+/gu, '');
 
   for (const filePath of walk(process.cwd()).reverse()) {
     if (shouldIgnoreFile(filePath)) {
@@ -209,7 +190,7 @@ export async function replacePlaceholderWithPackageName({
       }
     }
 
-    let fileName = startsWithCom ? segments.join('.') : cleanPackageName;
+    let fileName = cleanPackageName;
 
     if (shouldRenameFile(filePath, placeholderName)) {
       if (iosFile) {
@@ -225,7 +206,7 @@ export async function replacePlaceholderWithPackageName({
       );
     }
     try {
-      await createAndroidPackagePaths(filePath, packageName);
+      await createAndroidPackagePaths(filePath, cleanPackageName);
     } catch (error) {
       throw new CLIError('Failed to create correct paths for Android.');
     }

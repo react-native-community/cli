@@ -210,14 +210,13 @@ describe('replacePlaceholderWithPackageName', () => {
       placeholderTitle: 'Test',
       packageName: PACKAGE_NAME,
     });
-    const [prefix, ...segments] = PACKAGE_NAME.split('.');
 
     const mainActivityFile = fs.readFileSync(
       path.resolve(
         testPath,
         'android',
-        prefix,
-        segments.join('.'),
+        'com',
+        PACKAGE_NAME,
         'MainActivity.java',
       ),
       'utf8',

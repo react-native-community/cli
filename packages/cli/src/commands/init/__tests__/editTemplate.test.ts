@@ -9,6 +9,7 @@ import {
   changePlaceholderInTemplate,
   replacePlaceholderWithPackageName,
   validatePackageName,
+  replaceNameInUTF8File,
 } from '../editTemplate';
 
 const FIXTURE_DIR = path.resolve(
@@ -237,5 +238,54 @@ describe('validatePackageName', () => {
     expect(() => validatePackageName('com.organization.a@pp')).toThrowError(
       'The com.organization.a@pp package name is not valid. It can contain only alphanumeric characters and dots.',
     );
+  });
+});
+
+describe('replaceNameInUTF8File', () => {
+  test('should replace string in utf8 file', async () => {
+    const pathToUtf8File = path.join(
+      testPath,
+      'ios',
+      PLACEHOLDER_NAME,
+      'project.pbxproj',
+    );
+
+    const textToReplace = `PRODUCT_BUNDLE_IDENTIFIER = "${PACKAGE_NAME}"`;
+
+    const beforeReplacement = await fs.readFile(pathToUtf8File, 'utf8');
+
+    await replaceNameInUTF8File(
+      pathToUtf8File,
+      textToReplace,
+      'PRODUCT_BUNDLE_IDENTIFIER = "(.*)"',
+    );
+
+    const afterReplacement = await fs.readFile(pathToUtf8File, 'utf8');
+
+    expect(beforeReplacement).not.toBe(afterReplacement);
+    expect(afterReplacement).toContain(textToReplace);
+  });
+
+  test('should not replace string in utf8 file', async () => {
+    const fsWriteFileSpy = jest.spyOn(fs, 'writeFile');
+    const pathToUtf8File = path.join(
+      testPath,
+      'ios',
+      PLACEHOLDER_NAME,
+      'project.pbxproj',
+    );
+
+    const beforeReplacement = await fs.readFile(pathToUtf8File, 'utf8');
+
+    await replaceNameInUTF8File(
+      pathToUtf8File,
+      'random-string',
+      'random-string',
+    );
+
+    const afterReplacement = await fs.readFile(pathToUtf8File, 'utf8');
+
+    expect(beforeReplacement).toEqual(afterReplacement);
+    expect(fsWriteFileSpy).toHaveBeenCalledTimes(0);
   });
 });

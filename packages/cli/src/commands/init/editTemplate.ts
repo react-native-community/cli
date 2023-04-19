@@ -34,7 +34,7 @@ export function validatePackageName(packageName: string) {
   }
 }
 
-async function replaceNameInUTF8File(
+export async function replaceNameInUTF8File(
   filePath: string,
   projectName: string,
   templateName: string,

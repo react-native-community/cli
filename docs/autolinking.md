@@ -40,7 +40,7 @@ The implementation ensures that a library is imported only once. If you need to 
 
 ### Example
 
-See example usage in React Native template's [Podfile](https://github.com/facebook/react-native/blob/main/template/ios/Podfile).
+See example usage in React Native template's [Podfile](https://github.com/facebook/react-native/blob/main/packages/react-native/template/ios/Podfile).
 
 ## Platform Android
 

@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/cli-tools",
-  "version": "11.2.0",
+  "version": "11.2.1",
   "license": "MIT",
   "main": "build/index.js",
   "publishConfig": {
@@ -18,7 +18,7 @@
     "shell-quote": "^1.7.3"
   },
   "devDependencies": {
-    "@react-native-community/cli-types": "11.2.0",
+    "@react-native-community/cli-types": "11.2.1",
     "@types/lodash": "^4.14.149",
     "@types/mime": "^2.0.1",
     "@types/node": "^16.0.0",

@@ -91,9 +91,10 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
 
   let scheme = args.scheme || inferredSchemeName;
   let mode = args.mode;
+  let target = args.target;
 
   if (args.interactive) {
-    const selection = await selectFromInteractiveMode({scheme, mode});
+    const selection = await selectFromInteractiveMode({scheme, mode, target});
 
     if (selection.scheme) {
       scheme = selection.scheme;
@@ -102,9 +103,13 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     if (selection.mode) {
       mode = selection.mode;
     }
+
+    if (selection.target) {
+      target = selection.target;
+    }
   }
 
-  const modifiedArgs = {...args, scheme, mode};
+  const modifiedArgs = {...args, scheme, mode, target};
 
   modifiedArgs.mode = getConfigurationScheme(
     {scheme: modifiedArgs.scheme, mode: modifiedArgs.mode},
@@ -291,11 +296,12 @@ async function runOnSimulator(
       args,
     );
 
-    appPath = getBuildPath(
+    appPath = await getBuildPath(
       xcodeProject,
       args.mode || args.configuration,
       buildOutput,
       scheme,
+      args.target,
     );
   } else {
     appPath = args.binaryPath;
@@ -372,11 +378,12 @@ async function runOnDevice(
       args,
     );
 
-    const appPath = getBuildPath(
+    const appPath = await getBuildPath(
       xcodeProject,
       args.mode || args.configuration,
       buildOutput,
       scheme,
+      args.target,
       true,
     );
     const appProcess = child_process.spawn(`${appPath}/${scheme}`, [], {
@@ -394,11 +401,12 @@ async function runOnDevice(
         args,
       );
 
-      appPath = getBuildPath(
+      appPath = await getBuildPath(
         xcodeProject,
         args.mode || args.configuration,
         buildOutput,
         scheme,
+        args.target,
       );
     } else {
       appPath = args.binaryPath;
@@ -437,29 +445,54 @@ function bootSimulator(selectedSimulator: Device) {
   child_process.spawnSync('xcrun', ['simctl', 'boot', selectedSimulator.udid]);
 }
 
-function getTargetPaths(buildSettings: string) {
+async function getTargetPaths(
+  buildSettings: string,
+  scheme: string,
+  target: string | undefined,
+) {
   const settings = JSON.parse(buildSettings);
 
-  // Find app in all building settings - look for WRAPPER_EXTENSION: 'app',
-  for (const i in settings) {
-    const wrapperExtension = settings[i].buildSettings.WRAPPER_EXTENSION;
+  const targets = settings.map(({target}: any) => target);
+  let selectedTarget;
 
-    if (wrapperExtension === 'app') {
-      return {
-        targetBuildDir: settings[i].buildSettings.TARGET_BUILD_DIR,
-        executableFolderPath: settings[i].buildSettings.EXECUTABLE_FOLDER_PATH,
-      };
+  if (target) {
+    if (!targets.includes(target)) {
+      selectedTarget = targets[0];
+
+      logger.info(
+        `Target ${chalk.bold(target)} not found for scheme ${chalk.bold(
+          scheme,
+        )}, automatically selected target ${chalk.bold(targets[0])}`,
+      );
+    } else {
+      selectedTarget = target;
     }
+  }
+
+  // Find app in all building settings - look for WRAPPER_EXTENSION: 'app',
+
+  const targetIndex = targets.indexOf(selectedTarget);
+
+  const wrapperExtension =
+    settings[targetIndex].buildSettings.WRAPPER_EXTENSION;
+
+  if (wrapperExtension === 'app') {
+    return {
+      targetBuildDir: settings[targetIndex].buildSettings.TARGET_BUILD_DIR,
+      executableFolderPath:
+        settings[targetIndex].buildSettings.EXECUTABLE_FOLDER_PATH,
+    };
   }
 
   return {};
 }
 
-function getBuildPath(
+async function getBuildPath(
   xcodeProject: IOSProjectInfo,
   mode: BuildFlags['mode'],
   buildOutput: string,
   scheme: string,
+  target: string,
   isCatalyst: boolean = false,
 ) {
   const buildSettings = child_process.execFileSync(
@@ -478,7 +511,12 @@ function getBuildPath(
     ],
     {encoding: 'utf8'},
   );
-  const {targetBuildDir, executableFolderPath} = getTargetPaths(buildSettings);
+
+  const {targetBuildDir, executableFolderPath} = await getTargetPaths(
+    buildSettings,
+    scheme,
+    target,
+  );
 
   if (!targetBuildDir) {
     throw new CLIError('Failed to get the target build directory.');

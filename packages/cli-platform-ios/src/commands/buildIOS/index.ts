@@ -69,9 +69,10 @@ async function buildIOS(_: Array<string>, ctx: Config, args: FlagsT) {
 
   let scheme = args.scheme || inferredSchemeName;
   let mode = args.mode;
+  let target = args.target;
 
   if (args.interactive) {
-    const selection = await selectFromInteractiveMode({scheme, mode});
+    const selection = await selectFromInteractiveMode({scheme, mode, target});
 
     if (selection.scheme) {
       scheme = selection.scheme;
@@ -79,6 +80,10 @@ async function buildIOS(_: Array<string>, ctx: Config, args: FlagsT) {
 
     if (selection.mode) {
       mode = selection.mode;
+    }
+
+    if (selection.target) {
+      target = selection.target;
     }
   }
 
@@ -260,6 +265,10 @@ export const iosBuildOptions = [
     name: '--extra-params <string>',
     description: 'Custom params that will be passed to xcodebuild command.',
     parse: (val: string) => val.split(' '),
+  },
+  {
+    name: '--target <string>',
+    description: 'Explicitly set Xcode target to use.',
   },
 ];
 

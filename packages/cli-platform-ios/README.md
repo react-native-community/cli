@@ -61,6 +61,10 @@ react-native run-ios --mode "Release"
 
 Explicitly set Xcode scheme to use.
 
+#### `--target <string>`
+
+Explicitly set Xcode target to use.
+
 #### `--device [string]`
 
 Explicitly set device to use by name. The value is not required if you have a single device connected.
@@ -150,6 +154,10 @@ react-native build-ios --mode "Release"
 #### `--scheme <string>`
 
 Explicitly set Xcode scheme to use.
+
+#### `--target <string>`
+
+Explicitly set Xcode target to use.
 
 #### `--device [string]`
 

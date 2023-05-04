@@ -34,6 +34,23 @@ export async function promptForConfigurationSelection(
   return configuration;
 }
 
+export async function promptForTargetSelection(
+  targets: string[],
+  scheme: string,
+): Promise<string> {
+  const {target} = await prompts({
+    name: 'target',
+    type: 'select',
+    message: `Select the target you want to use for scheme ${scheme}`,
+    choices: targets.map((value) => ({
+      title: value,
+      value: value,
+    })),
+  });
+
+  return target;
+}
+
 export async function promptForDeviceSelection(
   availableDevices: Device[],
 ): Promise<Device | undefined> {

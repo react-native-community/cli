@@ -22,6 +22,11 @@ import {installPods} from '@react-native-community/cli-doctor';
 import banner from './banner';
 import TemplateAndVersionError from './errors/TemplateAndVersionError';
 import addNodeLinker from '../../tools/addNodeLinker';
+import {getYarnVersionIfAvailable} from '../../tools/yarn';
+import semver from 'semver';
+import prompts from 'prompts';
+import findUp from 'find-up';
+import {parse, stringify} from 'yaml';
 
 const DEFAULT_VERSION = 'latest';
 
@@ -79,6 +84,32 @@ function getTemplateName(cwd: string) {
   return name;
 }
 
+async function overwriteYarnrcFile(filePath: string, fileContent: any) {
+  logger.info(
+    'Detected ".yarnrc.yml" file but it doesn\'t contain "nodeLinker: node-modules". To create React Native project you need to use "node-modules" as "nodeLinker"',
+  );
+
+  const {value} = await prompts({
+    type: 'confirm',
+    name: 'value',
+    message:
+      'Do you want to add "nodeLinker: node-modules" to "yarnrc.yml" file?',
+    initial: true,
+  });
+
+  if (value) {
+    fileContent.nodeLinker = 'node-modules';
+    fs.writeFileSync(filePath, stringify(fileContent), {
+      encoding: 'utf8',
+      flag: 'w',
+    });
+  } else {
+    throw new CLIError(
+      'In order to create React Native app you need to use "node-modules" as "nodeLinker" in ".yarnrc.yml", or use Yarn Classic.',
+    );
+  }
+}
+
 async function createFromTemplate({
   projectName,
   templateUri,
@@ -99,6 +130,79 @@ async function createFromTemplate({
   );
 
   try {
+    await PackageManager.init({
+      preferYarn: !npm,
+      silent: true,
+      root: templateSourceDir,
+    });
+
+    const yarnVersion = getYarnVersionIfAvailable();
+
+    if (!npm && yarnVersion !== null) {
+      if (semver.satisfies(yarnVersion, '>=3.0.0')) {
+        const yarnrcYmlPathLocation = await findUp('.yarnrc.yml', {
+          type: 'file',
+        });
+
+        if (yarnrcYmlPathLocation && fs.existsSync(yarnrcYmlPathLocation)) {
+          const yarnYmlContent = parse(
+            fs.readFileSync(yarnrcYmlPathLocation, 'utf8'),
+          );
+
+          if (
+            !yarnYmlContent.nodeLinker ||
+            yarnYmlContent.nodeLinker !== 'node-modules'
+          ) {
+            await overwriteYarnrcFile(yarnrcYmlPathLocation, yarnYmlContent);
+          }
+
+          addNodeLinker(templateSourceDir);
+        } else {
+          throw new CLIError(
+            'Failed to found "yarnrc.yml". To create React Native app without "yarnrc.yml" file you need to use Yarn Classic.',
+          );
+        }
+      } else if (semver.satisfies(yarnVersion, '>=2.0.0')) {
+        const yarnrcYmlPathLocation = await findUp('.yarnrc.yml', {
+          type: 'file',
+        });
+
+        if (yarnrcYmlPathLocation && fs.existsSync(yarnrcYmlPathLocation)) {
+          const yarnYmlContent = parse(
+            fs.readFileSync(yarnrcYmlPathLocation, 'utf8'),
+          );
+
+          if (
+            !yarnYmlContent.nodeLinker ||
+            yarnYmlContent.nodeLinker !== 'node-modules'
+          ) {
+            await overwriteYarnrcFile(yarnrcYmlPathLocation, yarnYmlContent);
+          }
+
+          addNodeLinker(templateSourceDir);
+        } else {
+          logger.info(
+            `You're using Yarn at ${yarnVersion} version but you don't have ".yarnrc.yml" with "nodeLinker: node-modules". To create project without ".yarnrc.yml" file you need to use Yarn Classic.`,
+          );
+
+          const {value} = await prompts({
+            type: 'confirm',
+            name: 'value',
+            message:
+              'Do you want to add ".yarnrc.yml" file with "nodeLinker: node-modules" to your project?',
+            initial: true,
+          });
+
+          if (value) {
+            addNodeLinker(projectDirectory);
+            addNodeLinker(templateSourceDir);
+          } else {
+            throw new CLIError('Aborting process.');
+          }
+        }
+      }
+    }
+
     loader.start();
 
     await installTemplatePackage(templateUri, templateSourceDir, npm);
@@ -163,10 +267,6 @@ async function installDependencies({
   root: string;
 }) {
   loader.start('Installing dependencies');
-
-  if (!npm) {
-    addNodeLinker(root);
-  }
 
   await PackageManager.installAll({
     preferYarn: !npm,

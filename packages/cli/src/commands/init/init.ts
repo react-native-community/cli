@@ -21,6 +21,7 @@ import * as PackageManager from '../../tools/packageManager';
 import {installPods} from '@react-native-community/cli-doctor';
 import banner from './banner';
 import TemplateAndVersionError from './errors/TemplateAndVersionError';
+import addNodeLinker from '../../tools/addNodeLinker';
 
 const DEFAULT_VERSION = 'latest';
 
@@ -162,6 +163,10 @@ async function installDependencies({
   root: string;
 }) {
   loader.start('Installing dependencies');
+
+  if (!npm) {
+    addNodeLinker(root);
+  }
 
   await PackageManager.installAll({
     preferYarn: !npm,

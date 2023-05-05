@@ -6,6 +6,7 @@ import copyFiles from '../../tools/copyFiles';
 import replacePathSepForRegex from '../../tools/replacePathSepForRegex';
 import fs from 'fs';
 import chalk from 'chalk';
+import addNodeLinker from '../../tools/addNodeLinker';
 
 export type TemplateConfig = {
   placeholderName: string;
@@ -26,6 +27,10 @@ export async function installTemplatePackage(
     silent: true,
     root,
   });
+
+  if (!npm) {
+    addNodeLinker(root);
+  }
 
   return PackageManager.install([templateName], {
     preferYarn: !npm,

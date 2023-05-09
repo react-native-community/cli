@@ -64,6 +64,7 @@ The following settings are available on iOS and Android:
 ```ts
 type IOSProjectParams = {
   sourceDir?: string;
+  watchModeCommandParams?: string[];
   unstable_reactLegacyComponentNames?: string[] | null;
 };
 
@@ -73,6 +74,7 @@ type AndroidProjectParams = {
   manifestPath?: string;
   packageName?: string;
   dependencyConfiguration?: string;
+  watchModeCommandParams?: string[];
   unstable_reactLegacyComponentNames?: string[] | null;
 };
 ```
@@ -81,6 +83,10 @@ type AndroidProjectParams = {
 
 A path to a directory where iOS source files are located. In most cases, you shouldn't need to set it, unless you have
 multiple `Podfile` files in your project.
+
+#### project.ios.watchModeCommandParams
+
+Array of strings that will be passed to the `react-native run-ios` command when running in watch mode.
 
 #### project.ios.unstable_reactLegacyComponentNames
 
@@ -113,6 +119,10 @@ See [`dependency.platforms.android.packageName`](dependencies.md#platformsandroi
 #### project.android.dependencyConfiguration
 
 See [`dependency.platforms.android.configuration`](dependencies.md#platformsandroiddependencyconfiguration)
+
+#### project.android.watchModeCommandParams
+
+Array of strings that will be passed to the `react-native run-android` command when running in watch mode.
 
 #### project.android.unstable_reactLegacyComponentNames
 

@@ -2,6 +2,7 @@ import readline from 'readline';
 import {logger, hookStdout} from '@react-native-community/cli-tools';
 import execa from 'execa';
 import chalk from 'chalk';
+import {Config} from '@react-native-community/cli-types';
 
 function printWatchModeInstructions() {
   logger.log(
@@ -13,7 +14,7 @@ function printWatchModeInstructions() {
   );
 }
 
-function enableWatchMode(messageSocket: any) {
+function enableWatchMode(messageSocket: any, ctx: Config) {
   // We need to set this to true to catch key presses individually.
   // As a result we have to implement our own method for exiting
   // and other commands (e.g. ctrl+c & ctrl+z)
@@ -55,9 +56,14 @@ function enableWatchMode(messageSocket: any) {
       logger.info('Opening developer menu...');
     } else if (name === 'i' || name === 'a') {
       logger.info(`Opening the app on ${name === 'i' ? 'iOS' : 'Android'}...`);
+      const params =
+        name === 'i'
+          ? ctx.project.ios?.watchModeCommandParams
+          : ctx.project.android?.watchModeCommandParams;
       execa('npx', [
         'react-native',
         name === 'i' ? 'run-ios' : 'run-android',
+        ...(params ?? []),
       ]).stdout?.pipe(process.stdout);
     } else {
       console.log(_key);

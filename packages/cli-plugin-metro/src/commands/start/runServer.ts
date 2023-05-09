@@ -108,7 +108,7 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
   reportEvent = eventsSocketEndpoint.reportEvent;
 
   if (args.interactive) {
-    enableWatchMode(messageSocketEndpoint);
+    enableWatchMode(messageSocketEndpoint, ctx);
   }
 
   // In Node 8, the default keep-alive for an HTTP connection is 5 seconds. In

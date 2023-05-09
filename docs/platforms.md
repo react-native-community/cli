@@ -77,6 +77,7 @@ type IOSProjectConfig = {
     name: string;
     isWorkspace: boolean;
   } | null;
+  watchModeCommandParams: string;
 };
 
 type AndroidProjectConfig = {
@@ -84,6 +85,7 @@ type AndroidProjectConfig = {
   appName: string;
   packageName: string;
   dependencyConfiguration?: string;
+  watchModeCommandParams: string;
 };
 ```
 

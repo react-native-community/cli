@@ -64,6 +64,7 @@ export function projectConfig(
     appName,
     packageName,
     dependencyConfiguration: userConfig.dependencyConfiguration,
+    watchModeCommandParams: userConfig.watchModeCommandParams,
     unstable_reactLegacyComponentNames:
       userConfig.unstable_reactLegacyComponentNames,
   };

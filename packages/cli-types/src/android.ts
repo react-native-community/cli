@@ -3,6 +3,7 @@ export interface AndroidProjectConfig {
   appName: string;
   packageName: string;
   dependencyConfiguration?: string;
+  watchModeCommandParams?: string[];
   unstable_reactLegacyComponentNames?: string[] | null;
 }
 
@@ -12,6 +13,7 @@ export type AndroidProjectParams = {
   manifestPath?: string;
   packageName?: string;
   dependencyConfiguration?: string;
+  watchModeCommandParams?: string[];
   unstable_reactLegacyComponentNames?: string[] | null;
 };
 

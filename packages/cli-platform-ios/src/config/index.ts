@@ -47,6 +47,7 @@ export function projectConfig(
 
   return {
     sourceDir,
+    watchModeCommandParams: userConfig.watchModeCommandParams,
     xcodeProject,
   };
 }

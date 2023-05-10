@@ -229,6 +229,10 @@ export const iosBuildOptions = [
       'Explicitly set device to use by name.  The value is not required if you have a single device connected.',
   },
   {
+    name: '--destination <string>',
+    description: 'Explicitly extend distination e.g. "arch=x86_64"',
+  },
+  {
     name: '--udid <string>',
     description: 'Explicitly set device to use by udid',
   },

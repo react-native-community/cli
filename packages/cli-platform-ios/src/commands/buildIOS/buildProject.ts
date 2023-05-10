@@ -20,6 +20,7 @@ export type BuildFlags = {
   port: number;
   terminal: string | undefined;
   interactive?: boolean;
+  destination?: string;
   extraParams?: string[];
 };
 
@@ -40,11 +41,12 @@ export function buildProject(
       '-scheme',
       scheme,
       '-destination',
-      udid
+      (udid
         ? `id=${udid}`
         : args.mode === 'Debug'
         ? 'generic/platform=iOS Simulator'
-        : 'generic/platform=iOS',
+        : 'generic/platform=iOS') +
+        (args.destination ? ',' + args.destination : ''),
     ];
 
     if (args.extraParams) {

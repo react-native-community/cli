@@ -126,6 +126,9 @@ react-native build-android --extra-params "-x lint -x test"
 
 Installs passed binary instead of building a fresh one. This command is not compatible with `--tasks`.
 
+#### `--user` <number | string>
+
+Id of the User Profile you want to install the app on.
 ### `log-android`
 
 Usage:

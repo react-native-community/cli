@@ -22,6 +22,7 @@ import path from 'path';
 import {build, runPackager, BuildFlags, options} from '../buildAndroid';
 import {promptForTaskSelection} from './listAndroidTasks';
 import {getTaskNames} from './getTaskNames';
+import {checkUsers, promptForUser} from './listAndroidUsers';
 
 export interface Flags extends BuildFlags {
   appId: string;
@@ -30,6 +31,7 @@ export interface Flags extends BuildFlags {
   deviceId?: string;
   listDevices?: boolean;
   binaryPath?: string;
+  user?: number | string;
 }
 
 export type AndroidProject = NonNullable<Config['project']['android']>;
@@ -121,6 +123,17 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
       );
     }
 
+    if (args.interactive) {
+      const users = checkUsers(device.deviceId as string, adbPath);
+      if (users && users.length > 1) {
+        const user = await promptForUser(users);
+
+        if (user) {
+          args.user = user.id;
+        }
+      }
+    }
+
     if (device.connected) {
       return runOnSpecificDevice(
         {...args, deviceId: device.deviceId},
@@ -167,14 +180,16 @@ function runOnSpecificDevice(
   // if coming from run-android command and we have selected task
   // from interactive mode we need to create appropriate build task
   // eg 'installRelease' -> 'assembleRelease'
-  const buildTask = selectedTask?.replace('install', 'assemble') ?? 'build';
+  const buildTask = selectedTask
+    ? [selectedTask.replace('install', 'assemble')]
+    : [];
 
   if (devices.length > 0 && deviceId) {
     if (devices.indexOf(deviceId) !== -1) {
       let gradleArgs = getTaskNames(
         androidProject.appName,
         args.mode || args.variant,
-        args.tasks ?? [buildTask],
+        args.tasks ?? buildTask,
         'install',
         androidProject.sourceDir,
       );
@@ -286,6 +301,11 @@ export default {
       name: '--binary-path <string>',
       description:
         'Path relative to project root where pre-built .apk binary lives.',
+    },
+    {
+      name: '--user <number>',
+      description: 'Id of the User Profile you want to install the app on.',
+      parse: Number,
     },
   ],
 };

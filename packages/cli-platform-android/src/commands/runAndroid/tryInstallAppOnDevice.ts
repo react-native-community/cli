@@ -45,11 +45,13 @@ function tryInstallAppOnDevice(
       pathToApk = args.binaryPath;
     }
 
-    const adbArgs = ['-s', device, 'install', '-r', '-d', pathToApk];
+    const installArgs = ['-s', device, 'install', '-r', '-d'];
+    if (args.user !== undefined) {
+      installArgs.push('--user', `${args.user}`);
+    }
+    const adbArgs = [...installArgs, pathToApk];
     logger.info(`Installing the app on the device "${device}"...`);
-    logger.debug(
-      `Running command "cd android && adb -s ${device} install -r -d ${pathToApk}"`,
-    );
+    logger.debug(`Running command "cd android && adb ${adbArgs.join(' ')}"`);
     execa.sync(adbPath, adbArgs, {stdio: 'inherit'});
   } catch (error) {
     throw new CLIError(
@@ -82,7 +84,7 @@ function getInstallApkName(
     return apkName;
   }
 
-  throw new CLIError('Could not find the correct install APK file.');
+  throw new Error('Could not find the correct install APK file.');
 }
 
 export default tryInstallAppOnDevice;

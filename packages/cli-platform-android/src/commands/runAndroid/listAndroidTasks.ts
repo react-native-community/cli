@@ -17,7 +17,7 @@ export const parseTasksFromGradleFile = (
     taskType === 'build' ? '^assemble|^bundle' : '^install',
   );
   text.split('\n').forEach((line) => {
-    if (taskRegex.test(line) && /(?!.*?Test)^.*$/.test(line)) {
+    if (taskRegex.test(line.trim()) && /(?!.*?Test)^.*$/.test(line.trim())) {
       const metadata = line.split(' - ');
       instalTasks.push({
         task: metadata[0],

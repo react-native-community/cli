@@ -4,6 +4,7 @@ const SEPARATOR = ', ';
 
 let verbose = false;
 let disabled = false;
+let hidden = false;
 
 const formatMessages = (messages: Array<string>) =>
   chalk.reset(messages.join(SEPARATOR));
@@ -35,6 +36,8 @@ const error = (...messages: Array<string>) => {
 const debug = (...messages: Array<string>) => {
   if (verbose && !disabled) {
     console.log(`${chalk.gray.bold('debug')} ${formatMessages(messages)}`);
+  } else {
+    hidden = true;
   }
 };
 
@@ -58,6 +61,8 @@ const enable = () => {
   disabled = false;
 };
 
+const hasDebugMessages = () => hidden;
+
 export default {
   success,
   info,
@@ -67,6 +72,7 @@ export default {
   log,
   setVerbose,
   isVerbose,
+  hasDebugMessages,
   disable,
   enable,
 };

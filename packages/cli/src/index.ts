@@ -30,7 +30,7 @@ const handleError = (err: Error) => {
   if (err.stack) {
     logger.log(err.stack);
   }
-  if (!program.opts().verbose) {
+  if (!program.opts().verbose && logger.hasDebugMessages()) {
     logger.info(
       chalk.dim(
         `Run CLI with ${chalk.reset('--verbose')} ${chalk.dim(

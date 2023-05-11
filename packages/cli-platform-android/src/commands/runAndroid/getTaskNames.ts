@@ -10,10 +10,11 @@ export function getTaskNames(
   taskPrefix: 'assemble' | 'install' | 'bundle',
   sourceDir: string,
 ): Array<string> {
-  let appTasks = tasks || [taskPrefix + toPascalCase(mode)];
+  let appTasks =
+    tasks && tasks.length ? tasks : [taskPrefix + toPascalCase(mode)];
 
   // Check against build flavors for "install" task ("assemble" don't care about it so much and will build all)
-  if (!tasks && taskPrefix === 'install') {
+  if (!tasks?.length && taskPrefix === 'install') {
     const actionableInstallTasks = getGradleTasks('install', sourceDir);
     if (!actionableInstallTasks.find((t) => t.task.includes(appTasks[0]))) {
       const installTasksForMode = actionableInstallTasks.filter((t) =>

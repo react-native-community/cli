@@ -1,455 +1,53 @@
-import path from 'path';
-import fs from 'fs';
 import chalk from 'chalk';
-import semver from 'semver';
-import execa from 'execa';
-import {Config} from '@react-native-community/cli-types';
-import {logger, CLIError, fetch} from '@react-native-community/cli-tools';
-import * as PackageManager from '../../tools/packageManager';
-import {installPods} from '@react-native-community/cli-doctor';
-
-type UpgradeError = {message: string; stderr: string};
-
-// https://react-native-community.github.io/upgrade-helper/?from=0.59.10&to=0.60.0-rc.3
-
-type RepoNameType = 'react-native' | 'react-native-tvos';
-
-const repos = {
-  'react-native': {
-    rawDiffUrl:
-      'https://raw.githubusercontent.com/react-native-community/rn-diff-purge/diffs/diffs',
-    webDiffUrl: 'https://react-native-community.github.io/upgrade-helper',
-    dependencyName: 'react-native',
-  },
-  'react-native-tvos': {
-    rawDiffUrl:
-      'https://raw.githubusercontent.com/react-native-tvos/rn-diff-purge-tv/diffs/diffs',
-    webDiffUrl: 'https://react-native-community.github.io/upgrade-helper',
-    dependencyName: 'react-native@npm:react-native-tvos',
-  },
-};
-
-const isConnected = (output: string): boolean => {
-  // there is no reliable way of checking for internet connectivity, so we should just
-  // read the output from npm (to check for connectivity errors) which is faster and relatively more reliable.
-  return !output.includes('the host is inaccessible');
-};
-
-const checkForErrors = (output: string): void => {
-  if (!output) {
-    return;
-  }
-  if (!isConnected(output)) {
-    throw new CLIError(
-      'Upgrade failed. You do not seem to have an internet connection.',
-    );
-  }
-
-  if (output.includes('npm ERR')) {
-    throw new CLIError(`Upgrade failed with the following errors:\n${output}`);
-  }
-
-  if (output.includes('npm WARN')) {
-    logger.warn(output);
-  }
-};
-
-const getLatestRNVersion = async (repoName: RepoNameType): Promise<string> => {
-  logger.info('No version passed. Fetching latest...');
-  const {stdout, stderr} = await execa('npm', ['info', repoName, 'version']);
-  checkForErrors(stderr);
-  return stdout;
-};
-
-const getRNPeerDeps = async (
-  version: string,
-  repoName: RepoNameType,
-): Promise<{[key: string]: string}> => {
-  const {stdout, stderr} = await execa('npm', [
-    'info',
-    `${repoName}@${version}`,
-    'peerDependencies',
-    '--json',
-  ]);
-  checkForErrors(stderr);
-  return JSON.parse(stdout);
-};
-
-const getPatch = async (
-  currentVersion: string,
-  newVersion: string,
-  config: Config,
-  repoName: RepoNameType,
-) => {
-  let patch;
-
-  logger.info(`Fetching diff between v${currentVersion} and v${newVersion}...`);
-
-  try {
-    const {data} = await fetch(
-      `${repos[repoName].rawDiffUrl}/${currentVersion}..${newVersion}.diff`,
-    );
-
-    patch = data;
-  } catch (error) {
-    logger.error((error as UpgradeError).message);
-    logger.error(
-      `Failed to fetch diff for react-native@${newVersion}. Maybe it's not released yet?`,
-    );
-    logger.info(
-      `For available releases to diff see: ${chalk.underline.dim(
-        'https://github.com/react-native-community/rn-diff-purge#diff-table-full-table-here',
-      )}`,
-    );
-    return null;
-  }
-
-  let patchWithRenamedProjects = patch;
-
-  Object.keys(config.project).forEach((platform) => {
-    if (!config.project[platform]) {
-      return;
-    }
-    if (platform === 'ios') {
-      const xcodeProject = config.project.ios!.xcodeProject;
-      if (xcodeProject) {
-        patchWithRenamedProjects = patchWithRenamedProjects.replace(
-          new RegExp('RnDiffApp', 'g'),
-          xcodeProject.name.replace('.xcodeproj', ''),
-        );
-      }
-    } else if (platform === 'android') {
-      patchWithRenamedProjects = patchWithRenamedProjects
-        .replace(
-          new RegExp('com\\.rndiffapp', 'g'),
-          config.project[platform]!.packageName,
-        )
-        .replace(
-          new RegExp('com\\.rndiffapp'.split('.').join('/'), 'g'),
-          config.project[platform]!.packageName.split('.').join('/'),
-        );
-    } else {
-      logger.warn(
-        `Unsupported platform: "${platform}". \`upgrade\` only supports iOS and Android.`,
-      );
-    }
-  });
-
-  return patchWithRenamedProjects;
-};
-
-const getVersionToUpgradeTo = async (
-  argv: Array<string>,
-  currentVersion: string,
-  projectDir: string,
-  repoName: RepoNameType,
-) => {
-  const argVersion = argv[0];
-  const semverCoercedVersion = semver.coerce(argVersion);
-  const newVersion = argVersion
-    ? semver.valid(argVersion) ||
-      (semverCoercedVersion ? semverCoercedVersion.version : null)
-    : await getLatestRNVersion(repoName);
-
-  if (!newVersion) {
-    logger.error(
-      `Provided version "${argv[0]}" is not allowed. Please pass a valid semver version`,
-    );
-    return null;
-  }
-
-  if (semver.gt(currentVersion, newVersion)) {
-    logger.error(
-      `Trying to upgrade from newer version "${currentVersion}" to older "${newVersion}"`,
-    );
-    return null;
-  }
-  if (semver.eq(currentVersion, newVersion)) {
-    const {
-      dependencies: {'react-native': version},
-    } = require(path.join(projectDir, 'package.json'));
-
-    const parsedVersion = version.split('@')[version.split('@').length - 1];
-
-    if (semver.satisfies(newVersion, parsedVersion)) {
-      logger.warn(
-        `Specified version "${newVersion}" is already installed in node_modules and it satisfies "${parsedVersion}" semver range. No need to upgrade`,
-      );
-      return null;
-    }
-    logger.error(
-      `Dependency mismatch. Specified version "${newVersion}" is already installed in node_modules and it doesn't satisfy "${parsedVersion}" semver range of your "react-native" dependency. Please re-install your dependencies`,
-    );
-    return null;
-  }
-
-  return newVersion;
-};
-
-const installDeps = async (
-  root: string,
-  newVersion: string,
-  repoName: RepoNameType,
-) => {
-  logger.info(
-    `Installing "react-native@${newVersion}" and its peer dependencies...`,
-  );
-  const peerDeps = await getRNPeerDeps(newVersion, repoName);
-  const deps = [
-    `${repos[repoName].dependencyName}@${newVersion}`,
-    ...Object.keys(peerDeps).map((module) => `${module}@${peerDeps[module]}`),
-  ];
-  await PackageManager.install(deps, {
-    silent: true,
-    root,
-  });
-  await execa('git', ['add', 'package.json']);
-  try {
-    await execa('git', ['add', 'yarn.lock']);
-  } catch (error) {
-    // ignore
-  }
-  try {
-    await execa('git', ['add', 'package-lock.json']);
-  } catch (error) {
-    // ignore
-  }
-};
-
-const installCocoaPodsDeps = async () => {
-  if (process.platform === 'darwin') {
-    try {
-      logger.info(
-        `Installing CocoaPods dependencies ${chalk.dim(
-          '(this may take a few minutes)',
-        )}`,
-      );
-      await installPods();
-    } catch (error) {
-      if ((error as UpgradeError).stderr) {
-        logger.debug(
-          `"pod install" or "pod repo update" failed. Error output:\n${
-            (error as UpgradeError).stderr
-          }`,
-        );
-      }
-      logger.error(
-        'Installation of CocoaPods dependencies failed. Try to install them manually by running "pod install" in "ios" directory after finishing upgrade',
-      );
-    }
-  }
-};
-
-const applyPatch = async (
-  currentVersion: string,
-  newVersion: string,
-  tmpPatchFile: string,
-  repoName: RepoNameType,
-) => {
-  const defaultExcludes = ['package.json'];
-  let filesThatDontExist: Array<string> = [];
-  let filesThatFailedToApply: Array<string> = [];
-
-  const {stdout: relativePathFromRoot} = await execa('git', [
-    'rev-parse',
-    '--show-prefix',
-  ]);
-  try {
-    try {
-      const excludes = defaultExcludes.map(
-        (e) => `--exclude=${path.join(relativePathFromRoot, e)}`,
-      );
-      await execa('git', [
-        'apply',
-        // According to git documentation, `--binary` flag is turned on by
-        // default. However it's necessary when running `git apply --check` to
-        // actually accept binary files, maybe a bug in git?
-        '--binary',
-        '--check',
-        tmpPatchFile,
-        ...excludes,
-        '-p2',
-        '--3way',
-        `--directory=${relativePathFromRoot}`,
-      ]);
-      logger.info('Applying diff...');
-    } catch (error) {
-      const errorLines: Array<string> = (error as UpgradeError).stderr.split(
-        '\n',
-      );
-      filesThatDontExist = [
-        ...errorLines
-          .filter((x) => x.includes('does not exist in index'))
-          .map((x) =>
-            x.replace(/^error: (.*): does not exist in index$/, '$1'),
-          ),
-      ].filter(Boolean);
-
-      filesThatFailedToApply = errorLines
-        .filter((x) => x.includes('patch does not apply'))
-        .map((x) => x.replace(/^error: (.*): patch does not apply$/, '$1'))
-        .filter(Boolean);
-
-      logger.info('Applying diff...');
-      logger.warn(
-        `Excluding files that exist in the template, but not in your project:\n${filesThatDontExist
-          .map((file) => `  - ${chalk.bold(file)}`)
-          .join('\n')}`,
-      );
-      if (filesThatFailedToApply.length) {
-        logger.error(
-          `Excluding files that failed to apply the diff:\n${filesThatFailedToApply
-            .map((file) => `  - ${chalk.bold(file)}`)
-            .join(
-              '\n',
-            )}\nPlease make sure to check the actual changes after the upgrade command is finished.\nYou can find them in our Upgrade Helper web app: ${chalk.underline.dim(
-            `${repos[repoName].webDiffUrl}/?from=${currentVersion}&to=${newVersion}`,
-          )}`,
-        );
-      }
-    } finally {
-      const excludes = [
-        ...defaultExcludes,
-        ...filesThatDontExist,
-        ...filesThatFailedToApply,
-      ].map((e) => `--exclude=${path.join(relativePathFromRoot, e)}`);
-      await execa('git', [
-        'apply',
-        tmpPatchFile,
-        ...excludes,
-        '-p2',
-        '--3way',
-        `--directory=${relativePathFromRoot}`,
-      ]);
-    }
-  } catch (error) {
-    if ((error as UpgradeError).stderr) {
-      logger.debug(
-        `"git apply" failed. Error output:\n${(error as UpgradeError).stderr}`,
-      );
-    }
-    logger.error(
-      'Automatically applying diff failed. We did our best to automatically upgrade as many files as possible',
-    );
-    return false;
-  }
-  return true;
-};
+import type {Config} from '@react-native-community/cli-types';
+import {logger, version} from '@react-native-community/cli-tools';
 
 /**
  * Upgrade application to a new version of React Native.
  */
-async function upgrade(argv: Array<string>, ctx: Config) {
-  const tmpPatchFile = 'tmp-upgrade-rn.patch';
-  const projectDir = ctx.root;
-  const {name: rnName, version: currentVersion} = require(path.join(
-    projectDir,
-    'node_modules/react-native/package.json',
-  ));
-
-  const repoName: RepoNameType =
-    rnName === 'react-native-tvos' ? 'react-native-tvos' : 'react-native';
-
-  const newVersion = await getVersionToUpgradeTo(
-    argv,
-    currentVersion,
-    projectDir,
-    repoName,
+async function upgrade(_: string[], {root: projectDir}: Config) {
+  const url = new URL(
+    'https://react-native-community.github.io/upgrade-helper',
   );
 
-  if (!newVersion) {
-    return;
+  const update = await version.latest(projectDir);
+  if (!update?.current) {
+    logger.error(
+      `Cannot figure out your version of React Native, use: ${chalk.dim(
+        url.toString(),
+      )}`,
+    );
+    process.exit(1);
   }
 
-  const patch = await getPatch(currentVersion, newVersion, ctx, repoName);
+  const from = update.current;
+  const to = update.upgrade?.stable;
 
-  if (patch === null) {
-    return;
-  }
-
-  if (patch === '') {
-    logger.info('Diff has no changes to apply, proceeding further');
-    await installDeps(projectDir, newVersion, repoName);
-    await installCocoaPodsDeps();
-
+  if (to === from) {
     logger.success(
-      `Upgraded React Native to v${newVersion} 🎉. Now you can review and commit the changes`,
+      `You are on the most recent stable release of React Native: ${chalk.white(
+        from,
+      )} 🎉.`,
     );
     return;
   }
-  let patchSuccess;
 
-  try {
-    fs.writeFileSync(tmpPatchFile, patch);
-    patchSuccess = await applyPatch(
-      currentVersion,
-      newVersion,
-      tmpPatchFile,
-      repoName,
-    );
-  } catch (error) {
-    throw new Error((error as UpgradeError).stderr || (error as string));
-  } finally {
-    try {
-      fs.unlinkSync(tmpPatchFile);
-    } catch (e) {
-      // ignore
-    }
-    const {stdout} = await execa('git', ['status', '-s']);
-    if (!patchSuccess) {
-      if (stdout) {
-        logger.warn(
-          'Continuing after failure. Some of the files are upgraded but you will need to deal with conflicts manually',
-        );
-        await installDeps(projectDir, newVersion, repoName);
-        logger.info('Running "git status" to check what changed...');
-        await execa('git', ['status'], {stdio: 'inherit'});
-      } else {
-        logger.error(
-          'Patch failed to apply for unknown reason. Please fall back to manual way of upgrading',
-        );
-      }
-    } else {
-      await installDeps(projectDir, newVersion, repoName);
-      await installCocoaPodsDeps();
-      logger.info('Running "git status" to check what changed...');
-      await execa('git', ['status'], {stdio: 'inherit'});
-    }
-    if (!patchSuccess) {
-      if (stdout) {
-        logger.warn(
-          'Please run "git diff" to review the conflicts and resolve them',
-        );
-      }
-      if (process.platform === 'darwin') {
-        logger.warn(
-          'After resolving conflicts don\'t forget to run "pod install" inside "ios" directory',
-        );
-      }
-      logger.info(`You may find these resources helpful:
-• Release notes: ${chalk.underline.dim(
-        `https://github.com/facebook/react-native/releases/tag/v${newVersion}`,
-      )}
-• Manual Upgrade Helper: ${chalk.underline.dim(
-        `${repos[repoName].webDiffUrl}/?from=${currentVersion}&to=${newVersion}`,
-      )}
-• Git diff: ${chalk.underline.dim(
-        `${repos[repoName].rawDiffUrl}/${currentVersion}..${newVersion}.diff`,
-      )}`);
-
-      throw new CLIError(
-        'Upgrade failed. Please see the messages above for details',
-      );
-    }
+  url.searchParams.set('from', from);
+  if (to) {
+    url.searchParams.set('to', to);
   }
-  logger.success(
-    `Upgraded React Native to v${newVersion} 🎉. Now you can review and commit the changes`,
-  );
+
+  logger.log(`
+To upgrade React Native please follow the instructions here:
+
+  ${chalk.dim(url.toString())}
+`);
 }
+
 const upgradeCommand = {
-  name: 'upgrade [version]',
-  description:
-    "Upgrade your app's template files to the specified or latest npm version using `rn-diff-purge` project. Only valid semver versions are allowed.",
+  name: 'upgrade',
+  description: 'Generate a link to the upgrade helper to help you upgrade',
   func: upgrade,
 };
+
 export default upgradeCommand;

@@ -4,10 +4,37 @@ import {fetch} from '../fetch';
 import logger from '../logger';
 
 export type Release = {
-  version: string;
+  // The current stable release
+  stable: string;
+  // The current candidate release. These are only populated if the latest release is a candidate release.
+  candidate?: string;
   changelogUrl: string;
   diffUrl: string;
 };
+
+interface DiffPurge {
+  name: string;
+  zipball_url: string;
+  tarball_url: string;
+  commit: {
+    sha: string;
+    url: string;
+  };
+  node_id: string;
+}
+
+function isDiffPurgeEntry(data: any): data is DiffPurge {
+  return (
+    [
+      data.name,
+      data.zipball_url,
+      data.tarball_url,
+      data.commit?.sha,
+      data.commit?.url,
+      data.node_id,
+    ].indexOf(false) === -1
+  );
+}
 
 /**
  * Checks via GitHub API if there is a newer stable React Native release and,
@@ -49,17 +76,15 @@ export default async function getLatestRelease(
 
     logger.debug('Checking for newer releases on GitHub');
     const eTag = cacheManager.get(name, 'eTag');
-    const latestVersion = await getLatestRnDiffPurgeVersion(name, eTag);
-    logger.debug(`Latest release: ${latestVersion}`);
+    const {stable, candidate} = await getLatestRnDiffPurgeVersion(name, eTag);
+    logger.debug(`Latest release: ${stable} (${candidate})`);
 
-    if (
-      semver.compare(latestVersion, currentVersion) === 1 &&
-      !semver.prerelease(latestVersion)
-    ) {
+    if (semver.compare(stable, currentVersion) >= 0) {
       return {
-        version: latestVersion,
-        changelogUrl: buildChangelogUrl(latestVersion),
-        diffUrl: buildDiffUrl(currentVersion),
+        stable,
+        candidate,
+        changelogUrl: buildChangelogUrl(stable),
+        diffUrl: buildDiffUrl(stable),
       };
     }
   } catch (e) {
@@ -79,13 +104,18 @@ function buildDiffUrl(version: string) {
   return `https://react-native-community.github.io/upgrade-helper/?from=${version}`;
 }
 
+type LatestVersions = {
+  candidate?: string;
+  stable: string;
+};
+
 /**
  * Returns the most recent React Native version available to upgrade to.
  */
 async function getLatestRnDiffPurgeVersion(
   name: string,
   eTag?: string,
-): Promise<string> {
+): Promise<LatestVersions> {
   const options = {
     // https://developer.github.com/v3/#user-agent-required
     headers: {'User-Agent': 'React-Native-CLI'} as Headers,
@@ -100,32 +130,38 @@ async function getLatestRnDiffPurgeVersion(
     options,
   );
 
+  const result: LatestVersions = {stable: '0.0.0'};
+
   // Remote is newer.
   if (status === 200) {
-    const body: Array<any> = data;
-    const latestVersion = body[0].name.substring(8);
+    const body: DiffPurge[] = data.filter(isDiffPurgeEntry);
     const eTagHeader = headers.get('eTag');
 
-    // Update cache only if newer release is stable.
-    if (!semver.prerelease(latestVersion) && eTagHeader) {
-      logger.debug(`Saving ${eTagHeader} to cache`);
-      cacheManager.set(name, 'eTag', eTagHeader);
-      cacheManager.set(name, 'latestVersion', latestVersion);
+    for (let {name: version} of body) {
+      if (!result.candidate && version.includes('-rc')) {
+        result.candidate = version.substring(8);
+        continue;
+      }
+      if (!version.includes('-rc')) {
+        result.stable = version.substring(8);
+        if (eTagHeader) {
+          logger.debug(`Saving ${eTagHeader} to cache`);
+          cacheManager.set(name, 'eTag', eTagHeader);
+          cacheManager.set(name, 'latestVersion', result.stable);
+        }
+        return result;
+      }
     }
-
-    return latestVersion;
+    return result;
   }
 
   // Cache is still valid.
   if (status === 304) {
-    const latestVersion = cacheManager.get(name, 'latestVersion');
-    if (latestVersion) {
-      return latestVersion;
-    }
+    result.stable = cacheManager.get(name, 'latestVersion') ?? result.stable;
   }
 
   // Should be returned only if something went wrong.
-  return '0.0.0';
+  return result;
 }
 
 type Headers = {

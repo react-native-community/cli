@@ -69,10 +69,9 @@ async function buildIOS(_: Array<string>, ctx: Config, args: FlagsT) {
 
   let scheme = args.scheme || inferredSchemeName;
   let mode = args.mode;
-  let target = args.target;
 
   if (args.interactive) {
-    const selection = await selectFromInteractiveMode({scheme, mode, target});
+    const selection = await selectFromInteractiveMode({scheme, mode});
 
     if (selection.scheme) {
       scheme = selection.scheme;
@@ -80,10 +79,6 @@ async function buildIOS(_: Array<string>, ctx: Config, args: FlagsT) {
 
     if (selection.mode) {
       mode = selection.mode;
-    }
-
-    if (selection.target) {
-      target = selection.target;
     }
   }
 

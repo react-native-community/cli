@@ -91,10 +91,9 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
 
   let scheme = args.scheme || inferredSchemeName;
   let mode = args.mode;
-  let target = args.target;
 
   if (args.interactive) {
-    const selection = await selectFromInteractiveMode({scheme, mode, target});
+    const selection = await selectFromInteractiveMode({scheme, mode});
 
     if (selection.scheme) {
       scheme = selection.scheme;
@@ -103,13 +102,9 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     if (selection.mode) {
       mode = selection.mode;
     }
-
-    if (selection.target) {
-      target = selection.target;
-    }
   }
 
-  const modifiedArgs = {...args, scheme, mode, target};
+  const modifiedArgs = {...args, scheme, mode};
 
   modifiedArgs.mode = getConfigurationScheme(
     {scheme: modifiedArgs.scheme, mode: modifiedArgs.mode},
@@ -453,12 +448,11 @@ async function getTargetPaths(
   const settings = JSON.parse(buildSettings);
 
   const targets = settings.map(({target}: any) => target);
-  let selectedTarget;
+
+  let selectedTarget = targets[0];
 
   if (target) {
     if (!targets.includes(target)) {
-      selectedTarget = targets[0];
-
       logger.info(
         `Target ${chalk.bold(target)} not found for scheme ${chalk.bold(
           scheme,

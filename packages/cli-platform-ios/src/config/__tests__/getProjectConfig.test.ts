@@ -26,6 +26,7 @@ describe('ios::getProjectConfig', () => {
     expect(projectConfig('/', {})).toMatchInlineSnapshot(`
       Object {
         "sourceDir": "/ios",
+        "watchModeCommandParams": undefined,
         "xcodeProject": null,
       }
     `);
@@ -45,6 +46,7 @@ describe('ios::getProjectConfig', () => {
     expect(projectConfig('/', {})).toMatchInlineSnapshot(`
       Object {
         "sourceDir": "/ios",
+        "watchModeCommandParams": undefined,
         "xcodeProject": null,
       }
     `);

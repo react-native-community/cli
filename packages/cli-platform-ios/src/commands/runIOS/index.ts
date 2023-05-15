@@ -462,7 +462,7 @@ async function getTargetPaths(
       logger.info(
         `Target ${chalk.bold(target)} not found for scheme ${chalk.bold(
           scheme,
-        )}, automatically selected target ${chalk.bold(targets[0])}`,
+        )}, automatically selected target ${chalk.bold(selectedTarget)}`,
       );
     } else {
       selectedTarget = target;

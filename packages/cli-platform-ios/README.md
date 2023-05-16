@@ -65,6 +65,10 @@ Explicitly set Xcode scheme to use.
 
 Explicitly set device to use by name. The value is not required if you have a single device connected.
 
+#### `--destination <string>`
+
+Explicitly extend distination e.g. "arch=x86_64"
+
 #### `--udid <string>`
 
 Explicitly set device to use by udid.

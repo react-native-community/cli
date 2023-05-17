@@ -4,7 +4,7 @@ export default {
   YARN: '>= 1.10.x',
   NPM: '>= 4.x',
   RUBY: '>= 2.6.10',
-  JAVA: '>= 11',
+  JAVA: '>= 11 < 19',
   // Android
   ANDROID_SDK: '>= 33.x',
   ANDROID_NDK: '>= 23.x',

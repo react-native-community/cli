@@ -265,6 +265,10 @@ export const iosBuildOptions = [
     description: 'Custom params that will be passed to xcodebuild command.',
     parse: (val: string) => val.split(' '),
   },
+  {
+    name: '--target <string>',
+    description: 'Explicitly set Xcode target to use.',
+  },
 ];
 
 export default {

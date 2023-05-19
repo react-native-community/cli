@@ -13,6 +13,7 @@ import {
 
 export type BuildFlags = {
   mode: string;
+  target: string;
   packager: boolean;
   verbose: boolean;
   xcconfig?: string;

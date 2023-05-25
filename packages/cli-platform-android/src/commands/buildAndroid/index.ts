@@ -10,7 +10,7 @@ import execa from 'execa';
 import {getAndroidProject} from '../../config/getAndroidProject';
 import adb from '../runAndroid/adb';
 import getAdbPath from '../runAndroid/getAdbPath';
-import {startServerInNewWindow} from './startServerInNewWindow';
+import {startServerInNewWindow} from '@react-native-community/cli-plugin-metro';
 import {getTaskNames} from '../runAndroid/getTaskNames';
 import {promptForTaskSelection} from '../runAndroid/listAndroidTasks';
 

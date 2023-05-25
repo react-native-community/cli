@@ -9,6 +9,7 @@
     {"path": "../cli-types"},
     {"path": "../cli-config"},
     {"path": "../cli-platform-android"},
-    {"path": "../cli-platform-ios"}
+    {"path": "../cli-platform-ios"},
+    {"path": "../cli-plugin-metro"},
   ]
 }

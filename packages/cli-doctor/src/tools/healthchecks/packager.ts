@@ -4,7 +4,7 @@ import {
 } from '@react-native-community/cli-tools';
 import {HealthCheckInterface} from '../../types';
 import {logManualInstallation} from './common';
-import {startServerInNewWindow} from '@react-native-community/cli-platform-android';
+import {startServerInNewWindow} from '@react-native-community/cli-plugin-metro';
 
 export default {
   label: 'Metro',
@@ -39,12 +39,12 @@ export default {
       }
       return logManualInstallation({
         message:
-          'Could not start the packager. Please run "react-native start" command manually.',
+          'Could not start the bundler. Please run "react-native start" command manually.',
       });
     } catch (error) {
       return logManualInstallation({
         message:
-          'Could not start the packager. Please run "react-native start" command manually.',
+          'Could not start the bundler. Please run "react-native start" command manually.',
       });
     }
   },

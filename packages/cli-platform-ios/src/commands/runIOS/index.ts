@@ -447,7 +447,9 @@ async function getTargetPaths(
 ) {
   const settings = JSON.parse(buildSettings);
 
-  const targets = settings.map(({target}: any) => target);
+  const targets = settings.map(
+    ({target: settingsTarget}: any) => settingsTarget,
+  );
 
   let selectedTarget = targets[0];
 

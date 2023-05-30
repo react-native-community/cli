@@ -1,4 +1,3 @@
-import fs from 'fs';
 import path from 'path';
 import {
   ConfigT,
@@ -10,7 +9,6 @@ import {
 } from 'metro-config';
 import {CLIError, logger} from '@react-native-community/cli-tools';
 import type {Config} from '@react-native-community/cli-types';
-import getDefaultMetroConfig from './getDefaultMetroConfig';
 import {reactNativePlatformResolver} from './metroPlatformResolver';
 
 export type {Config};
@@ -19,6 +17,10 @@ export type ConfigLoadingContext = Pick<
   Config,
   'root' | 'reactNativePath' | 'platforms'
 >;
+
+declare global {
+  var __REACT_NATIVE_METRO_CONFIG_LOADED: boolean;
+}
 
 /**
  * Get the config options to override based on RN CLI inputs.
@@ -97,26 +99,22 @@ export default async function loadMetroConfig(
 
   logger.debug(`Reading Metro config from ${projectConfig.filepath}`);
 
-  if (
-    !/['"']@react-native\/metro-config['"']/.test(
-      fs.readFileSync(projectConfig.filepath, 'utf8'),
-    )
-  ) {
-    logger.warn(
-      'From React Native 0.72, your metro.config.js file should extend' +
-        "'@react-native/metro-config'. Please see the React Native 0.72 " +
-        'changelog, or copy the template at:\n' +
-        'https://github.com/facebook/react-native/blob/main/packages/react-native/template/metro.config.js',
-    );
-    logger.warn('Falling back to internal defaults.');
+  if (!global.__REACT_NATIVE_METRO_CONFIG_LOADED) {
+    const warning = `
+=================================================================================================
 
-    const loadedConfig = await loadConfig(
-      {cwd: ctx.root, ...options},
-      // Provide React Native defaults on top of Metro defaults
-      getDefaultMetroConfig(ctx),
-    );
+From React Native 0.73, your project's Metro config should extend '@react-native/metro-config'
+or it will fail to build. Please copy the template at:
+https://github.com/facebook/react-native/blob/main/packages/react-native/template/metro.config.js
 
-    return mergeConfig(loadedConfig, overrideConfig);
+This warning will be removed in future (https://github.com/facebook/metro/issues/1018).
+
+=================================================================================================
+    `;
+
+    for (const line of warning.trim().split('\n')) {
+      logger.warn(line);
+    }
   }
 
   return mergeConfig(

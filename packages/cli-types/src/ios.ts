@@ -5,6 +5,7 @@
 
 export interface IOSProjectParams {
   sourceDir?: string;
+  watchModeCommandParams?: string[];
 }
 
 export type IOSProjectInfo = {
@@ -15,6 +16,7 @@ export type IOSProjectInfo = {
 export interface IOSProjectConfig {
   sourceDir: string;
   xcodeProject: IOSProjectInfo | null;
+  watchModeCommandParams?: string[];
 }
 
 export interface IOSDependencyConfig {

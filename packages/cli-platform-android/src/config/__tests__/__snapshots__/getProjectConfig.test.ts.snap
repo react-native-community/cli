@@ -7,6 +7,7 @@ Object {
   "packageName": "com.some.example",
   "sourceDir": "/flat/android",
   "unstable_reactLegacyComponentNames": undefined,
+  "watchModeCommandParams": undefined,
 }
 `;
 
@@ -17,6 +18,7 @@ Object {
   "packageName": "com.some.example",
   "sourceDir": "/multiple/android",
   "unstable_reactLegacyComponentNames": undefined,
+  "watchModeCommandParams": undefined,
 }
 `;
 
@@ -27,5 +29,6 @@ Object {
   "packageName": "com.some.example",
   "sourceDir": "/nested/android",
   "unstable_reactLegacyComponentNames": undefined,
+  "watchModeCommandParams": undefined,
 }
 `;

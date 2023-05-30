@@ -150,6 +150,7 @@ export const projectConfig = t
           // IOSProjectParams
           .object({
             sourceDir: t.string(),
+            watchModeCommandParams: t.array().items(t.string()),
             unstable_reactLegacyComponentNames: t
               .array()
               .items(t.string())
@@ -164,6 +165,7 @@ export const projectConfig = t
             manifestPath: t.string(),
             packageName: t.string(),
             dependencyConfiguration: t.string(),
+            watchModeCommandParams: t.array().items(t.string()),
             unstable_reactLegacyComponentNames: t
               .array()
               .items(t.string())

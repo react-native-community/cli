@@ -1,7 +1,6 @@
-import {logger} from '@react-native-community/cli-tools';
+import {getLoader, logger} from '@react-native-community/cli-tools';
 import type {Config} from '@react-native-community/cli-types';
 import chalk from 'chalk';
-import ora from 'ora';
 import {EnvironmentInfo, HealthCheckCategoryResult, Loader} from '../types';
 import {HEALTHCHECK_TYPES} from './healthchecks';
 import {logManualInstallation} from './healthchecks/common';
@@ -80,8 +79,7 @@ export default async function ({
     logger.log(`\n${chalk.dim(category.label)}`);
 
     for (const healthcheckToRun of healthchecksToRun) {
-      // @todo replace this with `getLoader` from `tools`
-      const spinner = ora({
+      const spinner = getLoader({
         prefixText: '',
         text: healthcheckToRun.label,
       }).start();

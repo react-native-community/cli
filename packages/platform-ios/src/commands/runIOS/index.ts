@@ -37,6 +37,7 @@ type FlagsT = {
   verbose: boolean;
   port: number;
   terminal: string | undefined;
+  destination?: string;
 };
 
 function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
@@ -317,7 +318,7 @@ function buildProject(
       '-scheme',
       scheme,
       '-destination',
-      `id=${udid}`,
+      `id=${udid}` + (args.destination ? ',' + args.destination : ''),
     ];
     // @todo use `getLoader` from cli-tools package
     const loader = ora();
@@ -603,6 +604,10 @@ export default {
       name: '--device [string]',
       description:
         'Explicitly set device to use by name.  The value is not required if you have a single device connected.',
+    },
+    {
+      name: '--destination <string>',
+      description: 'Explicitly extend distination e.g. "arch=x86_64"',
     },
     {
       name: '--udid <string>',

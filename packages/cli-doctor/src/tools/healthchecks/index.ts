@@ -14,6 +14,7 @@ import iosDeploy from './iosDeploy';
 import {Healthchecks, HealthCheckCategory} from '../../types';
 import loadConfig from '@react-native-community/cli-config';
 import xcodeEnv from './xcodeEnv';
+import packager from './packager';
 
 export const HEALTHCHECK_TYPES = {
   ERROR: 'ERROR',
@@ -41,6 +42,7 @@ export const getHealthchecks = ({contributor}: Options): Healthchecks => {
         nodeJS,
         yarn,
         npm,
+        packager,
         ...(process.platform === 'darwin' ? [watchman] : []),
       ],
     },

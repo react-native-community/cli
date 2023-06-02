@@ -17,7 +17,10 @@ import {
   AndroidDependencyParams,
   AndroidDependencyConfig,
 } from '@react-native-community/cli-types';
-import {getPackageName} from './getAndroidProject';
+import {
+  getPackageName,
+  parseApplicationIdFromBuildGradleFile,
+} from './getAndroidProject';
 import {findLibraryName} from './findLibraryName';
 import {findComponentDescriptors} from './findComponentDescriptors';
 import {findBuildGradle} from './findBuildGradle';
@@ -59,15 +62,29 @@ export function projectConfig(
     );
   }
 
+  const applicationId =
+    getApplicationId(buildGradlePath as string) || packageName;
+
   return {
     sourceDir,
     appName,
     packageName,
+    applicationId,
     dependencyConfiguration: userConfig.dependencyConfiguration,
     watchModeCommandParams: userConfig.watchModeCommandParams,
     unstable_reactLegacyComponentNames:
       userConfig.unstable_reactLegacyComponentNames,
   };
+}
+
+function getApplicationId(buildGradlePath: string) {
+  let appId = '';
+
+  const applicationId = parseApplicationIdFromBuildGradleFile(buildGradlePath);
+  if (applicationId) {
+    appId = applicationId;
+  }
+  return appId;
 }
 
 function getAppName(sourceDir: string, userConfigAppName: string | undefined) {

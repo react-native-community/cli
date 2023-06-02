@@ -13,11 +13,12 @@ import {logger, CLIError} from '@react-native-community/cli-tools';
 function tryLaunchAppOnDevice(
   device: string | void,
   packageName: string,
+  applicationId: string,
   adbPath: string,
   args: Flags,
 ) {
   const {appId, appIdSuffix} = args;
-  const packageNameWithSuffix = [appId || packageName, appIdSuffix]
+  const packageNameWithSuffix = [appId || applicationId, appIdSuffix]
     .filter(Boolean)
     .join('.');
 

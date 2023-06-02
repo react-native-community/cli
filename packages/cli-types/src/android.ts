@@ -2,6 +2,7 @@ export interface AndroidProjectConfig {
   sourceDir: string;
   appName: string;
   packageName: string;
+  applicationId: string;
   dependencyConfiguration?: string;
   watchModeCommandParams?: string[];
   unstable_reactLegacyComponentNames?: string[] | null;

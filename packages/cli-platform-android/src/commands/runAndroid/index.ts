@@ -257,6 +257,7 @@ function installAndLaunchOnDevice(
   tryLaunchAppOnDevice(
     selectedDevice,
     androidProject.packageName,
+    androidProject.applicationId,
     adbPath,
     args,
   );

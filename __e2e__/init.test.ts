@@ -39,6 +39,13 @@ afterEach(() => {
   cleanupSync(DIR);
 });
 
+let templatePath = path.resolve(DIR, 'custom', 'template');
+if (process.platform === 'win32') {
+  templatePath = templatePath.split('\\').join('/');
+} else {
+  templatePath = `file://${templatePath}`;
+}
+
 test('init fails if the directory already exists', () => {
   fs.mkdirSync(path.join(DIR, 'TestInit'));
 
@@ -59,15 +66,11 @@ test('init --template fails without package name', () => {
 
 test('init --template filepath', () => {
   createCustomTemplateFiles();
-  let templatePath = path.resolve(DIR, 'custom', 'template');
-  if (process.platform === 'win32') {
-    templatePath = templatePath.split('\\').join('/');
-  }
 
   const {stdout} = runCLI(DIR, [
     'init',
     '--template',
-    `file://${templatePath}`,
+    templatePath,
     'TestInit',
   ]);
 
@@ -85,15 +88,11 @@ test('init --template file with custom directory', () => {
   createCustomTemplateFiles();
   const projectName = 'TestInit';
   const customPath = 'custom-path';
-  let templatePath = path.resolve(DIR, 'custom', 'template');
-  if (process.platform === 'win32') {
-    templatePath = templatePath.split('\\').join('/');
-  }
 
   const {stdout} = runCLI(DIR, [
     'init',
     '--template',
-    `file://${templatePath}`,
+    templatePath,
     projectName,
     '--directory',
     'custom-path',
@@ -111,15 +110,11 @@ test('init --template file with custom directory', () => {
 
 test('init skips installation of dependencies with --skip-install', () => {
   createCustomTemplateFiles();
-  let templatePath = path.resolve(DIR, 'custom', 'template');
-  if (process.platform === 'win32') {
-    templatePath = templatePath.split('\\').join('/');
-  }
 
   const {stdout} = runCLI(DIR, [
     'init',
     '--template',
-    `file://${templatePath}`,
+    templatePath,
     'TestInit',
     '--skip-install',
   ]);
@@ -140,15 +135,11 @@ test('init skips installation of dependencies with --skip-install', () => {
 
 test('init uses npm as the package manager with --npm', () => {
   createCustomTemplateFiles();
-  let templatePath = path.resolve(DIR, 'custom', 'template');
-  if (process.platform === 'win32') {
-    templatePath = templatePath.split('\\').join('/');
-  }
 
   const {stdout} = runCLI(DIR, [
     'init',
     '--template',
-    `file://${templatePath}`,
+    templatePath,
     'TestInit',
     '--npm',
   ]);

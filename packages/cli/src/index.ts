@@ -16,7 +16,6 @@ const pkgJson = require('../package.json');
 const program = new CommanderCommand()
   .usage('[command] [options]')
   .version(pkgJson.version, '-v', 'Output the current version')
-  .option('--verbose', 'Increase logging verbosity')
   .enablePositionalOptions();
 
 const handleError = (err: Error) => {
@@ -85,6 +84,7 @@ function attachCommand<C extends Command<boolean>>(
 ): void {
   const cmd = program
     .command(command.name)
+    .option('--verbose', 'Increase logging verbosity')
     .action(async function handleAction(
       this: CommanderCommand,
       ...args: string[]

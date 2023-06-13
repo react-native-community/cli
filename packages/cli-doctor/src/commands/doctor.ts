@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import {logger, getLoader} from '@react-native-community/cli-tools';
+import {logger, getLoader, CLIError} from '@react-native-community/cli-tools';
 import {getHealthchecks, HEALTHCHECK_TYPES} from '../tools/healthchecks';
 import printFixOptions, {KEYS} from '../tools/printFixOptions';
 import runAutomaticFix, {AUTOMATIC_FIX_LEVELS} from '../tools/runAutomaticFix';
@@ -255,8 +255,8 @@ const doctorCommand = (async (_, options, config) => {
 
         process.exit(0);
       } catch (err) {
-        // TODO: log error
-        process.exit(1);
+        logger.log((err as any).stderr || (err as any).stdout);
+        throw new CLIError('Failed to run automatic fixes.', err as Error);
       }
     }
   };

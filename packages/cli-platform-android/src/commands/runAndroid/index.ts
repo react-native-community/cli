@@ -46,6 +46,10 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
     link.setVersion(config.reactNativeVersion);
   }
 
+  if (!args.mainActivity && config.project.android?.mainActivity) {
+    args.mainActivity = config.project.android?.mainActivity;
+  }
+
   if (args.binaryPath) {
     if (args.tasks) {
       throw new CLIError(
@@ -283,7 +287,6 @@ export default {
     {
       name: '--main-activity <string>',
       description: 'Name of the activity to start',
-      default: 'MainActivity',
     },
     {
       name: '--deviceId <string>',

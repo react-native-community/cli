@@ -5,6 +5,7 @@ exports[`shows up help information without passing in any args 1`] = `
 
 Options:
   -v                            Output the current version
+  --verbose                     Increase logging verbosity
   -h, --help                    display help for command
 
 Commands:

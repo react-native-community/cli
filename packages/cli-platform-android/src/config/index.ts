@@ -62,8 +62,9 @@ export function projectConfig(
     );
   }
 
-  const applicationId =
-    getApplicationId(buildGradlePath as string) || packageName;
+  const applicationId = buildGradlePath
+    ? getApplicationId(buildGradlePath, packageName)
+    : packageName;
 
   return {
     sourceDir,
@@ -77,8 +78,8 @@ export function projectConfig(
   };
 }
 
-function getApplicationId(buildGradlePath: string) {
-  let appId = '';
+function getApplicationId(buildGradlePath: string, packageName: string) {
+  let appId = packageName;
 
   const applicationId = parseApplicationIdFromBuildGradleFile(buildGradlePath);
   if (applicationId) {

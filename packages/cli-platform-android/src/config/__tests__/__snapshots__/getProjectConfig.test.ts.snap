@@ -3,6 +3,7 @@
 exports[`android::getProjectConfig returns an object with android project configuration for flat structure 1`] = `
 Object {
   "appName": "",
+  "applicationId": "com.some.example",
   "dependencyConfiguration": undefined,
   "packageName": "com.some.example",
   "sourceDir": "/flat/android",
@@ -14,6 +15,7 @@ Object {
 exports[`android::getProjectConfig returns an object with android project configuration for multiple 1`] = `
 Object {
   "appName": "",
+  "applicationId": "com.some.example",
   "dependencyConfiguration": undefined,
   "packageName": "com.some.example",
   "sourceDir": "/multiple/android",

@@ -16,8 +16,8 @@ const pkgJson = require('../package.json');
 const program = new CommanderCommand()
   .usage('[command] [options]')
   .version(pkgJson.version, '-v', 'Output the current version')
-  .option('--verbose', 'Increase logging verbosity')
-  .enablePositionalOptions();
+  .option('--verbose', 'Increase logging verbosity');
+// .enablePositionalOptions();
 
 const handleError = (err: Error) => {
   logger.enable();

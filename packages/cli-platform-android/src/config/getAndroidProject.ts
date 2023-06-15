@@ -109,6 +109,9 @@ export function validatePackageName(packageName: string) {
 
 // Search for applicationId at defaultConfig object
 export function parseApplicationIdFromBuildGradleFile(buildGradlePath: string) {
+  if (!buildGradlePath) {
+    return null;
+  }
   const buildGradle = fs.readFileSync(buildGradlePath, 'utf8');
 
   const matchArray = buildGradle.match(/defaultConfig\s*{([\s\S]*?)}/);

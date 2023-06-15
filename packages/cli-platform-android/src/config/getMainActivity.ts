@@ -96,9 +96,7 @@ export default function getMainActivity(manifestPath: string): string | null {
         });
       });
 
-      return mainActivity
-        ? mainActivity['@_android:name'].replace('.', '')
-        : null;
+      return mainActivity ? mainActivity['@_android:name'] : null;
     } else {
       return null;
     }

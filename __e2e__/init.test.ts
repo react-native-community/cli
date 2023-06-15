@@ -6,6 +6,7 @@ import {
   cleanupSync,
   writeFiles,
 } from '../jest/helpers';
+import slash from 'slash';
 
 const DIR = getTempDirectory('command-init');
 
@@ -41,7 +42,7 @@ afterEach(() => {
 
 let templatePath = path.resolve(DIR, 'custom', 'template');
 if (process.platform === 'win32') {
-  templatePath = templatePath.split('\\').join('/');
+  templatePath = slash(templatePath);
 } else {
   templatePath = `file://${templatePath}`;
 }

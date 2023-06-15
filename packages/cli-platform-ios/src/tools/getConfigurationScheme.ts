@@ -11,9 +11,12 @@ export function getConfigurationScheme(
 ) {
   if (scheme && mode) {
     return mode;
-  } else if (scheme) {
-    return getBuildConfigurationFromXcScheme(scheme, mode, sourceDir);
   }
 
-  return mode || 'Debug';
+  const configuration = mode || 'Debug';
+  if (scheme) {
+    return getBuildConfigurationFromXcScheme(scheme, configuration, sourceDir);
+  }
+
+  return configuration;
 }

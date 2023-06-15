@@ -92,7 +92,7 @@ export default async function ({
           config,
         });
       } catch (error) {
-        // TODO: log the error in a meaningful way
+        logger.error((error as any).stderr || (error as any).stdout);
       }
     }
   }

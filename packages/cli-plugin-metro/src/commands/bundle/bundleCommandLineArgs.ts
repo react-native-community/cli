@@ -27,7 +27,6 @@ export interface CommandLineArgs {
   sourcemapUseAbsolutePath: boolean;
   verbose: boolean;
   unstableTransformProfile: string;
-  generateStaticViewConfigs: boolean;
 }
 
 export default [
@@ -123,12 +122,5 @@ export default [
     name: '--config <string>',
     description: 'Path to the CLI configuration file',
     parse: (val: string) => path.resolve(val),
-  },
-  {
-    name: '--generate-static-view-configs',
-    description:
-      'Generate static view configs for Fabric components. ' +
-      'If there are no Fabric components in the bundle or Fabric is disabled, this is just no-op.',
-    default: true,
   },
 ];

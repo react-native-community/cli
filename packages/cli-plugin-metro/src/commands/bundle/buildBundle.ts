@@ -26,7 +26,6 @@ interface RequestOptions {
   minify: boolean;
   platform: string | undefined;
   unstable_transformProfile: BundleOptions['unstable_transformProfile'];
-  generateStaticViewConfigs: boolean;
 }
 
 async function buildBundle(
@@ -87,7 +86,6 @@ export async function buildBundleWithConfig(
     minify: args.minify !== undefined ? args.minify : !args.dev,
     platform: args.platform,
     unstable_transformProfile: args.unstableTransformProfile as BundleOptions['unstable_transformProfile'],
-    generateStaticViewConfigs: args.generateStaticViewConfigs,
   };
   const server = new Server(config);
 

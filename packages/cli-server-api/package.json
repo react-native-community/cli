@@ -27,7 +27,7 @@
     "build",
     "!*.map"
   ],
-  "homepage": "https://github.com/react-native-community/cli/tree/master/packages/cli-server-api",
+  "homepage": "https://github.com/react-native-community/cli/tree/main/packages/cli-server-api",
   "repository": {
     "type": "git",
     "url": "https://github.com/react-native-community/cli.git",

@@ -52,7 +52,7 @@
     "slash": "^3.0.0",
     "snapshot-diff": "^0.7.0"
   },
-  "homepage": "https://github.com/react-native-community/cli/tree/master/packages/cli",
+  "homepage": "https://github.com/react-native-community/cli/tree/main/packages/cli",
   "repository": {
     "type": "git",
     "url": "https://github.com/react-native-community/cli.git",

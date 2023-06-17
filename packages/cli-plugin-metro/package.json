@@ -26,7 +26,7 @@
     "build",
     "!*.map"
   ],
-  "homepage": "https://github.com/react-native-community/cli/tree/master/packages/cli-plugin-metro",
+  "homepage": "https://github.com/react-native-community/cli/tree/main/packages/cli-plugin-metro",
   "repository": {
     "type": "git",
     "url": "https://github.com/react-native-community/cli.git",

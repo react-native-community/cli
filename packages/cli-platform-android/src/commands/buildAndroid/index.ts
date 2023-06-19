@@ -13,6 +13,7 @@ import getAdbPath from '../runAndroid/getAdbPath';
 import {startServerInNewWindow} from '@react-native-community/cli-plugin-metro';
 import {getTaskNames} from '../runAndroid/getTaskNames';
 import {promptForTaskSelection} from '../runAndroid/listAndroidTasks';
+import {filterGradlewOutput} from '../../tools/filterGradlewOutput';
 
 export interface BuildFlags {
   mode?: string;
@@ -129,9 +130,13 @@ export function build(gradleArgs: string[], sourceDir: string) {
   logger.info('Building the app...');
   logger.debug(`Running command "${cmd} ${gradleArgs.join(' ')}"`);
   try {
-    execa.sync(cmd, gradleArgs, {
-      stdio: 'inherit',
+    const {stdout} = execa(cmd, gradleArgs, {
+      buffer: true,
       cwd: sourceDir,
+    });
+
+    stdout?.on('data', (data) => {
+      filterGradlewOutput(data.toString());
     });
   } catch (error) {
     printRunDoctorTip();

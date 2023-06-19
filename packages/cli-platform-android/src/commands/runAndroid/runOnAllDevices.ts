@@ -22,6 +22,7 @@ import tryLaunchEmulator from './tryLaunchEmulator';
 import tryInstallAppOnDevice from './tryInstallAppOnDevice';
 import {getTaskNames} from './getTaskNames';
 import type {Flags} from '.';
+import {filterGradlewOutput} from '../../tools/filterGradlewOutput';
 
 type AndroidProject = NonNullable<Config['project']['android']>;
 
@@ -99,9 +100,13 @@ async function runOnAllDevices(
         `Running command "cd android && ${cmd} ${gradleArgs.join(' ')}"`,
       );
 
-      await execa(cmd, gradleArgs, {
-        stdio: ['inherit', 'inherit', 'pipe'],
+      const {stdout} = execa(cmd, gradleArgs, {
+        buffer: true,
         cwd: androidProject.sourceDir,
+      });
+
+      stdout?.on('data', (data) => {
+        filterGradlewOutput(data.toString());
       });
     }
   } catch (error) {

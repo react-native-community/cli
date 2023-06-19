@@ -1,10 +1,10 @@
-import {logger} from '@react-native-community/cli-tools';
-
 /**
  *
  * @param output
 
   This function takes the output of the gradlew command and filters out the deprecation warning about setting the namespace in `AndroidManifest.xml`.
+
+  For wider context, see https://github.com/react-native-community/discussions-and-proposals/issues/671#issuecomment-1597386954
 
   Warning:
   package="com.library" found in source AndroidManifest.xml: /Users/user/app/node_modules/library/android/src/main/AndroidManifest.xml.
@@ -21,6 +21,6 @@ export const filterGradlewOutput = (output: string) => {
   );
 
   if (!regex.test(output)) {
-    logger.log(output);
+    console.log(output);
   }
 };

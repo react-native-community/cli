@@ -49,7 +49,7 @@ export function isCatalogAsset(asset: AssetData): boolean {
 }
 
 export function writeImageSet(imageSet: ImageSet): void {
-  fs.mkdirSync(imageSet.basePath);
+  fs.mkdirSync(imageSet.basePath, {recursive: true});
 
   for (const file of imageSet.files) {
     const dest = path.join(imageSet.basePath, file.name);

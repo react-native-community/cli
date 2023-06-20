@@ -5,6 +5,7 @@ import path from 'path';
 import os from 'os';
 import {SourceMap} from 'hermes-profile-transformer';
 import ip from 'ip';
+import {MetroBundleOptions} from './metroBundleOptions';
 
 function getTempFilePath(filename: string) {
   return path.join(os.tmpdir(), filename);
@@ -29,14 +30,14 @@ function writeJsonSync(targetPath: string, data: any) {
 }
 
 async function getSourcemapFromServer(
-  port?: string,
+  port: string,
+  {platform, dev, minify}: MetroBundleOptions,
 ): Promise<SourceMap | undefined> {
   logger.debug('Getting source maps from Metro packager server');
-  const DEBUG_SERVER_PORT = port || '8081';
   const IP_ADDRESS = ip.address();
-  const PLATFORM = 'android';
 
-  const requestURL = `http://${IP_ADDRESS}:${DEBUG_SERVER_PORT}/index.map?platform=${PLATFORM}&dev=true`;
+  const requestURL = `http://${IP_ADDRESS}:${port}/index.map?platform=${platform}&dev=${dev}&minify=${minify}`;
+  logger.debug(`Downloading from ${requestURL}`);
   try {
     const {data} = await fetch(requestURL);
     return data as SourceMap;
@@ -50,11 +51,12 @@ async function getSourcemapFromServer(
  * Generate a sourcemap by fetching it from a running metro server
  */
 export async function generateSourcemap(
-  port?: string,
+  port: string,
+  bundleOptions: MetroBundleOptions,
 ): Promise<string | undefined> {
   // Fetch the source map to a temp directory
   const sourceMapPath = getTempFilePath('index.map');
-  const sourceMapResult = await getSourcemapFromServer(port);
+  const sourceMapResult = await getSourcemapFromServer(port, bundleOptions);
 
   if (sourceMapResult) {
     logger.debug('Using source maps from Metro packager server');
@@ -75,7 +77,8 @@ export async function generateSourcemap(
  */
 export async function findSourcemap(
   ctx: Config,
-  port?: string,
+  port: string,
+  bundleOptions: MetroBundleOptions,
 ): Promise<string | undefined> {
   const intermediateBuildPath = path.join(
     ctx.root,
@@ -108,6 +111,6 @@ export async function findSourcemap(
     logger.debug(`Getting the source map from ${intermediateBuildPath}`);
     return intermediateBuildPath;
   } else {
-    return generateSourcemap(port);
+    return generateSourcemap(port, bundleOptions);
   }
 }

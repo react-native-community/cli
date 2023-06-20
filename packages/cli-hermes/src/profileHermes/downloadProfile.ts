@@ -7,6 +7,7 @@ import os from 'os';
 import transformer from 'hermes-profile-transformer';
 import {findSourcemap, generateSourcemap} from './sourcemapUtils';
 import {getAndroidProject} from '@react-native-community/cli-platform-android';
+import {getMetroBundleOptions} from './metroBundleOptions';
 /**
  * Get the last modified hermes profile
  * @param packageNameWithSuffix
@@ -44,7 +45,7 @@ export async function downloadProfile(
   sourcemapPath?: string,
   raw?: boolean,
   shouldGenerateSourcemap?: boolean,
-  port?: string,
+  port: string = '8081',
   appId?: string,
   appIdSuffix?: string,
 ) {
@@ -88,13 +89,16 @@ export async function downloadProfile(
       execSyncWithLog(
         `adb shell run-as ${packageNameWithSuffix} cat cache/${file} > ${tempFilePath}`,
       );
+
+      const bundleOptions = getMetroBundleOptions(tempFilePath);
+
       // If path to source map is not given
       if (!sourcemapPath) {
         // Get or generate the source map
         if (shouldGenerateSourcemap) {
-          sourcemapPath = await generateSourcemap(port);
+          sourcemapPath = await generateSourcemap(port, bundleOptions);
         } else {
-          sourcemapPath = await findSourcemap(ctx, port);
+          sourcemapPath = await findSourcemap(ctx, port, bundleOptions);
         }
 
         // Run without source map

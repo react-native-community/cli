@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-// @ts-ignore untyped metro
 import Metro from 'metro';
 import type Server from 'metro/src/Server';
 import type {Middleware} from 'metro-config';

@@ -20,7 +20,7 @@ export interface CommandLineArgs {
   platform: string;
   dev: boolean;
   bundleOutput: string;
-  bundleEncoding?: string;
+  bundleEncoding?: 'utf8' | 'utf16le' | 'ascii';
   maxWorkers?: number;
   sourcemapOutput?: string;
   sourcemapSourcesRoot?: string;

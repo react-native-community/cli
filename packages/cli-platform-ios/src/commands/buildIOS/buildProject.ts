@@ -111,9 +111,9 @@ export function buildProject(
             `
             Failed to build iOS project.
 
-            We ran "xcodebuild" command but it exited with error code ${code}. To debug build
+            "xcodebuild" exited with error code '${code}'. To debug build
             logs further, consider building your app with Xcode.app, by opening
-            ${xcodeProject.name}.
+            '${xcodeProject.name}'.
           `,
             xcodebuildOutputFormatter
               ? undefined

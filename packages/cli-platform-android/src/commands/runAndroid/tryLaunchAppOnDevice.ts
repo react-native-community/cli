@@ -18,7 +18,7 @@ function tryLaunchAppOnDevice(
   args: Flags,
 ) {
   const {appId, appIdSuffix} = args;
-  const packageNameWithSuffix = [appId || applicationId, appIdSuffix]
+  const applicationIdWithSuffix = [appId || applicationId, appIdSuffix]
     .filter(Boolean)
     .join('.');
 
@@ -33,7 +33,7 @@ function tryLaunchAppOnDevice(
       'am',
       'start',
       '-n',
-      `${packageNameWithSuffix}/${activityToLaunch}`,
+      `${applicationIdWithSuffix}/${activityToLaunch}`,
       '-a',
       'android.intent.action.MAIN',
       '-c',

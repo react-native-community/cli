@@ -6,6 +6,7 @@ import {
   loadConfig,
   mergeConfig,
   resolveConfig,
+  ResolverConfigT,
 } from 'metro-config';
 import {CLIError, logger} from '@react-native-community/cli-tools';
 import type {Config} from '@react-native-community/cli-types';
@@ -26,23 +27,24 @@ function getOverrideConfig(ctx: ConfigLoadingContext): InputConfigT {
   const outOfTreePlatforms = Object.keys(ctx.platforms).filter(
     (platform) => ctx.platforms[platform].npmPackageName,
   );
+  const resolver: Partial<ResolverConfigT> = {
+    platforms: [...Object.keys(ctx.platforms), 'native'],
+  };
+
+  if (outOfTreePlatforms.length) {
+    resolver.resolveRequest = reactNativePlatformResolver(
+      outOfTreePlatforms.reduce<{[platform: string]: string}>(
+        (result, platform) => {
+          result[platform] = ctx.platforms[platform].npmPackageName!;
+          return result;
+        },
+        {},
+      ),
+    );
+  }
 
   return {
-    resolver: {
-      resolveRequest:
-        outOfTreePlatforms.length === 0
-          ? undefined
-          : reactNativePlatformResolver(
-              outOfTreePlatforms.reduce<{[platform: string]: string}>(
-                (result, platform) => {
-                  result[platform] = ctx.platforms[platform].npmPackageName!;
-                  return result;
-                },
-                {},
-              ),
-            ),
-      platforms: [...Object.keys(ctx.platforms), 'native'],
-    },
+    resolver,
     serializer: {
       // We can include multiple copies of InitializeCore here because metro will
       // only add ones that are already part of the bundle

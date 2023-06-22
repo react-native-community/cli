@@ -25,7 +25,7 @@
     "@types/fs-extra": "^8.1.0",
     "@types/glob": "^7.1.1"
   },
-  "homepage": "https://github.com/react-native-community/cli/tree/master/packages/platform-android",
+  "homepage": "https://github.com/react-native-community/cli/tree/main/packages/cli-platform-android",
   "repository": {
     "type": "git",
     "url": "https://github.com/react-native-community/cli.git",

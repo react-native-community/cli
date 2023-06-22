@@ -30,7 +30,7 @@
     "!*.d.ts",
     "!*.map"
   ],
-  "homepage": "https://github.com/react-native-community/cli/tree/master/packages/tools",
+  "homepage": "https://github.com/react-native-community/cli/tree/main/packages/cli-tools",
   "repository": {
     "type": "git",
     "url": "https://github.com/react-native-community/cli.git",

@@ -22,7 +22,7 @@
     "@react-native-community/cli-types": "12.0.0-alpha.4",
     "@types/prompts": "^2.0.9"
   },
-  "homepage": "https://github.com/react-native-community/cli/tree/master/packages/cli-clean",
+  "homepage": "https://github.com/react-native-community/cli/tree/main/packages/cli-clean",
   "repository": {
     "type": "git",
     "url": "https://github.com/react-native-community/cli.git",

@@ -55,7 +55,7 @@ export default function findPodfilePath(cwd: string) {
         inlineString(`
           Multiple Podfiles were found: ${podfiles}. Choosing ${podfiles[0]} automatically.
           If you would like to select a different one, you can configure it via "project.ios.sourceDir".
-          You can learn more about it here: https://github.com/react-native-community/cli/blob/master/docs/configuration.md
+          You can learn more about it here: https://github.com/react-native-community/cli/blob/main/docs/configuration.md
         `),
       );
     }

@@ -3,7 +3,7 @@
 exports[`ios::findPodfilePath prints a warning when multile Podfiles are found 1`] = `
 Array [
   Array [
-    "Multiple Podfiles were found: bar/ios/Podfile,foo/ios/Podfile. Choosing bar/ios/Podfile automatically. If you would like to select a different one, you can configure it via \\"project.ios.sourceDir\\". You can learn more about it here: https://github.com/react-native-community/cli/blob/master/docs/configuration.md",
+    "Multiple Podfiles were found: bar/ios/Podfile,foo/ios/Podfile. Choosing bar/ios/Podfile automatically. If you would like to select a different one, you can configure it via \\"project.ios.sourceDir\\". You can learn more about it here: https://github.com/react-native-community/cli/blob/main/docs/configuration.md",
   ],
 ]
 `;

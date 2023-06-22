@@ -159,7 +159,7 @@ Report SourceMapURL using its full path.
 
 Directory name where to store assets referenced in the bundle.
 
-If you are planning on building a debug APK that will run without the packager, see ([--bundle-output](https://github.com/react-native-community/cli/blob/master/docs/commands.md#--bundle-output-string))
+If you are planning on building a debug APK that will run without the packager, see ([--bundle-output](https://github.com/react-native-community/cli/blob/main/packages/cli-plugin-metro/README.md#--bundle-output-string))
 
 <details>
   Alternatively if you want to run <code>react-native bundle</code> manually and then create the APK with <code>./gradlew assembleDebug</code> you have to make sure to put the assets into the right directory, so that gradle can find them.

@@ -20,7 +20,7 @@
   "dependencies": {
     "serve-static": "^1.13.1"
   },
-  "homepage": "https://github.com/react-native-community/cli/tree/master/packages/debugger-ui",
+  "homepage": "https://github.com/react-native-community/cli/tree/main/packages/cli-debugger-ui",
   "repository": {
     "type": "git",
     "url": "https://github.com/react-native-community/cli.git",

@@ -25,7 +25,7 @@
     "@types/cosmiconfig": "^5.0.3",
     "@types/glob": "^7.1.1"
   },
-  "homepage": "https://github.com/react-native-community/cli/tree/master/packages/cli-config",
+  "homepage": "https://github.com/react-native-community/cli/tree/main/packages/cli-config",
   "repository": {
     "type": "git",
     "url": "https://github.com/react-native-community/cli.git",

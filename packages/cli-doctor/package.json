@@ -42,7 +42,7 @@
     "@types/semver": "^6.0.2",
     "@types/wcwidth": "^1.0.0"
   },
-  "homepage": "https://github.com/react-native-community/cli/tree/master/packages/cli-doctor",
+  "homepage": "https://github.com/react-native-community/cli/tree/main/packages/cli-doctor",
   "repository": {
     "type": "git",
     "url": "https://github.com/react-native-community/cli.git",

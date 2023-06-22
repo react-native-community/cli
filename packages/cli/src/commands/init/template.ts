@@ -50,7 +50,7 @@ export function getTemplateConfig(
     throw new CLIError(
       `Couldn't find the "${configFilePath} file inside "${templateName}" template. Please make sure the template is valid.
       Read more: ${chalk.underline.dim(
-        'https://github.com/react-native-community/cli/blob/master/docs/init.md#creating-custom-template',
+        'https://github.com/react-native-community/cli/blob/main/docs/init.md#creating-custom-template',
       )}`,
     );
   }

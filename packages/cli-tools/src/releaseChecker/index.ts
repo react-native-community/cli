@@ -69,7 +69,7 @@ export function current(projectRoot: string): SemVer | undefined {
     if (found) {
       return found;
     }
-  } catch (_) {
+  } catch {
     throw new UnknownProjectError(projectRoot);
   }
   return undefined;

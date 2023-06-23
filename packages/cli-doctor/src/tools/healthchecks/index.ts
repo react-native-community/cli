@@ -17,6 +17,7 @@ import xcodeEnv from './xcodeEnv';
 import packager from './packager';
 import deepmerge from 'deepmerge';
 import {logger} from '@react-native-community/cli-tools';
+import dependencies from './dependencies';
 
 export const HEALTHCHECK_TYPES = {
   ERROR: 'ERROR',
@@ -69,6 +70,7 @@ export const getHealthchecks = ({contributor}: Options): Healthchecks => {
     common: {
       label: 'Common',
       healthchecks: [
+        dependencies,
         nodeJS,
         yarn,
         npm,

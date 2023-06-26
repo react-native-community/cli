@@ -1,6 +1,6 @@
 export default {
   // Common
-  NODE_JS: '>= 16',
+  NODE_JS: '>= 18',
   YARN: '>= 1.10.x',
   NPM: '>= 4.x',
   RUBY: '>= 2.6.10',

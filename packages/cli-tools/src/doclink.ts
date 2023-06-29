@@ -1,7 +1,11 @@
 import os from 'os';
 import assert from 'assert';
 
-type Platforms = 'android' | 'ios';
+type Platforms =
+  | 'android'
+  | 'ios'
+  | 'inherit' // Expect the platform to be defined before this link is called with the link.setPlatform()
+  | 'none'; // No platform specific documentation
 
 export function getOS(): string {
   // Using os.platform instead of process.platform so we can test more easily. Once jest upgrades
@@ -23,12 +27,11 @@ export function getOS(): string {
   }
 }
 
-let _platform: Platforms = 'android';
+let _platform: Platforms | null = null;
 let _version: string | undefined;
 
 interface Overrides {
   os?: string;
-  platform?: string;
   hash?: string;
   version?: string;
 }
@@ -43,6 +46,7 @@ interface Other {
 function doclink(
   section: string,
   path: string,
+  platform: Platforms,
   hashOrOverrides?: string | (Overrides & Other),
 ): string {
   const url = new URL('https://reactnative.dev/');
@@ -54,19 +58,30 @@ function doclink(
   const version =
     isObj && hashOrOverrides.version ? hashOrOverrides.version : _version;
   const OS = isObj && hashOrOverrides.os ? hashOrOverrides.os : getOS();
-  const platform =
-    isObj && hashOrOverrides.platform ? hashOrOverrides.platform : _platform;
 
   url.pathname = _version
     ? `${section}/${version}/${path}`
     : `${section}/${path}`;
 
   url.searchParams.set('os', OS);
-  url.searchParams.set('platform', platform);
+
+  if (platform === 'inherit') {
+    assert.ok(
+      _platform !== null,
+      `Please report this CLI error:  link.setPlatform('ios'|'android'|'none') was expected to be set before using link.${section}(${path}, 'inherit').`,
+    );
+  }
+
+  const plat: Platforms =
+    platform === 'inherit' ? (_platform as Platforms) : platform ?? _platform;
+
+  if (plat !== 'none') {
+    url.searchParams.set('platform', plat);
+  }
 
   if (isObj) {
     const otherKeys = Object.keys(hashOrOverrides).filter(
-      (key) => !['hash', 'version', 'os', 'platform'].includes(key),
+      (key) => !['hash', 'version', 'os'].includes(key),
     );
     for (let key of otherKeys) {
       url.searchParams.set(key, hashOrOverrides[key]);
@@ -77,7 +92,7 @@ function doclink(
     assert.doesNotMatch(
       hash,
       /#/,
-      "Anchor links should be written withou a '#'",
+      "Anchor links should be written without a '#'",
     );
     url.hash = hash;
   }

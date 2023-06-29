@@ -61,10 +61,9 @@ export default {
     loader.fail();
     logManualInstallation({
       healthcheck: 'JDK',
-      url: link.docs('environment-setup', {
+      url: link.docs('environment-setup', 'android', {
         hash: 'jdk-studio',
         guide: 'native',
-        platform: 'android',
       }),
     });
   },

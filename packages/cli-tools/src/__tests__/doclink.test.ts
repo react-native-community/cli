@@ -10,7 +10,7 @@ describe('link', () => {
     mockPlatform.mockReturnValueOnce('darwin');
     link.setPlatform('android');
 
-    const url = new URL(link.docs('environment-setup')).toString();
+    const url = new URL(link.docs('environment-setup', 'inherit')).toString();
     expect(url).toMatch(/os=macos/);
     expect(url).toMatch(/platform=android/);
     expect(url).toEqual(
@@ -19,15 +19,20 @@ describe('link', () => {
 
     // Handles a change of os
     mockPlatform.mockReturnValueOnce('win32');
-    expect(link.docs('environment-setup')).toMatch(/os=windows/);
+    expect(link.docs('environment-setup', 'inherit')).toMatch(/os=windows/);
 
     // Handles a change of platform
     link.setPlatform('ios');
-    expect(link.docs('environment-setup')).toMatch(/platform=ios/);
+    expect(link.docs('environment-setup', 'inherit')).toMatch(/platform=ios/);
+
+    // Handles cases where we don't need a platform
+    expect(link.blog('2019/11/18/react-native-doctor', 'none')).not.toMatch(
+      /platform=/,
+    );
   });
 
   it('preserves anchor-links', () => {
-    expect(link.docs('environment-setup', 'ruby')).toMatch(/#ruby/);
+    expect(link.docs('environment-setup', 'inherit', 'ruby')).toMatch(/#ruby/);
   });
 
   describe('overrides', () => {
@@ -35,10 +40,18 @@ describe('link', () => {
     it.each([
       [{hash: 'ruby'}, /#ruby/],
       [{hash: 'ruby', os: 'linux'}, /os=linux/],
-      [{platform: 'ios'}, /platform=ios/],
       [{'extra stuff': 'here?ok'}, /extra\+stuff=here%3Fok/],
     ])("link.doc('environment-setup, %o) -> %o", (param, re) => {
-      expect(link.docs('environment-setup', param)).toMatch(re);
+      expect(link.docs('environment-setup', 'none', param)).toMatch(re);
+    });
+  });
+
+  describe('enforces platform inheritance', () => {
+    it("asserts on not setting the platform for link.docs('foo', 'inherit')", () => {
+      link.setPlatform(null);
+      expect(() => {
+        link.docs('foobar', 'inherit');
+      }).toThrow(/link\.setPlatform/);
     });
   });
 
@@ -46,7 +59,7 @@ describe('link', () => {
     afterAll(() => link.setVersion(null));
     it('supports linking to a specific version of React Native', () => {
       link.setVersion('0.71');
-      expect(link.docs('environment-setup', 'ruby')).toEqual(
+      expect(link.docs('environment-setup', 'ios', 'ruby')).toEqual(
         expect.stringContaining(
           'https://reactnative.dev/docs/0.71/environment-setup',
         ),

@@ -140,10 +140,9 @@ function createInstallError(error: Error & {stderr: string}) {
     )}."`;
   } else if (stderr.includes('requires Java')) {
     message = `Looks like your Android environment is not properly set. Please go to ${chalk.dim.underline(
-      link.docs('environment-setup', {
+      link.docs('environment-setup', 'android', {
         hash: 'jdk-studio',
         guide: 'native',
-        platform: 'android',
       }),
     )} and follow the React Native CLI QuickStart guide to install the compatible version of JDK.`;
   }

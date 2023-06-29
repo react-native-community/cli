@@ -182,10 +182,9 @@ export default {
 
     return logManualInstallation({
       healthcheck: 'Android SDK',
-      url: link.docs('environment-setup', {
+      url: link.docs('environment-setup', 'android', {
         hash: 'android-sdk',
         guide: 'native',
-        platform: 'android',
       }),
     });
   },

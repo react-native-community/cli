@@ -8,7 +8,7 @@
 import glob from 'glob';
 
 // These folders will be excluded from search to speed it up
-const GLOB_EXCLUDE_PATTERN = ['**/@(Pods|node_modules|Carthage)/**'];
+const GLOB_EXCLUDE_PATTERN = ['**/@(Pods|node_modules|Carthage|vendor)/**'];
 
 export default function findAllPodfilePaths(cwd: string) {
   return glob.sync('**/Podfile', {

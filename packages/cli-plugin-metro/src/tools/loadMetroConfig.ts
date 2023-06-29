@@ -20,6 +20,10 @@ export type ConfigLoadingContext = Pick<
   'root' | 'reactNativePath' | 'platforms'
 >;
 
+declare global {
+  var __REACT_NATIVE_METRO_CONFIG_LOADED: boolean;
+}
+
 /**
  * Get the config options to override based on RN CLI inputs.
  */
@@ -98,6 +102,9 @@ export default async function loadMetroConfig(
   logger.debug(`Reading Metro config from ${projectConfig.filepath}`);
 
   if (
+    !global.__REACT_NATIVE_METRO_CONFIG_LOADED &&
+    // TODO(huntie): Remove this check from 0.73 onwards (all users will be on
+    // the next major @react-native/metro-config version)
     !/['"']@react-native\/metro-config['"']/.test(
       fs.readFileSync(projectConfig.filepath, 'utf8'),
     )

@@ -55,7 +55,7 @@ function getOverrideConfig(ctx: ConfigLoadingContext): InputConfigT {
         ...outOfTreePlatforms.map((platform) =>
           require.resolve(
             `${ctx.platforms[platform]
-              .npmPackageName!}/Libraries/Core/InitializeCore`,
+              .npmPackageName!}/Libraries/Core/InitializeCore`, {paths: [ctx.root]}
           ),
         ),
       ],

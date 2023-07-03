@@ -14,5 +14,5 @@ Test Plan:
 Checklist
 ----------
 
-[] - Documentation is up to date to reflect these changes.
-[] - Follows commit message convention described in [CONTRIBUTING.md](https://github.com/react-native-community/cli/blob/main/CONTRIBUTING.md#commit-message-convention)
+- [ ] Documentation is up to date to reflect these changes.
+- [ ] Follows commit message convention described in [CONTRIBUTING.md](https://github.com/react-native-community/cli/blob/main/CONTRIBUTING.md#commit-message-convention)

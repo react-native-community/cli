@@ -112,11 +112,7 @@ Create project with custom package name for Android and bundle identifier for iO
 Usage:
 
 ```sh
-react-native upgrade [npm-version]
+react-native upgrade
 ```
 
-Upgrade your app's template files to the specified or latest npm version using [rn-diff-purge](https://github.com/react-native-community/rn-diff-purge) project. Only valid semver versions are allowed.
-
-Using this command is a recommended way of upgrading relatively simple React Native apps with not too many native libraries linked. The more iOS and Android build files are modified, the higher chance for a conflicts. The command will guide you on how to continue upgrade process manually in case of failure.
-
-_Note: If you'd like to upgrade using this method from React Native version lower than 0.59.0, you may use a standalone version of this CLI: `npx @react-native-community/cli upgrade`._
+This command generates a relevant link to the [Upgrade Helper](https://react-native-community.github.io/upgrade-helper/) to help you upgrade manually.

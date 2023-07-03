@@ -115,4 +115,4 @@ Usage:
 react-native upgrade
 ```
 
-This command generates a link to the upgrade helper to help you upgrade. It checks current version and the latest version available and will show you the link with the versions already selected.
+This command generates a relevant link to the [Upgrade Helper](https://react-native-community.github.io/upgrade-helper/) to help you upgrade manually.

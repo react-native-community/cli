@@ -22,7 +22,7 @@
     "node-stream-zip": "^1.9.1",
     "ora": "^5.4.1",
     "prompts": "^2.4.0",
-    "semver": "^6.3.0",
+    "semver": "^7.5.2",
     "strip-ansi": "^5.2.0",
     "sudo-prompt": "^9.0.0",
     "wcwidth": "^1.0.1",

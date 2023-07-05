@@ -14,23 +14,23 @@ jest.dontMock('../filterPlatformAssetScales').dontMock('../assetPathUtils');
 
 describe('filterPlatformAssetScales', () => {
   it('removes everything but 2x and 3x for iOS', () => {
-    expect(filterPlatformAssetScales('ios', [1, 1.5, 2, 3, 4])).toEqual([
+    expect(filterPlatformAssetScales([1, 2, 3], [1, 1.5, 2, 3, 4])).toEqual([
       1,
       2,
       3,
     ]);
-    expect(filterPlatformAssetScales('ios', [3, 4])).toEqual([3]);
+    expect(filterPlatformAssetScales([1, 2, 3], [3, 4])).toEqual([3]);
   });
 
   it('keeps closest largest one if nothing matches', () => {
-    expect(filterPlatformAssetScales('ios', [0.5, 4, 100])).toEqual([4]);
-    expect(filterPlatformAssetScales('ios', [0.5, 100])).toEqual([100]);
-    expect(filterPlatformAssetScales('ios', [0.5])).toEqual([0.5]);
-    expect(filterPlatformAssetScales('ios', [])).toEqual([]);
+    expect(filterPlatformAssetScales([1, 2, 3], [0.5, 4, 100])).toEqual([4]);
+    expect(filterPlatformAssetScales([1, 2, 3], [0.5, 100])).toEqual([100]);
+    expect(filterPlatformAssetScales([1, 2, 3], [0.5])).toEqual([0.5]);
+    expect(filterPlatformAssetScales([1, 2, 3], [])).toEqual([]);
   });
 
   it('keeps all scales for unknown platform', () => {
-    expect(filterPlatformAssetScales('freebsd', [1, 1.5, 2, 3.7])).toEqual([
+    expect(filterPlatformAssetScales(undefined, [1, 1.5, 2, 3.7])).toEqual([
       1,
       1.5,
       2,

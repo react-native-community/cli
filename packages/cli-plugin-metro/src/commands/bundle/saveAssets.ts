@@ -10,15 +10,7 @@ import {logger} from '@react-native-community/cli-tools';
 import fs from 'fs';
 import type {AssetData} from 'metro';
 import path from 'path';
-import {
-  cleanAssetCatalog,
-  getImageSet,
-  isCatalogAsset,
-  writeImageSet,
-} from './assetCatalogIOS';
 import filterPlatformAssetScales from './filterPlatformAssetScales';
-import getAssetDestPathAndroid from './getAssetDestPathAndroid';
-import getAssetDestPathIOS from './getAssetDestPathIOS';
 
 interface CopiedFiles {
   [src: string]: string;
@@ -29,6 +21,17 @@ function saveAssets(
   platform: string,
   assetsDest: string | undefined,
   assetCatalogDest: string | undefined,
+  saveAssetsPlugin: (
+    assets: ReadonlyArray<AssetData>,
+    platform: string,
+    assetsDest: string | undefined,
+    assetCatalogDest: string | undefined,
+    addAssetToCopy: (
+      asset: AssetData,
+      allowedScales: number[] | undefined,
+      getAssetDestPath: (asset: AssetData, scale: number) => string,
+    ) => void,
+  ) => void,
 ) {
   if (!assetsDest) {
     logger.warn('Assets destination folder is not set, skipping...');
@@ -37,15 +40,16 @@ function saveAssets(
 
   const filesToCopy: CopiedFiles = Object.create(null); // Map src -> dest
 
-  const getAssetDestPath =
-    platform === 'android' ? getAssetDestPathAndroid : getAssetDestPathIOS;
-
-  const addAssetToCopy = (asset: AssetData) => {
+  const addAssetToCopy = (
+    asset: AssetData,
+    allowedScales: number[] | undefined,
+    getAssetDestPath: (asset: AssetData, scale: number) => string,
+  ) => {
     const validScales = new Set(
-      filterPlatformAssetScales(platform, asset.scales),
+      filterPlatformAssetScales(allowedScales, asset.scales),
     );
 
-    asset.scales.forEach((scale, idx) => {
+    asset.scales.forEach((scale: number, idx: number) => {
       if (!validScales.has(scale)) {
         return;
       }
@@ -55,36 +59,13 @@ function saveAssets(
     });
   };
 
-  if (platform === 'ios' && assetCatalogDest != null) {
-    // Use iOS Asset Catalog for images. This will allow Apple app thinning to
-    // remove unused scales from the optimized bundle.
-    const catalogDir = path.join(assetCatalogDest, 'RNAssets.xcassets');
-    if (!fs.existsSync(catalogDir)) {
-      logger.error(
-        `Could not find asset catalog 'RNAssets.xcassets' in ${assetCatalogDest}. Make sure to create it if it does not exist.`,
-      );
-      return;
-    }
-
-    logger.info('Adding images to asset catalog', catalogDir);
-    cleanAssetCatalog(catalogDir);
-    for (const asset of assets) {
-      if (isCatalogAsset(asset)) {
-        const imageSet = getImageSet(
-          catalogDir,
-          asset,
-          filterPlatformAssetScales(platform, asset.scales),
-        );
-        writeImageSet(imageSet);
-      } else {
-        addAssetToCopy(asset);
-      }
-    }
-    logger.info('Done adding images to asset catalog');
-  } else {
-    assets.forEach(addAssetToCopy);
-  }
-
+  saveAssetsPlugin(
+    assets,
+    platform,
+    assetsDest,
+    assetCatalogDest,
+    addAssetToCopy,
+  );
   return copyAll(filesToCopy);
 }
 

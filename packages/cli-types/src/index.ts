@@ -66,6 +66,7 @@ interface PlatformConfig<
   DependencyParams
 > {
   npmPackageName?: string;
+  saveAssetsPlugin?: string;
   projectConfig: (
     projectRoot: string,
     projectParams: ProjectParams | void,

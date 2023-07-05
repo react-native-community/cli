@@ -9,7 +9,7 @@
 import path from 'path';
 import {PackagerAsset} from './assetPathUtils';
 
-function getAssetDestPathIOS(asset: PackagerAsset, scale: number): string {
+function getAssetDestPath(asset: PackagerAsset, scale: number): string {
   const suffix = scale === 1 ? '' : `@${scale}x`;
   const fileName = `${asset.name + suffix}.${asset.type}`;
   return path.join(
@@ -21,4 +21,4 @@ function getAssetDestPathIOS(asset: PackagerAsset, scale: number): string {
   );
 }
 
-export default getAssetDestPathIOS;
+export default getAssetDestPath;

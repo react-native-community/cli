@@ -6,15 +6,10 @@
  *
  */
 
-const ALLOWED_SCALES: {[key: string]: number[]} = {
-  ios: [1, 2, 3],
-};
-
 function filterPlatformAssetScales(
-  platform: string,
+  whitelist: ReadonlyArray<number> | undefined,
   scales: ReadonlyArray<number>,
 ): ReadonlyArray<number> {
-  const whitelist: number[] = ALLOWED_SCALES[platform];
   if (!whitelist) {
     return scales;
   }

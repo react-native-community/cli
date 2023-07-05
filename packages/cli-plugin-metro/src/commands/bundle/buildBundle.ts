@@ -17,6 +17,10 @@ import type {Config} from '@react-native-community/cli-types';
 import saveAssets from './saveAssets';
 import {default as loadMetroConfig} from '../../tools/loadMetroConfig';
 import {logger} from '@react-native-community/cli-tools';
+import type {AssetData} from 'metro';
+import saveAssetsAndroid from './saveAssetsAndroid';
+import saveAssetsDefault from './saveAssetsDefault';
+import saveAssetsIOS from './saveAssetsIOS';
 
 interface RequestOptions {
   entryFile: string;
@@ -38,7 +42,18 @@ async function buildBundle(
     config: args.config,
   });
 
-  return buildBundleWithConfig(args, config, output);
+  let saveAssetsPlugin =
+    ctx.platforms[args.platform] &&
+    ctx.platforms[args.platform].saveAssetsPlugin
+      ? require(require.resolve(
+          ctx.platforms[args.platform].saveAssetsPlugin!,
+          {
+            paths: [ctx.root],
+          },
+        ))
+      : undefined;
+
+  return buildBundleWithConfig(args, config, output, saveAssetsPlugin);
 }
 
 /**
@@ -50,6 +65,17 @@ export async function buildBundleWithConfig(
   args: CommandLineArgs,
   config: ConfigT,
   output: typeof outputBundle = outputBundle,
+  saveAssetsPlugin: (
+    assets: ReadonlyArray<AssetData>,
+    platform: string,
+    assetsDest: string | undefined,
+    assetCatalogDest: string | undefined,
+    addAssetToCopy: (
+      asset: AssetData,
+      allowedScales: number[] | undefined,
+      getAssetDestPath: (asset: AssetData, scale: number) => string,
+    ) => void,
+  ) => void,
 ) {
   if (config.resolver.platforms.indexOf(args.platform) === -1) {
     logger.error(
@@ -100,12 +126,22 @@ export async function buildBundleWithConfig(
       bundleType: 'todo',
     });
 
+    if (!saveAssetsPlugin) {
+      saveAssetsPlugin =
+        args.platform === 'ios'
+          ? saveAssetsIOS
+          : args.platform === 'android'
+          ? saveAssetsAndroid
+          : saveAssetsDefault;
+    }
+
     // When we're done saving bundle output and the assets, we're done.
     return await saveAssets(
       outputAssets,
       args.platform,
       args.assetsDest,
       args.assetCatalogDest,
+      saveAssetsPlugin,
     );
   } finally {
     server.end();

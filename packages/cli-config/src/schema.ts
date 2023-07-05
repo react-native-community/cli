@@ -96,6 +96,7 @@ export const dependencyConfig = t
       t.string(),
       t.object({
         npmPackageName: t.string().optional(),
+        saveAssetsPlugin: t.string().optional(),
         dependencyConfig: t.func(),
         projectConfig: t.func(),
         linkConfig: t.func(),
@@ -180,6 +181,7 @@ export const projectConfig = t
       t.string(),
       t.object({
         npmPackageName: t.string().optional(),
+        saveAssetsPlugin: t.string().optional(),
         dependencyConfig: t.func(),
         projectConfig: t.func(),
         linkConfig: t.func(),

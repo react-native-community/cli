@@ -148,7 +148,7 @@ function createInstallError(error: Error & {stderr: string}) {
   }
 
   return new CLIError(
-    `Failed to install the app.${message || ''}`,
+    `Failed to install the app.${message ? ' ' + message : ''}`,
     error.message.length > 0 ? undefined : error,
   );
 }

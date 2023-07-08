@@ -62,7 +62,7 @@
     "@types/node": "^16.0.0"
   },
   "lint-staged": {
-    "./packages/**/*.{ts}": [
+    "./packages/**/*.ts": [
       "yarn lint"
     ]
   }

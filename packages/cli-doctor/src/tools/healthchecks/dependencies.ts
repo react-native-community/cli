@@ -1,4 +1,5 @@
 import fs from 'fs';
+import chalk from 'chalk';
 import path from 'path';
 import semver from 'semver';
 import {HealthCheckInterface} from '../../types';
@@ -50,21 +51,31 @@ export default {
       const root = config?.root || findProjectRoot();
       const dependencies = findDependencies(root);
       const reactNativeVersion = dependencies['react-native'];
-      const reactNativeMinorVersion = semver.coerce(reactNativeVersion)?.minor;
+      const reactNativeCoercedVersion = semver.coerce(reactNativeVersion);
       const issues: string[] = [];
 
       RNPackages.forEach((pkg) => {
         if (dependencies[pkg]) {
-          issues.push(
-            `   - ${pkg} is part of React Native and should not be a dependency in your package.json`,
-          );
           const packageVersion = dependencies[pkg];
-          const packageMinorVersion = semver.coerce(packageVersion)?.minor;
-
-          if (reactNativeMinorVersion !== packageMinorVersion) {
-            issues.push(
-              `   - ${pkg} "${packageVersion}" is not compatible with react-native: "${reactNativeVersion}"`,
+          const packageCoercedVersion = semver.coerce(packageVersion);
+          if (reactNativeCoercedVersion && packageCoercedVersion) {
+            const verisonDiff = semver.diff(
+              packageCoercedVersion,
+              reactNativeCoercedVersion,
             );
+            if (verisonDiff === 'major' || verisonDiff === 'minor') {
+              issues.push(
+                `   - ${chalk.red.bold(
+                  'error',
+                )} ${pkg}: "${packageVersion}" is not compatible with react-native: "${reactNativeVersion}"`,
+              );
+            } else {
+              issues.push(
+                `   - ${chalk.yellow.bold(
+                  'warn',
+                )} ${pkg} is part of React Native and should not be a dependency in your package.json`,
+              );
+            }
           }
         }
       });

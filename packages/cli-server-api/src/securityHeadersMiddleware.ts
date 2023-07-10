@@ -14,7 +14,8 @@ export default function securityHeadersMiddleware(
   // Block any cross origin request.
   if (
     typeof req.headers.origin === 'string' &&
-    !req.headers.origin.match(/^https?:\/\/localhost:/)
+    !req.headers.origin.match(/^https?:\/\/localhost:/) &&
+    !req.headers.origin.startsWith('devtools://devtools')
   ) {
     next(
       new Error(

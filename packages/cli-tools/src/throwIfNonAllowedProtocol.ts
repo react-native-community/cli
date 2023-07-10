@@ -2,7 +2,7 @@
  * Check if a url uses an allowed protocol
  */
 
-const ALLOWED_PROTOCOLS = ['http:', 'https:', 'flipper:'];
+const ALLOWED_PROTOCOLS = ['http:', 'https:', 'devtools:', 'flipper:'];
 
 export default function throwIfNonAllowedProtocol(url: string) {
   const _url = new URL(url);

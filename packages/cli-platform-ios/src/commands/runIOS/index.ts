@@ -359,7 +359,7 @@ async function runOnDevice(
   if (isIOSDeployInstalled.error) {
     throw new CLIError(
       `Failed to install the app on the device because we couldn't execute the "ios-deploy" command. Please install it by running "${chalk.bold(
-        'npm install -g ios-deploy',
+        'brew install ios-deploy',
       )}" and try again.`,
     );
   }

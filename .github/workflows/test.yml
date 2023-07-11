@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18]
+        node-version: [18, 20]
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
@@ -44,7 +44,7 @@ jobs:
     name: E2E Tests
     strategy:
       matrix:
-        node-version: [18]
+        node-version: [18, 20]
         os: [ubuntu-latest, macos-latest, windows-2019]
     runs-on: ${{ matrix.os }}
     steps:

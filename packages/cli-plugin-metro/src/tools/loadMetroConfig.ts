@@ -56,6 +56,7 @@ function getOverrideConfig(ctx: ConfigLoadingContext): InputConfigT {
           require.resolve(
             `${ctx.platforms[platform]
               .npmPackageName!}/Libraries/Core/InitializeCore`,
+            {paths: [ctx.root]},
           ),
         ),
       ],

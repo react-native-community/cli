@@ -121,7 +121,7 @@ async function runOnAllDevices(
 
 function createInstallError(error: Error & {stderr: string}) {
   const stderr = (error.stderr || '').toString();
-  let message = error.message ?? '';
+  let message = '';
   // Pass the error message from the command to stdout because we pipe it to
   // parent process so it's not visible
   logger.log(stderr);
@@ -140,8 +140,8 @@ function createInstallError(error: Error & {stderr: string}) {
   }
 
   return new CLIError(
-    `Failed to install the app. ${message}`,
-    message.length > 0 ? undefined : error,
+    `Failed to install the app.${message ? ' ' + message : ''}`,
+    error.message.length > 0 ? undefined : error,
   );
 }
 

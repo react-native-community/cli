@@ -28,9 +28,7 @@ export default {
   description: 'File to customize Xcode environment',
   getDiagnostics: async (_, config) => {
     try {
-      const iosFolderPath = config?.project.ios
-        ? config?.project.ios.sourceDir
-        : '';
+      const iosFolderPath = config?.project.ios?.sourceDir ?? '';
 
       const missingXcodeEnvFile = findPodfilePaths(iosFolderPath).some(
         (podfilePath) => {
@@ -61,9 +59,7 @@ export default {
       const src = path.join(templateIosPath, templateXcodeEnv);
       const copyFileAsync = promisify(fs.copyFile);
 
-      const iosFolderPath = config?.project.ios
-        ? config?.project.ios.sourceDir
-        : '';
+      const iosFolderPath = config?.project.ios?.sourceDir ?? '';
 
       findPodfilePaths(iosFolderPath)
         .map((podfilePath) =>

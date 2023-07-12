@@ -14,41 +14,44 @@ jest.mock('fs');
 const fs = require('fs');
 
 describe('ios::findPodspec', () => {
-  it('returns null if there is not podspec file', () => {
-    fs.__setMockFilesystem({});
-    expect(findPodspec('')).toBeNull();
-  });
-
-  it('returns podspec name if only one exists', () => {
+  beforeAll(() => {
     fs.__setMockFilesystem({
-      'TestPod.podspec': 'empty',
-    });
-    expect(findPodspec('/')).toBe('/TestPod.podspec');
-  });
-
-  it('returns podspec name that match packet directory', () => {
-    fs.__setMockFilesystem({
-      user: {
-        PacketName: {
-          'Another.podspec': 'empty',
-          'PacketName.podspec': 'empty',
+      empty: {},
+      flat: {
+        'TestPod.podspec': 'empty',
+      },
+      multiple: {
+        user: {
+          PacketName: {
+            'Another.podspec': 'empty',
+            'PacketName.podspec': 'empty',
+          },
+          packet: {
+            'Another.podspec': 'empty',
+            'PacketName.podspec': 'empty',
+          },
         },
       },
     });
-    expect(findPodspec('/user/PacketName')).toBe(
-      '/user/PacketName/PacketName.podspec',
+  });
+
+  it('returns null if there is not podspec file', () => {
+    expect(findPodspec('/empty')).toBeNull();
+  });
+
+  it('returns podspec name if only one exists', () => {
+    expect(findPodspec('/flat')).toBe('/flat/TestPod.podspec');
+  });
+
+  it('returns podspec name that match packet directory', () => {
+    expect(findPodspec('/multiple/user/PacketName')).toBe(
+      '/multiple/user/PacketName/PacketName.podspec',
     );
   });
 
   it('returns first podspec name if not match in directory', () => {
-    fs.__setMockFilesystem({
-      user: {
-        packet: {
-          'Another.podspec': 'empty',
-          'PacketName.podspec': 'empty',
-        },
-      },
-    });
-    expect(findPodspec('/user/packet')).toBe('/user/packet/Another.podspec');
+    expect(findPodspec('/multiple/user/packet')).toBe(
+      '/multiple/user/packet/Another.podspec',
+    );
   });
 });

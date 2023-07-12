@@ -7,11 +7,14 @@
  */
 
 import fs from 'fs';
-import glob from 'glob';
+import fg from 'fast-glob';
 import path from 'path';
+import {unixifyPaths} from '@react-native-community/cli-tools';
 
 export default function getPackageClassName(folder: string) {
-  const files = glob.sync('**/+(*.java|*.kt)', {cwd: folder});
+  const files = fg.sync('**/+(*.java|*.kt)', {
+    cwd: unixifyPaths(folder),
+  });
 
   const packages = files
     .map((filePath) => fs.readFileSync(path.join(folder, filePath), 'utf8'))

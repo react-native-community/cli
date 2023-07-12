@@ -13,39 +13,44 @@ jest.mock('fs');
 const fs = require('fs');
 
 describe('ios::getProjectConfig', () => {
-  it('returns `null` if Podfile was not found', () => {
-    fs.__setMockFilesystem({});
-    expect(projectConfig('/', {})).toBe(null);
-  });
-  it('returns an object with ios project configuration', () => {
+  beforeAll(() => {
     fs.__setMockFilesystem({
-      ios: {
-        Podfile: '',
+      empty: {},
+      flat: {
+        ios: {
+          Podfile: '',
+        },
+      },
+      multiple: {
+        sample: {
+          Podfile: '',
+        },
+        ios: {
+          Podfile: '',
+        },
+        example: {
+          Podfile: '',
+        },
       },
     });
-    expect(projectConfig('/', {})).toMatchInlineSnapshot(`
+  });
+
+  it('returns `null` if Podfile was not found', () => {
+    expect(projectConfig('/empty', {})).toBe(null);
+  });
+  it('returns an object with ios project configuration', () => {
+    expect(projectConfig('/flat', {})).toMatchInlineSnapshot(`
       Object {
-        "sourceDir": "/ios",
+        "sourceDir": "/flat/ios",
         "watchModeCommandParams": undefined,
         "xcodeProject": null,
       }
     `);
   });
   it('returns correct configuration when multiple Podfile are present', () => {
-    fs.__setMockFilesystem({
-      sample: {
-        Podfile: '',
-      },
-      ios: {
-        Podfile: '',
-      },
-      example: {
-        Podfile: '',
-      },
-    });
-    expect(projectConfig('/', {})).toMatchInlineSnapshot(`
+    expect(projectConfig('/multiple', {})).toMatchInlineSnapshot(`
       Object {
-        "sourceDir": "/ios",
+        "sourceDir": "/multiple/ios",
         "watchModeCommandParams": undefined,
         "xcodeProject": null,
       }

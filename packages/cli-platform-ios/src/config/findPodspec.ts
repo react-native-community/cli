@@ -1,8 +1,9 @@
-import glob from 'glob';
+import {unixifyPaths} from '@react-native-community/cli-tools';
+import fg from 'fast-glob';
 import path from 'path';
 
 export default function findPodspec(folder: string): string | null {
-  const podspecs = glob.sync('*.podspec', {cwd: folder});
+  const podspecs = fg.sync('*.podspec', {cwd: unixifyPaths(folder)});
 
   if (podspecs.length === 0) {
     return null;

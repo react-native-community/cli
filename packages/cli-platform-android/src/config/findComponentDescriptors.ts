@@ -1,13 +1,13 @@
 import fs from 'fs';
 import path from 'path';
-import glob from 'glob';
+import fg from 'fast-glob';
 import {extractComponentDescriptors} from './extractComponentDescriptors';
 
 export function findComponentDescriptors(packageRoot: string) {
-  const files = glob.sync('**/+(*.js|*.jsx|*.ts|*.tsx)', {
+  const files = fg.sync('**/+(*.js|*.jsx|*.ts|*.tsx)', {
     cwd: packageRoot,
-    nodir: true,
-    ignore: '**/node_modules/**',
+    onlyFiles: true,
+    ignore: ['**/node_modules/**'],
   });
   const codegenComponent = files
     .map((filePath) =>

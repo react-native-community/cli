@@ -21,7 +21,7 @@ export default function printNewRelease(
   logger.info(`Diff: ${chalk.dim.underline(latestRelease.diffUrl)}`);
   logger.info(
     `For more info, check out "${chalk.dim.underline(
-      link.docs('upgrading', 'inherit'),
+      link.docs('upgrading', 'none'),
     )}".`,
   );
 

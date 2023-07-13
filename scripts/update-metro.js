@@ -7,7 +7,7 @@
 const fs = require('fs');
 const path = require('path');
 const cp = require('child_process');
-const fg = require('fast-glob').sync;
+const glob = require('fast-glob').sync;
 const chalk = require('chalk');
 
 /**
@@ -42,7 +42,7 @@ const updateDependencies = (depsObject) => {
 };
 
 const start = new Date().getTime();
-['./package.json', ...fg('./packages/*/package.json')].forEach((pkgPath) => {
+['./package.json', ...glob('./packages/*/package.json')].forEach((pkgPath) => {
   const pkg = require(path.join(process.cwd(), pkgPath));
 
   const updatedDependency = pkg.dependencies

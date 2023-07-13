@@ -6,11 +6,11 @@
  *
  */
 
-import fg from 'fast-glob';
+import glob from 'fast-glob';
 import path from 'path';
 
 export default function findManifest(folder: string) {
-  const manifestPath = fg.sync(path.join('**', 'AndroidManifest.xml'), {
+  const manifestPath = glob.sync(path.join('**', 'AndroidManifest.xml'), {
     cwd: folder,
     ignore: [
       'node_modules/**',

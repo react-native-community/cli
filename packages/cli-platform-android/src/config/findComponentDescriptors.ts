@@ -1,10 +1,10 @@
 import fs from 'fs';
 import path from 'path';
-import fg from 'fast-glob';
+import glob from 'fast-glob';
 import {extractComponentDescriptors} from './extractComponentDescriptors';
 
 export function findComponentDescriptors(packageRoot: string) {
-  const files = fg.sync('**/+(*.js|*.jsx|*.ts|*.tsx)', {
+  const files = glob.sync('**/+(*.js|*.jsx|*.ts|*.tsx)', {
     cwd: packageRoot,
     onlyFiles: true,
     ignore: ['**/node_modules/**'],

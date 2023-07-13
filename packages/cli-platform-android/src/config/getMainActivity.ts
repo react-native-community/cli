@@ -8,21 +8,13 @@ interface Activity {
   [x: string]: any;
 }
 
+interface AndroidNameProperty {
+  '@_android:name': string;
+}
+
 interface IntentFilter {
-  action:
-    | {
-        '@_android:name': string;
-      }
-    | {
-        '@_android:name': string;
-      }[];
-  category:
-    | {
-        '@_android:name': string;
-      }
-    | {
-        '@_android:name': string;
-      }[];
+  action: AndroidNameProperty | AndroidNameProperty[];
+  category: AndroidNameProperty | AndroidNameProperty[];
 }
 
 /**

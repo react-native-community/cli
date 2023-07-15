@@ -4,15 +4,13 @@ import path from 'path';
 import semver from 'semver';
 import {HealthCheckInterface} from '../../types';
 import {logManualInstallation} from './common';
-import {findProjectRoot} from '@react-native-community/cli-tools';
+import {findProjectRoot, logger} from '@react-native-community/cli-tools';
 
 const RNPackages = [
   '@react-native/babel-plugin-codegen',
   '@react-native/assets-registry',
-  '@react-native/eslint-config',
   '@react-native/eslint-plugin-specs',
   '@react-native/hermes-inspector-msggen',
-  '@react-native/metro-config',
   '@react-native/normalize-colors',
   '@react-native/js-polyfills',
   '@react-native/bots',
@@ -23,18 +21,21 @@ const RNPackages = [
   '@react-native/virtualized-lists',
 ];
 
-const getPackageJson = (root: string): Record<string, any> => {
+const getPackageJson = (root?: string): Record<string, any> => {
   try {
+    root = root || findProjectRoot();
     const packageJson = JSON.parse(
       fs.readFileSync(path.join(root, 'package.json'), 'utf8'),
     );
     return packageJson;
   } catch (e) {
+    logger.log(); // for extra space
+    logger.error(`Couldn't find a "package.json" in ${root || process.cwd()}.`);
     return {};
   }
 };
 
-const findDependencies = (root: string): Record<string, string> => {
+const findDependencies = (root?: string): Record<string, string> => {
   const {devDependencies = {}, dependencies = {}} = getPackageJson(root);
   return {
     ...devDependencies,
@@ -48,8 +49,7 @@ export default {
   description: 'NPM dependencies needed for the project to work correctly',
   getDiagnostics: async (_, config) => {
     try {
-      const root = config?.root || findProjectRoot();
-      const dependencies = findDependencies(root);
+      const dependencies = findDependencies(config?.root);
       const reactNativeVersion = dependencies['react-native'];
       const reactNativeCoercedVersion = semver.coerce(reactNativeVersion);
       const issues: string[] = [];
@@ -65,13 +65,13 @@ export default {
             );
             if (verisonDiff === 'major' || verisonDiff === 'minor') {
               issues.push(
-                `   - ${chalk.red.bold(
+                `   - ${chalk.red(
                   'error',
                 )} ${pkg}: "${packageVersion}" is not compatible with react-native: "${reactNativeVersion}"`,
               );
             } else {
               issues.push(
-                `   - ${chalk.yellow.bold(
+                `   - ${chalk.yellow(
                   'warn',
                 )} ${pkg} is part of React Native and should not be a dependency in your package.json`,
               );

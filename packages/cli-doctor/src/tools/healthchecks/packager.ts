@@ -29,12 +29,8 @@ export default {
       const terminal = getDefaultUserTerminal();
       const port = Number(process.env.RCT_METRO_PORT) || 8081;
       if (terminal && config) {
-        startServerInNewWindow(
-          port,
-          terminal,
-          config.root,
-          config.reactNativePath,
-        );
+        const {root, reactNativePath} = config;
+        startServerInNewWindow(port, root, reactNativePath, terminal);
         return loader.succeed();
       }
       return logManualInstallation({

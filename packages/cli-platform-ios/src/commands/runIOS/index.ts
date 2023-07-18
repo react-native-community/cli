@@ -23,6 +23,7 @@ import {getConfigurationScheme} from '../../tools/getConfigurationScheme';
 import {selectFromInteractiveMode} from '../../tools/selectFromInteractiveMode';
 import {promptForDeviceSelection} from '../../tools/prompts';
 import getSimulators from '../../tools/getSimulators';
+import {runPackager} from '@react-native-community/cli-plugin-metro';
 
 export interface FlagsT extends BuildFlags {
   simulator?: string;
@@ -106,6 +107,14 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     `Found Xcode ${
       xcodeProject.isWorkspace ? 'workspace' : 'project'
     } "${chalk.bold(xcodeProject.name)}"`,
+  );
+
+  await runPackager(
+    args.port,
+    ctx.root,
+    ctx.reactNativePath,
+    args.terminal,
+    args.packager,
   );
 
   const availableDevices = await listIOSDevices();

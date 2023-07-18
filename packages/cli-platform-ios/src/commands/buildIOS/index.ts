@@ -22,6 +22,7 @@ import {getProjectInfo} from '../../tools/getProjectInfo';
 import {checkIfConfigurationExists} from '../../tools/checkIfConfigurationExists';
 import {getConfigurationScheme} from '../../tools/getConfigurationScheme';
 import listIOSDevices from '../../tools/listIOSDevices';
+import {runPackager} from '@react-native-community/cli-plugin-metro';
 
 export interface FlagsT extends BuildFlags {
   simulator?: string;
@@ -84,6 +85,14 @@ async function buildIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     `Found Xcode ${
       xcodeProject.isWorkspace ? 'workspace' : 'project'
     } "${chalk.bold(xcodeProject.name)}"`,
+  );
+
+  await runPackager(
+    args.port,
+    ctx.root,
+    ctx.reactNativePath,
+    args.terminal,
+    args.packager,
   );
 
   const extendedArgs = {

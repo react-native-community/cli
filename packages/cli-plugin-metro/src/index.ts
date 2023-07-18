@@ -10,3 +10,4 @@ export {
   CommandLineArgs,
   startServerInNewWindow,
 } from './commands';
+export {runPackager} from './commands/start/runPackager';

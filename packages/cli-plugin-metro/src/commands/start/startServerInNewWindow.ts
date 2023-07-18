@@ -9,10 +9,16 @@ import {
 
 export function startServerInNewWindow(
   port: number,
-  terminal: string,
   projectRoot: string,
   reactNativePath: string,
+  terminal?: string,
 ) {
+  if (!terminal) {
+    throw new CLIError(
+      'Cannot start server in new window because no terminal was specified.',
+    );
+  }
+
   /**
    * Set up OS-specific filenames and commands
    */

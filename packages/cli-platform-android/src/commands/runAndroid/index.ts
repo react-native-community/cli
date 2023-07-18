@@ -19,11 +19,11 @@ import listAndroidDevices from './listAndroidDevices';
 import tryLaunchEmulator from './tryLaunchEmulator';
 import chalk from 'chalk';
 import path from 'path';
-import {build, runPackager, BuildFlags, options} from '../buildAndroid';
+import {build, BuildFlags, options} from '../buildAndroid';
 import {promptForTaskSelection} from './listAndroidTasks';
 import {getTaskNames} from './getTaskNames';
 import {checkUsers, promptForUser} from './listAndroidUsers';
-
+import {runPackager} from '@react-native-community/cli-plugin-metro';
 export interface Flags extends BuildFlags {
   appId: string;
   appIdSuffix: string;
@@ -66,7 +66,14 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
 
   const androidProject = getAndroidProject(config);
 
-  await runPackager(args, config);
+  await runPackager(
+    args.port,
+    config.root,
+    config.reactNativePath,
+    args.terminal,
+    args.packager,
+  );
+
   return buildAndRun(args, androidProject);
 }
 

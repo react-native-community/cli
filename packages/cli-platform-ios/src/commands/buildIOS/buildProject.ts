@@ -19,7 +19,7 @@ export type BuildFlags = {
   xcconfig?: string;
   buildFolder?: string;
   port: number;
-  terminal: string | undefined;
+  terminal?: string;
   interactive?: boolean;
   destination?: string;
   extraParams?: string[];
@@ -156,7 +156,7 @@ function getProcessOptions({
   port,
 }: {
   packager: boolean;
-  terminal: string | undefined;
+  terminal?: string;
   port: number;
 }): SpawnOptionsWithoutStdio {
   if (packager) {

@@ -26,7 +26,6 @@ import getSimulators from '../../tools/getSimulators';
 
 export interface FlagsT extends BuildFlags {
   simulator?: string;
-  configuration: string;
   scheme?: string;
   projectPath: string;
   device?: string | true;
@@ -68,14 +67,6 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
         'binary-path was specified, but the file was not found.',
       );
     }
-  }
-
-  if (args.configuration) {
-    logger.warn('--configuration has been deprecated. Use --mode instead.');
-    logger.warn(
-      'Parameters were automatically reassigned to --mode on this run.',
-    );
-    args.mode = args.configuration;
   }
 
   const projectInfo = getProjectInfo();
@@ -293,7 +284,7 @@ async function runOnSimulator(
 
     appPath = await getBuildPath(
       xcodeProject,
-      args.mode || args.configuration,
+      args.mode,
       buildOutput,
       scheme,
       args.target,
@@ -375,7 +366,7 @@ async function runOnDevice(
 
     const appPath = await getBuildPath(
       xcodeProject,
-      args.mode || args.configuration,
+      args.mode,
       buildOutput,
       scheme,
       args.target,
@@ -398,7 +389,7 @@ async function runOnDevice(
 
       appPath = await getBuildPath(
         xcodeProject,
-        args.mode || args.configuration,
+        args.mode,
         buildOutput,
         scheme,
         args.target,

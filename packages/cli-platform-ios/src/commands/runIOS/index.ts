@@ -12,7 +12,12 @@ import fs from 'fs';
 import chalk from 'chalk';
 import {Config, IOSProjectInfo} from '@react-native-community/cli-types';
 import {getDestinationSimulator} from '../../tools/getDestinationSimulator';
-import {logger, CLIError, link} from '@react-native-community/cli-tools';
+import {
+  logger,
+  CLIError,
+  link,
+  getDefaultUserTerminal,
+} from '@react-native-community/cli-tools';
 import {BuildFlags, buildProject} from '../buildIOS/buildProject';
 import {iosBuildOptions} from '../buildIOS';
 import {Device} from '../../types';
@@ -605,6 +610,21 @@ export default {
   ],
   options: [
     ...iosBuildOptions,
+    {
+      name: '--no-packager',
+      description: 'Do not launch packager while building',
+    },
+    {
+      name: '--port <number>',
+      default: process.env.RCT_METRO_PORT || 8081,
+      parse: Number,
+    },
+    {
+      name: '--terminal <string>',
+      description:
+        'Launches the Metro Bundler in a new window using the specified terminal path.',
+      default: getDefaultUserTerminal(),
+    },
     {
       name: '--no-packager',
       description: 'Do not launch packager while building',

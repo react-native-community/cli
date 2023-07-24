@@ -1,6 +1,5 @@
 import {
   CLIError,
-  getDefaultUserTerminal,
   logger,
   printRunDoctorTip,
 } from '@react-native-community/cli-tools';
@@ -11,14 +10,10 @@ import adb from '../runAndroid/adb';
 import getAdbPath from '../runAndroid/getAdbPath';
 import {getTaskNames} from '../runAndroid/getTaskNames';
 import {promptForTaskSelection} from '../runAndroid/listAndroidTasks';
-import {runPackager} from '@react-native-community/cli-plugin-metro';
 
 export interface BuildFlags {
   mode?: string;
   activeArchOnly?: boolean;
-  packager?: boolean;
-  port: number;
-  terminal?: string;
   tasks?: Array<string>;
   extraParams?: Array<string>;
   interactive?: boolean;
@@ -82,14 +77,6 @@ async function buildAndroid(
     }
   }
 
-  await runPackager(
-    args.port,
-    config.root,
-    config.reactNativePath,
-    args.terminal,
-    args.packager,
-  );
-
   return build(gradleArgs, androidProject.sourceDir);
 }
 
@@ -113,21 +100,6 @@ export const options = [
   {
     name: '--mode <string>',
     description: "Specify your app's build variant",
-  },
-  {
-    name: '--no-packager',
-    description: 'Do not launch packager while building',
-  },
-  {
-    name: '--port <number>',
-    default: process.env.RCT_METRO_PORT || 8081,
-    parse: Number,
-  },
-  {
-    name: '--terminal <string>',
-    description:
-      'Launches the Metro Bundler in a new window using the specified terminal path.',
-    default: getDefaultUserTerminal(),
   },
   {
     name: '--tasks <list>',

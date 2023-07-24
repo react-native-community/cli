@@ -13,7 +13,12 @@ import tryRunAdbReverse from './tryRunAdbReverse';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
 import tryInstallAppOnDevice from './tryInstallAppOnDevice';
 import getAdbPath from './getAdbPath';
-import {logger, CLIError, link} from '@react-native-community/cli-tools';
+import {
+  logger,
+  CLIError,
+  link,
+  getDefaultUserTerminal,
+} from '@react-native-community/cli-tools';
 import {getAndroidProject} from '../../config/getAndroidProject';
 import listAndroidDevices from './listAndroidDevices';
 import tryLaunchEmulator from './tryLaunchEmulator';
@@ -24,10 +29,14 @@ import {promptForTaskSelection} from './listAndroidTasks';
 import {getTaskNames} from './getTaskNames';
 import {checkUsers, promptForUser} from './listAndroidUsers';
 import {runPackager} from '@react-native-community/cli-plugin-metro';
+
 export interface Flags extends BuildFlags {
   appId: string;
   appIdSuffix: string;
   mainActivity: string;
+  port: number;
+  terminal?: string;
+  packager?: boolean;
   deviceId?: string;
   listDevices?: boolean;
   binaryPath?: string;
@@ -66,13 +75,14 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
 
   const androidProject = getAndroidProject(config);
 
-  await runPackager(
-    args.port,
-    config.root,
-    config.reactNativePath,
-    args.terminal,
-    args.packager,
-  );
+  if (args.packager) {
+    await runPackager(
+      args.port,
+      config.root,
+      config.reactNativePath,
+      args.terminal,
+    );
+  }
 
   return buildAndRun(args, androidProject);
 }
@@ -276,6 +286,21 @@ export default {
   func: runAndroid,
   options: [
     ...options,
+    {
+      name: '--no-packager',
+      description: 'Do not launch packager while building',
+    },
+    {
+      name: '--port <number>',
+      default: process.env.RCT_METRO_PORT || 8081,
+      parse: Number,
+    },
+    {
+      name: '--terminal <string>',
+      description:
+        'Launches the Metro Bundler in a new window using the specified terminal path.',
+      default: getDefaultUserTerminal(),
+    },
     {
       name: '--appId <string>',
       description:

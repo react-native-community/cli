@@ -33,6 +33,9 @@ export interface FlagsT extends BuildFlags {
   udid?: string;
   binaryPath?: string;
   listDevices?: boolean;
+  packager?: boolean;
+  port: number;
+  terminal?: string;
 }
 
 async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
@@ -109,13 +112,9 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     } "${chalk.bold(xcodeProject.name)}"`,
   );
 
-  await runPackager(
-    args.port,
-    ctx.root,
-    ctx.reactNativePath,
-    args.terminal,
-    args.packager,
-  );
+  if (args.packager) {
+    await runPackager(args.port, ctx.root, ctx.reactNativePath, args.terminal);
+  }
 
   const availableDevices = await listIOSDevices();
   if (modifiedArgs.listDevices || modifiedArgs.interactive) {

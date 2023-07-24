@@ -6,11 +6,7 @@ export async function runPackager(
   root: string,
   reactNativePath: string,
   terminal?: string,
-  packager?: boolean,
 ) {
-  if (!packager) {
-    return;
-  }
   const result = await isPackagerRunning(port);
   if (result === 'running') {
     logger.info('JS server already running.');

@@ -9,11 +9,7 @@
 import path from 'path';
 import chalk from 'chalk';
 import {Config} from '@react-native-community/cli-types';
-import {
-  logger,
-  CLIError,
-  getDefaultUserTerminal,
-} from '@react-native-community/cli-tools';
+import {logger, CLIError} from '@react-native-community/cli-tools';
 import {Device} from '../../types';
 import {BuildFlags, buildProject} from './buildProject';
 import {getDestinationSimulator} from '../../tools/getDestinationSimulator';
@@ -22,7 +18,6 @@ import {getProjectInfo} from '../../tools/getProjectInfo';
 import {checkIfConfigurationExists} from '../../tools/checkIfConfigurationExists';
 import {getConfigurationScheme} from '../../tools/getConfigurationScheme';
 import listIOSDevices from '../../tools/listIOSDevices';
-import {runPackager} from '@react-native-community/cli-plugin-metro';
 
 export interface FlagsT extends BuildFlags {
   simulator?: string;
@@ -87,23 +82,10 @@ async function buildIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     } "${chalk.bold(xcodeProject.name)}"`,
   );
 
-  await runPackager(
-    args.port,
-    ctx.root,
-    ctx.reactNativePath,
-    args.terminal,
-    args.packager,
-  );
-
-  const extendedArgs = {
-    ...modifiedArgs,
-    packager: false,
-  };
-
   // // No need to load all available devices
   if (!args.device && !args.udid) {
     if (!args.simulator) {
-      return buildProject(xcodeProject, undefined, scheme, extendedArgs);
+      return buildProject(xcodeProject, undefined, scheme, modifiedArgs);
     }
 
     /**
@@ -126,7 +108,7 @@ async function buildIOS(_: Array<string>, ctx: Config, args: FlagsT) {
       xcodeProject,
       selectedSimulator.udid,
       scheme,
-      extendedArgs,
+      modifiedArgs,
     );
   }
 
@@ -148,12 +130,12 @@ async function buildIOS(_: Array<string>, ctx: Config, args: FlagsT) {
       );
     }
 
-    return buildProject(xcodeProject, device.udid, scheme, extendedArgs);
+    return buildProject(xcodeProject, device.udid, scheme, modifiedArgs);
   } else {
     const physicalDevices = devices.filter((d) => d.type !== 'simulator');
     const device = matchingDevice(physicalDevices, args.device);
     if (device) {
-      return buildProject(xcodeProject, device.udid, scheme, extendedArgs);
+      return buildProject(xcodeProject, device.udid, scheme, modifiedArgs);
     }
   }
 }
@@ -235,17 +217,6 @@ export const iosBuildOptions = [
   {
     name: '--verbose',
     description: 'Do not use xcbeautify or xcpretty even if installed',
-  },
-  {
-    name: '--port <number>',
-    default: process.env.RCT_METRO_PORT || 8081,
-    parse: Number,
-  },
-  {
-    name: '--terminal <string>',
-    description:
-      'Launches the Metro Bundler in a new window using the specified terminal path.',
-    default: getDefaultUserTerminal(),
   },
   {
     name: '--xcconfig [string]',

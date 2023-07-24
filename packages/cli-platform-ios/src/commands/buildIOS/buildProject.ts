@@ -14,12 +14,9 @@ import {
 export type BuildFlags = {
   mode: string;
   target: string;
-  packager: boolean;
   verbose: boolean;
   xcconfig?: string;
   buildFolder?: string;
-  port: number;
-  terminal?: string;
   interactive?: boolean;
   destination?: string;
   extraParams?: string[];
@@ -72,6 +69,7 @@ export function buildProject(
         });
       }
     }
+
     const buildProcess = child_process.spawn(
       'xcodebuild',
       xcodebuildArgs,
@@ -150,30 +148,27 @@ function xcprettyAvailable() {
   return true;
 }
 
-function getProcessOptions({
-  packager,
-  terminal,
-  port,
-}: {
-  packager: boolean;
-  terminal?: string;
-  port: number;
-}): SpawnOptionsWithoutStdio {
-  if (packager) {
+function getProcessOptions<T extends BuildFlags>(
+  args: T,
+): SpawnOptionsWithoutStdio {
+  if (
+    'packager' in args &&
+    'port' in args &&
+    'terminal' in args &&
+    typeof args.packager === 'boolean' &&
+    typeof args.port === 'number' &&
+    typeof args.terminal === 'string'
+  ) {
     return {
       env: {
         ...process.env,
-        RCT_TERMINAL: terminal,
-        RCT_METRO_PORT: port.toString(),
+        RCT_TERMINAL: args.terminal,
+        RCT_METRO_PORT: args.port.toString(),
       },
     };
   }
 
   return {
-    env: {
-      ...process.env,
-      RCT_TERMINAL: terminal,
-      RCT_NO_LAUNCH_PACKAGER: 'true',
-    },
+    env: process.env,
   };
 }

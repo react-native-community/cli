@@ -188,7 +188,7 @@ function runOnSpecificDevice(
     if (devices.indexOf(deviceId) !== -1) {
       let gradleArgs = getTaskNames(
         androidProject.appName,
-        args.mode || args.variant,
+        args.mode,
         args.tasks ?? buildTask,
         'install',
         androidProject.sourceDir,

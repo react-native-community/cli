@@ -16,7 +16,6 @@ import {promptForTaskSelection} from '../runAndroid/listAndroidTasks';
 
 export interface BuildFlags {
   mode?: string;
-  variant?: string;
   activeArchOnly?: boolean;
   packager?: boolean;
   port: number;
@@ -63,12 +62,6 @@ async function buildAndroid(
 ) {
   const androidProject = getAndroidProject(config);
 
-  if (args.variant) {
-    logger.warn(
-      '"variant" flag is deprecated and will be removed in future release. Please switch to "mode" flag.',
-    );
-  }
-
   if (args.tasks && args.mode) {
     logger.warn(
       'Both "tasks" and "mode" parameters were passed to "build" command. Using "tasks" for building the app.',
@@ -89,7 +82,7 @@ async function buildAndroid(
 
   let gradleArgs = getTaskNames(
     androidProject.appName,
-    args.mode || args.variant,
+    args.mode,
     tasks,
     'bundle',
     androidProject.sourceDir,
@@ -111,7 +104,7 @@ async function buildAndroid(
       );
     if (architectures.length > 0) {
       logger.info(`Detected architectures ${architectures.join(', ')}`);
-      // `reactNativeDebugArchitectures` was renamed to `reactNativeArchitectures` in 0.68.
+      // `reactNativeDebugArchitectures` was renamed to `reactNativeArchitectures` in 0.68.
       // Can be removed when 0.67 no longer needs to be supported.
       gradleArgs.push(
         '-PreactNativeDebugArchitectures=' + architectures.join(','),
@@ -143,11 +136,6 @@ export const options = [
   {
     name: '--mode <string>',
     description: "Specify your app's build variant",
-  },
-  {
-    name: '--variant <string>',
-    description:
-      "Specify your app's build variant. Deprecated! Use 'mode' instead",
   },
   {
     name: '--no-packager',

@@ -12,8 +12,7 @@ export async function runPackager(
     logger.info('JS server already running.');
   } else if (result === 'unrecognized') {
     logger.warn('JS server not recognized, continuing with build...');
-  } else {
-    // result == 'not_running'
+  } else if (result === 'not_running') {
     logger.info('Starting JS server...');
 
     try {
@@ -25,5 +24,7 @@ export async function runPackager(
         );
       }
     }
+  } else {
+    logger.log('Unhandled request result: ', result);
   }
 }

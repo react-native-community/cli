@@ -278,7 +278,7 @@ async function runOnSimulator(
     selectedSimulator.udid,
   ]);
 
-  if (!selectedSimulator.booted) {
+  if (selectedSimulator.state !== 'Booted') {
     bootSimulator(selectedSimulator);
   }
 

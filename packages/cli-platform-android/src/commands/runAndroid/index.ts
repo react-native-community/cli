@@ -28,7 +28,7 @@ import {build, BuildFlags, options} from '../buildAndroid';
 import {promptForTaskSelection} from './listAndroidTasks';
 import {getTaskNames} from './getTaskNames';
 import {checkUsers, promptForUser} from './listAndroidUsers';
-import {runPackager} from '@react-native-community/cli-plugin-metro';
+import execa from 'execa';
 
 export interface Flags extends BuildFlags {
   appId: string;
@@ -74,14 +74,15 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
   }
 
   const androidProject = getAndroidProject(config);
-
-  if (args.packager) {
-    await runPackager(
-      args.port,
-      config.root,
-      config.reactNativePath,
+  if (args.packager && args.terminal) {
+    await execa('node', [
+      path.join(config.reactNativePath, 'cli.js'),
+      'run-packager-hook',
+      '--port',
+      args.port.toString(),
+      '--terminal',
       args.terminal,
-    );
+    ]);
   }
 
   return buildAndRun(args, androidProject);

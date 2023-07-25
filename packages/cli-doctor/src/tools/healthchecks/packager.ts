@@ -4,7 +4,8 @@ import {
 } from '@react-native-community/cli-tools';
 import {HealthCheckInterface} from '../../types';
 import {logManualInstallation} from './common';
-import {startServerInNewWindow} from '@react-native-community/cli-plugin-metro';
+import execa from 'execa';
+import path from 'path';
 
 export default {
   label: 'Metro',
@@ -29,8 +30,14 @@ export default {
       const terminal = getDefaultUserTerminal();
       const port = Number(process.env.RCT_METRO_PORT) || 8081;
       if (terminal && config) {
-        const {root, reactNativePath} = config;
-        startServerInNewWindow(port, root, reactNativePath, terminal);
+        await execa('node', [
+          path.join(config.reactNativePath, 'cli.js'),
+          'run-packager-hook',
+          '--port',
+          port.toString(),
+          '--terminal',
+          terminal,
+        ]);
         return loader.succeed();
       }
       return logManualInstallation({

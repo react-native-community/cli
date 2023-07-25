@@ -28,7 +28,7 @@ import {getConfigurationScheme} from '../../tools/getConfigurationScheme';
 import {selectFromInteractiveMode} from '../../tools/selectFromInteractiveMode';
 import {promptForDeviceSelection} from '../../tools/prompts';
 import getSimulators from '../../tools/getSimulators';
-import {runPackager} from '@react-native-community/cli-plugin-metro';
+import execa from 'execa';
 
 export interface FlagsT extends BuildFlags {
   simulator?: string;
@@ -117,8 +117,15 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     } "${chalk.bold(xcodeProject.name)}"`,
   );
 
-  if (args.packager) {
-    await runPackager(args.port, ctx.root, ctx.reactNativePath, args.terminal);
+  if (args.packager && args.terminal) {
+    await execa('node', [
+      path.join(ctx.reactNativePath, 'cli.js'),
+      'run-packager-hook',
+      '--port',
+      args.port.toString(),
+      '--terminal',
+      args.terminal,
+    ]);
   }
 
   const availableDevices = await listIOSDevices();

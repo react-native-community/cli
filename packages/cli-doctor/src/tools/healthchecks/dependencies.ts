@@ -17,9 +17,29 @@ const RNPackages = [
   '@react-native/codegen-typescript-test',
   '@react-native/codegen',
   '@react-native/gradle-plugin',
-  '@react-native/typescript-config',
   '@react-native/virtualized-lists',
 ];
+
+const cliPackages = [
+  '@react-native-community/cli',
+  '@react-native-community/cli-platform-android',
+  '@react-native-community/cli-platform-ios',
+  '@react-native-community/cli-tools',
+  '@react-native-community/cli-doctor',
+  '@react-native-community/cli-hermes',
+  '@react-native-community/cli-plugin-metro',
+  '@react-native-community/cli-clean',
+  '@react-native-community/cli-config',
+  '@react-native-community/cli-debugger-ui',
+  '@react-native-community/cli-server-api',
+  '@react-native-community/cli-types',
+];
+
+const reactNativeCliCompatiblityMatrix = {
+  12: ['0.73'],
+  11: ['0.72'],
+  10: ['0.71'],
+};
 
 const getPackageJson = (root?: string): Record<string, any> => {
   try {
@@ -79,6 +99,43 @@ export default {
           }
         }
       });
+
+      if (dependencies['react-native-cli']) {
+        issues.push(
+          `   - ${chalk.red(
+            'error',
+          )} react-native-cli is legacy and should not be listed as a dependency in your package.json`,
+        );
+      }
+
+      cliPackages.forEach((pkg) => {
+        if (dependencies[pkg]) {
+          const packageVersion = dependencies[pkg];
+          const packageMajorVersion = semver.coerce(packageVersion)?.major;
+          const RNVersion = `${reactNativeCoercedVersion?.major}.${reactNativeCoercedVersion?.minor}`;
+
+          if (packageMajorVersion) {
+            const compatibleRNVersions =
+              reactNativeCliCompatiblityMatrix[
+                packageMajorVersion as keyof typeof reactNativeCliCompatiblityMatrix
+              ] || [];
+            if (!compatibleRNVersions.includes(RNVersion)) {
+              issues.push(
+                `   - ${chalk.red(
+                  'error',
+                )} ${pkg}: "${packageVersion}" is not compatible with react-native: "${reactNativeVersion}"`,
+              );
+            } else {
+              issues.push(
+                `   - ${chalk.yellow(
+                  'warn',
+                )} ${pkg} comes included with React Native and should not be listed as a dependency in your package.json`,
+              );
+            }
+          }
+        }
+      });
+
       if (issues.length) {
         issues.unshift('There are some issues with your project dependencies');
         return {

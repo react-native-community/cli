@@ -226,7 +226,6 @@ async function runOnSimulator(
   args: FlagsT,
   simulator?: Device,
 ) {
-  // let selectedSimulator;
   /**
    * If provided simulator does not exist, try simulators in following order
    * - iPhone 14

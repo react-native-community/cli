@@ -1,11 +1,6 @@
 import semver from 'semver';
 import commandExists from 'command-exists';
 
-export enum PACKAGE_MANAGERS {
-  YARN = 'YARN',
-  NPM = 'NPM',
-}
-
 const isSoftwareNotInstalled = async (command: string): Promise<boolean> => {
   try {
     await commandExists(command);

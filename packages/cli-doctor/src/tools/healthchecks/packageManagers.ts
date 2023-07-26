@@ -1,23 +1,10 @@
-import fs from 'fs';
+import {PACKAGE_MANAGER, getProjectPM} from '@react-native-community/cli-tools';
 import versionRanges from '../versionRanges';
-import {
-  PACKAGE_MANAGERS,
-  doesSoftwareNeedToBeFixed,
-} from '../checkInstallation';
+import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
 import {install} from '../install';
 import {HealthCheckInterface} from '../../types';
 
-const packageManager = (() => {
-  if (fs.existsSync('yarn.lock')) {
-    return PACKAGE_MANAGERS.YARN;
-  }
-
-  if (fs.existsSync('package-lock.json')) {
-    return PACKAGE_MANAGERS.NPM;
-  }
-
-  return undefined;
-})();
+const packageManager = getProjectPM();
 
 const yarn: HealthCheckInterface = {
   label: 'yarn',
@@ -33,7 +20,7 @@ const yarn: HealthCheckInterface = {
   // Only show `yarn` if there's a `yarn.lock` file in the current directory
   // or if we can't identify that the user uses yarn or npm
   visible:
-    packageManager === PACKAGE_MANAGERS.YARN || packageManager === undefined,
+    packageManager === PACKAGE_MANAGER.YARN || packageManager === undefined,
   runAutomaticFix: async ({loader}) =>
     await install({
       pkg: 'yarn',
@@ -57,7 +44,7 @@ const npm: HealthCheckInterface = {
   // Only show `yarn` if there's a `package-lock.json` file in the current directory
   // or if we can't identify that the user uses yarn or npm
   visible:
-    packageManager === PACKAGE_MANAGERS.NPM || packageManager === undefined,
+    packageManager === PACKAGE_MANAGER.NPM || packageManager === undefined,
   runAutomaticFix: async ({loader}) =>
     await install({
       pkg: 'node',

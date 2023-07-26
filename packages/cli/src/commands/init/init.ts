@@ -9,6 +9,8 @@ import {
   logger,
   getLoader,
   Loader,
+  getProcessPM,
+  PACKAGE_MANAGER,
 } from '@react-native-community/cli-tools';
 import {
   installTemplatePackage,
@@ -21,6 +23,8 @@ import * as PackageManager from '../../tools/packageManager';
 import {installPods} from '@react-native-community/cli-doctor';
 import banner from './banner';
 import TemplateAndVersionError from './errors/TemplateAndVersionError';
+import {getYarnVersionIfAvailable} from '../../tools/yarn';
+import {fixMetroForPnpm} from '../../tools/pnpm';
 
 const DEFAULT_VERSION = 'latest';
 
@@ -91,6 +95,7 @@ async function createFromTemplate({
   logger.log(banner);
 
   const projectDirectory = await setProjectDirectory(directory);
+  const pm = getPackageManager({npm});
 
   const loader = getLoader({text: 'Downloading template'});
   const templateSourceDir = fs.mkdtempSync(
@@ -100,7 +105,7 @@ async function createFromTemplate({
   try {
     loader.start();
 
-    await installTemplatePackage(templateUri, templateSourceDir, npm);
+    await installTemplatePackage(templateUri, templateSourceDir, pm);
 
     loader.succeed();
     loader.start('Copying template');
@@ -124,6 +129,10 @@ async function createFromTemplate({
       packageName,
     });
 
+    if (pm === PACKAGE_MANAGER.PNPN) {
+      await fixMetroForPnpm({pm, root: projectDirectory});
+    }
+
     loader.succeed();
     const {postInitScript} = templateConfig;
     if (postInitScript) {
@@ -137,7 +146,7 @@ async function createFromTemplate({
 
     if (!skipInstall) {
       await installDependencies({
-        npm,
+        pm,
         loader,
         root: projectDirectory,
       });
@@ -152,19 +161,39 @@ async function createFromTemplate({
   }
 }
 
+function getPackageManager({npm}: {npm?: boolean}): PACKAGE_MANAGER {
+  let pm;
+  const processPM = getProcessPM();
+
+  if (npm) {
+    pm = PACKAGE_MANAGER.NPM;
+    // Matching the current behavior of defaulting to Yarn even if the command was run by `npx`
+  } else if (processPM === PACKAGE_MANAGER.NPM && getYarnVersionIfAvailable()) {
+    pm = PACKAGE_MANAGER.YARN;
+  } else if (processPM === undefined) {
+    pm = getYarnVersionIfAvailable()
+      ? PACKAGE_MANAGER.YARN
+      : PACKAGE_MANAGER.NPM;
+  } else {
+    pm = processPM;
+  }
+
+  return pm;
+}
+
 async function installDependencies({
-  npm,
+  pm,
   loader,
   root,
 }: {
-  npm?: boolean;
+  pm: PACKAGE_MANAGER;
   loader: Loader;
   root: string;
 }) {
   loader.start('Installing dependencies');
 
   await PackageManager.installAll({
-    preferYarn: !npm,
+    pm,
     silent: true,
     root,
   });

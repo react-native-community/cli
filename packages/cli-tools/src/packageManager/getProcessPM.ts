@@ -1,4 +1,4 @@
-import {PACKAGE_MANAGER} from '.';
+import {PACKAGE_MANAGER} from './types';
 
 export default function getProcessPM(): PACKAGE_MANAGER | undefined {
   const userAgent = process.env.npm_config_user_agent || '';

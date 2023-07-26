@@ -1,5 +1,5 @@
 import fs from 'fs';
-import {PACKAGE_MANAGER} from './';
+import {PACKAGE_MANAGER} from './types';
 
 export default function getProjectPM(): PACKAGE_MANAGER | undefined {
   if (fs.existsSync('yarn.lock')) {

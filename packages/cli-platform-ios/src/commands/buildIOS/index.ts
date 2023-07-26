@@ -230,7 +230,7 @@ export const iosBuildOptions = [
   },
   {
     name: '--destination <string>',
-    description: 'Explicitly extend distination e.g. "arch=x86_64"',
+    description: 'Explicitly extend destination e.g. "arch=x86_64"',
   },
   {
     name: '--udid <string>',

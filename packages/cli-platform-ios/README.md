@@ -71,7 +71,7 @@ Explicitly set device to use by name. The value is not required if you have a si
 
 #### `--destination <string>`
 
-Explicitly extend distination e.g. "arch=x86_64"
+Explicitly extend destination e.g. "arch=x86_64"
 
 #### `--udid <string>`
 

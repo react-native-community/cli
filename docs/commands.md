@@ -112,7 +112,7 @@ Create project with custom package name for Android and bundle identifier for iO
 Usage:
 
 ```sh
-react-native upgrade
+npx react-native upgrade
 ```
 
 This command generates a relevant link to the [Upgrade Helper](https://react-native-community.github.io/upgrade-helper/) to help you upgrade manually.

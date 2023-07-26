@@ -15,7 +15,7 @@ yarn add @react-native-community/cli-config
 Usage:
 
 ```sh
-react-native config
+npx react-native config
 ```
 
 Output project and dependencies configuration in JSON format to stdout. Used by [autolinking](./../../docs/autolinking.md).

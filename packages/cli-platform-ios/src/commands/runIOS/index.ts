@@ -623,16 +623,16 @@ export default {
   examples: [
     {
       desc: 'Run on a different simulator, e.g. iPhone SE (2nd generation)',
-      cmd: 'react-native run-ios --simulator "iPhone SE (2nd generation)"',
+      cmd: 'npx react-native run-ios --simulator "iPhone SE (2nd generation)"',
     },
     {
       desc: "Run on a connected device, e.g. Max's iPhone",
-      cmd: 'react-native run-ios --device "Max\'s iPhone"',
+      cmd: 'npx react-native run-ios --device "Max\'s iPhone"',
     },
     {
       desc: 'Run on the AppleTV simulator',
       cmd:
-        'react-native run-ios --simulator "Apple TV"  --scheme "helloworld-tvOS"',
+        'npx react-native run-ios --simulator "Apple TV"  --scheme "helloworld-tvOS"',
     },
   ],
   options: [

@@ -42,12 +42,12 @@ export default {
       }
       return logManualInstallation({
         message:
-          'Could not start the bundler. Please run "react-native start" command manually.',
+          'Could not start the bundler. Please run "npx react-native start" command manually.',
       });
     } catch (error) {
       return logManualInstallation({
         message:
-          'Could not start the bundler. Please run "react-native start" command manually.',
+          'Could not start the bundler. Please run "npx react-native start" command manually.',
       });
     }
   },

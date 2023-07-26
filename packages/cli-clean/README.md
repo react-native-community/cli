@@ -15,7 +15,7 @@ yarn add @react-native-community/cli-clean
 Usage:
 
 ```sh
-react-native clean
+npx react-native clean
 ```
 
 Cleans caches. Commonly used to ensure build failures are not due to stale cache. By default, it will prompt which caches to purge, with Watchman and Metro already checked. To omit interactive prompt (e.g. in scripts), please use `--include` flag.

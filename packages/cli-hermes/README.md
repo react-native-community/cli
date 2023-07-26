@@ -15,7 +15,7 @@ yarn add @react-native-community/cli-hermes
 Usage:
 
 ```sh
-react-native profile-hermes [destinationDir] <flag>
+npx react-native profile-hermes [destinationDir] <flag>
 ```
 
 Pull and convert a Hermes tracing profile to Chrome tracing profile, then store it in the directory <destinationDir> of the local machine.

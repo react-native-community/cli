@@ -62,7 +62,7 @@ export function readDependencyConfigFromDisk(
         validationError.message,
       )}.
       
-      Please verify it's properly linked using "react-native config" command and contact the package maintainers about this.`),
+      Please verify it's properly linked using "npx react-native config" command and contact the package maintainers about this.`),
     );
   }
 

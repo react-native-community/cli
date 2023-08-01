@@ -197,7 +197,7 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
   serverInstance.keepAliveTimeout = 30000;
 
   await version.logIfUpdateAvailable(ctx.root);
-  logger.info(`Started Metro Bundler at ${chalk.bold(port)} port`);
+  logger.info(`Started dev server at ${chalk.bold(port)}`);
 }
 
 function getReporterImpl(customLogReporterPath: string) {

@@ -1,7 +1,6 @@
 import {execFileSync} from 'child_process';
 
 /**
- *
  * @param port The port to find the process id for
  * @returns The process id for the port or null if not found
  */

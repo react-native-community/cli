@@ -90,7 +90,7 @@ export default {
     },
     {
       name: '--terminal',
-      description: 'Specify terminal to use for running Metro',
+      description: 'Specify terminal app to use for running Metro',
     },
   ],
 };

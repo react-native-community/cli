@@ -15,7 +15,7 @@ export function startServerInNewWindow(
 ) {
   if (!terminal) {
     throw new CLIError(
-      'Cannot start server in new window because no terminal was specified.',
+      'Cannot start server in new window because no terminal app was specified.',
     );
   }
 

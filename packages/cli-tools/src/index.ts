@@ -11,6 +11,8 @@ export {default as hookStdout} from './hookStdout';
 export {getLoader, NoopLoader, Loader} from './loader';
 export {default as findProjectRoot} from './findProjectRoot';
 export {default as printRunDoctorTip} from './printRunDoctorTip';
+export {default as getPidFromPort} from './getPidFromPort';
+export * from './prompt';
 export * as link from './doclink';
 export * from './prompt';
 

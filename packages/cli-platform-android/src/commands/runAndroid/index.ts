@@ -77,7 +77,7 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
   if (args.packager && args.terminal) {
     await execa('node', [
       path.join(config.reactNativePath, 'cli.js'),
-      'run-packager-hook',
+      'start',
       '--port',
       args.port.toString(),
       '--terminal',

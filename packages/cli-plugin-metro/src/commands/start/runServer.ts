@@ -18,8 +18,19 @@ import {
 import {Config} from '@react-native-community/cli-types';
 
 import loadMetroConfig from '../../tools/loadMetroConfig';
-import {version} from '@react-native-community/cli-tools';
+import {
+  isPackagerRunning,
+  logger,
+  version,
+} from '@react-native-community/cli-tools';
 import enableWatchMode from './watchMode';
+import {startServerInNewWindow} from './startServerInNewWindow';
+import getNextPort from '../../tools/getNextPort';
+import askForPortChange from '../../tools/askForPortChange';
+import askForProcessKill from '../../tools/askForProcessKill';
+import getProcessIdFromPort from '../../tools/getProcessIdFromPort';
+import execa from 'execa';
+import chalk from 'chalk';
 
 export type Args = {
   assetPlugins?: string[];
@@ -36,15 +47,74 @@ export type Args = {
   transformer?: string;
   watchFolders?: string[];
   config?: string;
+  terminal?: string;
   projectRoot?: string;
   interactive: boolean;
 };
 
+function logAlreadyRunningBundler(port: number) {
+  logger.info(`Metro Bundler is already for this project on port ${port}.`);
+}
+
+function logChangePortInstructions(port: number) {
+  logger.info(
+    `Please close the other packager running on port ${port}, or select another port with "--port".`,
+  );
+}
+
 async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
+  let port = args.port ?? 8081;
+
+  if (args.terminal) {
+    startServerInNewWindow(port, ctx.root, ctx.reactNativePath, args.terminal);
+    return;
+  }
+
+  const packagerStatus = await isPackagerRunning(port);
+
+  const handleSomethingRunningOnPort = async () => {
+    const {change: kill} = await askForProcessKill(port);
+    if (kill) {
+      const pid = await getProcessIdFromPort(port);
+
+      if (pid) {
+        execa.sync('kill', [pid]);
+      }
+    } else {
+      const {nextPort, start} = await getNextPort(port, ctx.root);
+      if (!start) {
+        logAlreadyRunningBundler(nextPort);
+      } else {
+        const {change} = await askForPortChange(nextPort);
+
+        if (change) {
+          port = nextPort;
+        } else {
+          logChangePortInstructions(port);
+          return;
+        }
+      }
+    }
+  };
+
+  if (
+    typeof packagerStatus === 'object' &&
+    packagerStatus.status === 'running'
+  ) {
+    if (packagerStatus.root === ctx.root) {
+      logAlreadyRunningBundler(port);
+      return;
+    } else {
+      await handleSomethingRunningOnPort();
+    }
+  } else if (packagerStatus === 'unrecognized') {
+    await handleSomethingRunningOnPort();
+  }
+
   const metroConfig = await loadMetroConfig(ctx, {
     config: args.config,
     maxWorkers: args.maxWorkers,
-    port: args.port,
+    port,
     resetCache: args.resetCache,
     watchFolders: args.watchFolders,
     projectRoot: args.projectRoot,
@@ -127,6 +197,7 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
   serverInstance.keepAliveTimeout = 30000;
 
   await version.logIfUpdateAvailable(ctx.root);
+  logger.info(`Started Metro Bundler at ${chalk.bold(port)} port`);
 }
 
 function getReporterImpl(customLogReporterPath: string) {

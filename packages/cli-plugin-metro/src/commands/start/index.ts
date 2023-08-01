@@ -88,6 +88,10 @@ export default {
       name: '--no-interactive',
       description: 'Disables interactive mode',
     },
+    {
+      name: '--terminal',
+      description: 'Specify terminal to use for running Metro',
+    },
   ],
 };
 

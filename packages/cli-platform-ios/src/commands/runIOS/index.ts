@@ -120,7 +120,7 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   if (args.packager && args.terminal) {
     await execa('node', [
       path.join(ctx.reactNativePath, 'cli.js'),
-      'run-packager-hook',
+      'start',
       '--port',
       args.port.toString(),
       '--terminal',

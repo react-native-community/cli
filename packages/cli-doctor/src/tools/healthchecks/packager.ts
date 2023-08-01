@@ -32,7 +32,7 @@ export default {
       if (terminal && config) {
         await execa('node', [
           path.join(config.reactNativePath, 'cli.js'),
-          'run-packager-hook',
+          'start',
           '--port',
           port.toString(),
           '--terminal',

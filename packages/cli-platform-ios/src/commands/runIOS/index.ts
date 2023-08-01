@@ -619,7 +619,7 @@ export default {
     ...iosBuildOptions,
     {
       name: '--no-packager',
-      description: 'Do not launch packager while building',
+      description: 'Do not launch packager while running the app',
     },
     {
       name: '--port <number>',
@@ -631,10 +631,6 @@ export default {
       description:
         'Launches the Metro Bundler in a new window using the specified terminal path.',
       default: getDefaultUserTerminal(),
-    },
-    {
-      name: '--no-packager',
-      description: 'Do not launch packager while building',
     },
     {
       name: '--binary-path <string>',

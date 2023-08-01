@@ -289,7 +289,7 @@ export default {
     ...options,
     {
       name: '--no-packager',
-      description: 'Do not launch packager while building',
+      description: 'Do not launch packager while running the app',
     },
     {
       name: '--port <number>',

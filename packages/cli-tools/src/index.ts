@@ -14,6 +14,8 @@ export {default as printRunDoctorTip} from './printRunDoctorTip';
 export {default as getPidFromPort} from './getPidFromPort';
 export * from './prompt';
 export * as link from './doclink';
-export * from './prompt';
+export {default as startServerInNewWindow} from './startServerInNewWindow';
+export {default as getNextPort} from './getNextPort';
+export * from './port';
 
 export * from './errors';

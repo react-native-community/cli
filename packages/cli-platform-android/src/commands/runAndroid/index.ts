@@ -18,6 +18,12 @@ import {
   CLIError,
   link,
   getDefaultUserTerminal,
+  isPackagerRunning,
+  getNextPort,
+  logAlreadyRunningBundler,
+  askForPortChange,
+  logChangePortInstructions,
+  startServerInNewWindow,
 } from '@react-native-community/cli-tools';
 import {getAndroidProject} from '../../config/getAndroidProject';
 import listAndroidDevices from './listAndroidDevices';
@@ -28,7 +34,6 @@ import {build, BuildFlags, options} from '../buildAndroid';
 import {promptForTaskSelection} from './listAndroidTasks';
 import {getTaskNames} from './getTaskNames';
 import {checkUsers, promptForUser} from './listAndroidUsers';
-import execa from 'execa';
 
 export interface Flags extends BuildFlags {
   appId: string;
@@ -50,6 +55,50 @@ export type AndroidProject = NonNullable<Config['project']['android']>;
  */
 async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
   link.setPlatform('android');
+
+  let {packager, port} = args;
+
+  const packagerStatus = await isPackagerRunning(port);
+
+  const handleSomethingRunningOnPort = async () => {
+    const {nextPort, start} = await getNextPort(port, config.root);
+    if (!start) {
+      packager = false;
+      logAlreadyRunningBundler(nextPort);
+    } else {
+      const {change} = await askForPortChange(port, nextPort);
+
+      if (change) {
+        port = nextPort;
+      } else {
+        packager = false;
+        logChangePortInstructions(port);
+      }
+    }
+  };
+
+  if (
+    typeof packagerStatus === 'object' &&
+    packagerStatus.status === 'running'
+  ) {
+    if (packagerStatus.root === config.root) {
+      packager = false;
+      logAlreadyRunningBundler(port);
+    } else {
+      await handleSomethingRunningOnPort();
+    }
+  } else if (packagerStatus === 'unrecognized') {
+    await handleSomethingRunningOnPort();
+  }
+
+  if (packager) {
+    await startServerInNewWindow(
+      port,
+      config.root,
+      config.reactNativePath,
+      args.terminal,
+    );
+  }
 
   if (config.reactNativeVersion !== 'unknown') {
     link.setVersion(config.reactNativeVersion);
@@ -74,16 +123,6 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
   }
 
   const androidProject = getAndroidProject(config);
-  if (args.packager && args.terminal) {
-    await execa('node', [
-      path.join(config.reactNativePath, 'cli.js'),
-      'start',
-      '--port',
-      args.port.toString(),
-      '--terminal',
-      args.terminal,
-    ]);
-  }
 
   return buildAndRun(args, androidProject);
 }

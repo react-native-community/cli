@@ -17,6 +17,12 @@ import {
   CLIError,
   link,
   getDefaultUserTerminal,
+  startServerInNewWindow,
+  isPackagerRunning,
+  getNextPort,
+  askForPortChange,
+  logAlreadyRunningBundler,
+  logChangePortInstructions,
 } from '@react-native-community/cli-tools';
 import {BuildFlags, buildProject} from '../buildIOS/buildProject';
 import {iosBuildOptions} from '../buildIOS';
@@ -28,7 +34,6 @@ import {getConfigurationScheme} from '../../tools/getConfigurationScheme';
 import {selectFromInteractiveMode} from '../../tools/selectFromInteractiveMode';
 import {promptForDeviceSelection} from '../../tools/prompts';
 import getSimulators from '../../tools/getSimulators';
-import execa from 'execa';
 
 export interface FlagsT extends BuildFlags {
   simulator?: string;
@@ -45,6 +50,50 @@ export interface FlagsT extends BuildFlags {
 
 async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   link.setPlatform('ios');
+
+  let {packager, port} = args;
+
+  const packagerStatus = await isPackagerRunning(port);
+
+  const handleSomethingRunningOnPort = async () => {
+    const {nextPort, start} = await getNextPort(port, ctx.root);
+    if (!start) {
+      packager = false;
+      logAlreadyRunningBundler(nextPort);
+    } else {
+      const {change} = await askForPortChange(port, nextPort);
+
+      if (change) {
+        port = nextPort;
+      } else {
+        packager = false;
+        logChangePortInstructions(port);
+      }
+    }
+  };
+
+  if (
+    typeof packagerStatus === 'object' &&
+    packagerStatus.status === 'running'
+  ) {
+    if (packagerStatus.root === ctx.root) {
+      packager = false;
+      logAlreadyRunningBundler(port);
+    } else {
+      await handleSomethingRunningOnPort();
+    }
+  } else if (packagerStatus === 'unrecognized') {
+    await handleSomethingRunningOnPort();
+  }
+
+  if (packager) {
+    await startServerInNewWindow(
+      port,
+      ctx.root,
+      ctx.reactNativePath,
+      args.terminal,
+    );
+  }
 
   if (ctx.reactNativeVersion !== 'unknown') {
     link.setVersion(ctx.reactNativeVersion);
@@ -116,17 +165,6 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
       xcodeProject.isWorkspace ? 'workspace' : 'project'
     } "${chalk.bold(xcodeProject.name)}"`,
   );
-
-  if (args.packager && args.terminal) {
-    await execa('node', [
-      path.join(ctx.reactNativePath, 'cli.js'),
-      'start',
-      '--port',
-      args.port.toString(),
-      '--terminal',
-      args.terminal,
-    ]);
-  }
 
   const availableDevices = await listIOSDevices();
   if (modifiedArgs.listDevices || modifiedArgs.interactive) {

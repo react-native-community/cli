@@ -88,11 +88,5 @@ export default {
       name: '--no-interactive',
       description: 'Disables interactive mode',
     },
-    {
-      name: '--terminal',
-      description: 'Specify terminal app to use for running Metro',
-    },
   ],
 };
-
-export {startServerInNewWindow} from './startServerInNewWindow';

@@ -22,14 +22,12 @@ import {
   isPackagerRunning,
   logger,
   version,
+  getNextPort,
+  askForPortChange,
+  logAlreadyRunningBundler,
+  logChangePortInstructions,
 } from '@react-native-community/cli-tools';
 import enableWatchMode from './watchMode';
-import {startServerInNewWindow} from './startServerInNewWindow';
-import getNextPort from '../../tools/getNextPort';
-import askForPortChange from '../../tools/askForPortChange';
-import askForProcessKill from '../../tools/askForProcessKill';
-import getProcessIdFromPort from '../../tools/getProcessIdFromPort';
-import execa from 'execa';
 import chalk from 'chalk';
 
 export type Args = {
@@ -47,52 +45,26 @@ export type Args = {
   transformer?: string;
   watchFolders?: string[];
   config?: string;
-  terminal?: string;
   projectRoot?: string;
   interactive: boolean;
 };
 
-function logAlreadyRunningBundler(port: number) {
-  logger.info(`Metro Bundler is already for this project on port ${port}.`);
-}
-
-function logChangePortInstructions(port: number) {
-  logger.info(
-    `Please close the other packager running on port ${port}, or select another port with "--port".`,
-  );
-}
-
 async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
   let port = args.port ?? 8081;
-
-  if (args.terminal) {
-    startServerInNewWindow(port, ctx.root, ctx.reactNativePath, args.terminal);
-    return;
-  }
-
   const packagerStatus = await isPackagerRunning(port);
 
   const handleSomethingRunningOnPort = async () => {
-    const {change: kill} = await askForProcessKill(port);
-    if (kill) {
-      const pid = await getProcessIdFromPort(port);
-
-      if (pid) {
-        execa.sync('kill', [pid]);
-      }
+    const {nextPort, start} = await getNextPort(port, ctx.root);
+    if (!start) {
+      logAlreadyRunningBundler(nextPort);
+      process.exit();
     } else {
-      const {nextPort, start} = await getNextPort(port, ctx.root);
-      if (!start) {
-        logAlreadyRunningBundler(nextPort);
+      const {change} = await askForPortChange(port, nextPort);
+      if (change) {
+        port = nextPort;
       } else {
-        const {change} = await askForPortChange(nextPort);
-
-        if (change) {
-          port = nextPort;
-        } else {
-          logChangePortInstructions(port);
-          return;
-        }
+        logChangePortInstructions(port);
+        process.exit();
       }
     }
   };
@@ -103,7 +75,7 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
   ) {
     if (packagerStatus.root === ctx.root) {
       logAlreadyRunningBundler(port);
-      return;
+      process.exit();
     } else {
       await handleSomethingRunningOnPort();
     }

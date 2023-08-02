@@ -1,4 +1,4 @@
-import {isPackagerRunning} from '@react-native-community/cli-tools';
+import isPackagerRunning from './isPackagerRunning';
 
 type Result = {
   start: boolean;

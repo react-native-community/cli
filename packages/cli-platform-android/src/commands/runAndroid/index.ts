@@ -60,7 +60,7 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
 
   const packagerStatus = await isPackagerRunning(port);
 
-  const handleSomethingRunningOnPort = async () => {
+  const handlePortUnavailable = async () => {
     const {nextPort, start} = await getNextPort(port, config.root);
     if (!start) {
       packager = false;
@@ -85,10 +85,10 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
       packager = false;
       logAlreadyRunningBundler(port);
     } else {
-      await handleSomethingRunningOnPort();
+      await handlePortUnavailable();
     }
   } else if (packagerStatus === 'unrecognized') {
-    await handleSomethingRunningOnPort();
+    await handlePortUnavailable();
   }
 
   if (packager) {

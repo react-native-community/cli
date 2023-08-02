@@ -55,7 +55,7 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
 
   const packagerStatus = await isPackagerRunning(port);
 
-  const handleSomethingRunningOnPort = async () => {
+  const handlePortUnavailable = async () => {
     const {nextPort, start} = await getNextPort(port, ctx.root);
     if (!start) {
       packager = false;
@@ -80,10 +80,10 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
       packager = false;
       logAlreadyRunningBundler(port);
     } else {
-      await handleSomethingRunningOnPort();
+      await handlePortUnavailable();
     }
   } else if (packagerStatus === 'unrecognized') {
-    await handleSomethingRunningOnPort();
+    await handlePortUnavailable();
   }
 
   if (packager) {

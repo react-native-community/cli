@@ -53,7 +53,7 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
   let port = args.port ?? 8081;
   const packagerStatus = await isPackagerRunning(port);
 
-  const handleSomethingRunningOnPort = async () => {
+  const handlePortUnavailable = async () => {
     const {nextPort, start} = await getNextPort(port, ctx.root);
     if (!start) {
       logAlreadyRunningBundler(nextPort);
@@ -77,10 +77,10 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
       logAlreadyRunningBundler(port);
       process.exit();
     } else {
-      await handleSomethingRunningOnPort();
+      await handlePortUnavailable();
     }
   } else if (packagerStatus === 'unrecognized') {
-    await handleSomethingRunningOnPort();
+    await handlePortUnavailable();
   }
 
   const metroConfig = await loadMetroConfig(ctx, {

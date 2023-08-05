@@ -73,7 +73,6 @@ function startServerInNewWindow(
       );
     }
   } catch (error) {
-    console.log('error', error);
     return new CLIError(
       `Couldn't copy the script for running bundler. Please check if the "${scriptFile}" file exists in the "node_modules/@react-native-community/cli-tools" folder and try again.`,
       error as any,

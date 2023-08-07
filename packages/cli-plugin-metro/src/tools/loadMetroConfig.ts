@@ -92,10 +92,11 @@ export default async function loadMetroConfig(
     overrideConfig.reporter = options.reporter;
   }
 
-  const projectConfig = await resolveConfig(undefined, ctx.root);
+  const cwd = ctx.root;
+  const projectConfig = await resolveConfig(options.config, cwd);
 
   if (projectConfig.isEmpty) {
-    throw new CLIError(`No metro config found in ${ctx.root}`);
+    throw new CLIError(`No Metro config found in ${cwd}`);
   }
 
   logger.debug(`Reading Metro config from ${projectConfig.filepath}`);
@@ -119,7 +120,10 @@ This warning will be removed in future (https://github.com/facebook/metro/issues
   }
 
   return mergeConfig(
-    await loadConfig({cwd: ctx.root, ...options}),
+    await loadConfig({
+      cwd,
+      ...options,
+    }),
     overrideConfig,
   );
 }

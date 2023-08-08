@@ -51,7 +51,7 @@
     "jest-snapshot-serializer-raw": "^1.1.0",
     "lerna": "^4.0.0",
     "lint-staged": "^13.1.0",
-    "metro-memory-fs": "0.76.7",
+    "metro-memory-fs": "0.76.8",
     "micromatch": "^4.0.4",
     "rimraf": "^3.0.2",
     "slash": "^3.0.0",

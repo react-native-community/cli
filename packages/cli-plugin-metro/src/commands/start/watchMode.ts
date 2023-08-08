@@ -60,11 +60,15 @@ function enableWatchMode(messageSocket: any, ctx: Config) {
         name === 'i'
           ? ctx.project.ios?.watchModeCommandParams
           : ctx.project.android?.watchModeCommandParams;
-      execa('npx', [
-        'react-native',
-        name === 'i' ? 'run-ios' : 'run-android',
-        ...(params ?? []),
-      ]).stdout?.pipe(process.stdout);
+      execa(
+        'npx',
+        [
+          'react-native',
+          name === 'i' ? 'run-ios' : 'run-android',
+          ...(params ?? []),
+        ],
+        {env: {FORCE_COLOR: chalk.supportsColor ? 'true' : 'false'}},
+      ).stdout?.pipe(process.stdout);
     } else {
       console.log(_key);
     }

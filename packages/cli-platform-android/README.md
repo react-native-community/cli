@@ -22,20 +22,6 @@ Builds your app and starts it on a connected Android emulator or device.
 
 #### Options
 
-#### `--root <string>`
-
-> **DEPRECATED** – root is discovered automatically
-
-Override the root directory for the Android build (which contains the android directory)'.
-
-#### `--appFolder <string>`
-
-> **DEPRECATED** – use "project.android.appName" in react-native.config.js
-
-> default: 'app'
-
-Specify a different application folder name for the Android source. If not, we assume is "app".
-
 #### `--appId <string>`
 
 Specify an `applicationId` to launch after build. If not specified, `package` from AndroidManifest.xml will be used.

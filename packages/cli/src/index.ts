@@ -82,6 +82,19 @@ function attachCommand<C extends Command<boolean>>(
   command: C,
   config: C extends DetachedCommand ? Config | undefined : Config,
 ): void {
+  // commander@9.x will internally push commands into an array structure!
+  // Commands with duplicate names (e.g. from config) must be reduced before
+  // calling this function.
+  // https://unpkg.com/browse/commander@9.4.1/lib/command.js#L1308
+  if (program.commands.find((cmd) => cmd.name() === command.name)) {
+    throw new Error(
+      'Invariant Violation: Attempted to override an already registered ' +
+        `command: '${command.name}'. This is not supported by the underlying ` +
+        'library and will cause bugs. Ensure a command with this `name` is ' +
+        'only registered once.',
+    );
+  }
+
   const cmd = program
     .command(command.name)
     .option('--verbose', 'Increase logging verbosity')
@@ -165,7 +178,14 @@ async function setupAndRun() {
 
     logger.enable();
 
+    const commands: Record<string, Command> = {};
+
+    // Reduce overridden commands before registering
     for (const command of [...projectCommands, ...config.commands]) {
+      commands[command.name] = command;
+    }
+
+    for (const command of Object.values(commands)) {
       attachCommand(command, config);
     }
   } catch (error) {

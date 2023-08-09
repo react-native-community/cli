@@ -22,14 +22,6 @@ Builds your app and starts it on a connected Android emulator or device.
 
 #### Options
 
-#### `--variant <string>`
-
-> **DEPRECATED** – use "mode" instead
-
-> default: 'debug'
-
-Specify your app's build variant.
-
 #### `--appId <string>`
 
 Specify an `applicationId` to launch after build. If not specified, `package` from AndroidManifest.xml will be used.

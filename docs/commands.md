@@ -17,7 +17,7 @@ React Native CLI comes with following commands:
 - [`build-ios`](/packages/cli-platform-ios/README.md#build-ios)
 - [`start`](/packages/cli-plugin-metro/README.md#start)
 - [`upgrade`](#upgrade)
-- [`profile-hermes`](/packages/cli-platform-android/README.md#profile-hermes)
+- [`profile-hermes`](/packages/cli-hermes/README.md#profile-hermes)
 
 ### `init`
 

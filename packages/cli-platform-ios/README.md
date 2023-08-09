@@ -43,10 +43,6 @@ Example: this will launch your project directly onto the iPhone 14 simulator:
 react-native run-ios --simulator "iPhone 14"
 ```
 
-#### `--configuration <string>`
-
-[Deprecated] Explicitly set the scheme configuration to use default: 'Debug'.
-
 #### `--mode <string>`
 
 Explicitly set the scheme configuration to use. This option is case sensitive.
@@ -71,7 +67,7 @@ Explicitly set device to use by name. The value is not required if you have a si
 
 #### `--destination <string>`
 
-Explicitly extend distination e.g. "arch=x86_64"
+Explicitly extend destination e.g. "arch=x86_64"
 
 #### `--udid <string>`
 
@@ -140,10 +136,6 @@ Example: this will launch your project directly onto the iPhone 14 simulator:
 ```sh
 react-native build-ios --simulator "iPhone 14"
 ```
-
-#### `--configuration <string>`
-
-[Deprecated] Explicitly set the scheme configuration to use default: 'Debug'.
 
 #### `--mode <string>`
 

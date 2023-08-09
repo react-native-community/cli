@@ -6,6 +6,7 @@ import {
   mergeConfig,
   resolveConfig,
   ResolverConfigT,
+  YargArguments,
 } from 'metro-config';
 import {CLIError, logger} from '@react-native-community/cli-tools';
 import type {Config} from '@react-native-community/cli-types';
@@ -66,17 +67,6 @@ function getOverrideConfig(ctx: ConfigLoadingContext): InputConfigT {
   };
 }
 
-export interface ConfigOptionsT {
-  maxWorkers?: number;
-  port?: number;
-  projectRoot?: string;
-  resetCache?: boolean;
-  watchFolders?: string[];
-  sourceExts?: string[];
-  reporter?: any;
-  config?: string;
-}
-
 /**
  * Load Metro config.
  *
@@ -85,12 +75,9 @@ export interface ConfigOptionsT {
  */
 export default async function loadMetroConfig(
   ctx: ConfigLoadingContext,
-  options: ConfigOptionsT = {},
+  options: YargArguments = {},
 ): Promise<ConfigT> {
   const overrideConfig = getOverrideConfig(ctx);
-  if (options.reporter) {
-    overrideConfig.reporter = options.reporter;
-  }
 
   const cwd = ctx.root;
   const projectConfig = await resolveConfig(options.config, cwd);

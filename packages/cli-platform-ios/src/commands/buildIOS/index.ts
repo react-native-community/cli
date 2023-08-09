@@ -24,7 +24,6 @@ import {getConfigurationScheme} from '../../tools/getConfigurationScheme';
 import listIOSDevices from '../../tools/listIOSDevices';
 
 export interface FlagsT extends BuildFlags {
-  configuration?: string;
   simulator?: string;
   device?: string | true;
   udid?: string;
@@ -47,14 +46,6 @@ async function buildIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   }
 
   process.chdir(sourceDir);
-
-  if (args.configuration) {
-    logger.warn('--configuration has been deprecated. Use --mode instead.');
-    logger.warn(
-      'Parameters were automatically reassigned to --mode on this run.',
-    );
-    args.mode = args.configuration;
-  }
 
   const projectInfo = getProjectInfo();
 
@@ -214,10 +205,6 @@ export const iosBuildOptions = [
     name: '--mode <string>',
     description:
       'Explicitly set the scheme configuration to use. This option is case sensitive.',
-  },
-  {
-    name: '--configuration <string>',
-    description: '[Deprecated] Explicitly set the scheme configuration to use',
   },
   {
     name: '--scheme <string>',

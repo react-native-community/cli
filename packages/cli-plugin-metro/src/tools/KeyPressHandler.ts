@@ -39,7 +39,10 @@ export class KeyPressHandler {
       logger.debug(`Key pressed: ${key}`);
       await this.onPress(key);
     } catch (error) {
-      return new CLIError('There was an error with the key press handler.');
+      return new CLIError(
+        'There was an error with the key press handler.',
+        (error as Error).message,
+      );
     } finally {
       this.isHandlingKeyPress = false;
       return;

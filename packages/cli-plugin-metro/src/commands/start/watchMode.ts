@@ -4,7 +4,6 @@ import execa from 'execa';
 import chalk from 'chalk';
 import {Config} from '@react-native-community/cli-types';
 import {KeyPressHandler} from '../../tools/KeyPressHandler';
-import {addInteractionListener} from '@react-native-community/cli-tools';
 
 const CTRL_C = '\u0003';
 const CTRL_Z = '\u0026';
@@ -42,7 +41,7 @@ function enableWatchMode(messageSocket: any, ctx: Config) {
     }
   });
 
-  const onPressAsync = async (key: string) => {
+  const onPress = (key: string) => {
     switch (key) {
       case 'r':
         messageSocket.broadcast('reload', null);
@@ -76,9 +75,8 @@ function enableWatchMode(messageSocket: any, ctx: Config) {
     }
   };
 
-  const keyPressHandler = new KeyPressHandler(onPressAsync);
-  const listener = keyPressHandler.createInteractionListener();
-  addInteractionListener(listener);
+  const keyPressHandler = new KeyPressHandler(onPress);
+  keyPressHandler.createInteractionListener();
   keyPressHandler.startInterceptingKeyStrokes();
 }
 

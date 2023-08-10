@@ -1,13 +1,14 @@
-import {CLIError, logger} from '@react-native-community/cli-tools';
-
-const CTRL_C = '\u0003';
+import {
+  CLIError,
+  addInteractionListener,
+  logger,
+} from '@react-native-community/cli-tools';
 
 /** An abstract key stroke interceptor. */
 export class KeyPressHandler {
   private isInterceptingKeyStrokes = false;
-  private isHandlingKeyPress = false;
 
-  constructor(public onPress: (key: string) => Promise<any>) {}
+  constructor(public onPress: (key: string) => void) {}
 
   /** Start observing interaction pause listeners. */
   createInteractionListener() {
@@ -26,25 +27,19 @@ export class KeyPressHandler {
       }
     };
 
-    return listener;
+    addInteractionListener(listener);
   }
 
   private handleKeypress = async (key: string) => {
-    // Prevent sending another event until the previous event has finished.
-    if (this.isHandlingKeyPress && key !== CTRL_C) {
-      return;
-    }
-    this.isHandlingKeyPress = true;
     try {
       logger.debug(`Key pressed: ${key}`);
-      await this.onPress(key);
+      this.onPress(key);
     } catch (error) {
       return new CLIError(
         'There was an error with the key press handler.',
         (error as Error).message,
       );
     } finally {
-      this.isHandlingKeyPress = false;
       return;
     }
   };

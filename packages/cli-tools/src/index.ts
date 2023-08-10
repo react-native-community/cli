@@ -12,5 +12,6 @@ export {getLoader, NoopLoader, Loader} from './loader';
 export {default as findProjectRoot} from './findProjectRoot';
 export {default as printRunDoctorTip} from './printRunDoctorTip';
 export * as link from './doclink';
+export * from './prompt';
 
 export * from './errors';

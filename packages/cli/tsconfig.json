@@ -9,7 +9,6 @@
     {"path": "../cli-config"},
     {"path": "../cli-doctor"},
     {"path": "../cli-hermes"},
-    {"path": "../cli-plugin-metro"},
     {"path": "../cli-server-api"},
     {"path": "../cli-types"},
     {"path": "../cli-debugger-ui"},

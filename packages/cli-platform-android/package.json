@@ -20,7 +20,6 @@
     "native_modules.gradle"
   ],
   "devDependencies": {
-    "@react-native-community/cli-plugin-metro": "12.0.0-alpha.8",
     "@react-native-community/cli-types": "12.0.0-alpha.8",
     "@types/fs-extra": "^8.1.0",
     "@types/glob": "^7.1.1"

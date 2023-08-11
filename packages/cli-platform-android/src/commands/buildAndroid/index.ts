@@ -1,7 +1,5 @@
 import {
   CLIError,
-  getDefaultUserTerminal,
-  isPackagerRunning,
   logger,
   printRunDoctorTip,
 } from '@react-native-community/cli-tools';
@@ -10,49 +8,15 @@ import execa from 'execa';
 import {getAndroidProject} from '../../config/getAndroidProject';
 import adb from '../runAndroid/adb';
 import getAdbPath from '../runAndroid/getAdbPath';
-import {startServerInNewWindow} from '@react-native-community/cli-plugin-metro';
 import {getTaskNames} from '../runAndroid/getTaskNames';
 import {promptForTaskSelection} from '../runAndroid/listAndroidTasks';
 
 export interface BuildFlags {
   mode?: string;
   activeArchOnly?: boolean;
-  packager?: boolean;
-  port: number;
-  terminal: string;
   tasks?: Array<string>;
   extraParams?: Array<string>;
   interactive?: boolean;
-}
-
-export async function runPackager(args: BuildFlags, config: Config) {
-  if (!args.packager) {
-    return;
-  }
-  const result = await isPackagerRunning(args.port);
-  if (result === 'running') {
-    logger.info('JS server already running.');
-  } else if (result === 'unrecognized') {
-    logger.warn('JS server not recognized, continuing with build...');
-  } else {
-    // result == 'not_running'
-    logger.info('Starting JS server...');
-
-    try {
-      startServerInNewWindow(
-        args.port,
-        args.terminal,
-        config.root,
-        config.reactNativePath,
-      );
-    } catch (error) {
-      if (error instanceof Error) {
-        logger.warn(
-          `Failed to automatically start the packager server. Please run "react-native start" manually. Error details: ${error.message}`,
-        );
-      }
-    }
-  }
 }
 
 async function buildAndroid(
@@ -112,7 +76,7 @@ async function buildAndroid(
       gradleArgs.push('-PreactNativeArchitectures=' + architectures.join(','));
     }
   }
-  await runPackager(args, config);
+
   return build(gradleArgs, androidProject.sourceDir);
 }
 
@@ -136,21 +100,6 @@ export const options = [
   {
     name: '--mode <string>',
     description: "Specify your app's build variant",
-  },
-  {
-    name: '--no-packager',
-    description: 'Do not launch packager while building',
-  },
-  {
-    name: '--port <number>',
-    default: process.env.RCT_METRO_PORT || 8081,
-    parse: Number,
-  },
-  {
-    name: '--terminal <string>',
-    description:
-      'Launches the Metro Bundler in a new window using the specified terminal path.',
-    default: getDefaultUserTerminal(),
   },
   {
     name: '--tasks <list>',

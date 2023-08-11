@@ -12,7 +12,16 @@ import fs from 'fs';
 import chalk from 'chalk';
 import {Config, IOSProjectInfo} from '@react-native-community/cli-types';
 import {getDestinationSimulator} from '../../tools/getDestinationSimulator';
-import {logger, CLIError, link} from '@react-native-community/cli-tools';
+import {
+  logger,
+  CLIError,
+  link,
+  getDefaultUserTerminal,
+  startServerInNewWindow,
+  isPackagerRunning,
+  logAlreadyRunningBundler,
+  handlePortUnavailable,
+} from '@react-native-community/cli-tools';
 import {BuildFlags, buildProject} from '../buildIOS/buildProject';
 import {iosBuildOptions} from '../buildIOS';
 import {Device} from '../../types';
@@ -32,10 +41,42 @@ export interface FlagsT extends BuildFlags {
   udid?: string;
   binaryPath?: string;
   listDevices?: boolean;
+  packager?: boolean;
+  port: number;
+  terminal?: string;
 }
 
 async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   link.setPlatform('ios');
+
+  let {packager, port} = args;
+
+  const packagerStatus = await isPackagerRunning(port);
+
+  if (
+    typeof packagerStatus === 'object' &&
+    packagerStatus.status === 'running'
+  ) {
+    if (packagerStatus.root === ctx.root) {
+      packager = false;
+      logAlreadyRunningBundler(port);
+    } else {
+      const result = await handlePortUnavailable(port, ctx.root, packager);
+      [port, packager] = [result.port, result.packager];
+    }
+  } else if (packagerStatus === 'unrecognized') {
+    const result = await handlePortUnavailable(port, ctx.root, packager);
+    [port, packager] = [result.port, result.packager];
+  }
+
+  if (packager) {
+    await startServerInNewWindow(
+      port,
+      ctx.root,
+      ctx.reactNativePath,
+      args.terminal,
+    );
+  }
 
   if (ctx.reactNativeVersion !== 'unknown') {
     link.setVersion(ctx.reactNativeVersion);
@@ -598,7 +639,18 @@ export default {
     ...iosBuildOptions,
     {
       name: '--no-packager',
-      description: 'Do not launch packager while building',
+      description: 'Do not launch packager while running the app',
+    },
+    {
+      name: '--port <number>',
+      default: process.env.RCT_METRO_PORT || 8081,
+      parse: Number,
+    },
+    {
+      name: '--terminal <string>',
+      description:
+        'Launches the Metro Bundler in a new window using the specified terminal path.',
+      default: getDefaultUserTerminal(),
     },
     {
       name: '--binary-path <string>',

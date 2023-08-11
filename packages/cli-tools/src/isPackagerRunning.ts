@@ -17,11 +17,26 @@ import {fetch} from './fetch';
  */
 async function isPackagerRunning(
   packagerPort: string | number = process.env.RCT_METRO_PORT || '8081',
-): Promise<'running' | 'not_running' | 'unrecognized'> {
+): Promise<
+  | {
+      status: 'running';
+      root: string;
+    }
+  | 'not_running'
+  | 'unrecognized'
+> {
   try {
     const {data} = await fetch(`http://localhost:${packagerPort}/status`);
 
-    return data === 'packager-status:running' ? 'running' : 'unrecognized';
+    try {
+      if (data.status === 'running') {
+        return data;
+      }
+    } catch (_error) {
+      return 'unrecognized';
+    }
+
+    return 'unrecognized';
   } catch (_error) {
     return 'not_running';
   }

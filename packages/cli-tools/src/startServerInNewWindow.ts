@@ -1,18 +1,22 @@
 import path from 'path';
 import fs from 'fs';
 import execa from 'execa';
-import {
-  CLIError,
-  logger,
-  resolveNodeModuleDir,
-} from '@react-native-community/cli-tools';
+import {CLIError} from './errors';
+import resolveNodeModuleDir from './resolveNodeModuleDir';
+import logger from './logger';
 
-export function startServerInNewWindow(
+function startServerInNewWindow(
   port: number,
-  terminal: string,
   projectRoot: string,
   reactNativePath: string,
+  terminal?: string,
 ) {
+  if (!terminal) {
+    throw new CLIError(
+      'Cannot start server in new window because no terminal app was specified.',
+    );
+  }
+
   /**
    * Set up OS-specific filenames and commands
    */
@@ -27,7 +31,7 @@ export function startServerInNewWindow(
   const nodeModulesPath = resolveNodeModuleDir(projectRoot, '.bin');
   const cliPluginMetroPath = path.join(
     path.dirname(
-      require.resolve('@react-native-community/cli-plugin-metro/package.json'),
+      require.resolve('@react-native-community/cli-tools/package.json'),
     ),
     'build',
   );
@@ -70,7 +74,7 @@ export function startServerInNewWindow(
     }
   } catch (error) {
     return new CLIError(
-      `Couldn't copy the script for running bundler. Please check if the "${scriptFile}" file exists in the "node_modules/@react-native-community/cli-plugin-metro" folder and try again.`,
+      `Couldn't copy the script for running bundler. Please check if the "${scriptFile}" file exists in the "node_modules/@react-native-community/cli-tools" folder and try again.`,
       error as any,
     );
   }
@@ -110,3 +114,5 @@ export function startServerInNewWindow(
   );
   return;
 }
+
+export default startServerInNewWindow;

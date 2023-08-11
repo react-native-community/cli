@@ -56,7 +56,7 @@ describe('findMatchingSimulator', () => {
     ).toEqual({
       udid: 'BA0D93BD-07E6-4182-9B0A-F60A2474139C',
       name: 'iPhone 6',
-      booted: false,
+      state: 'Shutdown',
       version: 'iOS 9.2',
     });
   });
@@ -108,7 +108,7 @@ describe('findMatchingSimulator', () => {
     ).toEqual({
       udid: 'BA0D93BD-07E6-4182-9B0A-F60A2474139C',
       name: 'iPhone 6',
-      booted: false,
+      state: 'Shutdown',
       version: 'iOS 12.1',
     });
   });
@@ -201,7 +201,7 @@ describe('findMatchingSimulator', () => {
     ).toEqual({
       udid: '1CCBBF8B-5773-4EA6-BD6F-C308C87A1ADB',
       name: 'iPhone 5',
-      booted: false,
+      state: 'Shutdown',
       version: 'iOS 9.2',
     });
   });
@@ -276,7 +276,7 @@ describe('findMatchingSimulator', () => {
     ).toEqual({
       udid: '1CCBBF8B-5773-4EA6-BD6F-C308C87A1ADB',
       name: 'iPhone 5',
-      booted: false,
+      state: 'Shutdown',
       version: 'iOS 9.2',
     });
   });
@@ -325,7 +325,7 @@ describe('findMatchingSimulator', () => {
     ).toEqual({
       udid: 'D0F29BE7-CC3C-4976-888D-C739B4F50508',
       name: 'iPhone 6s',
-      booted: true,
+      state: 'Booted',
       version: 'iOS 9.2',
     });
   });
@@ -374,7 +374,7 @@ describe('findMatchingSimulator', () => {
     ).toEqual({
       udid: 'BA0D93BD-07E6-4182-9B0A-F60A2474139C',
       name: 'iPhone 6',
-      booted: false,
+      state: 'Shutdown',
       version: 'iOS 9.2',
     });
   });
@@ -449,7 +449,7 @@ describe('findMatchingSimulator', () => {
     ).toEqual({
       udid: '3A409DC5-5188-42A6-8598-3AA6F34607A5',
       name: 'iPhone 7',
-      booted: true,
+      state: 'Booted',
       version: 'iOS 10.0',
     });
   });
@@ -524,7 +524,7 @@ describe('findMatchingSimulator', () => {
     ).toEqual({
       udid: 'D0F29BE7-CC3C-4976-888D-C739B4F50508',
       name: 'iPhone 6s',
-      booted: false,
+      state: 'Shutdown',
       version: 'iOS 9.2',
     });
   });
@@ -599,7 +599,7 @@ describe('findMatchingSimulator', () => {
     ).toEqual({
       udid: 'CBBB8FB8-77AB-49A9-8297-4CCFE3189C22',
       name: 'iPhone 6s',
-      booted: false,
+      state: 'Shutdown',
       version: 'iOS 10.0',
     });
   });
@@ -738,7 +738,7 @@ describe('findMatchingSimulator', () => {
     ).toEqual({
       udid: 'B2141C1E-86B7-4A10-82A7-4956799526DF',
       name: 'iPad Pro (9.7-inch)',
-      booted: false,
+      state: 'Shutdown',
       version: 'iOS 12.0',
     });
   });
@@ -813,7 +813,7 @@ describe('findMatchingSimulator', () => {
     ).toEqual({
       udid: 'B2141C1E-86B7-4A10-82A7-4956799526DF',
       name: 'iPad Pro (9.7-inch)',
-      booted: false,
+      state: 'Shutdown',
       version: 'iOS 12.2',
     });
   });
@@ -935,7 +935,7 @@ describe('findMatchingSimulator', () => {
     ).toEqual({
       udid: 'BA0D93BD-07E6-4182-9B0A-F60A2474139C',
       name: 'iPhone 6',
-      booted: false,
+      state: 'Shutdown',
       version: 'iOS 12.1',
     });
   });
@@ -979,7 +979,7 @@ describe('findMatchingSimulator', () => {
     ).toEqual({
       udid: '3AA90A75-D9C3-41A6-8DE1-43BE74A0C32B',
       name: 'iPhone 14',
-      booted: false,
+      state: 'Shutdown',
       version: 'iOS 16.0',
     });
   });
@@ -1023,7 +1023,7 @@ describe('findMatchingSimulator', () => {
     ).toEqual({
       udid: '6F2FA108-AC7D-4D3C-BD13-56C5E7FCEDFE',
       name: 'iPhone 14 Plus',
-      booted: false,
+      state: 'Shutdown',
       version: 'iOS 16.0',
     });
   });
@@ -1060,7 +1060,7 @@ describe('findMatchingSimulator', () => {
     ).toEqual({
       udid: '816C30EA-38EA-41AC-BFDA-96FB632D522E',
       name: 'Apple TV',
-      booted: true,
+      state: 'Booted',
       version: 'tvOS 11.2',
     });
   });

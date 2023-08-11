@@ -217,7 +217,6 @@ async function runOnSimulator(
   args: FlagsT,
   simulator?: Device,
 ) {
-  // let selectedSimulator;
   /**
    * If provided simulator does not exist, try simulators in following order
    * - iPhone 14
@@ -269,7 +268,7 @@ async function runOnSimulator(
     selectedSimulator.udid,
   ]);
 
-  if (!selectedSimulator.booted) {
+  if (selectedSimulator.state !== 'Booted') {
     bootSimulator(selectedSimulator);
   }
 

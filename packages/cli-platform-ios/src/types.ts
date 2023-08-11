@@ -1,13 +1,12 @@
 export interface Device {
-  availability?: string;
-  state?: string;
-  isAvailable?: boolean;
   name: string;
   udid: string;
+  state?: string;
+  availability?: string;
+  isAvailable?: boolean;
   version?: string;
   availabilityError?: string;
   type?: 'simulator' | 'device' | 'catalyst';
-  booted?: boolean;
   lastBootedAt?: string;
 }
 

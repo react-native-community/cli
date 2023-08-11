@@ -15,7 +15,7 @@ export {default as getPidFromPort} from './getPidFromPort';
 export * from './prompt';
 export * as link from './doclink';
 export {default as startServerInNewWindow} from './startServerInNewWindow';
-export {default as getNextPort} from './getNextPort';
+export {default as handlePortUnavailable} from './handlePortUnavailable';
 export * from './port';
 
 export * from './errors';

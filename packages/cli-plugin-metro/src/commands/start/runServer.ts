@@ -22,10 +22,8 @@ import {
   isPackagerRunning,
   logger,
   version,
-  getNextPort,
-  askForPortChange,
   logAlreadyRunningBundler,
-  logChangePortInstructions,
+  handlePortUnavailable,
 } from '@react-native-community/cli-tools';
 import enableWatchMode from './watchMode';
 import chalk from 'chalk';
@@ -51,36 +49,28 @@ export type Args = {
 
 async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
   let port = args.port ?? 8081;
-  const packagerStatus = await isPackagerRunning(port);
+  let packager = true;
 
-  const handlePortUnavailable = async () => {
-    const {nextPort, start} = await getNextPort(port, ctx.root);
-    if (!start) {
-      logAlreadyRunningBundler(nextPort);
-      process.exit();
-    } else {
-      const {change} = await askForPortChange(port, nextPort);
-      if (change) {
-        port = nextPort;
-      } else {
-        logChangePortInstructions(port);
-        process.exit();
-      }
-    }
-  };
+  const packagerStatus = await isPackagerRunning(port);
 
   if (
     typeof packagerStatus === 'object' &&
     packagerStatus.status === 'running'
   ) {
     if (packagerStatus.root === ctx.root) {
+      packager = false;
       logAlreadyRunningBundler(port);
-      process.exit();
     } else {
-      await handlePortUnavailable();
+      const result = await handlePortUnavailable(port, ctx.root, packager);
+      [port, packager] = [result.port, result.packager];
     }
   } else if (packagerStatus === 'unrecognized') {
-    await handlePortUnavailable();
+    const result = await handlePortUnavailable(port, ctx.root, packager);
+    [port, packager] = [result.port, result.packager];
+  }
+
+  if (packager === false) {
+    process.exit();
   }
 
   const metroConfig = await loadMetroConfig(ctx, {

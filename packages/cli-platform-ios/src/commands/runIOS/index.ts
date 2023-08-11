@@ -19,10 +19,8 @@ import {
   getDefaultUserTerminal,
   startServerInNewWindow,
   isPackagerRunning,
-  getNextPort,
-  askForPortChange,
   logAlreadyRunningBundler,
-  logChangePortInstructions,
+  handlePortUnavailable,
 } from '@react-native-community/cli-tools';
 import {BuildFlags, buildProject} from '../buildIOS/buildProject';
 import {iosBuildOptions} from '../buildIOS';
@@ -55,23 +53,6 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
 
   const packagerStatus = await isPackagerRunning(port);
 
-  const handlePortUnavailable = async () => {
-    const {nextPort, start} = await getNextPort(port, ctx.root);
-    if (!start) {
-      packager = false;
-      logAlreadyRunningBundler(nextPort);
-    } else {
-      const {change} = await askForPortChange(port, nextPort);
-
-      if (change) {
-        port = nextPort;
-      } else {
-        packager = false;
-        logChangePortInstructions(port);
-      }
-    }
-  };
-
   if (
     typeof packagerStatus === 'object' &&
     packagerStatus.status === 'running'
@@ -80,10 +61,12 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
       packager = false;
       logAlreadyRunningBundler(port);
     } else {
-      await handlePortUnavailable();
+      const result = await handlePortUnavailable(port, ctx.root, packager);
+      [port, packager] = [result.port, result.packager];
     }
   } else if (packagerStatus === 'unrecognized') {
-    await handlePortUnavailable();
+    const result = await handlePortUnavailable(port, ctx.root, packager);
+    [port, packager] = [result.port, result.packager];
   }
 
   if (packager) {

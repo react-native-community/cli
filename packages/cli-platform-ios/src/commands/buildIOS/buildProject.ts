@@ -153,17 +153,22 @@ function getProcessOptions<T extends BuildFlags>(
 ): SpawnOptionsWithoutStdio {
   if (
     'packager' in args &&
-    'port' in args &&
-    'terminal' in args &&
     typeof args.packager === 'boolean' &&
-    typeof args.port === 'number' &&
-    typeof args.terminal === 'string'
+    args.packager
   ) {
+    const terminal =
+      'terminal' in args && typeof args.terminal === 'string'
+        ? args.terminal
+        : '';
+
+    const port =
+      'port' in args && typeof args.port === 'string' ? args.port : '';
+
     return {
       env: {
         ...process.env,
-        RCT_TERMINAL: args.terminal,
-        RCT_METRO_PORT: args.port.toString(),
+        RCT_TERMINAL: terminal,
+        RCT_METRO_PORT: port,
       },
     };
   }

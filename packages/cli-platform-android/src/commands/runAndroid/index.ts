@@ -19,11 +19,9 @@ import {
   link,
   getDefaultUserTerminal,
   isPackagerRunning,
-  getNextPort,
   logAlreadyRunningBundler,
-  askForPortChange,
-  logChangePortInstructions,
   startServerInNewWindow,
+  handlePortUnavailable,
 } from '@react-native-community/cli-tools';
 import {getAndroidProject} from '../../config/getAndroidProject';
 import listAndroidDevices from './listAndroidDevices';
@@ -60,23 +58,6 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
 
   const packagerStatus = await isPackagerRunning(port);
 
-  const handlePortUnavailable = async () => {
-    const {nextPort, start} = await getNextPort(port, config.root);
-    if (!start) {
-      packager = false;
-      logAlreadyRunningBundler(nextPort);
-    } else {
-      const {change} = await askForPortChange(port, nextPort);
-
-      if (change) {
-        port = nextPort;
-      } else {
-        packager = false;
-        logChangePortInstructions(port);
-      }
-    }
-  };
-
   if (
     typeof packagerStatus === 'object' &&
     packagerStatus.status === 'running'
@@ -85,10 +66,12 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
       packager = false;
       logAlreadyRunningBundler(port);
     } else {
-      await handlePortUnavailable();
+      const result = await handlePortUnavailable(port, config.root, packager);
+      [port, packager] = [result.port, result.packager];
     }
   } else if (packagerStatus === 'unrecognized') {
-    await handlePortUnavailable();
+    const result = await handlePortUnavailable(port, config.root, packager);
+    [port, packager] = [result.port, result.packager];
   }
 
   if (packager) {

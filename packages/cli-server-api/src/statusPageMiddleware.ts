@@ -14,10 +14,6 @@ export default function statusPageMiddleware(
   _req: http.IncomingMessage,
   res: http.ServerResponse,
 ) {
-  res.end(
-    JSON.stringify({
-      status: 'running',
-      root: process.cwd(),
-    }),
-  );
+  res.setHeader('Project-Root', process.cwd());
+  res.end('packager-status:running');
 }

@@ -15,6 +15,7 @@ import {Healthchecks, HealthCheckCategory} from '../../types';
 import loadConfig from '@react-native-community/cli-config';
 import xcodeEnv from './xcodeEnv';
 import packager from './packager';
+import deepmerge from 'deepmerge';
 
 export const HEALTHCHECK_TYPES = {
   ERROR: 'ERROR',
@@ -29,20 +30,40 @@ type Options = {
 export const getHealthchecks = ({contributor}: Options): Healthchecks => {
   let additionalChecks: HealthCheckCategory[] = [];
 
+  let projectSpecificHealthchecks = {};
+
   // Doctor can run in a detached mode, where there isn't a config so this can fail
   try {
     let config = loadConfig();
     additionalChecks = config.healthChecks;
+
+    if (config) {
+      projectSpecificHealthchecks = {
+        common: {
+          label: 'Common',
+          healthchecks: [packager],
+        },
+        android: {
+          label: 'Android',
+          healthchecks: [androidSDK],
+        },
+        ...(process.platform === 'darwin' && {
+          ios: {
+            label: 'iOS',
+            healthchecks: [xcodeEnv],
+          },
+        }),
+      };
+    }
   } catch {}
 
-  return {
+  const defaultHealthchecks = {
     common: {
       label: 'Common',
       healthchecks: [
         nodeJS,
         yarn,
         npm,
-        packager,
         ...(process.platform === 'darwin' ? [watchman] : []),
       ],
     },
@@ -52,7 +73,6 @@ export const getHealthchecks = ({contributor}: Options): Healthchecks => {
         adb,
         jdk,
         androidStudio,
-        androidSDK,
         androidHomeEnvVariable,
         ...(contributor ? [androidNDK] : []),
       ],
@@ -61,10 +81,12 @@ export const getHealthchecks = ({contributor}: Options): Healthchecks => {
       ? {
           ios: {
             label: 'iOS',
-            healthchecks: [xcode, ruby, cocoaPods, iosDeploy, xcodeEnv],
+            healthchecks: [xcode, ruby, cocoaPods, iosDeploy],
           },
         }
       : {}),
     ...additionalChecks,
   };
+
+  return deepmerge(defaultHealthchecks, projectSpecificHealthchecks);
 };

@@ -26,11 +26,16 @@ async function isPackagerRunning(
   | 'unrecognized'
 > {
   try {
-    const {data} = await fetch(`http://localhost:${packagerPort}/status`);
+    const {data, headers} = await fetch(
+      `http://localhost:${packagerPort}/status`,
+    );
 
     try {
-      if (data.status === 'running') {
-        return data;
+      if (data === 'packager-status:running') {
+        return {
+          status: 'running',
+          root: headers.get('Project-Root') ?? '',
+        };
       }
     } catch (_error) {
       return 'unrecognized';

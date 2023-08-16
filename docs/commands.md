@@ -28,7 +28,7 @@ React Native CLI comes with following commands:
 Usage (with `npx`):
 
 ```sh
-npx react-native init <projectName> [options]
+npx react-native@latest init <projectName> [options]
 ```
 
 Initialize a new React Native project named <projectName> in a directory of the same name. You can find out more use cases in [init docs](./init.md).
@@ -59,10 +59,10 @@ Uses a custom template. Accepts following template sources:
 Example:
 
 ```sh
-npx react-native init MyApp --template react-native-custom-template
-npx react-native init MyApp --template file:///Users/name/template-path
-npx react-native init MyApp --template file:///Users/name/template-name-1.0.0.tgz
-npx react-native init MyApp --template Esemesek/react-native-new-template
+npx react-native@latest init MyApp --template react-native-custom-template
+npx react-native@latest init MyApp --template file:///Users/name/template-path
+npx react-native@latest init MyApp --template file:///Users/name/template-name-1.0.0.tgz
+npx react-native@latest init MyApp --template Esemesek/react-native-new-template
 ```
 
 A template is any directory or npm package that contains a `template.config.js` file in the root with the following type:

@@ -406,12 +406,28 @@ test('should convert project sourceDir relative path to absolute', () => {
       <manifest xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         package="com.coinbase.android">
+        <application android:name=".MainApplication">
+          <activity android:name=".MainActivity">
+            <intent-filter>
+              <action android:name="android.intent.action.MAIN" />
+              <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+          </activity>
+        </application>
       </manifest>
     `,
     'android2/AndroidManifest.xml': `
       <manifest xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         package="com.coinbase.android">
+        <application android:name=".MainApplication">
+          <activity android:name=".MainActivity">
+            <intent-filter>
+              <action android:name="android.intent.action.MAIN" />
+              <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+          </activity>
+        </application>
       </manifest>
     `,
   });

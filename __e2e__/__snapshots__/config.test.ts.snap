@@ -65,7 +65,8 @@ exports[`shows up current config without unnecessary output 1`] = `
     "android": {
       "sourceDir": "<<REPLACED_ROOT>>/TestProject/android",
       "appName": "app",
-      "packageName": "com.testproject"
+      "packageName": "com.testproject",
+      "mainActivity": ".MainActivity"
     }
   }
 }

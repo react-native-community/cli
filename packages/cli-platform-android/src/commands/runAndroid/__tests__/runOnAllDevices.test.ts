@@ -67,6 +67,7 @@ describe('--appFolder', () => {
     appName: 'app',
     packageName: 'com.test',
     sourceDir: '/android',
+    mainActivity: '.MainActivity',
   };
   beforeEach(() => {
     jest.clearAllMocks();

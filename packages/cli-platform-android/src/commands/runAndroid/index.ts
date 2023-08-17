@@ -105,7 +105,11 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
     }
   }
 
-  const androidProject = getAndroidProject(config);
+  let androidProject = getAndroidProject(config);
+
+  if (args.mainActivity) {
+    androidProject.mainActivity = args.mainActivity;
+  }
 
   return buildAndRun(args, androidProject);
 }
@@ -294,12 +298,8 @@ function installAndLaunchOnDevice(
     androidProject,
     selectedTask,
   );
-  tryLaunchAppOnDevice(
-    selectedDevice,
-    androidProject.packageName,
-    adbPath,
-    args,
-  );
+
+  tryLaunchAppOnDevice(selectedDevice, androidProject, adbPath, args);
 }
 
 export default {
@@ -338,7 +338,6 @@ export default {
     {
       name: '--main-activity <string>',
       description: 'Name of the activity to start',
-      default: 'MainActivity',
     },
     {
       name: '--deviceId <string>',

@@ -35,7 +35,7 @@ const cliPackages = [
   '@react-native-community/cli-types',
 ];
 
-const reactNativeCliCompatiblityMatrix = {
+const reactNativeCliCompatibilityMatrix = {
   12: ['0.73'],
   11: ['0.72'],
   10: ['0.71'],
@@ -44,10 +44,7 @@ const reactNativeCliCompatiblityMatrix = {
 const getPackageJson = (root?: string): Record<string, any> => {
   try {
     root = root || findProjectRoot();
-    const packageJson = JSON.parse(
-      fs.readFileSync(path.join(root, 'package.json'), 'utf8'),
-    );
-    return packageJson;
+    return JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
   } catch (e) {
     logger.log(); // for extra space
     logger.error(`Couldn't find a "package.json" in ${root || process.cwd()}.`);
@@ -116,8 +113,8 @@ export default {
 
           if (packageMajorVersion) {
             const compatibleRNVersions =
-              reactNativeCliCompatiblityMatrix[
-                packageMajorVersion as keyof typeof reactNativeCliCompatiblityMatrix
+              reactNativeCliCompatibilityMatrix[
+                packageMajorVersion as keyof typeof reactNativeCliCompatibilityMatrix
               ] || [];
             if (!compatibleRNVersions.includes(RNVersion)) {
               issues.push(

@@ -115,7 +115,7 @@ async function runOnAllDevices(
       if (args.binaryPath && device) {
         tryInstallAppOnDevice(args, adbPath, device, androidProject);
       }
-      tryLaunchAppOnDevice(device, androidProject.packageName, adbPath, args);
+      tryLaunchAppOnDevice(device, androidProject, adbPath, args);
     },
   );
 }

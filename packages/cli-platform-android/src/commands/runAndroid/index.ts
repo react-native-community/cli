@@ -46,10 +46,6 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
     link.setVersion(config.reactNativeVersion);
   }
 
-  if (!args.mainActivity && config.project.android?.mainActivity) {
-    args.mainActivity = config.project.android?.mainActivity;
-  }
-
   if (args.binaryPath) {
     if (args.tasks) {
       throw new CLIError(
@@ -68,7 +64,11 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
     }
   }
 
-  const androidProject = getAndroidProject(config);
+  let androidProject = getAndroidProject(config);
+
+  if (args.mainActivity) {
+    androidProject.mainActivity = args.mainActivity;
+  }
 
   await runPackager(args, config);
   return buildAndRun(args, androidProject);
@@ -258,12 +258,8 @@ function installAndLaunchOnDevice(
     androidProject,
     selectedTask,
   );
-  tryLaunchAppOnDevice(
-    selectedDevice,
-    androidProject.packageName,
-    adbPath,
-    args,
-  );
+
+  tryLaunchAppOnDevice(selectedDevice, androidProject, adbPath, args);
 }
 
 export default {

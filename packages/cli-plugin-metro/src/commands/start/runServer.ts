@@ -6,6 +6,7 @@
  */
 
 import Metro from 'metro';
+import type {Reporter, ReportableEvent} from 'metro';
 import type Server from 'metro/src/Server';
 import type {Middleware} from 'metro-config';
 import {Terminal} from 'metro-core';
@@ -17,8 +18,15 @@ import {
 import {Config} from '@react-native-community/cli-types';
 
 import loadMetroConfig from '../../tools/loadMetroConfig';
-import {version} from '@react-native-community/cli-tools';
+import {
+  isPackagerRunning,
+  logger,
+  version,
+  logAlreadyRunningBundler,
+  handlePortUnavailable,
+} from '@react-native-community/cli-tools';
 import enableWatchMode from './watchMode';
+import chalk from 'chalk';
 
 export type Args = {
   assetPlugins?: string[];
@@ -40,29 +48,47 @@ export type Args = {
 };
 
 async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
-  let reportEvent: ((event: any) => void) | undefined;
-  const terminal = new Terminal(process.stdout);
-  const ReporterImpl = getReporterImpl(args.customLogReporterPath);
-  const terminalReporter = new ReporterImpl(terminal);
-  const reporter = {
-    update(event: any) {
-      terminalReporter.update(event);
-      if (reportEvent) {
-        reportEvent(event);
-      }
-    },
-  };
+  let port = args.port ?? 8081;
+  let packager = true;
+
+  const packagerStatus = await isPackagerRunning(port);
+
+  if (
+    typeof packagerStatus === 'object' &&
+    packagerStatus.status === 'running'
+  ) {
+    if (packagerStatus.root === ctx.root) {
+      packager = false;
+      logAlreadyRunningBundler(port);
+    } else {
+      const result = await handlePortUnavailable(port, ctx.root, packager);
+      [port, packager] = [result.port, result.packager];
+    }
+  } else if (packagerStatus === 'unrecognized') {
+    const result = await handlePortUnavailable(port, ctx.root, packager);
+    [port, packager] = [result.port, result.packager];
+  }
+
+  if (packager === false) {
+    process.exit();
+  }
 
   const metroConfig = await loadMetroConfig(ctx, {
     config: args.config,
     maxWorkers: args.maxWorkers,
-    port: args.port,
+    port,
     resetCache: args.resetCache,
     watchFolders: args.watchFolders,
     projectRoot: args.projectRoot,
     sourceExts: args.sourceExts,
-    reporter,
   });
+  // if customLogReporterPath is provided, use the custom reporter, otherwise use the default one
+  let reporter: Reporter = metroConfig.reporter;
+  if (args.customLogReporterPath) {
+    const terminal = new Terminal(process.stdout);
+    const ReporterImpl = getReporterImpl(args.customLogReporterPath);
+    reporter = new ReporterImpl(terminal);
+  }
 
   if (args.assetPlugins) {
     // @ts-ignore - assigning to readonly property
@@ -95,16 +121,26 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
     return middleware.use(metroMiddleware);
   };
 
-  const serverInstance = await Metro.runServer(metroConfig, {
-    host: args.host,
-    secure: args.https,
-    secureCert: args.cert,
-    secureKey: args.key,
-    // @ts-ignore - ws.Server types are incompatible
-    websocketEndpoints,
-  });
-
-  reportEvent = eventsSocketEndpoint.reportEvent;
+  const serverInstance = await Metro.runServer(
+    {
+      ...metroConfig,
+      reporter: {
+        update(event: ReportableEvent) {
+          reporter.update(event);
+          // Add reportEvent to the reporter update method.
+          eventsSocketEndpoint.reportEvent(event);
+        },
+      },
+    },
+    {
+      host: args.host,
+      secure: args.https,
+      secureCert: args.cert,
+      secureKey: args.key,
+      // @ts-ignore - ws.Server types are incompatible
+      websocketEndpoints,
+    },
+  );
 
   if (args.interactive) {
     enableWatchMode(messageSocketEndpoint, ctx);
@@ -123,12 +159,10 @@ async function runServer(_argv: Array<string>, ctx: Config, args: Args) {
   serverInstance.keepAliveTimeout = 30000;
 
   await version.logIfUpdateAvailable(ctx.root);
+  logger.info(`Started dev server at ${chalk.bold(port)}`);
 }
 
-function getReporterImpl(customLogReporterPath: string | undefined) {
-  if (customLogReporterPath === undefined) {
-    return require('metro/src/lib/TerminalReporter');
-  }
+function getReporterImpl(customLogReporterPath: string) {
   try {
     // First we let require resolve it, so we can require packages in node_modules
     // as expected. eg: require('my-package/reporter');

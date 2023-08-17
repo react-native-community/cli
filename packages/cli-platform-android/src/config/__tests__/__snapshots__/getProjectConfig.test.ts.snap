@@ -4,6 +4,7 @@ exports[`android::getProjectConfig returns an object with android project config
 Object {
   "appName": "",
   "dependencyConfiguration": undefined,
+  "mainActivity": ".MainActivity",
   "packageName": "com.some.example",
   "sourceDir": "/flat/android",
   "unstable_reactLegacyComponentNames": undefined,
@@ -15,6 +16,7 @@ exports[`android::getProjectConfig returns an object with android project config
 Object {
   "appName": "",
   "dependencyConfiguration": undefined,
+  "mainActivity": ".MainActivity",
   "packageName": "com.some.example",
   "sourceDir": "/multiple/android",
   "unstable_reactLegacyComponentNames": undefined,
@@ -26,6 +28,7 @@ exports[`android::getProjectConfig returns an object with android project config
 Object {
   "appName": "app",
   "dependencyConfiguration": undefined,
+  "mainActivity": ".MainActivity",
   "packageName": "com.some.example",
   "sourceDir": "/nested/android",
   "unstable_reactLegacyComponentNames": undefined,

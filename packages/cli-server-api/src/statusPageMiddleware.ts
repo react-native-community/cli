@@ -14,5 +14,6 @@ export default function statusPageMiddleware(
   _req: http.IncomingMessage,
   res: http.ServerResponse,
 ) {
+  res.setHeader('Project-Root', process.cwd());
   res.end('packager-status:running');
 }

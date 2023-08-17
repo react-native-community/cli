@@ -83,12 +83,11 @@ function findMatchingSimulator(
       ) {
         continue;
       }
-      const booted = simulator.state === 'Booted';
       const lastBootedAt = simulator.lastBootedAt;
-      const simulatorDescriptor = {
+      const simulatorDescriptor: Device = {
         udid: simulator.udid,
         name: simulator.name,
-        booted,
+        state: simulator.state,
         version,
       };
       if (findOptions && findOptions.udid) {
@@ -96,7 +95,7 @@ function findMatchingSimulator(
           return simulatorDescriptor;
         }
       } else {
-        if (booted && simulatorName === null) {
+        if (simulator.state === 'Booted' && simulatorName === null) {
           return simulatorDescriptor;
         }
         if (simulator.name === simulatorName && !match) {

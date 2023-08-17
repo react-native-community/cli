@@ -47,17 +47,12 @@ async function runOnAllDevices(
       );
     }
   }
-  if (args.variant) {
-    logger.warn(
-      '"variant" flag is deprecated and will be removed in future release. Please switch to "mode" flag.',
-    );
-  }
 
   try {
     if (!args.binaryPath) {
       let gradleArgs = getTaskNames(
         androidProject.appName,
-        args.mode || args.variant,
+        args.mode,
         args.tasks,
         'install',
         androidProject.sourceDir,
@@ -115,7 +110,7 @@ async function runOnAllDevices(
       if (args.binaryPath && device) {
         tryInstallAppOnDevice(args, adbPath, device, androidProject);
       }
-      tryLaunchAppOnDevice(device, androidProject.packageName, adbPath, args);
+      tryLaunchAppOnDevice(device, androidProject, adbPath, args);
     },
   );
 }

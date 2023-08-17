@@ -22,28 +22,6 @@ Builds your app and starts it on a connected Android emulator or device.
 
 #### Options
 
-#### `--root <string>`
-
-> **DEPRECATED** – root is discovered automatically
-
-Override the root directory for the Android build (which contains the android directory)'.
-
-#### `--variant <string>`
-
-> **DEPRECATED** – use "mode" instead
-
-> default: 'debug'
-
-Specify your app's build variant.
-
-#### `--appFolder <string>`
-
-> **DEPRECATED** – use "project.android.appName" in react-native.config.js
-
-> default: 'app'
-
-Specify a different application folder name for the Android source. If not, we assume is "app".
-
 #### `--appId <string>`
 
 Specify an `applicationId` to launch after build. If not specified, `package` from AndroidManifest.xml will be used.
@@ -129,6 +107,7 @@ Installs passed binary instead of building a fresh one. This command is not comp
 #### `--user` <number | string>
 
 Id of the User Profile you want to install the app on.
+
 ### `log-android`
 
 Usage:

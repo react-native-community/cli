@@ -13,13 +13,22 @@ import tryRunAdbReverse from './tryRunAdbReverse';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice';
 import tryInstallAppOnDevice from './tryInstallAppOnDevice';
 import getAdbPath from './getAdbPath';
-import {logger, CLIError, link} from '@react-native-community/cli-tools';
+import {
+  logger,
+  CLIError,
+  link,
+  getDefaultUserTerminal,
+  isPackagerRunning,
+  logAlreadyRunningBundler,
+  startServerInNewWindow,
+  handlePortUnavailable,
+} from '@react-native-community/cli-tools';
 import {getAndroidProject} from '../../config/getAndroidProject';
 import listAndroidDevices from './listAndroidDevices';
 import tryLaunchEmulator from './tryLaunchEmulator';
 import chalk from 'chalk';
 import path from 'path';
-import {build, runPackager, BuildFlags, options} from '../buildAndroid';
+import {build, BuildFlags, options} from '../buildAndroid';
 import {promptForTaskSelection} from './listAndroidTasks';
 import {getTaskNames} from './getTaskNames';
 import {checkUsers, promptForUser} from './listAndroidUsers';
@@ -28,6 +37,9 @@ export interface Flags extends BuildFlags {
   appId: string;
   appIdSuffix: string;
   mainActivity: string;
+  port: number;
+  terminal?: string;
+  packager?: boolean;
   deviceId?: string;
   listDevices?: boolean;
   binaryPath?: string;
@@ -41,6 +53,35 @@ export type AndroidProject = NonNullable<Config['project']['android']>;
  */
 async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
   link.setPlatform('android');
+
+  let {packager, port} = args;
+
+  const packagerStatus = await isPackagerRunning(port);
+
+  if (
+    typeof packagerStatus === 'object' &&
+    packagerStatus.status === 'running'
+  ) {
+    if (packagerStatus.root === config.root) {
+      packager = false;
+      logAlreadyRunningBundler(port);
+    } else {
+      const result = await handlePortUnavailable(port, config.root, packager);
+      [port, packager] = [result.port, result.packager];
+    }
+  } else if (packagerStatus === 'unrecognized') {
+    const result = await handlePortUnavailable(port, config.root, packager);
+    [port, packager] = [result.port, result.packager];
+  }
+
+  if (packager) {
+    await startServerInNewWindow(
+      port,
+      config.root,
+      config.reactNativePath,
+      args.terminal,
+    );
+  }
 
   if (config.reactNativeVersion !== 'unknown') {
     link.setVersion(config.reactNativeVersion);
@@ -64,9 +105,12 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
     }
   }
 
-  const androidProject = getAndroidProject(config);
+  let androidProject = getAndroidProject(config);
 
-  await runPackager(args, config);
+  if (args.mainActivity) {
+    androidProject.mainActivity = args.mainActivity;
+  }
+
   return buildAndRun(args, androidProject);
 }
 
@@ -188,7 +232,7 @@ function runOnSpecificDevice(
     if (devices.indexOf(deviceId) !== -1) {
       let gradleArgs = getTaskNames(
         androidProject.appName,
-        args.mode || args.variant,
+        args.mode,
         args.tasks ?? buildTask,
         'install',
         androidProject.sourceDir,
@@ -254,12 +298,8 @@ function installAndLaunchOnDevice(
     androidProject,
     selectedTask,
   );
-  tryLaunchAppOnDevice(
-    selectedDevice,
-    androidProject.packageName,
-    adbPath,
-    args,
-  );
+
+  tryLaunchAppOnDevice(selectedDevice, androidProject, adbPath, args);
 }
 
 export default {
@@ -269,6 +309,21 @@ export default {
   func: runAndroid,
   options: [
     ...options,
+    {
+      name: '--no-packager',
+      description: 'Do not launch packager while running the app',
+    },
+    {
+      name: '--port <number>',
+      default: process.env.RCT_METRO_PORT || 8081,
+      parse: Number,
+    },
+    {
+      name: '--terminal <string>',
+      description:
+        'Launches the Metro Bundler in a new window using the specified terminal path.',
+      default: getDefaultUserTerminal(),
+    },
     {
       name: '--appId <string>',
       description:
@@ -283,7 +338,6 @@ export default {
     {
       name: '--main-activity <string>',
       description: 'Name of the activity to start',
-      default: 'MainActivity',
     },
     {
       name: '--deviceId <string>',

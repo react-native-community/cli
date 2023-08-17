@@ -22,6 +22,14 @@ const appBuildGradle = fs.readFileSync(
   path.join(__dirname, './files/appbuild.gradle'),
 );
 
+const fewActivitiesManifest = fs.readFileSync(
+  path.join(__dirname, './files/AndroidManifest-few-activities.xml'),
+);
+
+const classNameManifest = fs.readFileSync(
+  path.join(__dirname, './files/AndroidManifest-className.xml'),
+);
+
 function generateValidFileStructureForLib(classFileName: string) {
   return {
     'build.gradle': buildGradle,
@@ -278,3 +286,15 @@ export const findPackagesClassNameJavaNotValid = [
   }
   `,
 ];
+
+export const fewActivities = {
+  src: {
+    'AndroidManifest.xml': fewActivitiesManifest,
+  },
+};
+
+export const className = {
+  src: {
+    'AndroidManifest.xml': classNameManifest,
+  },
+};

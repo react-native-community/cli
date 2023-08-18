@@ -41,6 +41,10 @@ function enableWatchMode(messageSocket: any, ctx: Config) {
     }
   });
 
+  const execaOptions = {
+    env: {FORCE_COLOR: chalk.supportsColor ? 'true' : 'false'},
+  };
+
   const onPress = (key: string) => {
     switch (key) {
       case 'r':
@@ -53,21 +57,27 @@ function enableWatchMode(messageSocket: any, ctx: Config) {
         break;
       case 'i':
         logger.info('Opening app on iOS...');
-        execa('npx', [
-          'react-native',
-          'run-ios',
-          ...(ctx.project.ios?.watchModeCommandParams ?? []),
-          {env: {FORCE_COLOR: chalk.supportsColor ? 'true' : 'false'}},
-        ]).stdout?.pipe(process.stdout);
+        execa(
+          'npx',
+          [
+            'react-native',
+            'run-ios',
+            ...(ctx.project.ios?.watchModeCommandParams ?? []),
+          ],
+          execaOptions,
+        ).stdout?.pipe(process.stdout);
         break;
       case 'a':
         logger.info('Opening app on Android...');
-        execa('npx', [
-          'react-native',
-          'run-android',
-          ...(ctx.project.android?.watchModeCommandParams ?? []),
-          {env: {FORCE_COLOR: chalk.supportsColor ? 'true' : 'false'}},
-        ]).stdout?.pipe(process.stdout);
+        execa(
+          'npx',
+          [
+            'react-native',
+            'run-android',
+            ...(ctx.project.android?.watchModeCommandParams ?? []),
+          ],
+          execaOptions,
+        ).stdout?.pipe(process.stdout);
         break;
       case CTRL_Z:
         process.emit('SIGTSTP', 'SIGTSTP');

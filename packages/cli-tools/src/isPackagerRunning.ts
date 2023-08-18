@@ -34,7 +34,7 @@ async function isPackagerRunning(
       if (data === 'packager-status:running') {
         return {
           status: 'running',
-          root: headers.get('Project-Root') ?? '',
+          root: headers.get('X-React-Native-Project-Root') ?? '',
         };
       }
     } catch (_error) {

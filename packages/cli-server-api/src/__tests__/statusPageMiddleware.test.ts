@@ -14,7 +14,10 @@ describe('statusPageMiddleware', () => {
     statusPageMiddleware(mockReq, res);
 
     // We're strictly checking response here, because React Native is strongly depending on this response. Changing the response might be a breaking change.
-    expect(res.setHeader).toHaveBeenCalledWith('Project-Root', '/mocked/path');
+    expect(res.setHeader).toHaveBeenCalledWith(
+      'X-React-Native-Project-Root',
+      '/mocked/path',
+    );
     expect(res.end).toHaveBeenCalledWith('packager-status:running');
   });
 });

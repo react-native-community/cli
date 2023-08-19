@@ -57,7 +57,7 @@ This monorepository contains tools and helpers for React Native projects in form
 Run the following command in your terminal prompt:
 
 ```sh
-npx react-native init MyApp
+npx react-native@latest init MyApp
 ```
 
 ## Usage in an existing React Native project

@@ -245,15 +245,15 @@ export default {
   examples: [
     {
       desc: 'Build the app for the IOS simulator',
-      cmd: 'react-native build-ios',
+      cmd: 'npx react-native build-ios',
     },
     {
       desc: 'Build the app for all IOS devices',
-      cmd: 'react-native build-ios --mode "Release"',
+      cmd: 'npx react-native build-ios --mode "Release"',
     },
     {
       desc: 'Build the app for a specific IOS device',
-      cmd: 'react-native build-ios --simulator "IPhone 11"',
+      cmd: 'npx react-native build-ios --simulator "IPhone 11"',
     },
   ],
   options: [

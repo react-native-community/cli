@@ -73,7 +73,7 @@ Object {
 }
 `;
 
-exports[`should not skip packages that have invalid configuration (to avoid breaking users): logged warning 1`] = `"warn Package react-native contains invalid configuration: \\"dependency.invalidProperty\\" is not allowed. Please verify it's properly linked using \\"react-native config\\" command and contact the package maintainers about this."`;
+exports[`should not skip packages that have invalid configuration (to avoid breaking users): logged warning 1`] = `"warn Package react-native contains invalid configuration: \\"dependency.invalidProperty\\" is not allowed. Please verify it's properly linked using \\"npx react-native config\\" command and contact the package maintainers about this."`;
 
 exports[`should read a config of a dependency and use it to load other settings 1`] = `
 Object {

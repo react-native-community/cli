@@ -1,6 +1,6 @@
 # Health Check Plugins
 
-Plugins can be used to extend the health checks that `react-native doctor` runs.  This can be used to add additional checks for out of tree platforms, or other checks that are specific to a community module.
+Plugins can be used to extend the health checks that `npx react-native doctor` runs.  This can be used to add additional checks for out of tree platforms, or other checks that are specific to a community module.
 
 See [`Plugins`](./plugins.md) for information about how plugins work.  
 

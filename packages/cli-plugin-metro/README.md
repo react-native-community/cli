@@ -16,7 +16,7 @@ yarn add @react-native-community/cli-plugin-metro
 Usage:
 
 ```sh
-react-native start [option]
+npx react-native start [option]
 ```
 
 Starts the server that communicates with connected devices
@@ -84,7 +84,7 @@ Disables interactive mode
 Usage:
 
 ```sh
-react-native bundle <flag>
+npx react-native bundle <flag>
 ```
 
 Builds the JavaScript bundle for offline use.
@@ -120,7 +120,7 @@ File name where to store the resulting bundle, ex. `/tmp/groups.bundle`.
 If you are planning on building a debug APK, that will run without the packager, by invoking `./gradlew assembleDebug` you can simply set `bundleInDebug: true` in your app/build.gradle file, inside the `project.ext.react` map.
 
 <details>
-Alternatively if you want to run <code>react-native bundle</code> manually and then create the APK with <code>./gradlew assembleDebug</code> you have to make sure to put the bundle into the right directory and give it the right name, so that gradle can find it.
+Alternatively if you want to run <code>npx react-native bundle</code> manually and then create the APK with <code>./gradlew assembleDebug</code> you have to make sure to put the bundle into the right directory and give it the right name, so that gradle can find it.
 
 For react-native versions 0.57 and above the bundle output path should be:
 <code>android/app/build/generated/assets/react/debug/index.android.js</code>
@@ -162,7 +162,7 @@ Directory name where to store assets referenced in the bundle.
 If you are planning on building a debug APK that will run without the packager, see ([--bundle-output](https://github.com/react-native-community/cli/blob/main/packages/cli-plugin-metro/README.md#--bundle-output-string))
 
 <details>
-  Alternatively if you want to run <code>react-native bundle</code> manually and then create the APK with <code>./gradlew assembleDebug</code> you have to make sure to put the assets into the right directory, so that gradle can find them.
+  Alternatively if you want to run <code>npx react-native bundle</code> manually and then create the APK with <code>./gradlew assembleDebug</code> you have to make sure to put the assets into the right directory, so that gradle can find them.
 
 For react-native versions 0.57 and above the <code>--assets-dest</code> path should be:
 <code>android/app/build/generated/res/react/debug</code>
@@ -192,7 +192,7 @@ Path to the CLI configuration file.
 Usage:
 
 ```sh
-react-native ram-bundle [options]
+npx react-native ram-bundle [options]
 ```
 
 Builds JavaScript as a "Random Access Module" bundle for offline use.

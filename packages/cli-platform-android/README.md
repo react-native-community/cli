@@ -15,7 +15,7 @@ yarn add @react-native-community/cli-platform-android
 Usage:
 
 ```sh
-react-native run-android [options]
+npx react-native run-android [options]
 ```
 
 Builds your app and starts it on a connected Android emulator or device.
@@ -78,7 +78,7 @@ List all available Android devices and simulators and let you choose one to run 
 Usage:
 
 ```sh
-react-native build-android [options]
+npx react-native build-android [options]
 ```
 
 Builds Android app.
@@ -97,7 +97,7 @@ Custom params that will be passed to gradle build command.
 Example:
 
 ```sh
-react-native build-android --extra-params "-x lint -x test"
+npx react-native build-android --extra-params "-x lint -x test"
 ```
 
 #### `--binary-path <path>`
@@ -113,7 +113,7 @@ Id of the User Profile you want to install the app on.
 Usage:
 
 ```sh
-react-native log-android
+npx react-native log-android
 ```
 
 Starts [`logkitty`](https://github.com/zamotany/logkitty) displaying pretty Android logs.

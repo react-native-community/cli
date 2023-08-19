@@ -86,7 +86,7 @@ multiple `Podfile` files in your project.
 
 #### project.ios.watchModeCommandParams
 
-Array of strings that will be passed to the `react-native run-ios` command when running in watch mode.
+Array of strings that will be passed to the `npx react-native run-ios` command when running in watch mode.
 
 #### project.ios.unstable_reactLegacyComponentNames
 
@@ -122,7 +122,7 @@ See [`dependency.platforms.android.configuration`](dependencies.md#platformsandr
 
 #### project.android.watchModeCommandParams
 
-Array of strings that will be passed to the `react-native run-android` command when running in watch mode.
+Array of strings that will be passed to the `npx react-native run-android` command when running in watch mode.
 
 #### project.android.unstable_reactLegacyComponentNames
 

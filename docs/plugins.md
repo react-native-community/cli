@@ -2,7 +2,7 @@
 
 Plugin is a JavaScript package that extends built-in React Native CLI features. It can provide an array of additional commands to run or platforms to target.
 
-For example, `react-native-windows` package is a plugin that provides `react-native run-windows` command and `windows` platform.
+For example, `react-native-windows` package is a plugin that provides `run-windows` command and `windows` platform.
 
 Details of this particular integration as well as how to provide an additional platform for React Native were described in a [`dedicated section`](./platforms.md) about platforms.
 
@@ -21,13 +21,13 @@ module.exports = {
 };
 ```
 
-> Above is an example of a plugin that exports a command named `foo-command` that can be executed with `react-native foo-command` and logs "It worked" and exits.
+> Above is an example of a plugin that exports a command named `foo-command` that can be executed with `npx react-native foo-command` and logs "It worked" and exits.
 
 At the startup, React Native CLI reads configuration from all dependencies listed in `package.json` and reduces them into a single configuration.
 
 At the end, an array of commands concatenated from all plugins is passed on to the CLI to be loaded after built-in commands.
 
-> See [`healthChecks`](./healthChecks.md) for information on how plugins can provide additional health checks for `react-native doctor`.
+> See [`healthChecks`](./healthChecks.md) for information on how plugins can provide additional health checks for `npx react-native doctor`.
 
 ## Command interface
 

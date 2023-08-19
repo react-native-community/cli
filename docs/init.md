@@ -4,27 +4,27 @@ There are couple of ways to initialize new React Native projects.
 
 ### For `react-native@0.60.0` or greater
 
-#### Using `npx` utility:
+#### Using `npx` utility
 
 ```sh
-npx react-native init ProjectName
+npx react-native@latest init ProjectName
 ```
 
 > Note: If you have both `yarn` and `npm` installed on your machine, React Native CLI will always try to use `yarn`, so even if you use `npx` utility, only `react-native` executable will be installed using `npm` and the rest of the work will be delegated to `yarn`. You can force usage of `npm` adding `--npm` flag to the command.
 
 > Note: for Yarn users, `yarn dlx` command similar to `npx` will be featured in Yarn 2.0: <https://github.com/yarnpkg/berry/pull/40> so we’ll be able to use it in a similar fashion.
 
-#### Installing `react-native` and invoking `init` command:
+#### Installing `react-native` and invoking `init` command
 
 ```sh
 yarn init && yarn add react-native && yarn react-native init ProjectName
 ```
 
-#### Initializing project with custom version of `react-native`:
+#### Initializing project with custom version of `react-native`
 
 ```sh
 # This will use the latest init command but will install react-native@VERSION and use its template
-npx react-native init ProjectName --version ${VERSION}
+npx react-native@latest init ProjectName --version ${VERSION}
 
 # This will use init command from react-native@VERSION
 npx react-native@${VERSION} init ProjectName
@@ -47,7 +47,7 @@ For all available options, please check [Yarn documentation](https://classic.yar
 
 ```sh
 # This will initialize new project using template from `react-native-template-typescript` package
-npx react-native init ProjectName --template ${TEMPLATE_NAME}
+npx react-native@latest init ProjectName --template ${TEMPLATE_NAME}
 
 # This will initialize new project using init command from react-native@VERSION but will use a custom template
 npx react-native@${VERSION} init ProjectName --template ${TEMPLATE_NAME}
@@ -56,7 +56,7 @@ npx react-native@${VERSION} init ProjectName --template ${TEMPLATE_NAME}
 You can force usage of `npm` if you have both `yarn` and `npm` installed on your machine:
 
 ```sh
-npx react-native init ProjectName --npm
+npx react-native@latest init ProjectName --npm
 ```
 
 ### For older `react-native` versions
@@ -65,7 +65,7 @@ Using legacy `react-native-cli` package:
 
 ```sh
 yarn global add react-native-cli
-react-native init ProjectName
+npx react-native@latest init ProjectName
 ```
 
 > Note: It is not recommended, but you can also use legacy `react-native-cli` package to initialize projects using latest `react-native` versions.

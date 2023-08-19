@@ -194,7 +194,11 @@ function handleTestFailure(
   result: {[key: string]: any},
   args: string[] | undefined,
 ) {
-  if (!options.expectedFailure && result.code !== 0) {
+  if (
+    !options.expectedFailure &&
+    result.code !== undefined &&
+    result.code !== 0
+  ) {
     console.log(`Running ${cmd} command failed for unexpected reason. Here's more info:
 ${chalk.bold('cmd:')}     ${cmd}
 ${chalk.bold('options:')} ${JSON.stringify(options)}

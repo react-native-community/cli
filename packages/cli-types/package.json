@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/cli-types",
-  "version": "12.0.0-alpha.4",
+  "version": "12.0.0-alpha.11",
   "main": "build",
   "publishConfig": {
     "access": "public"
@@ -14,7 +14,7 @@
   },
   "types": "build/index.d.ts",
   "license": "MIT",
-  "homepage": "https://github.com/react-native-community/cli/tree/master/packages/cli-types",
+  "homepage": "https://github.com/react-native-community/cli/tree/main/packages/cli-types",
   "repository": {
     "type": "git",
     "url": "https://github.com/react-native-community/cli.git",

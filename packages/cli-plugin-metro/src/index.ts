@@ -8,5 +8,4 @@ export {
   default as commands,
   buildBundleWithConfig,
   CommandLineArgs,
-  startServerInNewWindow,
 } from './commands';

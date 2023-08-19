@@ -6,14 +6,13 @@ labels: 'bug report'
 
 ## Environment
 
-<!-- Run `react-native info` in your terminal and paste its contents here. -->
+<!-- Run `npx react-native info` in your terminal and paste its contents here. -->
 
 ## Description
 
 <!--
   Describe your issue in detail. Include screenshots if needed. If this is a regression, let us know.
 -->
-
 
 ## Reproducible Demo
 

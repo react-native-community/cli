@@ -7,7 +7,7 @@
  */
 
 import path from 'path';
-import fs from 'fs-extra';
+import fs from 'fs';
 import type {AssetData} from 'metro';
 import assetPathUtils from './assetPathUtils';
 
@@ -16,7 +16,7 @@ export function cleanAssetCatalog(catalogDir: string): void {
     .readdirSync(catalogDir)
     .filter((file) => file.endsWith('.imageset'));
   for (const file of files) {
-    fs.removeSync(path.join(catalogDir, file));
+    fs.rmSync(path.join(catalogDir, file));
   }
 }
 
@@ -49,22 +49,25 @@ export function isCatalogAsset(asset: AssetData): boolean {
 }
 
 export function writeImageSet(imageSet: ImageSet): void {
-  fs.mkdirsSync(imageSet.basePath);
+  fs.mkdirSync(imageSet.basePath, {recursive: true});
 
   for (const file of imageSet.files) {
     const dest = path.join(imageSet.basePath, file.name);
     fs.copyFileSync(file.src, dest);
   }
 
-  fs.writeJSONSync(path.join(imageSet.basePath, 'Contents.json'), {
-    images: imageSet.files.map((file) => ({
-      filename: file.name,
-      idiom: 'universal',
-      scale: `${file.scale}x`,
-    })),
-    info: {
-      author: 'xcode',
-      version: 1,
-    },
-  });
+  fs.writeFileSync(
+    path.join(imageSet.basePath, 'Contents.json'),
+    JSON.stringify({
+      images: imageSet.files.map((file) => ({
+        filename: file.name,
+        idiom: 'universal',
+        scale: `${file.scale}x`,
+      })),
+      info: {
+        author: 'xcode',
+        version: 1,
+      },
+    }),
+  );
 }

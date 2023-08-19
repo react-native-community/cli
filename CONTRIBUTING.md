@@ -16,6 +16,7 @@ All work on React Native CLI happens directly on GitHub. Contributors send pull 
 > Please make sure the version of React Native matches the one present in devDependencies of the CLI. Otherwise, you may get unexpected errors.
 
 _Note: you must use the `--watchFolders` flag with the `start` command when testing the CLI with `yarn link` like this. Otherwise Metro can't find the symlinked folder and this may result in errors such as `ReferenceError: SHA-1 for file ... is not computed`. If you are experiencing this error while using Release configuration, please add `watchFolders: ["path/to/cloned/cli/"]` to your `metro.config.js` file._
+
 ### Setup
 
 Because of a modular design of the CLI, we recommend developing using symbolic links to its packages. This way you can use it seamlessly in the tested project, as you'd use the locally installed CLI. Here's what you need to run in the terminal:
@@ -31,7 +32,7 @@ And then:
 
 ```sh
 cd /my/new/react-native/project/
-yarn link "@react-native-community/cli-platform-ios" "@react-native-community/cli-platform-android" "@react-native-community/cli" "@react-native-community/cli-server-api" "@react-native-community/cli-types" "@react-native-community/cli-tools" "@react-native-community/cli-debugger-ui" "@react-native-community/cli-hermes" "@react-native-community/cli-plugin-metro" "@react-native-community/cli-clean"
+yarn link "@react-native-community/cli-platform-ios" "@react-native-community/cli-platform-android" "@react-native-community/cli" "@react-native-community/cli-server-api" "@react-native-community/cli-types" "@react-native-community/cli-tools" "@react-native-community/cli-debugger-ui" "@react-native-community/cli-hermes" "@react-native-community/cli-plugin-metro" "@react-native-community/cli-clean" "@react-native-community/cli-doctor" "@react-native-community/cli-config"
 ```
 
 Once you're done with testing and you'd like to get back to regular setup, run `yarn unlink` instead of `yarn link` from above command. Then `yarn install --force`.
@@ -66,7 +67,7 @@ First make sure you have RN repo checked out and CLI repo checked out and built.
 
 1. Check out `react-native` repo. Then update template in local `react-native/template/package.json`, replacing dependency version of `react-native` with the absolute path of the react native repo, for example: "react-native": "file:///Users/username/react-native" (you can find the absolute path using `pwd` command)
 
-1. Go back up and create a new RN project: `node ./cli/packages/cli/build/bin.js init --template=file:///path/to/local/react-native RNTestProject`
+1. Go back up and create a new RN project: `node ./cli/packages/cli/build/bin.js init --template=file:///path/to/local/react-native/RNTestProject`
 
 1. To work with android, update gradle config in the newly created project following the second part of [Christoph's instructions](https://gist.github.com/cpojer/38a91f90614f35769e88410e3a387b48)
 

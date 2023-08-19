@@ -17,7 +17,7 @@ React Native CLI comes with following commands:
 - [`build-ios`](/packages/cli-platform-ios/README.md#build-ios)
 - [`start`](/packages/cli-plugin-metro/README.md#start)
 - [`upgrade`](#upgrade)
-- [`profile-hermes`](/packages/cli-platform-android/README.md#profile-hermes)
+- [`profile-hermes`](/packages/cli-hermes/README.md#profile-hermes)
 
 ### `init`
 
@@ -28,7 +28,7 @@ React Native CLI comes with following commands:
 Usage (with `npx`):
 
 ```sh
-npx react-native init <projectName> [options]
+npx react-native@latest init <projectName> [options]
 ```
 
 Initialize a new React Native project named <projectName> in a directory of the same name. You can find out more use cases in [init docs](./init.md).
@@ -59,10 +59,10 @@ Uses a custom template. Accepts following template sources:
 Example:
 
 ```sh
-npx react-native init MyApp --template react-native-custom-template
-npx react-native init MyApp --template file:///Users/name/template-path
-npx react-native init MyApp --template file:///Users/name/template-name-1.0.0.tgz
-npx react-native init MyApp --template Esemesek/react-native-new-template
+npx react-native@latest init MyApp --template react-native-custom-template
+npx react-native@latest init MyApp --template file:///Users/name/template-path
+npx react-native@latest init MyApp --template file:///Users/name/template-name-1.0.0.tgz
+npx react-native@latest init MyApp --template Esemesek/react-native-new-template
 ```
 
 A template is any directory or npm package that contains a `template.config.js` file in the root with the following type:
@@ -112,11 +112,7 @@ Create project with custom package name for Android and bundle identifier for iO
 Usage:
 
 ```sh
-react-native upgrade [npm-version]
+npx react-native upgrade
 ```
 
-Upgrade your app's template files to the specified or latest npm version using [rn-diff-purge](https://github.com/react-native-community/rn-diff-purge) project. Only valid semver versions are allowed.
-
-Using this command is a recommended way of upgrading relatively simple React Native apps with not too many native libraries linked. The more iOS and Android build files are modified, the higher chance for a conflicts. The command will guide you on how to continue upgrade process manually in case of failure.
-
-_Note: If you'd like to upgrade using this method from React Native version lower than 0.59.0, you may use a standalone version of this CLI: `npx @react-native-community/cli upgrade`._
+This command generates a relevant link to the [Upgrade Helper](https://react-native-community.github.io/upgrade-helper/) to help you upgrade manually.

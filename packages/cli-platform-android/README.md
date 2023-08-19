@@ -15,34 +15,12 @@ yarn add @react-native-community/cli-platform-android
 Usage:
 
 ```sh
-react-native run-android [options]
+npx react-native run-android [options]
 ```
 
 Builds your app and starts it on a connected Android emulator or device.
 
 #### Options
-
-#### `--root <string>`
-
-> **DEPRECATED** – root is discovered automatically
-
-Override the root directory for the Android build (which contains the android directory)'.
-
-#### `--variant <string>`
-
-> **DEPRECATED** – use "mode" instead
-
-> default: 'debug'
-
-Specify your app's build variant.
-
-#### `--appFolder <string>`
-
-> **DEPRECATED** – use "project.android.appName" in react-native.config.js
-
-> default: 'app'
-
-Specify a different application folder name for the Android source. If not, we assume is "app".
 
 #### `--appId <string>`
 
@@ -100,7 +78,7 @@ List all available Android devices and simulators and let you choose one to run 
 Usage:
 
 ```sh
-react-native build-android [options]
+npx react-native build-android [options]
 ```
 
 Builds Android app.
@@ -119,7 +97,7 @@ Custom params that will be passed to gradle build command.
 Example:
 
 ```sh
-react-native build-android --extra-params "-x lint -x test"
+npx react-native build-android --extra-params "-x lint -x test"
 ```
 
 #### `--binary-path <path>`
@@ -129,12 +107,13 @@ Installs passed binary instead of building a fresh one. This command is not comp
 #### `--user` <number | string>
 
 Id of the User Profile you want to install the app on.
+
 ### `log-android`
 
 Usage:
 
 ```sh
-react-native log-android
+npx react-native log-android
 ```
 
 Starts [`logkitty`](https://github.com/zamotany/logkitty) displaying pretty Android logs.

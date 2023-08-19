@@ -25,6 +25,7 @@ import {findLibraryName} from './findLibraryName';
 import {findComponentDescriptors} from './findComponentDescriptors';
 import {findBuildGradle} from './findBuildGradle';
 import {CLIError} from '@react-native-community/cli-tools';
+import getMainActivity from './getMainActivity';
 
 /**
  * Gets android project config by analyzing given folder and taking some
@@ -65,12 +66,18 @@ export function projectConfig(
   const applicationId = buildGradlePath
     ? getApplicationId(buildGradlePath, packageName)
     : packageName;
+  const mainActivity = getMainActivity(manifestPath || '');
+
+  if (!mainActivity) {
+    throw new CLIError(`Main activity not found in ${manifestPath}`);
+  }
 
   return {
     sourceDir,
     appName,
     packageName,
     applicationId,
+    mainActivity,
     dependencyConfiguration: userConfig.dependencyConfiguration,
     watchModeCommandParams: userConfig.watchModeCommandParams,
     unstable_reactLegacyComponentNames:

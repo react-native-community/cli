@@ -1,3 +1,4 @@
+import type {IosProjectInfo} from '../../types';
 import {checkIfConfigurationExists} from '../checkIfConfigurationExists';
 
 const CONFIGURATIONS = ['Debug', 'Release'];
@@ -23,6 +24,13 @@ describe('checkIfConfigurationExists', () => {
 
   test('should not throw an error if project info contains selected configuration', () => {
     const checkConfig = () => checkIfConfigurationExists(PROJECT_INFO, 'Debug');
+
+    expect(checkConfig).not.toThrow();
+  });
+
+  test('should not throw an error if project could not be found', () => {
+    const checkConfig = () =>
+      checkIfConfigurationExists(undefined as IosProjectInfo, 'Debug');
 
     expect(checkConfig).not.toThrow();
   });

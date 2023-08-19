@@ -15,7 +15,7 @@ yarn add @react-native-community/cli-doctor
 Usage:
 
 ```sh
-react-native doctor
+npx react-native doctor
 ```
 
 Diagnose and fix common Node.js, iOS, Android & React Native issues.
@@ -25,7 +25,7 @@ Diagnose and fix common Node.js, iOS, Android & React Native issues.
 Usage:
 
 ```sh
-react-native info
+npx react-native info
 ```
 
 Get relevant version info about OS, toolchain and libraries. Useful when sending bug reports.

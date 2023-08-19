@@ -6,27 +6,26 @@
  *
  */
 
-import Server from 'metro/src/Server';
-// @ts-ignore - no typed definition for the package
-const outputBundle = require('metro/src/shared/output/bundle');
-import type {BundleOptions} from 'metro/src/shared/types';
-import type {ConfigT} from 'metro-config';
-import path from 'path';
-import chalk from 'chalk';
-import {CommandLineArgs} from './bundleCommandLineArgs';
-import type {Config} from '@react-native-community/cli-types';
-import saveAssets from './saveAssets';
-import {default as loadMetroConfig} from '../../tools/loadMetroConfig';
 import {logger} from '@react-native-community/cli-tools';
+import type {Config} from '@react-native-community/cli-types';
+import chalk from 'chalk';
+import fs from 'fs';
+import type {ConfigT} from 'metro-config';
+import Server from 'metro/src/Server';
+import outputBundle from 'metro/src/shared/output/bundle';
+import type {BundleOptions} from 'metro/src/shared/types';
+import path from 'path';
+import {default as loadMetroConfig} from '../../tools/loadMetroConfig';
+import {CommandLineArgs} from './bundleCommandLineArgs';
+import saveAssets from './saveAssets';
 
 interface RequestOptions {
   entryFile: string;
   sourceMapUrl: string | undefined;
   dev: boolean;
   minify: boolean;
-  platform: string | undefined;
+  platform: string;
   unstable_transformProfile: BundleOptions['unstable_transformProfile'];
-  generateStaticViewConfigs: boolean;
 }
 
 async function buildBundle(
@@ -87,12 +86,15 @@ export async function buildBundleWithConfig(
     minify: args.minify !== undefined ? args.minify : !args.dev,
     platform: args.platform,
     unstable_transformProfile: args.unstableTransformProfile as BundleOptions['unstable_transformProfile'],
-    generateStaticViewConfigs: args.generateStaticViewConfigs,
   };
   const server = new Server(config);
 
   try {
     const bundle = await output.build(server, requestOpts);
+
+    // Ensure destination directory exists before saving the bundle
+    const mkdirOptions = {recursive: true, mode: 0o755} as const;
+    fs.mkdirSync(path.dirname(args.bundleOutput), mkdirOptions);
 
     await output.save(bundle, args, logger.info);
 

@@ -47,17 +47,12 @@ async function runOnAllDevices(
       );
     }
   }
-  if (args.variant) {
-    logger.warn(
-      '"variant" flag is deprecated and will be removed in future release. Please switch to "mode" flag.',
-    );
-  }
 
   try {
     if (!args.binaryPath) {
       let gradleArgs = getTaskNames(
         androidProject.appName,
-        args.mode || args.variant,
+        args.mode,
         args.tasks,
         'install',
         androidProject.sourceDir,
@@ -115,20 +110,14 @@ async function runOnAllDevices(
       if (args.binaryPath && device) {
         tryInstallAppOnDevice(args, adbPath, device, androidProject);
       }
-      tryLaunchAppOnDevice(
-        device,
-        androidProject.packageName,
-        androidProject.applicationId,
-        adbPath,
-        args,
-      );
+      tryLaunchAppOnDevice(device, androidProject, adbPath, args);
     },
   );
 }
 
 function createInstallError(error: Error & {stderr: string}) {
   const stderr = (error.stderr || '').toString();
-  let message = error.message ?? '';
+  let message = '';
   // Pass the error message from the command to stdout because we pipe it to
   // parent process so it's not visible
   logger.log(stderr);
@@ -146,17 +135,16 @@ function createInstallError(error: Error & {stderr: string}) {
     )}."`;
   } else if (stderr.includes('requires Java')) {
     message = `Looks like your Android environment is not properly set. Please go to ${chalk.dim.underline(
-      link.docs('environment-setup', {
+      link.docs('environment-setup', 'android', {
         hash: 'jdk-studio',
         guide: 'native',
-        platform: 'android',
       }),
     )} and follow the React Native CLI QuickStart guide to install the compatible version of JDK.`;
   }
 
   return new CLIError(
-    `Failed to install the app. ${message}`,
-    message.length > 0 ? undefined : error,
+    `Failed to install the app.${message ? ' ' + message : ''}`,
+    error.message.length > 0 ? undefined : error,
   );
 }
 

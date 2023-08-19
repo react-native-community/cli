@@ -15,7 +15,7 @@ yarn add @react-native-community/cli-platform-ios
 Usage:
 
 ```sh
-react-native run-ios [options]
+npx react-native run-ios [options]
 ```
 
 Builds your app and starts it on iOS simulator.
@@ -40,12 +40,8 @@ Notes: `simulator_name` must be a valid iOS simulator name. If in doubt, open yo
 Example: this will launch your project directly onto the iPhone 14 simulator:
 
 ```sh
-react-native run-ios --simulator "iPhone 14"
+npx react-native run-ios --simulator "iPhone 14"
 ```
-
-#### `--configuration <string>`
-
-[Deprecated] Explicitly set the scheme configuration to use default: 'Debug'.
 
 #### `--mode <string>`
 
@@ -54,7 +50,7 @@ Explicitly set the scheme configuration to use. This option is case sensitive.
 Example:
 
 ```sh
-react-native run-ios --mode "Release"
+npx react-native run-ios --mode "Release"
 ```
 
 #### `--scheme <string>`
@@ -71,7 +67,7 @@ Explicitly set device to use by name. The value is not required if you have a si
 
 #### `--destination <string>`
 
-Explicitly extend distination e.g. "arch=x86_64"
+Explicitly extend destination e.g. "arch=x86_64"
 
 #### `--udid <string>`
 
@@ -105,7 +101,7 @@ Custom params that will be passed to `xcodebuild` command.
 Example:
 
 ```sh
-react-native run-ios --extra-params "-jobs 4"
+npx react-native run-ios --extra-params "-jobs 4"
 ```
 
 ### `build-ios`
@@ -113,7 +109,7 @@ react-native run-ios --extra-params "-jobs 4"
 Usage:
 
 ```sh
-react-native build-ios [options]
+npx react-native build-ios [options]
 ```
 
 Builds IOS app.
@@ -138,12 +134,8 @@ Notes: `simulator_name` must be a valid iOS simulator name. If in doubt, open yo
 Example: this will launch your project directly onto the iPhone 14 simulator:
 
 ```sh
-react-native build-ios --simulator "iPhone 14"
+npx react-native build-ios --simulator "iPhone 14"
 ```
-
-#### `--configuration <string>`
-
-[Deprecated] Explicitly set the scheme configuration to use default: 'Debug'.
 
 #### `--mode <string>`
 
@@ -152,7 +144,7 @@ Explicitly set the scheme configuration to use. This option is case sensitive.
 Example:
 
 ```sh
-react-native build-ios --mode "Release"
+npx react-native build-ios --mode "Release"
 ```
 
 #### `--scheme <string>`
@@ -209,7 +201,7 @@ Custom params that will be passed to `xcodebuild` command.
 Example:
 
 ```sh
-react-native build-ios --extra-params "-jobs 4"
+npx react-native build-ios --extra-params "-jobs 4"
 ```
 
 ### log-ios
@@ -219,7 +211,7 @@ react-native build-ios --extra-params "-jobs 4"
 Usage:
 
 ```sh
-react-native log-ios
+npx react-native log-ios
 ```
 
 Starts iOS device syslog tail.

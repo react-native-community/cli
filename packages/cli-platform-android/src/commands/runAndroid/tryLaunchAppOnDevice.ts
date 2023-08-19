@@ -7,24 +7,26 @@
  */
 
 import execa from 'execa';
-import {Flags} from '.';
+import {AndroidProject, Flags} from '.';
 import {logger, CLIError} from '@react-native-community/cli-tools';
 
 function tryLaunchAppOnDevice(
   device: string | void,
-  packageName: string,
-  applicationId: string,
+  androidProject: AndroidProject,
   adbPath: string,
   args: Flags,
 ) {
   const {appId, appIdSuffix} = args;
+
+  const {packageName, mainActivity, applicationId} = androidProject;
+
   const applicationIdWithSuffix = [appId || applicationId, appIdSuffix]
     .filter(Boolean)
     .join('.');
 
-  const activityToLaunch = args.mainActivity.includes('.')
-    ? args.mainActivity
-    : [packageName, args.mainActivity].filter(Boolean).join('.');
+  const activityToLaunch = mainActivity.includes('.')
+    ? mainActivity
+    : [packageName, mainActivity].filter(Boolean).join('.');
 
   try {
     // Here we're using the same flags as Android Studio to launch the app

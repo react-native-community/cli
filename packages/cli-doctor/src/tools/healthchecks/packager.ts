@@ -4,7 +4,8 @@ import {
 } from '@react-native-community/cli-tools';
 import {HealthCheckInterface} from '../../types';
 import {logManualInstallation} from './common';
-import {startServerInNewWindow} from '@react-native-community/cli-plugin-metro';
+import execa from 'execa';
+import path from 'path';
 
 export default {
   label: 'Metro',
@@ -29,22 +30,24 @@ export default {
       const terminal = getDefaultUserTerminal();
       const port = Number(process.env.RCT_METRO_PORT) || 8081;
       if (terminal && config) {
-        startServerInNewWindow(
-          port,
+        await execa('node', [
+          path.join(config.reactNativePath, 'cli.js'),
+          'start',
+          '--port',
+          port.toString(),
+          '--terminal',
           terminal,
-          config.root,
-          config.reactNativePath,
-        );
+        ]);
         return loader.succeed();
       }
       return logManualInstallation({
         message:
-          'Could not start the bundler. Please run "react-native start" command manually.',
+          'Could not start the bundler. Please run "npx react-native start" command manually.',
       });
     } catch (error) {
       return logManualInstallation({
         message:
-          'Could not start the bundler. Please run "react-native start" command manually.',
+          'Could not start the bundler. Please run "npx react-native start" command manually.',
       });
     }
   },

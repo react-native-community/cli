@@ -18,6 +18,8 @@ export default function findManifest(folder: string) {
       '**/debug/**',
       'Examples/**',
       'examples/**',
+      '**/Pods/**',
+      '**/sdks/hermes/android/**',
     ],
   })[0];
 

@@ -10,7 +10,7 @@ const printRunDoctorTip = () => {
     chalk.dim(
       `${chalk.dim(
         '💡 Tip: Make sure that you have set up your development environment correctly, by running',
-      )} ${chalk.reset(chalk.bold('react-native doctor'))}. ${chalk.dim(
+      )} ${chalk.reset(chalk.bold('npx react-native doctor'))}. ${chalk.dim(
         `To read more about doctor command visit: ${linkToDocs} \n`,
       )}`,
     ),

@@ -53,6 +53,25 @@ function getDependencyConfig(
   ) as DependencyConfig;
 }
 
+// Try our best to figure out what version of React Native we're running. This is
+// currently being used to get our deeplinks working, so it's only worried with
+// the major and minor version.
+function getReactNativeVersion(reactNativePath: string) {
+  try {
+    let semver = version.current(reactNativePath);
+    if (semver) {
+      // Retain only these version, since they correspond with our documentation.
+      return `${semver.major}.${semver.minor}`;
+    }
+  } catch (e) {
+    // If we don't seem to be in a well formed project, give up quietly.
+    if (!(e instanceof UnknownProjectError)) {
+      throw e;
+    }
+  }
+  return 'unknown';
+}
+
 /**
  * Loads CLI configuration
  */
@@ -67,7 +86,9 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
         ? path.resolve(projectRoot, userConfig.reactNativePath)
         : resolveReactNativePath(projectRoot);
     },
-    reactNativeVersion: 'unknown',
+    get reactNativeVersion() {
+      return getReactNativeVersion(initialConfig.reactNativePath);
+    },
     dependencies: userConfig.dependencies,
     commands: userConfig.commands,
     healthChecks: [],
@@ -92,22 +113,6 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
     },
   };
 
-  // Try our best to figure out what version of React Native we're running. This is
-  // currently being used to get our deeplinks working, so it's only worried with
-  // the major and minor version.
-  try {
-    let semver = version.current(initialConfig.reactNativePath);
-    if (semver) {
-      // Retain only these version, since they correspond with our documentation.
-      initialConfig.reactNativeVersion = `${semver.major}.${semver.minor}`;
-    }
-  } catch (e) {
-    // If we don't seem to be in a well formed project, give up quietly.
-    if (!(e instanceof UnknownProjectError)) {
-      throw e;
-    }
-  }
-
   const finalConfig = Array.from(
     new Set([
       ...Object.keys(userConfig.dependencies),
@@ -117,7 +122,6 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
     const localDependencyRoot =
       userConfig.dependencies[dependencyName] &&
       userConfig.dependencies[dependencyName].root;
-
     try {
       let root =
         localDependencyRoot ||

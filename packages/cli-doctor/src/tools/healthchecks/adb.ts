@@ -63,10 +63,9 @@ export default {
     } catch (e) {
       return logManualInstallation({
         healthcheck: 'Adb',
-        url: link.docs('running-on-device', {
+        url: link.docs('running-on-device', 'android', {
           hash: hash,
           guide: 'native',
-          platform: 'android',
         }),
       });
     }

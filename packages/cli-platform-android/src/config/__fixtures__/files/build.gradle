@@ -2,7 +2,10 @@ apply package: "com.android.application"
 apply package: "com.facebook.react"
 
 android {
-    namespace 'com.some.example'
+    namespace "com.some.example"
+    defaultConfig {
+        applicationId "com.example"
+    }
 }
 
 react {

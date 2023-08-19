@@ -106,3 +106,22 @@ export function parseNamespaceFromBuildGradleFile(buildGradle: string) {
 export function validatePackageName(packageName: string) {
   return /^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/i.test(packageName);
 }
+
+// Search for applicationId at defaultConfig object
+export function parseApplicationIdFromBuildGradleFile(buildGradlePath: string) {
+  if (!buildGradlePath) {
+    return null;
+  }
+  const buildGradle = fs.readFileSync(buildGradlePath, 'utf8');
+
+  const matchArray = buildGradle.match(/defaultConfig\s*{([\s\S]*?)}/);
+
+  if (matchArray && matchArray.length > 0) {
+    const appIdMatchArray = matchArray[1].match(
+      /applicationId\s*[=]*\s*["'](.+?)["']/,
+    );
+    return appIdMatchArray?.[1] ?? '';
+  } else {
+    return null;
+  }
+}

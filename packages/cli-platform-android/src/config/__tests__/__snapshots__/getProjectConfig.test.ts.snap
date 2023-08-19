@@ -3,6 +3,7 @@
 exports[`android::getProjectConfig returns an object with android project configuration for flat structure 1`] = `
 Object {
   "appName": "",
+  "applicationId": "com.some.example",
   "dependencyConfiguration": undefined,
   "mainActivity": ".MainActivity",
   "packageName": "com.some.example",
@@ -15,6 +16,7 @@ Object {
 exports[`android::getProjectConfig returns an object with android project configuration for multiple 1`] = `
 Object {
   "appName": "",
+  "applicationId": "com.some.example",
   "dependencyConfiguration": undefined,
   "mainActivity": ".MainActivity",
   "packageName": "com.some.example",
@@ -27,6 +29,7 @@ Object {
 exports[`android::getProjectConfig returns an object with android project configuration for nested structure 1`] = `
 Object {
   "appName": "app",
+  "applicationId": "com.example",
   "dependencyConfiguration": undefined,
   "mainActivity": ".MainActivity",
   "packageName": "com.some.example",

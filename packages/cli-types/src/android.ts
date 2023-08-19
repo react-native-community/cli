@@ -2,6 +2,7 @@ export interface AndroidProjectConfig {
   sourceDir: string;
   appName: string;
   packageName: string;
+  applicationId: string;
   mainActivity: string;
   dependencyConfiguration?: string;
   watchModeCommandParams?: string[];

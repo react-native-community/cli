@@ -26,12 +26,14 @@ type Options = {
   contributor: boolean | void;
 };
 
-export const getHealthchecks = ({contributor}: Options): Healthchecks => {
+export const getHealthchecks = async ({
+  contributor,
+}: Options): Promise<Healthchecks> => {
   let additionalChecks: HealthCheckCategory[] = [];
 
   // Doctor can run in a detached mode, where there isn't a config so this can fail
   try {
-    let config = loadConfig();
+    let config = await loadConfig();
     additionalChecks = config.healthChecks;
   } catch {}
 

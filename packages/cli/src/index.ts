@@ -174,7 +174,7 @@ async function setupAndRun() {
 
   let config: Config | undefined;
   try {
-    config = loadConfig();
+    config = await loadConfig();
 
     logger.enable();
 

@@ -20,6 +20,7 @@ import {
 } from './readConfigFromDisk';
 import assign from './assign';
 import merge from './merge';
+import findLocalModules from './findLocalModules';
 
 function getDependencyConfig(
   root: string,
@@ -75,9 +76,12 @@ function getReactNativeVersion(reactNativePath: string) {
 /**
  * Loads CLI configuration
  */
-function loadConfig(projectRoot: string = findProjectRoot()): Config {
+async function loadConfig(
+  projectRoot: string = findProjectRoot(),
+): Promise<Config> {
   let lazyProject: ProjectConfig;
   const userConfig = readConfigFromDisk(projectRoot);
+  const localModules = findLocalModules(projectRoot);
 
   const initialConfig: Config = {
     root: projectRoot,
@@ -117,6 +121,7 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
     new Set([
       ...Object.keys(userConfig.dependencies),
       ...findDependencies(projectRoot),
+      ...Object.keys(localModules),
     ]),
   ).reduce((acc: Config, dependencyName) => {
     const localDependencyRoot =
@@ -125,7 +130,9 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
     try {
       let root =
         localDependencyRoot ||
-        resolveNodeModuleDir(projectRoot, dependencyName);
+        resolveNodeModuleDir(projectRoot, dependencyName) ||
+        localModules[dependencyName].root;
+
       let config = readDependencyConfigFromDisk(root, dependencyName);
 
       const isPlatform = Object.keys(config.platforms).length > 0;

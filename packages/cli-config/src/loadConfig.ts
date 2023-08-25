@@ -133,6 +133,10 @@ async function loadConfig(
         resolveNodeModuleDir(projectRoot, dependencyName) ||
         localModules[dependencyName].root;
 
+      if (!root) {
+        return acc;
+      }
+
       let config = readDependencyConfigFromDisk(root, dependencyName);
 
       const isPlatform = Object.keys(config.platforms).length > 0;

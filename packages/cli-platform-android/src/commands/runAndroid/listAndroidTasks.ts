@@ -34,7 +34,7 @@ export const getGradleTasks = (
 ) => {
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
 
-  const out = execa.sync(cmd, ['tasks'], {
+  const out = execa.sync(cmd, ['tasks', '--group', taskType], {
     cwd: sourceDir,
   }).stdout;
   return parseTasksFromGradleFile(taskType, out);

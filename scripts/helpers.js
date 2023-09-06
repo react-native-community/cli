@@ -11,6 +11,7 @@ const chalk = require('chalk');
 const stringLength = require('string-length');
 
 const PACKAGES_DIR = path.resolve(__dirname, '../packages');
+const REMOVED_PACKAGES = new Set(['cli-plugin-metro']);
 
 const OK = chalk.reset.inverse.bold.green(' DONE ');
 
@@ -18,7 +19,11 @@ function getPackages() {
   return fs
     .readdirSync(PACKAGES_DIR)
     .map((file) => path.resolve(PACKAGES_DIR, file))
-    .filter((f) => fs.lstatSync(path.resolve(f)).isDirectory());
+    .filter(
+      (f) =>
+        fs.lstatSync(path.resolve(f)).isDirectory() &&
+        !REMOVED_PACKAGES.has(path.basename(f)),
+    );
 }
 
 function adjustToTerminalWidth(str) {

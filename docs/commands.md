@@ -2,7 +2,7 @@
 
 React Native CLI comes with following commands:
 
-- [`bundle`](/packages/cli-plugin-metro/README.md#bundle)
+- [`bundle`](https://github.com/facebook/react-native/tree/main/packages/community-cli-plugin#bundle)
 - [`clean`](/packages/cli-clean/README.md#clean)
 - [`config`](/packages/cli-config/README.md#config)
 - [`doctor`](/packages/cli-doctor/README.md#doctor)
@@ -10,12 +10,12 @@ React Native CLI comes with following commands:
 - [`info`](/packages/cli-doctor/README.md#info)
 - [`log-android`](/packages/cli-platform-android/README.md#log-android)
 - [`log-ios`](/packages/cli-platform-ios/README.md#log-ios)
-- [`ram-bundle`](/packages/cli-plugin-metro/README.md#ram-bundle)
+- [`ram-bundle`](https://github.com/facebook/react-native/tree/main/packages/community-cli-plugin#ram-bundle)
 - [`run-android`](/packages/cli-platform-android/README.md#run-android)
 - [`build-android`](/packages/cli-platform-android/README.md#build-android)
 - [`run-ios`](/packages/cli-platform-ios/README.md#run-ios)
 - [`build-ios`](/packages/cli-platform-ios/README.md#build-ios)
-- [`start`](/packages/cli-plugin-metro/README.md#start)
+- [`start`](https://github.com/facebook/react-native/tree/main/packages/community-cli-plugin#start)
 - [`upgrade`](#upgrade)
 - [`profile-hermes`](/packages/cli-hermes/README.md#profile-hermes)
 

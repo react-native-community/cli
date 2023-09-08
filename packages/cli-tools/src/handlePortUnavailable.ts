@@ -27,7 +27,7 @@ const handlePortUnavailable = async (
       port = nextPort;
     } else {
       packager = false;
-      logChangePortInstructions(port);
+      logChangePortInstructions();
     }
   }
 

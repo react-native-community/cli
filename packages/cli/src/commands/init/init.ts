@@ -24,6 +24,7 @@ import TemplateAndVersionError from './errors/TemplateAndVersionError';
 import {getBunVersionIfAvailable} from '../../tools/bun';
 import {getNpmVersionIfAvailable} from '../../tools/npm';
 import {getYarnVersionIfAvailable} from '../../tools/yarn';
+import prompts from 'prompts';
 
 const DEFAULT_VERSION = 'latest';
 
@@ -274,6 +275,15 @@ export default (async function initialize(
   [projectName]: Array<string>,
   options: Options,
 ) {
+  if (!projectName) {
+    const {projName} = await prompts({
+      type: 'text',
+      name: 'projName',
+      message: 'What is the project name?',
+    });
+    projectName = projName;
+  }
+
   validateProjectName(projectName);
 
   if (!!options.template && !!options.version) {

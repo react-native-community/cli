@@ -48,7 +48,7 @@ export default {
   win32AutomaticFix: async ({loader}) => {
     // Need a GitHub action to update automatically. See #1180
     const androidStudioUrl =
-      'https://redirector.gvt1.com/edgedl/android/studio/ide-zips/3.6.3.0/android-studio-ide-192.6392135-windows.zip';
+      'https://redirector.gvt1.com/edgedl/android/studio/ide-zips/2022.3.1.18/android-studio-2022.3.1.18-windows.zip';
 
     const installPath = getUserAndroidPath();
     await downloadAndUnzip({

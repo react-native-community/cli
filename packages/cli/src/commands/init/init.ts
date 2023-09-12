@@ -21,6 +21,8 @@ import * as PackageManager from '../../tools/packageManager';
 import {installPods} from '@react-native-community/cli-doctor';
 import banner from './banner';
 import TemplateAndVersionError from './errors/TemplateAndVersionError';
+import {getBunVersionIfAvailable} from '../../tools/bun';
+import {getNpmVersionIfAvailable} from '../../tools/npm';
 
 const DEFAULT_VERSION = 'latest';
 
@@ -191,6 +193,20 @@ async function installDependencies({
   loader.succeed();
 }
 
+function checkPackageManagerAvailability(options: Options) {
+  if (options.bun) {
+    const isBunAvailable = getBunVersionIfAvailable();
+
+    return isBunAvailable;
+  } else if (options.npm) {
+    const isNpmAvailable = getNpmVersionIfAvailable();
+
+    return isNpmAvailable;
+  }
+
+  return true;
+}
+
 function createTemplateUri(options: Options, version: string): string {
   const isTypescriptTemplate =
     options.template === 'react-native-template-typescript';
@@ -256,6 +272,13 @@ export default (async function initialize(
   const root = process.cwd();
   const version = options.version || DEFAULT_VERSION;
   const directoryName = path.relative(root, options.directory || projectName);
+
+  if (!checkPackageManagerAvailability(options)) {
+    logger.error(
+      'Seems like the package manager you want to use is not installed. Please install it or choose another package manager.',
+    );
+    return;
+  }
 
   const packageManager = userAgentPackageManager();
 

@@ -1,12 +1,11 @@
 {
   "name": "@react-native-community/cli-plugin-metro",
-  "version": "12.0.0-alpha.11",
+  "version": "12.0.0-alpha.12",
   "description": "[Removed since 12.0.0-alpha.12]",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
   },
-  "dependencies": {},
   "homepage": "https://github.com/react-native-community/cli/tree/main/packages/cli-plugin-metro",
   "repository": {
     "type": "git",

@@ -100,6 +100,10 @@ Skip dependencies installation
 
 Force use of npm during initialization
 
+#### `--bun`
+
+Force use of bun during initialization
+
 #### `--package-name <string>`
 
 Create project with custom package name for Android and bundle identifier for iOS. The correct package name should:

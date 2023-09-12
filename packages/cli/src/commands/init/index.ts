@@ -21,6 +21,10 @@ export default {
       description: 'Forces using npm for initialization',
     },
     {
+      name: '--bun',
+      description: 'Forces using bun for initialization',
+    },
+    {
       name: '--directory <string>',
       description: 'Uses a custom directory instead of `<projectName>`.',
     },

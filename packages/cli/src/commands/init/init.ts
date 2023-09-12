@@ -27,6 +27,7 @@ const DEFAULT_VERSION = 'latest';
 type Options = {
   template?: string;
   npm?: boolean;
+  bun?: boolean;
   directory?: string;
   displayName?: string;
   title?: string;
@@ -39,6 +40,7 @@ interface TemplateOptions {
   projectName: string;
   templateUri: string;
   npm?: boolean;
+  bun?: boolean;
   directory: string;
   projectTitle?: string;
   skipInstall?: boolean;
@@ -82,6 +84,7 @@ async function createFromTemplate({
   projectName,
   templateUri,
   npm,
+  bun,
   directory,
   projectTitle,
   skipInstall,
@@ -100,7 +103,19 @@ async function createFromTemplate({
   try {
     loader.start();
 
-    await installTemplatePackage(templateUri, templateSourceDir, npm);
+    let packageManager: PackageManager.PackageManager = 'yarn';
+
+    if (npm) {
+      packageManager = 'npm';
+    } else if (bun) {
+      packageManager = 'bun';
+    }
+
+    await installTemplatePackage(
+      templateUri,
+      templateSourceDir,
+      packageManager,
+    );
 
     loader.succeed();
     loader.start('Copying template');
@@ -137,7 +152,7 @@ async function createFromTemplate({
 
     if (!skipInstall) {
       await installDependencies({
-        npm,
+        packageManager,
         loader,
         root: projectDirectory,
       });
@@ -153,18 +168,18 @@ async function createFromTemplate({
 }
 
 async function installDependencies({
-  npm,
+  packageManager,
   loader,
   root,
 }: {
-  npm?: boolean;
+  packageManager?: PackageManager.PackageManager;
   loader: Loader;
   root: string;
 }) {
   loader.start('Installing dependencies');
 
   await PackageManager.installAll({
-    preferYarn: !npm,
+    packageManager,
     silent: true,
     root,
   });
@@ -202,11 +217,30 @@ async function createProject(
     projectName,
     templateUri,
     npm: options.npm,
+    bun: options.bun,
     directory,
     projectTitle: options.title,
     skipInstall: options.skipInstall,
     packageName: options.packageName,
   });
+}
+
+function resolvePackageManager() {
+  const userAgent = process.env.npm_config_user_agent;
+
+  if (userAgent) {
+    if (userAgent.startsWith('yarn')) {
+      return 'yarn';
+    }
+    if (userAgent.startsWith('npm')) {
+      return 'npm';
+    }
+    if (userAgent.startsWith('bun')) {
+      return 'bun';
+    }
+  }
+
+  return 'npm';
 }
 
 export default (async function initialize(
@@ -222,6 +256,12 @@ export default (async function initialize(
   const root = process.cwd();
   const version = options.version || DEFAULT_VERSION;
   const directoryName = path.relative(root, options.directory || projectName);
+
+  const packageManager = resolvePackageManager();
+
+  if (packageManager === 'bun') {
+    options.bun = true;
+  }
 
   await createProject(projectName, directoryName, version, options);
 

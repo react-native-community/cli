@@ -22,13 +22,19 @@ describe('yarn', () => {
   });
 
   it('should install', () => {
-    PackageManager.install(PACKAGES, {preferYarn: true, root: PROJECT_ROOT});
+    PackageManager.install(PACKAGES, {
+      packageManager: 'yarn',
+      root: PROJECT_ROOT,
+    });
 
     expect(execa).toHaveBeenCalledWith('yarn', ['add', ...PACKAGES], EXEC_OPTS);
   });
 
   it('should installDev', () => {
-    PackageManager.installDev(PACKAGES, {preferYarn: true, root: PROJECT_ROOT});
+    PackageManager.installDev(PACKAGES, {
+      packageManager: 'yarn',
+      root: PROJECT_ROOT,
+    });
 
     expect(execa).toHaveBeenCalledWith(
       'yarn',
@@ -38,7 +44,10 @@ describe('yarn', () => {
   });
 
   it('should uninstall', () => {
-    PackageManager.uninstall(PACKAGES, {preferYarn: true, root: PROJECT_ROOT});
+    PackageManager.uninstall(PACKAGES, {
+      packageManager: 'yarn',
+      root: PROJECT_ROOT,
+    });
 
     expect(execa).toHaveBeenCalledWith(
       'yarn',
@@ -50,7 +59,10 @@ describe('yarn', () => {
 
 describe('npm', () => {
   it('should install', () => {
-    PackageManager.install(PACKAGES, {preferYarn: false, root: PROJECT_ROOT});
+    PackageManager.install(PACKAGES, {
+      packageManager: 'npm',
+      root: PROJECT_ROOT,
+    });
 
     expect(execa).toHaveBeenCalledWith(
       'npm',
@@ -61,7 +73,7 @@ describe('npm', () => {
 
   it('should installDev', () => {
     PackageManager.installDev(PACKAGES, {
-      preferYarn: false,
+      packageManager: 'npm',
       root: PROJECT_ROOT,
     });
 
@@ -73,7 +85,10 @@ describe('npm', () => {
   });
 
   it('should uninstall', () => {
-    PackageManager.uninstall(PACKAGES, {preferYarn: false, root: PROJECT_ROOT});
+    PackageManager.uninstall(PACKAGES, {
+      packageManager: 'npm',
+      root: PROJECT_ROOT,
+    });
 
     expect(execa).toHaveBeenCalledWith(
       'npm',
@@ -83,9 +98,50 @@ describe('npm', () => {
   });
 });
 
+describe('bun', () => {
+  it('should install', () => {
+    PackageManager.install(PACKAGES, {
+      packageManager: 'bun',
+      root: PROJECT_ROOT,
+    });
+
+    expect(execa).toHaveBeenCalledWith(
+      'bun',
+      ['add', '--exact', ...PACKAGES],
+      EXEC_OPTS,
+    );
+  });
+
+  it('should installDev', () => {
+    PackageManager.installDev(PACKAGES, {
+      packageManager: 'bun',
+      root: PROJECT_ROOT,
+    });
+
+    expect(execa).toHaveBeenCalledWith(
+      'bun',
+      ['add', '--dev', '--exact', ...PACKAGES],
+      EXEC_OPTS,
+    );
+  });
+
+  it('should uninstall', () => {
+    PackageManager.uninstall(PACKAGES, {
+      packageManager: 'bun',
+      root: PROJECT_ROOT,
+    });
+
+    expect(execa).toHaveBeenCalledWith(
+      'bun',
+      ['remove', ...PACKAGES],
+      EXEC_OPTS,
+    );
+  });
+});
+
 it('should use npm if yarn is not available', () => {
   jest.spyOn(yarn, 'getYarnVersionIfAvailable').mockImplementation(() => false);
-  PackageManager.install(PACKAGES, {preferYarn: true, root: PROJECT_ROOT});
+  PackageManager.install(PACKAGES, {root: PROJECT_ROOT});
 
   expect(execa).toHaveBeenCalledWith(
     'npm',
@@ -111,7 +167,9 @@ it('should use yarn if project is using yarn', () => {
   jest.spyOn(yarn, 'getYarnVersionIfAvailable').mockImplementation(() => true);
   jest.spyOn(yarn, 'isProjectUsingYarn').mockImplementation(() => true);
 
-  PackageManager.install(PACKAGES, {root: PROJECT_ROOT});
+  PackageManager.install(PACKAGES, {
+    root: PROJECT_ROOT,
+  });
 
   expect(execa).toHaveBeenCalledWith('yarn', ['add', ...PACKAGES], EXEC_OPTS);
   expect(yarn.isProjectUsingYarn).toHaveBeenCalledWith(PROJECT_ROOT);

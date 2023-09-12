@@ -22,10 +22,10 @@ afterEach(() => {
 test('installTemplatePackage', async () => {
   jest.spyOn(PackageManger, 'install').mockImplementationOnce(() => null);
 
-  await installTemplatePackage(TEMPLATE_NAME, TEMPLATE_SOURCE_DIR, true);
+  await installTemplatePackage(TEMPLATE_NAME, TEMPLATE_SOURCE_DIR, 'npm');
 
   expect(PackageManger.install).toHaveBeenCalledWith([TEMPLATE_NAME], {
-    preferYarn: false,
+    packageManager: 'npm',
     silent: true,
     root: TEMPLATE_SOURCE_DIR,
   });

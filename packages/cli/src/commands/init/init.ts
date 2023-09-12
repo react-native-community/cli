@@ -225,7 +225,7 @@ async function createProject(
   });
 }
 
-function resolvePackageManager() {
+function userAgentPackageManager() {
   const userAgent = process.env.npm_config_user_agent;
 
   if (userAgent) {
@@ -257,7 +257,7 @@ export default (async function initialize(
   const version = options.version || DEFAULT_VERSION;
   const directoryName = path.relative(root, options.directory || projectName);
 
-  const packageManager = resolvePackageManager();
+  const packageManager = userAgentPackageManager();
 
   if (packageManager === 'bun') {
     options.bun = true;

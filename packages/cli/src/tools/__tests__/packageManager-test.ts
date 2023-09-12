@@ -1,6 +1,7 @@
 jest.mock('execa', () => jest.fn());
 import execa from 'execa';
 import * as yarn from '../yarn';
+import * as bun from '../bun';
 import {logger} from '@react-native-community/cli-tools';
 import * as PackageManager from '../packageManager';
 
@@ -100,6 +101,10 @@ describe('npm', () => {
 
 describe('bun', () => {
   it('should install', () => {
+    jest.spyOn(bun, 'getBunVersionIfAvailable').mockImplementation(() => true);
+    jest
+      .spyOn(bun, 'isProjectUsingBun')
+      .mockImplementation(() => './path/to/bun.lockb');
     PackageManager.install(PACKAGES, {
       packageManager: 'bun',
       root: PROJECT_ROOT,
@@ -113,6 +118,10 @@ describe('bun', () => {
   });
 
   it('should installDev', () => {
+    jest.spyOn(bun, 'getBunVersionIfAvailable').mockImplementation(() => true);
+    jest
+      .spyOn(bun, 'isProjectUsingBun')
+      .mockImplementation(() => './path/to/bun.lockb');
     PackageManager.installDev(PACKAGES, {
       packageManager: 'bun',
       root: PROJECT_ROOT,
@@ -126,6 +135,10 @@ describe('bun', () => {
   });
 
   it('should uninstall', () => {
+    jest.spyOn(bun, 'getBunVersionIfAvailable').mockImplementation(() => true);
+    jest
+      .spyOn(bun, 'isProjectUsingBun')
+      .mockImplementation(() => './path/to/bun.lockb');
     PackageManager.uninstall(PACKAGES, {
       packageManager: 'bun',
       root: PROJECT_ROOT,

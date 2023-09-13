@@ -30,7 +30,7 @@ const DEFAULT_VERSION = 'latest';
 type Options = {
   template?: string;
   npm?: boolean;
-  pm: PackageManager.PackageManager;
+  pm?: PackageManager.PackageManager;
   directory?: string;
   displayName?: string;
   title?: string;
@@ -43,7 +43,7 @@ interface TemplateOptions {
   projectName: string;
   templateUri: string;
   npm?: boolean;
-  pm: PackageManager.PackageManager;
+  pm?: PackageManager.PackageManager;
   directory: string;
   projectTitle?: string;
   skipInstall?: boolean;
@@ -87,7 +87,7 @@ async function createFromTemplate({
   projectName,
   templateUri,
   npm,
-  pm = 'yarn',
+  pm,
   directory,
   projectTitle,
   skipInstall,
@@ -97,17 +97,19 @@ async function createFromTemplate({
   logger.log(banner);
 
   let packageManager = pm;
+
+  if (pm) {
+    packageManager = pm;
+  } else {
+    packageManager = userAgentPackageManager();
+  }
+
   if (npm) {
     logger.warn(
       'Flag --npm is deprecated and will be removed soon. In the future, please use --pm npm instead.',
     );
 
     packageManager = 'npm';
-  }
-
-  const userAgent = userAgentPackageManager();
-  if (userAgent === 'bun') {
-    packageManager = 'bun';
   }
 
   const projectDirectory = await setProjectDirectory(directory);
@@ -201,21 +203,19 @@ async function installDependencies({
 }
 
 function checkPackageManagerAvailability(options: Options) {
-  if (options.pm === 'bun') {
-    const isBunAvailable = getBunVersionIfAvailable();
-
-    return isBunAvailable;
-  } else if (options.pm === 'npm') {
-    const isNpmAvailable = getNpmVersionIfAvailable();
-
-    return isNpmAvailable;
-  } else if (options.pm === 'yarn') {
-    const isYarnAvailable = getYarnVersionIfAvailable();
-
-    return isYarnAvailable;
+  if (!options.pm) {
+    return true;
   }
 
-  return true;
+  if (options.pm === 'bun') {
+    return getBunVersionIfAvailable();
+  } else if (options.pm === 'npm') {
+    return getNpmVersionIfAvailable();
+  } else if (options.pm === 'yarn') {
+    return getYarnVersionIfAvailable();
+  }
+
+  return false;
 }
 
 function createTemplateUri(options: Options, version: string): string {
@@ -267,7 +267,7 @@ function userAgentPackageManager() {
     }
   }
 
-  return 'npm';
+  return 'yarn';
 }
 
 export default (async function initialize(

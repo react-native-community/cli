@@ -21,8 +21,9 @@ export default {
       description: 'Forces using npm for initialization',
     },
     {
-      name: '--bun',
-      description: 'Forces using bun for initialization',
+      name: '--pm <string>',
+      description:
+        'Use specific package manager to initialize the project. Available options: `yarn`, `npm`, `bun`. Default: `yarn`',
     },
     {
       name: '--directory <string>',

@@ -17,7 +17,7 @@ export type TemplateConfig = {
 export async function installTemplatePackage(
   templateName: string,
   root: string,
-  packageManager?: PackageManager.PackageManager,
+  packageManager: PackageManager.PackageManager,
 ) {
   logger.debug(`Installing template from ${templateName}`);
 

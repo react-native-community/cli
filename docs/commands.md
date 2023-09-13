@@ -97,12 +97,14 @@ module.exports = {
 Skip dependencies installation
 
 #### `--npm`
+> [!WARNING]  
+> `--npm` is deprecated and will be removed in the future. Please use `--pm npm` instead.
 
 Force use of npm during initialization
 
-#### `--bun`
+#### `--pm <string>`
 
-Force use of bun during initialization
+Use specific package manager to initialize the project. Available options: `yarn`, `npm`, `bun`. Default: `yarn`
 
 #### `--package-name <string>`
 

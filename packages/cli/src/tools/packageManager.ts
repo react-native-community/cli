@@ -2,11 +2,12 @@ import execa from 'execa';
 import {logger} from '@react-native-community/cli-tools';
 import {getYarnVersionIfAvailable, isProjectUsingYarn} from './yarn';
 import {getBunVersionIfAvailable, isProjectUsingBun} from './bun';
+import {getNpmVersionIfAvailable, isProjectUsingNpm} from './npm';
 
 export type PackageManager = keyof typeof packageManagers;
 
 type Options = {
-  packageManager?: PackageManager;
+  packageManager: PackageManager;
   silent?: boolean;
   root: string;
 };
@@ -61,20 +62,27 @@ function executeCommand(
   });
 }
 
-function shouldUseYarn(options: Options) {
-  if (options && options.packageManager === 'yarn') {
-    return options.packageManager === 'yarn' && getYarnVersionIfAvailable();
+export function shouldUseYarn(options: Options) {
+  if (options.packageManager === 'yarn') {
+    return getYarnVersionIfAvailable();
   }
-
   return isProjectUsingYarn(options.root) && getYarnVersionIfAvailable();
 }
 
-function shouldUseBun(options: Options) {
-  if (options && options.packageManager === 'bun') {
-    return options.packageManager === 'bun' && getBunVersionIfAvailable();
+export function shouldUseBun(options: Options) {
+  if (options.packageManager === 'bun') {
+    return getBunVersionIfAvailable();
   }
 
   return isProjectUsingBun(options.root) && getBunVersionIfAvailable();
+}
+
+export function shouldUseNpm(options: Options) {
+  if (options.packageManager === 'npm') {
+    return getNpmVersionIfAvailable();
+  }
+
+  return isProjectUsingNpm(options.root) && getNpmVersionIfAvailable();
 }
 
 export function init(options: Options) {

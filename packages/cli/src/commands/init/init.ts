@@ -23,13 +23,14 @@ import banner from './banner';
 import TemplateAndVersionError from './errors/TemplateAndVersionError';
 import {getBunVersionIfAvailable} from '../../tools/bun';
 import {getNpmVersionIfAvailable} from '../../tools/npm';
+import {getYarnVersionIfAvailable} from '../../tools/yarn';
 
 const DEFAULT_VERSION = 'latest';
 
 type Options = {
   template?: string;
   npm?: boolean;
-  bun?: boolean;
+  pm: PackageManager.PackageManager;
   directory?: string;
   displayName?: string;
   title?: string;
@@ -42,7 +43,7 @@ interface TemplateOptions {
   projectName: string;
   templateUri: string;
   npm?: boolean;
-  bun?: boolean;
+  pm: PackageManager.PackageManager;
   directory: string;
   projectTitle?: string;
   skipInstall?: boolean;
@@ -86,7 +87,7 @@ async function createFromTemplate({
   projectName,
   templateUri,
   npm,
-  bun,
+  pm = 'yarn',
   directory,
   projectTitle,
   skipInstall,
@@ -94,6 +95,20 @@ async function createFromTemplate({
 }: TemplateOptions) {
   logger.debug('Initializing new project');
   logger.log(banner);
+
+  let packageManager = pm;
+  if (npm) {
+    logger.warn(
+      'Flag --npm is deprecated and will be removed soon. In the future, please use --pm npm instead.',
+    );
+
+    packageManager = 'npm';
+  }
+
+  const userAgent = userAgentPackageManager();
+  if (userAgent === 'bun') {
+    packageManager = 'bun';
+  }
 
   const projectDirectory = await setProjectDirectory(directory);
 
@@ -104,14 +119,6 @@ async function createFromTemplate({
 
   try {
     loader.start();
-
-    let packageManager: PackageManager.PackageManager = 'yarn';
-
-    if (npm) {
-      packageManager = 'npm';
-    } else if (bun) {
-      packageManager = 'bun';
-    }
 
     await installTemplatePackage(
       templateUri,
@@ -174,7 +181,7 @@ async function installDependencies({
   loader,
   root,
 }: {
-  packageManager?: PackageManager.PackageManager;
+  packageManager: PackageManager.PackageManager;
   loader: Loader;
   root: string;
 }) {
@@ -194,14 +201,18 @@ async function installDependencies({
 }
 
 function checkPackageManagerAvailability(options: Options) {
-  if (options.bun) {
+  if (options.pm === 'bun') {
     const isBunAvailable = getBunVersionIfAvailable();
 
     return isBunAvailable;
-  } else if (options.npm) {
+  } else if (options.pm === 'npm') {
     const isNpmAvailable = getNpmVersionIfAvailable();
 
     return isNpmAvailable;
+  } else if (options.pm === 'yarn') {
+    const isYarnAvailable = getYarnVersionIfAvailable();
+
+    return isYarnAvailable;
   }
 
   return true;
@@ -233,7 +244,7 @@ async function createProject(
     projectName,
     templateUri,
     npm: options.npm,
-    bun: options.bun,
+    pm: options.pm,
     directory,
     projectTitle: options.title,
     skipInstall: options.skipInstall,
@@ -278,12 +289,6 @@ export default (async function initialize(
       'Seems like the package manager you want to use is not installed. Please install it or choose another package manager.',
     );
     return;
-  }
-
-  const packageManager = userAgentPackageManager();
-
-  if (packageManager === 'bun') {
-    options.bun = true;
   }
 
   await createProject(projectName, directoryName, version, options);

@@ -18,6 +18,7 @@ describe('yarn', () => {
     jest
       .spyOn(yarn, 'getYarnVersionIfAvailable')
       .mockImplementation(() => true);
+    jest.spyOn(yarn, 'isProjectUsingYarn').mockImplementation(() => true);
 
     jest.spyOn(logger, 'isVerbose').mockImplementation(() => false);
   });
@@ -154,7 +155,10 @@ describe('bun', () => {
 
 it('should use npm if yarn is not available', () => {
   jest.spyOn(yarn, 'getYarnVersionIfAvailable').mockImplementation(() => false);
-  PackageManager.install(PACKAGES, {root: PROJECT_ROOT});
+  PackageManager.install(PACKAGES, {
+    packageManager: 'yarn',
+    root: PROJECT_ROOT,
+  });
 
   expect(execa).toHaveBeenCalledWith(
     'npm',
@@ -164,28 +168,29 @@ it('should use npm if yarn is not available', () => {
 });
 
 it('should use npm if project is not using yarn', () => {
-  jest.spyOn(yarn, 'isProjectUsingYarn').mockImplementation(() => false);
+  jest.spyOn(yarn, 'isProjectUsingYarn').mockImplementation(() => undefined);
 
-  PackageManager.install(PACKAGES, {root: PROJECT_ROOT});
+  PackageManager.install(PACKAGES, {
+    packageManager: 'yarn',
+    root: PROJECT_ROOT,
+  });
 
   expect(execa).toHaveBeenCalledWith(
     'npm',
     ['install', '--save', '--save-exact', ...PACKAGES],
     EXEC_OPTS,
   );
-  expect(yarn.isProjectUsingYarn).toHaveBeenCalledWith(PROJECT_ROOT);
 });
 
 it('should use yarn if project is using yarn', () => {
   jest.spyOn(yarn, 'getYarnVersionIfAvailable').mockImplementation(() => true);
-  jest.spyOn(yarn, 'isProjectUsingYarn').mockImplementation(() => true);
 
   PackageManager.install(PACKAGES, {
+    packageManager: 'yarn',
     root: PROJECT_ROOT,
   });
 
   expect(execa).toHaveBeenCalledWith('yarn', ['add', ...PACKAGES], EXEC_OPTS);
-  expect(yarn.isProjectUsingYarn).toHaveBeenCalledWith(PROJECT_ROOT);
 });
 
 test.each([
@@ -200,7 +205,11 @@ test.each([
     jest.spyOn(yarn, 'isProjectUsingYarn').mockImplementation(() => true);
     jest.spyOn(logger, 'isVerbose').mockImplementation(() => isVerbose);
 
-    PackageManager.install(PACKAGES, {root: PROJECT_ROOT, silent: true});
+    PackageManager.install(PACKAGES, {
+      packageManager: 'yarn',
+      root: PROJECT_ROOT,
+      silent: true,
+    });
 
     expect(execa).toHaveBeenCalledWith('yarn', ['add', ...PACKAGES], {
       stdio: stdioType,

@@ -163,6 +163,17 @@ export async function clean(
           : []),
       ],
     },
+    bun: {
+      description: 'Bun cache',
+      tasks: [
+        {
+          label: 'Clean Bun cache',
+          action: async () => {
+            await execa('bun', ['pm', 'cache', 'rm'], {cwd: projectRoot});
+          },
+        },
+      ],
+    },
     watchman: {
       description: 'Stop Watchman and delete its cache',
       tasks: [

@@ -17,18 +17,18 @@ export type TemplateConfig = {
 export async function installTemplatePackage(
   templateName: string,
   root: string,
-  npm?: boolean,
+  packageManager: PackageManager.PackageManager,
 ) {
   logger.debug(`Installing template from ${templateName}`);
 
   await PackageManager.init({
-    preferYarn: !npm,
+    packageManager,
     silent: true,
     root,
   });
 
   return PackageManager.install([templateName], {
-    preferYarn: !npm,
+    packageManager,
     silent: true,
     root,
   });

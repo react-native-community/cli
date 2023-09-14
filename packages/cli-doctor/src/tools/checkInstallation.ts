@@ -4,6 +4,7 @@ import commandExists from 'command-exists';
 export enum PACKAGE_MANAGERS {
   YARN = 'YARN',
   NPM = 'NPM',
+  BUN = 'BUN',
 }
 
 const isSoftwareNotInstalled = async (command: string): Promise<boolean> => {

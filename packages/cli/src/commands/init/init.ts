@@ -21,12 +21,16 @@ import * as PackageManager from '../../tools/packageManager';
 import {installPods} from '@react-native-community/cli-doctor';
 import banner from './banner';
 import TemplateAndVersionError from './errors/TemplateAndVersionError';
+import {getBunVersionIfAvailable} from '../../tools/bun';
+import {getNpmVersionIfAvailable} from '../../tools/npm';
+import {getYarnVersionIfAvailable} from '../../tools/yarn';
 
 const DEFAULT_VERSION = 'latest';
 
 type Options = {
   template?: string;
   npm?: boolean;
+  pm?: PackageManager.PackageManager;
   directory?: string;
   displayName?: string;
   title?: string;
@@ -39,6 +43,7 @@ interface TemplateOptions {
   projectName: string;
   templateUri: string;
   npm?: boolean;
+  pm?: PackageManager.PackageManager;
   directory: string;
   projectTitle?: string;
   skipInstall?: boolean;
@@ -82,6 +87,7 @@ async function createFromTemplate({
   projectName,
   templateUri,
   npm,
+  pm,
   directory,
   projectTitle,
   skipInstall,
@@ -89,6 +95,24 @@ async function createFromTemplate({
 }: TemplateOptions) {
   logger.debug('Initializing new project');
   logger.log(banner);
+
+  let packageManager = pm;
+
+  if (pm) {
+    packageManager = pm;
+  } else {
+    const userAgentPM = userAgentPackageManager();
+    // if possible, use the package manager from the user agent. Otherwise fallback to default (yarn)
+    packageManager = userAgentPM || 'yarn';
+  }
+
+  if (npm) {
+    logger.warn(
+      'Flag --npm is deprecated and will be removed soon. In the future, please use --pm npm instead.',
+    );
+
+    packageManager = 'npm';
+  }
 
   const projectDirectory = await setProjectDirectory(directory);
 
@@ -100,7 +124,11 @@ async function createFromTemplate({
   try {
     loader.start();
 
-    await installTemplatePackage(templateUri, templateSourceDir, npm);
+    await installTemplatePackage(
+      templateUri,
+      templateSourceDir,
+      packageManager,
+    );
 
     loader.succeed();
     loader.start('Copying template');
@@ -137,7 +165,7 @@ async function createFromTemplate({
 
     if (!skipInstall) {
       await installDependencies({
-        npm,
+        packageManager,
         loader,
         root: projectDirectory,
       });
@@ -153,18 +181,18 @@ async function createFromTemplate({
 }
 
 async function installDependencies({
-  npm,
+  packageManager,
   loader,
   root,
 }: {
-  npm?: boolean;
+  packageManager: PackageManager.PackageManager;
   loader: Loader;
   root: string;
 }) {
   loader.start('Installing dependencies');
 
   await PackageManager.installAll({
-    preferYarn: !npm,
+    packageManager,
     silent: true,
     root,
   });
@@ -174,6 +202,20 @@ async function installDependencies({
   }
 
   loader.succeed();
+}
+
+function checkPackageManagerAvailability(
+  packageManager: PackageManager.PackageManager,
+) {
+  if (packageManager === 'bun') {
+    return getBunVersionIfAvailable();
+  } else if (packageManager === 'npm') {
+    return getNpmVersionIfAvailable();
+  } else if (packageManager === 'yarn') {
+    return getYarnVersionIfAvailable();
+  }
+
+  return false;
 }
 
 function createTemplateUri(options: Options, version: string): string {
@@ -202,11 +244,30 @@ async function createProject(
     projectName,
     templateUri,
     npm: options.npm,
+    pm: options.pm,
     directory,
     projectTitle: options.title,
     skipInstall: options.skipInstall,
     packageName: options.packageName,
   });
+}
+
+function userAgentPackageManager() {
+  const userAgent = process.env.npm_config_user_agent;
+
+  if (userAgent) {
+    if (userAgent.startsWith('yarn')) {
+      return 'yarn';
+    }
+    if (userAgent.startsWith('npm')) {
+      return 'npm';
+    }
+    if (userAgent.startsWith('bun')) {
+      return 'bun';
+    }
+  }
+
+  return null;
 }
 
 export default (async function initialize(
@@ -222,6 +283,13 @@ export default (async function initialize(
   const root = process.cwd();
   const version = options.version || DEFAULT_VERSION;
   const directoryName = path.relative(root, options.directory || projectName);
+
+  if (options.pm && !checkPackageManagerAvailability(options.pm)) {
+    logger.error(
+      'Seems like the package manager you want to use is not installed. Please install it or choose another package manager.',
+    );
+    return;
+  }
 
   await createProject(projectName, directoryName, version, options);
 

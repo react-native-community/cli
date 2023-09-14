@@ -3,6 +3,7 @@ export default {
   NODE_JS: '>= 18',
   YARN: '>= 1.10.x',
   NPM: '>= 4.x',
+  BUN: '>= 1.0.0',
   RUBY: '>= 2.6.10',
   JAVA: '>= 17 <= 20',
   // Android

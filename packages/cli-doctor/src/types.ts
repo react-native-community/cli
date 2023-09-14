@@ -23,6 +23,7 @@ export type EnvironmentInfo = {
     Node: AvailableInformation;
     Yarn: AvailableInformation;
     npm: AvailableInformation;
+    bun: AvailableInformation;
     Watchman: AvailableInformation;
   };
   Managers: {

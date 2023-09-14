@@ -151,6 +151,34 @@ describe('bun', () => {
       EXEC_OPTS,
     );
   });
+
+  it('should use npm if bun is not available', () => {
+    jest.spyOn(bun, 'getBunVersionIfAvailable').mockImplementation(() => false);
+    PackageManager.install(PACKAGES, {
+      packageManager: 'bun',
+      root: PROJECT_ROOT,
+    });
+
+    expect(execa).toHaveBeenCalledWith(
+      'npm',
+      ['install', '--save', '--save-exact', ...PACKAGES],
+      EXEC_OPTS,
+    );
+  });
+
+  it('should use npm if bun bun.lockb is not found', () => {
+    jest.spyOn(bun, 'isProjectUsingBun').mockImplementation(() => false);
+    PackageManager.install(PACKAGES, {
+      packageManager: 'bun',
+      root: PROJECT_ROOT,
+    });
+
+    expect(execa).toHaveBeenCalledWith(
+      'npm',
+      ['install', '--save', '--save-exact', ...PACKAGES],
+      EXEC_OPTS,
+    );
+  });
 });
 
 it('should use npm if yarn is not available', () => {

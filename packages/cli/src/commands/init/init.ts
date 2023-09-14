@@ -202,16 +202,14 @@ async function installDependencies({
   loader.succeed();
 }
 
-function checkPackageManagerAvailability(options: Options) {
-  if (!options.pm) {
-    return true;
-  }
-
-  if (options.pm === 'bun') {
+function checkPackageManagerAvailability(
+  packageManager: PackageManager.PackageManager,
+) {
+  if (packageManager === 'bun') {
     return getBunVersionIfAvailable();
-  } else if (options.pm === 'npm') {
+  } else if (packageManager === 'npm') {
     return getNpmVersionIfAvailable();
-  } else if (options.pm === 'yarn') {
+  } else if (packageManager === 'yarn') {
     return getYarnVersionIfAvailable();
   }
 
@@ -284,7 +282,7 @@ export default (async function initialize(
   const version = options.version || DEFAULT_VERSION;
   const directoryName = path.relative(root, options.directory || projectName);
 
-  if (!checkPackageManagerAvailability(options)) {
+  if (options.pm && !checkPackageManagerAvailability(options.pm)) {
     logger.error(
       'Seems like the package manager you want to use is not installed. Please install it or choose another package manager.',
     );

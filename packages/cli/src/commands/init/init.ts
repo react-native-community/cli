@@ -101,7 +101,9 @@ async function createFromTemplate({
   if (pm) {
     packageManager = pm;
   } else {
-    packageManager = userAgentPackageManager();
+    const userAgentPM = userAgentPackageManager();
+    // if possible, use the package manager from the user agent. Otherwise fallback to default (yarn)
+    packageManager = userAgentPM || 'yarn';
   }
 
   if (npm) {
@@ -265,7 +267,7 @@ function userAgentPackageManager() {
     }
   }
 
-  return 'yarn';
+  return null;
 }
 
 export default (async function initialize(

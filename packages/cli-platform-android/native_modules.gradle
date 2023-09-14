@@ -75,7 +75,7 @@ set(CMAKE_VERBOSE_MAKEFILE on)
 
 {{ libraryIncludes }}
 
-set(AUTOLINKED_LIBRARIES 
+set(AUTOLINKED_LIBRARIES
   {{ libraryModules }}
 )
 """
@@ -143,6 +143,7 @@ class ReactNativeModules {
   private ArrayList<HashMap<String, String>> reactNativeModules
   private ArrayList<String> unstable_reactLegacyComponentNames
   private HashMap<String, ArrayList> reactNativeModulesBuildVariants
+  private String reactNativeVersion
 
   private static String LOG_PREFIX = ":ReactNative:"
 
@@ -150,11 +151,12 @@ class ReactNativeModules {
     this.logger = logger
     this.root = root
 
-    def (nativeModules, reactNativeModulesBuildVariants, androidProject) = this.getReactNativeConfig()
+    def (nativeModules, reactNativeModulesBuildVariants, androidProject, reactNativeVersion) = this.getReactNativeConfig()
     this.reactNativeModules = nativeModules
     this.reactNativeModulesBuildVariants = reactNativeModulesBuildVariants
     this.packageName = androidProject["packageName"]
     this.unstable_reactLegacyComponentNames = androidProject["unstable_reactLegacyComponentNames"]
+    this.reactNativeVersion = reactNativeVersion
   }
 
   /**
@@ -180,7 +182,7 @@ class ReactNativeModules {
         if (reactNativeModulesBuildVariants.containsKey(nameCleansed)) {
           reactNativeModulesBuildVariants
             .get(nameCleansed)
-            .forEach { buildVariant -> 
+            .forEach { buildVariant ->
               if(dependencyConfiguration != null) {
                 "${buildVariant}${dependencyConfiguration}"
               } else {
@@ -218,7 +220,7 @@ class ReactNativeModules {
                 // Before adding the package replacement mechanism,
                 // BuildConfig and R classes were imported automatically
                 // into the scope of the file. We want to replace all
-                // non-FQDN references to those classes with the package name 
+                // non-FQDN references to those classes with the package name
                 // of the MainApplication.
                 //
                 // We want to match "R" or "BuildConfig":
@@ -324,7 +326,7 @@ class ReactNativeModules {
           result += it.componentDescriptors.collect {
             "  providerRegistry->add(concreteComponentDescriptorProvider<${it}>());"
           }.join('\n')
-        } 
+        }
         result
       }.join("\n")
     }
@@ -403,7 +405,7 @@ class ReactNativeModules {
 
     ArrayList<HashMap<String, String>> reactNativeModules = new ArrayList<HashMap<String, String>>()
     HashMap<String, ArrayList> reactNativeModulesBuildVariants = new HashMap<String, ArrayList>()
-    
+
     /**
      * Resolve the CLI location from Gradle file
      *
@@ -427,6 +429,7 @@ class ReactNativeModules {
     }
     def dependencies = json["dependencies"]
     def project = json["project"]["android"]
+    def reactNativeVersion = json["version"]
 
     if (project == null) {
       throw new Exception("React Native CLI failed to determine Android project configuration. This is likely due to misconfiguration. Config output:\n${json.toMapString()}")
@@ -440,7 +443,7 @@ class ReactNativeModules {
 
       if (androidConfig != null && androidConfig["sourceDir"] != null) {
         this.logger.info("${LOG_PREFIX}Automatically adding native module '${name}'")
-        
+
         HashMap reactNativeModuleConfig = new HashMap<String, String>()
         def nameCleansed = name.replaceAll('[~*!\'()]+', '_').replaceAll('^@([\\w-.]+)/', '$1_')
         reactNativeModuleConfig.put("name", name)
@@ -465,14 +468,14 @@ class ReactNativeModules {
         }
 
         this.logger.trace("${LOG_PREFIX}'${name}': ${reactNativeModuleConfig.toMapString()}")
-        
+
         reactNativeModules.add(reactNativeModuleConfig)
       } else {
         this.logger.info("${LOG_PREFIX}Skipping native module '${name}'")
       }
     }
 
-    return [reactNativeModules, reactNativeModulesBuildVariants, json["project"]["android"]];
+    return [reactNativeModules, reactNativeModulesBuildVariants, json["project"]["android"], reactNativeVersion];
   }
 }
 
@@ -484,6 +487,21 @@ class ReactNativeModules {
 def projectRoot = rootProject.projectDir
 
 def autoModules = new ReactNativeModules(logger, projectRoot)
+
+def reactNativeVersionRequireNewArchEnabled(autoModules) {
+    def rnVersion = autoModules.reactNativeVersion
+    def regexPattern = /^(\d+)\.(\d+)\.(\d+)(?:-(\w+(?:[-.]\d+)?))?$/
+
+    if (rnVersion =~ regexPattern) {
+        def result = (rnVersion =~ regexPattern).findAll().first()
+
+        def major = result[1].toInteger()
+        if (major > 0 && major < 1000) {
+            return true
+        }
+    }
+    return false
+}
 
 /** -----------------------
  *    Exported Extensions
@@ -516,15 +534,16 @@ ext.applyNativeModulesAppBuildGradle = { Project project, String root = null ->
 
   task generateNewArchitectureFiles {
     doLast {
-      autoModules.generateCmakeFile(generatedJniDir, "Android-rncli.cmake", cmakeTemplate) 
+      autoModules.generateCmakeFile(generatedJniDir, "Android-rncli.cmake", cmakeTemplate)
       autoModules.generateRncliCpp(generatedJniDir, "rncli.cpp", rncliCppTemplate)
       autoModules.generateRncliH(generatedJniDir, "rncli.h", rncliHTemplate)
     }
   }
 
   preBuild.dependsOn generatePackageList
-
-  if (project.hasProperty("newArchEnabled") && project.newArchEnabled == "true") {
+  def isNewArchEnabled = (project.hasProperty("newArchEnabled") && project.newArchEnabled == "true") ||
+    reactNativeVersionRequireNewArchEnabled(autoModules)
+  if (isNewArchEnabled) {
     preBuild.dependsOn generateNewArchitectureFiles
   }
 

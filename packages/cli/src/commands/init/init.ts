@@ -279,7 +279,7 @@ export default (async function initialize(
     const {projName} = await prompts({
       type: 'text',
       name: 'projName',
-      message: 'What is the project name?',
+      message: 'How would you like to name the app?',
     });
     projectName = projName;
   }

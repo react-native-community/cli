@@ -5,7 +5,7 @@ export default {
   detached: true,
   name: 'init [projectName]',
   description:
-    'Initialize a new React Native project in a directory of the same name.',
+    'New app will be initialized in the directory of the same name. Android and iOS projects will use this name for publishing setup.',
   options: [
     {
       name: '--version <string>',

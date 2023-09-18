@@ -22,21 +22,17 @@ import {
   logAlreadyRunningBundler,
   handlePortUnavailable,
 } from '@react-native-community/cli-tools';
-import {BuildFlags, buildProject} from '../buildIOS/buildProject';
-import {iosBuildOptions} from '../buildIOS';
+import {buildProject} from '../buildIOS/buildProject';
+import {BuildFlags, buildOptions} from '../buildIOS/buildOptions';
+import {getConfiguration} from '../buildIOS/getConfiguration';
 import {Device} from '../../types';
 import listIOSDevices from '../../tools/listIOSDevices';
-import {checkIfConfigurationExists} from '../../tools/checkIfConfigurationExists';
-import {getProjectInfo} from '../../tools/getProjectInfo';
-import {getConfigurationScheme} from '../../tools/getConfigurationScheme';
-import {selectFromInteractiveMode} from '../../tools/selectFromInteractiveMode';
 import {promptForDeviceSelection} from '../../tools/prompts';
 import getSimulators from '../../tools/getSimulators';
+import {getXcodeProjectAndDir} from '../buildIOS/getXcodeProjectAndDir';
 
 export interface FlagsT extends BuildFlags {
   simulator?: string;
-  scheme?: string;
-  projectPath: string;
   device?: string | true;
   udid?: string;
   binaryPath?: string;
@@ -82,19 +78,7 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     link.setVersion(ctx.reactNativeVersion);
   }
 
-  if (!ctx.project.ios) {
-    throw new CLIError(
-      'iOS project folder not found. Are you sure this is a React Native project?',
-    );
-  }
-
-  const {xcodeProject, sourceDir} = ctx.project.ios;
-
-  if (!xcodeProject) {
-    throw new CLIError(
-      `Could not find Xcode project files in "${sourceDir}" folder`,
-    );
-  }
+  const {xcodeProject, sourceDir} = getXcodeProjectAndDir(ctx.project.ios);
 
   process.chdir(sourceDir);
 
@@ -110,51 +94,14 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     }
   }
 
-  const projectInfo = getProjectInfo();
-
-  if (args.mode) {
-    checkIfConfigurationExists(projectInfo, args.mode);
-  }
-
-  const inferredSchemeName = path.basename(
-    xcodeProject.name,
-    path.extname(xcodeProject.name),
-  );
-
-  let scheme = args.scheme || inferredSchemeName;
-  let mode = args.mode;
-
-  if (args.interactive) {
-    const selection = await selectFromInteractiveMode({scheme, mode});
-
-    if (selection.scheme) {
-      scheme = selection.scheme;
-    }
-
-    if (selection.mode) {
-      mode = selection.mode;
-    }
-  }
-
-  const modifiedArgs = {...args, scheme, mode};
-
-  modifiedArgs.mode = getConfigurationScheme(
-    {scheme: modifiedArgs.scheme, mode: modifiedArgs.mode},
-    sourceDir,
-  );
-
-  logger.info(
-    `Found Xcode ${
-      xcodeProject.isWorkspace ? 'workspace' : 'project'
-    } "${chalk.bold(xcodeProject.name)}"`,
-  );
+  const {mode, scheme} = await getConfiguration(xcodeProject, sourceDir, args);
 
   const availableDevices = await listIOSDevices();
-  if (modifiedArgs.listDevices || modifiedArgs.interactive) {
-    if (modifiedArgs.device || modifiedArgs.udid) {
+  if (args.listDevices || args.interactive) {
+    if (args.device || args.udid) {
       logger.warn(
         `Both ${
-          modifiedArgs.device ? 'device' : 'udid'
+          args.device ? 'device' : 'udid'
         } and "list-devices" parameters were passed to "run" command. We will list available devices and let you choose from one.`,
       );
     }
@@ -167,13 +114,13 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
       );
     }
     if (selectedDevice.type === 'simulator') {
-      return runOnSimulator(xcodeProject, scheme, modifiedArgs, selectedDevice);
+      return runOnSimulator(xcodeProject, mode, scheme, args, selectedDevice);
     } else {
-      return runOnDevice(selectedDevice, scheme, xcodeProject, modifiedArgs);
+      return runOnDevice(selectedDevice, mode, scheme, xcodeProject, args);
     }
   }
 
-  if (!modifiedArgs.device && !modifiedArgs.udid && !modifiedArgs.simulator) {
+  if (!args.device && !args.udid && !args.simulator) {
     const bootedDevices = availableDevices.filter(
       ({type, isAvailable}) => type === 'device' && isAvailable,
     );
@@ -189,54 +136,56 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
       logger.info(
         'No booted devices or simulators found. Launching first available simulator...',
       );
-      return runOnSimulator(xcodeProject, scheme, modifiedArgs);
+      return runOnSimulator(xcodeProject, mode, scheme, args);
     }
 
     logger.info(`Found booted ${booted.map(({name}) => name).join(', ')}`);
 
     return runOnBootedDevicesSimulators(
+      mode,
       scheme,
       xcodeProject,
-      modifiedArgs,
+      args,
       bootedDevices,
       bootedSimulators,
     );
   }
 
-  if (modifiedArgs.device && modifiedArgs.udid) {
+  if (args.device && args.udid) {
     return logger.error(
       'The `device` and `udid` options are mutually exclusive.',
     );
   }
 
-  if (modifiedArgs.udid) {
-    const device = availableDevices.find((d) => d.udid === modifiedArgs.udid);
+  if (args.udid) {
+    const device = availableDevices.find((d) => d.udid === args.udid);
     if (!device) {
       return logger.error(
         `Could not find a device with udid: "${chalk.bold(
-          modifiedArgs.udid,
+          args.udid,
         )}". ${printFoundDevices(availableDevices)}`,
       );
     }
     if (device.type === 'simulator') {
-      return runOnSimulator(xcodeProject, scheme, modifiedArgs);
+      return runOnSimulator(xcodeProject, mode, scheme, args);
     } else {
-      return runOnDevice(device, scheme, xcodeProject, modifiedArgs);
+      return runOnDevice(device, mode, scheme, xcodeProject, args);
     }
-  } else if (modifiedArgs.device) {
+  } else if (args.device) {
     const physicalDevices = availableDevices.filter(
       ({type}) => type !== 'simulator',
     );
-    const device = matchingDevice(physicalDevices, modifiedArgs.device);
+    const device = matchingDevice(physicalDevices, args.device);
     if (device) {
-      return runOnDevice(device, scheme, xcodeProject, modifiedArgs);
+      return runOnDevice(device, mode, scheme, xcodeProject, args);
     }
   } else {
-    runOnSimulator(xcodeProject, scheme, modifiedArgs);
+    runOnSimulator(xcodeProject, mode, scheme, args);
   }
 }
 
 async function runOnBootedDevicesSimulators(
+  mode: string,
   scheme: string,
   xcodeProject: IOSProjectInfo,
   args: FlagsT,
@@ -244,16 +193,17 @@ async function runOnBootedDevicesSimulators(
   simulators: Device[],
 ) {
   for (const device of devices) {
-    await runOnDevice(device, scheme, xcodeProject, args);
+    await runOnDevice(device, mode, scheme, xcodeProject, args);
   }
 
   for (const simulator of simulators) {
-    await runOnSimulator(xcodeProject, scheme, args, simulator);
+    await runOnSimulator(xcodeProject, mode, scheme, args, simulator);
   }
 }
 
 async function runOnSimulator(
   xcodeProject: IOSProjectInfo,
+  mode: string,
   scheme: string,
   args: FlagsT,
   simulator?: Device,
@@ -318,13 +268,14 @@ async function runOnSimulator(
     buildOutput = await buildProject(
       xcodeProject,
       selectedSimulator.udid,
+      mode,
       scheme,
       args,
     );
 
     appPath = await getBuildPath(
       xcodeProject,
-      args.mode,
+      mode,
       buildOutput,
       scheme,
       args.target,
@@ -372,6 +323,7 @@ async function runOnSimulator(
 
 async function runOnDevice(
   selectedDevice: Device,
+  mode: string,
   scheme: string,
   xcodeProject: IOSProjectInfo,
   args: FlagsT,
@@ -400,13 +352,14 @@ async function runOnDevice(
     const buildOutput = await buildProject(
       xcodeProject,
       selectedDevice.udid,
+      mode,
       scheme,
       args,
     );
 
     const appPath = await getBuildPath(
       xcodeProject,
-      args.mode,
+      mode,
       buildOutput,
       scheme,
       args.target,
@@ -423,13 +376,14 @@ async function runOnDevice(
       buildOutput = await buildProject(
         xcodeProject,
         selectedDevice.udid,
+        mode,
         scheme,
         args,
       );
 
       appPath = await getBuildPath(
         xcodeProject,
-        args.mode,
+        mode,
         buildOutput,
         scheme,
         args.target,
@@ -516,10 +470,10 @@ async function getTargetPaths(
 
 async function getBuildPath(
   xcodeProject: IOSProjectInfo,
-  mode: BuildFlags['mode'],
+  mode: string,
   buildOutput: string,
   scheme: string,
-  target: string,
+  target: string | undefined,
   isCatalyst: boolean = false,
 ) {
   const buildSettings = child_process.execFileSync(
@@ -636,7 +590,7 @@ export default {
     },
   ],
   options: [
-    ...iosBuildOptions,
+    ...buildOptions,
     {
       name: '--no-packager',
       description: 'Do not launch packager while running the app',
@@ -661,11 +615,6 @@ export default {
       name: '--list-devices',
       description:
         'List all available iOS devices and simulators and let you choose one to run the app. ',
-    },
-    {
-      name: '--interactive',
-      description:
-        'Explicitly select which scheme and configuration to use before running a build and select device to run the application.',
     },
   ],
 };

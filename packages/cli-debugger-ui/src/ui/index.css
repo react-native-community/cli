@@ -35,3 +35,32 @@ body.dark {
 input[type='checkbox'] {
   vertical-align: middle;
 }
+
+.warning {
+  box-sizing: border-box;
+  max-width: 800px;
+  padding: 16px;
+  margin-bottom: 1em;
+  border-left: 5px solid rgb(230, 167, 0);
+  border-radius: 6px;
+  background-color: rgb(255, 248, 230);
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
+  color: rgb(77, 56, 0);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+.warning p {
+  margin-top: 0;
+}
+
+.warning p:last-child {
+  margin: 0;
+}
+
+.dark .warning {
+  background: rgb(77, 56, 0);
+  border-left-color: rgb(230, 167, 0);
+  color: rgb(255, 248, 230);
+}

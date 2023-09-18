@@ -38,7 +38,7 @@ export const getHealthchecks = ({contributor}: Options): Healthchecks => {
     config = loadConfig();
     additionalChecks = config.healthChecks;
 
-    if (config) {
+    if (config.reactNativePath) {
       projectSpecificHealthchecks = {
         common: {
           label: 'Common',

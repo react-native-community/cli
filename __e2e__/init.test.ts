@@ -7,6 +7,9 @@ import {
   writeFiles,
 } from '../jest/helpers';
 import slash from 'slash';
+import prompts from 'prompts';
+
+jest.mock('prompts', () => jest.fn());
 
 const DIR = getTempDirectory('command-init');
 
@@ -56,13 +59,16 @@ test('init fails if the directory already exists', () => {
   );
 });
 
-test('init --template fails without package name', () => {
-  const {stderr} = runCLI(
-    DIR,
-    ['init', '--template', 'react-native-new-template'],
-    {expectedFailure: true},
+test('init should prompt for the project name', () => {
+  createCustomTemplateFiles();
+  const {stdout} = runCLI(DIR, ['init', 'test', '--template', templatePath]);
+
+  (prompts as jest.MockedFunction<typeof prompts>).mockReturnValue(
+    Promise.resolve({
+      name: 'TestInit',
+    }),
   );
-  expect(stderr).toContain('missing required argument');
+  expect(stdout).toContain('Run instructions');
 });
 
 test('init --template filepath', () => {

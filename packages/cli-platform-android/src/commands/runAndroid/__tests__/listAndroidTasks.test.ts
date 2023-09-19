@@ -105,7 +105,11 @@ jest.mock('prompts', () => jest.fn());
 describe('promptForTaskSelection', () => {
   it('should prompt with correct tasks', () => {
     (execa.sync as jest.Mock).mockReturnValueOnce({stdout: gradleTaskOutput});
-    prompts.mockReturnValue({task: []});
+    (prompts as jest.MockedFunction<typeof prompts>).mockReturnValue(
+      Promise.resolve({
+        task: [],
+      }),
+    );
 
     promptForTaskSelection('install', 'sourceDir');
 

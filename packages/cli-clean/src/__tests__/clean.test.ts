@@ -18,7 +18,11 @@ describe('clean', () => {
   });
 
   it('prompts if `--include` is omitted', async () => {
-    prompts.mockReturnValue({cache: []});
+    (prompts as jest.MockedFunction<typeof prompts>).mockReturnValue(
+      Promise.resolve({
+        cache: [],
+      }),
+    );
 
     await clean([], mockConfig, {include: '', projectRoot: process.cwd()});
 

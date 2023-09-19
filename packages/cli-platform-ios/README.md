@@ -104,6 +104,16 @@ Example:
 npx react-native run-ios --extra-params "-jobs 4"
 ```
 
+#### `--binary-path <path>`
+
+Installs passed binary instead of building a fresh one.
+
+#### `--list-devices`
+
+> default: false
+
+List all available iOS devices and simulators and let you choose one to run the app.
+
 ### `build-ios`
 
 Usage:
@@ -145,16 +155,6 @@ Explicitly pass `xcconfig` options from the command line.
 #### `--buildFolder <string>`
 
 Location for iOS build artifacts. Corresponds to Xcode's `-derivedDataPath`.
-
-#### `--binary-path <path>`
-
-Installs passed binary instead of building a fresh one.
-
-#### `--list-devices`
-
-> default: false
-
-List all available iOS devices and simulators and let you choose one to run the app.
 
 #### `--extra-params <string>`
 

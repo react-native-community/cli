@@ -26,7 +26,7 @@ exports[`shows up current config without unnecessary output 1`] = `
     },
     {
       "name": "build-ios",
-      "description": "builds your app on iOS simulator",
+      "description": "builds your app for iOS platform",
       "examples": [
         "<<REPLACED>>"
       ],

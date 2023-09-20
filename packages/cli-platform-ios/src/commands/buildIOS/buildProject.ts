@@ -10,21 +10,12 @@ import {
   printRunDoctorTip,
   getLoader,
 } from '@react-native-community/cli-tools';
-
-export type BuildFlags = {
-  mode: string;
-  target: string;
-  verbose: boolean;
-  xcconfig?: string;
-  buildFolder?: string;
-  interactive?: boolean;
-  destination?: string;
-  extraParams?: string[];
-};
+import type {BuildFlags} from './buildOptions';
 
 export function buildProject(
   xcodeProject: IOSProjectInfo,
   udid: string | undefined,
+  mode: string,
   scheme: string,
   args: BuildFlags,
 ): Promise<string> {
@@ -35,13 +26,13 @@ export function buildProject(
       ...(args.xcconfig ? ['-xcconfig', args.xcconfig] : []),
       ...(args.buildFolder ? ['-derivedDataPath', args.buildFolder] : []),
       '-configuration',
-      args.mode,
+      mode,
       '-scheme',
       scheme,
       '-destination',
       (udid
         ? `id=${udid}`
-        : args.mode === 'Debug'
+        : mode === 'Debug'
         ? 'generic/platform=iOS Simulator'
         : 'generic/platform=iOS') +
         (args.destination ? ',' + args.destination : ''),

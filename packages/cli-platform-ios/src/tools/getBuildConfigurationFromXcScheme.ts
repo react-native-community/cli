@@ -1,7 +1,9 @@
 import {CLIError} from '@react-native-community/cli-tools';
+import chalk from 'chalk';
 import {XMLParser} from 'fast-xml-parser';
 import fs from 'fs';
 import path from 'path';
+import {IosProjectInfo} from '../types';
 
 const xmlParser = new XMLParser({ignoreAttributes: false});
 
@@ -9,7 +11,8 @@ export function getBuildConfigurationFromXcScheme(
   scheme: string,
   configuration: string,
   sourceDir: string,
-) {
+  projectInfo: IosProjectInfo,
+): string {
   try {
     const xcProject = fs
       .readdirSync(sourceDir)
@@ -35,7 +38,9 @@ export function getBuildConfigurationFromXcScheme(
     }
   } catch {
     throw new CLIError(
-      `Could not find scheme ${scheme}. Please make sure the schema you want to run exists.`,
+      `Could not find scheme ${scheme}. Please make sure the schema you want to run exists. Available schemas are: ${projectInfo.schemes
+        .map((name) => chalk.bold(name))
+        .join(', ')}'`,
     );
   }
 

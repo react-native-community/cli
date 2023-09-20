@@ -27,7 +27,6 @@ const cliPackages = [
   '@react-native-community/cli-tools',
   '@react-native-community/cli-doctor',
   '@react-native-community/cli-hermes',
-  '@react-native-community/cli-plugin-metro',
   '@react-native-community/cli-clean',
   '@react-native-community/cli-config',
   '@react-native-community/cli-debugger-ui',

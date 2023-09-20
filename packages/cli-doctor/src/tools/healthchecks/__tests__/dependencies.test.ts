@@ -36,7 +36,7 @@ describe('dependencies', () => {
     expect(diagnostics.needsToBeFixed).toBe(true);
   });
 
-  it('returns true if dependencies contains an compatible version react native package', async () => {
+  it('warn if dependencies contains an compatible version of react native packages', async () => {
     dependenciesJSON = JSON.stringify({
       name: 'AwesomeProject',
       dependencies: {
@@ -46,6 +46,8 @@ describe('dependencies', () => {
     });
 
     const diagnostics = await dependencies.getDiagnostics(environmentInfo);
-    expect(diagnostics.needsToBeFixed).toBe(true);
+    expect(diagnostics.description).toMatch(
+      '@react-native/codegen is part of React Native and should not be a dependency in your package.json',
+    );
   });
 });

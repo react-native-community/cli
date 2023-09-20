@@ -15,6 +15,8 @@ import {Healthchecks, HealthCheckCategory} from '../../types';
 import loadConfig from '@react-native-community/cli-config';
 import xcodeEnv from './xcodeEnv';
 import packager from './packager';
+import deepmerge from 'deepmerge';
+import {logger} from '@react-native-community/cli-tools';
 
 export const HEALTHCHECK_TYPES = {
   ERROR: 'ERROR',
@@ -28,21 +30,48 @@ type Options = {
 
 export const getHealthchecks = ({contributor}: Options): Healthchecks => {
   let additionalChecks: HealthCheckCategory[] = [];
+  let projectSpecificHealthchecks = {};
+  let config;
 
   // Doctor can run in a detached mode, where there isn't a config so this can fail
   try {
-    let config = loadConfig();
+    config = loadConfig();
     additionalChecks = config.healthChecks;
+
+    if (config.reactNativePath) {
+      projectSpecificHealthchecks = {
+        common: {
+          label: 'Common',
+          healthchecks: [packager],
+        },
+        android: {
+          label: 'Android',
+          healthchecks: [androidSDK],
+        },
+        ...(process.platform === 'darwin' && {
+          ios: {
+            label: 'iOS',
+            healthchecks: [xcodeEnv],
+          },
+        }),
+      };
+    }
   } catch {}
 
-  return {
+  if (!config) {
+    logger.log();
+    logger.info(
+      'Detected that command has been run outside of React Native project, running basic healthchecks.',
+    );
+  }
+
+  const defaultHealthchecks = {
     common: {
       label: 'Common',
       healthchecks: [
         nodeJS,
         yarn,
         npm,
-        packager,
         ...(process.platform === 'darwin' ? [watchman] : []),
       ],
     },
@@ -52,7 +81,6 @@ export const getHealthchecks = ({contributor}: Options): Healthchecks => {
         adb,
         jdk,
         androidStudio,
-        androidSDK,
         androidHomeEnvVariable,
         ...(contributor ? [androidNDK] : []),
       ],
@@ -61,10 +89,12 @@ export const getHealthchecks = ({contributor}: Options): Healthchecks => {
       ? {
           ios: {
             label: 'iOS',
-            healthchecks: [xcode, ruby, cocoaPods, iosDeploy, xcodeEnv],
+            healthchecks: [xcode, ruby, cocoaPods, iosDeploy],
           },
         }
       : {}),
     ...additionalChecks,
   };
+
+  return deepmerge(defaultHealthchecks, projectSpecificHealthchecks);
 };

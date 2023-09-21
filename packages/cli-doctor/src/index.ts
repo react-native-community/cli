@@ -9,4 +9,3 @@ export const commands = {info, doctor};
  * refactor the init in order to remove that connection.
  */
 export {default as versionRanges} from './tools/versionRanges';
-export {default as installPods} from './tools/installPods';

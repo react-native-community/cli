@@ -1,5 +1,6 @@
 import fs from 'fs';
 import execa from 'execa';
+import {Ora} from 'ora';
 import chalk from 'chalk';
 import {
   logger,
@@ -9,10 +10,9 @@ import {
 } from '@react-native-community/cli-tools';
 import sudo from 'sudo-prompt';
 import runBundleInstall from './runBundleInstall';
-import {Loader} from '../types';
 
 async function runPodInstall(
-  loader: Loader,
+  loader: Ora,
   shouldHandleRepoUpdate: boolean = true,
 ) {
   try {
@@ -52,7 +52,7 @@ async function runPodInstall(
   }
 }
 
-async function runPodUpdate(loader: Loader) {
+async function runPodUpdate(loader: Ora) {
   try {
     loader.start(
       `Updating CocoaPods repositories ${chalk.dim(
@@ -97,7 +97,7 @@ async function installCocoaPodsWithGem() {
   }
 }
 
-async function installCocoaPods(loader: Loader) {
+async function installCocoaPods(loader: Ora) {
   loader.stop();
 
   loader.start('Installing CocoaPods');
@@ -118,7 +118,7 @@ async function installCocoaPods(loader: Loader) {
   }
 }
 
-async function installPods(loader?: Loader) {
+async function installPods(loader?: Ora) {
   loader = loader || new NoopLoader();
   try {
     if (!fs.existsSync('ios')) {

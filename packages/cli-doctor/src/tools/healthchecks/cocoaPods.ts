@@ -1,6 +1,6 @@
 import execa from 'execa';
+import {runSudo} from '@react-native-community/cli-platform-ios';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
-import {runSudo} from '../installPods';
 import {logError} from './common';
 import {HealthCheckInterface} from '../../types';
 import versionRanges from '../versionRanges';

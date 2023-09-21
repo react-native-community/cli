@@ -1,9 +1,8 @@
 import execa from 'execa';
 import {CLIError, logger, link} from '@react-native-community/cli-tools';
+import type {Ora} from 'ora';
 
-import {Loader} from '../types';
-
-async function runBundleInstall(loader: Loader) {
+async function runBundleInstall(loader: Ora) {
   try {
     loader.start('Installing Ruby Gems');
 

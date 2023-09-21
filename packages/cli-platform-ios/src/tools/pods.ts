@@ -1,6 +1,7 @@
 import path from 'path';
 import md5 from 'crypto-js/md5';
-import {cacheManager} from '@react-native-community/cli-tools';
+import {cacheManager, getLoader} from '@react-native-community/cli-tools';
+import installPods from './installPods';
 
 export function getPackageJson(root: string) {
   return require(path.join(root, 'package.json'));
@@ -45,6 +46,7 @@ export default async function resolvePods(root: string) {
     !cachedDependenciesHash ||
     !compareMd5Hashes(currentDependenciesHash, cachedDependenciesHash)
   ) {
-    console.log('pod install');
+    const loader = getLoader('Installing CocoaPods...');
+    await installPods(loader);
   }
 }

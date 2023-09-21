@@ -40,6 +40,7 @@ type Options = {
   skipInstall?: boolean;
   version?: string;
   packageName?: string;
+  installPods?: string;
 };
 
 interface TemplateOptions {
@@ -51,6 +52,7 @@ interface TemplateOptions {
   projectTitle?: string;
   skipInstall?: boolean;
   packageName?: string;
+  installCocoaPods?: string;
 }
 
 function doesDirectoryExist(dir: string) {
@@ -95,6 +97,7 @@ async function createFromTemplate({
   projectTitle,
   skipInstall,
   packageName,
+  installCocoaPods,
 }: TemplateOptions) {
   logger.debug('Initializing new project');
   logger.log(banner);
@@ -174,16 +177,24 @@ async function createFromTemplate({
       });
 
       if (process.platform === 'darwin') {
-        const {installCocoapods} = await prompt({
-          type: 'confirm',
-          name: 'installCocoapods',
-          message: `Do you want to install CocoaPods? ${chalk.reset.dim(
-            'Only needed if you run your project in Xcode directly',
-          )}`,
-        });
+        const installPodsValue = String(installCocoaPods);
 
-        if (installCocoapods) {
+        if (installPodsValue === 'true') {
           await installPods(loader);
+          loader.succeed();
+        } else if (installPodsValue === 'undefined') {
+          const {installCocoapods} = await prompt({
+            type: 'confirm',
+            name: 'installCocoapods',
+            message: `Do you want to install CocoaPods? ${chalk.reset.dim(
+              'Only needed if you run your project in Xcode directly',
+            )}`,
+          });
+
+          if (installCocoapods) {
+            await installPods(loader);
+            loader.succeed();
+          }
         }
       }
     } else {
@@ -262,6 +273,7 @@ async function createProject(
     projectTitle: options.title,
     skipInstall: options.skipInstall,
     packageName: options.packageName,
+    installCocoaPods: options.installPods,
   });
 }
 

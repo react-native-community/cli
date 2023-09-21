@@ -96,6 +96,10 @@ module.exports = {
 
 Skip dependencies installation
 
+#### `--install-pods [boolean]`
+
+Determine if CocoaPods should be installed when initializing a project. If set to `true` it will install pods, if set to `false`, it will skip the step entirely. If not used, prompt will be displayed
+
 #### `--npm`
 > [!WARNING]  
 > `--npm` is deprecated and will be removed in the future. Please use `--pm npm` instead.

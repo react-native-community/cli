@@ -49,7 +49,7 @@ beforeAll(() => {
 
   // Initialise React Native project
 
-  runCLI(DIR, ['init', 'TestProject']);
+  runCLI(DIR, ['init', 'TestProject', '--install-pods']);
 
   // Link CLI to the project
   const pkgs = [

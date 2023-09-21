@@ -1,18 +1,22 @@
 import fs from 'fs';
 import execa from 'execa';
+import type {Ora} from 'ora';
 import chalk from 'chalk';
 import {
   logger,
   NoopLoader,
   link,
   CLIError,
+  runSudo,
 } from '@react-native-community/cli-tools';
-import sudo from 'sudo-prompt';
 import runBundleInstall from './runBundleInstall';
-import {Loader} from '../types';
+
+interface PodInstallOptions {
+  skipBundleInstall?: boolean;
+}
 
 async function runPodInstall(
-  loader: Loader,
+  loader: Ora,
   shouldHandleRepoUpdate: boolean = true,
 ) {
   try {
@@ -52,7 +56,7 @@ async function runPodInstall(
   }
 }
 
-async function runPodUpdate(loader: Loader) {
+async function runPodUpdate(loader: Ora) {
   try {
     loader.start(
       `Updating CocoaPods repositories ${chalk.dim(
@@ -73,18 +77,6 @@ async function runPodUpdate(loader: Loader) {
   }
 }
 
-function runSudo(command: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    sudo.exec(command, {name: 'React Native CLI'}, (error) => {
-      if (error) {
-        reject(error);
-      }
-
-      resolve();
-    });
-  });
-}
-
 async function installCocoaPodsWithGem() {
   const options = ['install', 'cocoapods', '--no-document'];
 
@@ -97,7 +89,7 @@ async function installCocoaPodsWithGem() {
   }
 }
 
-async function installCocoaPods(loader: Loader) {
+async function installCocoaPods(loader: Ora) {
   loader.stop();
 
   loader.start('Installing CocoaPods');
@@ -118,7 +110,7 @@ async function installCocoaPods(loader: Loader) {
   }
 }
 
-async function installPods(loader?: Loader) {
+async function installPods(loader?: Ora, options?: PodInstallOptions) {
   loader = loader || new NoopLoader();
   try {
     if (!fs.existsSync('ios')) {
@@ -133,7 +125,7 @@ async function installPods(loader?: Loader) {
       return;
     }
 
-    if (fs.existsSync('../Gemfile')) {
+    if (fs.existsSync('../Gemfile') && !options?.skipBundleInstall) {
       await runBundleInstall(loader);
     }
 
@@ -153,6 +145,6 @@ async function installPods(loader?: Loader) {
   }
 }
 
-export {runSudo, installCocoaPods};
+export {installCocoaPods};
 
 export default installPods;

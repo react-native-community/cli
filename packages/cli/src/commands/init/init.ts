@@ -2,6 +2,8 @@ import os from 'os';
 import path from 'path';
 import fs from 'fs-extra';
 import {validateProjectName} from './validate';
+import {prompt} from 'prompts';
+import chalk from 'chalk';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
 import printRunInstructions from './printRunInstructions';
 import {
@@ -9,7 +11,9 @@ import {
   logger,
   getLoader,
   Loader,
+  cacheManager,
 } from '@react-native-community/cli-tools';
+import {installPods} from '@react-native-community/cli-platform-ios';
 import {
   installTemplatePackage,
   getTemplateConfig,
@@ -18,13 +22,12 @@ import {
 } from './template';
 import {changePlaceholderInTemplate} from './editTemplate';
 import * as PackageManager from '../../tools/packageManager';
-import {installPods} from '@react-native-community/cli-doctor';
 import banner from './banner';
 import TemplateAndVersionError from './errors/TemplateAndVersionError';
 import {getBunVersionIfAvailable} from '../../tools/bun';
 import {getNpmVersionIfAvailable} from '../../tools/npm';
 import {getYarnVersionIfAvailable} from '../../tools/yarn';
-import prompts from 'prompts';
+import {createHash} from 'crypto';
 
 const DEFAULT_VERSION = 'latest';
 
@@ -38,6 +41,7 @@ type Options = {
   skipInstall?: boolean;
   version?: string;
   packageName?: string;
+  installPods?: string | boolean;
 };
 
 interface TemplateOptions {
@@ -49,6 +53,7 @@ interface TemplateOptions {
   projectTitle?: string;
   skipInstall?: boolean;
   packageName?: string;
+  installCocoaPods?: string | boolean;
 }
 
 function doesDirectoryExist(dir: string) {
@@ -84,6 +89,15 @@ function getTemplateName(cwd: string) {
   return name;
 }
 
+//set cache to empty string to prevent installing cocoapods on freshly created project
+function setEmptyHashForCachedDependencies(projectName: string) {
+  cacheManager.set(
+    projectName,
+    'dependencies',
+    createHash('md5').update('').digest('hex'),
+  );
+}
+
 async function createFromTemplate({
   projectName,
   templateUri,
@@ -93,6 +107,7 @@ async function createFromTemplate({
   projectTitle,
   skipInstall,
   packageName,
+  installCocoaPods,
 }: TemplateOptions) {
   logger.debug('Initializing new project');
   logger.log(banner);
@@ -170,6 +185,30 @@ async function createFromTemplate({
         loader,
         root: projectDirectory,
       });
+
+      if (process.platform === 'darwin') {
+        const installPodsValue = String(installCocoaPods);
+
+        if (installPodsValue === 'true') {
+          await installPods(loader);
+          loader.succeed();
+          setEmptyHashForCachedDependencies(projectName);
+        } else if (installPodsValue === 'undefined') {
+          const {installCocoapods} = await prompt({
+            type: 'confirm',
+            name: 'installCocoapods',
+            message: `Do you want to install CocoaPods now? ${chalk.reset.dim(
+              'Only needed if you run your project in Xcode directly',
+            )}`,
+          });
+
+          if (installCocoapods) {
+            await installPods(loader);
+            loader.succeed();
+            setEmptyHashForCachedDependencies(projectName);
+          }
+        }
+      }
     } else {
       loader.succeed('Dependencies installation skipped');
     }
@@ -197,10 +236,6 @@ async function installDependencies({
     silent: true,
     root,
   });
-
-  if (process.platform === 'darwin') {
-    await installPods(loader);
-  }
 
   loader.succeed();
 }
@@ -250,6 +285,7 @@ async function createProject(
     projectTitle: options.title,
     skipInstall: options.skipInstall,
     packageName: options.packageName,
+    installCocoaPods: options.installPods,
   });
 }
 
@@ -276,7 +312,7 @@ export default (async function initialize(
   options: Options,
 ) {
   if (!projectName) {
-    const {projName} = await prompts({
+    const {projName} = await prompt({
       type: 'text',
       name: 'projName',
       message: 'How would you like to name the app?',

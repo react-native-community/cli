@@ -2,10 +2,10 @@ import path from 'path';
 import fs from 'fs';
 import os from 'os';
 import appDirs from 'appdirsjs';
-import logger from '../logger';
+import logger from './logger';
 
-type ReleaseCacheKey = 'eTag' | 'lastChecked' | 'latestVersion';
-type Cache = {[key in ReleaseCacheKey]?: string};
+type CacheKey = 'eTag' | 'lastChecked' | 'latestVersion' | 'dependencies';
+type Cache = {[key in CacheKey]?: string};
 
 function loadCache(name: string): Cache | undefined {
   try {
@@ -20,7 +20,7 @@ function loadCache(name: string): Cache | undefined {
       // Create cache file since it doesn't exist.
       saveCache(name, {});
     }
-    logger.debug('No release cache found');
+    logger.debug('No cache found');
     return undefined;
   }
 }
@@ -48,7 +48,7 @@ function getCacheRootPath() {
   return cachePath;
 }
 
-function get(name: string, key: ReleaseCacheKey): string | undefined {
+function get(name: string, key: CacheKey): string | undefined {
   const cache = loadCache(name);
   if (cache) {
     return cache[key];
@@ -56,7 +56,7 @@ function get(name: string, key: ReleaseCacheKey): string | undefined {
   return undefined;
 }
 
-function set(name: string, key: ReleaseCacheKey, value: string) {
+function set(name: string, key: CacheKey, value: string) {
   const cache = loadCache(name);
   if (cache) {
     cache[key] = value;

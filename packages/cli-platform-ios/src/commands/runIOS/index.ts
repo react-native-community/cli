@@ -30,6 +30,7 @@ import listIOSDevices from '../../tools/listIOSDevices';
 import {promptForDeviceSelection} from '../../tools/prompts';
 import getSimulators from '../../tools/getSimulators';
 import {getXcodeProjectAndDir} from '../buildIOS/getXcodeProjectAndDir';
+import resolvePods from '../../tools/pods';
 
 export interface FlagsT extends BuildFlags {
   simulator?: string;
@@ -46,6 +47,9 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   link.setPlatform('ios');
 
   let {packager, port} = args;
+
+  // check if pods need to be installed
+  await resolvePods(ctx.root, ctx.dependencies, {forceInstall: args.forcePods});
 
   const packagerStatus = await isPackagerRunning(port);
 

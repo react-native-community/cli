@@ -241,6 +241,14 @@ test('supports dependencies from user configuration with custom root and propert
   writeFiles(DIR, {
     ...REACT_NATIVE_MOCK,
     'native-libs/local-lib/LocalRNLibrary.podspec': '',
+    'native-libs/local-lib/package.json': `
+    {
+      "name": "local-lib",
+      "version": "0.0.1",
+      "dependencies": {
+        "react-native": "0.0.1"
+      }
+    }`,
     'react-native.config.js': `
 const path = require('path');
 const root = path.resolve('${escapePathSeparator(
@@ -276,6 +284,7 @@ module.exports = {
           "configurations": Array [],
           "podspecPath": "custom-path",
           "scriptPhases": Array [],
+          "version": "0.0.1",
         },
       },
       "root": "<<REPLACED>>/native-libs/local-lib",

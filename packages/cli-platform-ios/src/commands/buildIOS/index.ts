@@ -11,9 +11,13 @@ import {buildProject} from './buildProject';
 import {BuildFlags, buildOptions} from './buildOptions';
 import {getConfiguration} from './getConfiguration';
 import {getXcodeProjectAndDir} from './getXcodeProjectAndDir';
+import resolvePods from '../../tools/pods';
 
 async function buildIOS(_: Array<string>, ctx: Config, args: BuildFlags) {
   const {xcodeProject, sourceDir} = getXcodeProjectAndDir(ctx.project.ios);
+
+  // check if pods need to be installed
+  await resolvePods(ctx.root, ctx.dependencies, {forceInstall: args.forcePods});
 
   process.chdir(sourceDir);
 

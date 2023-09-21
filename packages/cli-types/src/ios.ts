@@ -21,13 +21,14 @@ export interface IOSProjectConfig {
 
 export interface IOSDependencyConfig {
   podspecPath: string;
+  version: string;
   scriptPhases: Array<IOSScriptPhase>;
   configurations: string[];
 }
 
 export type IOSDependencyParams = Omit<
   Partial<IOSDependencyConfig>,
-  'podspecPath'
+  'podspecPath' | 'version'
 >;
 
 /**

@@ -38,6 +38,11 @@ export default {
       description: 'Skips dependencies installation step',
     },
     {
+      name: '--install-pods [boolean]',
+      description:
+        'Determine if CocoaPods should be installed when initializing a project',
+    },
+    {
       name: '--package-name <string>',
       description:
         'Inits a project with a custom package name (Android) and bundle ID (iOS), e.g. com.example.app',

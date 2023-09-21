@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
+import chalk from 'chalk';
 import path from 'path';
 import fs from 'fs';
 import findPodfilePath from './findPodfilePath';
@@ -17,6 +18,7 @@ import {
   IOSProjectConfig,
   IOSDependencyConfig,
 } from '@react-native-community/cli-types';
+import {CLIError} from '@react-native-community/cli-tools';
 
 /**
  * Returns project config by analyzing given folder and applying some user defaults
@@ -66,8 +68,25 @@ export function dependencyConfig(
     return null;
   }
 
+  let version = 'unresolved';
+
+  try {
+    const packageJson = require(path.join(folder, 'package.json'));
+
+    if (packageJson.version) {
+      version = packageJson.version;
+    }
+  } catch {
+    throw new CLIError(
+      `Failed to locate package.json file from ${chalk.underline(
+        folder,
+      )}. This is most likely issue with your node_modules folder being corrupted. Please force install dependencies and try again`,
+    );
+  }
+
   return {
     podspecPath,
+    version,
     configurations: userConfig.configurations || [],
     scriptPhases: userConfig.scriptPhases || [],
   };

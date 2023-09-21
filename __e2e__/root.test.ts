@@ -23,8 +23,7 @@ beforeAll(() => {
   writeFiles(cwd, {});
 
   // Initialise React Native project
-  runCLI(cwd, ['init', 'TestProject']);
-
+  runCLI(cwd, ['init', 'TestProject', '--install-pods']);
   // Link CLI to the project
   const pkgs = [
     '@react-native-community/cli-platform-ios',

@@ -8,6 +8,7 @@ export type BuildFlags = {
   interactive?: boolean;
   destination?: string;
   extraParams?: string[];
+  forcePods?: boolean;
 };
 
 export const buildOptions = [

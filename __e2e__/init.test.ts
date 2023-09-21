@@ -61,7 +61,14 @@ test('init fails if the directory already exists', () => {
 
 test('init should prompt for the project name', () => {
   createCustomTemplateFiles();
-  const {stdout} = runCLI(DIR, ['init', 'test', '--template', templatePath]);
+  const {stdout} = runCLI(DIR, [
+    'init',
+    'test',
+    '--template',
+    templatePath,
+    '--install-pods',
+    'false',
+  ]);
 
   (prompts as jest.MockedFunction<typeof prompts>).mockReturnValue(
     Promise.resolve({
@@ -79,6 +86,8 @@ test('init --template filepath', () => {
     '--template',
     templatePath,
     'TestInit',
+    '--install-pods',
+    'false',
   ]);
 
   expect(stdout).toContain('Run instructions');
@@ -103,6 +112,8 @@ test('init --template file with custom directory', () => {
     projectName,
     '--directory',
     'custom-path',
+    '--install-pods',
+    'false',
   ]);
 
   // make sure --directory option is used in run instructions
@@ -149,6 +160,8 @@ test('init uses npm as the package manager with --npm', () => {
     templatePath,
     'TestInit',
     '--npm',
+    '--install-pods',
+    'false',
   ]);
 
   expect(stdout).toContain('Run instructions');

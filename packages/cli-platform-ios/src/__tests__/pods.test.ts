@@ -1,9 +1,6 @@
 import {writeFiles, getTempDirectory, cleanup} from '../../../../jest/helpers';
 import installPods from '../tools/installPods';
-import resolvePods, {
-  compareMd5Hashes,
-  normalizeDependencies,
-} from '../tools/pods';
+import resolvePods, {compareMd5Hashes, getIosDependencies} from '../tools/pods';
 
 const mockGet = jest.fn();
 const mockSet = jest.fn();
@@ -15,12 +12,34 @@ jest.mock('@react-native-community/cli-tools', () => ({
   },
 }));
 jest.mock('../tools/installPods', () => jest.fn());
-const dependencyHash = 'abecd1ad748898def530ff27362e14ba';
+const dependencyHash = 'd41d8cd98f00b204e9800998ecf8427e';
 
 const packageJson = {
   name: 'test-package',
   dependencies: {dep1: '1.0.0'},
   devDependencies: {dep2: '2.0.0'},
+};
+
+const commonDepConfig = {
+  root: '',
+  platforms: {
+    ios: {
+      podspecPath: '',
+      scriptPhases: [],
+      configurations: [],
+    },
+  },
+};
+
+const dependenciesConfig = {
+  dep1: {
+    name: 'dep1',
+    ...commonDepConfig,
+  },
+  dep2: {
+    name: 'dep2',
+    ...commonDepConfig,
+  },
 };
 
 const DIR = getTempDirectory('root_test');
@@ -51,13 +70,13 @@ describe('compareMd5Hashes', () => {
   });
 });
 
-describe('normalizeDependencies', () => {
-  it('should normalize dependencies', () => {
+describe('getIosDependencies', () => {
+  it('should return only dependencies with native code', () => {
     const dependencies = {
       ...packageJson.dependencies,
       ...packageJson.devDependencies,
     };
-    const result = normalizeDependencies(dependencies);
+    const result = getIosDependencies(dependenciesConfig, dependencies);
     expect(result).toEqual(['dep1@1.0.0', 'dep2@2.0.0']);
   });
 });
@@ -66,7 +85,7 @@ describe('resolvePods', () => {
   it('should install pods if they are not installed', async () => {
     createTempFiles({'ios/Podfile/Manifest.lock': ''});
 
-    await resolvePods(DIR);
+    await resolvePods(DIR, {});
 
     expect(installPods).toHaveBeenCalled();
   });
@@ -74,7 +93,7 @@ describe('resolvePods', () => {
   it('should install pods when force option is set to true', async () => {
     createTempFiles();
 
-    await resolvePods(DIR, {forceInstall: true});
+    await resolvePods(DIR, {}, {forceInstall: true});
 
     expect(installPods).toHaveBeenCalled();
   });
@@ -82,7 +101,7 @@ describe('resolvePods', () => {
   it('should install pods when there is no cached hash of dependencies', async () => {
     createTempFiles();
 
-    await resolvePods(DIR);
+    await resolvePods(DIR, {});
 
     expect(mockSet).toHaveBeenCalledWith(
       packageJson.name,
@@ -96,8 +115,30 @@ describe('resolvePods', () => {
 
     mockGet.mockImplementation(() => dependencyHash);
 
-    await resolvePods(DIR);
+    await resolvePods(DIR, {});
 
     expect(installPods).not.toHaveBeenCalled();
+  });
+
+  it('should install pods if the cached hash and current hash are different', async () => {
+    createTempFiles({'ios/Pods/Manifest.lock': ''});
+
+    mockGet.mockImplementation(() => dependencyHash);
+
+    await resolvePods(DIR, {
+      dep1: {
+        name: 'dep1',
+        root: '',
+        platforms: {
+          ios: {
+            podspecPath: '',
+            scriptPhases: [],
+            configurations: [],
+          },
+        },
+      },
+    });
+
+    expect(installPods).toHaveBeenCalled();
   });
 });

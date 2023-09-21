@@ -11,6 +11,7 @@ import {
   logger,
   getLoader,
   Loader,
+  cacheManager,
 } from '@react-native-community/cli-tools';
 import {installPods} from '@react-native-community/cli-platform-ios';
 import {
@@ -26,7 +27,7 @@ import TemplateAndVersionError from './errors/TemplateAndVersionError';
 import {getBunVersionIfAvailable} from '../../tools/bun';
 import {getNpmVersionIfAvailable} from '../../tools/npm';
 import {getYarnVersionIfAvailable} from '../../tools/yarn';
-import prompts from 'prompts';
+import {createHash} from 'crypto';
 
 const DEFAULT_VERSION = 'latest';
 
@@ -86,6 +87,15 @@ function getTemplateName(cwd: string) {
       .dependencies,
   )[0];
   return name;
+}
+
+//set cache to empty string to prevent installing cocoapods on freshly created project
+function setEmptyHashForCachedDependencies(projectName: string) {
+  cacheManager.set(
+    projectName,
+    'dependencies',
+    createHash('md5').update('').digest('hex'),
+  );
 }
 
 async function createFromTemplate({
@@ -182,6 +192,7 @@ async function createFromTemplate({
         if (installPodsValue === 'true') {
           await installPods(loader);
           loader.succeed();
+          setEmptyHashForCachedDependencies(projectName);
         } else if (installPodsValue === 'undefined') {
           const {installCocoapods} = await prompt({
             type: 'confirm',
@@ -194,6 +205,7 @@ async function createFromTemplate({
           if (installCocoapods) {
             await installPods(loader);
             loader.succeed();
+            setEmptyHashForCachedDependencies(projectName);
           }
         }
       }
@@ -300,7 +312,7 @@ export default (async function initialize(
   options: Options,
 ) {
   if (!projectName) {
-    const {projName} = await prompts({
+    const {projName} = await prompt({
       type: 'text',
       name: 'projName',
       message: 'How would you like to name the app?',

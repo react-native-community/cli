@@ -61,7 +61,14 @@ test('init fails if the directory already exists', () => {
 
 test('init should prompt for the project name', () => {
   createCustomTemplateFiles();
-  const {stdout} = runCLI(DIR, ['init', 'test', '--template', templatePath]);
+  const {stdout} = runCLI(DIR, [
+    'init',
+    'test',
+    '--template',
+    templatePath,
+    '--install-pods',
+    'false',
+  ]);
 
   (prompts as jest.MockedFunction<typeof prompts>).mockReturnValue(
     Promise.resolve({

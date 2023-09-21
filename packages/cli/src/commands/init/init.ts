@@ -2,6 +2,8 @@ import os from 'os';
 import path from 'path';
 import fs from 'fs-extra';
 import {validateProjectName} from './validate';
+import {prompt} from 'prompts';
+import chalk from 'chalk';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
 import printRunInstructions from './printRunInstructions';
 import {
@@ -10,6 +12,7 @@ import {
   getLoader,
   Loader,
 } from '@react-native-community/cli-tools';
+import {installPods} from '@react-native-community/cli-platform-ios';
 import {
   installTemplatePackage,
   getTemplateConfig,
@@ -169,6 +172,20 @@ async function createFromTemplate({
         loader,
         root: projectDirectory,
       });
+
+      if (process.platform === 'darwin') {
+        const {installCocoapods} = await prompt({
+          type: 'confirm',
+          name: 'installCocoapods',
+          message: `Do you want to install CocoaPods? ${chalk.reset.dim(
+            'Only needed if you run your project in Xcode directly',
+          )}`,
+        });
+
+        if (installCocoapods) {
+          await installPods(loader);
+        }
+      }
     } else {
       loader.succeed('Dependencies installation skipped');
     }

@@ -17,7 +17,7 @@ const dependencyHash = 'd41d8cd98f00b204e9800998ecf8427e';
 const packageJson = {
   name: 'test-package',
   dependencies: {dep1: '1.0.0'},
-  devDependencies: {dep2: '2.0.0'},
+  devDependencies: {dep2: '1.0.0'},
 };
 
 const commonDepConfig = {
@@ -25,6 +25,7 @@ const commonDepConfig = {
   platforms: {
     ios: {
       podspecPath: '',
+      version: '1.0.0',
       scriptPhases: [],
       configurations: [],
     },
@@ -72,12 +73,8 @@ describe('compareMd5Hashes', () => {
 
 describe('getIosDependencies', () => {
   it('should return only dependencies with native code', () => {
-    const dependencies = {
-      ...packageJson.dependencies,
-      ...packageJson.devDependencies,
-    };
-    const result = getIosDependencies(dependenciesConfig, dependencies);
-    expect(result).toEqual(['dep1@1.0.0', 'dep2@2.0.0']);
+    const result = getIosDependencies(dependenciesConfig);
+    expect(result).toEqual(['dep1@1.0.0', 'dep2@1.0.0']);
   });
 });
 
@@ -128,14 +125,7 @@ describe('resolvePods', () => {
     await resolvePods(DIR, {
       dep1: {
         name: 'dep1',
-        root: '',
-        platforms: {
-          ios: {
-            podspecPath: '',
-            scriptPhases: [],
-            configurations: [],
-          },
-        },
+        ...commonDepConfig,
       },
     });
 

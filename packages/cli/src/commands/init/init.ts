@@ -18,7 +18,6 @@ import {
 } from './template';
 import {changePlaceholderInTemplate} from './editTemplate';
 import * as PackageManager from '../../tools/packageManager';
-import {installPods} from '@react-native-community/cli-doctor';
 import banner from './banner';
 import TemplateAndVersionError from './errors/TemplateAndVersionError';
 import {getBunVersionIfAvailable} from '../../tools/bun';
@@ -197,10 +196,6 @@ async function installDependencies({
     silent: true,
     root,
   });
-
-  if (process.platform === 'darwin') {
-    await installPods(loader);
-  }
 
   loader.succeed();
 }

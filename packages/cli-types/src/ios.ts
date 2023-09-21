@@ -28,7 +28,7 @@ export interface IOSDependencyConfig {
 
 export type IOSDependencyParams = Omit<
   Partial<IOSDependencyConfig>,
-  'podspecPath'
+  'podspecPath' | 'version'
 >;
 
 /**

@@ -122,6 +122,7 @@ export const projectConfig = t
               // IOSDependencyConfig
               .object({
                 podspecPath: t.string(),
+                version: t.string(),
                 configurations: t.array().items(t.string()).default([]),
                 scriptPhases: t.array().items(t.object()).default([]),
               })

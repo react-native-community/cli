@@ -17,6 +17,7 @@ import {
   IOSProjectConfig,
   IOSDependencyConfig,
 } from '@react-native-community/cli-types';
+import {CLIError} from '@react-native-community/cli-tools';
 
 /**
  * Returns project config by analyzing given folder and applying some user defaults
@@ -66,8 +67,13 @@ export function dependencyConfig(
     return null;
   }
 
-  const packageJson = require(path.join(folder, 'package.json'));
-  const version = packageJson.version;
+  let version = '';
+  try {
+    const packageJson = require(path.join(folder, 'package.json'));
+    version = packageJson.version;
+  } catch {
+    throw new CLIError(`Could not read package.json file from ${folder}`);
+  }
 
   return {
     podspecPath,

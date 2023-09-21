@@ -9,7 +9,10 @@ import {
 } from '@react-native-community/cli-tools';
 import installPods from './installPods';
 import findPodfilePath from '../config/findPodfilePath';
-import {DependencyConfig} from '@react-native-community/cli-types';
+import {
+  DependencyConfig,
+  IOSDependencyConfig,
+} from '@react-native-community/cli-types';
 
 interface ResolvePodsOptions {
   forceInstall?: boolean;
@@ -28,7 +31,10 @@ export function getIosDependencies(dependencies: NativeDependencies) {
     .filter((dependency) => dependencies[dependency].platforms.ios)
     .map(
       (dependency) =>
-        `${dependency}@${dependencies[dependency].platforms.ios?.version}`,
+        `${dependency}@${
+          (dependencies[dependency].platforms.ios as IOSDependencyConfig)
+            .version
+        }`,
     )
     .sort();
 }

@@ -7,8 +7,8 @@ import {
   NoopLoader,
   link,
   CLIError,
+  runSudo,
 } from '@react-native-community/cli-tools';
-import sudo from 'sudo-prompt';
 import runBundleInstall from './runBundleInstall';
 
 interface PodInstallOptions {
@@ -75,18 +75,6 @@ async function runPodUpdate(loader: Ora) {
       )}`,
     );
   }
-}
-
-function runSudo(command: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    sudo.exec(command, {name: 'React Native CLI'}, (error) => {
-      if (error) {
-        reject(error);
-      }
-
-      resolve();
-    });
-  });
 }
 
 async function installCocoaPodsWithGem() {
@@ -157,6 +145,6 @@ async function installPods(loader?: Ora, options?: PodInstallOptions) {
   }
 }
 
-export {runSudo, installCocoaPods};
+export {installCocoaPods};
 
 export default installPods;

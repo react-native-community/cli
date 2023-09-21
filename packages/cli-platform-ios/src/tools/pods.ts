@@ -9,18 +9,27 @@ import {
 } from '@react-native-community/cli-tools';
 import installPods from './installPods';
 import findPodfilePath from '../config/findPodfilePath';
+import {DependencyConfig} from '@react-native-community/cli-types';
 
 interface ResolvePodsOptions {
   forceInstall?: boolean;
+}
+
+interface NativeDependencies {
+  [key: string]: DependencyConfig;
 }
 
 export function getPackageJson(root: string) {
   return require(path.join(root, 'package.json'));
 }
 
-export function normalizeDependencies(dependencies: Record<string, string>) {
-  return Object.entries(dependencies)
-    .map(([name, version]) => `${name}@${version}`)
+export function getIosDependencies(
+  dependencies: NativeDependencies,
+  dependenciesVersions: Record<string, string>,
+) {
+  return Object.keys(dependencies)
+    .filter((dependency) => dependencies[dependency].platforms.ios)
+    .map((dependency) => `${dependency}@${dependenciesVersions[dependency]}`)
     .sort();
 }
 
@@ -38,6 +47,7 @@ export function compareMd5Hashes(hash1: string, hash2: string) {
 
 export default async function resolvePods(
   root: string,
+  nativeDependencies: NativeDependencies,
   options?: ResolvePodsOptions,
 ) {
   const packageJson = getPackageJson(root);
@@ -47,11 +57,16 @@ export default async function resolvePods(
     : path.join(root, 'ios');
   const podsPath = path.join(iosFolderPath, 'Pods');
   const arePodsInstalled = fs.existsSync(podsPath);
-  const dependencies = normalizeDependencies({
+  const dependenciesVersions = {
     ...packageJson.dependencies,
     ...packageJson.devDependencies,
-  });
-  const dependenciesString = dependenciesToString(dependencies);
+  };
+  const iosDependencies = getIosDependencies(
+    nativeDependencies,
+    dependenciesVersions,
+  );
+
+  const dependenciesString = dependenciesToString(iosDependencies);
   const currentDependenciesHash = generateMd5Hash(dependenciesString);
   const cachedDependenciesHash = cacheManager.get(
     packageJson.name,

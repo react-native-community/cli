@@ -52,4 +52,8 @@ export const buildOptions = [
     description:
       'Explicitly select which scheme and configuration to use before running a build',
   },
+  {
+    name: '--force-pods',
+    description: 'Force CocoaPods installation',
+  },
 ];

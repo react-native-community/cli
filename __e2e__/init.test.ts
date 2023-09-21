@@ -79,6 +79,8 @@ test('init --template filepath', () => {
     '--template',
     templatePath,
     'TestInit',
+    '--install-pods',
+    'false',
   ]);
 
   expect(stdout).toContain('Run instructions');
@@ -103,6 +105,8 @@ test('init --template file with custom directory', () => {
     projectName,
     '--directory',
     'custom-path',
+    '--install-pods',
+    'false',
   ]);
 
   // make sure --directory option is used in run instructions
@@ -149,6 +153,8 @@ test('init uses npm as the package manager with --npm', () => {
     templatePath,
     'TestInit',
     '--npm',
+    '--install-pods',
+    'false',
   ]);
 
   expect(stdout).toContain('Run instructions');

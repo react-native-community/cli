@@ -186,7 +186,7 @@ async function createFromTemplate({
           const {installCocoapods} = await prompt({
             type: 'confirm',
             name: 'installCocoapods',
-            message: `Do you want to install CocoaPods? ${chalk.reset.dim(
+            message: `Do you want to install CocoaPods now? ${chalk.reset.dim(
               'Only needed if you run your project in Xcode directly',
             )}`,
           });

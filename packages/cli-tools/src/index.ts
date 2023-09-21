@@ -14,5 +14,6 @@ export * as link from './doclink';
 export {default as startServerInNewWindow} from './startServerInNewWindow';
 export {default as handlePortUnavailable} from './handlePortUnavailable';
 export * from './port';
+export {default as cacheManager} from './releaseChecker/releaseCacheManager';
 
 export * from './errors';

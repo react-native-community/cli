@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
+import chalk from 'chalk';
 import path from 'path';
 import fs from 'fs';
 import findPodfilePath from './findPodfilePath';
@@ -67,12 +68,20 @@ export function dependencyConfig(
     return null;
   }
 
-  let version = '';
+  let version = 'unresolved';
+
   try {
     const packageJson = require(path.join(folder, 'package.json'));
-    version = packageJson.version;
+
+    if (packageJson.version) {
+      version = packageJson.version;
+    }
   } catch {
-    throw new CLIError(`Could not read package.json file from ${folder}`);
+    throw new CLIError(
+      `Failed to locate package.json file from ${chalk.underline(
+        folder,
+      )}. This is most likely issue with your node_modules folder being corrupted. Please force install dependencies and try again`,
+    );
   }
 
   return {

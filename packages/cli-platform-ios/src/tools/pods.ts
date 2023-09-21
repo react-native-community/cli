@@ -41,7 +41,6 @@ export default async function resolvePods(
 ) {
   const packageJson = getPackageJson(root);
   const podsPath = path.join(root, 'ios', 'Pods');
-  console.log({packageJson, podsPath});
   const arePodsInstalled = fs.existsSync(podsPath);
   const dependencies = normalizeDependencies({
     ...packageJson.dependencies,
@@ -53,10 +52,6 @@ export default async function resolvePods(
     packageJson.name,
     'dependencies',
   );
-
-  if (!cachedDependenciesHash) {
-    cacheManager.set(packageJson.name, 'dependencies', currentDependenciesHash);
-  }
 
   if (
     !cachedDependenciesHash ||

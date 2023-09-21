@@ -23,13 +23,13 @@ export function getPackageJson(root: string) {
   return require(path.join(root, 'package.json'));
 }
 
-export function getIosDependencies(
-  dependencies: NativeDependencies,
-  dependenciesVersions: Record<string, string>,
-) {
+export function getIosDependencies(dependencies: NativeDependencies) {
   return Object.keys(dependencies)
     .filter((dependency) => dependencies[dependency].platforms.ios)
-    .map((dependency) => `${dependency}@${dependenciesVersions[dependency]}`)
+    .map(
+      (dependency) =>
+        `${dependency}@${dependencies[dependency].platforms.ios?.version}`,
+    )
     .sort();
 }
 
@@ -57,15 +57,7 @@ export default async function resolvePods(
     : path.join(root, 'ios');
   const podsPath = path.join(iosFolderPath, 'Pods');
   const arePodsInstalled = fs.existsSync(podsPath);
-  const dependenciesVersions = {
-    ...packageJson.dependencies,
-    ...packageJson.devDependencies,
-  };
-  const iosDependencies = getIosDependencies(
-    nativeDependencies,
-    dependenciesVersions,
-  );
-
+  const iosDependencies = getIosDependencies(nativeDependencies);
   const dependenciesString = dependenciesToString(iosDependencies);
   const currentDependenciesHash = generateMd5Hash(dependenciesString);
   const cachedDependenciesHash = cacheManager.get(

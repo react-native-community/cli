@@ -21,6 +21,7 @@ export interface IOSProjectConfig {
 
 export interface IOSDependencyConfig {
   podspecPath: string;
+  version: string;
   scriptPhases: Array<IOSScriptPhase>;
   configurations: string[];
 }

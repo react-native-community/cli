@@ -66,8 +66,12 @@ export function dependencyConfig(
     return null;
   }
 
+  const packageJson = require(path.join(folder, 'package.json'));
+  const version = packageJson.version;
+
   return {
     podspecPath,
+    version,
     configurations: userConfig.configurations || [],
     scriptPhases: userConfig.scriptPhases || [],
   };

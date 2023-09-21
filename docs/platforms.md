@@ -111,6 +111,7 @@ On Android and iOS, this function returns a dependency configuration for:
 ```ts
 type IOSDependencyConfig = {
   podspecPath: string;
+  version: string;
   scriptPhases: Array<IOSScriptPhase>;
   configurations: string[];
 };

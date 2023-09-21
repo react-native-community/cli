@@ -41,7 +41,7 @@ type Options = {
   skipInstall?: boolean;
   version?: string;
   packageName?: string;
-  installPods?: string;
+  installPods?: string | boolean;
 };
 
 interface TemplateOptions {
@@ -53,7 +53,7 @@ interface TemplateOptions {
   projectTitle?: string;
   skipInstall?: boolean;
   packageName?: string;
-  installCocoaPods?: string;
+  installCocoaPods?: string | boolean;
 }
 
 function doesDirectoryExist(dir: string) {

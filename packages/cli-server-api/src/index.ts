@@ -7,6 +7,7 @@ import nocache from 'nocache';
 import serveStatic from 'serve-static';
 import {debuggerUIMiddleware} from '@react-native-community/cli-debugger-ui';
 
+import devToolsMiddleware from './devToolsMiddleware';
 import indexPageMiddleware from './indexPageMiddleware';
 import openStackFrameInEditorMiddleware from './openStackFrameInEditorMiddleware';
 import openURLMiddleware from './openURLMiddleware';
@@ -19,6 +20,7 @@ import createDebuggerProxyEndpoint from './websocket/createDebuggerProxyEndpoint
 import createMessageSocketEndpoint from './websocket/createMessageSocketEndpoint';
 import createEventsSocketEndpoint from './websocket/createEventsSocketEndpoint';
 
+export {devToolsMiddleware};
 export {indexPageMiddleware};
 export {openStackFrameInEditorMiddleware};
 export {openURLMiddleware};
@@ -35,6 +37,7 @@ type MiddlewareOptions = {
 
 export function createDevServerMiddleware(options: MiddlewareOptions) {
   const debuggerProxyEndpoint = createDebuggerProxyEndpoint();
+  const isDebuggerConnected = debuggerProxyEndpoint.isDebuggerConnected;
 
   const messageSocketEndpoint = createMessageSocketEndpoint();
   const broadcast = messageSocketEndpoint.broadcast;
@@ -47,6 +50,10 @@ export function createDevServerMiddleware(options: MiddlewareOptions) {
     .use(compression())
     .use(nocache())
     .use('/debugger-ui', debuggerUIMiddleware())
+    .use(
+      '/launch-js-devtools',
+      devToolsMiddleware(options, isDebuggerConnected),
+    )
     .use('/open-stack-frame', openStackFrameInEditorMiddleware(options))
     .use('/open-url', openURLMiddleware)
     .use('/status', statusPageMiddleware)

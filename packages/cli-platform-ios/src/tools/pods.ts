@@ -23,7 +23,13 @@ interface NativeDependencies {
 }
 
 export function getPackageJson(root: string) {
-  return require(path.join(root, 'package.json'));
+  try {
+    return require(path.join(root, 'package.json'));
+  } catch {
+    throw new CLIError(
+      'No package.json found. Please make sure the file exists in the current folder.',
+    );
+  }
 }
 
 export function getIosDependencies(dependencies: NativeDependencies) {

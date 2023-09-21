@@ -8,6 +8,7 @@ import {
   getLoader,
 } from '@react-native-community/cli-tools';
 import installPods from './installPods';
+import findPodfilePath from '../config/findPodfilePath';
 
 interface ResolvePodsOptions {
   forceInstall?: boolean;
@@ -40,7 +41,11 @@ export default async function resolvePods(
   options?: ResolvePodsOptions,
 ) {
   const packageJson = getPackageJson(root);
-  const podsPath = path.join(root, 'ios', 'Pods');
+  const podfilePath = findPodfilePath(root);
+  const iosFolderPath = podfilePath
+    ? podfilePath.slice(0, podfilePath.lastIndexOf('/'))
+    : path.join(root, 'ios');
+  const podsPath = path.join(iosFolderPath, 'Pods');
   const arePodsInstalled = fs.existsSync(podsPath);
   const dependencies = normalizeDependencies({
     ...packageJson.dependencies,

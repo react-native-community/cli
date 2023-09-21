@@ -1,6 +1,12 @@
 import path from 'path';
+import fs from 'fs-extra';
 import md5 from 'crypto-js/md5';
-import {cacheManager, getLoader} from '@react-native-community/cli-tools';
+import chalk from 'chalk';
+import {
+  CLIError,
+  cacheManager,
+  getLoader,
+} from '@react-native-community/cli-tools';
 import installPods from './installPods';
 
 export function getPackageJson(root: string) {
@@ -27,6 +33,8 @@ function compareMd5Hashes(hash1: string, hash2: string) {
 
 export default async function resolvePods(root: string) {
   const packageJson = getPackageJson(root);
+  const podsPath = path.join(root, 'ios', 'Pods');
+  const arePodsInstalled = fs.existsSync(podsPath);
   const dependencies = normalizeDependencies({
     ...packageJson.dependencies,
     ...packageJson.devDependencies,
@@ -44,9 +52,25 @@ export default async function resolvePods(root: string) {
 
   if (
     !cachedDependenciesHash ||
-    !compareMd5Hashes(currentDependenciesHash, cachedDependenciesHash)
+    !compareMd5Hashes(currentDependenciesHash, cachedDependenciesHash) ||
+    !arePodsInstalled
   ) {
     const loader = getLoader('Installing CocoaPods...');
-    await installPods(loader);
+    try {
+      await installPods(loader, {skipBundleInstall: !!cachedDependenciesHash});
+      cacheManager.set(
+        packageJson.name,
+        'dependencies',
+        currentDependenciesHash,
+      );
+      loader.succeed();
+    } catch {
+      loader.fail();
+      throw new CLIError(
+        `Something when wrong while installing CocoaPods. Please run ${chalk.bold(
+          'pod install',
+        )} manually`,
+      );
+    }
   }
 }

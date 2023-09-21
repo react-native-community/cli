@@ -11,6 +11,10 @@ import {
 import sudo from 'sudo-prompt';
 import runBundleInstall from './runBundleInstall';
 
+interface PodInstallOptions {
+  skipBundleInstall?: boolean;
+}
+
 async function runPodInstall(
   loader: Ora,
   shouldHandleRepoUpdate: boolean = true,
@@ -118,7 +122,7 @@ async function installCocoaPods(loader: Ora) {
   }
 }
 
-async function installPods(loader?: Ora) {
+async function installPods(loader?: Ora, options?: PodInstallOptions) {
   loader = loader || new NoopLoader();
   try {
     if (!fs.existsSync('ios')) {
@@ -133,7 +137,7 @@ async function installPods(loader?: Ora) {
       return;
     }
 
-    if (fs.existsSync('../Gemfile')) {
+    if (fs.existsSync('../Gemfile') && !options?.skipBundleInstall) {
       await runBundleInstall(loader);
     }
 

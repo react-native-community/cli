@@ -48,6 +48,9 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
 
   let {packager, port} = args;
 
+  // check if pods need to be installed
+  await resolvePods(ctx.root);
+
   const packagerStatus = await isPackagerRunning(port);
 
   if (
@@ -80,8 +83,6 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   }
 
   const {xcodeProject, sourceDir} = getXcodeProjectAndDir(ctx.project.ios);
-
-  await resolvePods(ctx.root);
 
   process.chdir(sourceDir);
 

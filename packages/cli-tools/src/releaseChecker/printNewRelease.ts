@@ -4,7 +4,7 @@ import * as link from '../doclink';
 
 import logger from '../logger';
 import {Release} from './getLatestRelease';
-import cacheManager from './releaseCacheManager';
+import cacheManager from '../cacheManager';
 
 /**
  * Notifies the user that a newer version of React Native is available.

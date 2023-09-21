@@ -10,7 +10,6 @@
     "@react-native-community/cli-tools": "12.0.0-alpha.13",
     "@react-native-community/cli-doctor": "12.0.0-alpha.13",
     "chalk": "^4.1.2",
-    "crypto-js": "^4.1.1",
     "execa": "^5.0.0",
     "fast-xml-parser": "^4.0.12",
     "glob": "^7.1.3",
@@ -18,7 +17,6 @@
   },
   "devDependencies": {
     "@react-native-community/cli-types": "12.0.0-alpha.13",
-    "@types/crypto-js": "^4.1.2",
     "@types/glob": "^7.1.1",
     "@types/lodash": "^4.14.149",
     "hasbin": "^1.2.3"

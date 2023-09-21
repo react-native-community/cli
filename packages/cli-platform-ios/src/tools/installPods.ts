@@ -1,6 +1,6 @@
 import fs from 'fs';
 import execa from 'execa';
-import {Ora} from 'ora';
+import type {Ora} from 'ora';
 import chalk from 'chalk';
 import {
   logger,

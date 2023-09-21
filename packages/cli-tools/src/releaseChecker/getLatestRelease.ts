@@ -1,5 +1,5 @@
 import semver from 'semver';
-import cacheManager from './releaseCacheManager';
+import cacheManager from '../cacheManager';
 import {fetch} from '../fetch';
 import logger from '../logger';
 

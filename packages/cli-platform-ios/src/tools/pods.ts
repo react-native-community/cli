@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs-extra';
-import md5 from 'crypto-js/md5';
+import {createHash} from 'crypto';
 import chalk from 'chalk';
 import {
   CLIError,
@@ -28,7 +28,7 @@ export function dependenciesToString(dependencies: string[]) {
 }
 
 export function generateMd5Hash(text: string) {
-  return md5(text).toString();
+  return createHash('md5').update(text).digest('hex');
 }
 
 export function compareMd5Hashes(hash1: string, hash2: string) {

@@ -9,6 +9,10 @@ import {
 } from '@react-native-community/cli-tools';
 import installPods from './installPods';
 
+interface ResolvePodsOptions {
+  forceInstall?: boolean;
+}
+
 export function getPackageJson(root: string) {
   return require(path.join(root, 'package.json'));
 }
@@ -31,7 +35,10 @@ function compareMd5Hashes(hash1: string, hash2: string) {
   return hash1 === hash2;
 }
 
-export default async function resolvePods(root: string) {
+export default async function resolvePods(
+  root: string,
+  options?: ResolvePodsOptions,
+) {
   const packageJson = getPackageJson(root);
   const podsPath = path.join(root, 'ios', 'Pods');
   const arePodsInstalled = fs.existsSync(podsPath);
@@ -53,7 +60,8 @@ export default async function resolvePods(root: string) {
   if (
     !cachedDependenciesHash ||
     !compareMd5Hashes(currentDependenciesHash, cachedDependenciesHash) ||
-    !arePodsInstalled
+    !arePodsInstalled ||
+    options?.forceInstall
   ) {
     const loader = getLoader('Installing CocoaPods...');
     try {

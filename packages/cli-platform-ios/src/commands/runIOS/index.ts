@@ -49,7 +49,7 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   let {packager, port} = args;
 
   // check if pods need to be installed
-  await resolvePods(ctx.root);
+  await resolvePods(ctx.root, {forceInstall: args.forcePods});
 
   const packagerStatus = await isPackagerRunning(port);
 

@@ -27,11 +27,11 @@ export function dependenciesToString(dependencies: string[]) {
   return dependencies.join('\n');
 }
 
-function generateMd5Hash(text: string) {
+export function generateMd5Hash(text: string) {
   return md5(text).toString();
 }
 
-function compareMd5Hashes(hash1: string, hash2: string) {
+export function compareMd5Hashes(hash1: string, hash2: string) {
   return hash1 === hash2;
 }
 
@@ -41,6 +41,7 @@ export default async function resolvePods(
 ) {
   const packageJson = getPackageJson(root);
   const podsPath = path.join(root, 'ios', 'Pods');
+  console.log({packageJson, podsPath});
   const arePodsInstalled = fs.existsSync(podsPath);
   const dependencies = normalizeDependencies({
     ...packageJson.dependencies,

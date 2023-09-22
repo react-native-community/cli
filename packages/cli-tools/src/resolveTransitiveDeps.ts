@@ -21,6 +21,10 @@ export function isUsingYarn(root: string) {
   return fs.existsSync(path.join(root, 'yarn.lock'));
 }
 
+function writeFile(filePath: string, content: string) {
+  fs.writeFileSync(filePath, content, {encoding: 'utf8'});
+}
+
 async function fetchAvailableVersions(packageName: string): Promise<string[]> {
   const response = await fetch.json(`/${packageName}`);
 
@@ -170,6 +174,74 @@ function filterInstalledPeers(
   return data;
 }
 
+function findPeerDepsToInstall(
+  root: string,
+  dependencies: Map<string, DependencyData>,
+) {
+  const rootPackageJson = require(path.join(root, 'package.json'));
+  const dependencyList = {
+    ...rootPackageJson.dependencies,
+    ...rootPackageJson.devDependencies,
+  };
+  const peerDependencies = new Set<string>();
+  dependencies.forEach((value) => {
+    if (value.peerDependencies) {
+      Object.keys(value.peerDependencies).forEach((name) => {
+        if (!Object.keys(dependencyList).includes(name)) {
+          peerDependencies.add(name);
+        }
+      });
+    }
+  });
+
+  return peerDependencies;
+}
+async function getMissingPeerDepsForYarn(root: string) {
+  const dependencies = collectDependencies(root);
+  const depsToInstall = findPeerDepsToInstall(root, dependencies);
+
+  return depsToInstall;
+}
+
+// install peer deps with yarn without making any changes to package.json and yarn.lock
+async function yarnSilentInstallPeerDeps(root: string) {
+  const dependenciesToInstall = await getMissingPeerDepsForYarn(root);
+  const packageJsonPath = path.join(root, 'package.json');
+  const lockfilePath = path.join(root, 'yarn.lock');
+
+  if (dependenciesToInstall.size > 0) {
+    const binPackageJson = fs.readFileSync(packageJsonPath, {
+      encoding: 'utf8',
+    });
+    const binLockfile = fs.readFileSync(lockfilePath, {
+      encoding: 'utf8',
+    });
+
+    if (!binPackageJson) {
+      logger.error('package.json is missing');
+      return;
+    }
+
+    if (!binLockfile) {
+      logger.error('yarn.lock is missing');
+      return;
+    }
+    const loader = getLoader({text: 'Verifying dependencies...'});
+
+    loader.start();
+    try {
+      execa.sync('yarn', ['add', ...dependenciesToInstall]);
+      loader.succeed();
+    } catch {
+      loader.fail('Failed to verify peer dependencies');
+      return;
+    }
+
+    writeFile(packageJsonPath, binPackageJson);
+    writeFile(lockfilePath, binLockfile);
+  }
+}
+
 export default async function findPeerDepsForAutolinking(root: string) {
   const deps = collectDependencies(root);
   const nonEmptyPeers = filterNativeDependencies(root, deps);
@@ -240,7 +312,10 @@ async function getPackagesVersion(
   return workingVersions;
 }
 
-function installMissingPackages(packages: Record<string, string | null>) {
+function installMissingPackages(
+  packages: Record<string, string | null>,
+  yarn = true,
+) {
   const packageVersions = Object.entries(packages).map(
     ([name, version]) => `${name}@^${version}`,
   );
@@ -249,7 +324,12 @@ function installMissingPackages(packages: Record<string, string | null>) {
   const loader = getLoader({text: 'Installing peer dependencies...'});
   loader.start();
   try {
-    execa.sync('npm', ['install', ...flattenList.map((dep) => dep)]);
+    const deps = flattenList.map((dep) => dep);
+    if (yarn) {
+      execa.sync('yarn', ['add', ...deps]);
+    } else {
+      execa.sync('npm', ['install', ...deps]);
+    }
     loader.succeed();
 
     return true;
@@ -262,6 +342,11 @@ function installMissingPackages(packages: Record<string, string | null>) {
 
 export async function resolveTransitiveDeps() {
   const root = process.cwd();
+  const isYarn = isUsingYarn(root);
+
+  if (isYarn) {
+    await yarnSilentInstallPeerDeps(root);
+  }
 
   const missingPeerDependencies = await findPeerDepsForAutolinking(root);
 
@@ -275,7 +360,7 @@ export async function resolveTransitiveDeps() {
         missingPeerDependencies,
       );
 
-      return installMissingPackages(packagesVersions);
+      return installMissingPackages(packagesVersions, isYarn);
     }
   }
 

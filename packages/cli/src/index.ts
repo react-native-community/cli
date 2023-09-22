@@ -175,9 +175,7 @@ async function setupAndRun() {
     }
   }
 
-  if (!transitiveDeps.isUsingYarn(process.cwd())) {
-    await transitiveDeps.checkTransitiveDeps();
-  }
+  await transitiveDeps.checkTransitiveDeps();
 
   let config: Config | undefined;
 

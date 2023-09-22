@@ -306,7 +306,16 @@ async function getPackagesVersion(
       ranges,
       availableVersions,
     );
-    workingVersions[packageName] = workingVersion;
+
+    if (workingVersion !== null) {
+      workingVersions[packageName] = workingVersion;
+    } else {
+      logger.warn(
+        `Could not find a version that matches all ranges for ${chalk.bold(
+          packageName,
+        )}. Please resolve this issue manually.`,
+      );
+    }
   }
 
   return workingVersions;

@@ -41,6 +41,7 @@ const handleError = (err: Error) => {
   }
   process.exit(1);
 };
+
 function printExamples(examples: Command['examples']) {
   let output: string[] = [];
 
@@ -172,7 +173,6 @@ async function setupAndRun() {
   }
 
   let config: Config | undefined;
-
   try {
     config = loadConfig();
 

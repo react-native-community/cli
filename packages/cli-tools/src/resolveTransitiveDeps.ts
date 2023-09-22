@@ -10,7 +10,7 @@ import generateFileHash from './generateFileHash';
 import {getLoader} from './loader';
 import logger from './logger';
 
-interface DependencyData {
+export interface DependencyData {
   path: string;
   version: string;
   peerDependencies: {[key: string]: string};
@@ -25,16 +25,18 @@ function writeFile(filePath: string, content: string) {
   fs.writeFileSync(filePath, content, {encoding: 'utf8'});
 }
 
-async function fetchAvailableVersions(packageName: string): Promise<string[]> {
+export async function fetchAvailableVersions(
+  packageName: string,
+): Promise<string[]> {
   const response = await fetch.json(`/${packageName}`);
 
   return Object.keys(response.versions || {});
 }
 
-async function calculateWorkingVersion(
+export function calculateWorkingVersion(
   ranges: string[],
   availableVersions: string[],
-): Promise<string | null> {
+): string | null {
   const sortedVersions = availableVersions
     .filter((version) =>
       ranges.every((range) => semver.satisfies(version, range)),
@@ -44,7 +46,7 @@ async function calculateWorkingVersion(
   return sortedVersions.length > 0 ? sortedVersions[0] : null;
 }
 
-function findDependencyPath(
+export function findDependencyPath(
   dependencyName: string,
   rootPath: string,
   parentPath: string,
@@ -62,7 +64,7 @@ function findDependencyPath(
   return dependencyPath;
 }
 
-function collectDependencies(root: string): Map<string, DependencyData> {
+export function collectDependencies(root: string): Map<string, DependencyData> {
   const dependencies = new Map<string, DependencyData>();
 
   const checkDependency = (dependencyPath: string) => {
@@ -117,7 +119,7 @@ function collectDependencies(root: string): Map<string, DependencyData> {
   return dependencies;
 }
 
-function filterNativeDependencies(
+export function filterNativeDependencies(
   root: string,
   dependencies: Map<string, DependencyData>,
 ) {
@@ -149,7 +151,7 @@ function filterNativeDependencies(
   return depsWithNativePeers;
 }
 
-function filterInstalledPeers(
+export function filterInstalledPeers(
   root: string,
   peers: Map<string, Map<string, string>>,
 ) {
@@ -174,7 +176,7 @@ function filterInstalledPeers(
   return data;
 }
 
-function findPeerDepsToInstall(
+export function findPeerDepsToInstall(
   root: string,
   dependencies: Map<string, DependencyData>,
 ) {
@@ -196,7 +198,7 @@ function findPeerDepsToInstall(
 
   return peerDependencies;
 }
-async function getMissingPeerDepsForYarn(root: string) {
+export function getMissingPeerDepsForYarn(root: string) {
   const dependencies = collectDependencies(root);
   const depsToInstall = findPeerDepsToInstall(root, dependencies);
 
@@ -204,8 +206,8 @@ async function getMissingPeerDepsForYarn(root: string) {
 }
 
 // install peer deps with yarn without making any changes to package.json and yarn.lock
-async function yarnSilentInstallPeerDeps(root: string) {
-  const dependenciesToInstall = await getMissingPeerDepsForYarn(root);
+export function yarnSilentInstallPeerDeps(root: string) {
+  const dependenciesToInstall = getMissingPeerDepsForYarn(root);
   const packageJsonPath = path.join(root, 'package.json');
   const lockfilePath = path.join(root, 'yarn.lock');
 
@@ -226,7 +228,7 @@ async function yarnSilentInstallPeerDeps(root: string) {
       logger.error('yarn.lock is missing');
       return;
     }
-    const loader = getLoader({text: 'Verifying dependencies...'});
+    const loader = getLoader({text: 'Looking for peer dependencies...'});
 
     loader.start();
     try {
@@ -242,7 +244,7 @@ async function yarnSilentInstallPeerDeps(root: string) {
   }
 }
 
-async function findPeerDepsForAutolinking(root: string) {
+function findPeerDepsForAutolinking(root: string) {
   const deps = collectDependencies(root);
   const nonEmptyPeers = filterNativeDependencies(root, deps);
   const nonInstalledPeers = filterInstalledPeers(root, nonEmptyPeers);
@@ -250,7 +252,7 @@ async function findPeerDepsForAutolinking(root: string) {
   return nonInstalledPeers;
 }
 
-async function promptForMissingPeerDependencies(
+export async function promptForMissingPeerDependencies(
   dependencies: Record<string, Record<string, string>>,
 ): Promise<boolean> {
   logger.warn(
@@ -277,7 +279,6 @@ async function promptForMissingPeerDependencies(
     message:
       'Do you want to install them now? The matching versions will be added as project dependencies and become visible for autolinking.',
   });
-
   return install;
 }
 
@@ -302,10 +303,7 @@ async function getPackagesVersion(
   for (const packageName in packageToRanges) {
     const ranges = packageToRanges[packageName];
     const availableVersions = await fetchAvailableVersions(packageName);
-    const workingVersion = await calculateWorkingVersion(
-      ranges,
-      availableVersions,
-    );
+    const workingVersion = calculateWorkingVersion(ranges, availableVersions);
 
     if (workingVersion !== null) {
       workingVersions[packageName] = workingVersion;
@@ -349,16 +347,13 @@ function installMissingPackages(
   }
 }
 
-async function resolveTransitiveDeps() {
-  const root = process.cwd();
+export async function resolveTransitiveDeps(root: string) {
   const isYarn = isUsingYarn(root);
-
   if (isYarn) {
-    await yarnSilentInstallPeerDeps(root);
+    yarnSilentInstallPeerDeps(root);
   }
 
-  const missingPeerDependencies = await findPeerDepsForAutolinking(root);
-
+  const missingPeerDependencies = findPeerDepsForAutolinking(root);
   if (Object.keys(missingPeerDependencies).length > 0) {
     const installDeps = await promptForMissingPeerDependencies(
       missingPeerDependencies,
@@ -393,9 +388,10 @@ async function resolvePodsInstallation() {
 }
 
 export default async function checkTransitiveDependencies() {
+  const root = process.cwd();
   const packageJsonPath = path.join(process.cwd(), 'package.json');
   const preInstallHash = generateFileHash(packageJsonPath);
-  const areTransitiveDepsInstalled = await resolveTransitiveDeps();
+  const areTransitiveDepsInstalled = await resolveTransitiveDeps(root);
   const postInstallHash = generateFileHash(packageJsonPath);
 
   if (

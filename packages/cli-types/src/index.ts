@@ -135,6 +135,7 @@ export type UserConfig = Omit<Config, 'root'> & {
     ios?: IOSProjectParams;
     [key: string]: any;
   };
+  unstable_autolinkPeerDependencies?: boolean;
 };
 
 export type UserDependencyConfig = {

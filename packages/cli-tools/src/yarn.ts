@@ -8,8 +8,8 @@
 
 import {execSync} from 'child_process';
 import semver from 'semver';
-import {logger} from '@react-native-community/cli-tools';
 import findUp from 'find-up';
+import logger from './logger';
 
 /**
  * Use Yarn if available, it's much faster than the npm client.

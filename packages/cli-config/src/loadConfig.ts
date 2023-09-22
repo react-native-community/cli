@@ -11,6 +11,7 @@ import {
   version,
   resolveNodeModuleDir,
   UnknownProjectError,
+  resolveTransitiveDeps,
 } from '@react-native-community/cli-tools';
 import findDependencies from './findDependencies';
 import resolveReactNativePath from './resolveReactNativePath';
@@ -75,7 +76,9 @@ function getReactNativeVersion(reactNativePath: string) {
 /**
  * Loads CLI configuration
  */
-function loadConfig(projectRoot: string = findProjectRoot()): Config {
+async function loadConfig(
+  projectRoot: string = findProjectRoot(),
+): Promise<Config> {
   let lazyProject: ProjectConfig;
   const userConfig = readConfigFromDisk(projectRoot);
 
@@ -113,11 +116,19 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
     },
   };
 
+  const dependencyMap = findDependencies(projectRoot);
+  let dependencies = Array.from(dependencyMap.keys());
+
+  if (userConfig.unstable_autolinkPeerDependencies) {
+    const installedDependencies = await resolveTransitiveDeps(
+      projectRoot,
+      dependencyMap,
+    );
+    dependencies = [...dependencies, ...installedDependencies];
+  }
+
   const finalConfig = Array.from(
-    new Set([
-      ...Object.keys(userConfig.dependencies),
-      ...findDependencies(projectRoot),
-    ]),
+    new Set([...Object.keys(userConfig.dependencies), ...dependencies]),
   ).reduce((acc: Config, dependencyName) => {
     const localDependencyRoot =
       userConfig.dependencies[dependencyName] &&

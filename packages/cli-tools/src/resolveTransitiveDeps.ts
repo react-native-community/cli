@@ -5,9 +5,10 @@ import chalk from 'chalk';
 import {prompt} from 'prompts';
 import execa from 'execa';
 import semver from 'semver';
-import {getLoader, logger} from '@react-native-community/cli-tools';
 import {DependencyMap} from '@react-native-community/cli-types';
 import {isProjectUsingYarn} from './yarn';
+import {getLoader} from './loader';
+import logger from './logger';
 
 export async function fetchAvailableVersions(
   packageName: string,

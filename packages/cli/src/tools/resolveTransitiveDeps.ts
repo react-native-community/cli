@@ -4,7 +4,6 @@ import {getLoader, logger} from '@react-native-community/cli-tools';
 import chalk from 'chalk';
 import {prompt} from 'prompts';
 import execa from 'execa';
-import semver from 'semver';
 
 interface DependencyInfo {
   path: string;
@@ -92,55 +91,6 @@ function excludeInstalledPeerDependencies(
   return missingPeerDependencies;
 }
 
-function getMatchingPackageVersion(
-  packageName: string,
-  range: string,
-  yarn = true,
-) {
-  if (yarn) {
-    const {stdout} = execa.sync('yarn', [
-      'info',
-      packageName,
-      'versions',
-      '--json',
-    ]);
-    const versions = JSON.parse(stdout).data as string[];
-    const satisfying = versions.filter((version) =>
-      semver.satisfies(version, range),
-    );
-    const maxSatisfying = semver.maxSatisfying(satisfying, range);
-
-    return maxSatisfying;
-  } else {
-    const {stdout} = execa.sync('npm', [
-      'view',
-      `${packageName}@${range}`,
-      'version',
-      '--json',
-    ]);
-    const versions = JSON.parse(stdout);
-    const maxSatisfying = semver.maxSatisfying(versions, range);
-    return maxSatisfying;
-  }
-}
-
-function flattenSemver(input) {
-  const result = {};
-  input.forEach((item) => {
-    Object.entries(item).forEach(([key, value]) => {
-      if (result[key]) {
-        if (value !== '*' && result[key] !== '*') {
-          result[key] = `${result[key]} && ${value}`;
-        }
-      } else {
-        result[key] = value;
-      }
-    });
-  });
-
-  return result;
-}
-
 export default async function installTransitiveDeps() {
   const root = process.cwd();
   const packageJsonPath = path.join(root, 'package.json');
@@ -178,34 +128,19 @@ export default async function installTransitiveDeps() {
     const loader = getLoader({text: 'Installing peer dependencies...'});
 
     if (install) {
-      let deps = {} as Record<string, string>;
-      const semverRanges = flattenSemver(Object.values(depsToInstall));
-
+      let deps = new Set();
       dependenciesWithMissingDeps.map((dep) => {
         const missingDeps = depsToInstall[dep];
-        Object.entries(missingDeps).map(([name]) => {
-          const version = getMatchingPackageVersion(
-            name,
-            semverRanges[name],
-            isYarn,
-          );
-          if (version) {
-            deps[name] = version;
-          }
-        });
+        deps.add(Object.keys(missingDeps));
       });
+      const arr = Array.from(deps) as string[];
+      const flat = [].concat(...arr);
       loader.start();
 
       if (isYarn) {
-        execa.sync('yarn', [
-          'add',
-          ...Object.entries(deps).map(([k, v]) => `${k}@^${v}`),
-        ]);
+        execa.sync('yarn', ['add', ...flat.map((dep) => dep)]);
       } else {
-        execa.sync('npm', [
-          'install',
-          ...Object.entries(deps).map(([k, v]) => `${k}@^${v}`),
-        ]);
+        execa.sync('npm', ['install', ...flat.map((dep) => dep)]);
       }
       loader.succeed();
     }

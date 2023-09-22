@@ -10,7 +10,11 @@ import childProcess from 'child_process';
 import {Command as CommanderCommand} from 'commander';
 import path from 'path';
 import {detachedCommands, projectCommands} from './commands';
-import installTransitiveDeps from './tools/resolveTransitiveDeps';
+import installTransitiveDeps, {
+  resolvePodsInstallation,
+} from './tools/resolveTransitiveDeps';
+import {isProjectUsingYarn} from './tools/yarn';
+import generateFileHash from './tools/generateFileHash';
 
 const pkgJson = require('../package.json');
 
@@ -42,7 +46,6 @@ const handleError = (err: Error) => {
   }
   process.exit(1);
 };
-
 function printExamples(examples: Command['examples']) {
   let output: string[] = [];
 
@@ -172,11 +175,23 @@ async function setupAndRun() {
       );
     }
   }
+  // for now, run only if project is using npm
+  if (
+    process.argv.includes('--dependency-check') &&
+    !isProjectUsingYarn(process.cwd())
+  ) {
+    const packageJsonPath = path.join(process.cwd(), 'package.json');
+    const preInstallHash = generateFileHash(packageJsonPath);
+    const areTransitiveDepsInstalled = await installTransitiveDeps();
+    const postInstallHash = generateFileHash(packageJsonPath);
 
-  // are peer dependencies installed?
-  await installTransitiveDeps();
+    if (areTransitiveDepsInstalled && preInstallHash !== postInstallHash) {
+      await resolvePodsInstallation();
+    }
+  }
 
   let config: Config | undefined;
+
   try {
     config = loadConfig();
 

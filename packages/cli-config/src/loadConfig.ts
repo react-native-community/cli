@@ -12,6 +12,7 @@ import {
   resolveNodeModuleDir,
   UnknownProjectError,
 } from '@react-native-community/cli-tools';
+import findDependencies from './findDependencies';
 import resolveReactNativePath from './resolveReactNativePath';
 import {
   readConfigFromDisk,
@@ -19,7 +20,6 @@ import {
 } from './readConfigFromDisk';
 import assign from './assign';
 import merge from './merge';
-import findDependencies from './findDependencies';
 
 function getDependencyConfig(
   root: string,

@@ -1,9 +1,5 @@
 import loadConfig from '@react-native-community/cli-config';
-import {
-  CLIError,
-  logger,
-  transitiveDeps,
-} from '@react-native-community/cli-tools';
+import {CLIError, logger} from '@react-native-community/cli-tools';
 import type {
   Command,
   Config,
@@ -174,8 +170,6 @@ async function setupAndRun() {
       );
     }
   }
-
-  await transitiveDeps.checkTransitiveDeps();
 
   let config: Config | undefined;
 

@@ -17,7 +17,7 @@ interface DependencyData {
   duplicates?: DependencyData[];
 }
 
-export function isUsingYarn(root: string) {
+function isUsingYarn(root: string) {
   return fs.existsSync(path.join(root, 'yarn.lock'));
 }
 
@@ -62,7 +62,7 @@ function findDependencyPath(
   return dependencyPath;
 }
 
-export function collectDependencies(root: string): Map<string, DependencyData> {
+function collectDependencies(root: string): Map<string, DependencyData> {
   const dependencies = new Map<string, DependencyData>();
 
   const checkDependency = (dependencyPath: string) => {
@@ -242,7 +242,7 @@ async function yarnSilentInstallPeerDeps(root: string) {
   }
 }
 
-export default async function findPeerDepsForAutolinking(root: string) {
+async function findPeerDepsForAutolinking(root: string) {
   const deps = collectDependencies(root);
   const nonEmptyPeers = filterNativeDependencies(root, deps);
   const nonInstalledPeers = filterInstalledPeers(root, nonEmptyPeers);
@@ -340,7 +340,7 @@ function installMissingPackages(
   }
 }
 
-export async function resolveTransitiveDeps() {
+async function resolveTransitiveDeps() {
   const root = process.cwd();
   const isYarn = isUsingYarn(root);
 
@@ -367,7 +367,7 @@ export async function resolveTransitiveDeps() {
   return false;
 }
 
-export async function resolvePodsInstallation() {
+async function resolvePodsInstallation() {
   const {install} = await prompt({
     type: 'confirm',
     name: 'install',
@@ -383,7 +383,7 @@ export async function resolvePodsInstallation() {
   }
 }
 
-export async function checkTransitiveDeps() {
+export default async function checkTransitiveDependencies() {
   const packageJsonPath = path.join(process.cwd(), 'package.json');
   const preInstallHash = generateFileHash(packageJsonPath);
   const areTransitiveDepsInstalled = await resolveTransitiveDeps();

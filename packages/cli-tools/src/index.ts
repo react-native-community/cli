@@ -17,6 +17,6 @@ export {default as handlePortUnavailable} from './handlePortUnavailable';
 export * from './port';
 export {default as cacheManager} from './cacheManager';
 export {default as runSudo} from './runSudo';
-export * as transitiveDeps from './resolveTransitiveDeps';
+export {default as checkTransitiveDependencies} from './resolveTransitiveDeps';
 
 export * from './errors';

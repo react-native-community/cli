@@ -21,6 +21,7 @@ import {
   isPackagerRunning,
   logAlreadyRunningBundler,
   handlePortUnavailable,
+  checkTransitiveDependencies,
 } from '@react-native-community/cli-tools';
 import {buildProject} from '../buildIOS/buildProject';
 import {BuildFlags, buildOptions} from '../buildIOS/buildOptions';

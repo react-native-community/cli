@@ -17,6 +17,7 @@ export interface BuildFlags {
   tasks?: Array<string>;
   extraParams?: Array<string>;
   interactive?: boolean;
+  dependencyCheck?: boolean;
 }
 
 async function buildAndroid(
@@ -122,6 +123,11 @@ export const options = [
     name: '--interactive',
     description:
       'Explicitly select build type and flavour to use before running a build',
+  },
+  {
+    name: '--dependency-check',
+    description:
+      'Check if there are any transitive dependencies containing native code that are not declared as a direct dependency in your package.json.',
   },
 ];
 

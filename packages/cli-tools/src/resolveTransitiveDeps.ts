@@ -1,4 +1,3 @@
-import {installPods} from '@react-native-community/cli-doctor';
 import fs from 'fs-extra';
 import path from 'path';
 import * as fetch from 'npm-registry-fetch';
@@ -9,6 +8,7 @@ import semver from 'semver';
 import generateFileHash from './generateFileHash';
 import {getLoader} from './loader';
 import logger from './logger';
+import {CLIError} from './errors';
 
 export interface DependencyData {
   path: string;
@@ -19,6 +19,26 @@ export interface DependencyData {
 
 function isUsingYarn(root: string) {
   return fs.existsSync(path.join(root, 'yarn.lock'));
+}
+
+async function podInstall() {
+  process.chdir('ios');
+  const loader = getLoader();
+  try {
+    loader.start('Installing pods...');
+    await execa('bundle', ['exec', 'pod', 'install']);
+    loader.succeed();
+  } catch (error) {
+    const stderr = (error as any).stderr || (error as any).stdout;
+    loader.fail();
+    logger.error(stderr);
+
+    throw new CLIError(
+      'Could not install pods. Try running pod installation manually.',
+    );
+  } finally {
+    process.chdir('..');
+  }
 }
 
 function writeFile(filePath: string, content: string) {
@@ -380,10 +400,7 @@ async function resolvePodsInstallation() {
   });
 
   if (install) {
-    const loader = getLoader({text: 'Installing pods...'});
-    loader.start();
-    await installPods(loader);
-    loader.succeed();
+    await podInstall();
   }
 }
 

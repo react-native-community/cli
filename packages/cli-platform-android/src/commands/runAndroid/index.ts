@@ -22,7 +22,6 @@ import {
   logAlreadyRunningBundler,
   startServerInNewWindow,
   handlePortUnavailable,
-  checkTransitiveDependencies,
 } from '@react-native-community/cli-tools';
 import {getAndroidProject} from '../../config/getAndroidProject';
 import listAndroidDevices from './listAndroidDevices';
@@ -56,10 +55,6 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
   link.setPlatform('android');
 
   let {packager, port} = args;
-
-  if (args.dependencyCheck) {
-    await checkTransitiveDependencies();
-  }
 
   const packagerStatus = await isPackagerRunning(port);
 

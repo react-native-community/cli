@@ -1,12 +1,18 @@
 import path from 'path';
 import fs from 'fs-extra';
-import {logger} from '@react-native-community/cli-tools';
+import {getLoader, logger} from '@react-native-community/cli-tools';
 import chalk from 'chalk';
 import {prompt} from 'prompts';
+import execa from 'execa';
+import semver from 'semver';
 
 interface DependencyInfo {
   path: string;
   peerDependencies: {[key: string]: string};
+}
+
+function isUsingYarn(root: string) {
+  return fs.existsSync(path.join(root, 'yarn.lock'));
 }
 
 function getPeerDependencies(root: string): Map<string, DependencyInfo> {
@@ -15,20 +21,36 @@ function getPeerDependencies(root: string): Map<string, DependencyInfo> {
 
   const dependenciesAndPeerDependencies = new Map<string, DependencyInfo>();
 
-  for (const dependency in {...packageJson.dependencies}) {
+  for (const dependency in packageJson.dependencies) {
     const dependencyPath = path.join(root, 'node_modules', dependency);
 
     if (fs.existsSync(dependencyPath)) {
-      const packageJsonPath = path.join(dependencyPath, 'package.json');
-      const packageJson = require(packageJsonPath);
+      const dependencyPackageJson = require(path.join(
+        dependencyPath,
+        'package.json',
+      ));
+      const peerDependenciesMeta = dependencyPackageJson.peerDependenciesMeta;
+
+      let optionalDeps: string[] = [];
+      if (peerDependenciesMeta) {
+        const peers = Object.keys(peerDependenciesMeta);
+        optionalDeps = peers.filter(
+          (p) => peerDependenciesMeta[p].optional === true,
+        );
+      }
 
       if (
-        packageJson.peerDependencies &&
+        dependencyPackageJson.peerDependencies &&
         !dependenciesAndPeerDependencies.has(dependency)
       ) {
         dependenciesAndPeerDependencies.set(dependency, {
           path: dependencyPath,
-          peerDependencies: packageJson.peerDependencies,
+          peerDependencies: Object.keys(dependencyPackageJson.peerDependencies)
+            .filter((key) => !optionalDeps.includes(key))
+            .reduce<Record<string, string>>((result, key) => {
+              result[key] = dependencyPackageJson.peerDependencies[key];
+              return result;
+            }, {}),
         });
       }
     }
@@ -63,6 +85,22 @@ function excludeInstalledPeerDependencies(
   return missingPeerDependencies;
 }
 
+function getMatchingPackageVersion(packageName: string, range: string) {
+  const {stdout} = execa.sync('yarn', [
+    'info',
+    packageName,
+    'versions',
+    '--json',
+  ]);
+  const versions = JSON.parse(stdout).data as string[];
+  const satisfying = versions.filter((version) =>
+    semver.satisfies(version, range),
+  );
+  const maxSatisfying = semver.maxSatisfying(satisfying, range);
+
+  return maxSatisfying;
+}
+
 export default async function installTransitiveDeps() {
   const root = process.cwd();
 
@@ -85,8 +123,31 @@ export default async function installTransitiveDeps() {
     const {install} = await prompt({
       type: 'confirm',
       name: 'install',
-      message: 'Do you want to install them now?',
+      message:
+        'Do you want to install them now? The matching versions will be added as project dependencies.',
     });
-    console.log({install});
+    const loader = getLoader({text: 'Installing peer dependencies...'});
+
+    if (install) {
+      if (isUsingYarn(root)) {
+        let deps = {} as Record<string, string>;
+        dependenciesWithMissingDeps.map((dep) => {
+          const missingDeps = depsToInstall[dep];
+
+          Object.entries(missingDeps).map(([name, range]) => {
+            const version = getMatchingPackageVersion(name, range);
+            if (version) {
+              deps[name] = version;
+            }
+          });
+        });
+        loader.start();
+        execa.sync('yarn', [
+          'add',
+          ...Object.entries(deps).map(([k, v]) => `${k}@^${v}`),
+        ]);
+        loader.succeed();
+      }
+    }
   }
 }

@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 import {createHash} from 'crypto';
-import {CLIError} from '@react-native-community/cli-tools';
+import {CLIError} from './errors';
 
 export default function generateFileHash(filePath: string) {
   try {

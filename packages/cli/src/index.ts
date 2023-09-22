@@ -1,5 +1,9 @@
 import loadConfig from '@react-native-community/cli-config';
-import {CLIError, logger} from '@react-native-community/cli-tools';
+import {
+  CLIError,
+  logger,
+  transitiveDeps,
+} from '@react-native-community/cli-tools';
 import type {
   Command,
   Config,
@@ -10,11 +14,6 @@ import childProcess from 'child_process';
 import {Command as CommanderCommand} from 'commander';
 import path from 'path';
 import {detachedCommands, projectCommands} from './commands';
-import installTransitiveDeps, {
-  resolvePodsInstallation,
-} from './tools/resolveTransitiveDeps';
-import {isProjectUsingYarn} from './tools/yarn';
-import generateFileHash from './tools/generateFileHash';
 
 const pkgJson = require('../package.json');
 
@@ -175,19 +174,9 @@ async function setupAndRun() {
       );
     }
   }
-  // for now, run only if project is using npm
-  if (
-    process.argv.includes('--dependency-check') &&
-    !isProjectUsingYarn(process.cwd())
-  ) {
-    const packageJsonPath = path.join(process.cwd(), 'package.json');
-    const preInstallHash = generateFileHash(packageJsonPath);
-    const areTransitiveDepsInstalled = await installTransitiveDeps();
-    const postInstallHash = generateFileHash(packageJsonPath);
 
-    if (areTransitiveDepsInstalled && preInstallHash !== postInstallHash) {
-      await resolvePodsInstallation();
-    }
+  if (!transitiveDeps.isUsingYarn(process.cwd())) {
+    await transitiveDeps.checkTransitiveDeps();
   }
 
   let config: Config | undefined;

@@ -7,6 +7,7 @@
     "access": "public"
   },
   "dependencies": {
+    "@react-native-community/cli-doctor": "12.0.0-alpha.7",
     "appdirsjs": "^1.2.4",
     "chalk": "^4.1.2",
     "find-up": "^5.0.0",

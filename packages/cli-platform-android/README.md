@@ -73,6 +73,9 @@ Build native libraries only for the current device architecture for debug builds
 
 List all available Android devices and simulators and let you choose one to run the app.
 
+#### `--dependency-check`
+Check if there are any transitive dependencies containing native code that are not declared as a direct dependency in your package.json. If any found, prompts if you want to install and autolink them before running an app.
+
 ### `build-android`
 
 Usage:
@@ -107,6 +110,9 @@ Installs passed binary instead of building a fresh one. This command is not comp
 #### `--user` <number | string>
 
 Id of the User Profile you want to install the app on.
+
+#### `--dependency-check`
+Check if there are any transitive dependencies containing native code that are not declared as a direct dependency in your package.json. If any found, prompts if you want to install and autolink them before building an app.
 
 ### `log-android`
 

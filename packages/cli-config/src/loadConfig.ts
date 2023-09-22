@@ -119,7 +119,10 @@ async function loadConfig(
   const dependencyMap = findDependencies(projectRoot);
   let dependencies = Array.from(dependencyMap.keys());
 
-  if (userConfig.unstable_autolinkPeerDependencies) {
+  if (
+    userConfig.unstable_autolinkPeerDependencies &&
+    !process.argv.includes('config')
+  ) {
     const installedDependencies = await resolveTransitiveDeps(
       projectRoot,
       dependencyMap,

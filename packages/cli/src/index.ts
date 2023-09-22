@@ -10,6 +10,7 @@ import childProcess from 'child_process';
 import {Command as CommanderCommand} from 'commander';
 import path from 'path';
 import {detachedCommands, projectCommands} from './commands';
+import installTransitiveDeps from './tools/resolveTransitiveDeps';
 
 const pkgJson = require('../package.json');
 
@@ -171,6 +172,9 @@ async function setupAndRun() {
       );
     }
   }
+
+  // are peer dependencies installed?
+  await installTransitiveDeps();
 
   let config: Config | undefined;
   try {

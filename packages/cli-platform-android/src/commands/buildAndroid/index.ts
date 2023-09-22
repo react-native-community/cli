@@ -1,5 +1,6 @@
 import {
   CLIError,
+  checkTransitiveDependencies,
   logger,
   printRunDoctorTip,
 } from '@react-native-community/cli-tools';
@@ -34,6 +35,10 @@ async function buildAndroid(
   }
 
   let {tasks} = args;
+
+  if (args.dependencyCheck) {
+    await checkTransitiveDependencies();
+  }
 
   if (args.interactive) {
     const selectedTask = await promptForTaskSelection(

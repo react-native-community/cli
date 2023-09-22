@@ -1,8 +1,13 @@
 import execa from 'execa';
-import {logger} from '@react-native-community/cli-tools';
-import {getYarnVersionIfAvailable, isProjectUsingYarn} from './yarn';
-import {getBunVersionIfAvailable, isProjectUsingBun} from './bun';
-import {getNpmVersionIfAvailable, isProjectUsingNpm} from './npm';
+import {
+  getBunVersionIfAvailable,
+  getNpmVersionIfAvailable,
+  getYarnVersionIfAvailable,
+  isProjectUsingBun,
+  isProjectUsingNpm,
+  isProjectUsingYarn,
+  logger,
+} from '@react-native-community/cli-tools';
 
 export type PackageManager = keyof typeof packageManagers;
 

@@ -1,54 +1,18 @@
 import fs from 'fs-extra';
 import path from 'path';
-import * as fetch from 'npm-registry-fetch';
+import * as npmRegistryFetch from 'npm-registry-fetch';
 import chalk from 'chalk';
 import {prompt} from 'prompts';
 import execa from 'execa';
 import semver from 'semver';
-import generateFileHash from './generateFileHash';
-import {getLoader} from './loader';
-import logger from './logger';
-import {CLIError} from './errors';
-
-export interface DependencyData {
-  path: string;
-  version: string;
-  peerDependencies: {[key: string]: string};
-  duplicates?: DependencyData[];
-}
-
-function isUsingYarn(root: string) {
-  return fs.existsSync(path.join(root, 'yarn.lock'));
-}
-
-async function podInstall() {
-  process.chdir('ios');
-  const loader = getLoader();
-  try {
-    loader.start('Installing pods...');
-    await execa('bundle', ['exec', 'pod', 'install']);
-    loader.succeed();
-  } catch (error) {
-    const stderr = (error as any).stderr || (error as any).stdout;
-    loader.fail();
-    logger.error(stderr);
-
-    throw new CLIError(
-      'Could not install pods. Try running pod installation manually.',
-    );
-  } finally {
-    process.chdir('..');
-  }
-}
-
-function writeFile(filePath: string, content: string) {
-  fs.writeFileSync(filePath, content, {encoding: 'utf8'});
-}
+import {getLoader, logger} from '@react-native-community/cli-tools';
+import {DependencyMap} from '@react-native-community/cli-types';
+import {isProjectUsingYarn} from './yarn';
 
 export async function fetchAvailableVersions(
   packageName: string,
 ): Promise<string[]> {
-  const response = await fetch.json(`/${packageName}`);
+  const response = await npmRegistryFetch.json(`/${packageName}`);
 
   return Object.keys(response.versions || {});
 }
@@ -84,64 +48,9 @@ export function findDependencyPath(
   return dependencyPath;
 }
 
-export function collectDependencies(root: string): Map<string, DependencyData> {
-  const dependencies = new Map<string, DependencyData>();
-
-  const checkDependency = (dependencyPath: string) => {
-    const packageJsonPath = path.join(dependencyPath, 'package.json');
-    const packageJson = require(packageJsonPath);
-
-    if (dependencies.has(packageJson.name)) {
-      const dependency = dependencies.get(packageJson.name) as DependencyData;
-
-      if (
-        dependencyPath !== dependency.path &&
-        dependency.duplicates?.every(
-          (duplicate) => duplicate.path !== dependencyPath,
-        )
-      ) {
-        dependencies.set(packageJson.name, {
-          ...dependency,
-          duplicates: [
-            ...dependency.duplicates,
-            {
-              path: dependencyPath,
-              version: packageJson.version,
-              peerDependencies: packageJson.peerDependencies,
-            },
-          ],
-        });
-      }
-      return;
-    }
-
-    dependencies.set(packageJson.name, {
-      path: dependencyPath,
-      version: packageJson.version,
-      peerDependencies: packageJson.peerDependencies,
-      duplicates: [],
-    });
-
-    for (const dependency in {
-      ...packageJson.dependencies,
-      ...(root === dependencyPath ? packageJson.devDependencies : {}),
-    }) {
-      const depPath = findDependencyPath(dependency, root, dependencyPath);
-
-      if (depPath) {
-        checkDependency(depPath);
-      }
-    }
-  };
-
-  checkDependency(root);
-
-  return dependencies;
-}
-
 export function filterNativeDependencies(
   root: string,
-  dependencies: Map<string, DependencyData>,
+  dependencies: DependencyMap,
 ) {
   const depsWithNativePeers = new Map<string, Map<string, string>>();
 
@@ -198,7 +107,7 @@ export function filterInstalledPeers(
 
 export function findPeerDepsToInstall(
   root: string,
-  dependencies: Map<string, DependencyData>,
+  dependencies: DependencyMap,
 ) {
   const rootPackageJson = require(path.join(root, 'package.json'));
   const dependencyList = {
@@ -206,7 +115,7 @@ export function findPeerDepsToInstall(
     ...rootPackageJson.devDependencies,
   };
   const peerDependencies = new Set<string>();
-  dependencies.forEach((value) => {
+  Array.from(dependencies.entries()).forEach(([_, value]) => {
     if (value.peerDependencies) {
       Object.keys(value.peerDependencies).forEach((name) => {
         if (!Object.keys(dependencyList).includes(name)) {
@@ -218,16 +127,24 @@ export function findPeerDepsToInstall(
 
   return peerDependencies;
 }
-export function getMissingPeerDepsForYarn(root: string) {
-  const dependencies = collectDependencies(root);
+export function getMissingPeerDepsForYarn(
+  root: string,
+  dependencies: DependencyMap,
+) {
   const depsToInstall = findPeerDepsToInstall(root, dependencies);
-
   return depsToInstall;
 }
 
 // install peer deps with yarn without making any changes to package.json and yarn.lock
-export function yarnSilentInstallPeerDeps(root: string) {
-  const dependenciesToInstall = getMissingPeerDepsForYarn(root);
+export function yarnSilentInstallPeerDeps(
+  root: string,
+  missingPeerDependencies: DependencyMap,
+) {
+  const dependenciesToInstall = getMissingPeerDepsForYarn(
+    root,
+    missingPeerDependencies,
+  );
+
   const packageJsonPath = path.join(root, 'package.json');
   const lockfilePath = path.join(root, 'yarn.lock');
 
@@ -259,17 +176,9 @@ export function yarnSilentInstallPeerDeps(root: string) {
       return;
     }
 
-    writeFile(packageJsonPath, binPackageJson);
-    writeFile(lockfilePath, binLockfile);
+    fs.writeFileSync(packageJsonPath, binPackageJson, {encoding: 'utf8'});
+    fs.writeFileSync(lockfilePath, binLockfile, {encoding: 'utf8'});
   }
-}
-
-function findPeerDepsForAutolinking(root: string) {
-  const deps = collectDependencies(root);
-  const nonEmptyPeers = filterNativeDependencies(root, deps);
-  const nonInstalledPeers = filterInstalledPeers(root, nonEmptyPeers);
-
-  return nonInstalledPeers;
 }
 
 export async function promptForMissingPeerDependencies(
@@ -302,7 +211,7 @@ export async function promptForMissingPeerDependencies(
   return install;
 }
 
-async function getPackagesVersion(
+export async function getPackagesVersion(
   missingDependencies: Record<string, Record<string, string>>,
 ) {
   const packageToRanges: {[pkg: string]: string[]} = {};
@@ -339,7 +248,7 @@ async function getPackagesVersion(
   return workingVersions;
 }
 
-function installMissingPackages(
+export function installMissingPackages(
   packages: Record<string, string | null>,
   yarn = true,
 ) {
@@ -359,63 +268,37 @@ function installMissingPackages(
     }
     loader.succeed();
 
-    return true;
+    return deps;
   } catch (error) {
     loader.fail();
 
-    return false;
+    return [];
   }
 }
 
-export async function resolveTransitiveDeps(root: string) {
-  const isYarn = isUsingYarn(root);
-  if (isYarn) {
-    yarnSilentInstallPeerDeps(root);
-  }
+export async function resolveTransitiveDeps(
+  root: string,
+  dependencyMap: DependencyMap,
+) {
+  const isYarn = !!isProjectUsingYarn(root);
 
-  const missingPeerDependencies = findPeerDepsForAutolinking(root);
-  if (Object.keys(missingPeerDependencies).length > 0) {
+  if (isYarn) {
+    yarnSilentInstallPeerDeps(root, dependencyMap);
+  }
+  const nonEmptyPeers = filterNativeDependencies(root, dependencyMap);
+  const nonInstalledPeers = filterInstalledPeers(root, nonEmptyPeers);
+
+  if (Object.keys(nonInstalledPeers).length > 0) {
     const installDeps = await promptForMissingPeerDependencies(
-      missingPeerDependencies,
+      nonInstalledPeers,
     );
 
     if (installDeps) {
-      const packagesVersions = await getPackagesVersion(
-        missingPeerDependencies,
-      );
+      const packagesVersions = await getPackagesVersion(nonInstalledPeers);
 
       return installMissingPackages(packagesVersions, isYarn);
     }
   }
 
-  return false;
-}
-
-async function resolvePodsInstallation() {
-  const {install} = await prompt({
-    type: 'confirm',
-    name: 'install',
-    message:
-      'Do you want to install pods? This will make sure your transitive dependencies are linked properly.',
-  });
-
-  if (install) {
-    await podInstall();
-  }
-}
-
-export default async function checkTransitiveDependencies() {
-  const root = process.cwd();
-  const packageJsonPath = path.join(process.cwd(), 'package.json');
-  const preInstallHash = generateFileHash(packageJsonPath);
-  const areTransitiveDepsInstalled = await resolveTransitiveDeps(root);
-  const postInstallHash = generateFileHash(packageJsonPath);
-
-  if (
-    process.platform === 'darwin' &&
-    areTransitiveDepsInstalled &&
-    preInstallHash !== postInstallHash
-  ) {
-    await resolvePodsInstallation();
-  }
+  return [];
 }

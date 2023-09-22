@@ -148,6 +148,15 @@ export type UserDependencyConfig = {
   healthChecks: [];
 };
 
+export type DependencyMap = Map<
+  string,
+  {
+    version: string;
+    peerDependencies: Record<string, string>;
+    path: string;
+  }
+>;
+
 export {
   IOSProjectConfig,
   IOSProjectParams,

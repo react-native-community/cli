@@ -12,7 +12,7 @@ import {
   resolveNodeModuleDir,
   UnknownProjectError,
 } from '@react-native-community/cli-tools';
-import findDependencies from './findDependencies';
+import {collectDependencies, dedupeDependencies} from './resolveDependencies';
 import resolveReactNativePath from './resolveReactNativePath';
 import {
   readConfigFromDisk,
@@ -112,12 +112,11 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
       return lazyProject;
     },
   };
+  const deps = collectDependencies(projectRoot);
+  const dedupedDeps = dedupeDependencies(deps);
 
   const finalConfig = Array.from(
-    new Set([
-      ...Object.keys(userConfig.dependencies),
-      ...findDependencies(projectRoot),
-    ]),
+    new Set([...Object.keys(userConfig.dependencies), ...deps.keys()]),
   ).reduce((acc: Config, dependencyName) => {
     const localDependencyRoot =
       userConfig.dependencies[dependencyName] &&
@@ -125,7 +124,12 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
     try {
       let root =
         localDependencyRoot ||
-        resolveNodeModuleDir(projectRoot, dependencyName);
+        resolveNodeModuleDir(
+          dedupedDeps.has(dependencyName)
+            ? dedupedDeps.get(dependencyName)!.path
+            : projectRoot,
+          dependencyName,
+        );
       let config = readDependencyConfigFromDisk(root, dependencyName);
 
       const isPlatform = Object.keys(config.platforms).length > 0;

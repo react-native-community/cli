@@ -13,12 +13,16 @@ import runBundleInstall from './runBundleInstall';
 
 interface PodInstallOptions {
   skipBundleInstall?: boolean;
+  newArchEnabled?: boolean;
 }
 
-async function runPodInstall(
-  loader: Ora,
-  shouldHandleRepoUpdate: boolean = true,
-) {
+interface RunPodInstallOptions {
+  shouldHandleRepoUpdate?: boolean;
+  newArchEnabled?: boolean;
+}
+
+async function runPodInstall(loader: Ora, options?: RunPodInstallOptions) {
+  const shouldHandleRepoUpdate = options?.shouldHandleRepoUpdate || true;
   try {
     loader.start(
       `Installing CocoaPods dependencies ${chalk.dim(
@@ -26,7 +30,11 @@ async function runPodInstall(
       )}`,
     );
 
-    await execa('bundle', ['exec', 'pod', 'install']);
+    await execa('bundle', ['exec', 'pod', 'install'], {
+      env: {
+        RCT_NEW_ARCH_ENABLED: options?.newArchEnabled ? '1' : '0',
+      },
+    });
   } catch (error) {
     // "pod" command outputs errors to stdout (at least some of them)
     const stderr = (error as any).stderr || (error as any).stdout;
@@ -40,7 +48,10 @@ async function runPodInstall(
      */
     if (stderr.includes('pod repo update') && shouldHandleRepoUpdate) {
       await runPodUpdate(loader);
-      await runPodInstall(loader, false);
+      await runPodInstall(loader, {
+        shouldHandleRepoUpdate: false,
+        newArchEnabled: options?.newArchEnabled,
+      });
     } else {
       loader.fail();
       logger.error(stderr);
@@ -139,7 +150,7 @@ async function installPods(loader?: Ora, options?: PodInstallOptions) {
       await installCocoaPods(loader);
     }
 
-    await runPodInstall(loader);
+    await runPodInstall(loader, {newArchEnabled: options?.newArchEnabled});
   } finally {
     process.chdir('..');
   }

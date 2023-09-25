@@ -156,6 +156,7 @@ export const projectConfig = t
               .array()
               .items(t.string())
               .default([]),
+            newArchEnabled: t.bool().default(false),
           })
           .default({}),
         android: t

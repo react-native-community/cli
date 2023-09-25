@@ -47,9 +47,11 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   link.setPlatform('ios');
 
   let {packager, port} = args;
-
   // check if pods need to be installed
-  await resolvePods(ctx.root, ctx.dependencies, {forceInstall: args.forcePods});
+  await resolvePods(ctx.root, ctx.dependencies, {
+    forceInstall: args.forcePods,
+    newArchEnabled: ctx.project.ios?.newArchEnabled,
+  });
 
   const packagerStatus = await isPackagerRunning(port);
 

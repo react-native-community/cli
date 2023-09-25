@@ -6,6 +6,7 @@
 export interface IOSProjectParams {
   sourceDir?: string;
   watchModeCommandParams?: string[];
+  newArchEnabled?: boolean;
 }
 
 export type IOSProjectInfo = {
@@ -17,6 +18,7 @@ export interface IOSProjectConfig {
   sourceDir: string;
   xcodeProject: IOSProjectInfo | null;
   watchModeCommandParams?: string[];
+  newArchEnabled?: boolean;
 }
 
 export interface IOSDependencyConfig {

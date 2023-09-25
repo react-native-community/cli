@@ -4,7 +4,12 @@ import os from 'os';
 import appDirs from 'appdirsjs';
 import logger from './logger';
 
-type CacheKey = 'eTag' | 'lastChecked' | 'latestVersion' | 'dependencies';
+type CacheKey =
+  | 'eTag'
+  | 'lastChecked'
+  | 'latestVersion'
+  | 'dependencies'
+  | 'newArchEnabled';
 type Cache = {[key in CacheKey]?: string};
 
 function loadCache(name: string): Cache | undefined {

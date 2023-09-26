@@ -45,7 +45,6 @@ export interface FlagsT extends BuildFlags {
 
 async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   link.setPlatform('ios');
-
   let {packager, port} = args;
   // check if pods need to be installed
   await resolvePods(ctx.root, ctx.dependencies, {

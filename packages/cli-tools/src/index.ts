@@ -17,5 +17,6 @@ export {default as handlePortUnavailable} from './handlePortUnavailable';
 export * from './port';
 export {default as cacheManager} from './cacheManager';
 export {default as runSudo} from './runSudo';
+export {default as getArchitectureForIos} from './getArchitectureForIos';
 
 export * from './errors';

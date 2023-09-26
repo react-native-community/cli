@@ -6,7 +6,11 @@
  */
 
 import getEnvironmentInfo from '../tools/envinfo';
-import {logger, version} from '@react-native-community/cli-tools';
+import {
+  getArchitectureForIos,
+  logger,
+  version,
+} from '@react-native-community/cli-tools';
 import {Config} from '@react-native-community/cli-types';
 import {readFile} from 'fs-extra';
 import path from 'path';
@@ -41,12 +45,9 @@ const info = async function getInfo(_argv: Array<string>, ctx: Config) {
 
     if (process.platform !== 'win32' && ctx.project.ios?.sourceDir) {
       try {
-        const podfile = await readFile(
-          path.join(ctx.project.ios.sourceDir, '/Podfile.lock'),
-          'utf8',
+        platforms.iOS.hermesEnabled = await getArchitectureForIos(
+          ctx.project.ios.sourceDir,
         );
-
-        platforms.iOS.hermesEnabled = podfile.includes('hermes-engine');
       } catch (e) {
         platforms.iOS.hermesEnabled = notFound;
       }

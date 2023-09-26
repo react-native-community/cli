@@ -620,5 +620,22 @@ export default {
       description:
         'List all available iOS devices and simulators and let you choose one to run the app. ',
     },
+    {
+      name: '--simulator <string>',
+      description:
+        'Explicitly set the simulator to use. Optionally set the iOS version ' +
+        'between parentheses at the end to match an exact version: ' +
+        '"iPhone 15 (17.0)"',
+    },
+    {
+      name: '--device <string>',
+      description:
+        'Explicitly set the device to use by name. The value is not required ' +
+        'if you have a single device connected.',
+    },
+    {
+      name: '--udid <string>',
+      description: 'Explicitly set the device to use by UDID',
+    },
   ],
 };

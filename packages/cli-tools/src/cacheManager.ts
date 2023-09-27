@@ -28,10 +28,7 @@ function loadCache(name: string): Cache | undefined {
 function saveCache(name: string, cache: Cache) {
   const fullPath = path.resolve(getCacheRootPath(), name);
 
-  const dir = path.dirname(fullPath);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir);
-  }
+  fs.mkdirSync(path.dirname(fullPath), {recursive: true});
   fs.writeFileSync(fullPath, JSON.stringify(cache, null, 2));
 }
 

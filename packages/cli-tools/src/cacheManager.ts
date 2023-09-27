@@ -26,10 +26,13 @@ function loadCache(name: string): Cache | undefined {
 }
 
 function saveCache(name: string, cache: Cache) {
-  fs.writeFileSync(
-    path.resolve(getCacheRootPath(), name),
-    JSON.stringify(cache, null, 2),
-  );
+  const fullPath = path.resolve(getCacheRootPath(), name);
+
+  const dir = path.dirname(fullPath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  }
+  fs.writeFileSync(fullPath, JSON.stringify(cache, null, 2));
 }
 
 /**

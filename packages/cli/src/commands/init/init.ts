@@ -310,6 +310,28 @@ function userAgentPackageManager() {
 }
 
 const createGitRepository = async (folder: string) => {
+  const loader = getLoader();
+
+  try {
+    await execa('git', ['--version'], {stdio: 'ignore'});
+  } catch {
+    loader.fail('Unable to initialize Git repo. `git` not in $PATH.');
+    return;
+  }
+
+  try {
+    await execa('git', ['rev-parse', '--is-inside-work-tree'], {
+      stdio: 'ignore',
+      cwd: folder,
+    });
+    loader.succeed(
+      'New project is already inside of a Git repo, skipping git init.',
+    );
+    return;
+  } catch {}
+
+  loader.start('Initializing Git repository');
+
   try {
     await execa('git', ['init'], {cwd: folder});
     await execa('git', ['branch', '-M', 'main'], {cwd: folder});
@@ -325,8 +347,12 @@ const createGitRepository = async (folder: string) => {
         cwd: folder,
       },
     );
+    loader.succeed();
   } catch (e) {
-    // Ignore error
+    loader.fail(
+      'Could not create an empty Git repository, see debug logs with --verbose',
+    );
+    logger.debug(e as string);
   }
 };
 
@@ -364,6 +390,6 @@ export default (async function initialize(
 
   const projectFolder = path.join(root, directoryName);
 
-  createGitRepository(projectFolder);
+  await createGitRepository(projectFolder);
   printRunInstructions(projectFolder, projectName);
 });

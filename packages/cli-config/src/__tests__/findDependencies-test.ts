@@ -14,10 +14,24 @@ test('returns plugins from both dependencies and dev dependencies', () => {
   writeFiles(DIR, {
     'package.json': `
       {
+        "name": "plugin",
+        "version": "1.0.0",
         "dependencies": {"rnpm-plugin-test": "*"},
         "devDependencies": {"rnpm-plugin-test-2": "*"}
       }
     `,
+    'node_modules/rnpm-plugin-test/package.json': `
+    {
+      "name": "rnpm-plugin-test",
+      "version": "1.0.0"
+
+    }`,
+    'node_modules/rnpm-plugin-test-2/package.json': `
+    {
+      "name": "rnpm-plugin-test-2",
+      "version": "1.0.0"
+    }`,
   });
-  expect(findDependencies(DIR)).toHaveLength(2);
+
+  expect(findDependencies(DIR).size).toBe(3);
 });

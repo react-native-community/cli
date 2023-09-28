@@ -17,7 +17,12 @@ const androidPath = slash(
 );
 
 const REACT_NATIVE_MOCK = {
-  'node_modules/react-native/package.json': '{}',
+  'node_modules/react-native/package.json': `
+  {
+    "name": "react-native",
+    "version": "0.0.1"
+  }
+  `,
   'node_modules/react-native/react-native.config.js': `
     const ios = require("${iosPath}");
     const android = require("${androidPath}");
@@ -59,22 +64,27 @@ beforeEach(async () => {
 
 afterEach(async () => await cleanup(DIR));
 
-test('should have a valid structure by default', () => {
+test('should have a valid structure by default', async () => {
   DIR = getTempDirectory('config_test_structure');
   writeFiles(DIR, {
     'react-native.config.js': `module.exports = {
       reactNativePath: "."
     }`,
   });
-  const config = loadConfig(DIR);
+  const config = await loadConfig(DIR);
   expect(removeString(config, DIR)).toMatchSnapshot();
 });
 
-test('should return dependencies from package.json', () => {
+test('should return dependencies from package.json', async () => {
   DIR = getTempDirectory('config_test_deps');
   writeFiles(DIR, {
     ...REACT_NATIVE_MOCK,
-    'node_modules/react-native-test/package.json': '{}',
+    'node_modules/react-native-test/package.json': `
+    {
+      "name": "react-native-test",
+      "version": "0.0.1"
+    }
+    `,
     'node_modules/react-native-test/ReactNativeTest.podspec': '',
     'package.json': `{
       "dependencies": {
@@ -83,15 +93,20 @@ test('should return dependencies from package.json', () => {
       }
     }`,
   });
-  const {dependencies} = loadConfig(DIR);
+  const {dependencies} = await loadConfig(DIR);
   expect(removeString(dependencies, DIR)).toMatchSnapshot();
 });
 
-test('should read a config of a dependency and use it to load other settings', () => {
+test('should read a config of a dependency and use it to load other settings', async () => {
   DIR = getTempDirectory('config_test_settings');
   writeFiles(DIR, {
     ...REACT_NATIVE_MOCK,
-    'node_modules/react-native-test/package.json': '{}',
+    'node_modules/react-native-test/package.json': `
+    {
+      "name": "react-native-test",
+      "version": "0.0.1"
+    }
+    `,
     'node_modules/react-native-test/ReactNativeTest.podspec': '',
     'node_modules/react-native-test/react-native.config.js': `module.exports = {
       dependency: {
@@ -122,17 +137,22 @@ test('should read a config of a dependency and use it to load other settings', (
       }
     }`,
   });
-  const {dependencies} = loadConfig(DIR);
+  const {dependencies} = await loadConfig(DIR);
   expect(
     removeString(dependencies['react-native-test'], DIR),
   ).toMatchSnapshot();
 });
 
-test('should merge project configuration with default values', () => {
+test('should merge project configuration with default values', async () => {
   DIR = getTempDirectory('config_test_merge');
   writeFiles(DIR, {
     ...REACT_NATIVE_MOCK,
-    'node_modules/react-native-test/package.json': '{}',
+    'node_modules/react-native-test/package.json': `
+    {
+      "name": "react-native-test",
+      "version": "0.0.1"
+    }
+    `,
     'node_modules/react-native-test/ReactNativeTest.podspec': '',
     'package.json': `{
       "dependencies": {
@@ -153,17 +173,22 @@ test('should merge project configuration with default values', () => {
       }
     }`,
   });
-  const {dependencies} = loadConfig(DIR);
+  const {dependencies} = await loadConfig(DIR);
   expect(removeString(dependencies['react-native-test'], DIR)).toMatchSnapshot(
     'snapshoting `react-native-test` config',
   );
 });
 
-test('should load commands from "react-native-foo" and "react-native-bar" packages', () => {
+test('should load commands from "react-native-foo" and "react-native-bar" packages', async () => {
   DIR = getTempDirectory('config_test_packages');
   writeFiles(DIR, {
     'react-native.config.js': 'module.exports = { reactNativePath: "." }',
-    'node_modules/react-native-foo/package.json': '{}',
+    'node_modules/react-native-foo/package.json': `
+    {
+      "name": "react-native-foo",
+      "version": "0.0.1"
+    }
+    `,
     'node_modules/react-native-foo/react-native.config.js': `module.exports = {
       commands: [
         {
@@ -172,7 +197,12 @@ test('should load commands from "react-native-foo" and "react-native-bar" packag
         }
       ]
     }`,
-    'node_modules/react-native-bar/package.json': '{}',
+    'node_modules/react-native-bar/package.json': `
+    {
+      "name": "react-native-bar",
+      "version": "0.0.1"
+    }
+    `,
     'node_modules/react-native-bar/react-native.config.js': `module.exports = {
       commands: [
         {
@@ -188,15 +218,20 @@ test('should load commands from "react-native-foo" and "react-native-bar" packag
       }
     }`,
   });
-  const {commands} = loadConfig(DIR);
+  const {commands} = await loadConfig(DIR);
   expect(commands).toMatchSnapshot();
 });
 
-test('should not skip packages that have invalid configuration (to avoid breaking users)', () => {
+test('should not skip packages that have invalid configuration (to avoid breaking users)', async () => {
   process.env.FORCE_COLOR = '0'; // To disable chalk
   DIR = getTempDirectory('config_test_skip');
   writeFiles(DIR, {
-    'node_modules/react-native/package.json': '{}',
+    'node_modules/react-native/package.json': `
+    {
+      "name": "react-native",
+      "version": "0.0.1"
+    }
+    `,
     'node_modules/react-native/react-native.config.js': `module.exports = {
       dependency: {
         invalidProperty: 5
@@ -208,18 +243,20 @@ test('should not skip packages that have invalid configuration (to avoid breakin
       }
     }`,
   });
-  const {dependencies} = loadConfig(DIR);
+  const {dependencies} = await loadConfig(DIR);
   expect(removeString(dependencies, DIR)).toMatchSnapshot(
     'dependencies config',
   );
   expect(spy.mock.calls[0][0]).toMatchSnapshot('logged warning');
 });
 
-test('does not use restricted "react-native" key to resolve config from package.json', () => {
+test('does not use restricted "react-native" key to resolve config from package.json', async () => {
   DIR = getTempDirectory('config_test_restricted');
   writeFiles(DIR, {
     'node_modules/react-native-netinfo/package.json': `{
-      "react-native": "src/index.js"
+      "react-native": "src/index.js",
+      "name": "react-native-netinfo",
+      "version": "0.0.1"
     }`,
     'react-native.config.js': 'module.exports = { reactNativePath: "." }',
     'package.json': `{
@@ -228,12 +265,13 @@ test('does not use restricted "react-native" key to resolve config from package.
       }
     }`,
   });
-  const {dependencies} = loadConfig(DIR);
+  const {dependencies} = await loadConfig(DIR);
+
   expect(dependencies).toHaveProperty('react-native-netinfo');
   expect(spy).not.toHaveBeenCalled();
 });
 
-test('supports dependencies from user configuration with custom root and properties', () => {
+test('supports dependencies from user configuration with custom root and properties', async () => {
   DIR = getTempDirectory('config_test_custom_root');
   const escapePathSeparator = (value: string) =>
     path.sep === '\\' ? value.replace(/(\/|\\)/g, '\\\\') : value;
@@ -274,7 +312,7 @@ module.exports = {
     }`,
   });
 
-  const {dependencies} = loadConfig(DIR);
+  const {dependencies} = await loadConfig(DIR);
   expect(removeString(dependencies['local-lib'], DIR)).toMatchInlineSnapshot(`
     Object {
       "name": "local-lib",
@@ -284,7 +322,6 @@ module.exports = {
           "configurations": Array [],
           "podspecPath": "custom-path",
           "scriptPhases": Array [],
-          "version": "0.0.1",
         },
       },
       "root": "<<REPLACED>>/native-libs/local-lib",
@@ -292,11 +329,14 @@ module.exports = {
   `);
 });
 
-test('should apply build types from dependency config', () => {
+test('should apply build types from dependency config', async () => {
   DIR = getTempDirectory('config_test_apply_dependency_config');
   writeFiles(DIR, {
     ...REACT_NATIVE_MOCK,
-    'node_modules/react-native-test/package.json': '{}',
+    'node_modules/react-native-test/package.json': `{
+      "name": "react-native-test",
+      "version": "0.0.1"
+    }`,
     'node_modules/react-native-test/ReactNativeTest.podspec': '',
     'node_modules/react-native-test/react-native.config.js': `module.exports = {
       dependency: {
@@ -314,13 +354,13 @@ test('should apply build types from dependency config', () => {
       }
     }`,
   });
-  const {dependencies} = loadConfig(DIR);
+  const {dependencies} = await loadConfig(DIR);
   expect(
     removeString(dependencies['react-native-test'], DIR),
   ).toMatchSnapshot();
 });
 
-test('supports dependencies from user configuration with custom build type', () => {
+test('supports dependencies from user configuration with custom build type', async () => {
   DIR = getTempDirectory('config_test_apply_custom_build_config');
   writeFiles(DIR, {
     ...REACT_NATIVE_MOCK,
@@ -335,7 +375,12 @@ test('supports dependencies from user configuration with custom build type', () 
     },
   }
 }`,
-    'node_modules/react-native-test/package.json': '{}',
+    'node_modules/react-native-test/package.json': `
+    {
+      "name": "react-native-test",
+      "version": "0.0.1"
+    }
+    `,
     'node_modules/react-native-test/ReactNativeTest.podspec': '',
     'node_modules/react-native-test/react-native.config.js':
       'module.exports = {}',
@@ -347,17 +392,20 @@ test('supports dependencies from user configuration with custom build type', () 
     }`,
   });
 
-  const {dependencies} = loadConfig(DIR);
+  const {dependencies} = await loadConfig(DIR);
   expect(
     removeString(dependencies['react-native-test'], DIR),
   ).toMatchSnapshot();
 });
 
-test('supports disabling dependency for ios platform', () => {
+test('supports disabling dependency for ios platform', async () => {
   DIR = getTempDirectory('config_test_disable_dependency_platform');
   writeFiles(DIR, {
     ...REACT_NATIVE_MOCK,
-    'node_modules/react-native-test/package.json': '{}',
+    'node_modules/react-native-test/package.json': `{
+      "name": "react-native-test",
+      "version": "0.0.1"
+    }`,
     'node_modules/react-native-test/ReactNativeTest.podspec': '',
     'node_modules/react-native-test/react-native.config.js': `
       module.exports = {
@@ -376,13 +424,13 @@ test('supports disabling dependency for ios platform', () => {
     }`,
   });
 
-  const {dependencies} = loadConfig(DIR);
+  const {dependencies} = await loadConfig(DIR);
   expect(
     removeString(dependencies['react-native-test'], DIR),
   ).toMatchSnapshot();
 });
 
-test('should convert project sourceDir relative path to absolute', () => {
+test('should convert project sourceDir relative path to absolute', async () => {
   DIR = getTempDirectory('config_test_absolute_project_source_dir');
   const iosProjectDir = './ios2';
   const androidProjectDir = './android2';
@@ -441,7 +489,7 @@ test('should convert project sourceDir relative path to absolute', () => {
     `,
   });
 
-  const config = loadConfig(DIR);
+  const config = await loadConfig(DIR);
 
   expect(config.project.ios?.sourceDir).toBe(path.join(DIR, iosProjectDir));
   expect(config.project.android?.sourceDir).toBe(

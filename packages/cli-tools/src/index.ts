@@ -21,5 +21,6 @@ export * from './resolveTransitiveDeps';
 export * from './npm';
 export * from './bun';
 export * from './yarn';
+export * as PackageManager from './packageManager';
 
 export * from './errors';

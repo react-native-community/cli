@@ -1,7 +1,10 @@
 import execa from 'execa';
 import path from 'path';
-import {logger, CLIError} from '@react-native-community/cli-tools';
-import * as PackageManager from '../../tools/packageManager';
+import {
+  logger,
+  CLIError,
+  PackageManager,
+} from '@react-native-community/cli-tools';
 import copyFiles from '../../tools/copyFiles';
 import replacePathSepForRegex from '../../tools/replacePathSepForRegex';
 import fs from 'fs';
@@ -21,7 +24,7 @@ export async function installTemplatePackage(
 ) {
   logger.debug(`Installing template from ${templateName}`);
 
-  await PackageManager.init({
+  PackageManager.init({
     packageManager,
     silent: true,
     root,

@@ -12,6 +12,12 @@ export default function findDependencies(root: string): DependencyMap {
   const checkDependency = (dependencyPath: string) => {
     let pjson: {[key: string]: any};
 
+    const packageJsonPath = path.join(dependencyPath, 'package.json');
+
+    if (!fs.existsSync(packageJsonPath)) {
+      return;
+    }
+
     pjson = JSON.parse(
       fs.readFileSync(path.join(dependencyPath, 'package.json'), 'utf8'),
     );

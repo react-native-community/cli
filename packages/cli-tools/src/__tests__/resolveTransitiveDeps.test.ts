@@ -2,9 +2,7 @@ import path from 'path';
 import prompts from 'prompts';
 import {cleanup, getTempDirectory, writeFiles} from '../../../../jest/helpers';
 import {
-  DependencyData,
   calculateWorkingVersion,
-  collectDependencies,
   filterInstalledPeers,
   filterNativeDependencies,
   findDependencyPath,
@@ -12,6 +10,7 @@ import {
   resolveTransitiveDeps,
 } from '../resolveTransitiveDeps';
 import logger from '../logger';
+import findDependencies from '../../../cli-config/src/findDependencies';
 
 jest.mock('execa', () => {
   return {sync: jest.fn()};
@@ -158,36 +157,12 @@ describe('findDependencyPath', () => {
   });
 });
 
-describe('collectDependencies', () => {
-  beforeEach(() => {
-    createTempFiles();
-  });
-
-  it('should recursively get all dependencies', () => {
-    const dependencies = collectDependencies(DIR);
-
-    expect(dependencies.size).toBe(4);
-  });
-
-  it('should collect peer dependencies of a dependency', () => {
-    const dependencies = collectDependencies(DIR);
-    const stackDependency = dependencies.get(
-      '@react-navigation/stack',
-    ) as DependencyData;
-    const peerNames = Object.keys(stackDependency.peerDependencies);
-
-    expect(peerNames).toContain('react');
-    expect(peerNames).toContain('react-native');
-    expect(peerNames).toContain('react-native-gesture-handler');
-  });
-});
-
 describe('filterNativeDependencies', () => {
   it('should return only dependencies with peer dependencies containing native code', () => {
     createTempFiles({
       'node_modules/react-native-safe-area-view/ios/Podfile': '{}',
     });
-    const dependencies = collectDependencies(DIR);
+    const dependencies = findDependencies(DIR);
     const filtered = filterNativeDependencies(DIR, dependencies);
     expect(filtered.keys()).toContain('@react-navigation/stack');
     expect(filtered.keys()).toContain('@react-navigation/elements');
@@ -197,7 +172,7 @@ describe('filterNativeDependencies', () => {
 describe('filterInstalledPeers', () => {
   it('should return only dependencies with peer dependencies that are installed', () => {
     createTempFiles();
-    const dependencies = collectDependencies(DIR);
+    const dependencies = findDependencies(DIR);
     const libsWithNativeDeps = filterNativeDependencies(DIR, dependencies);
     const nonInstalledPeers = filterInstalledPeers(DIR, libsWithNativeDeps);
 
@@ -211,11 +186,11 @@ describe('filterInstalledPeers', () => {
 describe('getMissingPeerDepsForYarn', () => {
   it('should return an array of peer dependencies to install', () => {
     createTempFiles();
-
-    const dependencies = getMissingPeerDepsForYarn(DIR);
-    expect(dependencies.values()).toContain('react');
-    expect(dependencies.values()).toContain('react-native-gesture-handler');
-    expect(dependencies.values()).toContain('react-native-safe-area-view');
+    const dependencies = findDependencies(DIR);
+    const missingDeps = getMissingPeerDepsForYarn(DIR, dependencies);
+    expect(missingDeps.values()).toContain('react');
+    expect(missingDeps.values()).toContain('react-native-gesture-handler');
+    expect(missingDeps.values()).toContain('react-native-safe-area-view');
   });
 });
 
@@ -223,7 +198,8 @@ describe('resolveTransitiveDeps', () => {
   it('should display list of missing peer dependencies if there are any', async () => {
     createTempFiles();
     prompts.prompt.mockReturnValue({});
-    await resolveTransitiveDeps(DIR);
+    const dependencies = findDependencies(DIR);
+    await resolveTransitiveDeps(DIR, dependencies);
     expect(logger.warn).toHaveBeenCalledWith(
       'Looks like you are missing some of the peer dependencies of your libraries:\n',
     );
@@ -233,15 +209,16 @@ describe('resolveTransitiveDeps', () => {
     writeFiles(DIR, {
       'package.json': JSON.stringify(rootPackageJson),
     });
-
-    await resolveTransitiveDeps(DIR);
+    const dependencies = findDependencies(DIR);
+    await resolveTransitiveDeps(DIR, dependencies);
     expect(logger.warn).not.toHaveBeenCalled();
   });
 
   it('should prompt user to install missing peer dependencies', async () => {
     createTempFiles();
     prompts.prompt.mockReturnValue({});
-    await resolveTransitiveDeps(DIR);
+    const dependencies = findDependencies(DIR);
+    await resolveTransitiveDeps(DIR, dependencies);
     expect(prompts.prompt).toHaveBeenCalledWith({
       type: 'confirm',
       name: 'install',
@@ -252,6 +229,7 @@ describe('resolveTransitiveDeps', () => {
 
   it('should install missing peer dependencies if user confirms', async () => {
     createTempFiles();
+    const dependencies = findDependencies(DIR);
     prompts.prompt.mockReturnValue({install: true});
     mockFetchJson.mockReturnValueOnce({
       versions: {
@@ -260,8 +238,8 @@ describe('resolveTransitiveDeps', () => {
       },
     });
 
-    const resolveDeps = await resolveTransitiveDeps(DIR);
+    const resolveDeps = await resolveTransitiveDeps(DIR, dependencies);
 
-    expect(resolveDeps).toBe(true);
+    expect(resolveDeps).toEqual(['react-native-gesture-handler@^2.1.0']);
   });
 });

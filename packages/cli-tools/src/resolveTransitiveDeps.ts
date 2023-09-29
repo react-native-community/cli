@@ -268,7 +268,7 @@ export async function installMissingPackages(
 
   try {
     const deps = flattenList.map((dep) => dep);
-    await install(deps, {
+    install(deps, {
       packageManager: pkgManager,
       root: process.cwd(),
       silent: true,
@@ -294,7 +294,6 @@ export async function resolveTransitiveDeps(
   }
   const nonEmptyPeers = filterNativeDependencies(root, dependencyMap);
   const nonInstalledPeers = filterInstalledPeers(root, nonEmptyPeers);
-
   if (Object.keys(nonInstalledPeers).length > 0) {
     const installDeps = await promptForMissingPeerDependencies(
       nonInstalledPeers,

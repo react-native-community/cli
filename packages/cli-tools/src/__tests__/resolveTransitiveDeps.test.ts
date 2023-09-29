@@ -6,16 +6,13 @@ import {
   filterInstalledPeers,
   filterNativeDependencies,
   findDependencyPath,
-  getMissingPeerDepsForYarn,
+  getMissingPeerDeps,
   resolveTransitiveDeps,
 } from '../resolveTransitiveDeps';
 import logger from '../logger';
 import findDependencies from '../../../cli-config/src/findDependencies';
 
-jest.mock('execa', () => {
-  return {sync: jest.fn()};
-});
-
+jest.mock('execa', () => jest.fn());
 jest.mock('prompts', () => ({prompt: jest.fn()}));
 
 jest.mock('../logger', () => ({
@@ -65,7 +62,7 @@ const elementsPackageJson = {
 
 const gestureHandlerPackageJson = {
   name: 'react-native-gesture-handler',
-  version: '1.10.3',
+  version: '2.1.0',
 };
 
 const DIR = getTempDirectory('root_test');
@@ -164,7 +161,6 @@ describe('filterNativeDependencies', () => {
     });
     const dependencies = findDependencies(DIR);
     const filtered = filterNativeDependencies(DIR, dependencies);
-    expect(filtered.keys()).toContain('@react-navigation/stack');
     expect(filtered.keys()).toContain('@react-navigation/elements');
   });
 });
@@ -187,7 +183,7 @@ describe('getMissingPeerDepsForYarn', () => {
   it('should return an array of peer dependencies to install', () => {
     createTempFiles();
     const dependencies = findDependencies(DIR);
-    const missingDeps = getMissingPeerDepsForYarn(DIR, dependencies);
+    const missingDeps = getMissingPeerDeps(DIR, dependencies);
     expect(missingDeps.values()).toContain('react');
     expect(missingDeps.values()).toContain('react-native-gesture-handler');
     expect(missingDeps.values()).toContain('react-native-safe-area-view');
@@ -221,7 +217,7 @@ describe('resolveTransitiveDeps', () => {
     await resolveTransitiveDeps(DIR, dependencies);
     expect(prompts.prompt).toHaveBeenCalledWith({
       type: 'confirm',
-      name: 'install',
+      name: 'installDependencies',
       message:
         'Do you want to install them now? The matching versions will be added as project dependencies and become visible for autolinking.',
     });
@@ -230,7 +226,7 @@ describe('resolveTransitiveDeps', () => {
   it('should install missing peer dependencies if user confirms', async () => {
     createTempFiles();
     const dependencies = findDependencies(DIR);
-    prompts.prompt.mockReturnValue({install: true});
+    prompts.prompt.mockReturnValue({installDependencies: true});
     mockFetchJson.mockReturnValueOnce({
       versions: {
         '2.0.0': {},

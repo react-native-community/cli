@@ -322,6 +322,7 @@ module.exports = {
           "configurations": Array [],
           "podspecPath": "custom-path",
           "scriptPhases": Array [],
+          "version": "0.0.1",
         },
       },
       "root": "<<REPLACED>>/native-libs/local-lib",

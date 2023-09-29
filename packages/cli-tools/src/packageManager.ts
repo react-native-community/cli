@@ -85,6 +85,17 @@ export function shouldUseNpm(options: Options) {
   return isProjectUsingNpm(options.root) && getNpmVersionIfAvailable();
 }
 
+export function getProjectPackageManager(root: string) {
+  if (isProjectUsingYarn(root)) {
+    return 'yarn';
+  }
+  if (isProjectUsingBun(root)) {
+    return 'bun';
+  }
+
+  return 'npm';
+}
+
 export function init(options: Options) {
   return configurePackageManager([], 'init', options);
 }

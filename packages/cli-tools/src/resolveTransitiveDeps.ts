@@ -6,9 +6,13 @@ import {prompt} from 'prompts';
 import execa from 'execa';
 import semver from 'semver';
 import {DependencyMap} from '@react-native-community/cli-types';
-import {isProjectUsingYarn} from './yarn';
 import {getLoader} from './loader';
 import logger from './logger';
+import {
+  PackageManager,
+  getProjectPackageManager,
+  install,
+} from './packageManager';
 
 export async function fetchAvailableVersions(
   packageName: string,
@@ -129,26 +133,25 @@ export function findPeerDepsToInstall(
   return peerDependencies;
 }
 
-export function getMissingPeerDepsForYarn(
-  root: string,
-  dependencies: DependencyMap,
-) {
+export function getMissingPeerDeps(root: string, dependencies: DependencyMap) {
   const depsToInstall = findPeerDepsToInstall(root, dependencies);
   return depsToInstall;
 }
 
-// install peer deps with yarn without making any changes to package.json and yarn.lock
-export function yarnSilentInstallPeerDeps(
+// install peer deps with yarn/bun without making any changes to package.json and yarn.lock/bun.lockb
+export function silentInstallPeerDeps(
   root: string,
   missingPeerDependencies: DependencyMap,
+  pkgManager: PackageManager,
 ) {
-  const dependenciesToInstall = getMissingPeerDepsForYarn(
+  const dependenciesToInstall = getMissingPeerDeps(
     root,
     missingPeerDependencies,
   );
+  const lockfile = pkgManager === 'yarn' ? 'yarn.lock' : 'bun.lockb';
 
   const packageJsonPath = path.join(root, 'package.json');
-  const lockfilePath = path.join(root, 'yarn.lock');
+  const lockfilePath = path.join(root, lockfile);
 
   if (dependenciesToInstall.size > 0) {
     const binPackageJson = fs.readFileSync(packageJsonPath, {
@@ -164,14 +167,14 @@ export function yarnSilentInstallPeerDeps(
     }
 
     if (!binLockfile) {
-      logger.error('yarn.lock is missing');
+      logger.error(`${lockfile} is missing`);
       return;
     }
     const loader = getLoader({text: 'Looking for peer dependencies...'});
 
     loader.start();
     try {
-      execa.sync('yarn', ['add', ...dependenciesToInstall]);
+      execa.sync(pkgManager, ['add', ...dependenciesToInstall]);
       loader.succeed();
     } catch {
       loader.fail('Failed to verify peer dependencies');
@@ -204,13 +207,14 @@ export async function promptForMissingPeerDependencies(
       .replace(/,/g, ''),
   );
 
-  const {install} = await prompt({
+  const {installDependencies} = await prompt({
     type: 'confirm',
-    name: 'install',
+    name: 'installDependencies',
     message:
       'Do you want to install them now? The matching versions will be added as project dependencies and become visible for autolinking.',
   });
-  return install;
+
+  return installDependencies;
 }
 
 export async function getPackagesVersion(
@@ -250,9 +254,9 @@ export async function getPackagesVersion(
   return workingVersions;
 }
 
-export function installMissingPackages(
+export async function installMissingPackages(
   packages: Record<string, string | null>,
-  yarn = true,
+  pkgManager: PackageManager,
 ) {
   const packageVersions = Object.entries(packages).map(
     ([name, version]) => `${name}@^${version}`,
@@ -261,13 +265,14 @@ export function installMissingPackages(
 
   const loader = getLoader({text: 'Installing peer dependencies...'});
   loader.start();
+
   try {
     const deps = flattenList.map((dep) => dep);
-    if (yarn) {
-      execa.sync('yarn', ['add', ...deps]);
-    } else {
-      execa.sync('npm', ['install', ...deps]);
-    }
+    await install(deps, {
+      packageManager: pkgManager,
+      root: process.cwd(),
+      silent: true,
+    });
     loader.succeed();
 
     return deps;
@@ -282,10 +287,10 @@ export async function resolveTransitiveDeps(
   root: string,
   dependencyMap: DependencyMap,
 ) {
-  const isYarn = !!isProjectUsingYarn(root);
+  const packageManager = getProjectPackageManager(root);
 
-  if (isYarn) {
-    yarnSilentInstallPeerDeps(root, dependencyMap);
+  if (packageManager !== 'npm') {
+    silentInstallPeerDeps(root, dependencyMap, packageManager);
   }
   const nonEmptyPeers = filterNativeDependencies(root, dependencyMap);
   const nonInstalledPeers = filterInstalledPeers(root, nonEmptyPeers);
@@ -298,7 +303,7 @@ export async function resolveTransitiveDeps(
     if (installDeps) {
       const packagesVersions = await getPackagesVersion(nonInstalledPeers);
 
-      return installMissingPackages(packagesVersions, isYarn);
+      return installMissingPackages(packagesVersions, packageManager);
     }
   }
 

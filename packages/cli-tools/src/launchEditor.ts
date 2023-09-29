@@ -92,6 +92,7 @@ function getArgumentsForLineNumber(
     case 'mine':
       return ['--line', String(lineNumber), fileName];
     case 'code':
+    case 'code-insiders':
       return addWorkspaceToArgumentsIfExists(
         ['-g', `${fileName}:${lineNumber}`],
         workspace,

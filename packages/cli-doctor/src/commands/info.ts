@@ -45,24 +45,22 @@ const info = async function getInfo(_argv: Array<string>, ctx: Config) {
 
     if (process.platform !== 'win32' && ctx.project.ios?.sourceDir) {
       try {
-        platforms.iOS.hermesEnabled = await getArchitectureForIos(
-          ctx.project.ios.sourceDir,
+        const podfile = await readFile(
+          path.join(ctx.project.ios.sourceDir, '/Podfile.lock'),
+          'utf8',
         );
+
+        platforms.iOS.hermesEnabled = podfile.includes('hermes-engine');
       } catch (e) {
         platforms.iOS.hermesEnabled = notFound;
       }
 
       try {
-        const project = await readFile(
-          path.join(
-            ctx.project.ios.sourceDir,
-            '/Pods/Pods.xcodeproj/project.pbxproj',
-          ),
+        const isNewArchitecture = await getArchitectureForIos(
+          ctx.project.ios.sourceDir,
         );
 
-        platforms.iOS.newArchEnabled = project.includes(
-          '-DRCT_NEW_ARCH_ENABLED=1',
-        );
+        platforms.iOS.newArchEnabled = isNewArchitecture;
       } catch {
         platforms.iOS.newArchEnabled = notFound;
       }

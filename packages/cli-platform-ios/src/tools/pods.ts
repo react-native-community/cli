@@ -16,7 +16,8 @@ import {
 
 interface ResolvePodsOptions {
   forceInstall?: boolean;
-  newArchEnabled?: boolean;
+  enableNewArchitecture?: boolean;
+  isRunningNewArchitecture: boolean | undefined;
 }
 
 interface NativeDependencies {
@@ -77,24 +78,24 @@ export default async function resolvePods(
     packageJson.name,
     'dependencies',
   );
-  const cachedNewArchEnabled = cacheManager.get(
-    packageJson.name,
-    'newArchEnabled',
-  );
-  const newArchEnabled = options?.newArchEnabled;
+
+  const isRunningDifferentArchitecture =
+    options?.enableNewArchitecture !== undefined &&
+    options.isRunningNewArchitecture !== options?.enableNewArchitecture;
 
   if (
     !cachedDependenciesHash ||
     !compareMd5Hashes(currentDependenciesHash, cachedDependenciesHash) ||
     !arePodsInstalled ||
     options?.forceInstall ||
-    String(newArchEnabled) !== cachedNewArchEnabled
+    isRunningDifferentArchitecture
   ) {
     const loader = getLoader('Installing CocoaPods...');
     try {
       await installPods(loader, {
         skipBundleInstall: !!cachedDependenciesHash,
-        newArchEnabled: options?.newArchEnabled,
+        newArchEnabled:
+          options?.enableNewArchitecture && isRunningDifferentArchitecture,
       });
       cacheManager.set(
         packageJson.name,
@@ -102,13 +103,6 @@ export default async function resolvePods(
         currentDependenciesHash,
       );
 
-      if (String(newArchEnabled) !== cachedNewArchEnabled) {
-        cacheManager.set(
-          packageJson.name,
-          'newArchEnabled',
-          String(newArchEnabled),
-        );
-      }
       loader.succeed();
     } catch {
       loader.fail();

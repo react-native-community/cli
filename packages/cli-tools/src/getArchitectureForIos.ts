@@ -3,12 +3,11 @@ import path from 'path';
 
 export default async function getArchitectureForIos(iosSourceDir: string) {
   try {
-    const podfile = await readFile(
-      path.join(iosSourceDir, '/Podfile.lock'),
-      'utf8',
+    const project = await readFile(
+      path.join(iosSourceDir, '/Pods/Pods.xcodeproj/project.pbxproj'),
     );
 
-    return podfile.includes('hermes-engine');
+    return project.includes('-DRCT_NEW_ARCH_ENABLED=1');
   } catch {
     return false;
   }

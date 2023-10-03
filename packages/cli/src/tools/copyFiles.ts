@@ -69,7 +69,7 @@ function copyBinaryFile(
   let cbCalled = false;
   const {mode} = fs.statSync(srcPath);
   const readStream = fs.createReadStream(srcPath);
-  const writeStream = fs.createWriteStream(destPath);
+  const writeStream = fs.createWriteStream(destPath, {mode});
   readStream.on('error', (err) => {
     done(err);
   });
@@ -78,7 +78,6 @@ function copyBinaryFile(
   });
   readStream.on('close', () => {
     done();
-    fs.chmodSync(destPath, mode);
   });
   readStream.pipe(writeStream);
   function done(err?: Error) {

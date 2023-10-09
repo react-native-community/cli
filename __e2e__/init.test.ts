@@ -7,9 +7,6 @@ import {
   writeFiles,
 } from '../jest/helpers';
 import slash from 'slash';
-import prompts from 'prompts';
-
-jest.mock('prompts', () => jest.fn());
 
 const DIR = getTempDirectory('command-init');
 
@@ -60,22 +57,9 @@ test('init fails if the directory already exists', () => {
 });
 
 test('init should prompt for the project name', () => {
-  createCustomTemplateFiles();
-  const {stdout} = runCLI(DIR, [
-    'init',
-    'test',
-    '--template',
-    templatePath,
-    '--install-pods',
-    'false',
-  ]);
+  const {stdout} = runCLI(DIR, ['init']);
 
-  (prompts as jest.MockedFunction<typeof prompts>).mockReturnValue(
-    Promise.resolve({
-      name: 'TestInit',
-    }),
-  );
-  expect(stdout).toContain('Run instructions');
+  expect(stdout).toContain('How would you like to name the app?');
 });
 
 test('init --template filepath', () => {

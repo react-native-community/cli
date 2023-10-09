@@ -34,6 +34,7 @@ import {
 } from './git';
 import semver from 'semver';
 import {executeCommand} from '../../tools/executeCommand';
+import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
 
 const DEFAULT_VERSION = 'latest';
 
@@ -50,6 +51,7 @@ type Options = {
   installPods?: string | boolean;
   platformName?: string;
   skipGitInit?: boolean;
+  replaceDirectory?: string | boolean;
 };
 
 interface TemplateOptions {
@@ -64,10 +66,12 @@ interface TemplateOptions {
   packageName?: string;
   installCocoaPods?: string | boolean;
   version?: string;
+  replaceDirectory?: string | boolean;
 }
 
 interface TemplateReturnType {
   didInstallPods?: boolean;
+  replaceDirectory?: string | boolean;
 }
 
 // Here we are defining explicit version of Yarn to be used in the new project because in some cases providing `3.x` don't work.
@@ -104,11 +108,21 @@ function getConflictsForDirectory(directory: string) {
   return readdirSync(directory);
 }
 
-async function setProjectDirectory(directory: string) {
+async function setProjectDirectory(
+  directory: string,
+  replaceDirectory: string,
+) {
   const directoryExists = doesDirectoryExist(directory);
+
+  if (replaceDirectory === 'false' && directoryExists) {
+    throw new DirectoryAlreadyExistsError(directory);
+  }
+
   let deleteDirectory = false;
 
-  if (directoryExists) {
+  if (replaceDirectory === 'true' && directoryExists) {
+    deleteDirectory = true;
+  } else if (directoryExists) {
     const conflicts = getConflictsForDirectory(directory);
 
     if (conflicts.length > 0) {
@@ -131,9 +145,7 @@ async function setProjectDirectory(directory: string) {
       deleteDirectory = replace;
 
       if (!replace) {
-        throw new CLIError(
-          'Please remove files manually, or choose other directory.',
-        );
+        throw new DirectoryAlreadyExistsError(directory);
       }
     }
   }
@@ -186,6 +198,7 @@ async function createFromTemplate({
   skipInstall,
   packageName,
   installCocoaPods,
+  replaceDirectory,
 }: TemplateOptions): Promise<TemplateReturnType> {
   logger.debug('Initializing new project');
   // Only print out the banner if we're not in a CI
@@ -214,7 +227,10 @@ async function createFromTemplate({
   // if the project with the name already has cache, remove the cache to avoid problems with pods installation
   cacheManager.removeProjectCache(projectName);
 
-  const projectDirectory = await setProjectDirectory(directory);
+  const projectDirectory = await setProjectDirectory(
+    directory,
+    String(replaceDirectory),
+  );
 
   const loader = getLoader({text: 'Downloading template'});
   const templateSourceDir = fs.mkdtempSync(
@@ -402,6 +418,7 @@ async function createProject(
     packageName: options.packageName,
     installCocoaPods: options.installPods,
     version,
+    replaceDirectory: options.replaceDirectory,
   });
 }
 

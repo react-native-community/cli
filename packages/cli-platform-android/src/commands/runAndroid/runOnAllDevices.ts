@@ -140,6 +140,8 @@ function createInstallError(error: Error & {stderr: string}) {
         guide: 'native',
       }),
     )} and follow the React Native CLI QuickStart guide to install the compatible version of JDK.`;
+  } else {
+    message = error.message;
   }
 
   return new CLIError(

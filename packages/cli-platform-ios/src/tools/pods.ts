@@ -57,6 +57,26 @@ export function compareMd5Hashes(hash1: string, hash2: string) {
   return hash1 === hash2;
 }
 
+async function install(
+  packageJson: Record<string, any>,
+  cachedDependenciesHash: string | undefined,
+  currentDependenciesHash: string,
+) {
+  const loader = getLoader('Installing CocoaPods...');
+  try {
+    await installPods(loader, {skipBundleInstall: !!cachedDependenciesHash});
+    cacheManager.set(packageJson.name, 'dependencies', currentDependenciesHash);
+    loader.succeed();
+  } catch {
+    loader.fail();
+    throw new CLIError(
+      `Something when wrong while installing CocoaPods. Please run ${chalk.bold(
+        'pod install',
+      )} manually`,
+    );
+  }
+}
+
 export default async function resolvePods(
   root: string,
   nativeDependencies: NativeDependencies,
@@ -77,28 +97,15 @@ export default async function resolvePods(
     'dependencies',
   );
 
-  if (
+  if (options?.forceInstall) {
+    await install(packageJson, cachedDependenciesHash, currentDependenciesHash);
+  } else if (arePodsInstalled && cachedDependenciesHash === undefined) {
+    cacheManager.set(packageJson.name, 'dependencies', currentDependenciesHash);
+  } else if (
     !cachedDependenciesHash ||
     !compareMd5Hashes(currentDependenciesHash, cachedDependenciesHash) ||
-    !arePodsInstalled ||
-    options?.forceInstall
+    !arePodsInstalled
   ) {
-    const loader = getLoader('Installing CocoaPods...');
-    try {
-      await installPods(loader, {skipBundleInstall: !!cachedDependenciesHash});
-      cacheManager.set(
-        packageJson.name,
-        'dependencies',
-        currentDependenciesHash,
-      );
-      loader.succeed();
-    } catch {
-      loader.fail();
-      throw new CLIError(
-        `Something when wrong while installing CocoaPods. Please run ${chalk.bold(
-          'pod install',
-        )} manually`,
-      );
-    }
+    await install(packageJson, cachedDependenciesHash, currentDependenciesHash);
   }
 }

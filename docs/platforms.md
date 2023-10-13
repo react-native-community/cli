@@ -2,7 +2,7 @@
 
 A platform is a React Native package that enables writing and shipping React Native applications to a new target.
 
-For example, React Native Windows is a platform, because it allows to run React Native apps on Windows. At the same time, React Native itself is also a platform - it allows to run React Native apps on Android, iOS and tvOS.
+For example, React Native Windows is a platform, because it allows to run React Native apps on Windows. At the same time, React Native itself is also a platform - it allows to run React Native apps on Android, iOS, tvOS and Android TV.
 
 Each platform can have an additional configuration for the CLI to enable bundling apps and linking packages for targets it provides.
 

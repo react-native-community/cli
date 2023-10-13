@@ -6,6 +6,7 @@ import {getProjectInfo} from '../../tools/getProjectInfo';
 import {checkIfConfigurationExists} from '../../tools/checkIfConfigurationExists';
 import type {BuildFlags} from './buildOptions';
 import {getBuildConfigurationFromXcScheme} from '../../tools/getBuildConfigurationFromXcScheme';
+import path from 'path';
 
 export async function getConfiguration(
   xcodeProject: IOSProjectInfo,
@@ -18,7 +19,9 @@ export async function getConfiguration(
     checkIfConfigurationExists(projectInfo, args.mode);
   }
 
-  let scheme = args.scheme || projectInfo.schemes[0];
+  let scheme =
+    args.scheme ||
+    path.basename(xcodeProject.name, path.extname(xcodeProject.name));
   let mode =
     args.mode ||
     getBuildConfigurationFromXcScheme(scheme, 'Debug', sourceDir, projectInfo);

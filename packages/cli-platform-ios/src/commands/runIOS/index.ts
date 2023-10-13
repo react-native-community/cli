@@ -34,6 +34,7 @@ export interface FlagsT extends BuildFlags {
 }
 
 async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
+  console.log('');
   if (!ctx.project.ios) {
     throw new CLIError(
       'iOS project folder not found. Are you sure this is a React Native project?',

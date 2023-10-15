@@ -9,7 +9,7 @@ import {
 interface Args {
   scheme?: string;
   mode?: string;
-  projectInfo: IosProjectInfo;
+  projectInfo: IosProjectInfo | undefined;
 }
 
 export async function selectFromInteractiveMode({
@@ -20,13 +20,13 @@ export async function selectFromInteractiveMode({
   let newScheme = scheme;
   let newMode = mode;
 
-  if (projectInfo.schemes.length > 1) {
+  if (projectInfo && projectInfo.schemes.length > 1) {
     newScheme = await promptForSchemeSelection(projectInfo);
   } else {
     logger.info(`Automatically selected ${chalk.bold(scheme)} scheme.`);
   }
 
-  if (projectInfo.configurations.length > 1) {
+  if (projectInfo && projectInfo.configurations.length > 1) {
     newMode = await promptForConfigurationSelection(projectInfo);
   } else {
     logger.info(`Automatically selected ${chalk.bold(mode)} configuration.`);

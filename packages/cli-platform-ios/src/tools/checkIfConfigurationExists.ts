@@ -2,7 +2,7 @@ import {CLIError, logger} from '@react-native-community/cli-tools';
 import {IosProjectInfo} from '../types';
 
 export function checkIfConfigurationExists(
-  project: IosProjectInfo,
+  project: IosProjectInfo | undefined,
   mode: string,
 ) {
   if (!project) {

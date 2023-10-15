@@ -11,7 +11,7 @@ export function getBuildConfigurationFromXcScheme(
   scheme: string,
   configuration: string,
   sourceDir: string,
-  projectInfo: IosProjectInfo,
+  projectInfo: IosProjectInfo | undefined,
 ): string {
   try {
     const xcProject = fs
@@ -37,10 +37,13 @@ export function getBuildConfigurationFromXcScheme(
       return Scheme.LaunchAction['@_buildConfiguration'];
     }
   } catch {
+    const availableSchemas = projectInfo
+      ? `Available schemas are: ${projectInfo.schemes
+          .map((name) => chalk.bold(name))
+          .join(', ')}'`
+      : '';
     throw new CLIError(
-      `Could not find scheme ${scheme}. Please make sure the schema you want to run exists. Available schemas are: ${projectInfo.schemes
-        .map((name) => chalk.bold(name))
-        .join(', ')}'`,
+      `Could not find scheme ${scheme}. Please make sure the schema you want to run exists. ${availableSchemas}`,
     );
   }
 

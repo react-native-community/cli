@@ -1,7 +1,7 @@
 import execa from 'execa';
 import {IosProjectInfo} from '../types';
 
-export function getProjectInfo(): IosProjectInfo {
+export function getProjectInfo(): IosProjectInfo | undefined {
   try {
     const out = execa.sync('xcodebuild', ['-list', '-json']).stdout;
     const {project} = JSON.parse(out);

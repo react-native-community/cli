@@ -110,14 +110,18 @@ async function installCocoaPods(loader: Ora) {
   }
 }
 
-async function installPods(loader?: Ora, options?: PodInstallOptions) {
+async function installPods(
+  loader?: Ora,
+  iosFolderPath?: string,
+  options?: PodInstallOptions,
+) {
   loader = loader || new NoopLoader();
   try {
-    if (!fs.existsSync('ios')) {
+    if (!iosFolderPath && !fs.existsSync('ios')) {
       return;
     }
 
-    process.chdir('ios');
+    process.chdir(iosFolderPath ?? 'ios');
 
     const hasPods = fs.existsSync('Podfile');
 

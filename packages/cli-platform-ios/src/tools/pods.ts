@@ -101,7 +101,12 @@ export default async function resolvePods(
   );
 
   if (options?.forceInstall) {
-    await install(packageJson, cachedDependenciesHash, currentDependenciesHash);
+    await install(
+      packageJson,
+      cachedDependenciesHash,
+      currentDependenciesHash,
+      iosFolderPath,
+    );
   } else if (arePodsInstalled && cachedDependenciesHash === undefined) {
     cacheManager.set(packageJson.name, 'dependencies', currentDependenciesHash);
   } else if (

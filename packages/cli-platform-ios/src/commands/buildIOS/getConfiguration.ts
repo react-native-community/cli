@@ -16,10 +16,7 @@ export async function getConfiguration(
   const info = getInfo();
 
   if (args.mode) {
-    if (!info || !info.configurations) {
-      throw new Error('Cannot determine Xcode project configuration.');
-    }
-    checkIfConfigurationExists(info.configurations, args.mode);
+    checkIfConfigurationExists((info && info.configurations) ?? [], args.mode);
   }
 
   let scheme =

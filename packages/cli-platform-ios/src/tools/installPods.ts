@@ -25,9 +25,9 @@ async function runPodInstall(loader: Ora, options?: RunPodInstallOptions) {
   const shouldHandleRepoUpdate = options?.shouldHandleRepoUpdate || true;
   try {
     loader.start(
-      `Installing CocoaPods dependencies ${chalk.dim(
-        '(this may take a few minutes)',
-      )}`,
+      `Installing CocoaPods dependencies ${chalk.bold(
+        options?.newArchEnabled ? 'with New Architecture' : '',
+      )} ${chalk.dim('(this may take a few minutes)')}`,
     );
 
     await execa('bundle', ['exec', 'pod', 'install'], {

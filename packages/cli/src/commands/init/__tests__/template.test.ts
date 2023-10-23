@@ -2,7 +2,7 @@ jest.mock('execa', () => jest.fn());
 import execa from 'execa';
 import path from 'path';
 import fs from 'fs';
-import * as PackageManger from '../../../tools/packageManager';
+import {PackageManager} from '@react-native-community/cli-tools';
 import {
   installTemplatePackage,
   getTemplateConfig,
@@ -20,11 +20,11 @@ afterEach(() => {
 });
 
 test('installTemplatePackage', async () => {
-  jest.spyOn(PackageManger, 'install').mockImplementationOnce(() => null);
+  jest.spyOn(PackageManager, 'install').mockImplementationOnce(jest.fn());
 
   await installTemplatePackage(TEMPLATE_NAME, TEMPLATE_SOURCE_DIR, 'npm');
 
-  expect(PackageManger.install).toHaveBeenCalledWith([TEMPLATE_NAME], {
+  expect(PackageManager.install).toHaveBeenCalledWith([TEMPLATE_NAME], {
     packageManager: 'npm',
     silent: true,
     root: TEMPLATE_SOURCE_DIR,

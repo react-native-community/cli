@@ -186,6 +186,7 @@ export const projectConfig = t
         linkConfig: t.func(),
       }),
     ).default({}),
+    unstable_autolinkPeerDependencies: t.bool(),
   })
   .unknown(true)
   .default();

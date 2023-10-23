@@ -135,6 +135,7 @@ export type UserConfig = Omit<Config, 'root'> & {
     ios?: IOSProjectParams;
     [key: string]: any;
   };
+  unstable_autolinkPeerDependencies?: boolean;
 };
 
 export type UserDependencyConfig = {
@@ -147,6 +148,15 @@ export type UserDependencyConfig = {
   // Additional health checks
   healthChecks: [];
 };
+
+export type DependencyMap = Map<
+  string,
+  {
+    version: string;
+    peerDependencies: Record<string, string>;
+    path: string;
+  }
+>;
 
 export {
   IOSProjectConfig,

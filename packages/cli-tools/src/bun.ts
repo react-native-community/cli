@@ -1,7 +1,7 @@
-import {logger} from '@react-native-community/cli-tools';
 import {execSync} from 'child_process';
 import findUp from 'find-up';
 import semver from 'semver';
+import logger from './logger';
 
 export function getBunVersionIfAvailable() {
   let bunVersion;

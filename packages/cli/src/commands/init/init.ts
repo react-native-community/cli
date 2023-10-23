@@ -12,6 +12,10 @@ import {
   getLoader,
   Loader,
   cacheManager,
+  getBunVersionIfAvailable,
+  getNpmVersionIfAvailable,
+  getYarnVersionIfAvailable,
+  PackageManager,
 } from '@react-native-community/cli-tools';
 import {installPods} from '@react-native-community/cli-platform-ios';
 import {
@@ -21,12 +25,8 @@ import {
   executePostInitScript,
 } from './template';
 import {changePlaceholderInTemplate} from './editTemplate';
-import * as PackageManager from '../../tools/packageManager';
 import banner from './banner';
 import TemplateAndVersionError from './errors/TemplateAndVersionError';
-import {getBunVersionIfAvailable} from '../../tools/bun';
-import {getNpmVersionIfAvailable} from '../../tools/npm';
-import {getYarnVersionIfAvailable} from '../../tools/yarn';
 import {createHash} from 'crypto';
 
 const DEFAULT_VERSION = 'latest';

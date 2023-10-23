@@ -2,7 +2,7 @@ jest.mock('execa', () => jest.fn());
 import execa from 'execa';
 import * as yarn from '../yarn';
 import * as bun from '../bun';
-import {logger} from '@react-native-community/cli-tools';
+import logger from '../logger';
 import * as PackageManager from '../packageManager';
 
 const PACKAGES = ['react', 'react-native'];

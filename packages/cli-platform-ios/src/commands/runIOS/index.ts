@@ -51,25 +51,25 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   // check if pods need to be installed
   await resolvePods(ctx.root, ctx.dependencies, {forceInstall: args.forcePods});
 
-  const packagerStatus = await isPackagerRunning(port);
+  if (packager) {
+    const packagerStatus = await isPackagerRunning(port);
 
-  if (
-    typeof packagerStatus === 'object' &&
-    packagerStatus.status === 'running'
-  ) {
-    if (packagerStatus.root === ctx.root) {
-      packager = false;
-      logAlreadyRunningBundler(port);
-    } else {
+    if (
+      typeof packagerStatus === 'object' &&
+      packagerStatus.status === 'running'
+    ) {
+      if (packagerStatus.root === ctx.root) {
+        packager = false;
+        logAlreadyRunningBundler(port);
+      } else {
+        const result = await handlePortUnavailable(port, ctx.root, packager);
+        [port, packager] = [result.port, result.packager];
+      }
+    } else if (packagerStatus === 'unrecognized') {
       const result = await handlePortUnavailable(port, ctx.root, packager);
       [port, packager] = [result.port, result.packager];
     }
-  } else if (packagerStatus === 'unrecognized') {
-    const result = await handlePortUnavailable(port, ctx.root, packager);
-    [port, packager] = [result.port, result.packager];
-  }
 
-  if (packager) {
     await startServerInNewWindow(
       port,
       ctx.root,

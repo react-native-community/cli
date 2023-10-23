@@ -56,25 +56,25 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
 
   let {packager, port} = args;
 
-  const packagerStatus = await isPackagerRunning(port);
+  if (packager) {
+    const packagerStatus = await isPackagerRunning(port);
 
-  if (
-    typeof packagerStatus === 'object' &&
-    packagerStatus.status === 'running'
-  ) {
-    if (packagerStatus.root === config.root) {
-      packager = false;
-      logAlreadyRunningBundler(port);
-    } else {
+    if (
+      typeof packagerStatus === 'object' &&
+      packagerStatus.status === 'running'
+    ) {
+      if (packagerStatus.root === config.root) {
+        packager = false;
+        logAlreadyRunningBundler(port);
+      } else {
+        const result = await handlePortUnavailable(port, config.root, packager);
+        [port, packager] = [result.port, result.packager];
+      }
+    } else if (packagerStatus === 'unrecognized') {
       const result = await handlePortUnavailable(port, config.root, packager);
       [port, packager] = [result.port, result.packager];
     }
-  } else if (packagerStatus === 'unrecognized') {
-    const result = await handlePortUnavailable(port, config.root, packager);
-    [port, packager] = [result.port, result.packager];
-  }
 
-  if (packager) {
     await startServerInNewWindow(
       port,
       config.root,

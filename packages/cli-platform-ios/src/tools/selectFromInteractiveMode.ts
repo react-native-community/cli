@@ -20,8 +20,9 @@ export async function selectFromInteractiveMode({
   let newScheme = scheme;
   let newMode = mode;
 
-  if (info && info?.schemes && info.schemes.length > 1) {
-    newScheme = await promptForSchemeSelection(info.schemes);
+  const schemes = info?.schemes;
+  if (schemes && schemes.length > 1) {
+    newScheme = await promptForSchemeSelection(schemes);
   } else {
     logger.info(`Automatically selected ${chalk.bold(scheme)} scheme.`);
   }

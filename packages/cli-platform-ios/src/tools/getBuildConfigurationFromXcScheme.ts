@@ -3,7 +3,7 @@ import chalk from 'chalk';
 import {XMLParser} from 'fast-xml-parser';
 import fs from 'fs';
 import path from 'path';
-import {IosProjectInfo} from '../types';
+import {IosInfo} from '../types';
 
 const xmlParser = new XMLParser({ignoreAttributes: false});
 
@@ -11,7 +11,7 @@ export function getBuildConfigurationFromXcScheme(
   scheme: string,
   configuration: string,
   sourceDir: string,
-  projectInfo: IosProjectInfo | undefined,
+  projectInfo: IosInfo | undefined,
 ): string {
   try {
     const xcProject = fs
@@ -37,11 +37,13 @@ export function getBuildConfigurationFromXcScheme(
       return Scheme.LaunchAction['@_buildConfiguration'];
     }
   } catch {
-    const availableSchemas = projectInfo
-      ? `Available schemas are: ${projectInfo.schemes
-          .map((name) => chalk.bold(name))
-          .join(', ')}'`
-      : '';
+    const availableSchemas =
+      projectInfo && projectInfo.schemes && projectInfo.schemes.length > 0
+        ? `Available schemas are: ${projectInfo.schemes
+            .map((name) => chalk.bold(name))
+            .join(', ')}'`
+        : '';
+
     throw new CLIError(
       `Could not find scheme ${scheme}. Please make sure the schema you want to run exists. ${availableSchemas}`,
     );

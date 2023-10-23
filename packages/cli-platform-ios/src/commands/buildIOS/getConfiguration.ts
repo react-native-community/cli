@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import {IOSProjectInfo} from '@react-native-community/cli-types';
 import {logger} from '@react-native-community/cli-tools';
 import {selectFromInteractiveMode} from '../../tools/selectFromInteractiveMode';
-import {getProjectInfo} from '../../tools/getProjectInfo';
+import {getInfo} from '../../tools/getInfo';
 import {checkIfConfigurationExists} from '../../tools/checkIfConfigurationExists';
 import type {BuildFlags} from './buildOptions';
 import {getBuildConfigurationFromXcScheme} from '../../tools/getBuildConfigurationFromXcScheme';
@@ -13,10 +13,13 @@ export async function getConfiguration(
   sourceDir: string,
   args: BuildFlags,
 ) {
-  const projectInfo = getProjectInfo();
+  const info = getInfo();
 
   if (args.mode) {
-    checkIfConfigurationExists(projectInfo, args.mode);
+    if (!info || !info.configurations) {
+      throw new Error('Cannot determine Xcode project configuration.');
+    }
+    checkIfConfigurationExists(info.configurations, args.mode);
   }
 
   let scheme =
@@ -24,13 +27,13 @@ export async function getConfiguration(
     path.basename(xcodeProject.name, path.extname(xcodeProject.name));
   let mode =
     args.mode ||
-    getBuildConfigurationFromXcScheme(scheme, 'Debug', sourceDir, projectInfo);
+    getBuildConfigurationFromXcScheme(scheme, 'Debug', sourceDir, info);
 
   if (args.interactive) {
     const selection = await selectFromInteractiveMode({
       scheme,
       mode,
-      projectInfo,
+      info,
     });
 
     if (selection.scheme) {

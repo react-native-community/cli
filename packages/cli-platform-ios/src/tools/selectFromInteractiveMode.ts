@@ -1,6 +1,6 @@
 import {logger} from '@react-native-community/cli-tools';
 import chalk from 'chalk';
-import {IosProjectInfo} from '../types';
+import {IosInfo} from '../types';
 import {
   promptForConfigurationSelection,
   promptForSchemeSelection,
@@ -9,25 +9,25 @@ import {
 interface Args {
   scheme?: string;
   mode?: string;
-  projectInfo: IosProjectInfo | undefined;
+  info: IosInfo | undefined;
 }
 
 export async function selectFromInteractiveMode({
   scheme,
   mode,
-  projectInfo,
+  info,
 }: Args): Promise<{scheme?: string; mode?: string}> {
   let newScheme = scheme;
   let newMode = mode;
 
-  if (projectInfo && projectInfo.schemes.length > 1) {
-    newScheme = await promptForSchemeSelection(projectInfo);
+  if (info && info?.schemes && info.schemes.length > 1) {
+    newScheme = await promptForSchemeSelection(info.schemes);
   } else {
     logger.info(`Automatically selected ${chalk.bold(scheme)} scheme.`);
   }
 
-  if (projectInfo && projectInfo.configurations.length > 1) {
-    newMode = await promptForConfigurationSelection(projectInfo);
+  if (info && info?.configurations && info?.configurations?.length > 1) {
+    newMode = await promptForConfigurationSelection(info.configurations);
   } else {
     logger.info(`Automatically selected ${chalk.bold(mode)} configuration.`);
   }

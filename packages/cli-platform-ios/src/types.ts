@@ -10,9 +10,9 @@ export interface Device {
   lastBootedAt?: string;
 }
 
-export interface IosProjectInfo {
-  configurations: string[];
+export interface IosInfo {
   name: string;
-  schemes: string[];
-  targets: string[];
+  schemes?: string[];
+  configurations?: string[];
+  targets?: string[];
 }

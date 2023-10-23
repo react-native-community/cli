@@ -16,7 +16,7 @@ export async function getConfiguration(
   const info = getInfo();
 
   if (args.mode) {
-    checkIfConfigurationExists((info && info.configurations) ?? [], args.mode);
+    checkIfConfigurationExists(info?.configurations ?? [], args.mode);
   }
 
   let scheme =

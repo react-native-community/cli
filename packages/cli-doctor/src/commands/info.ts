@@ -8,6 +8,7 @@
 import getEnvironmentInfo from '../tools/envinfo';
 import {logger, version} from '@react-native-community/cli-tools';
 import {Config} from '@react-native-community/cli-types';
+import {getArchitecture} from '@react-native-community/cli-platform-ios';
 import {readFile} from 'fs-extra';
 import path from 'path';
 import {stringify} from 'yaml';
@@ -52,16 +53,11 @@ const info = async function getInfo(_argv: Array<string>, ctx: Config) {
       }
 
       try {
-        const project = await readFile(
-          path.join(
-            ctx.project.ios.sourceDir,
-            '/Pods/Pods.xcodeproj/project.pbxproj',
-          ),
+        const isNewArchitecture = await getArchitecture(
+          ctx.project.ios.sourceDir,
         );
 
-        platforms.iOS.newArchEnabled = project.includes(
-          '-DRCT_NEW_ARCH_ENABLED=1',
-        );
+        platforms.iOS.newArchEnabled = isNewArchitecture;
       } catch {
         platforms.iOS.newArchEnabled = notFound;
       }

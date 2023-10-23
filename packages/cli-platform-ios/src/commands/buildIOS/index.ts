@@ -12,12 +12,20 @@ import {BuildFlags, buildOptions} from './buildOptions';
 import {getConfiguration} from './getConfiguration';
 import {getXcodeProjectAndDir} from './getXcodeProjectAndDir';
 import resolvePods from '../../tools/pods';
+import getArchitecture from '../../tools/getArchitecture';
 
 async function buildIOS(_: Array<string>, ctx: Config, args: BuildFlags) {
   const {xcodeProject, sourceDir} = getXcodeProjectAndDir(ctx.project.ios);
 
+  const isAppRunningNewArchitecture = ctx.project.ios?.sourceDir
+    ? await getArchitecture(ctx.project.ios?.sourceDir)
+    : undefined;
+
   // check if pods need to be installed
-  await resolvePods(ctx.root, ctx.dependencies, {forceInstall: args.forcePods});
+  await resolvePods(ctx.root, ctx.dependencies, {
+    forceInstall: args.forcePods,
+    newArchEnabled: isAppRunningNewArchitecture,
+  });
 
   process.chdir(sourceDir);
 

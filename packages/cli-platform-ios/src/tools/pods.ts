@@ -16,6 +16,7 @@ import {
 
 interface ResolvePodsOptions {
   forceInstall?: boolean;
+  newArchEnabled?: boolean;
 }
 
 interface NativeDependencies {
@@ -114,11 +115,25 @@ export default async function resolvePods(
     !compareMd5Hashes(currentDependenciesHash, cachedDependenciesHash) ||
     !arePodsInstalled
   ) {
-    await install(
-      packageJson,
-      cachedDependenciesHash,
-      currentDependenciesHash,
-      iosFolderPath,
-    );
+    const loader = getLoader('Installing CocoaPods...');
+    try {
+      await installPods(loader, {
+        skipBundleInstall: !!cachedDependenciesHash,
+        newArchEnabled: options?.newArchEnabled,
+      });
+      cacheManager.set(
+        packageJson.name,
+        'dependencies',
+        currentDependenciesHash,
+      );
+      loader.succeed();
+    } catch {
+      loader.fail();
+      throw new CLIError(
+        `Something when wrong while installing CocoaPods. Please run ${chalk.bold(
+          'pod install',
+        )} manually`,
+      );
+    }
   }
 }

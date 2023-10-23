@@ -66,8 +66,9 @@ async function install(
 ) {
   const loader = getLoader('Installing CocoaPods...');
   try {
-    await installPods(loader, iosFolderPath, {
+    await installPods(loader, {
       skipBundleInstall: !!cachedDependenciesHash,
+      iosFolderPath,
     });
     cacheManager.set(packageJson.name, 'dependencies', currentDependenciesHash);
     loader.succeed();
@@ -120,6 +121,7 @@ export default async function resolvePods(
       await installPods(loader, {
         skipBundleInstall: !!cachedDependenciesHash,
         newArchEnabled: options?.newArchEnabled,
+        iosFolderPath,
       });
       cacheManager.set(
         packageJson.name,

@@ -27,8 +27,9 @@ export async function selectFromInteractiveMode({
     logger.info(`Automatically selected ${chalk.bold(scheme)} scheme.`);
   }
 
-  if (info && info?.configurations && info?.configurations?.length > 1) {
-    newMode = await promptForConfigurationSelection(info.configurations);
+  const configurations = info?.configurations;
+  if (configurations && configurations.length > 1) {
+    newMode = await promptForConfigurationSelection(configurations);
   } else {
     logger.info(`Automatically selected ${chalk.bold(mode)} configuration.`);
   }

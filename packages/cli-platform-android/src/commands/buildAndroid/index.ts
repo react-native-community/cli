@@ -10,6 +10,7 @@ import adb from '../runAndroid/adb';
 import getAdbPath from '../runAndroid/getAdbPath';
 import {getTaskNames} from '../runAndroid/getTaskNames';
 import {promptForTaskSelection} from '../runAndroid/listAndroidTasks';
+import {checkGradleWrapper} from '../runAndroid/checkGradleWrapper';
 
 export interface BuildFlags {
   mode?: string;
@@ -25,6 +26,8 @@ async function buildAndroid(
   args: BuildFlags,
 ) {
   const androidProject = getAndroidProject(config);
+
+  await checkGradleWrapper(config.root);
 
   if (args.tasks && args.mode) {
     logger.warn(

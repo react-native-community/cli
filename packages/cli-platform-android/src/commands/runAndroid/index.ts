@@ -30,6 +30,7 @@ import {build, BuildFlags, options} from '../buildAndroid';
 import {promptForTaskSelection} from './listAndroidTasks';
 import {getTaskNames} from './getTaskNames';
 import {checkUsers, promptForUser} from './listAndroidUsers';
+import {checkGradleWrapper} from './checkGradleWrapper';
 
 export interface Flags extends BuildFlags {
   appId: string;
@@ -73,6 +74,8 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
   if (config.reactNativeVersion !== 'unknown') {
     link.setVersion(config.reactNativeVersion);
   }
+
+  await checkGradleWrapper(config.root);
 
   if (args.binaryPath) {
     if (args.tasks) {

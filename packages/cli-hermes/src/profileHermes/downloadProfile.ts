@@ -28,6 +28,16 @@ function execSyncWithLog(command: string) {
 }
 
 /**
+ * A wrapper that converts an object to JSON with 4 spaces for indentation.
+ *
+ * @param obj Any object that can be represented as JSON
+ * @returns A JSON string
+ */
+function jsonStringify(obj: any) {
+  return JSON.stringify(obj, undefined, 4);
+}
+
+/**
  * Pull and convert a Hermes tracing profile to Chrome tracing profile
  * @param ctx
  * @param dstPath
@@ -123,11 +133,12 @@ export async function downloadProfile(
         file,
         '.cpuprofile',
       )}-converted.json`;
-      fs.writeFileSync(
-        transformedFilePath,
-        JSON.stringify(events, undefined, 4),
-        'utf-8',
-      );
+
+      // Convert to JSON in chunks because JSON.stringify() will fail for large
+      // arrays with the error "RangeError: Invalid string length"
+      const out = events.map(jsonStringify).join(',');
+
+      fs.writeFileSync(transformedFilePath, '[' + out + ']', 'utf-8');
       logger.success(
         `Successfully converted to Chrome tracing format and pulled the file to ${transformedFilePath}`,
       );

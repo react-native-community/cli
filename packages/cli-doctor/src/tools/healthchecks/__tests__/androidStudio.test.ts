@@ -16,7 +16,7 @@ describe('androidStudio', () => {
 
   beforeAll(async () => {
     environmentInfo = await getEnvironmentInfo();
-    ((execa as unknown) as jest.Mock).mockResolvedValue({stdout: ''});
+    (execa as unknown as jest.Mock).mockResolvedValue({stdout: ''});
   }, 60000);
 
   afterEach(() => {

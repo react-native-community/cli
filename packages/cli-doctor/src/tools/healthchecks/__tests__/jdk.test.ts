@@ -30,7 +30,7 @@ describe('jdk', () => {
 
   it('returns a message if JDK is not installed', async () => {
     environmentInfo.Languages.Java = 'Not Found';
-    ((execa as unknown) as jest.Mock).mockResolvedValue({stdout: ''});
+    (execa as unknown as jest.Mock).mockResolvedValue({stdout: ''});
     const diagnostics = await jdk.getDiagnostics(environmentInfo);
     expect(diagnostics.needsToBeFixed).toBe(true);
   });

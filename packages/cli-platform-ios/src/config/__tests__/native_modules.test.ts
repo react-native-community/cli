@@ -61,10 +61,8 @@ function run(runConfig: RunConfig) {
         if (runConfig.captureStdout) {
           resolve(data.trimRight());
         } else {
-          const {
-            target_definitions,
-            return_values,
-          }: TestScriptOutput = JSON.parse(data);
+          const {target_definitions, return_values}: TestScriptOutput =
+            JSON.parse(data);
           resolve({
             rootTargetDefinition: target_definitions[0],
             returnValues: return_values,
@@ -118,8 +116,7 @@ describeIfSupportedEnv()('native_modules.rb', () => {
         project: {ios: {sourceDir: FIXTURES_ROOT}},
         dependencies: {
           'android-dep': {
-            root:
-              '/root/app/node_modules/react-native-google-play-game-services',
+            root: '/root/app/node_modules/react-native-google-play-game-services',
             platforms: {ios: null, android: {}},
           },
         },

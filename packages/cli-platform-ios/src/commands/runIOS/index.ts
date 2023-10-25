@@ -597,8 +597,7 @@ export default {
     },
     {
       desc: 'Run on the AppleTV simulator',
-      cmd:
-        'npx react-native run-ios --simulator "Apple TV"  --scheme "helloworld-tvOS"',
+      cmd: 'npx react-native run-ios --simulator "Apple TV"  --scheme "helloworld-tvOS"',
     },
   ],
   options: [

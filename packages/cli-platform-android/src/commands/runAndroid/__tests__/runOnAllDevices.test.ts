@@ -81,7 +81,7 @@ describe('--appFolder', () => {
       'adb',
       androidProject,
     );
-    expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toContain(
+    expect((execa as unknown as jest.Mock).mock.calls[0][1]).toContain(
       'app:installDebug',
     );
   });
@@ -92,7 +92,7 @@ describe('--appFolder', () => {
       appName: 'someApp',
     });
 
-    expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toContain(
+    expect((execa as unknown as jest.Mock).mock.calls[0][1]).toContain(
       'someApp:installDebug',
     );
   });
@@ -103,7 +103,7 @@ describe('--appFolder', () => {
       appName: 'anotherApp',
     });
 
-    expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toContain(
+    expect((execa as unknown as jest.Mock).mock.calls[0][1]).toContain(
       'anotherApp:installRelease',
     );
   });
@@ -116,7 +116,7 @@ describe('--appFolder', () => {
       androidProject,
     );
 
-    expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toContain(
+    expect((execa as unknown as jest.Mock).mock.calls[0][1]).toContain(
       'app:someTask',
     );
   });
@@ -127,7 +127,7 @@ describe('--appFolder', () => {
       appName: 'anotherApp',
     });
 
-    expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toContain(
+    expect((execa as unknown as jest.Mock).mock.calls[0][1]).toContain(
       'anotherApp:someTask',
     );
   });
@@ -140,7 +140,7 @@ describe('--appFolder', () => {
       androidProject,
     );
 
-    expect(((execa as unknown) as jest.Mock).mock.calls[0][1]).toEqual([
+    expect((execa as unknown as jest.Mock).mock.calls[0][1]).toEqual([
       'app:clean',
       'app:someTask',
       '-PreactNativeDevServerPort=8081',

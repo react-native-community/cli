@@ -14,7 +14,8 @@ import {getMetroBundleOptions} from './metroBundleOptions';
  */
 function getLatestFile(packageNameWithSuffix: string): string {
   try {
-    const file = execSync(`adb shell run-as ${packageNameWithSuffix} ls cache/ -tp | grep -v /$ | grep -E '.cpuprofile' | head -1
+    const file =
+      execSync(`adb shell run-as ${packageNameWithSuffix} ls cache/ -tp | grep -v /$ | grep -E '.cpuprofile' | head -1
         `);
     return file.toString().trim();
   } catch (e) {

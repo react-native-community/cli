@@ -86,9 +86,9 @@ accel`,
     const processorTypeSpy = jest.spyOn(processorType, 'getProcessorType');
 
     for (const {output, expectedResult, processor} of hyperVisorScenarios) {
-      executeCommandSpy.mockResolvedValue(({
+      executeCommandSpy.mockResolvedValue({
         stdout: output,
-      } as any) as ExecaChildProcess);
+      } as any as ExecaChildProcess);
       processorTypeSpy.mockReturnValue(processor as 'Intel' | 'AMD');
       const result = await androidWinHelpers.getBestHypervisor('');
       expect(result).toEqual(expectedResult);

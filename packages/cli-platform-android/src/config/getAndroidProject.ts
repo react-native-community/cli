@@ -27,9 +27,8 @@ function discoverPackageName(
 ) {
   if (manifestPath) {
     const androidManifest = fs.readFileSync(manifestPath, 'utf8');
-    const packageNameFromManifest = parsePackageNameFromAndroidManifestFile(
-      androidManifest,
-    );
+    const packageNameFromManifest =
+      parsePackageNameFromAndroidManifestFile(androidManifest);
     // We got the package from the AndroidManifest.xml
     if (packageNameFromManifest) {
       return packageNameFromManifest;

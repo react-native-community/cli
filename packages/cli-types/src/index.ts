@@ -63,7 +63,7 @@ interface PlatformConfig<
   ProjectConfig,
   ProjectParams,
   DependencyConfig,
-  DependencyParams
+  DependencyParams,
 > {
   npmPackageName?: string;
   projectConfig: (

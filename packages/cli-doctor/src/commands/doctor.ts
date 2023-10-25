@@ -128,13 +128,8 @@ const doctorCommand = (async (_, options, config) => {
             return;
           }
 
-          const {
-            description,
-            needsToBeFixed,
-            version,
-            versions,
-            versionRange,
-          } = await healthcheck.getDiagnostics(environmentInfo, config);
+          const {description, needsToBeFixed, version, versions, versionRange} =
+            await healthcheck.getDiagnostics(environmentInfo, config);
 
           // Assume that it's required unless specified otherwise
           const isRequired = healthcheck.isRequired !== false;

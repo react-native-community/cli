@@ -8,13 +8,12 @@ import {
 const handlePortUnavailable = async (
   initialPort: number,
   projectRoot: string,
-  initialPackager?: boolean,
 ): Promise<{
   port: number;
   packager: boolean;
 }> => {
   const {nextPort, start} = await getNextPort(initialPort, projectRoot);
-  let packager = initialPackager === true;
+  let packager = true;
   let port = initialPort;
 
   if (!start) {

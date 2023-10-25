@@ -7,11 +7,9 @@ import {
   writeFiles,
 } from '../jest/helpers';
 import slash from 'slash';
-import prompts from 'prompts';
-
-jest.mock('prompts', () => jest.fn());
 
 const DIR = getTempDirectory('command-init');
+const PROJECT_NAME = 'TestInit';
 
 function createCustomTemplateFiles() {
   writeFiles(DIR, {
@@ -51,31 +49,18 @@ if (process.platform === 'win32') {
 }
 
 test('init fails if the directory already exists', () => {
-  fs.mkdirSync(path.join(DIR, 'TestInit'));
+  fs.mkdirSync(path.join(DIR, PROJECT_NAME));
 
-  const {stderr} = runCLI(DIR, ['init', 'TestInit'], {expectedFailure: true});
+  const {stderr} = runCLI(DIR, ['init', PROJECT_NAME], {expectedFailure: true});
   expect(stderr).toContain(
-    'error Cannot initialize new project because directory "TestInit" already exists.',
+    `error Cannot initialize new project because directory "${PROJECT_NAME}" already exists.`,
   );
 });
 
 test('init should prompt for the project name', () => {
-  createCustomTemplateFiles();
-  const {stdout} = runCLI(DIR, [
-    'init',
-    'test',
-    '--template',
-    templatePath,
-    '--install-pods',
-    'false',
-  ]);
+  const {stdout} = runCLI(DIR, ['init']);
 
-  (prompts as jest.MockedFunction<typeof prompts>).mockReturnValue(
-    Promise.resolve({
-      name: 'TestInit',
-    }),
-  );
-  expect(stdout).toContain('Run instructions');
+  expect(stdout).toContain('How would you like to name the app?');
 });
 
 test('init --template filepath', () => {
@@ -85,7 +70,7 @@ test('init --template filepath', () => {
     'init',
     '--template',
     templatePath,
-    'TestInit',
+    PROJECT_NAME,
     '--install-pods',
     'false',
   ]);
@@ -95,21 +80,20 @@ test('init --template filepath', () => {
   // make sure we don't leave garbage
   expect(fs.readdirSync(DIR)).toContain('custom');
 
-  let dirFiles = fs.readdirSync(path.join(DIR, 'TestInit'));
+  let dirFiles = fs.readdirSync(path.join(DIR, PROJECT_NAME));
 
   expect(dirFiles).toEqual(customTemplateCopiedFiles);
 });
 
 test('init --template file with custom directory', () => {
   createCustomTemplateFiles();
-  const projectName = 'TestInit';
   const customPath = 'custom-path';
 
   const {stdout} = runCLI(DIR, [
     'init',
     '--template',
     templatePath,
-    projectName,
+    PROJECT_NAME,
     '--directory',
     'custom-path',
     '--install-pods',
@@ -133,7 +117,7 @@ test('init skips installation of dependencies with --skip-install', () => {
     'init',
     '--template',
     templatePath,
-    'TestInit',
+    PROJECT_NAME,
     '--skip-install',
   ]);
 
@@ -142,7 +126,7 @@ test('init skips installation of dependencies with --skip-install', () => {
   // make sure we don't leave garbage
   expect(fs.readdirSync(DIR)).toContain('custom');
 
-  let dirFiles = fs.readdirSync(path.join(DIR, 'TestInit'));
+  let dirFiles = fs.readdirSync(path.join(DIR, PROJECT_NAME));
 
   expect(dirFiles).toEqual(
     customTemplateCopiedFiles.filter(
@@ -158,7 +142,7 @@ test('init uses npm as the package manager with --npm', () => {
     'init',
     '--template',
     templatePath,
-    'TestInit',
+    PROJECT_NAME,
     '--npm',
     '--install-pods',
     'false',
@@ -169,7 +153,7 @@ test('init uses npm as the package manager with --npm', () => {
   // make sure we don't leave garbage
   expect(fs.readdirSync(DIR)).toContain('custom');
 
-  const initDirPath = path.join(DIR, 'TestInit');
+  const initDirPath = path.join(DIR, PROJECT_NAME);
 
   // Remove yarn.lock and node_modules
   const filteredFiles = customTemplateCopiedFiles.filter(

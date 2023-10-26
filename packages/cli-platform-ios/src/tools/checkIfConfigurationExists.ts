@@ -1,18 +1,17 @@
 import {CLIError, logger} from '@react-native-community/cli-tools';
-import {IosProjectInfo} from '../types';
 
 export function checkIfConfigurationExists(
-  project: IosProjectInfo,
+  configurations: string[],
   mode: string,
 ) {
-  if (!project) {
+  if (configurations.length === 0) {
     logger.warn(`Unable to check whether "${mode}" exists in your project`);
     return;
   }
 
-  if (!project.configurations.includes(mode)) {
+  if (!configurations.includes(mode)) {
     throw new CLIError(
-      `Configuration "${mode}" does not exist in your project. Please use one of the existing configurations: ${project.configurations.join(
+      `Configuration "${mode}" does not exist in your project. Please use one of the existing configurations: ${configurations.join(
         ', ',
       )}`,
     );

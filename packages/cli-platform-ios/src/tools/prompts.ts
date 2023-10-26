@@ -1,15 +1,15 @@
 import chalk from 'chalk';
 import prompts from 'prompts';
-import {Device, IosProjectInfo} from '../types';
+import {Device} from '../types';
 
 export async function promptForSchemeSelection(
-  project: IosProjectInfo,
+  schemes: string[],
 ): Promise<string> {
   const {scheme} = await prompts({
     name: 'scheme',
     type: 'select',
     message: 'Select the scheme you want to use',
-    choices: project.schemes.map((value) => ({
+    choices: schemes.map((value) => ({
       title: value,
       value: value,
     })),
@@ -19,13 +19,13 @@ export async function promptForSchemeSelection(
 }
 
 export async function promptForConfigurationSelection(
-  project: IosProjectInfo,
+  configurations: string[],
 ): Promise<string> {
   const {configuration} = await prompts({
     name: 'configuration',
     type: 'select',
     message: 'Select the configuration you want to use',
-    choices: project.configurations.map((value) => ({
+    choices: configurations.map((value) => ({
       title: value,
       value: value,
     })),

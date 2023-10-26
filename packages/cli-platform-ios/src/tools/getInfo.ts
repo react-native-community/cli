@@ -1,11 +1,19 @@
 import execa from 'execa';
-import {IosProjectInfo} from '../types';
+import {IosInfo} from '../types';
 
-export function getProjectInfo(): IosProjectInfo {
+export function getInfo(): IosInfo | undefined {
   try {
-    const out = execa.sync('xcodebuild', ['-list', '-json']).stdout;
-    const {project} = JSON.parse(out);
-    return project;
+    const value = JSON.parse(
+      execa.sync('xcodebuild', ['-list', '-json']).stdout,
+    );
+
+    if ('project' in value) {
+      return value.project;
+    } else if ('workspace' in value) {
+      return value.workspace;
+    }
+
+    return undefined;
   } catch (error) {
     if (
       (error as Error)?.message &&

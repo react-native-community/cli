@@ -65,10 +65,13 @@ function configurePackageManager(
   return executeCommand(pm, args, options);
 }
 
-function executeCommand(
+export function executeCommand(
   command: string,
   args: Array<string>,
-  options: Options,
+  options: {
+    root: string;
+    silent?: boolean;
+  },
 ) {
   return execa(command, args, {
     stdio: options.silent && !logger.isVerbose() ? 'pipe' : 'inherit',

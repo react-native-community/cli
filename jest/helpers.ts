@@ -68,15 +68,15 @@ export async function runUntil(
   return spawnPromise;
 }
 
-export const makeTemplate = (
-  str: string,
-): ((values?: Array<any>) => string) => (values?: Array<any>) =>
-  str.replace(/\$(\d+)/g, (_match, number) => {
-    if (!Array.isArray(values)) {
-      throw new Error('Array of values must be passed to the template.');
-    }
-    return values[number - 1];
-  });
+export const makeTemplate =
+  (str: string): ((values?: Array<any>) => string) =>
+  (values?: Array<any>) =>
+    str.replace(/\$(\d+)/g, (_match, number) => {
+      if (!Array.isArray(values)) {
+        throw new Error('Array of values must be passed to the template.');
+      }
+      return values[number - 1];
+    });
 
 export const cleanup = (directory: string) => {
   return rimrafAsync(directory);

@@ -83,9 +83,8 @@ const Page = (window.Page = {
     darkCheckbox.checked = isDark;
     localStorage.setItem('darkTheme', isDark ? 'on' : '');
 
-    const maintainPriorityCheckbox = document.getElementById(
-      'maintain-priority',
-    );
+    const maintainPriorityCheckbox =
+      document.getElementById('maintain-priority');
     const silence = document.getElementById('silence');
     silence.volume = 0.1;
     if (isPriorityMaintained) {

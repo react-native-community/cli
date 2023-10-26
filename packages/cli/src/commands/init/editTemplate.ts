@@ -23,7 +23,8 @@ const DEFAULT_TITLE_PLACEHOLDER = 'Hello App Display Name';
 
 export function validatePackageName(packageName: string) {
   const packageNameParts = packageName.split('.');
-  const packageNameRegex = /^([a-zA-Z]([a-zA-Z0-9_])*\.)+[a-zA-Z]([a-zA-Z0-9_])*$/u;
+  const packageNameRegex =
+    /^([a-zA-Z]([a-zA-Z0-9_])*\.)+[a-zA-Z]([a-zA-Z0-9_])*$/u;
 
   if (packageNameParts.length < 2) {
     throw `The package name ${packageName} is invalid. It should contain at least two segments, e.g. com.app`;

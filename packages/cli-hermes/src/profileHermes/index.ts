@@ -81,8 +81,7 @@ export default {
   ],
   examples: [
     {
-      desc:
-        'Download the Hermes Sampling Profiler to the directory <destinationDir> on the local machine',
+      desc: 'Download the Hermes Sampling Profiler to the directory <destinationDir> on the local machine',
       cmd: 'profile-hermes /tmp',
     },
   ],

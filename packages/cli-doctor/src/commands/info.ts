@@ -70,9 +70,8 @@ const info = async function getInfo(_argv: Array<string>, ctx: Config) {
           'utf8',
         );
 
-        platforms.Android.hermesEnabled = gradleProperties.includes(
-          'hermesEnabled=true',
-        );
+        platforms.Android.hermesEnabled =
+          gradleProperties.includes('hermesEnabled=true');
         platforms.Android.newArchEnabled = gradleProperties.includes(
           'newArchEnabled=true',
         );

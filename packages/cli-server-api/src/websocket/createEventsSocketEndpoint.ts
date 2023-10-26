@@ -150,7 +150,9 @@ export default function createEventsSocketEndpoint(
         ws.send(serialized);
       } catch (e) {
         logger.error(
-          `Failed to send broadcast to client due to:\n ${(e as any).toString()}`,
+          `Failed to send broadcast to client due to:\n ${(
+            e as any
+          ).toString()}`,
         );
       }
     }

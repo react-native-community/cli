@@ -49,8 +49,10 @@ function configurePackageManager(
   if (options.packageManager === 'bun') {
     if (bunAvailable) {
       pm = 'bun';
+    } else if (yarnAvailable) {
+      pm = 'yarn';
     } else {
-      pm = yarnAvailable ? 'yarn' : 'npm';
+      pm = 'npm';
     }
   }
 

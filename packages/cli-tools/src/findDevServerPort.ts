@@ -3,14 +3,16 @@ import isPackagerRunning from './isPackagerRunning';
 import {logAlreadyRunningBundler} from './port';
 
 const findDevServerPort = async (
-  port: number,
+  initialPort: number,
   root: string,
 ): Promise<{
   port: number;
   startPackager: boolean;
 }> => {
-  const packagerStatus = await isPackagerRunning(port);
+  let port = initialPort;
   let startPackager = false;
+
+  const packagerStatus = await isPackagerRunning(port);
 
   if (
     typeof packagerStatus === 'object' &&

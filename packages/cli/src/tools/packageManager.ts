@@ -41,9 +41,23 @@ function configurePackageManager(
   action: 'init' | 'install' | 'installDev' | 'installAll' | 'uninstall',
   options: Options,
 ) {
-  let pm: PackageManager = shouldUseYarn(options) ? 'yarn' : 'npm';
+  let yarnAvailable = shouldUseYarn(options);
+  let bunAvailable = shouldUseBun(options);
+
+  let pm: PackageManager = 'npm';
+
   if (options.packageManager === 'bun') {
-    pm = shouldUseBun(options) ? 'bun' : 'npm';
+    if (bunAvailable) {
+      pm = 'bun';
+    } else if (yarnAvailable) {
+      pm = 'yarn';
+    } else {
+      pm = 'npm';
+    }
+  }
+
+  if (options.packageManager === 'yarn' && yarnAvailable) {
+    pm = 'yarn';
   }
 
   const [executable, ...flags] = packageManagers[pm][action];

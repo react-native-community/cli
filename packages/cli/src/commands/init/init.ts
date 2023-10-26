@@ -29,6 +29,8 @@ import {getNpmVersionIfAvailable} from '../../tools/npm';
 import {getYarnVersionIfAvailable} from '../../tools/yarn';
 import {createHash} from 'crypto';
 import createGitRepository from './createGitRepository';
+import semver from 'semver';
+import {executeCommand} from '../../tools/executeCommand';
 
 const DEFAULT_VERSION = 'latest';
 
@@ -63,6 +65,30 @@ interface TemplateOptions {
 interface TemplateReturnType {
   didInstallPods?: boolean;
 }
+
+const YARN_VERSION = '3.6.4';
+
+const bumpYarnVersion = async (silent: boolean, root: string) => {
+  try {
+    let yarnVersion = semver.parse(getYarnVersionIfAvailable());
+    if (yarnVersion && semver.major(yarnVersion) === 1) {
+      await executeCommand('yarn', ['set', 'version', YARN_VERSION], {
+        root,
+        silent,
+      });
+
+      // React Native doesn't support PnP, so we need to set nodeLinker to node-modules. Read more here: https://github.com/react-native-community/cli/issues/27#issuecomment-1772626767
+
+      await executeCommand(
+        'yarn',
+        ['config', 'set', 'nodeLinker', 'node-modules'],
+        {root, silent},
+      );
+    }
+  } catch (e) {
+    logger.debug(e as string);
+  }
+};
 
 function doesDirectoryExist(dir: string) {
   return fs.existsSync(dir);
@@ -182,6 +208,11 @@ async function createFromTemplate({
       packageName,
     });
 
+    if (packageManager === 'yarn') {
+      await bumpYarnVersion(false, projectDirectory);
+    }
+
+    loader.succeed();
     const {postInitScript} = templateConfig;
     if (postInitScript) {
       loader.info('Executing post init script ');

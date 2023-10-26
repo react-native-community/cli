@@ -22,6 +22,8 @@ function createCustomTemplateFiles() {
 
 const customTemplateCopiedFiles = [
   '.git',
+  '.yarn',
+  '.yarnrc.yml',
   'dir',
   'file',
   'node_modules',

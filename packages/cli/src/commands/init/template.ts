@@ -7,7 +7,7 @@ import replacePathSepForRegex from '../../tools/replacePathSepForRegex';
 import fs from 'fs';
 import chalk from 'chalk';
 import {getYarnVersionIfAvailable} from '../../tools/yarn';
-import {executeCommand} from '../../tools/packageManager';
+import {executeCommand} from '../../tools/executeCommand';
 
 export type TemplateConfig = {
   placeholderName: string;

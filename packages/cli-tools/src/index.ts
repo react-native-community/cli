@@ -13,7 +13,7 @@ export {default as printRunDoctorTip} from './printRunDoctorTip';
 export * from './prompt';
 export * as link from './doclink';
 export {default as startServerInNewWindow} from './startServerInNewWindow';
-export {default as handlePortUnavailable} from './handlePortUnavailable';
+export {default as findDevServerPort} from './findDevServerPort';
 export * from './port';
 export {default as cacheManager} from './cacheManager';
 export {default as runSudo} from './runSudo';

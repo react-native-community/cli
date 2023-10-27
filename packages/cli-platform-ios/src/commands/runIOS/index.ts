@@ -18,9 +18,7 @@ import {
   link,
   getDefaultUserTerminal,
   startServerInNewWindow,
-  isPackagerRunning,
-  logAlreadyRunningBundler,
-  handlePortUnavailable,
+  findDevServerPort,
 } from '@react-native-community/cli-tools';
 import {buildProject} from '../buildIOS/buildProject';
 import {BuildFlags, buildOptions} from '../buildIOS/buildOptions';
@@ -59,31 +57,20 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     newArchEnabled: isAppRunningNewArchitecture,
   });
 
-  const packagerStatus = await isPackagerRunning(port);
-
-  if (
-    typeof packagerStatus === 'object' &&
-    packagerStatus.status === 'running'
-  ) {
-    if (packagerStatus.root === ctx.root) {
-      packager = false;
-      logAlreadyRunningBundler(port);
-    } else {
-      const result = await handlePortUnavailable(port, ctx.root, packager);
-      [port, packager] = [result.port, result.packager];
-    }
-  } else if (packagerStatus === 'unrecognized') {
-    const result = await handlePortUnavailable(port, ctx.root, packager);
-    [port, packager] = [result.port, result.packager];
-  }
-
   if (packager) {
-    await startServerInNewWindow(
+    const {port: newPort, startPackager} = await findDevServerPort(
       port,
       ctx.root,
-      ctx.reactNativePath,
-      args.terminal,
     );
+
+    if (startPackager) {
+      await startServerInNewWindow(
+        newPort,
+        ctx.root,
+        ctx.reactNativePath,
+        args.terminal,
+      );
+    }
   }
 
   if (ctx.reactNativeVersion !== 'unknown') {

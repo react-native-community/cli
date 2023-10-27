@@ -28,6 +28,9 @@ export function runCLI(
   return spawnScript(process.execPath, [CLI_PATH, ...(args || [])], {
     ...options,
     cwd: dir,
+    env: {
+      YARN_ENABLE_IMMUTABLE_INSTALLS: 'false',
+    },
   });
 }
 
@@ -92,6 +95,7 @@ export const getTempDirectory = (name: string) =>
 
 type SpawnOptions = RunOptions & {
   cwd: string;
+  env?: {[key: string]: string | undefined};
 };
 
 type SpawnFunction<T> = (
@@ -117,13 +121,20 @@ function getExecaOptions(options: SpawnOptions) {
 
   const cwd = isRelative ? path.resolve(__dirname, options.cwd) : options.cwd;
 
-  const env = Object.assign({}, process.env, {FORCE_COLOR: '0'});
+  let env = Object.assign({}, process.env, {FORCE_COLOR: '0'});
 
   if (options.nodeOptions) {
     env.NODE_OPTIONS = options.nodeOptions;
   }
   if (options.nodePath) {
     env.NODE_PATH = options.nodePath;
+  }
+
+  if (options.env) {
+    env = {
+      ...env,
+      ...options.env,
+    };
   }
 
   return {

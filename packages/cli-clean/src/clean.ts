@@ -1,11 +1,10 @@
-import {getLoader} from '@react-native-community/cli-tools';
+import {getLoader, prompt} from '@react-native-community/cli-tools';
 import type {Config as CLIConfig} from '@react-native-community/cli-types';
 import chalk from 'chalk';
 import execa from 'execa';
 import {existsSync as fileExists, rmdir} from 'fs';
 import os from 'os';
 import path from 'path';
-import prompts from 'prompts';
 import {promisify} from 'util';
 
 type Args = {
@@ -53,7 +52,7 @@ function findPath(startPath: string, files: string[]): string | undefined {
 async function promptForCaches(
   groups: CleanGroups,
 ): Promise<string[] | undefined> {
-  const {caches} = await prompts({
+  const {caches} = await prompt({
     type: 'multiselect',
     name: 'caches',
     message: 'Select all caches to clean',

@@ -1,6 +1,5 @@
-import {logger} from '@react-native-community/cli-tools';
 import execa from 'execa';
-import prompts from 'prompts';
+import {logger, prompt} from '@react-native-community/cli-tools';
 
 type User = {
   id: string;
@@ -42,7 +41,7 @@ export function checkUsers(device: string, adbPath: string) {
 }
 
 export async function promptForUser(users: User[]) {
-  const {selectedUser}: {selectedUser: User} = await prompts({
+  const {selectedUser}: {selectedUser: User} = await prompt({
     type: 'select',
     name: 'selectedUser',
     message: 'Which profile would you like to launch your app into?',

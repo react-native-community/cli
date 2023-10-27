@@ -1,11 +1,11 @@
 import chalk from 'chalk';
-import prompts from 'prompts';
 import {Device} from '../types';
+import {prompt} from '@react-native-community/cli-tools';
 
 export async function promptForSchemeSelection(
   schemes: string[],
 ): Promise<string> {
-  const {scheme} = await prompts({
+  const {scheme} = await prompt({
     name: 'scheme',
     type: 'select',
     message: 'Select the scheme you want to use',
@@ -21,7 +21,7 @@ export async function promptForSchemeSelection(
 export async function promptForConfigurationSelection(
   configurations: string[],
 ): Promise<string> {
-  const {configuration} = await prompts({
+  const {configuration} = await prompt({
     name: 'configuration',
     type: 'select',
     message: 'Select the configuration you want to use',
@@ -37,7 +37,7 @@ export async function promptForConfigurationSelection(
 export async function promptForDeviceSelection(
   availableDevices: Device[],
 ): Promise<Device | undefined> {
-  const {device} = await prompts({
+  const {device} = await prompt({
     type: 'select',
     name: 'device',
     message: 'Select the device you want to use',

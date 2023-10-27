@@ -9,11 +9,10 @@
 import {spawnSync} from 'child_process';
 import os from 'os';
 import path from 'path';
-import {logger} from '@react-native-community/cli-tools';
+import {logger, prompt} from '@react-native-community/cli-tools';
 import listIOSDevices from '../../tools/listIOSDevices';
 import getSimulators from '../../tools/getSimulators';
 import {Config} from '@react-native-community/cli-types';
-import prompts from 'prompts';
 
 /**
  * Starts iOS device syslog tail
@@ -49,7 +48,7 @@ async function logIOS(_argv: Array<string>, _ctx: Config, args: Args) {
   }
 
   if (args.interactive && bootedAndAvailableSimulators.length > 1) {
-    const {udid} = await prompts({
+    const {udid} = await prompt({
       type: 'select',
       name: 'udid',
       message: 'Select iOS simulators to tail logs from',

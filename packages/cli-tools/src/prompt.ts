@@ -9,10 +9,10 @@ type InteractionCallback = (options: InteractionOptions) => void;
 /** Interaction observers for detecting when keystroke tracking should pause/resume. */
 const listeners: InteractionCallback[] = [];
 
-export async function prompt(
+export async function prompt<T extends string>(
   question: PromptObject,
   options: PromptOptions = {},
-) {
+): Promise<prompts.Answers<T>> {
   pauseInteractions();
   try {
     const results = await prompts(question, {

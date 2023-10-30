@@ -84,40 +84,19 @@ You can also add npm scripts to call it with whichever package manager you use:
 
 ## Updating the CLI
 
-React Native CLI is a dependency of `react-native`, which makes it a transitive dependency of your project. It happens that you may be locked on a version without fixes for bugs that may affect you. Here's how to get it sorted:
+> [!INFO]
+> Please do it only if you need to. We don't recommend updating CLI independently of `react-native` as it may cause unexpected issues.
 
-1. If you use lock files (`yarn.lock` or `package-lock.json`) - find all the `@react-native-community/cli` prefixed entries, remove them, run `yarn install` / `npm install` once again.
-   Here's an example using `yarn.lock`. Notice how _whole `@react-native-community/cli` entries_ are removed. Make sure to delete all of them:
+React Native CLI is a dependency of `react-native`, which makes it a transitive dependency of your project. You can update CLI independently of `react-native` by specifying a version in your `package.json`:
 
-   ```diff
-   diff --git a/yarn.lock b/yarn.lock
-   index 073309f..0bb8c4b 100644
-   --- a/yarn.lock
-   +++ b/yarn.lock
-   @@ -843,26 +843,6 @@
-        "@types/istanbul-reports" "^1.1.1"
-        "@types/yargs" "^13.0.0"
-
-   -"@react-native-community/cli-debugger-ui@^3.0.0":
-   -  version "3.0.0"
-   -  resolved "https://registry.yarnpkg.com/@react-native-community/cli-debugger-ui/-/cli-debugger-ui-3.0.0.tgz#d01d08d1e5ddc1633d82c7d84d48fff07bd39416"
-   -  integrity sha512-m3X+iWLsK/H7/b7PpbNO33eQayR/+M26la4ZbYe1KRke5Umg4PIWsvg21O8Tw4uJcY8LA5hsP+rBi/syBkBf0g==
-   -  dependencies:
-   -    serve-static "^1.13.1"
-   -
-   -"@react-native-community/cli-platform-android@^3.0.0":
-   -  version "3.1.2"
-   -  resolved "https://registry.yarnpkg.com/@react-native-community/cli-platform-android/-/cli-platform-android-3.1.2.tgz#313644fba81b5d673cc803009e1eddc930b9618c"
-   -  integrity sha512-H30a00LLigsTh4eO0kc2YtaIkOJKrValWOU6n2VES3ZGS31qDx9GhZIwMCMcdzcSnypAyMAfauVatEmBSQZU7Q==
-   -  dependencies:
-   -    "@react-native-community/cli-tools" "^3.0.0"
-   -    chalk "^2.4.2"
-   ```
-
-2. If you don't use lock files – remove `node_modules` and run `yarn install` / `npm install` again.
-3. Run `yarn list --pattern @react-native-community/cli` or `npm list @react-native-community/cli` and verify you're on the latest version.
-
-After performing these steps you should be on the latest CLI version. Feel free to do it once in a while, because we release often.
+```json
+{
+  "dependencies": {
+    "@react-native-community/cli": "^11.3.5",
+    "@react-native-community/cli-platform-ios": "^11.3.5",
+  }
+}
+```
 
 ## Maintainers
 

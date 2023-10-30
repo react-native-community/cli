@@ -14,10 +14,8 @@ _Note: CLI has been extracted from core `react-native` as a part of "[Lean Core]
 - [Documentation](#documentation)
 - [About](#about)
 - [Creating a new React Native project](#creating-a-new-react-native-project)
-  - [Using `npx` (_recommended_)](#using-npx-recommended)
 - [Usage in an existing React Native project](#usage-in-an-existing-react-native-project)
 - [Updating the CLI](#updating-the-cli)
-- [Contributing](./CONTRIBUTING.md)
 - [Maintainers](#maintainers)
 - [License](#license)
 
@@ -92,8 +90,17 @@ React Native CLI is a dependency of `react-native`, which makes it a transitive 
 ```json
 {
   "resolutions": {
-    "@react-native-community/cli": "^11.3.5",
-    "@react-native-community/cli-platform-ios": "^11.3.5",
+    "@react-native-community/cli": "VERSION",
+    "@react-native-community/cli-clean": "VERSION",
+    "@react-native-community/cli-config": "VERSION",
+    "@react-native-community/cli-debugger-ui": "VERSION",
+    "@react-native-community/cli-doctor": "VERSION",
+    "@react-native-community/cli-hermes": "VERSION",
+    "@react-native-community/cli-platform-android": "VERSION",
+    "@react-native-community/cli-platform-ios": "VERSION",
+    "@react-native-community/cli-server-api": "VERSION",
+    "@react-native-community/cli-tools": "VERSION",
+    "@react-native-community/cli-types": "VERSION"
   }
 }
 ```

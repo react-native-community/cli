@@ -53,7 +53,7 @@ const createTempFiles = (rest?: Record<string, string>) => {
 };
 
 beforeEach(async () => {
-  await cleanup(DIR);
+  cleanup(DIR);
   jest.resetAllMocks();
 });
 

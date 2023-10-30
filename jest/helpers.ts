@@ -1,15 +1,11 @@
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-import {promisify} from 'util';
 import {createDirectory} from 'jest-util';
-import rimraf from 'rimraf';
 import execa from 'execa';
 import chalk from 'chalk';
 import slash from 'slash';
 import {Writable} from 'readable-stream';
-
-const rimrafAsync = promisify(rimraf);
 
 const CLI_PATH = path.resolve(__dirname, '../packages/cli/build/bin.js');
 
@@ -79,11 +75,7 @@ export const makeTemplate =
     });
 
 export const cleanup = (directory: string) => {
-  return rimrafAsync(directory);
-};
-
-export const cleanupSync = (directory: string) => {
-  rimraf.sync(directory);
+  fs.rmSync(directory, {recursive: true, force: true});
 };
 
 /**

@@ -3,11 +3,11 @@ import findProjectRoot from '../findProjectRoot';
 import {cleanup, writeFiles, getTempDirectory} from '../../../../jest/helpers';
 
 beforeEach(async () => {
-  await cleanup(DIR);
+  cleanup(DIR);
   jest.resetModules();
 });
 
-afterEach(async () => await cleanup(DIR));
+afterEach(() => cleanup(DIR));
 
 const DIR = getTempDirectory('find_project_root_test');
 

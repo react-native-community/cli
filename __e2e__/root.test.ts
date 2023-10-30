@@ -4,7 +4,7 @@ import {
   spawnScript,
   runCLI,
   getTempDirectory,
-  cleanupSync,
+  cleanup,
   writeFiles,
 } from '../jest/helpers';
 
@@ -19,7 +19,7 @@ beforeAll(() => {
   }
 
   // Clean up folder and re-create a new project
-  cleanupSync(cwd);
+  cleanup(cwd);
   writeFiles(cwd, {});
 
   // Initialise React Native project
@@ -36,7 +36,7 @@ beforeAll(() => {
 });
 
 afterAll(() => {
-  cleanupSync(cwd);
+  cleanup(cwd);
 });
 
 test('works when Gradle is run outside of the project hierarchy', () => {

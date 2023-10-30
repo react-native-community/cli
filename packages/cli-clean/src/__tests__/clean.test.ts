@@ -13,8 +13,8 @@ describe('clean', () => {
     jest.resetAllMocks();
   });
 
-  it('throws if project root is not set', () => {
-    expect(clean([], mockConfig, mockConfig)).rejects.toThrow();
+  it('throws if project root is not set', async () => {
+    await expect(clean([], mockConfig, mockConfig)).rejects.toThrow();
   });
 
   it('prompts if `--include` is omitted', async () => {

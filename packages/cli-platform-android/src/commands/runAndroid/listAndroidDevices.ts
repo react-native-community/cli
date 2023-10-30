@@ -4,9 +4,8 @@ import getAdbPath from './getAdbPath';
 import {getEmulators} from './tryLaunchEmulator';
 import {toPascalCase} from './toPascalCase';
 import os from 'os';
-import prompts from 'prompts';
 import chalk from 'chalk';
-import {CLIError} from '@react-native-community/cli-tools';
+import {CLIError, prompt} from '@react-native-community/cli-tools';
 
 type DeviceData = {
   deviceId: string | undefined;
@@ -56,7 +55,7 @@ async function promptForDeviceSelection(
       'No devices and/or emulators connected. Please create emulator with Android Studio or connect Android device.',
     );
   }
-  const {device} = await prompts({
+  const {device} = await prompt({
     type: 'select',
     name: 'device',
     message: 'Select the device / emulator you want to use',

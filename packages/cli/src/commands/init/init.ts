@@ -2,7 +2,6 @@ import os from 'os';
 import path from 'path';
 import fs from 'fs-extra';
 import {validateProjectName} from './validate';
-import {prompt} from 'prompts';
 import chalk from 'chalk';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
 import printRunInstructions from './printRunInstructions';
@@ -12,6 +11,7 @@ import {
   getLoader,
   Loader,
   cacheManager,
+  prompt,
 } from '@react-native-community/cli-tools';
 import {installPods} from '@react-native-community/cli-platform-ios';
 import {

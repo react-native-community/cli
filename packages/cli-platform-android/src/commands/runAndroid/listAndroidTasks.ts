@@ -1,7 +1,6 @@
-import {CLIError} from '@react-native-community/cli-tools';
+import {CLIError, prompt} from '@react-native-community/cli-tools';
 import chalk from 'chalk';
 import execa from 'execa';
-import prompts from 'prompts';
 
 type GradleTask = {
   task: string;
@@ -48,7 +47,7 @@ export const promptForTaskSelection = async (
   if (!tasks.length) {
     throw new CLIError(`No actionable ${taskType} tasks were found...`);
   }
-  const {task}: {task: string} = await prompts({
+  const {task}: {task: string} = await prompt({
     type: 'select',
     name: 'task',
     message: `Select ${taskType} task you want to perform`,

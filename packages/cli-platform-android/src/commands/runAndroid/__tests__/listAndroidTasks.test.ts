@@ -5,7 +5,7 @@ import {
   parseTasksFromGradleFile,
   promptForTaskSelection,
 } from '../listAndroidTasks';
-
+import tools from '@react-native-community/cli-tools';
 const gradleTaskOutput = `
 > Task :tasks
 
@@ -111,9 +111,11 @@ describe('promptForTaskSelection', () => {
       }),
     );
 
+    const promptSpy = jest.spyOn(tools, 'prompt');
+
     promptForTaskSelection('install', 'sourceDir');
 
-    expect(prompts).toHaveBeenCalledWith({
+    expect(promptSpy).toHaveBeenCalledWith({
       choices: tasksList.map((t) => ({
         title: `${chalk.bold(t.task)} - ${t.description}`,
         value: t.task,

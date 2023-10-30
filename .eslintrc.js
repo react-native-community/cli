@@ -9,9 +9,6 @@ module.exports = {
   // @todo: remove once we cover whole codebase with types
   plugins: ['import'],
   settings: {
-    react: {
-      version: 'latest',
-    },
     'import/resolver': {
       // Use <rootDir>/tsconfig.json for typescript resolution
       typescript: {},

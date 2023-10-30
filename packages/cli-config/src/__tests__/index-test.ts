@@ -52,12 +52,12 @@ const removeString = (config, str) =>
   );
 
 beforeEach(async () => {
-  await cleanup(DIR);
+  cleanup(DIR);
   jest.resetModules();
   jest.clearAllMocks();
 });
 
-afterEach(async () => await cleanup(DIR));
+afterEach(() => cleanup(DIR));
 
 test('should have a valid structure by default', () => {
   DIR = getTempDirectory('config_test_structure');

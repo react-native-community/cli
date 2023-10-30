@@ -1,18 +1,13 @@
-import {
-  runCLI,
-  getTempDirectory,
-  cleanupSync,
-  writeFiles,
-} from '../jest/helpers';
+import {runCLI, getTempDirectory, cleanup, writeFiles} from '../jest/helpers';
 
 const DIR = getTempDirectory('test_unknown');
 
 beforeEach(() => {
-  cleanupSync(DIR);
+  cleanup(DIR);
   writeFiles(DIR, {});
 });
 afterEach(() => {
-  cleanupSync(DIR);
+  cleanup(DIR);
 });
 
 test('warn for passing in unknown commands', () => {

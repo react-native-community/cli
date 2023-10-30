@@ -1,11 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import {
-  runCLI,
-  getTempDirectory,
-  cleanupSync,
-  writeFiles,
-} from '../jest/helpers';
+import {runCLI, getTempDirectory, cleanup, writeFiles} from '../jest/helpers';
 import slash from 'slash';
 
 const DIR = getTempDirectory('command-init');
@@ -34,11 +29,11 @@ const customTemplateCopiedFiles = [
 ];
 
 beforeEach(() => {
-  cleanupSync(DIR);
+  cleanup(DIR);
   writeFiles(DIR, {});
 });
 afterEach(() => {
-  cleanupSync(DIR);
+  cleanup(DIR);
 });
 
 let templatePath = path.resolve(DIR, 'custom', 'template');

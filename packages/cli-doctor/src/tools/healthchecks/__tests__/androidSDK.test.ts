@@ -43,9 +43,7 @@ describe('androidSDK', () => {
     });
   });
 
-  afterAll(
-    async () => await cleanup(join(mockWorkingDir, 'android/build.gradle')),
-  );
+  afterAll(async () => cleanup(join(mockWorkingDir, 'android/build.gradle')));
 
   let environmentInfo: EnvironmentInfo;
 
@@ -175,7 +173,7 @@ describe('androidSDK', () => {
       stdout: 'build-tools;28.0.3',
     });
 
-    await cleanup(join(mockWorkingDir, 'android/build.gradle'));
+    cleanup(join(mockWorkingDir, 'android/build.gradle'));
 
     const diagnostics = await androidSDK.getDiagnostics(environmentInfo);
     expect(diagnostics.needsToBeFixed).toBe(true);

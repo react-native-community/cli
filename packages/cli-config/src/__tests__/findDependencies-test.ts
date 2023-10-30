@@ -2,11 +2,11 @@ import findDependencies from '../findDependencies';
 import {cleanup, writeFiles, getTempDirectory} from '../../../../jest/helpers';
 
 beforeEach(async () => {
-  await cleanup(DIR);
+  cleanup(DIR);
   jest.resetModules();
 });
 
-afterEach(async () => await cleanup(DIR));
+afterEach(() => cleanup(DIR));
 
 const DIR = getTempDirectory('find_dependencies_test');
 

@@ -91,7 +91,7 @@ React Native CLI is a dependency of `react-native`, which makes it a transitive 
 
 ```json
 {
-  "dependencies": {
+  "resolutions": {
     "@react-native-community/cli": "^11.3.5",
     "@react-native-community/cli-platform-ios": "^11.3.5",
   }

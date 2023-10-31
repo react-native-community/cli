@@ -66,6 +66,7 @@ type IOSProjectParams = {
   sourceDir?: string;
   watchModeCommandParams?: string[];
   unstable_reactLegacyComponentNames?: string[] | null;
+  automaticPodsInstallation?: boolean;
 };
 
 type AndroidProjectParams = {
@@ -99,6 +100,17 @@ An array with a list of Legacy Component Name that you want to be registered wit
 This will allow you to use libraries that haven't been migrated yet on the New Architecture.
 
 The list should contain the name of the components, as they're registered in the ViewManagers (i.e. just `"Button"`).
+
+#### project.ios.automaticPodsInstallation
+
+A boolean value to determine if you want to automatically install CocoaPods when running `run-ios` or `build-ios` command and:
+- they are not yet installed
+- a new dependency visible for autolinking is installed
+- a version of existing native dependency has changed
+
+If set to `true`, you can skip running `pod install` manually whenever it's needed.
+
+> Note: Starting from React Native 0.73, CLI's `init` command scaffolds the project with `react-native.config.js` file with this value set to `true` by default. Older projects can opt-in after migrating to 0.73. Please note that if your setup does not follow the standard React Native template, e.g. you are not using Gems to install CocoaPods, this might not work properly for you.
 
 #### project.android.appName
 

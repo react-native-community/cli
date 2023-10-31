@@ -51,6 +51,7 @@ export function projectConfig(
     sourceDir,
     watchModeCommandParams: userConfig.watchModeCommandParams,
     xcodeProject,
+    automaticPodsInstallation: userConfig.automaticPodsInstallation,
   };
 }
 

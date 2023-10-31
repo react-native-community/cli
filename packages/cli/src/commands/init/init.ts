@@ -29,6 +29,7 @@ import {getNpmVersionIfAvailable} from '../../tools/npm';
 import {getYarnVersionIfAvailable} from '../../tools/yarn';
 import {createHash} from 'crypto';
 import createGitRepository from './createGitRepository';
+import deepmerge from 'deepmerge';
 
 const DEFAULT_VERSION = 'latest';
 
@@ -169,7 +170,8 @@ async function createFromTemplate({
       packageName,
     });
 
-    loader.succeed();
+    createDefaultConfigFile(projectDirectory, loader);
+
     const {postInitScript} = templateConfig;
     if (postInitScript) {
       loader.info('Executing post init script ');
@@ -267,6 +269,62 @@ function createTemplateUri(options: Options, version: string): string {
   }
 
   return options.template || `react-native@${version}`;
+}
+
+//remove quotes from object keys to match the linter rules of the template
+function sanitizeConfigFile(fileContent: string) {
+  return fileContent.replace(/"([^"]+)":/g, '$1:');
+}
+
+/*
+Starting from 0.73, react-native.config.js is created by CLI during the init process.
+It contains automaticPodsInstallation flag set to true by default.
+This flag is used by CLI to determine whether to install CocoaPods dependencies when running ios commands or not.
+It's created by CLI rather than being a part of a template to avoid displaying this file in the Upgrade Helper,
+as it might bring confusion for existing projects where this change might not be applicable.
+For more details, see https://github.com/react-native-community/cli/blob/main/docs/projects.md#projectiosautomaticpodsinstallation
+*/
+function createDefaultConfigFile(directory: string, loader: Loader) {
+  const cliConfigContent = {
+    project: {
+      ios: {
+        automaticPodsInstallation: true,
+      },
+    },
+  };
+  const configFileContent = `module.exports = ${JSON.stringify(
+    cliConfigContent,
+    null,
+    2,
+  )}`;
+  const filepath = 'react-native.config.js';
+  try {
+    if (!doesDirectoryExist(path.join(directory, filepath))) {
+      fs.writeFileSync(filepath, sanitizeConfigFile(configFileContent), {
+        encoding: 'utf-8',
+      });
+    } else {
+      const existingConfigFile = require(path.join(directory, filepath));
+
+      const mergedConfig = deepmerge(existingConfigFile, cliConfigContent);
+      const output = `module.exports = ${JSON.stringify(
+        mergedConfig,
+        null,
+        2,
+      )};`;
+
+      fs.writeFileSync(filepath, sanitizeConfigFile(output), {
+        encoding: 'utf-8',
+      });
+    }
+    loader.succeed();
+  } catch {
+    loader.warn(
+      `Could not create custom ${chalk.bold(
+        'react-native.config.js',
+      )} file. You can create it manually in your project's root folder with the following content: \n\n${configFileContent}`,
+    );
+  }
 }
 
 async function createProject(

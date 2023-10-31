@@ -26,6 +26,7 @@ const customTemplateCopiedFiles = [
   'file',
   'node_modules',
   'package.json',
+  'react-native.config.js',
   'yarn.lock',
 ];
 

@@ -30,6 +30,7 @@ import getSimulators from '../../tools/getSimulators';
 import {getXcodeProjectAndDir} from '../buildIOS/getXcodeProjectAndDir';
 import resolvePods from '../../tools/pods';
 import getArchitecture from '../../tools/getArchitecture';
+import forcePodsNoEffectLogger from '../../tools/forcePodsNoEffectLogger';
 
 export interface FlagsT extends BuildFlags {
   simulator?: string;
@@ -47,28 +48,18 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
 
   let {packager, port} = args;
 
-  const isAppRunningNewArchitecture = ctx.project.ios?.sourceDir
-    ? await getArchitecture(ctx.project.ios?.sourceDir)
-    : undefined;
-
   // check if pods need to be installed
   if (ctx.project.ios?.automaticPodsInstallation) {
+    const isAppRunningNewArchitecture = ctx.project.ios?.sourceDir
+      ? await getArchitecture(ctx.project.ios?.sourceDir)
+      : undefined;
+
     await resolvePods(ctx.root, ctx.dependencies, {
       forceInstall: args.forcePods,
       newArchEnabled: isAppRunningNewArchitecture,
     });
   } else if (args.forcePods) {
-    logger.warn(
-      `${chalk.bold(
-        '--force-pods',
-      )} has no effect because automatic CocoaPods installation is disabled. In order to use this flag, set ${chalk.bold(
-        'project.ios.automaticPodsInstallation',
-      )} to true in ${chalk.bold(
-        'react-native.config.js',
-      )}. For more information, see ${chalk.underline(
-        'https://github.com/react-native-community/cli/blob/main/docs/projects.md#projectiosautomaticpodsinstallation',
-      )}`,
-    );
+    forcePodsNoEffectLogger();
   }
 
   if (packager) {

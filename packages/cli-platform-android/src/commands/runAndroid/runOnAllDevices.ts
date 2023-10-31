@@ -55,7 +55,6 @@ async function runOnAllDevices(
         args.mode,
         args.tasks,
         'install',
-        androidProject.sourceDir,
       );
 
       if (args.extraParams) {

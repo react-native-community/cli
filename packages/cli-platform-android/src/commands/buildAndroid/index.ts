@@ -49,7 +49,6 @@ async function buildAndroid(
     args.mode,
     tasks,
     'bundle',
-    androidProject.sourceDir,
   );
 
   if (args.extraParams) {

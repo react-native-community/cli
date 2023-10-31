@@ -291,21 +291,33 @@ function createDefaultConfigFile(directory: string) {
 `;
 
   const filepath = 'react-native.config.js';
-  if (!doesDirectoryExist(path.join(directory, filepath))) {
-    fs.createFileSync(filepath);
-    fs.writeFileSync(filepath, content, {encoding: 'utf-8'});
-  } else {
-    const tempFilePath = path.join(directory, 'tempConfig.js');
-    fs.writeFileSync(tempFilePath, content);
-    const cliConfigFile = require(tempFilePath);
-    const existingConfigFile = require(path.join(directory, filepath));
+  try {
+    if (!doesDirectoryExist(path.join(directory, filepath))) {
+      fs.createFileSync(filepath);
+      fs.writeFileSync(filepath, content, {encoding: 'utf-8'});
+    } else {
+      const tempFilePath = path.join(directory, 'tempConfig.js');
+      fs.writeFileSync(tempFilePath, content);
+      const cliConfigFile = require(tempFilePath);
+      const existingConfigFile = require(path.join(directory, filepath));
 
-    const mergedConfig = deepmerge(existingConfigFile, cliConfigFile);
+      const mergedConfig = deepmerge(existingConfigFile, cliConfigFile);
 
-    fs.unlinkSync(tempFilePath);
+      fs.unlinkSync(tempFilePath);
 
-    const output = `module.exports = ${JSON.stringify(mergedConfig, null, 2)};`;
-    fs.writeFileSync(filepath, output, {encoding: 'utf-8'});
+      const output = `module.exports = ${JSON.stringify(
+        mergedConfig,
+        null,
+        2,
+      )};`;
+      fs.writeFileSync(filepath, output, {encoding: 'utf-8'});
+    }
+  } catch {
+    logger.warn(
+      `Could not create custom ${chalk.bold(
+        'react-native.config.js',
+      )} file. You can create it manually in your project's root folder.`,
+    );
   }
 }
 

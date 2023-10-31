@@ -170,9 +170,8 @@ async function createFromTemplate({
       packageName,
     });
 
-    createDefaultConfigFile(projectDirectory);
+    createDefaultConfigFile(projectDirectory, loader);
 
-    loader.succeed();
     const {postInitScript} = templateConfig;
     if (postInitScript) {
       loader.info('Executing post init script ');
@@ -285,7 +284,7 @@ It's created by CLI rather than being a part of a template to avoid displaying t
 as it might bring confusion for existing projects where this change might not be applicable.
 For more details, see https://github.com/react-native-community/cli/blob/main/docs/projects.md#projectiosautomaticpodsinstallation
 */
-function createDefaultConfigFile(directory: string) {
+function createDefaultConfigFile(directory: string, loader: Loader) {
   const cliConfigContent = {
     project: {
       ios: {
@@ -293,19 +292,17 @@ function createDefaultConfigFile(directory: string) {
       },
     },
   };
-
+  const configFileContent = `module.exports = ${JSON.stringify(
+    cliConfigContent,
+    null,
+    2,
+  )}`;
   const filepath = 'react-native.config.js';
   try {
     if (!doesDirectoryExist(path.join(directory, filepath))) {
-      fs.writeFileSync(
-        filepath,
-        sanitizeConfigFile(
-          `module.exports = ${JSON.stringify(cliConfigContent, null, 2)}`,
-        ),
-        {
-          encoding: 'utf-8',
-        },
-      );
+      fs.writeFileSync(filepath, sanitizeConfigFile(configFileContent), {
+        encoding: 'utf-8',
+      });
     } else {
       const existingConfigFile = require(path.join(directory, filepath));
 
@@ -320,11 +317,12 @@ function createDefaultConfigFile(directory: string) {
         encoding: 'utf-8',
       });
     }
+    loader.succeed();
   } catch {
-    logger.warn(
+    loader.warn(
       `Could not create custom ${chalk.bold(
         'react-native.config.js',
-      )} file. You can create it manually in your project's root folder.`,
+      )} file. You can create it manually in your project's root folder with the following content: \n\n${configFileContent}`,
     );
   }
 }

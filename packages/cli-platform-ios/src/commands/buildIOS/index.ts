@@ -13,12 +13,11 @@ import {getConfiguration} from './getConfiguration';
 import {getXcodeProjectAndDir} from './getXcodeProjectAndDir';
 import resolvePods from '../../tools/pods';
 import getArchitecture from '../../tools/getArchitecture';
-import forcePodsNoEffectLogger from '../../tools/forcePodsNoEffectLogger';
 
 async function buildIOS(_: Array<string>, ctx: Config, args: BuildFlags) {
   const {xcodeProject, sourceDir} = getXcodeProjectAndDir(ctx.project.ios);
 
-  if (ctx.project.ios?.automaticPodsInstallation) {
+  if (ctx.project.ios?.automaticPodsInstallation || args.forcePods) {
     const isAppRunningNewArchitecture = ctx.project.ios?.sourceDir
       ? await getArchitecture(ctx.project.ios?.sourceDir)
       : undefined;
@@ -27,8 +26,6 @@ async function buildIOS(_: Array<string>, ctx: Config, args: BuildFlags) {
       forceInstall: args.forcePods,
       newArchEnabled: isAppRunningNewArchitecture,
     });
-  } else if (args.forcePods) {
-    forcePodsNoEffectLogger();
   }
 
   process.chdir(sourceDir);

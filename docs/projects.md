@@ -103,7 +103,7 @@ The list should contain the name of the components, as they're registered in the
 
 #### project.ios.automaticPodsInstallation
 
-A boolean value to determine if you want to automatically install CocoaPods when running `run-ios` or `build-ios` command and:
+A boolean value to determine if you want to automatically install CocoaPods when running `run-ios` or `build-ios` command when:
 - they are not yet installed
 - a new dependency visible for autolinking is installed
 - a version of existing native dependency has changed

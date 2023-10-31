@@ -30,7 +30,6 @@ import getSimulators from '../../tools/getSimulators';
 import {getXcodeProjectAndDir} from '../buildIOS/getXcodeProjectAndDir';
 import resolvePods from '../../tools/pods';
 import getArchitecture from '../../tools/getArchitecture';
-import forcePodsNoEffectLogger from '../../tools/forcePodsNoEffectLogger';
 
 export interface FlagsT extends BuildFlags {
   simulator?: string;
@@ -49,7 +48,7 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   let {packager, port} = args;
 
   // check if pods need to be installed
-  if (ctx.project.ios?.automaticPodsInstallation) {
+  if (ctx.project.ios?.automaticPodsInstallation || args.forcePods) {
     const isAppRunningNewArchitecture = ctx.project.ios?.sourceDir
       ? await getArchitecture(ctx.project.ios?.sourceDir)
       : undefined;
@@ -58,8 +57,6 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
       forceInstall: args.forcePods,
       newArchEnabled: isAppRunningNewArchitecture,
     });
-  } else if (args.forcePods) {
-    forcePodsNoEffectLogger();
   }
 
   if (packager) {

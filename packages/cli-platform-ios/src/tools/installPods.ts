@@ -139,6 +139,10 @@ async function installPods(loader?: Ora, options?: PodInstallOptions) {
 
     if (fs.existsSync('../Gemfile') && !options?.skipBundleInstall) {
       await runBundleInstall(loader);
+    } else if (!fs.existsSync('../Gemfile')) {
+      throw new CLIError(
+        'Could not find the Gemfile. Currently the CLI requires to have this file in the root directory of the project to install CocoaPods. If your configuration is different, please install the CocoaPods manually.',
+      );
     }
 
     try {

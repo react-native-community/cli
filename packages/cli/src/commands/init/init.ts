@@ -29,6 +29,7 @@ import {getNpmVersionIfAvailable} from '../../tools/npm';
 import {getYarnVersionIfAvailable} from '../../tools/yarn';
 import {createHash} from 'crypto';
 import createGitRepository from './createGitRepository';
+import deepmerge from 'deepmerge';
 
 const DEFAULT_VERSION = 'latest';
 
@@ -271,6 +272,14 @@ function createTemplateUri(options: Options, version: string): string {
   return options.template || `react-native@${version}`;
 }
 
+/*
+Starting from 0.73, react-native.config.js is created by CLI during the init process.
+It contains automaticPodsInstallation flag set to true by default.
+This flag is used by CLI to determine whether to install CocoaPods dependencies when running ios commands or not.
+It's created by CLI rather than being a part of a template to avoid displaying this file in the Upgrade Helper,
+as it might bring confusion for existing projects where this change might not be applicable.
+For more details, see https://github.com/react-native-community/cli/blob/main/docs/projects.md#projectiosautomaticpodsinstallation
+*/
 function createDefaultConfigFile(directory: string) {
   const content = `module.exports = {
   project: {
@@ -282,11 +291,22 @@ function createDefaultConfigFile(directory: string) {
 `;
 
   const filepath = 'react-native.config.js';
-  if (!fs.existsSync(path.join(directory, filepath))) {
+  if (!doesDirectoryExist(path.join(directory, filepath))) {
     fs.createFileSync(filepath);
-  }
+    fs.writeFileSync(filepath, content, {encoding: 'utf-8'});
+  } else {
+    const tempFilePath = path.join(directory, 'tempConfig.js');
+    fs.writeFileSync(tempFilePath, content);
+    const cliConfigFile = require(tempFilePath);
+    const existingConfigFile = require(path.join(directory, filepath));
 
-  fs.writeFileSync(filepath, content, {encoding: 'utf-8'});
+    const mergedConfig = deepmerge(existingConfigFile, cliConfigFile);
+
+    fs.unlinkSync(tempFilePath);
+
+    const output = `module.exports = ${JSON.stringify(mergedConfig, null, 2)};`;
+    fs.writeFileSync(filepath, output, {encoding: 'utf-8'});
+  }
 }
 
 async function createProject(

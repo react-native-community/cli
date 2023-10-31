@@ -57,13 +57,17 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
       forceInstall: args.forcePods,
       newArchEnabled: isAppRunningNewArchitecture,
     });
-  } else if (args.forcePods && !ctx.project.ios?.automaticPodsInstallation) {
+  } else if (args.forcePods) {
     logger.warn(
       `${chalk.bold(
         '--force-pods',
       )} has no effect because automatic CocoaPods installation is disabled. In order to use this flag, set ${chalk.bold(
         'project.ios.automaticPodsInstallation',
-      )} to true in ${chalk.bold('react-native.config.js')}.`,
+      )} to true in ${chalk.bold(
+        'react-native.config.js',
+      )}. For more information, see ${chalk.underline(
+        'https://github.com/react-native-community/cli/blob/main/docs/projects.md#projectiosautomaticpodsinstallation',
+      )}`,
     );
   }
 

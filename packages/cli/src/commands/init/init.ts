@@ -272,6 +272,11 @@ function createTemplateUri(options: Options, version: string): string {
   return options.template || `react-native@${version}`;
 }
 
+//remove quotes from object keys to match the linter rules of the template
+function sanitizeConfigFile(fileContent: string) {
+  return fileContent.replace(/"([^"]+)":/g, '$1:');
+}
+
 /*
 Starting from 0.73, react-native.config.js is created by CLI during the init process.
 It contains automaticPodsInstallation flag set to true by default.
@@ -281,36 +286,39 @@ as it might bring confusion for existing projects where this change might not be
 For more details, see https://github.com/react-native-community/cli/blob/main/docs/projects.md#projectiosautomaticpodsinstallation
 */
 function createDefaultConfigFile(directory: string) {
-  const content = `module.exports = {
-  project: {
-    ios: {
-      automaticPodsInstallation: true,
+  const cliConfigContent = {
+    project: {
+      ios: {
+        automaticPodsInstallation: true,
+      },
     },
-  },
-};
-`;
+  };
 
   const filepath = 'react-native.config.js';
   try {
     if (!doesDirectoryExist(path.join(directory, filepath))) {
-      fs.createFileSync(filepath);
-      fs.writeFileSync(filepath, content, {encoding: 'utf-8'});
+      fs.writeFileSync(
+        filepath,
+        sanitizeConfigFile(
+          `module.exports = ${JSON.stringify(cliConfigContent, null, 2)}`,
+        ),
+        {
+          encoding: 'utf-8',
+        },
+      );
     } else {
-      const tempFilePath = path.join(directory, 'tempConfig.js');
-      fs.writeFileSync(tempFilePath, content);
-      const cliConfigFile = require(tempFilePath);
       const existingConfigFile = require(path.join(directory, filepath));
 
-      const mergedConfig = deepmerge(existingConfigFile, cliConfigFile);
-
-      fs.unlinkSync(tempFilePath);
-
+      const mergedConfig = deepmerge(existingConfigFile, cliConfigContent);
       const output = `module.exports = ${JSON.stringify(
         mergedConfig,
         null,
         2,
       )};`;
-      fs.writeFileSync(filepath, output, {encoding: 'utf-8'});
+
+      fs.writeFileSync(filepath, sanitizeConfigFile(output), {
+        encoding: 'utf-8',
+      });
     }
   } catch {
     logger.warn(

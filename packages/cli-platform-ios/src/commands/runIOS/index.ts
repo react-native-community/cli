@@ -95,7 +95,18 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
 
   const {mode, scheme} = await getConfiguration(xcodeProject, sourceDir, args);
 
-  const availableDevices = await listIOSDevices();
+  const devices = await listIOSDevices();
+
+  const availableDevices = devices.filter(
+    ({isAvailable}) => isAvailable === true,
+  );
+
+  if (availableDevices.length === 0) {
+    return logger.error(
+      'iOS devices or simulators not detected. Install simulators via Xcode or connect a physical iOS device',
+    );
+  }
+
   if (args.listDevices || args.interactive) {
     if (args.device || args.udid) {
       logger.warn(
@@ -121,7 +132,7 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
 
   if (!args.device && !args.udid && !args.simulator) {
     const bootedDevices = availableDevices.filter(
-      ({type, isAvailable}) => type === 'device' && isAvailable,
+      ({type}) => type === 'device',
     );
 
     const simulators = getSimulators();

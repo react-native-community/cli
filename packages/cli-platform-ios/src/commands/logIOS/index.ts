@@ -35,6 +35,11 @@ async function logIOS(_argv: Array<string>, _ctx: Config, args: Args) {
     ({type, isAvailable}) => type === 'simulator' && isAvailable,
   );
 
+  if (availableSimulators.length === 0) {
+    logger.error('No simulators detected. Install simulators via Xcode.');
+    return;
+  }
+
   const bootedAndAvailableSimulators = bootedSimulators.map((booted) => {
     const available = availableSimulators.find(
       ({udid}) => udid === booted.udid,
@@ -43,7 +48,7 @@ async function logIOS(_argv: Array<string>, _ctx: Config, args: Args) {
   });
 
   if (bootedAndAvailableSimulators.length === 0) {
-    logger.error('No active iOS device found');
+    logger.error('No booted and available iOS simulators found.');
     return;
   }
 

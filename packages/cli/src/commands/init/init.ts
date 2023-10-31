@@ -28,6 +28,7 @@ import {getBunVersionIfAvailable} from '../../tools/bun';
 import {getNpmVersionIfAvailable} from '../../tools/npm';
 import {getYarnVersionIfAvailable} from '../../tools/yarn';
 import {createHash} from 'crypto';
+import createGitRepository from './createGitRepository';
 
 const DEFAULT_VERSION = 'latest';
 
@@ -340,5 +341,7 @@ export default (async function initialize(
   await createProject(projectName, directoryName, version, options);
 
   const projectFolder = path.join(root, directoryName);
+
+  await createGitRepository(projectFolder);
   printRunInstructions(projectFolder, projectName);
 });

@@ -21,6 +21,7 @@ function createCustomTemplateFiles() {
 }
 
 const customTemplateCopiedFiles = [
+  '.git',
   'dir',
   'file',
   'node_modules',

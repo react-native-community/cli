@@ -25,6 +25,7 @@ describe('ios::getProjectConfig', () => {
     });
     expect(projectConfig('/', {})).toMatchInlineSnapshot(`
       Object {
+        "automaticPodsInstallation": undefined,
         "sourceDir": "/ios",
         "watchModeCommandParams": undefined,
         "xcodeProject": null,
@@ -45,6 +46,7 @@ describe('ios::getProjectConfig', () => {
     });
     expect(projectConfig('/', {})).toMatchInlineSnapshot(`
       Object {
+        "automaticPodsInstallation": undefined,
         "sourceDir": "/ios",
         "watchModeCommandParams": undefined,
         "xcodeProject": null,

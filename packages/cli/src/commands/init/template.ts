@@ -6,6 +6,8 @@ import copyFiles from '../../tools/copyFiles';
 import replacePathSepForRegex from '../../tools/replacePathSepForRegex';
 import fs from 'fs';
 import chalk from 'chalk';
+import {getYarnVersionIfAvailable} from '../../tools/yarn';
+import {executeCommand} from '../../tools/packageManager';
 
 export type TemplateConfig = {
   placeholderName: string;
@@ -26,6 +28,15 @@ export async function installTemplatePackage(
     silent: true,
     root,
   });
+
+  // React Native doesn't support PnP, so we need to set nodeLinker to node-modules. Read more here: https://github.com/react-native-community/cli/issues/27#issuecomment-1772626767
+
+  if (packageManager === 'yarn' && getYarnVersionIfAvailable() !== null) {
+    executeCommand('yarn', ['config', 'set', 'nodeLinker', 'node-modules'], {
+      root,
+      silent: true,
+    });
+  }
 
   return PackageManager.install([templateName], {
     packageManager,

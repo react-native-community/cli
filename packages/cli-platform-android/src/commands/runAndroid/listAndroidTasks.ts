@@ -1,4 +1,4 @@
-import {CLIError} from '@react-native-community/cli-tools';
+import {CLIError, getLoader} from '@react-native-community/cli-tools';
 import chalk from 'chalk';
 import execa from 'execa';
 import prompts from 'prompts';
@@ -32,12 +32,19 @@ export const getGradleTasks = (
   taskType: 'install' | 'build',
   sourceDir: string,
 ) => {
+  const loader = getLoader();
+  loader.start('Searching for available Gradle tasks...');
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
-
-  const out = execa.sync(cmd, ['tasks', '--group', taskType], {
-    cwd: sourceDir,
-  }).stdout;
-  return parseTasksFromGradleFile(taskType, out);
+  try {
+    const out = execa.sync(cmd, ['tasks', '--group', taskType], {
+      cwd: sourceDir,
+    }).stdout;
+    loader.succeed();
+    return parseTasksFromGradleFile(taskType, out);
+  } catch {
+    loader.fail();
+    return [];
+  }
 };
 
 export const promptForTaskSelection = async (

@@ -169,6 +169,8 @@ async function createFromTemplate({
       packageName,
     });
 
+    createDefaultConfigFile(projectDirectory);
+
     loader.succeed();
     const {postInitScript} = templateConfig;
     if (postInitScript) {
@@ -267,6 +269,24 @@ function createTemplateUri(options: Options, version: string): string {
   }
 
   return options.template || `react-native@${version}`;
+}
+
+function createDefaultConfigFile(directory: string) {
+  const content = `module.exports = {
+  project: {
+    ios: {
+      automaticPodsInstallation: true,
+    },
+  },
+};
+`;
+
+  const filepath = 'react-native.config.js';
+  if (!fs.existsSync(path.join(directory, filepath))) {
+    fs.createFileSync(filepath);
+  }
+
+  fs.writeFileSync(filepath, content, {encoding: 'utf-8'});
 }
 
 async function createProject(

@@ -52,10 +52,20 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     : undefined;
 
   // check if pods need to be installed
-  await resolvePods(ctx.root, ctx.dependencies, {
-    forceInstall: args.forcePods,
-    newArchEnabled: isAppRunningNewArchitecture,
-  });
+  if (ctx.project.ios?.automaticPodsInstallation) {
+    await resolvePods(ctx.root, ctx.dependencies, {
+      forceInstall: args.forcePods,
+      newArchEnabled: isAppRunningNewArchitecture,
+    });
+  } else if (args.forcePods && !ctx.project.ios?.automaticPodsInstallation) {
+    logger.warn(
+      `${chalk.bold(
+        '--force-pods',
+      )} has no effect because automatic CocoaPods installation is disabled. In order to use this flag, set ${chalk.bold(
+        'project.ios.automaticPodsInstallation',
+      )} to true in ${chalk.bold('react-native.config.js')}.`,
+    );
+  }
 
   if (packager) {
     const {port: newPort, startPackager} = await findDevServerPort(

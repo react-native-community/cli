@@ -34,12 +34,16 @@ export const getGradleTasks = (
   const loader = getLoader();
   loader.start('Searching for available Gradle tasks...');
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
-
-  const out = execa.sync(cmd, ['tasks', '--group', taskType], {
-    cwd: sourceDir,
-  }).stdout;
-  loader.succeed();
-  return parseTasksFromGradleFile(taskType, out);
+  try {
+    const out = execa.sync(cmd, ['tasks', '--group', taskType], {
+      cwd: sourceDir,
+    }).stdout;
+    loader.succeed();
+    return parseTasksFromGradleFile(taskType, out);
+  } catch {
+    loader.fail();
+    return [];
+  }
 };
 
 export const promptForTaskSelection = async (

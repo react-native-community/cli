@@ -6,13 +6,17 @@ import {
   getTempDirectory,
   cleanup,
   writeFiles,
+  addRNCPrefix,
+  getAllPackages,
 } from '../jest/helpers';
 
 const cwd = getTempDirectory('test_different_roots');
 
 beforeAll(() => {
+  const packages = getAllPackages();
+
   // Register all packages to be linked
-  for (const pkg of ['cli-platform-ios', 'cli-platform-android']) {
+  for (const pkg of packages) {
     spawnScript('yarn', ['link'], {
       cwd: path.join(__dirname, `../packages/${pkg}`),
     });
@@ -23,14 +27,11 @@ beforeAll(() => {
   writeFiles(cwd, {});
 
   // Initialise React Native project
-  runCLI(cwd, ['init', 'TestProject', '--install-pods']);
-  // Link CLI to the project
-  const pkgs = [
-    '@react-native-community/cli-platform-ios',
-    '@react-native-community/cli-platform-android',
-  ];
+  runCLI(cwd, ['init', 'TestProject']);
 
-  spawnScript('yarn', ['link', ...pkgs], {
+  // Link CLI to the project
+
+  spawnScript('yarn', ['link', ...addRNCPrefix(packages)], {
     cwd: path.join(cwd, 'TestProject'),
   });
 });

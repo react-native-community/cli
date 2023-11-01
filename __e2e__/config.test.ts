@@ -8,6 +8,8 @@ import {
   writeFiles,
   spawnScript,
   replaceProjectRootInOutput,
+  getAllPackages,
+  addRNCPrefix,
 } from '../jest/helpers';
 
 const DIR = getTempDirectory('test_root');
@@ -36,8 +38,10 @@ function createCorruptedSetupEnvScript() {
 }
 
 beforeAll(() => {
+  const packages = getAllPackages();
+
   // Register all packages to be linked
-  for (const pkg of ['cli-platform-ios', 'cli-platform-android']) {
+  for (const pkg of packages) {
     spawnScript('yarn', ['link'], {
       cwd: path.join(__dirname, `../packages/${pkg}`),
     });
@@ -48,17 +52,16 @@ beforeAll(() => {
   writeFiles(DIR, {});
 
   // Initialise React Native project
-
-  runCLI(DIR, ['init', 'TestProject', '--install-pods']);
+  runCLI(DIR, ['init', 'TestProject']);
 
   // Link CLI to the project
-  const pkgs = [
-    '@react-native-community/cli-platform-ios',
-    '@react-native-community/cli-platform-android',
-  ];
-
-  spawnScript('yarn', ['link', ...pkgs], {
+  spawnScript('yarn', ['link', ...addRNCPrefix(packages)], {
     cwd: path.join(DIR, 'TestProject'),
+  });
+
+  // Install pods after linking packages because Podfile uses `use_native_modules` function that executes `config` command. In case there was introduce breaking change in `cli-config` package, it will fail since it will be using old version of the package.
+  spawnScript('pod', ['install'], {
+    cwd: path.join(DIR, 'TestProject', 'ios'),
   });
 });
 

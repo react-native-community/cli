@@ -207,3 +207,11 @@ export function replaceProjectRootInOutput(output: string, testFolder: string) {
   const regex = new RegExp(`(:\\s").*(${slash(testFolder)})`, 'g');
   return slash(output).replace(regex, '$1<<REPLACED_ROOT>>');
 }
+
+export function getAllPackages() {
+  return fs.readdirSync(path.resolve(__dirname, '../packages'));
+}
+
+export function addRNCPrefix(packages: string[]) {
+  return packages.map((p) => `@react-native-community/${p}`);
+}

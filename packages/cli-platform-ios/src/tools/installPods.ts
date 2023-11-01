@@ -37,6 +37,7 @@ async function runPodInstall(loader: Ora, options?: RunPodInstallOptions) {
       },
     });
   } catch (error) {
+    logger.debug(error as string);
     // "pod" command outputs errors to stdout (at least some of them)
     const stderr = (error as any).stderr || (error as any).stdout;
 

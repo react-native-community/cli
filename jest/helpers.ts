@@ -5,7 +5,6 @@ import {createDirectory} from 'jest-util';
 import execa from 'execa';
 import chalk from 'chalk';
 import slash from 'slash';
-import {Writable} from 'readable-stream';
 
 const CLI_PATH = path.resolve(__dirname, '../packages/cli/build/bin.js');
 
@@ -30,38 +29,6 @@ export function runCLI(
     ...options,
     cwd: dir,
   });
-}
-
-// Runs cli until a given output is achieved, then kills it with `SIGTERM`
-export async function runUntil(
-  dir: string,
-  args: string[] | undefined,
-  text: string,
-  options: RunOptions = {
-    expectedFailure: false,
-  },
-) {
-  const spawnPromise = spawnScriptAsync(dir, args || [], {
-    timeout: 30000,
-    cwd: dir,
-    ...options,
-  });
-
-  spawnPromise.stderr?.pipe(
-    new Writable({
-      write(chunk: any, _encoding: string, callback: () => void) {
-        const output = chunk.toString('utf8');
-
-        if (output.includes(text)) {
-          spawnPromise.kill();
-        }
-
-        callback();
-      },
-    }),
-  );
-
-  return spawnPromise;
 }
 
 export const makeTemplate =
@@ -133,7 +100,7 @@ type SpawnFunction<T> = (
   options: SpawnOptions,
 ) => T;
 
-export const spawnScript: SpawnFunction<execa.ExecaReturns> = (
+export const spawnScript: SpawnFunction<execa.ExecaReturnBase<string>> = (
   execPath,
   args,
   options,
@@ -143,19 +110,6 @@ export const spawnScript: SpawnFunction<execa.ExecaReturns> = (
   handleTestFailure(execPath, options, result, args);
 
   return result;
-};
-
-const spawnScriptAsync: SpawnFunction<execa.ExecaChildProcess> = (
-  execPath,
-  args,
-  options,
-) => {
-  try {
-    return execa(execPath, args, getExecaOptions(options));
-  } catch (result) {
-    handleTestFailure(execPath, options, result, args);
-    return result;
-  }
 };
 
 function getExecaOptions(options: SpawnOptions) {

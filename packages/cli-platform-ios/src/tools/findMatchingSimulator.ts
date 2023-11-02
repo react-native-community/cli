@@ -53,8 +53,14 @@ function findMatchingSimulator(
   let match;
   let fallbackMatch;
 
-  for (const versionDescriptor in devices) {
-    const device = devices[versionDescriptor];
+  const sortedDevices = Object.fromEntries(
+    Object.entries(devices).sort(
+      (a, b) => Number(b[0].includes('iOS')) - Number(a[0].includes('iOS')),
+    ),
+  );
+
+  for (const versionDescriptor in sortedDevices) {
+    const device = sortedDevices[versionDescriptor];
     let version = versionDescriptor;
 
     if (/^com\.apple\.CoreSimulator\.SimRuntime\./g.test(version)) {

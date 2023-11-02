@@ -1064,4 +1064,54 @@ describe('findMatchingSimulator', () => {
       version: 'tvOS 11.2',
     });
   });
+
+  it('should sort simulator to get iOS ones first', () => {
+    expect(
+      findMatchingSimulator({
+        devices: {
+          'com.apple.CoreSimulator.SimRuntime.tvOS-11-2': [
+            {
+              state: 'Shutdown',
+              availability: '(available)',
+              name: 'Apple TV',
+              udid: '816C30EA-38EA-41AC-BFDA-96FB632D522E',
+            },
+            {
+              state: 'Shutdown',
+              availability: '(available)',
+              name: 'Apple TV 4K',
+              udid: 'BCBB7E4B-D872-4D61-BC61-7C9805551075',
+            },
+            {
+              state: 'Shutdown',
+              availability: '(available)',
+              name: 'Apple TV 4K (at 1080p)',
+              udid: '1DE12308-1C14-4F0F-991E-A3ADC41BDFFC',
+            },
+          ],
+          'com.apple.CoreSimulator.SimRuntime.iOS-16-2': [
+            {
+              lastBootedAt: '2023-05-09T11:08:32Z',
+              udid: '54B1D3DE-A943-4867-BA6A-B82BFE3A7904',
+              availability: '(available)',
+              state: 'Shutdown',
+              name: 'iPhone 14',
+            },
+            {
+              lastBootedAt: '2023-04-06T12:34:01Z',
+              udid: '816A7D47-A205-4F57-AE19-E5CB842B6304',
+              availability: '(available)',
+              state: 'Shutdown',
+              name: 'iPhone 14 Plus',
+            },
+          ],
+        },
+      }),
+    ).toEqual({
+      udid: '54B1D3DE-A943-4867-BA6A-B82BFE3A7904',
+      name: 'iPhone 14',
+      state: 'Shutdown',
+      version: 'iOS 16.2',
+    });
+  });
 });

@@ -27,12 +27,16 @@ beforeAll(() => {
   writeFiles(cwd, {});
 
   // Initialise React Native project
-  runCLI(cwd, ['init', 'TestProject', `--install-pods`]);
+  runCLI(cwd, ['init', 'TestProject']);
 
   // Link CLI to the project
 
   spawnScript('yarn', ['link', ...addRNCPrefix(packages)], {
     cwd: path.join(cwd, 'TestProject'),
+  });
+
+  spawnScript('pod', ['install'], {
+    cwd: path.join(cwd, 'TestProject', 'ios'),
   });
 });
 

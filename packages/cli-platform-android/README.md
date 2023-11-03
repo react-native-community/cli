@@ -95,6 +95,14 @@ Build native libraries only for the current device architecture for debug builds
 
 List all available Android devices and simulators and let you choose one to run the app.
 
+
+#### `--interactive`
+
+Manually select a task and device/simulator you want to run your app on.
+
+> [!WARNING]  
+> This flag is running `./gradlew tasks` under the hood, which might take some time for more complex apps. If that affects your project, consider using `--mode` and `--deviceId` flags instead.
+
 ### `build-android`
 
 Usage:

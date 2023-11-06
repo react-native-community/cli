@@ -37,18 +37,6 @@ function cleanDir(directory: string): Promise<void> {
   return rmAsync(directory, {maxRetries: 3, recursive: true, force: true});
 }
 
-function findPath(startPath: string, files: string[]): string | undefined {
-  // TODO: Find project files via `@react-native-community/cli`
-  for (const file of files) {
-    const filename = path.resolve(startPath, file);
-    if (fileExists(filename)) {
-      return filename;
-    }
-  }
-
-  return undefined;
-}
-
 async function promptForCaches(
   groups: CleanGroups,
 ): Promise<string[] | undefined> {
@@ -68,7 +56,7 @@ async function promptForCaches(
 
 export async function clean(
   _argv: string[],
-  _config: CLIConfig,
+  ctx: CLIConfig,
   cleanOptions: Args,
 ): Promise<void> {
   const {include, projectRoot, verifyCache} = cleanOptions;
@@ -83,12 +71,18 @@ export async function clean(
         {
           label: 'Clean Gradle cache',
           action: async () => {
-            const candidates =
+            const gradlew =
               os.platform() === 'win32'
-                ? ['android/gradlew.bat', 'gradlew.bat']
-                : ['android/gradlew', 'gradlew'];
-            const gradlew = findPath(projectRoot, candidates);
-            if (gradlew) {
+                ? path.join(
+                    ctx.project.android?.sourceDir ?? 'android',
+                    'gradlew.bat',
+                  )
+                : path.join(
+                    ctx.project.android?.sourceDir ?? 'android',
+                    'gradlew',
+                  );
+
+            if (fileExists(gradlew)) {
               const script = path.basename(gradlew);
               await execa(
                 os.platform() === 'win32' ? script : `./${script}`,

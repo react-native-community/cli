@@ -28,7 +28,11 @@ import {getBunVersionIfAvailable} from '../../tools/bun';
 import {getNpmVersionIfAvailable} from '../../tools/npm';
 import {getYarnVersionIfAvailable} from '../../tools/yarn';
 import {createHash} from 'crypto';
-import createGitRepository from './createGitRepository';
+import {
+  createGitRepository,
+  checkGitInstallation,
+  checkIfFolderIsGitRepo,
+} from './git';
 import semver from 'semver';
 import {executeCommand} from '../../tools/executeCommand';
 
@@ -51,6 +55,7 @@ type Options = {
 
 interface TemplateOptions {
   projectName: string;
+  shouldBumpYarnVersion: boolean;
   templateUri: string;
   npm?: boolean;
   pm?: PackageManager.PackageManager;
@@ -96,12 +101,7 @@ function doesDirectoryExist(dir: string) {
 }
 
 async function setProjectDirectory(directory: string) {
-  if (doesDirectoryExist(directory)) {
-    throw new DirectoryAlreadyExistsError(directory);
-  }
-
   try {
-    fs.mkdirSync(directory, {recursive: true});
     process.chdir(directory);
   } catch (error) {
     throw new CLIError(
@@ -135,6 +135,7 @@ function setEmptyHashForCachedDependencies(projectName: string) {
 
 async function createFromTemplate({
   projectName,
+  shouldBumpYarnVersion,
   templateUri,
   npm,
   pm,
@@ -209,7 +210,7 @@ async function createFromTemplate({
       packageName,
     });
 
-    if (packageManager === 'yarn') {
+    if (packageManager === 'yarn' && shouldBumpYarnVersion) {
       await bumpYarnVersion(false, projectDirectory);
     }
 
@@ -342,12 +343,14 @@ async function createProject(
   projectName: string,
   directory: string,
   version: string,
+  shouldBumpYarnVersion: boolean,
   options: Options,
 ): Promise<TemplateReturnType> {
   const templateUri = createTemplateUri(options, version);
 
   return createFromTemplate({
     projectName,
+    shouldBumpYarnVersion,
     templateUri,
     npm: options.npm,
     pm: options.pm,
@@ -393,6 +396,7 @@ export default (async function initialize(
   const version = options.version || DEFAULT_VERSION;
 
   const directoryName = path.relative(root, options.directory || projectName);
+  const projectFolder = path.join(root, directoryName);
 
   if (options.pm && !checkPackageManagerAvailability(options.pm)) {
     logger.error(
@@ -401,16 +405,40 @@ export default (async function initialize(
     return;
   }
 
+  if (doesDirectoryExist(projectFolder)) {
+    throw new DirectoryAlreadyExistsError(projectFolder);
+  } else {
+    fs.mkdirSync(projectFolder, {recursive: true});
+  }
+
+  let shouldBumpYarnVersion = true;
+  let shouldCreateGitRepository = false;
+
+  const isGitAvailable = await checkGitInstallation();
+
+  if (isGitAvailable) {
+    const isFolderGitRepo = await checkIfFolderIsGitRepo(projectFolder);
+
+    if (isFolderGitRepo) {
+      shouldBumpYarnVersion = false;
+    } else {
+      shouldCreateGitRepository = true; // Initialize git repo after creating project
+    }
+  } else {
+    logger.warn(
+      'Git is not installed on your system. This might cause some features to work incorrectly.',
+    );
+  }
+
   const {didInstallPods} = await createProject(
     projectName,
     directoryName,
     version,
+    shouldBumpYarnVersion,
     options,
   );
 
-  const projectFolder = path.join(root, directoryName);
-
-  if (!options.skipGitInit) {
+  if (shouldCreateGitRepository && !options.skipGitInit) {
     await createGitRepository(projectFolder);
   }
 

@@ -80,8 +80,8 @@ jobs:
 
       - name: Setup Git user
         run: |
-          git config --global user.name ""
-          git config --global user.email ""
+          git config --global user.name "test"
+          git config --global user.email "test@test.com"
           
       - name: Install dependencies
         run: yarn --frozen-lockfile

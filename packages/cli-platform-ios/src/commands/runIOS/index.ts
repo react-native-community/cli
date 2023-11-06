@@ -222,10 +222,10 @@ async function runOnSimulator(
 ) {
   /**
    * If provided simulator does not exist, try simulators in following order
+   * - iPhone 15
    * - iPhone 14
    * - iPhone 13
    * - iPhone 12
-   * - iPhone 11
    */
 
   let selectedSimulator;
@@ -233,10 +233,10 @@ async function runOnSimulator(
     selectedSimulator = simulator;
   } else {
     const fallbackSimulators = [
+      'iPhone 15',
       'iPhone 14',
       'iPhone 13',
       'iPhone 12',
-      'iPhone 11',
     ];
     selectedSimulator = getDestinationSimulator(args, fallbackSimulators);
   }

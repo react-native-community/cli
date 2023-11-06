@@ -157,9 +157,10 @@ test('init uses npm as the package manager with --npm', () => {
 
   const initDirPath = path.join(DIR, PROJECT_NAME);
 
-  // Remove yarn.lock and node_modules
+  // Remove yarn specific files and node_modules
   const filteredFiles = customTemplateCopiedFiles.filter(
-    (file) => !['yarn.lock', 'node_modules'].includes(file),
+    (file) =>
+      !['yarn.lock', 'node_modules', '.yarnrc.yml', '.yarn'].includes(file),
   );
 
   // Add package-lock.json

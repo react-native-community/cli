@@ -34,7 +34,7 @@ function cleanDir(directory: string): Promise<void> {
     return Promise.resolve();
   }
 
-  return rmAsync(directory, {maxRetries: 3, recursive: true});
+  return rmAsync(directory, {maxRetries: 3, recursive: true, force: true});
 }
 
 function findPath(startPath: string, files: string[]): string | undefined {

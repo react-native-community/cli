@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/cli",
-  "version": "10.2.5",
+  "version": "10.2.6",
   "description": "React Native CLI",
   "license": "MIT",
   "main": "build/index.js",

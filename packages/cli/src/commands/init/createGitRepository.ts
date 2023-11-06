@@ -56,6 +56,7 @@ const createGitRepository = async (folder: string) => {
     );
     loader.succeed();
   } catch (e) {
+    console.log(e);
     loader.fail(
       'Could not create an empty Git repository, see debug logs with --verbose',
     );

@@ -29,13 +29,24 @@ export async function installTemplatePackage(
     root,
   });
 
-  // React Native doesn't support PnP, so we need to set nodeLinker to node-modules. Read more here: https://github.com/react-native-community/cli/issues/27#issuecomment-1772626767
-
   if (packageManager === 'yarn' && getYarnVersionIfAvailable() !== null) {
-    executeCommand('yarn', ['config', 'set', 'nodeLinker', 'node-modules'], {
+    const options = {
       root,
       silent: true,
-    });
+    };
+
+    // React Native doesn't support PnP, so we need to set nodeLinker to node-modules. Read more here: https://github.com/react-native-community/cli/issues/27#issuecomment-1772626767
+    executeCommand(
+      'yarn',
+      ['config', 'set', 'nodeLinker', 'node-modules'],
+      options,
+    );
+
+    executeCommand(
+      'yarn',
+      ['config', 'set', 'nmHoistingLimits', 'workspaces'],
+      options,
+    );
   }
 
   return PackageManager.install([templateName], {

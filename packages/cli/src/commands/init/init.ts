@@ -77,7 +77,8 @@ const YARN_VERSION = '3.6.4';
 const bumpYarnVersion = async (silent: boolean, root: string) => {
   try {
     let yarnVersion = semver.parse(getYarnVersionIfAvailable());
-    if (yarnVersion && semver.major(yarnVersion) === 1) {
+
+    if (yarnVersion) {
       await executeCommand('yarn', ['set', 'version', YARN_VERSION], {
         root,
         silent,
@@ -406,7 +407,7 @@ export default (async function initialize(
   }
 
   if (doesDirectoryExist(projectFolder)) {
-    throw new DirectoryAlreadyExistsError(projectFolder);
+    throw new DirectoryAlreadyExistsError(directoryName);
   } else {
     fs.mkdirSync(projectFolder, {recursive: true});
   }

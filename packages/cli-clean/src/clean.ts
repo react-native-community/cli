@@ -2,7 +2,7 @@ import {getLoader, prompt} from '@react-native-community/cli-tools';
 import type {Config as CLIConfig} from '@react-native-community/cli-types';
 import chalk from 'chalk';
 import execa from 'execa';
-import {existsSync as fileExists, rmdir} from 'fs';
+import {existsSync as fileExists, rm} from 'fs';
 import os from 'os';
 import path from 'path';
 import {promisify} from 'util';
@@ -27,14 +27,14 @@ type CleanGroups = {
 
 const DEFAULT_GROUPS = ['metro', 'watchman'];
 
-const rmdirAsync = promisify(rmdir);
+const rmAsync = promisify(rm);
 
 function cleanDir(directory: string): Promise<void> {
   if (!fileExists(directory)) {
     return Promise.resolve();
   }
 
-  return rmdirAsync(directory, {maxRetries: 3, recursive: true});
+  return rmAsync(directory, {maxRetries: 3, recursive: true});
 }
 
 function findPath(startPath: string, files: string[]): string | undefined {

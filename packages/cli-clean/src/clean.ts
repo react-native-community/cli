@@ -6,6 +6,7 @@ import {existsSync as fileExists, rm} from 'fs';
 import os from 'os';
 import path from 'path';
 import {promisify} from 'util';
+import {glob} from 'fast-glob';
 
 type Args = {
   include?: string;
@@ -30,6 +31,18 @@ const DEFAULT_GROUPS = ['metro', 'watchman'];
 const rmAsync = promisify(rm);
 
 function cleanDir(directory: string): Promise<void> {
+  // fs.rm('foo*') does not expand the * on windows.
+  // Use fast-glob to generate a list of paths to delete
+  if (os.platform() === 'win32' && directory.endsWith('*')) {
+    return Promise.all(
+      glob
+        .globSync(glob.convertPathToPattern(directory), {
+          onlyFiles: false,
+        })
+        .map((entity) => cleanDir(entity)),
+    ) as unknown as Promise<void>;
+  }
+
   if (!fileExists(directory)) {
     return Promise.resolve();
   }

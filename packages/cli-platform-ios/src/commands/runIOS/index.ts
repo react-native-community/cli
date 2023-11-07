@@ -149,11 +149,13 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
         } command.`,
       );
     } else {
-      cacheManager.set(
-        packageJson.name,
-        'lastUsedDeviceId',
-        selectedDevice.udid,
-      );
+      if (selectedDevice.udid !== preferredDevice) {
+        cacheManager.set(
+          packageJson.name,
+          'lastUsedDeviceId',
+          selectedDevice.udid,
+        );
+      }
     }
 
     if (selectedDevice.type === 'simulator') {

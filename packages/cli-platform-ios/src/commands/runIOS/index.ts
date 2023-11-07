@@ -19,6 +19,7 @@ import {
   getDefaultUserTerminal,
   startServerInNewWindow,
   findDevServerPort,
+  cacheManager,
 } from '@react-native-community/cli-tools';
 import {buildProject} from '../buildIOS/buildProject';
 import {BuildFlags, buildOptions} from '../buildIOS/buildOptions';
@@ -28,7 +29,7 @@ import listIOSDevices from '../../tools/listIOSDevices';
 import {promptForDeviceSelection} from '../../tools/prompts';
 import getSimulators from '../../tools/getSimulators';
 import {getXcodeProjectAndDir} from '../buildIOS/getXcodeProjectAndDir';
-import resolvePods from '../../tools/pods';
+import resolvePods, {getPackageJson} from '../../tools/pods';
 import getArchitecture from '../../tools/getArchitecture';
 import findXcodeProject from '../../config/findXcodeProject';
 
@@ -129,14 +130,32 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
         } and "list-devices" parameters were passed to "run" command. We will list available devices and let you choose from one.`,
       );
     }
-    const selectedDevice = await promptForDeviceSelection(availableDevices);
+
+    const packageJson = getPackageJson(ctx.root);
+    const preferredDevice = cacheManager.get(
+      packageJson.name,
+      'lastUsedDeviceId',
+    );
+
+    const selectedDevice = await promptForDeviceSelection(
+      availableDevices,
+      preferredDevice,
+    );
+
     if (!selectedDevice) {
       throw new CLIError(
         `Failed to select device, please try to run app without ${
           args.listDevices ? 'list-devices' : 'interactive'
         } command.`,
       );
+    } else {
+      cacheManager.set(
+        packageJson.name,
+        'lastUsedDeviceId',
+        selectedDevice.udid,
+      );
     }
+
     if (selectedDevice.type === 'simulator') {
       return runOnSimulator(xcodeProject, mode, scheme, args, selectedDevice);
     } else {

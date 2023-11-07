@@ -5,7 +5,12 @@ import appDirs from 'appdirsjs';
 import chalk from 'chalk';
 import logger from './logger';
 
-type CacheKey = 'eTag' | 'lastChecked' | 'latestVersion' | 'dependencies';
+type CacheKey =
+  | 'eTag'
+  | 'lastChecked'
+  | 'latestVersion'
+  | 'dependencies'
+  | 'lastUsedDeviceId';
 type Cache = {[key in CacheKey]?: string};
 
 function loadCache(name: string): Cache | undefined {

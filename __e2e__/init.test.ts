@@ -46,13 +46,31 @@ if (process.platform === 'win32') {
   templatePath = `file://${templatePath}`;
 }
 
-test('init fails if the directory already exists', () => {
+test('init fails if the directory already exists and --replace-directory false', () => {
   fs.mkdirSync(path.join(DIR, PROJECT_NAME));
 
-  const {stderr} = runCLI(DIR, ['init', PROJECT_NAME], {expectedFailure: true});
+  const {stderr} = runCLI(
+    DIR,
+    ['init', PROJECT_NAME, '--replace-directory', 'false'],
+    {expectedFailure: true},
+  );
+
   expect(stderr).toContain(
     `error Cannot initialize new project because directory "${PROJECT_NAME}" already exists.`,
   );
+});
+
+test('init should ask and print files in directory if exist', () => {
+  fs.mkdirSync(path.join(DIR, PROJECT_NAME));
+  fs.writeFileSync(path.join(DIR, PROJECT_NAME, 'package.json'), '{}');
+
+  const {stdout, stderr} = runCLI(DIR, ['init', PROJECT_NAME]);
+
+  expect(stderr).toContain(
+    `warn The directory ${PROJECT_NAME} contains files that will be overwritten:`,
+  );
+  expect(stdout).toContain(`package.json`);
+  expect(stdout).toContain(`Do you want to replace existing files?`);
 });
 
 test('init should prompt for the project name', () => {

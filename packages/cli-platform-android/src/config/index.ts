@@ -48,7 +48,7 @@ export function projectConfig(
   const manifestPath = userConfig.manifestPath
     ? path.join(sourceDir, userConfig.manifestPath)
     : findManifest(path.join(sourceDir, appName));
-  const buildGradlePath = findBuildGradle(sourceDir, false);
+  const buildGradlePath = findBuildGradle(sourceDir);
 
   if (!manifestPath && !buildGradlePath) {
     return null;
@@ -130,7 +130,7 @@ export function dependencyConfig(
   const manifestPath = userConfig.manifestPath
     ? path.join(sourceDir, userConfig.manifestPath)
     : findManifest(sourceDir);
-  const buildGradlePath = findBuildGradle(sourceDir, true);
+  const buildGradlePath = findBuildGradle(sourceDir);
 
   if (!manifestPath && !buildGradlePath) {
     return null;

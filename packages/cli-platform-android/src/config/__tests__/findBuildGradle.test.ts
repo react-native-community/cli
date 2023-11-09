@@ -25,13 +25,13 @@ describe('findBuildGradle for apps', () => {
   });
 
   it('returns the app gradle path if file exists in the folder', () => {
-    expect(findBuildGradle('/flat/android', false)).toBe(
+    expect(findBuildGradle('/flat/android')).toBe(
       '/flat/android/app/build.gradle',
     );
   });
 
   it('returns `null` if there is no gradle in the app folder', () => {
-    expect(findBuildGradle('/empty', false)).toBeNull();
+    expect(findBuildGradle('/empty')).toBeNull();
   });
 });
 
@@ -46,12 +46,27 @@ describe('findBuildGradle for libraries', () => {
   });
 
   it('returns the app gradle path if file exists in the folder', () => {
-    expect(findBuildGradle('/flat/android', true)).toBe(
-      '/flat/android/build.gradle',
-    );
+    expect(findBuildGradle('/flat/android')).toBe('/flat/android/build.gradle');
   });
 
   it('returns `null` if there is no gradle in the app folder', () => {
-    expect(findBuildGradle('/empty', true)).toBeNull();
+    expect(findBuildGradle('/empty')).toBeNull();
+  });
+});
+
+describe('findBuildGradle for libraries with nested android folder', () => {
+  beforeAll(() => {
+    fs.__setMockFilesystem({
+      empty: {},
+      flat: {
+        android: mocks.validApp,
+      },
+    });
+  });
+
+  it('returns the app gradle path if file exists in the folder', () => {
+    expect(findBuildGradle('/flat/android')).toBe(
+      '/flat/android/app/build.gradle',
+    );
   });
 });

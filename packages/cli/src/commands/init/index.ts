@@ -47,5 +47,10 @@ export default {
       description:
         'Inits a project with a custom package name (Android) and bundle ID (iOS), e.g. com.example.app',
     },
+    {
+      name: '--platform-name <string>',
+      description:
+        'Name of out of tree platform to be used for ex. react-native-macos. This flag is optional as it should be passed automatically by out of tree platform.',
+    },
   ],
 };

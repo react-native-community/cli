@@ -44,6 +44,7 @@ type Options = {
   version?: string;
   packageName?: string;
   installPods?: string | boolean;
+  platformName?: string;
 };
 
 interface TemplateOptions {
@@ -261,14 +262,17 @@ function createTemplateUri(options: Options, version: string): string {
   const isTypescriptTemplate =
     options.template === 'react-native-template-typescript';
 
+  // This allows to correctly retrieve template uri for out of tree platforms.
+  const platform = options.platformName || 'react-native';
+
   if (isTypescriptTemplate) {
     logger.warn(
       "Ignoring custom template: 'react-native-template-typescript'. Starting from React Native v0.71 TypeScript is used by default.",
     );
-    return 'react-native';
+    return platform;
   }
 
-  return options.template || `react-native@${version}`;
+  return options.template || `${platform}@${version}`;
 }
 
 //remove quotes from object keys to match the linter rules of the template

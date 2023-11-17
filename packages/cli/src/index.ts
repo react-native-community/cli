@@ -134,15 +134,16 @@ function attachCommand<C extends Command<boolean>>(
   }
 }
 
-async function run() {
+// Platform name is optional argument passed by out of tree platforms.
+async function run(platformName?: string) {
   try {
-    await setupAndRun();
+    await setupAndRun(platformName);
   } catch (e) {
     handleError(e as Error);
   }
 }
 
-async function setupAndRun() {
+async function setupAndRun(platformName?: string) {
   // Commander is not available yet
 
   // when we run `config`, we don't want to output anything to the console. We
@@ -210,7 +211,14 @@ async function setupAndRun() {
     }
   }
 
-  program.parse(process.argv);
+  const argv = [...process.argv];
+
+  // If out of tree platform specifices custom platform name by passing it to , we need to pass it to argv array.
+  if (platformName) {
+    argv.push('--platform-name', platformName);
+  }
+
+  program.parse(argv);
 }
 
 const bin = require.resolve('./bin');

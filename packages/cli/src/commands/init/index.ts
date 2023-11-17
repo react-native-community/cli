@@ -50,7 +50,7 @@ export default {
     {
       name: '--platform-name <string>',
       description:
-        'Name of out of tree platform to be used for ex. react-native-macos. This flag is optional as it should be passed automatically by out of tree platform.',
+        'Name of out of tree platform to be used for ex. react-native-macos. This flag is optional as it should be passed automatically by out of tree platform. It needs to match the name of the platform declared in package.json',
     },
   ],
 };

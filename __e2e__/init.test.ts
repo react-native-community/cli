@@ -168,3 +168,29 @@ test('init uses npm as the package manager with --npm', () => {
     expect(fs.existsSync(path.join(initDirPath, file))).toBe(true);
   });
 });
+
+test('init --platform-name should work for out of tree platform', () => {
+  createCustomTemplateFiles();
+  const outOfTreePlatformName = 'react-native-macos';
+
+  const {stdout} = runCLI(DIR, [
+    'init',
+    PROJECT_NAME,
+    '--platform-name',
+    outOfTreePlatformName,
+    '--skip-install',
+    '--verbose',
+  ]);
+
+  expect(stdout).toContain('Run instructions');
+  expect(stdout).toContain(
+    `Installing template from ${outOfTreePlatformName}@latest`,
+  );
+
+  // make sure we don't leave garbage
+  expect(fs.readdirSync(DIR)).toContain('custom');
+
+  let dirFiles = fs.readdirSync(path.join(DIR, PROJECT_NAME));
+
+  expect(dirFiles.length).toBeGreaterThan(0);
+});

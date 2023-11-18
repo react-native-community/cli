@@ -213,8 +213,8 @@ async function setupAndRun(platformName?: string) {
 
   const argv = [...process.argv];
 
-  // If out of tree platform specifices custom platform name by passing it to , we need to pass it to argv array.
-  if (platformName) {
+  // If out of tree platform specifices custom platform name, we need to pass it to argv array for the init command.
+  if (process.argv.includes('init') && platformName) {
     argv.push('--platform-name', platformName);
   }
 

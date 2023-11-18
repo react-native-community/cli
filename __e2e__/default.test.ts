@@ -14,3 +14,8 @@ test('shows up help information without passing in any args', () => {
   const {stderr} = runCLI(DIR);
   expect(stderr).toMatchSnapshot();
 });
+
+test('does not pass --platform-name by default', () => {
+  const {stderr} = runCLI(DIR);
+  expect(stderr).not.toContain("unknown option '--platform-name'");
+});

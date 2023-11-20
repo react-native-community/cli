@@ -143,12 +143,16 @@ async function run(platformName?: string) {
   }
 }
 
+const isCommandPassed = (commandName: string) => {
+  return process.argv.filter((arg) => arg === commandName).length > 0;
+};
+
 async function setupAndRun(platformName?: string) {
   // Commander is not available yet
 
   // when we run `config`, we don't want to output anything to the console. We
   // expect it to return valid JSON
-  if (process.argv.includes('config')) {
+  if (isCommandPassed('config')) {
     logger.disable();
   }
 
@@ -214,7 +218,7 @@ async function setupAndRun(platformName?: string) {
   const argv = [...process.argv];
 
   // If out of tree platform specifices custom platform name, we need to pass it to argv array for the init command.
-  if (process.argv.includes('init') && platformName) {
+  if (isCommandPassed('init') && platformName) {
     argv.push('--platform-name', platformName);
   }
 

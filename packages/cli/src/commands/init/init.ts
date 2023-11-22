@@ -383,6 +383,9 @@ export default (async function initialize(
     projectName = projName;
   }
 
+  // if the project with the name already has cache, remove the cache to avoid problems with pods installation
+  cacheManager.removeProjectCache(projectName);
+
   validateProjectName(projectName);
 
   if (!!options.template && !!options.version) {

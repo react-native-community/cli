@@ -48,6 +48,14 @@ function getCacheRootPath() {
   return cachePath;
 }
 
+function removeProjectCache(name: string) {
+  const fullPath = path.resolve(getCacheRootPath(), name);
+
+  if (fs.existsSync(fullPath)) {
+    fs.rmSync(fullPath, {recursive: true});
+  }
+}
+
 function get(name: string, key: CacheKey): string | undefined {
   const cache = loadCache(name);
   if (cache) {
@@ -67,4 +75,5 @@ function set(name: string, key: CacheKey, value: string) {
 export default {
   get,
   set,
+  removeProjectCache,
 };

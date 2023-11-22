@@ -30,6 +30,7 @@ import {getYarnVersionIfAvailable} from '../../tools/yarn';
 import {createHash} from 'crypto';
 import createGitRepository from './createGitRepository';
 import deepmerge from 'deepmerge';
+import semver from 'semver';
 
 const DEFAULT_VERSION = 'latest';
 
@@ -57,6 +58,7 @@ interface TemplateOptions {
   skipInstall?: boolean;
   packageName?: string;
   installCocoaPods?: string | boolean;
+  version?: string;
 }
 
 function doesDirectoryExist(dir: string) {
@@ -111,6 +113,7 @@ async function createFromTemplate({
   skipInstall,
   packageName,
   installCocoaPods,
+  version,
 }: TemplateOptions) {
   logger.debug('Initializing new project');
   logger.log(banner);
@@ -171,7 +174,14 @@ async function createFromTemplate({
       packageName,
     });
 
-    createDefaultConfigFile(projectDirectory, loader);
+    const coerceRnVersion = semver.valid(semver.coerce(version));
+
+    if (
+      version === 'latest' ||
+      (coerceRnVersion && semver.satisfies(coerceRnVersion, '>=0.73.0'))
+    ) {
+      createDefaultConfigFile(projectDirectory, loader);
+    }
 
     const {postInitScript} = templateConfig;
     if (postInitScript) {
@@ -349,6 +359,7 @@ async function createProject(
     skipInstall: options.skipInstall,
     packageName: options.packageName,
     installCocoaPods: options.installPods,
+    version,
   });
 }
 
@@ -394,6 +405,7 @@ export default (async function initialize(
 
   const root = process.cwd();
   const version = options.version || DEFAULT_VERSION;
+
   const directoryName = path.relative(root, options.directory || projectName);
 
   if (options.pm && !checkPackageManagerAvailability(options.pm)) {

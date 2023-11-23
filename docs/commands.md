@@ -117,6 +117,10 @@ Create project with custom package name for Android and bundle identifier for iO
 - contain at least two segments separated by dots, e.g. `com.example`
 - contain only alphanumeric characters and dots
 
+#### `--skip-git-init <boolean>`
+
+Skip git repository initialization.
+
 ### `upgrade`
 
 Usage:

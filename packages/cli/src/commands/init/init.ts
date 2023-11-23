@@ -45,6 +45,7 @@ type Options = {
   packageName?: string;
   installPods?: string | boolean;
   platformName?: string;
+  skipGitInit?: boolean;
 };
 
 interface TemplateOptions {
@@ -404,6 +405,9 @@ export default (async function initialize(
 
   const projectFolder = path.join(root, directoryName);
 
-  await createGitRepository(projectFolder);
+  if (!options.skipGitInit) {
+    await createGitRepository(projectFolder);
+  }
+
   printRunInstructions(projectFolder, projectName);
 });

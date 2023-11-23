@@ -1,1 +1,9 @@
 * @adamTrz @thymikee 
+
+# Android
+packages/cli-platform-android/ @cortinico
+packages/cli-doctor/src/tools/healthchecks/android* @cipolleschi
+
+# iOS
+packages/cli-platform-ios/ @cipolleschi
+packages/cli-doctor/src/tools/healthchecks/ios* @cipolleschi

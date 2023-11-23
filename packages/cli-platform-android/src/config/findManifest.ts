@@ -10,7 +10,7 @@ import glob from 'glob';
 import path from 'path';
 
 export default function findManifest(folder: string) {
-  const manifestPath = glob.sync(path.join('**', 'AndroidManifest.xml'), {
+  let manifestPaths = glob.sync(path.join('**', 'AndroidManifest.xml'), {
     cwd: folder,
     ignore: [
       'node_modules/**',
@@ -23,7 +23,16 @@ export default function findManifest(folder: string) {
       '**/src/androidTest/**',
       '**/src/test/**',
     ],
-  })[0];
+  });
+  if (manifestPaths.length > 1) {
+    // if we have more than one manifest, pick the one in the main folder if present
+    const mainManifest = manifestPaths.filter((manifestPath) =>
+      manifestPath.includes('src/main/'),
+    );
+    if (mainManifest.length === 1) {
+      manifestPaths = mainManifest;
+    }
+  }
 
-  return manifestPath ? path.join(folder, manifestPath) : null;
+  return manifestPaths[0] ? path.join(folder, manifestPaths[0]) : null;
 }

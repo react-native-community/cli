@@ -49,6 +49,14 @@ yarn link /path/to/cloned/cli/ --all
 
 When you'd like to revert to a regular setup, you will need to revert the changes made to the `resolutions` field of `package.json`.
 
+#### Manual
+
+If you don't want to use `yarn link`, you can run CLI from the source:
+
+```sh
+node /path/to/cloned/cli/packages/cli/build/bin.js <command>
+```
+
 ### Running
 
 ```sh

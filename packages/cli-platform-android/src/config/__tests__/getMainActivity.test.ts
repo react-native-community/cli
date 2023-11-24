@@ -26,6 +26,11 @@ describe('android::getMainActivity', () => {
           app: mocks.fewActivities,
         },
       },
+      customFlavor: {
+        android: {
+          app: mocks.customFlavor,
+        },
+      },
     });
   });
 
@@ -51,6 +56,14 @@ describe('android::getMainActivity', () => {
     expect(mainActivity).not.toBeNull();
     expect(typeof mainActivity).toBe('string');
     expect(mainActivity).toBe('com.example.ExampleAppActivity');
+  });
+
+  it('returns main activity from main manifest when custom flavors are defined', () => {
+    const manifestPath = findManifest('/customFlavor');
+    const mainActivity = getMainActivity(manifestPath || '');
+    expect(mainActivity).not.toBeNull();
+    expect(typeof mainActivity).toBe('string');
+    expect(mainActivity).toBe('.MainActivity');
   });
 
   it('returns null if file do not exist', () => {

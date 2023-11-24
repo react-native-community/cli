@@ -30,6 +30,14 @@ const classNameManifest = fs.readFileSync(
   path.join(__dirname, './files/AndroidManifest-className.xml'),
 );
 
+const customFlavorManifest = fs.readFileSync(
+  path.join(__dirname, './files/AndroidManifest-custom-flavor.xml'),
+);
+
+const mainManifest = fs.readFileSync(
+  path.join(__dirname, './files/AndroidManifest.xml'),
+);
+
 function generateValidFileStructureForLib(classFileName: string) {
   return {
     'build.gradle': buildGradle,
@@ -296,5 +304,16 @@ export const fewActivities = {
 export const className = {
   src: {
     'AndroidManifest.xml': classNameManifest,
+  },
+};
+
+export const customFlavor = {
+  src: {
+    e2e: {
+      'AndroidManifest.xml': customFlavorManifest,
+    },
+    main: {
+      'AndroidManifest.xml': mainManifest,
+    },
   },
 };

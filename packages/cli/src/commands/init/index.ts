@@ -52,5 +52,9 @@ export default {
       description:
         'Name of out of tree platform to be used for ex. react-native-macos. This flag is optional as it should be passed automatically by out of tree platform. It needs to match the name of the platform declared in package.json',
     },
+    {
+      name: '--skip-git-init',
+      description: 'Skip git repository initialization',
+    },
   ],
 };

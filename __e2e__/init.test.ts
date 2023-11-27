@@ -194,3 +194,23 @@ test('init --platform-name should work for out of tree platform', () => {
 
   expect(dirFiles.length).toBeGreaterThan(0);
 });
+
+test('should not create custom config file if installed version is below 0.73', () => {
+  createCustomTemplateFiles();
+
+  runCLI(DIR, ['init', PROJECT_NAME, '--skip-install', '--version', '0.72.0']);
+
+  let dirFiles = fs.readdirSync(path.join(DIR, PROJECT_NAME));
+
+  expect(dirFiles).not.toContain('react-native.config.js');
+});
+
+test('should create custom config file if installed version is latest (starting from 0.73)', () => {
+  createCustomTemplateFiles();
+
+  runCLI(DIR, ['init', PROJECT_NAME, '--skip-install']);
+
+  let dirFiles = fs.readdirSync(path.join(DIR, PROJECT_NAME));
+
+  expect(dirFiles).toContain('react-native.config.js');
+});

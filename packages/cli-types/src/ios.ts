@@ -48,6 +48,7 @@ export type IOSScriptPhase = ({script: string} | {path: string}) & {
   input_file_lists?: string[];
   output_file_lists?: string[];
   show_env_vars_in_log?: boolean;
-  dependency_file?: string;
   execution_position?: 'before_compile' | 'after_compile' | 'any';
+  dependency_file?: string;
+  always_out_of_date?: string;
 };

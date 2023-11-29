@@ -59,9 +59,9 @@ function removeProjectCache(name: string) {
     }
   } catch {
     logger.error(
-      `Failed to remove cache for ${name}. If you experience any issues when running freshly initialized project, please remove ${chalk.underline(
+      `Failed to remove cache for ${name}. If you experience any issues when running freshly initialized project, please remove the "${chalk.underline(
         path.join(cacheRootPath, name),
-      )} folder manually.`,
+      )}" folder manually.`,
     );
   }
 }

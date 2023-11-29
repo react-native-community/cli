@@ -213,4 +213,22 @@ test('should create custom config file if installed version is latest (starting 
   let dirFiles = fs.readdirSync(path.join(DIR, PROJECT_NAME));
 
   expect(dirFiles).toContain('react-native.config.js');
+  const fileContent = fs.readFileSync(
+    path.join(DIR, PROJECT_NAME, 'react-native.config.js'),
+    'utf8',
+  );
+
+  const configFileContent = `
+  module.exports = {
+    project: {
+      ios: {
+        automaticPodsInstallation: true
+      }
+    }
+  }`;
+
+  //normalize all white-spaces for easier comparision
+  expect(fileContent.replace(/\s+/g, '')).toEqual(
+    configFileContent.replace(/\s+/g, ''),
+  );
 });

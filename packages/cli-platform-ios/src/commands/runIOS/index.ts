@@ -30,6 +30,7 @@ import getSimulators from '../../tools/getSimulators';
 import {getXcodeProjectAndDir} from '../buildIOS/getXcodeProjectAndDir';
 import resolvePods from '../../tools/pods';
 import getArchitecture from '../../tools/getArchitecture';
+import findXcodeProject from '../../config/findXcodeProject';
 
 export interface FlagsT extends BuildFlags {
   simulator?: string;
@@ -46,7 +47,7 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
   link.setPlatform('ios');
 
   let {packager, port} = args;
-
+  let installedPods = false;
   // check if pods need to be installed
   if (ctx.project.ios?.automaticPodsInstallation || args.forcePods) {
     const isAppRunningNewArchitecture = ctx.project.ios?.sourceDir
@@ -57,6 +58,8 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
       forceInstall: args.forcePods,
       newArchEnabled: isAppRunningNewArchitecture,
     });
+
+    installedPods = true;
   }
 
   if (packager) {
@@ -79,7 +82,16 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     link.setVersion(ctx.reactNativeVersion);
   }
 
-  const {xcodeProject, sourceDir} = getXcodeProjectAndDir(ctx.project.ios);
+  let {xcodeProject, sourceDir} = getXcodeProjectAndDir(ctx.project.ios);
+
+  // if project is freshly created, revisit Xcode project to verify Pods are installed correctly.
+  // This is needed because ctx project is created before Pods are installed, so it might have outdated information.
+  if (installedPods) {
+    const recheckXcodeProject = findXcodeProject(fs.readdirSync(sourceDir));
+    if (recheckXcodeProject) {
+      xcodeProject = recheckXcodeProject;
+    }
+  }
 
   process.chdir(sourceDir);
 

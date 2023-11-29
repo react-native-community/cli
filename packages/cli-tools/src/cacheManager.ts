@@ -2,6 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import os from 'os';
 import appDirs from 'appdirsjs';
+import chalk from 'chalk';
 import logger from './logger';
 
 type CacheKey = 'eTag' | 'lastChecked' | 'latestVersion' | 'dependencies';
@@ -48,6 +49,23 @@ function getCacheRootPath() {
   return cachePath;
 }
 
+function removeProjectCache(name: string) {
+  const cacheRootPath = getCacheRootPath();
+  try {
+    const fullPath = path.resolve(cacheRootPath, name);
+
+    if (fs.existsSync(fullPath)) {
+      fs.rmSync(fullPath, {recursive: true});
+    }
+  } catch {
+    logger.error(
+      `Failed to remove cache for ${name}. If you experience any issues when running freshly initialized project, please remove the "${chalk.underline(
+        path.join(cacheRootPath, name),
+      )}" folder manually.`,
+    );
+  }
+}
+
 function get(name: string, key: CacheKey): string | undefined {
   const cache = loadCache(name);
   if (cache) {
@@ -67,4 +85,6 @@ function set(name: string, key: CacheKey, value: string) {
 export default {
   get,
   set,
+  removeProjectCache,
+  getCacheRootPath,
 };

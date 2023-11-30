@@ -82,7 +82,7 @@ You can also add npm scripts to call it with whichever package manager you use:
 
 ## Updating the CLI
 
-> [!INFO]
+> [!WARNING]
 > Please do it only if you need to. We don't recommend updating CLI independently of `react-native` as it may cause unexpected issues.
 
 React Native CLI is a dependency of `react-native`, which makes it a transitive dependency of your project. You can overwrite the version independently of `react-native` by using `resolutions` field in your `package.json`:

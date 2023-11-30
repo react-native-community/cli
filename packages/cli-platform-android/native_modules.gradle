@@ -507,19 +507,11 @@ def reactNativeVersionRequireNewArchEnabled(autoModules) {
  *    Exported Extensions
  * ------------------------ */
 
-ext.applyNativeModulesSettingsGradle = { DefaultSettings defaultSettings, String root = null ->
-  if (root != null) {
-    logger.warn("${ReactNativeModules.LOG_PREFIX}Passing custom root is deprecated. CLI detects root automatically now.");
-    logger.warn("${ReactNativeModules.LOG_PREFIX}Please remove second argument to `applyNativeModulesSettingsGradle`.");
-  }
+ext.applyNativeModulesSettingsGradle = { DefaultSettings defaultSettings ->
   autoModules.addReactNativeModuleProjects(defaultSettings)
 }
 
-ext.applyNativeModulesAppBuildGradle = { Project project, String root = null ->
-  if (root != null) {
-    logger.warn("${ReactNativeModules.LOG_PREFIX}Passing custom root is deprecated. CLI detects root automatically now");
-    logger.warn("${ReactNativeModules.LOG_PREFIX}Please remove second argument to `applyNativeModulesAppBuildGradle`.");
-  }
+ext.applyNativeModulesAppBuildGradle = { Project project ->
   autoModules.addReactNativeModuleDependencies(project)
 
   def generatedSrcDir = new File(buildDir, "generated/rncli/src/main/java")

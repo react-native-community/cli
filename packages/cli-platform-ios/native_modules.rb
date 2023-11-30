@@ -12,20 +12,30 @@
 require 'pathname'
 require 'cocoapods'
 
-def use_native_modules!()
+def use_native_modules!(config = nil)
+  if (config.is_a? String)
+    Pod::UI.warn("Passing custom root to use_native_modules! is deprecated.",
+      [
+        "CLI detects root of the project automatically. The \"#{config}\" argument was ignored.",
+      ]);
+    config = nil;
+  end
+
   # Resolving the path the RN CLI. The `@react-native-community/cli` module may not be there for certain package managers, so we fall back to resolving it through `react-native` package, that's always present in RN projects
   cli_resolve_script = "try {console.log(require('@react-native-community/cli').bin);} catch (e) {console.log(require('react-native/cli').bin);}"
   cli_bin = Pod::Executable.execute_command("node", ["-e", cli_resolve_script], true).strip
 
-  json = []
+  if (!config)
+    json = []
 
-  IO.popen(["node", cli_bin, "config"]) do |data|
-    while line = data.gets
-      json << line
+    IO.popen(["node", cli_bin, "config"]) do |data|
+      while line = data.gets
+        json << line
+      end
     end
-  end
 
-  config = JSON.parse(json.join("\n"))
+    config = JSON.parse(json.join("\n"))
+  end
 
   project_root = Pathname.new(config["project"]["ios"]["sourceDir"])
 

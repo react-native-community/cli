@@ -66,11 +66,7 @@ export function projectConfig(
   const applicationId = buildGradlePath
     ? getApplicationId(buildGradlePath, packageName)
     : packageName;
-  const mainActivity = getMainActivity(manifestPath || '');
-
-  if (!mainActivity) {
-    throw new CLIError(`Main activity not found in ${manifestPath}`);
-  }
+  const mainActivity = getMainActivity(manifestPath || '') ?? '';
 
   return {
     sourceDir,

@@ -40,7 +40,7 @@ afterAll(() => {
   cleanup(cwd);
 });
 
-test('works when Gradle is run outside of the project hierarchy', () => {
+test('works when Gradle is run outside of the project hierarchy', async () => {
   /**
    * Location of Android project
    */
@@ -52,6 +52,15 @@ test('works when Gradle is run outside of the project hierarchy', () => {
    * Gradle globally
    */
   const gradleWrapper = path.join(androidProjectRoot, 'gradlew');
+
+  // Make sure that we use `-bin` distribution of Gradle
+  await spawnScript(
+    gradleWrapper,
+    ['wrapper', '--gradle-version=8.0.1', '--distribution-type', 'bin'],
+    {
+      cwd: androidProjectRoot,
+    },
+  );
 
   // Execute `gradle` with `-p` flag and `cwd` outside of project hierarchy
   const {stdout} = spawnScript(gradleWrapper, ['-p', androidProjectRoot], {

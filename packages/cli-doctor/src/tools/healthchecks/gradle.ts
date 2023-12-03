@@ -13,11 +13,14 @@ const platform = process.platform as 'darwin' | 'win32' | 'linux';
 export default {
   label,
   description,
-  getDiagnostics: async () => {
-    const root = findProjectRoot();
+  getDiagnostics: async (_, config) => {
+    const projectRoot = findProjectRoot();
     const filename = platform === 'win32' ? 'gradlew.bat' : 'gradlew';
+    const androidFolderPath =
+      config?.project.android?.sourceDir ?? `${projectRoot}/android`;
 
-    const gradleWrapperFile = path.join(root, `android/${filename}`);
+    const gradleWrapperFile = path.join(androidFolderPath, filename);
+
     const executableMode = fs.constants.X_OK;
 
     try {
@@ -31,8 +34,10 @@ export default {
     try {
       const projectRoot = config?.root ?? findProjectRoot();
       const filename = platform === 'win32' ? 'gradlew.bat' : 'gradlew';
+      const androidFolderPath =
+        config?.project.android?.sourceDir ?? `${projectRoot}/android`;
 
-      const gradleWrapperFile = path.join(projectRoot, `android/${filename}`);
+      const gradleWrapperFile = path.join(androidFolderPath, filename);
       const PERMISSIONS = 0o755;
 
       await fs.chmod(gradleWrapperFile, PERMISSIONS);

@@ -514,17 +514,17 @@ ext.applyNativeModulesSettingsGradle = { DefaultSettings defaultSettings ->
 ext.applyNativeModulesAppBuildGradle = { Project project ->
   autoModules.addReactNativeModuleDependencies(project)
 
-  def generatedSrcDir = new File(buildDir, "generated/rncli/src/main/java")
+  def generatedSrcDir = new File(project.getBuildDir(), "generated/rncli/src/main/java")
   def generatedCodeDir = new File(generatedSrcDir, generatedFilePackage.replace('.', '/'))
-  def generatedJniDir = new File(buildDir, "generated/rncli/src/main/jni")
+  def generatedJniDir = new File(project.getBuildDir(), "generated/rncli/src/main/jni")
 
-  task generatePackageList {
+  project.task("generatePackageList"){
     doLast {
       autoModules.generatePackagesFile(generatedCodeDir, generatedFileName, generatedFileContentsTemplate)
     }
   }
 
-  task generateNewArchitectureFiles {
+  project.task("generateNewArchitectureFiles"){
     doLast {
       autoModules.generateCmakeFile(generatedJniDir, "Android-rncli.cmake", cmakeTemplate)
       autoModules.generateRncliCpp(generatedJniDir, "rncli.cpp", rncliCppTemplate)
@@ -532,14 +532,14 @@ ext.applyNativeModulesAppBuildGradle = { Project project ->
     }
   }
 
-  preBuild.dependsOn generatePackageList
+  project.preBuild.dependsOn("generatePackageList")
   def isNewArchEnabled = (project.hasProperty("newArchEnabled") && project.newArchEnabled == "true") ||
     reactNativeVersionRequireNewArchEnabled(autoModules)
   if (isNewArchEnabled) {
-    preBuild.dependsOn generateNewArchitectureFiles
+    project.preBuild.dependsOn("generateNewArchitectureFiles")
   }
 
-  android {
+  project.android {
     sourceSets {
       main {
         java {

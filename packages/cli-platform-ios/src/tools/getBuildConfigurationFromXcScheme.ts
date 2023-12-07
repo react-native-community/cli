@@ -13,29 +13,45 @@ export function getBuildConfigurationFromXcScheme(
   sourceDir: string,
   projectInfo: IosInfo | undefined,
 ): string {
+  let xcProjects: string[] = [];
   try {
-    const xcProject = fs
+    xcProjects = fs
       .readdirSync(sourceDir)
-      .find((dir) => dir.includes('.xcodeproj'));
+      .filter((x) => x.endsWith('.xcodeproj'));
+  } catch (e: any) {
+    throw new CLIError(`Unknown error: ${e.toString()}`);
+  }
 
-    if (xcProject) {
-      const xmlScheme = fs.readFileSync(
-        path.join(
-          sourceDir,
-          xcProject,
-          'xcshareddata',
-          'xcschemes',
-          `${scheme}.xcscheme`,
-        ),
-        {
-          encoding: 'utf-8',
-        },
-      );
+  if (xcProjects.length === 0) {
+    throw new CLIError(
+      'Xcode project not found. please make sure it is a iOS project',
+    );
+  }
 
-      const {Scheme} = xmlParser.parse(xmlScheme);
+  if (xcProjects.length > 1) {
+    throw new CLIError(
+      'Multiple Xcode projects found. we are only support one. please remove another one',
+    );
+  }
 
-      return Scheme.LaunchAction['@_buildConfiguration'];
-    }
+  const xcProject = xcProjects[0];
+
+  try {
+    const xmlScheme = fs.readFileSync(
+      path.join(
+        sourceDir,
+        xcProject,
+        'xcshareddata',
+        'xcschemes',
+        `${scheme}.xcscheme`,
+      ),
+      {
+        encoding: 'utf-8',
+      },
+    );
+
+    const {Scheme} = xmlParser.parse(xmlScheme);
+    return Scheme.LaunchAction['@_buildConfiguration'];
   } catch {
     const availableSchemas =
       projectInfo && projectInfo.schemes && projectInfo.schemes.length > 0
@@ -48,6 +64,4 @@ export function getBuildConfigurationFromXcScheme(
       `Could not find scheme ${scheme}. Please make sure the schema you want to run exists. ${availableSchemas}`,
     );
   }
-
-  return configuration;
 }

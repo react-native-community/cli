@@ -66,6 +66,7 @@ describe('--appFolder', () => {
   const androidProject: AndroidProjectConfig = {
     appName: 'app',
     packageName: 'com.test',
+    applicationId: 'com.test',
     sourceDir: '/android',
     mainActivity: '.MainActivity',
   };

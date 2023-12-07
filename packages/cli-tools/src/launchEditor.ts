@@ -78,11 +78,6 @@ function getArgumentsForLineNumber(
     case 'Atom Beta':
     case 'subl':
     case 'sublime':
-    case 'webstorm':
-    case 'wstorm':
-    case 'appcode':
-    case 'charm':
-    case 'idea':
       return [`${fileName}:${lineNumber}`];
     case 'joe':
     case 'emacs':
@@ -91,6 +86,11 @@ function getArgumentsForLineNumber(
     case 'rmate':
     case 'mate':
     case 'mine':
+    case 'webstorm':
+    case 'wstorm':
+    case 'appcode':
+    case 'charm':
+    case 'idea':
       return ['--line', String(lineNumber), fileName];
     case 'code':
     case 'code-insiders':

@@ -34,7 +34,7 @@ import {checkUsers, promptForUser} from './listAndroidUsers';
 export interface Flags extends BuildFlags {
   appId: string;
   appIdSuffix: string;
-  mainActivity: string;
+  mainActivity?: string;
   port: number;
   terminal?: string;
   packager?: boolean;

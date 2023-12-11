@@ -38,7 +38,7 @@ export async function promptForDeviceSelection(
   devices: Device[],
   lastUsedIOSDeviceId?: string,
 ): Promise<Device | undefined> {
-  const sortedDevices = devices;
+  const sortedDevices = [...devices];
   const devicesIds = sortedDevices.map(({udid}) => udid);
 
   if (lastUsedIOSDeviceId) {

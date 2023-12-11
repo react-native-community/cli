@@ -15,6 +15,7 @@ import {Healthchecks, HealthCheckCategory} from '../../types';
 import loadConfig from '@react-native-community/cli-config';
 import xcodeEnv from './xcodeEnv';
 import packager from './packager';
+import gradle from './gradle';
 import deepmerge from 'deepmerge';
 import {logger} from '@react-native-community/cli-tools';
 
@@ -82,6 +83,7 @@ export const getHealthchecks = ({contributor}: Options): Healthchecks => {
         jdk,
         androidStudio,
         androidHomeEnvVariable,
+        gradle,
         ...(contributor ? [androidNDK] : []),
       ],
     },

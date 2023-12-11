@@ -10,7 +10,7 @@ const findDevServerPort = async (
   startPackager: boolean;
 }> => {
   let port = initialPort;
-  let startPackager = false;
+  let startPackager = true;
 
   const packagerStatus = await isPackagerRunning(port);
 

@@ -10,7 +10,7 @@ type CacheKey =
   | 'lastChecked'
   | 'latestVersion'
   | 'dependencies'
-  | 'lastUsedDeviceId';
+  | 'lastUsedIOSDeviceId';
 type Cache = {[key in CacheKey]?: string};
 
 function loadCache(name: string): Cache | undefined {

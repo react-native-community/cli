@@ -36,13 +36,13 @@ export async function promptForConfigurationSelection(
 
 export async function promptForDeviceSelection(
   devices: Device[],
-  lastUsedDeviceId?: string,
+  lastUsedIOSDeviceId?: string,
 ): Promise<Device | undefined> {
   const sortedDevices = devices;
   const devicesIds = sortedDevices.map(({udid}) => udid);
 
-  if (lastUsedDeviceId) {
-    const preferredDeviceIndex = devicesIds.indexOf(lastUsedDeviceId);
+  if (lastUsedIOSDeviceId) {
+    const preferredDeviceIndex = devicesIds.indexOf(lastUsedIOSDeviceId);
 
     if (preferredDeviceIndex > -1) {
       const [preferredDevice] = sortedDevices.splice(preferredDeviceIndex, 1);

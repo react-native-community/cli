@@ -134,7 +134,7 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
     const packageJson = getPackageJson(ctx.root);
     const preferredDevice = cacheManager.get(
       packageJson.name,
-      'lastUsedDeviceId',
+      'lastUsedIOSDeviceId',
     );
 
     const selectedDevice = await promptForDeviceSelection(
@@ -152,7 +152,7 @@ async function runIOS(_: Array<string>, ctx: Config, args: FlagsT) {
       if (selectedDevice.udid !== preferredDevice) {
         cacheManager.set(
           packageJson.name,
-          'lastUsedDeviceId',
+          'lastUsedIOSDeviceId',
           selectedDevice.udid,
         );
       }

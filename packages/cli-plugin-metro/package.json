@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/cli-plugin-metro",
-  "version": "12.2.0",
+  "version": "12.2.1",
   "description": "[Removed since 12.0.0-alpha.12]",
   "license": "MIT",
   "publishConfig": {

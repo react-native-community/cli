@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/cli-types",
-  "version": "12.2.0",
+  "version": "12.2.1",
   "main": "build",
   "publishConfig": {
     "access": "public"

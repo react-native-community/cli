@@ -366,29 +366,20 @@ class ReactNativeModules {
   }
 
   /**
-   * Runs a specified command using Runtime exec() in a specified directory.
+   * Runs a specified command using providers.exec in a specified directory.
    * Throws when the command result is empty.
    */
-  String getCommandOutput(String[] command, File directory) {
+  String getCommandOutput(String[] command, File directory) {    
     try {
-      def output = ""
-      def cmdProcess = Runtime.getRuntime().exec(command, null, directory)
-      def bufferedReader = new BufferedReader(new InputStreamReader(cmdProcess.getInputStream()))
-      def buff = ""
-      def readBuffer = new StringBuffer()
-      while ((buff = bufferedReader.readLine()) != null) {
-        readBuffer.append(buff)
+      def execOutput = providers.exec {
+        commandLine(command)
+        workingDir(directory)
       }
-      output = readBuffer.toString()
+      def output = execOutput.standardOutput.asText.get().trim()
       if (!output) {
         this.logger.error("${LOG_PREFIX}Unexpected empty result of running '${command}' command.")
-        def bufferedErrorReader = new BufferedReader(new InputStreamReader(cmdProcess.getErrorStream()))
-        def errBuff = ""
-        def readErrorBuffer = new StringBuffer()
-        while ((errBuff = bufferedErrorReader.readLine()) != null) {
-          readErrorBuffer.append(errBuff)
-        }
-        throw new Exception(readErrorBuffer.toString())
+        def error = execOutput.standardError.asText.get().trim()
+        throw new Exception(error)
       }
       return output
     } catch (Exception exception) {

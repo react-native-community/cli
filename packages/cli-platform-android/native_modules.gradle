@@ -369,7 +369,7 @@ class ReactNativeModules {
    * Runs a specified command using providers.exec in a specified directory.
    * Throws when the command result is empty.
    */
-  String getCommandOutput(String[] command, File directory) {    
+  String getCommandOutput(String[] command, File directory) {
     try {
       def execOutput = providers.exec {
         commandLine(command)

@@ -138,6 +138,7 @@ void rncli_registerProviders(std::shared_ptr<ComponentDescriptorProviderRegistry
 
 class ReactNativeModules {
   private Logger logger
+  private ProviderFactory providers
   private String packageName
   private File root
   private ArrayList<HashMap<String, String>> reactNativeModules
@@ -147,8 +148,9 @@ class ReactNativeModules {
 
   private static String LOG_PREFIX = ":ReactNative:"
 
-  ReactNativeModules(Logger logger, File root) {
+  ReactNativeModules(Logger logger, ProviderFactory providers, File root) {
     this.logger = logger
+    this.providers = providers
     this.root = root
 
     def (nativeModules, reactNativeModulesBuildVariants, androidProject, reactNativeVersion) = this.getReactNativeConfig()
@@ -477,7 +479,7 @@ class ReactNativeModules {
  */
 def projectRoot = rootProject.projectDir
 
-def autoModules = new ReactNativeModules(logger, projectRoot)
+def autoModules = new ReactNativeModules(logger, providers, projectRoot)
 
 def reactNativeVersionRequireNewArchEnabled(autoModules) {
     def rnVersion = autoModules.reactNativeVersion

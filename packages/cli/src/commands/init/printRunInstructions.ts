@@ -49,7 +49,7 @@ function printRunInstructions(
       options.showPodsInstructions
         ? `
     • Install Cocoapods
-      • bundle install
+      • bundle install # you need to run this only once in your project.
       • bundle exec pod install
       • cd ..
     `

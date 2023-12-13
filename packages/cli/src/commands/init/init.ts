@@ -213,15 +213,6 @@ async function createFromTemplate({
             )}`,
           });
           didInstallPods = installCocoapods;
-          logger.log('\n');
-          logger.info(
-            `💡 To enable automatic CocoaPods installation when building for iOS you can create react-native.config.js with automaticPodsInstallation field. \n${chalk.reset.dim(
-              `For more details, see ${chalk.underline(
-                'https://github.com/react-native-community/cli/blob/main/docs/projects.md#projectiosautomaticpodsinstallation',
-              )}`,
-            )}
-            `,
-          );
 
           if (installCocoapods) {
             await installPods(loader);
@@ -231,6 +222,7 @@ async function createFromTemplate({
         }
       }
     } else {
+      didInstallPods = false;
       loader.succeed('Dependencies installation skipped');
     }
   } catch (e) {
@@ -244,6 +236,19 @@ async function createFromTemplate({
   } finally {
     fs.removeSync(templateSourceDir);
   }
+
+  if (process.platform === 'darwin') {
+    logger.log('\n');
+    logger.info(
+      `💡 To enable automatic CocoaPods installation when building for iOS you can create react-native.config.js with automaticPodsInstallation field. \n${chalk.reset.dim(
+        `For more details, see ${chalk.underline(
+          'https://github.com/react-native-community/cli/blob/main/docs/projects.md#projectiosautomaticpodsinstallation',
+        )}`,
+      )}
+            `,
+    );
+  }
+
   return {didInstallPods};
 }
 

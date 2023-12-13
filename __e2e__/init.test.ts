@@ -26,7 +26,6 @@ const customTemplateCopiedFiles = [
   'file',
   'node_modules',
   'package.json',
-  'react-native.config.js',
   'yarn.lock',
 ];
 
@@ -193,42 +192,4 @@ test('init --platform-name should work for out of tree platform', () => {
   let dirFiles = fs.readdirSync(path.join(DIR, PROJECT_NAME));
 
   expect(dirFiles.length).toBeGreaterThan(0);
-});
-
-test('should not create custom config file if installed version is below 0.73', () => {
-  createCustomTemplateFiles();
-
-  runCLI(DIR, ['init', PROJECT_NAME, '--skip-install', '--version', '0.72.0']);
-
-  let dirFiles = fs.readdirSync(path.join(DIR, PROJECT_NAME));
-
-  expect(dirFiles).not.toContain('react-native.config.js');
-});
-
-test('should create custom config file if installed version is latest (starting from 0.73)', () => {
-  createCustomTemplateFiles();
-
-  runCLI(DIR, ['init', PROJECT_NAME, '--skip-install']);
-
-  let dirFiles = fs.readdirSync(path.join(DIR, PROJECT_NAME));
-
-  expect(dirFiles).toContain('react-native.config.js');
-  const fileContent = fs.readFileSync(
-    path.join(DIR, PROJECT_NAME, 'react-native.config.js'),
-    'utf8',
-  );
-
-  const configFileContent = `
-  module.exports = {
-    project: {
-      ios: {
-        automaticPodsInstallation: true
-      }
-    }
-  }`;
-
-  //normalize all white-spaces for easier comparision
-  expect(fileContent.replace(/\s+/g, '')).toEqual(
-    configFileContent.replace(/\s+/g, ''),
-  );
 });

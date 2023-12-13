@@ -81,8 +81,7 @@ exports[`shows up current config without unnecessary output 1`] = `
   },
   "project": {
     "ios": {
-      "sourceDir": "<<REPLACED_ROOT>>/TestProject/ios",
-      "automaticPodsInstallation": true
+      "sourceDir": "<<REPLACED_ROOT>>/TestProject/ios"
     },
     "android": {
       "sourceDir": "<<REPLACED_ROOT>>/TestProject/android",

@@ -52,16 +52,11 @@ beforeAll(() => {
   writeFiles(DIR, {});
 
   // Initialise React Native project
-  runCLI(DIR, ['init', 'TestProject']);
+  runCLI(DIR, ['init', 'TestProject', '--install-pods']);
 
   // Link CLI to the project
   spawnScript('yarn', ['link', ...addRNCPrefix(packages)], {
     cwd: path.join(DIR, 'TestProject'),
-  });
-
-  // Install pods after linking packages because Podfile uses `use_native_modules` function that executes `config` command. In case there was introduce breaking change in `cli-config` package, it will fail since it will be using old version of the package.
-  spawnScript('pod', ['install'], {
-    cwd: path.join(DIR, 'TestProject', 'ios'),
   });
 });
 

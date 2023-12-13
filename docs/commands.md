@@ -6,6 +6,7 @@ React Native CLI comes with following commands:
 - [`clean`](/packages/cli-clean/README.md#clean)
 - [`config`](/packages/cli-config/README.md#config)
 - [`doctor`](/packages/cli-doctor/README.md#doctor)
+- [`link-assets`](/packages/cli-link-assets/README.md#link-assets)
 - [`init`](#init)
 - [`info`](/packages/cli-doctor/README.md#info)
 - [`log-android`](/packages/cli-platform-android/README.md#log-android)

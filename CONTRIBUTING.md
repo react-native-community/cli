@@ -35,7 +35,7 @@ And then:
 
 ```sh
 cd /my/new/react-native/project/
-yarn link "@react-native-community/cli-platform-ios" "@react-native-community/cli-platform-android" "@react-native-community/cli" "@react-native-community/cli-server-api" "@react-native-community/cli-types" "@react-native-community/cli-tools" "@react-native-community/cli-debugger-ui" "@react-native-community/cli-hermes" "@react-native-community/cli-clean" "@react-native-community/cli-doctor" "@react-native-community/cli-config"
+yarn link "@react-native-community/cli-platform-ios" "@react-native-community/cli-platform-android" "@react-native-community/cli" "@react-native-community/cli-server-api" "@react-native-community/cli-types" "@react-native-community/cli-tools" "@react-native-community/cli-debugger-ui" "@react-native-community/cli-hermes" "@react-native-community/cli-clean" "@react-native-community/cli-doctor" "@react-native-community/cli-config" "@react-native-community/cli-link-assets"
 ```
 
 Once you're done with testing and you'd like to get back to regular setup, run `yarn unlink` instead of `yarn link` from above command. Then `yarn install --force`.

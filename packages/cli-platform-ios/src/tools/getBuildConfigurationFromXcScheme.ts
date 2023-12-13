@@ -9,49 +9,35 @@ const xmlParser = new XMLParser({ignoreAttributes: false});
 
 export function getBuildConfigurationFromXcScheme(
   scheme: string,
-  _: string,
+  configuration: string,
   sourceDir: string,
   projectInfo: IosInfo | undefined,
 ): string {
-  let xcProjects: string[] = [];
+  // can not assume .xcodeproj exists.
+  // for more info see: https://github.com/react-native-community/cli/pull/2196
   try {
-    xcProjects = fs
+    const xcProject = fs
       .readdirSync(sourceDir)
-      .filter((x) => x.endsWith('.xcodeproj'));
-  } catch (e: any) {
-    throw new CLIError(`Unknown error: ${e.toString()}`);
-  }
+      .find((dir) => dir.endsWith('.xcodeproj'));
 
-  if (xcProjects.length === 0) {
-    throw new CLIError(
-      'Xcode project not found. please make sure it is a iOS project',
-    );
-  }
+    if (xcProject) {
+      const xmlScheme = fs.readFileSync(
+        path.join(
+          sourceDir,
+          xcProject,
+          'xcshareddata',
+          'xcschemes',
+          `${scheme}.xcscheme`,
+        ),
+        {
+          encoding: 'utf-8',
+        },
+      );
 
-  if (xcProjects.length > 1) {
-    throw new CLIError(
-      'Multiple Xcode projects found. we are only support one. please remove another one',
-    );
-  }
+      const {Scheme} = xmlParser.parse(xmlScheme);
 
-  const xcProject = xcProjects[0];
-
-  try {
-    const xmlScheme = fs.readFileSync(
-      path.join(
-        sourceDir,
-        xcProject,
-        'xcshareddata',
-        'xcschemes',
-        `${scheme}.xcscheme`,
-      ),
-      {
-        encoding: 'utf-8',
-      },
-    );
-
-    const {Scheme} = xmlParser.parse(xmlScheme);
-    return Scheme.LaunchAction['@_buildConfiguration'];
+      return Scheme.LaunchAction['@_buildConfiguration'];
+    }
   } catch {
     const availableSchemas =
       projectInfo && projectInfo.schemes && projectInfo.schemes.length > 0
@@ -64,4 +50,6 @@ export function getBuildConfigurationFromXcScheme(
       `Could not find scheme ${scheme}. Please make sure the schema you want to run exists. ${availableSchemas}`,
     );
   }
+
+  return configuration;
 }

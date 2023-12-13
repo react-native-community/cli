@@ -9,7 +9,7 @@ const xmlParser = new XMLParser({ignoreAttributes: false});
 
 export function getBuildConfigurationFromXcScheme(
   scheme: string,
-  configuration: string,
+  _: string,
   sourceDir: string,
   projectInfo: IosInfo | undefined,
 ): string {

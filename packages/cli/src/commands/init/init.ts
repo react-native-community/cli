@@ -60,6 +60,10 @@ interface TemplateOptions {
   version?: string;
 }
 
+interface TemplateReturnType {
+  automaticPodsInstallation?: boolean;
+}
+
 function doesDirectoryExist(dir: string) {
   return fs.existsSync(dir);
 }
@@ -112,10 +116,10 @@ async function createFromTemplate({
   skipInstall,
   packageName,
   installCocoaPods,
-}: TemplateOptions) {
+}: TemplateOptions): Promise<TemplateReturnType> {
   logger.debug('Initializing new project');
   logger.log(banner);
-
+  let automaticPodsInstallation = String(installCocoaPods) === 'true';
   let packageManager = pm;
 
   if (pm) {
@@ -196,6 +200,7 @@ async function createFromTemplate({
         const installPodsValue = String(installCocoaPods);
 
         if (installPodsValue === 'true') {
+          automaticPodsInstallation = true;
           await installPods(loader);
           loader.succeed();
           setEmptyHashForCachedDependencies(projectName);
@@ -207,6 +212,16 @@ async function createFromTemplate({
               'Only needed if you run your project in Xcode directly',
             )}`,
           });
+          automaticPodsInstallation = installCocoapods;
+          logger.log('\n');
+          logger.info(
+            `To enable automatic CocoaPods installation when building for iOS you can create react-native.config.js with automaticPodsInstallation field. \n${chalk.reset.dim(
+              `For more details, see ${chalk.underline(
+                'https://github.com/react-native-community/cli/blob/main/docs/projects.md#projectiosautomaticpodsinstallation',
+              )}`,
+            )}
+            `,
+          );
 
           if (installCocoapods) {
             await installPods(loader);
@@ -219,11 +234,15 @@ async function createFromTemplate({
       loader.succeed('Dependencies installation skipped');
     }
   } catch (e) {
+    if (e instanceof Error) {
+      logger.error(e.message);
+    }
     loader.fail();
-    throw e;
+    automaticPodsInstallation = false;
   } finally {
     fs.removeSync(templateSourceDir);
   }
+  return {automaticPodsInstallation};
 }
 
 async function installDependencies({
@@ -282,7 +301,7 @@ async function createProject(
   directory: string,
   version: string,
   options: Options,
-) {
+): Promise<TemplateReturnType> {
   const templateUri = createTemplateUri(options, version);
 
   return createFromTemplate({
@@ -348,7 +367,12 @@ export default (async function initialize(
     return;
   }
 
-  await createProject(projectName, directoryName, version, options);
+  const {automaticPodsInstallation} = await createProject(
+    projectName,
+    directoryName,
+    version,
+    options,
+  );
 
   const projectFolder = path.join(root, directoryName);
 
@@ -356,5 +380,7 @@ export default (async function initialize(
     await createGitRepository(projectFolder);
   }
 
-  printRunInstructions(projectFolder, projectName);
+  printRunInstructions(projectFolder, projectName, {
+    showPodsInstructions: !automaticPodsInstallation,
+  });
 });

@@ -198,7 +198,9 @@ test('init should contain Cocoapods instructions when pods are not installed aut
   createCustomTemplateFiles();
 
   const {stdout} = runCLI(DIR, ['init', PROJECT_NAME, '--skip-install']);
-  expect(stdout).toContain('Install Cocoapods');
+  if (process.platform === 'darwin') {
+    expect(stdout).toContain('Install Cocoapods');
+  }
 
   // make sure we don't leave garbage
   expect(fs.readdirSync(DIR)).toContain('custom');

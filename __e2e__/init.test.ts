@@ -193,3 +193,16 @@ test('init --platform-name should work for out of tree platform', () => {
 
   expect(dirFiles.length).toBeGreaterThan(0);
 });
+
+test('init should contain Cocoapods instructions when pods are not installed automatically', () => {
+  createCustomTemplateFiles();
+
+  const {stdout} = runCLI(DIR, ['init', PROJECT_NAME, '--skip-install']);
+  expect(stdout).toContain('Install Cocoapods');
+
+  // make sure we don't leave garbage
+  expect(fs.readdirSync(DIR)).toContain('custom');
+
+  let dirFiles = fs.readdirSync(path.join(DIR, PROJECT_NAME));
+  expect(dirFiles.length).toBeGreaterThan(0);
+});

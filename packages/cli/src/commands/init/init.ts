@@ -61,7 +61,7 @@ interface TemplateOptions {
 }
 
 interface TemplateReturnType {
-  automaticPodsInstallation?: boolean;
+  didInstallPods?: boolean;
 }
 
 function doesDirectoryExist(dir: string) {
@@ -119,7 +119,7 @@ async function createFromTemplate({
 }: TemplateOptions): Promise<TemplateReturnType> {
   logger.debug('Initializing new project');
   logger.log(banner);
-  let automaticPodsInstallation = String(installCocoaPods) === 'true';
+  let didInstallPods = String(installCocoaPods) === 'true';
   let packageManager = pm;
 
   if (pm) {
@@ -200,7 +200,7 @@ async function createFromTemplate({
         const installPodsValue = String(installCocoaPods);
 
         if (installPodsValue === 'true') {
-          automaticPodsInstallation = true;
+          didInstallPods = true;
           await installPods(loader);
           loader.succeed();
           setEmptyHashForCachedDependencies(projectName);
@@ -212,10 +212,10 @@ async function createFromTemplate({
               'Only needed if you run your project in Xcode directly',
             )}`,
           });
-          automaticPodsInstallation = installCocoapods;
+          didInstallPods = installCocoapods;
           logger.log('\n');
           logger.info(
-            `To enable automatic CocoaPods installation when building for iOS you can create react-native.config.js with automaticPodsInstallation field. \n${chalk.reset.dim(
+            `💡 To enable automatic CocoaPods installation when building for iOS you can create react-native.config.js with automaticPodsInstallation field. \n${chalk.reset.dim(
               `For more details, see ${chalk.underline(
                 'https://github.com/react-native-community/cli/blob/main/docs/projects.md#projectiosautomaticpodsinstallation',
               )}`,
@@ -235,14 +235,16 @@ async function createFromTemplate({
     }
   } catch (e) {
     if (e instanceof Error) {
-      logger.error(e.message);
+      logger.error(
+        'Installing pods failed. This doesn\'t affect project initialization and you can safely proceed. \nHowever, you will need to install pods manually when running iOS, follow additional steps in "Run instructions for iOS" section.\n',
+      );
     }
     loader.fail();
-    automaticPodsInstallation = false;
+    didInstallPods = false;
   } finally {
     fs.removeSync(templateSourceDir);
   }
-  return {automaticPodsInstallation};
+  return {didInstallPods};
 }
 
 async function installDependencies({
@@ -367,7 +369,7 @@ export default (async function initialize(
     return;
   }
 
-  const {automaticPodsInstallation} = await createProject(
+  const {didInstallPods} = await createProject(
     projectName,
     directoryName,
     version,
@@ -381,6 +383,6 @@ export default (async function initialize(
   }
 
   printRunInstructions(projectFolder, projectName, {
-    showPodsInstructions: !automaticPodsInstallation,
+    showPodsInstructions: !didInstallPods,
   });
 });

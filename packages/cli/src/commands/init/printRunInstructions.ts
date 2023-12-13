@@ -13,7 +13,17 @@ import process from 'process';
 import chalk from 'chalk';
 import {logger} from '@react-native-community/cli-tools';
 
-function printRunInstructions(projectDir: string, projectName: string) {
+interface Options {
+  showPodsInstructions?: boolean;
+}
+
+function printRunInstructions(
+  projectDir: string,
+  projectName: string,
+  options: Options = {
+    showPodsInstructions: false,
+  },
+) {
   let iosInstructions = '';
   let desktopInstructions = '';
 
@@ -34,7 +44,18 @@ function printRunInstructions(projectDir: string, projectName: string) {
 
     iosInstructions = `
   ${chalk.cyan(`Run instructions for ${chalk.bold('iOS')}`)}:
-    • cd "${projectDir}" && npx react-native run-ios
+    • cd "${projectDir}${options.showPodsInstructions ? '/ios' : ''}"
+    ${
+      options.showPodsInstructions
+        ? `
+    • Install Cocoapods
+      • bundle install # you need to run this only once in your project.
+      • bundle exec pod install
+      • cd ..
+    `
+        : ''
+    }
+    • npx react-native run-ios
     ${chalk.dim('- or -')}
     • Open ${relativeXcodeProjectPath} in Xcode or run "xed -b ios"
     • Hit the Run button

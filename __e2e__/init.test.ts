@@ -119,6 +119,10 @@ test('init skips installation of dependencies with --skip-install', () => {
 
   expect(stdout).toContain('Run instructions');
 
+  if (process.platform === 'darwin') {
+    expect(stdout).toContain('Install Cocoapods');
+  }
+
   // make sure we don't leave garbage
   expect(fs.readdirSync(DIR)).toContain('custom');
 

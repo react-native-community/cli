@@ -2,6 +2,7 @@ jest.mock('execa', () => jest.fn());
 import execa from 'execa';
 import * as yarn from '../yarn';
 import * as bun from '../bun';
+import * as pnpm from '../pnpm';
 import {logger} from '@react-native-community/cli-tools';
 import * as PackageManager from '../packageManager';
 
@@ -176,6 +177,54 @@ describe('bun', () => {
     expect(execa).toHaveBeenCalledWith(
       'npm',
       ['install', '--save', '--save-exact', ...PACKAGES],
+      EXEC_OPTS,
+    );
+  });
+});
+
+describe('pnpm', () => {
+  beforeEach(() => {
+    jest
+      .spyOn(pnpm, 'getPnpmVersionIfAvailable')
+      .mockImplementation(() => true);
+    jest.spyOn(pnpm, 'isProjectUsingPnpm').mockImplementation(() => true);
+  });
+
+  it('should install', () => {
+    PackageManager.install(PACKAGES, {
+      packageManager: 'pnpm',
+      root: PROJECT_ROOT,
+    });
+
+    expect(execa).toHaveBeenCalledWith(
+      'pnpm',
+      ['add', '--save-exact', ...PACKAGES],
+      EXEC_OPTS,
+    );
+  });
+
+  it('should installDev', () => {
+    PackageManager.installDev(PACKAGES, {
+      packageManager: 'pnpm',
+      root: PROJECT_ROOT,
+    });
+
+    expect(execa).toHaveBeenCalledWith(
+      'pnpm',
+      ['add', '-D', '--save-exact', ...PACKAGES],
+      EXEC_OPTS,
+    );
+  });
+
+  it('should uninstall', () => {
+    PackageManager.uninstall(PACKAGES, {
+      packageManager: 'pnpm',
+      root: PROJECT_ROOT,
+    });
+
+    expect(execa).toHaveBeenCalledWith(
+      'pnpm',
+      ['remove', ...PACKAGES],
       EXEC_OPTS,
     );
   });

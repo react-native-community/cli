@@ -108,7 +108,7 @@ Force use of npm during initialization
 
 #### `--pm <string>`
 
-Use specific package manager to initialize the project. Available options: `yarn`, `npm`, `bun`. Default: `yarn`
+Use specific package manager to initialize the project. Available options: `yarn`, `npm`, `bun`, `pnpm`. Default: `yarn`
 
 #### `--package-name <string>`
 

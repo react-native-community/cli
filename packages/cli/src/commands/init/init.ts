@@ -27,6 +27,7 @@ import TemplateAndVersionError from './errors/TemplateAndVersionError';
 import {getBunVersionIfAvailable} from '../../tools/bun';
 import {getNpmVersionIfAvailable} from '../../tools/npm';
 import {getYarnVersionIfAvailable} from '../../tools/yarn';
+import {getPnpmVersionIfAvailable} from '../../tools/pnpm';
 import {createHash} from 'crypto';
 import createGitRepository from './createGitRepository';
 
@@ -284,6 +285,8 @@ function checkPackageManagerAvailability(
     return getNpmVersionIfAvailable();
   } else if (packageManager === 'yarn') {
     return getYarnVersionIfAvailable();
+  } else if (packageManager === 'pnpm') {
+    return getPnpmVersionIfAvailable();
   }
 
   return false;
@@ -340,6 +343,9 @@ function userAgentPackageManager() {
     }
     if (userAgent.startsWith('bun')) {
       return 'bun';
+    }
+    if (userAgent.startsWith('pnpm')) {
+      return 'pnpm';
     }
   }
 

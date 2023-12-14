@@ -14,6 +14,7 @@ import type {BuildFlags} from './buildOptions';
 
 export function buildProject(
   xcodeProject: IOSProjectInfo,
+  platform: string,
   udid: string | undefined,
   mode: string,
   scheme: string,
@@ -33,8 +34,8 @@ export function buildProject(
       (udid
         ? `id=${udid}`
         : mode === 'Debug'
-        ? 'generic/platform=iOS Simulator'
-        : 'generic/platform=iOS') +
+        ? `generic/platform=${platform} Simulator`
+        : `generic/platform=${platform}`) +
         (args.destination ? ',' + args.destination : ''),
     ];
 
@@ -98,7 +99,7 @@ export function buildProject(
         reject(
           new CLIError(
             `
-            Failed to build iOS project.
+            Failed to build ${platform} project.
 
             "xcodebuild" exited with error code '${code}'. To debug build
             logs further, consider building your app with Xcode.app, by opening

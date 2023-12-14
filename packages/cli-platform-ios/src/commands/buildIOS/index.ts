@@ -14,6 +14,8 @@ import {getXcodeProjectAndDir} from './getXcodeProjectAndDir';
 import resolvePods from '../../tools/pods';
 import getArchitecture from '../../tools/getArchitecture';
 
+const PLATFORM = 'ios';
+
 async function buildIOS(_: Array<string>, ctx: Config, args: BuildFlags) {
   const {xcodeProject, sourceDir} = getXcodeProjectAndDir(ctx.project.ios);
 
@@ -32,7 +34,7 @@ async function buildIOS(_: Array<string>, ctx: Config, args: BuildFlags) {
 
   const {scheme, mode} = await getConfiguration(xcodeProject, sourceDir, args);
 
-  return buildProject(xcodeProject, undefined, mode, scheme, args);
+  return buildProject(xcodeProject, PLATFORM, undefined, mode, scheme, args);
 }
 
 export default {

@@ -3,6 +3,7 @@ import {logger} from '@react-native-community/cli-tools';
 import {getYarnVersionIfAvailable, isProjectUsingYarn} from './yarn';
 import {getBunVersionIfAvailable, isProjectUsingBun} from './bun';
 import {getNpmVersionIfAvailable, isProjectUsingNpm} from './npm';
+import {getPnpmVersionIfAvailable, isProjectUsingPnpm} from './pnpm';
 
 export type PackageManager = keyof typeof packageManagers;
 
@@ -34,6 +35,13 @@ const packageManagers = {
     uninstall: ['remove'],
     installAll: ['install'],
   },
+  pnpm: {
+    init: ['init'],
+    install: ['add', '--save-exact'],
+    installDev: ['add', '-D', '--save-exact'],
+    uninstall: ['remove'],
+    installAll: ['install'],
+  },
 };
 
 function configurePackageManager(
@@ -43,6 +51,7 @@ function configurePackageManager(
 ) {
   let yarnAvailable = shouldUseYarn(options);
   let bunAvailable = shouldUseBun(options);
+  let pnpmAvailable = shouldUsePnpm(options);
 
   let pm: PackageManager = 'npm';
 
@@ -51,6 +60,8 @@ function configurePackageManager(
       pm = 'bun';
     } else if (yarnAvailable) {
       pm = 'yarn';
+    } else if (pnpmAvailable) {
+      pm = 'pnpm';
     } else {
       pm = 'npm';
     }
@@ -60,8 +71,13 @@ function configurePackageManager(
     pm = 'yarn';
   }
 
+  if (options.packageManager === 'pnpm' && pnpmAvailable) {
+    pm = 'pnpm';
+  }
+
   const [executable, ...flags] = packageManagers[pm][action];
   const args = [executable, ...flags, ...packageNames];
+
   return executeCommand(pm, args, options);
 }
 
@@ -100,6 +116,14 @@ export function shouldUseNpm(options: Options) {
   }
 
   return isProjectUsingNpm(options.root) && getNpmVersionIfAvailable();
+}
+
+export function shouldUsePnpm(options: Options) {
+  if (options.packageManager === 'pnpm') {
+    return getPnpmVersionIfAvailable();
+  }
+
+  return isProjectUsingPnpm(options.root) && getPnpmVersionIfAvailable();
 }
 
 export function init(options: Options) {

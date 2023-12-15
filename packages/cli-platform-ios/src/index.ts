@@ -7,14 +7,8 @@ export {projectConfig, dependencyConfig, findPodfilePaths} from './config';
 
 export {default as getArchitecture} from './tools/getArchitecture';
 export {default as installPods} from './tools/installPods';
-export {default as resolvePods} from './tools/pods';
-export {default as getSimulators} from './tools/getSimulators';
-export {default as listIOSDevices} from './tools/listIOSDevices';
-export {default as findXcodeProject} from './config/findXcodeProject';
 
-export {buildProject} from './commands/buildIOS/buildProject';
-export {getXcodeProjectAndDir} from './commands/buildIOS/getXcodeProjectAndDir';
-export {getConfiguration} from './commands/buildIOS/getConfiguration';
-
-export {runOnDevice} from './commands/runIOS/runOnDevice';
-export {runOnSimulator} from './commands/runIOS/runOnSimulator';
+// TODO: Move this to `cli-platform-apple`
+export {commandBuilder as buildPlatformCommand} from './commands/buildIOS';
+export {commandBuilder as buildPlatformRunCommand} from './commands/runIOS';
+export {commandBuilder as buildPlatformLogCommand} from './commands/logIOS';

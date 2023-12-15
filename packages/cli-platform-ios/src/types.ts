@@ -5,6 +5,7 @@ export interface Device {
   availability?: string;
   isAvailable?: boolean;
   version?: string;
+  sdk?: string;
   availabilityError?: string;
   type?: 'simulator' | 'device' | 'catalyst';
   lastBootedAt?: string;

@@ -1,8 +1,7 @@
 import child_process from 'child_process';
 import {IOSProjectInfo} from '@react-native-community/cli-types';
-import {getDestinationSimulator} from '../../tools/getDestinationSimulator';
 import path from 'path';
-import {CLIError, logger} from '@react-native-community/cli-tools';
+import {logger} from '@react-native-community/cli-tools';
 import chalk from 'chalk';
 import {FlagsT} from '.';
 import {Device} from '../../types';
@@ -16,37 +15,8 @@ export async function runOnSimulator(
   mode: string,
   scheme: string,
   args: FlagsT,
-  simulator?: Device,
+  simulator: Device,
 ) {
-  /**
-   * If provided simulator does not exist, try simulators in following order
-   * - iPhone 14
-   * - iPhone 13
-   * - iPhone 12
-   * - iPhone 11
-   */
-
-  let selectedSimulator;
-  if (simulator) {
-    selectedSimulator = simulator;
-  } else {
-    const fallbackSimulators = [
-      'iPhone 14',
-      'iPhone 13',
-      'iPhone 12',
-      'iPhone 11',
-    ];
-    selectedSimulator = getDestinationSimulator(args, fallbackSimulators);
-  }
-
-  if (!selectedSimulator) {
-    throw new CLIError(
-      `No simulator available with ${
-        args.simulator ? `name "${args.simulator}"` : `udid "${args.udid}"`
-      }`,
-    );
-  }
-
   /**
    * Booting simulator through `xcrun simctl boot` will boot it in the `headless` mode
    * (running in the background).
@@ -66,11 +36,11 @@ export async function runOnSimulator(
     `${activeDeveloperDir}/Applications/Simulator.app`,
     '--args',
     '-CurrentDeviceUDID',
-    selectedSimulator.udid,
+    simulator.udid,
   ]);
 
-  if (selectedSimulator.state !== 'Booted') {
-    bootSimulator(selectedSimulator);
+  if (simulator.state !== 'Booted') {
+    bootSimulator(simulator);
   }
 
   let buildOutput, appPath;
@@ -78,7 +48,7 @@ export async function runOnSimulator(
     buildOutput = await buildProject(
       xcodeProject,
       platform,
-      selectedSimulator.udid,
+      simulator.udid,
       mode,
       scheme,
       args,
@@ -95,13 +65,11 @@ export async function runOnSimulator(
     appPath = args.binaryPath;
   }
 
-  logger.info(
-    `Installing "${chalk.bold(appPath)} on ${selectedSimulator.name}"`,
-  );
+  logger.info(`Installing "${chalk.bold(appPath)} on ${simulator.name}"`);
 
   child_process.spawnSync(
     'xcrun',
-    ['simctl', 'install', selectedSimulator.udid, appPath],
+    ['simctl', 'install', simulator.udid, appPath],
     {stdio: 'inherit'},
   );
 
@@ -118,7 +86,7 @@ export async function runOnSimulator(
   const result = child_process.spawnSync('xcrun', [
     'simctl',
     'launch',
-    selectedSimulator.udid,
+    simulator.udid,
     bundleID,
   ]);
 

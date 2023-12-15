@@ -33,17 +33,11 @@ exports[`should edit template 2`] = `
 - First value
 + Second value
 
-@@ -1,2 +1,2 @@
-- com.placeholdername;
-+ com.projectname;
-
-@@ -4,4 +4,4 @@
-    public static void run() {
--     String name = \\"PlaceholderName\\";
--     String title = \\"Hello App Display Name\\";
-+     String name = \\"ProjectName\\";
-+     String title = \\"ProjectName\\";
-    }"
+@@ -1,3 +1,3 @@
+  <resources>
+-     <string name=\\"app_name\\">Hello App Display Name</string>
++     <string name=\\"app_name\\">ProjectName</string>
+  </resources>"
 `;
 
 exports[`should edit template 3`] = `
@@ -51,16 +45,24 @@ exports[`should edit template 3`] = `
 - First value
 + Second value
 
-@@ -4,14 +4,14 @@
-    \\"/android/com\\",
--   \\"/android/com/placeholdername\\",
--   \\"/android/com/placeholdername/Main.java\\",
--   \\"/android/com/placeholdername/MainActivity.java\\",
--   \\"/android/com/placeholdername/PlaceholderName.java\\",
-+   \\"/android/com/projectname\\",
-+   \\"/android/com/projectname/Main.java\\",
-+   \\"/android/com/projectname/MainActivity.java\\",
-+   \\"/android/com/projectname/ProjectName.java\\",
+@@ -9,5 +9,5 @@
+    \\"/android/android-java/com/.DS_Store\\",
+-   \\"/android/android-java/com/placeholdername\\",
+-   \\"/android/android-java/com/placeholdername/MainActivity.java\\",
+-   \\"/android/android-java/com/placeholdername/PlaceholderName.java\\",
++   \\"/android/android-java/com/projectname\\",
++   \\"/android/android-java/com/projectname/MainActivity.java\\",
++   \\"/android/android-java/com/projectname/ProjectName.java\\",
+    \\"/android/android-kotlin\\",
+@@ -16,14 +16,14 @@
+    \\"/android/android-kotlin/com/.DS_Store\\",
+-   \\"/android/android-kotlin/com/placeholdername\\",
+-   \\"/android/android-kotlin/com/placeholdername/MainActivity.kt\\",
+-   \\"/android/android-kotlin/com/placeholdername/PlaceholderName.kt\\",
++   \\"/android/android-kotlin/com/projectname\\",
++   \\"/android/android-kotlin/com/projectname/MainActivity.kt\\",
++   \\"/android/android-kotlin/com/projectname/ProjectName.kt\\",
+    \\"/android/strings.xml\\",
     \\"/ios\\",
 -   \\"/ios/PlaceholderName\\",
 -   \\"/ios/PlaceholderName/AppDelegate.m\\",
@@ -77,22 +79,4 @@ exports[`should edit template 3`] = `
 +   \\"/ios/ProjectNameTests\\",
 +   \\"/ios/ProjectNameTests/.gitkeep\\",
     \\"/node_modules\\","
-`;
-
-exports[`should edit template with custom title 1`] = `
-"Snapshot Diff:
-- First value
-+ Second value
-
-@@ -1,2 +1,2 @@
-- com.placeholdername;
-+ com.projectname;
-
-@@ -4,4 +4,4 @@
-    public static void run() {
--     String name = \\"PlaceholderName\\";
--     String title = \\"Hello App Display Name\\";
-+     String name = \\"ProjectName\\";
-+     String title = \\"ProjectTitle\\";
-    }"
 `;

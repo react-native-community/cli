@@ -58,24 +58,12 @@ skipIfNode20('should edit template', async () => {
   const transformedTree = walk(testPath).map((e) => e.replace(testPath, ''));
   const fixtureTree = walk(FIXTURE_DIR).map((e) => e.replace(FIXTURE_DIR, ''));
 
-  const oldJavaFile = fs.readFileSync(
-    path.resolve(
-      FIXTURE_DIR,
-      'android',
-      'com',
-      PLACEHOLDER_NAME.toLowerCase(),
-      'Main.java',
-    ),
+  const oldXmlFile = fs.readFileSync(
+    path.resolve(FIXTURE_DIR, 'android', 'strings.xml'),
     'utf8',
   );
-  const newJavaFile = fs.readFileSync(
-    path.resolve(
-      testPath,
-      'android',
-      'com',
-      PROJECT_NAME.toLowerCase(),
-      'Main.java',
-    ),
+  const newXmlFile = fs.readFileSync(
+    path.resolve(testPath, 'android', 'strings.xml'),
     'utf8',
   );
 
@@ -90,7 +78,7 @@ skipIfNode20('should edit template', async () => {
 
   expect(snapshotDiff(oldCFile, newCFile, {contextLines: 1})).toMatchSnapshot();
   expect(
-    snapshotDiff(oldJavaFile, newJavaFile, {contextLines: 1}),
+    snapshotDiff(oldXmlFile, newXmlFile, {contextLines: 1}),
   ).toMatchSnapshot();
   expect(
     snapshotDiff(fixtureTree.map(slash), transformedTree.map(slash), {
@@ -108,30 +96,14 @@ skipIfNode20('should edit template with custom title', async () => {
     projectTitle: PROJECT_TITLE,
   });
 
-  const oldJavaFile = fs.readFileSync(
-    path.resolve(
-      FIXTURE_DIR,
-      'android',
-      'com',
-      PLACEHOLDER_NAME.toLowerCase(),
-      'Main.java',
-    ),
-    'utf8',
-  );
-  const newJavaFile = fs.readFileSync(
-    path.resolve(
-      testPath,
-      'android',
-      'com',
-      PROJECT_NAME.toLowerCase(),
-      'Main.java',
-    ),
+  const replacedFile = fs.readFileSync(
+    path.resolve(testPath, 'android', 'strings.xml'),
     'utf8',
   );
 
-  expect(
-    snapshotDiff(oldJavaFile, newJavaFile, {contextLines: 1}),
-  ).toMatchSnapshot();
+  expect(replacedFile).toContain(
+    `<string name="app_name">${PROJECT_TITLE}</string>`,
+  );
 });
 
 describe('changePlaceholderInTemplate', () => {
@@ -214,7 +186,7 @@ describe('replacePlaceholderWithPackageName', () => {
   });
 
   skipIfNode20(
-    `should rename Main component name for Android with ${PROJECT_NAME}`,
+    `should rename Main component name for Android with ${PROJECT_NAME} in Java template`,
     async () => {
       await replacePlaceholderWithPackageName({
         projectName: PROJECT_NAME,
@@ -227,6 +199,7 @@ describe('replacePlaceholderWithPackageName', () => {
         path.resolve(
           testPath,
           'android',
+          'android-java',
           'com',
           PACKAGE_NAME,
           'MainActivity.java',
@@ -237,6 +210,32 @@ describe('replacePlaceholderWithPackageName', () => {
       expect(
         mainActivityFile.includes(`return "${PROJECT_NAME}"`),
       ).toBeTruthy();
+    },
+  );
+
+  skipIfNode20(
+    `should rename Main component name for Android with ${PROJECT_NAME} in Kotlin template`,
+    async () => {
+      await replacePlaceholderWithPackageName({
+        projectName: PROJECT_NAME,
+        placeholderName: PLACEHOLDER_NAME,
+        placeholderTitle: 'Test',
+        packageName: PACKAGE_NAME,
+      });
+
+      const mainActivityFile = fs.readFileSync(
+        path.resolve(
+          testPath,
+          'android',
+          'android-kotlin',
+          'com',
+          PACKAGE_NAME,
+          'MainActivity.kt',
+        ),
+        'utf8',
+      );
+
+      expect(mainActivityFile.includes(`= "${PROJECT_NAME}"`)).toBeTruthy();
     },
   );
 });

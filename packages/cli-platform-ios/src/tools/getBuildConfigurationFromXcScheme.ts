@@ -13,10 +13,12 @@ export function getBuildConfigurationFromXcScheme(
   sourceDir: string,
   projectInfo: IosInfo | undefined,
 ): string {
+  // can not assume .xcodeproj exists.
+  // for more info see: https://github.com/react-native-community/cli/pull/2196
   try {
     const xcProject = fs
       .readdirSync(sourceDir)
-      .find((dir) => dir.includes('.xcodeproj'));
+      .find((dir) => dir.endsWith('.xcodeproj'));
 
     if (xcProject) {
       const xmlScheme = fs.readFileSync(

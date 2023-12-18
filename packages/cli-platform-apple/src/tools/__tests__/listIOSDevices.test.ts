@@ -7,7 +7,7 @@
  */
 
 import execa from 'execa';
-import listIOSDevices from '../listIOSDevices';
+import listDevices from '../listDevices';
 
 jest.mock('execa', () => {
   return {sync: jest.fn()};
@@ -164,7 +164,7 @@ const xcrunOut = `
 describe('listIOSDevices', () => {
   it('parses output from xcdevice list', async () => {
     (execa.sync as jest.Mock).mockReturnValueOnce({stdout: xcrunOut});
-    const devices = await listIOSDevices();
+    const devices = await listDevices(['iphoneos', 'iphonesimulator']);
 
     // Find all available simulators
     expect(devices).toContainEqual({

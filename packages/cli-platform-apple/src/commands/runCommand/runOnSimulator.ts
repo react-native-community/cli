@@ -3,11 +3,11 @@ import {IOSProjectInfo} from '@react-native-community/cli-types';
 import path from 'path';
 import {logger} from '@react-native-community/cli-tools';
 import chalk from 'chalk';
-import {FlagsT} from '.';
 import {Device} from '../../types';
-import {buildProject} from '../buildIOS/buildProject';
+import {buildProject} from '../buildCommand/buildProject';
 import {formattedDeviceName} from './matchingDevice';
 import {getBuildPath} from './getBuildPath';
+import {FlagsT} from './createRun';
 
 export async function runOnSimulator(
   xcodeProject: IOSProjectInfo,

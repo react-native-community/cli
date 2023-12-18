@@ -8,7 +8,7 @@
 import getEnvironmentInfo from '../tools/envinfo';
 import {logger, version} from '@react-native-community/cli-tools';
 import {Config} from '@react-native-community/cli-types';
-import {getArchitecture} from '@react-native-community/cli-platform-ios';
+import {getArchitecture} from '@react-native-community/cli-platform-apple';
 import {readFile} from 'fs-extra';
 import path from 'path';
 import {stringify} from 'yaml';

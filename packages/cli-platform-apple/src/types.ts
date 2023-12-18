@@ -17,3 +17,11 @@ export interface IosInfo {
   configurations?: string[];
   targets?: string[];
 }
+
+export interface BuilderCommand {
+  /**
+   * Lowercase name of the platform.
+   * Example: 'ios', 'visionos'
+   */
+  platformName: string;
+}

@@ -1,7 +1,7 @@
 import {CLIError} from '@react-native-community/cli-tools';
 import {getDestinationSimulator} from '../../tools/getDestinationSimulator';
-import {FlagsT} from '.';
 import {Device} from '../../types';
+import {FlagsT} from './createRun';
 
 export function getFallbackSimulator(args: FlagsT): Device {
   /**

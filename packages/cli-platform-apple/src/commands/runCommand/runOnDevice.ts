@@ -1,11 +1,11 @@
 import child_process from 'child_process';
 import {Device} from '../../types';
 import {IOSProjectInfo} from '@react-native-community/cli-types';
-import {FlagsT} from '.';
 import {CLIError, logger} from '@react-native-community/cli-tools';
 import chalk from 'chalk';
-import {buildProject} from '../buildIOS/buildProject';
+import {buildProject} from '../buildCommand/buildProject';
 import {getBuildPath} from './getBuildPath';
+import {FlagsT} from './createRun';
 
 export async function runOnDevice(
   selectedDevice: Device,

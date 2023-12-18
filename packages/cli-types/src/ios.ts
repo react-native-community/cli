@@ -7,6 +7,7 @@ export interface IOSProjectParams {
   sourceDir?: string;
   watchModeCommandParams?: string[];
   automaticPodsInstallation?: boolean;
+  assets?: string[];
 }
 
 export type IOSProjectInfo = {
@@ -19,6 +20,7 @@ export interface IOSProjectConfig {
   xcodeProject: IOSProjectInfo | null;
   watchModeCommandParams?: string[];
   automaticPodsInstallation?: boolean;
+  assets: string[];
 }
 
 export interface IOSDependencyConfig {

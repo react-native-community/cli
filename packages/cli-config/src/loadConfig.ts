@@ -93,6 +93,7 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
     commands: userConfig.commands,
     healthChecks: [],
     platforms: userConfig.platforms,
+    assets: userConfig.assets,
     get project() {
       if (lazyProject) {
         return lazyProject;

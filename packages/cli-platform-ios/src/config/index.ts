@@ -52,6 +52,7 @@ export function projectConfig(
     watchModeCommandParams: userConfig.watchModeCommandParams,
     xcodeProject,
     automaticPodsInstallation: userConfig.automaticPodsInstallation,
+    assets: userConfig.assets ?? [],
   };
 }
 

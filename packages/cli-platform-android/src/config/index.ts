@@ -78,6 +78,7 @@ export function projectConfig(
     watchModeCommandParams: userConfig.watchModeCommandParams,
     unstable_reactLegacyComponentNames:
       userConfig.unstable_reactLegacyComponentNames,
+    assets: userConfig.assets ?? [],
   };
 }
 

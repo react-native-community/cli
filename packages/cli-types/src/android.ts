@@ -7,6 +7,7 @@ export interface AndroidProjectConfig {
   dependencyConfiguration?: string;
   watchModeCommandParams?: string[];
   unstable_reactLegacyComponentNames?: string[] | null;
+  assets: string[];
 }
 
 export type AndroidProjectParams = {
@@ -17,6 +18,7 @@ export type AndroidProjectParams = {
   dependencyConfiguration?: string;
   watchModeCommandParams?: string[];
   unstable_reactLegacyComponentNames?: string[] | null;
+  assets?: string[];
 };
 
 export type AndroidDependencyConfig = {

@@ -157,6 +157,7 @@ export const projectConfig = t
               .items(t.string())
               .default([]),
             automaticPodsInstallation: t.bool().default(false),
+            assets: t.array().items(t.string()).default([]),
           })
           .default({}),
         android: t
@@ -172,6 +173,7 @@ export const projectConfig = t
               .array()
               .items(t.string())
               .default([]),
+            assets: t.array().items(t.string()).default([]),
           })
           .default({}),
       })

@@ -21,6 +21,30 @@ exports[`should edit template 1`] = `
 - First value
 + Second value
 
+@@ -515,12 +515,8 @@
+      80,
+-     108,
+-     97,
+-     99,
+-     101,
+-     104,
++     114,
+      111,
+-     108,
+-     100,
++     106,
+      101,
+-     114,
++     99,
++     116,
+      78,"
+`;
+
+exports[`should edit template 2`] = `
+"Snapshot Diff:
+- First value
++ Second value
+
 @@ -12,3 +12,3 @@
     RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
 -                                             moduleName:@\\"PlaceholderName\\"
@@ -28,7 +52,7 @@ exports[`should edit template 1`] = `
                                               initialProperties:nil];"
 `;
 
-exports[`should edit template 2`] = `
+exports[`should edit template 3`] = `
 "Snapshot Diff:
 - First value
 + Second value
@@ -40,13 +64,13 @@ exports[`should edit template 2`] = `
   </resources>"
 `;
 
-exports[`should edit template 3`] = `
+exports[`should edit template 4`] = `
 "Snapshot Diff:
 - First value
 + Second value
 
-@@ -9,5 +9,5 @@
-    \\"/android/android-java/com/.DS_Store\\",
+@@ -8,5 +8,5 @@
+    \\"/android/android-java/com\\",
 -   \\"/android/android-java/com/placeholdername\\",
 -   \\"/android/android-java/com/placeholdername/MainActivity.java\\",
 -   \\"/android/android-java/com/placeholdername/PlaceholderName.java\\",
@@ -54,8 +78,8 @@ exports[`should edit template 3`] = `
 +   \\"/android/android-java/com/projectname/MainActivity.java\\",
 +   \\"/android/android-java/com/projectname/ProjectName.java\\",
     \\"/android/android-kotlin\\",
-@@ -16,14 +16,14 @@
-    \\"/android/android-kotlin/com/.DS_Store\\",
+@@ -14,14 +14,14 @@
+    \\"/android/android-kotlin/com\\",
 -   \\"/android/android-kotlin/com/placeholdername\\",
 -   \\"/android/android-kotlin/com/placeholdername/MainActivity.kt\\",
 -   \\"/android/android-kotlin/com/placeholdername/PlaceholderName.kt\\",
@@ -65,18 +89,42 @@ exports[`should edit template 3`] = `
     \\"/android/strings.xml\\",
     \\"/ios\\",
 -   \\"/ios/PlaceholderName\\",
--   \\"/ios/PlaceholderName/AppDelegate.m\\",
--   \\"/ios/PlaceholderName/project.pbxproj\\",
 -   \\"/ios/PlaceholderName-tvOS\\",
 -   \\"/ios/PlaceholderName-tvOS/.gitkeep\\",
+-   \\"/ios/PlaceholderName/AppDelegate.m\\",
+-   \\"/ios/PlaceholderName/project.pbxproj\\",
 -   \\"/ios/PlaceholderNameTests\\",
 -   \\"/ios/PlaceholderNameTests/.gitkeep\\",
 +   \\"/ios/ProjectName\\",
-+   \\"/ios/ProjectName/AppDelegate.m\\",
-+   \\"/ios/ProjectName/project.pbxproj\\",
 +   \\"/ios/ProjectName-tvOS\\",
 +   \\"/ios/ProjectName-tvOS/.gitkeep\\",
++   \\"/ios/ProjectName/AppDelegate.m\\",
++   \\"/ios/ProjectName/project.pbxproj\\",
 +   \\"/ios/ProjectNameTests\\",
 +   \\"/ios/ProjectNameTests/.gitkeep\\",
     \\"/node_modules\\","
+`;
+
+exports[`should edit template with custom title 1`] = `
+"Snapshot Diff:
+- First value
++ Second value
+
+@@ -515,12 +515,8 @@
+      80,
+-     108,
+-     97,
+-     99,
+-     101,
+-     104,
++     114,
+      111,
+-     108,
+-     100,
++     106,
+      101,
+-     114,
++     99,
++     116,
+      78,"
 `;

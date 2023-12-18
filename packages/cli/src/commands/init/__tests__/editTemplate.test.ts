@@ -58,6 +58,28 @@ skipIfNode20('should edit template', async () => {
   const transformedTree = walk(testPath).map((e) => e.replace(testPath, ''));
   const fixtureTree = walk(FIXTURE_DIR).map((e) => e.replace(FIXTURE_DIR, ''));
 
+  const oldJavaFile = fs.readFileSync(
+    path.resolve(
+      FIXTURE_DIR,
+      'android',
+      'android-java',
+      'com',
+      PLACEHOLDER_NAME.toLowerCase(),
+      'MainActivity.java',
+    ),
+  );
+
+  const newJavaFile = fs.readFileSync(
+    path.resolve(
+      testPath,
+      'android',
+      'android-java',
+      'com',
+      PROJECT_NAME.toLowerCase(),
+      'MainActivity.java',
+    ),
+  );
+
   const oldXmlFile = fs.readFileSync(
     path.resolve(FIXTURE_DIR, 'android', 'strings.xml'),
     'utf8',
@@ -76,14 +98,23 @@ skipIfNode20('should edit template', async () => {
     'utf8',
   );
 
+  expect(
+    snapshotDiff(oldJavaFile, newJavaFile, {contextLines: 1}),
+  ).toMatchSnapshot();
+
   expect(snapshotDiff(oldCFile, newCFile, {contextLines: 1})).toMatchSnapshot();
   expect(
     snapshotDiff(oldXmlFile, newXmlFile, {contextLines: 1}),
   ).toMatchSnapshot();
+
   expect(
-    snapshotDiff(fixtureTree.map(slash), transformedTree.map(slash), {
-      contextLines: 1,
-    }),
+    snapshotDiff(
+      fixtureTree.map(slash).sort(),
+      transformedTree.map(slash).sort(),
+      {
+        contextLines: 1,
+      },
+    ),
   ).toMatchSnapshot();
 });
 
@@ -96,10 +127,36 @@ skipIfNode20('should edit template with custom title', async () => {
     projectTitle: PROJECT_TITLE,
   });
 
+  const oldJavaFile = fs.readFileSync(
+    path.resolve(
+      FIXTURE_DIR,
+      'android',
+      'android-java',
+      'com',
+      PLACEHOLDER_NAME.toLowerCase(),
+      'MainActivity.java',
+    ),
+  );
+
+  const newJavaFile = fs.readFileSync(
+    path.resolve(
+      testPath,
+      'android',
+      'android-java',
+      'com',
+      PROJECT_NAME.toLowerCase(),
+      'MainActivity.java',
+    ),
+  );
+
   const replacedFile = fs.readFileSync(
     path.resolve(testPath, 'android', 'strings.xml'),
     'utf8',
   );
+
+  expect(
+    snapshotDiff(oldJavaFile, newJavaFile, {contextLines: 1}),
+  ).toMatchSnapshot();
 
   expect(replacedFile).toContain(
     `<string name="app_name">${PROJECT_TITLE}</string>`,

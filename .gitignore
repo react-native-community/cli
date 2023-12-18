@@ -11,5 +11,5 @@ build/
 .cache
 .watchmanconfig
 coverage
-!packages/cli-platform-ios/src/config/__fixtures__/native_modules/node_modules
+!packages/cli-platform-apple/src/config/__fixtures__/native_modules/node_modules
 *.env

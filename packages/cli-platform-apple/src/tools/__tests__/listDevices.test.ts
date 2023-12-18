@@ -234,8 +234,6 @@ describe('listDevices', () => {
     const sdkNames = getSDKNamefromPlatform('tvos');
     const devices = await listDevices(sdkNames);
 
-    console.log(devices);
-
     // Filter out all available simulators
     expect(devices).not.toContainEqual({
       isAvailable: true,

@@ -21,6 +21,9 @@ export function buildProject(
   args: BuildFlags,
 ): Promise<string> {
   return new Promise((resolve, reject) => {
+    const simulatorDest =
+      platform === 'macos' ? platform : `${platform} Simulator`;
+
     const xcodebuildArgs = [
       xcodeProject.isWorkspace ? '-workspace' : '-project',
       xcodeProject.name,
@@ -34,7 +37,7 @@ export function buildProject(
       (udid
         ? `id=${udid}`
         : mode === 'Debug'
-        ? `generic/platform=${platform} Simulator`
+        ? `generic/platform=${simulatorDest}`
         : `generic/platform=${platform}`) +
         (args.destination ? ',' + args.destination : ''),
     ];

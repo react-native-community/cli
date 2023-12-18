@@ -12,7 +12,12 @@
     "@react-native-community/cli-platform-android": "13.0.1",
     "@react-native-community/cli-platform-ios": "13.0.1",
     "@react-native-community/cli-tools": "13.0.1",
-    "chalk": "^4.1.2"
+    "chalk": "^4.1.2",
+    "fast-xml-parser": "^4.3.2",
+    "opentype.js": "^1.3.4",
+    "plist": "^3.1.0",
+    "slugify": "^1.6.6",
+    "xcode": "^3.0.1"
   },
   "files": [
     "build",
@@ -20,7 +25,9 @@
     "!*.map"
   ],
   "devDependencies": {
-    "@react-native-community/cli-types": "13.0.1"
+    "@react-native-community/cli-types": "13.0.1",
+    "@types/opentype.js": "^1.3.8",
+    "@types/plist": "^3.0.5"
   },
   "homepage": "https://github.com/react-native-community/cli/tree/main/packages/cli-link-assets",
   "repository": {

@@ -43,15 +43,22 @@ export async function promptForDeviceSelection(
     message: 'Select the device you want to use',
     choices: availableDevices
       .filter((d) => d.type === 'device' || d.type === 'simulator')
-      .map((d) => ({
-        title: `${chalk.bold(d.name)} ${
+      .map((d) => {
+        const version = d.version
+          ? ` (${d.version.match(/^(\d+\.\d+)/)?.[1]})`
+          : '';
+
+        const availability =
           !d.isAvailable && !!d.availabilityError
             ? chalk.red(`(unavailable - ${d.availabilityError})`)
-            : ''
-        }`,
-        value: d,
-        disabled: !d.isAvailable,
-      })),
+            : '';
+
+        return {
+          title: `${chalk.bold(`${d.name}${version}`)} ${availability}`,
+          value: d,
+          disabled: !d.isAvailable,
+        };
+      }),
     min: 1,
   });
   return device;

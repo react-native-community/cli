@@ -77,8 +77,6 @@ const createRun =
       installedPods = true;
     }
 
-    const fallbackSimulator = getFallbackSimulator(args);
-
     if (packager) {
       const {port: newPort, startPackager} = await findDevServerPort(
         port,
@@ -147,6 +145,9 @@ const createRun =
         `${platformReadableName} devices or simulators not detected. Install simulators via Xcode or connect a physical ${platformReadableName} device`,
       );
     }
+
+    const fallbackSimulator =
+      platformName === 'ios' ? getFallbackSimulator(args) : availableDevices[0];
 
     if (args.listDevices || args.interactive) {
       if (args.device || args.udid) {

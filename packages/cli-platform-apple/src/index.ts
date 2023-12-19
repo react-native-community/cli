@@ -1,4 +1,4 @@
-export {projectConfig, dependencyConfig, findPodfilePaths} from './config';
+export {dependencyConfig, getProjectConfig, findPodfilePaths} from './config';
 
 export {buildOptions} from './commands/buildCommand/buildOptions';
 export {logOptions} from './commands/logCommand/logOptions';

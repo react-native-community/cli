@@ -5,7 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import {projectConfig} from '../index';
+import {getProjectConfig} from '../index';
+
+const projectConfig = getProjectConfig({platformName: 'ios'});
 
 jest.mock('path');
 jest.mock('fs');

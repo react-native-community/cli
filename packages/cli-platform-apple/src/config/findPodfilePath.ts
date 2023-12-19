@@ -19,14 +19,17 @@ const IOS_BASE = 'ios';
 // Podfile in the bundle package
 const BUNDLE_VENDORED_PODFILE = 'vendor/bundle/ruby';
 
-export default function findPodfilePath(cwd: string) {
+export default function findPodfilePath(
+  cwd: string,
+  platformName: string = IOS_BASE,
+) {
   const podfiles = findAllPodfilePaths(cwd)
     /**
      * Then, we will run a simple test to rule out most example projects,
-     * unless they are located in a `ios` folder
+     * unless they are located in a `platformName` folder
      */
     .filter((project) => {
-      if (path.dirname(project) === IOS_BASE) {
+      if (path.dirname(project) === platformName) {
         // Pick the Podfile in the default project (in the iOS folder)
         return true;
       }
@@ -45,16 +48,16 @@ export default function findPodfilePath(cwd: string) {
       return true;
     })
     /**
-     * Podfile from `ios` folder will be picked up as a first one.
+     * Podfile from `platformName` folder will be picked up as a first one.
      */
-    .sort((project) => (path.dirname(project) === IOS_BASE ? -1 : 1));
+    .sort((project) => (path.dirname(project) === platformName ? -1 : 1));
 
   if (podfiles.length > 0) {
     if (podfiles.length > 1) {
       logger.warn(
         inlineString(`
           Multiple Podfiles were found: ${podfiles}. Choosing ${podfiles[0]} automatically.
-          If you would like to select a different one, you can configure it via "project.ios.sourceDir".
+          If you would like to select a different one, you can configure it via "project.${platformName}.sourceDir".
           You can learn more about it here: https://github.com/react-native-community/cli/blob/main/docs/configuration.md
         `),
       );

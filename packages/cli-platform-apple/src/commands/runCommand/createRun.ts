@@ -9,7 +9,7 @@
 import path from 'path';
 import fs from 'fs';
 import chalk from 'chalk';
-import {Config, ProjectConfig} from '@react-native-community/cli-types';
+import {Config, IOSProjectConfig} from '@react-native-community/cli-types';
 import {
   logger,
   CLIError,
@@ -52,7 +52,7 @@ const createRun =
   async (_: Array<string>, ctx: Config, args: FlagsT) => {
     // React Native docs assume platform is always ios/android
     link.setPlatform('ios');
-    const platform = ctx.project[platformName] as ProjectConfig['ios'];
+    const platform = ctx.project[platformName] as IOSProjectConfig;
     const platformReadableName = getPlatformReadableName(platformName);
 
     if (platform === undefined) {

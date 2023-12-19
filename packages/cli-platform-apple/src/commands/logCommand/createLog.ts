@@ -1,5 +1,5 @@
 import {CLIError, logger, prompt} from '@react-native-community/cli-tools';
-import {Config, ProjectConfig} from '@react-native-community/cli-types';
+import {Config, IOSProjectConfig} from '@react-native-community/cli-types';
 import {spawnSync} from 'child_process';
 import os from 'os';
 import path from 'path';
@@ -20,7 +20,7 @@ type Args = {
 const createLog =
   ({platformName}: BuilderCommand) =>
   async (_: Array<string>, ctx: Config, args: Args) => {
-    const platform = ctx.project[platformName] as ProjectConfig['ios'];
+    const platform = ctx.project[platformName] as IOSProjectConfig;
     const platformReadableName = getPlatformReadableName(platformName);
 
     if (platform === undefined) {

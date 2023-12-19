@@ -113,6 +113,7 @@ Installs passed binary instead of building a fresh one.
 > default: false
 
 List all available iOS devices and simulators and let you choose one to run the app.
+
 #### `--force-pods`,
 
 Force running `pod install` before running an app
@@ -171,6 +172,7 @@ npx react-native build-ios --extra-params "-jobs 4"
 #### `--force-pods`,
 
 Force running `pod install` before building an app
+
 ### `log-ios`
 
 Usage:
@@ -186,7 +188,3 @@ Starts iOS device syslog tail.
 #### `--interactive`
 
 Explicitly select simulator to tail logs from. By default it will tail logs from the first booted and available simulator.
-
-## License
-
-Everything inside this repository is [MIT licensed](./LICENSE).

@@ -69,7 +69,7 @@ const createRun =
         ? await getArchitecture(platform?.sourceDir)
         : undefined;
 
-      await resolvePods(ctx.root, ctx.dependencies, {
+      await resolvePods(ctx.root, ctx.dependencies, platformName, {
         forceInstall: args.forcePods,
         newArchEnabled: isAppRunningNewArchitecture,
       });

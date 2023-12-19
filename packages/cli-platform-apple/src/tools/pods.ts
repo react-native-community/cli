@@ -17,7 +17,6 @@ import {
 interface ResolvePodsOptions {
   forceInstall?: boolean;
   newArchEnabled?: boolean;
-  platformName?: string;
 }
 
 interface NativeDependencies {
@@ -92,18 +91,19 @@ async function install(
 export default async function resolvePods(
   root: string,
   nativeDependencies: NativeDependencies,
+  platformName: string = 'ios',
   options?: ResolvePodsOptions,
 ) {
   const packageJson = getPackageJson(root);
-  const podfilePath = findPodfilePath(root, options?.platformName);
+  const podfilePath = findPodfilePath(root, platformName);
   const platformFolderPath = podfilePath
     ? podfilePath.slice(0, podfilePath.lastIndexOf('/'))
-    : path.join(root, options?.platformName || 'ios');
+    : path.join(root, platformName);
   const podsPath = path.join(platformFolderPath, 'Pods');
   const arePodsInstalled = fs.existsSync(podsPath);
   const platformDependencies = getPlatformDependencies(
     nativeDependencies,
-    options?.platformName,
+    platformName,
   );
   const dependenciesString = dependenciesToString(platformDependencies);
   const currentDependenciesHash = generateMd5Hash(dependenciesString);

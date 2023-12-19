@@ -3,6 +3,12 @@ interface PlatformInfo {
   sdkNames: string[];
 }
 
+/**
+ * Returns platform readable name and list of SDKs for given platform.
+ * We can get list of SDKs from `xcodebuild -showsdks` command.
+ *
+ * Falls back to iOS if platform is not supported.
+ */
 export function getPlatformInfo(platform: string): PlatformInfo {
   const iosPlatformInfo: PlatformInfo = {
     readableName: 'iOS',

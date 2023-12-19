@@ -40,7 +40,3 @@ module.exports = {
   //..
 };
 ```
-
-## License
-
-Everything inside this repository is [MIT licensed](./LICENSE).

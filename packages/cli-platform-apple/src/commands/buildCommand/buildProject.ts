@@ -11,6 +11,7 @@ import {
   getLoader,
 } from '@react-native-community/cli-tools';
 import type {BuildFlags} from './buildOptions';
+import {simulatorDestinationMap} from './simulatorDestinationMap';
 
 export function buildProject(
   xcodeProject: IOSProjectInfo,
@@ -21,8 +22,16 @@ export function buildProject(
   args: BuildFlags,
 ): Promise<string> {
   return new Promise((resolve, reject) => {
-    const simulatorDest =
-      platform === 'macos' ? platform : `${platform} Simulator`;
+    const simulatorDest = simulatorDestinationMap?.[platform];
+
+    if (!simulatorDest) {
+      reject(
+        new CLIError(
+          `Unknown platform: ${platform}. Please, use one of: ios, macos, visionos, tvos.`,
+        ),
+      );
+      return;
+    }
 
     const xcodebuildArgs = [
       xcodeProject.isWorkspace ? '-workspace' : '-project',

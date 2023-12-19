@@ -13,15 +13,12 @@ import findAllPodfilePaths from './findAllPodfilePaths';
 // Regexp matching all test projects
 const TEST_PROJECTS = /test|example|sample/i;
 
-// Base iOS folder
-const IOS_BASE = 'ios';
-
 // Podfile in the bundle package
 const BUNDLE_VENDORED_PODFILE = 'vendor/bundle/ruby';
 
 export default function findPodfilePath(
   cwd: string,
-  platformName: string = IOS_BASE,
+  platformName: string = 'ios',
 ) {
   const podfiles = findAllPodfilePaths(cwd)
     /**

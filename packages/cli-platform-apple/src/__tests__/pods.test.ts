@@ -93,7 +93,7 @@ describe('resolvePods', () => {
   it('should install pods when force option is set to true', async () => {
     createTempFiles();
 
-    await resolvePods(DIR, {}, {forceInstall: true});
+    await resolvePods(DIR, {}, 'ios', {forceInstall: true});
 
     expect(installPods).toHaveBeenCalled();
   });

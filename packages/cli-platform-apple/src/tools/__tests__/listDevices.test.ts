@@ -8,7 +8,6 @@
 
 import execa from 'execa';
 import listDevices from '../listDevices';
-import {getPlatformInfo} from '../../commands/runCommand/getPlatformInfo';
 
 jest.mock('execa', () => {
   return {sync: jest.fn()};
@@ -165,8 +164,7 @@ const xcrunOut = `
 describe('listDevices', () => {
   it('parses output from xcdevice list for iOS', async () => {
     (execa.sync as jest.Mock).mockReturnValueOnce({stdout: xcrunOut});
-    const {sdkNames} = getPlatformInfo('ios');
-    const devices = await listDevices(sdkNames);
+    const devices = await listDevices(['iphoneos', 'iphonesimulator']);
 
     // Find all available simulators
     expect(devices).toContainEqual({
@@ -231,8 +229,7 @@ describe('listDevices', () => {
 
   it('parses output from xcdevice list for tvOS', async () => {
     (execa.sync as jest.Mock).mockReturnValueOnce({stdout: xcrunOut});
-    const {sdkNames} = getPlatformInfo('tvos');
-    const devices = await listDevices(sdkNames);
+    const devices = await listDevices(['appletvos', 'appletvsimulator']);
 
     // Filter out all available simulators
     expect(devices).not.toContainEqual({

@@ -15,5 +15,5 @@ export default {
   name: 'log-ios',
   description: 'starts iOS device syslog tail',
   func: createLog({platformName: 'ios'}),
-  options: [...logOptions],
+  options: logOptions,
 };

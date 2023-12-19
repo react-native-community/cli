@@ -3,7 +3,7 @@ import path from 'path';
 import {IOSNativeModulesConfig} from '@react-native-community/cli-types';
 import hasbin from 'hasbin';
 
-const SCRIPT_PATH = path.resolve(__dirname, '../../native_modules.rb');
+const SCRIPT_PATH = path.resolve(__dirname, '../../../native_modules.rb');
 const FIXTURES_ROOT = path.resolve(__dirname, '../__fixtures__/native_modules');
 const REACT_NATIVE_ROOT = '/root/app/node_modules/react-native';
 

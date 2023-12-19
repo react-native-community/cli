@@ -331,16 +331,8 @@ async function createProject(
 function userAgentPackageManager() {
   const userAgent = process.env.npm_config_user_agent;
 
-  if (userAgent) {
-    if (userAgent.startsWith('yarn')) {
-      return 'yarn';
-    }
-    if (userAgent.startsWith('npm')) {
-      return 'npm';
-    }
-    if (userAgent.startsWith('bun')) {
-      return 'bun';
-    }
+  if (userAgent && userAgent.startsWith('bun')) {
+    return 'bun';
   }
 
   return null;

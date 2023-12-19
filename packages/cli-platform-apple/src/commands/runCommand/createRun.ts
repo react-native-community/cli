@@ -29,8 +29,7 @@ import {buildProject} from '../buildCommand/buildProject';
 import {getConfiguration} from '../buildCommand/getConfiguration';
 import {getXcodeProjectAndDir} from '../buildCommand/getXcodeProjectAndDir';
 import {getFallbackSimulator} from './getFallbackSimulator';
-import getPlatformReadableName from './getPlatformReadableName';
-import getSDKNamefromPlatform from './getSDKNameFromPlatform';
+import {getPlatformInfo} from './getPlatformInfo';
 import {printFoundDevices, matchingDevice} from './matchingDevice';
 import {runOnDevice} from './runOnDevice';
 import {runOnSimulator} from './runOnSimulator';
@@ -53,7 +52,8 @@ const createRun =
     // React Native docs assume platform is always ios/android
     link.setPlatform('ios');
     const platform = ctx.project[platformName] as IOSProjectConfig;
-    const platformReadableName = getPlatformReadableName(platformName);
+    const {sdkNames, readableName: platformReadableName} =
+      getPlatformInfo(platformName);
 
     if (platform === undefined) {
       throw new CLIError(
@@ -133,7 +133,6 @@ const createRun =
       return;
     }
 
-    const sdkNames = getSDKNamefromPlatform(platformName);
     const devices = await listDevices(sdkNames);
 
     const availableDevices = devices.filter(

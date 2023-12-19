@@ -8,7 +8,7 @@
 
 import execa from 'execa';
 import listDevices from '../listDevices';
-import getSDKNamefromPlatform from '../../commands/runCommand/getSDKNameFromPlatform';
+import {getPlatformInfo} from '../../commands/runCommand/getPlatformInfo';
 
 jest.mock('execa', () => {
   return {sync: jest.fn()};
@@ -165,7 +165,7 @@ const xcrunOut = `
 describe('listDevices', () => {
   it('parses output from xcdevice list for iOS', async () => {
     (execa.sync as jest.Mock).mockReturnValueOnce({stdout: xcrunOut});
-    const sdkNames = getSDKNamefromPlatform('ios');
+    const {sdkNames} = getPlatformInfo('ios');
     const devices = await listDevices(sdkNames);
 
     // Find all available simulators
@@ -231,7 +231,7 @@ describe('listDevices', () => {
 
   it('parses output from xcdevice list for tvOS', async () => {
     (execa.sync as jest.Mock).mockReturnValueOnce({stdout: xcrunOut});
-    const sdkNames = getSDKNamefromPlatform('tvos');
+    const {sdkNames} = getPlatformInfo('tvos');
     const devices = await listDevices(sdkNames);
 
     // Filter out all available simulators

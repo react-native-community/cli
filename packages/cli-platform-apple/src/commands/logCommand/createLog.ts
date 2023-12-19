@@ -5,8 +5,7 @@ import os from 'os';
 import path from 'path';
 import getSimulators from '../../tools/getSimulators';
 import listDevices from '../../tools/listDevices';
-import getPlatformReadableName from '../runCommand/getPlatformReadableName';
-import getSDKNamefromPlatform from '../runCommand/getSDKNameFromPlatform';
+import {getPlatformInfo} from '../runCommand/getPlatformInfo';
 import {BuilderCommand} from '../../types';
 
 /**
@@ -21,7 +20,7 @@ const createLog =
   ({platformName}: BuilderCommand) =>
   async (_: Array<string>, ctx: Config, args: Args) => {
     const platform = ctx.project[platformName] as IOSProjectConfig;
-    const platformReadableName = getPlatformReadableName(platformName);
+    const {readableName: platformReadableName} = getPlatformInfo(platformName);
 
     if (platform === undefined) {
       throw new CLIError(`Unable to find ${platform} platform config`);
@@ -34,7 +33,7 @@ const createLog =
       .reduce((acc, val) => acc.concat(val), [])
       .filter(({state}) => state === 'Booted');
 
-    const sdkNames = getSDKNamefromPlatform(platformName);
+    const {sdkNames} = getPlatformInfo(platformName);
     const devices = await listDevices(sdkNames);
 
     const availableSimulators = devices.filter(

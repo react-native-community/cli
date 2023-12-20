@@ -7,7 +7,6 @@
  */
 
 import {
-  buildOptions,
   createRun,
   runOptions,
 } from '@react-native-community/cli-platform-apple';
@@ -30,5 +29,5 @@ export default {
       cmd: 'npx react-native run-ios --simulator "Apple TV"  --scheme "helloworld-tvOS"',
     },
   ],
-  options: [...buildOptions, ...runOptions],
+  options: runOptions,
 };

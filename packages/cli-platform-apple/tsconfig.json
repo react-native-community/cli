@@ -4,5 +4,5 @@
     "rootDir": "src",
     "outDir": "build",
   },
-  "references": [{"path": "../cli-platform-apple"}]
+  "references": [{"path": "../cli-tools"}, {"path": "../cli-types"}]
 }

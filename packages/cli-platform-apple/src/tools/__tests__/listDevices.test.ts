@@ -7,7 +7,7 @@
  */
 
 import execa from 'execa';
-import listIOSDevices from '../listIOSDevices';
+import listDevices from '../listDevices';
 
 jest.mock('execa', () => {
   return {sync: jest.fn()};
@@ -161,16 +161,17 @@ const xcrunOut = `
 ]
 `;
 
-describe('listIOSDevices', () => {
-  it('parses output from xcdevice list', async () => {
+describe('listDevices', () => {
+  it('parses output from xcdevice list for iOS', async () => {
     (execa.sync as jest.Mock).mockReturnValueOnce({stdout: xcrunOut});
-    const devices = await listIOSDevices();
+    const devices = await listDevices(['iphoneos', 'iphonesimulator']);
 
     // Find all available simulators
     expect(devices).toContainEqual({
-      name: 'iPhone 14 Plus',
       isAvailable: true,
+      name: 'iPhone 14 Plus',
       udid: 'A88CFA2A-05C8-44EE-9B67-7AEFE1624E2F',
+      sdk: 'com.apple.platform.iphonesimulator',
       version: '16.0 (20A360)',
       availabilityError: undefined,
       type: 'simulator',
@@ -179,6 +180,7 @@ describe('listIOSDevices', () => {
       name: 'iPhone SE (3rd generation)',
       isAvailable: true,
       udid: '1202C373-7381-433C-84FA-EF6741078CC1',
+      sdk: 'com.apple.platform.iphonesimulator',
       version: '16.0 (20A360)',
       availabilityError: undefined,
       type: 'simulator',
@@ -190,6 +192,7 @@ describe('listIOSDevices', () => {
       isAvailable: false,
       udid: '1234567890-0987654321',
       version: '16.2 (20C65)',
+      sdk: 'com.apple.platform.iphoneos',
       availabilityError:
         'To use Adam’s iPhone for development, enable Developer Mode in Settings → Privacy & Security.',
       type: 'device',
@@ -200,6 +203,7 @@ describe('listIOSDevices', () => {
       name: 'Living Room',
       udid: '7656fbf922891c8a2c7682c9d845eaa6954c24d8',
       version: '16.1 (20K71)',
+      sdk: 'com.apple.platform.appletvos',
       availabilityError: 'Living Room is not connected',
       type: 'device',
     });
@@ -207,10 +211,69 @@ describe('listIOSDevices', () => {
       isAvailable: true,
       name: 'Apple TV 4K (2nd generation)',
       udid: 'F022AD06-DFD3-4B9F-B4DD-3C30E17E7CE6',
+      sdk: 'com.apple.platform.appletvsimulator',
       version: '16.0 (20J373)',
       availabilityError: undefined,
       type: 'simulator',
     });
+    // Filter out macOS
+    expect(devices).not.toContainEqual({
+      isAvailable: true,
+      name: 'My Mac',
+      udid: '11111111-131230917230918374',
+      version: '13.0.1 (22A400)',
+      availabilityError: undefined,
+      type: 'device',
+    });
+  });
+
+  it('parses output from xcdevice list for tvOS', async () => {
+    (execa.sync as jest.Mock).mockReturnValueOnce({stdout: xcrunOut});
+    const devices = await listDevices(['appletvos', 'appletvsimulator']);
+
+    // Filter out all available simulators
+    expect(devices).not.toContainEqual({
+      isAvailable: true,
+      name: 'iPhone 14 Plus',
+      udid: 'A88CFA2A-05C8-44EE-9B67-7AEFE1624E2F',
+      sdk: 'com.apple.platform.iphonesimulator',
+      version: '16.0 (20A360)',
+      availabilityError: undefined,
+      type: 'simulator',
+    });
+
+    // Filter out all available iPhone's event when not available
+    expect(devices).not.toContainEqual({
+      name: 'Adam’s iPhone',
+      isAvailable: false,
+      udid: '1234567890-0987654321',
+      version: '16.2 (20C65)',
+      sdk: 'com.apple.platform.iphoneos',
+      availabilityError:
+        'To use Adam’s iPhone for development, enable Developer Mode in Settings → Privacy & Security.',
+      type: 'device',
+    });
+
+    // Find AppleTV
+    expect(devices).toContainEqual({
+      isAvailable: false,
+      name: 'Living Room',
+      udid: '7656fbf922891c8a2c7682c9d845eaa6954c24d8',
+      sdk: 'com.apple.platform.appletvos',
+      version: '16.1 (20K71)',
+      availabilityError: 'Living Room is not connected',
+      type: 'device',
+    });
+    expect(devices).toContainEqual({
+      isAvailable: true,
+      name: 'Apple TV 4K (2nd generation)',
+      udid: 'F022AD06-DFD3-4B9F-B4DD-3C30E17E7CE6',
+      sdk: 'com.apple.platform.appletvsimulator',
+      version: '16.0 (20J373)',
+      availabilityError: undefined,
+      type: 'simulator',
+    });
+
     // Filter out macOS
     expect(devices).not.toContainEqual({
       isAvailable: true,

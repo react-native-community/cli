@@ -5,6 +5,7 @@ export interface Device {
   availability?: string;
   isAvailable?: boolean;
   version?: string;
+  sdk?: string;
   availabilityError?: string;
   type?: 'simulator' | 'device' | 'catalyst';
   lastBootedAt?: string;
@@ -15,4 +16,12 @@ export interface IosInfo {
   schemes?: string[];
   configurations?: string[];
   targets?: string[];
+}
+
+export interface BuilderCommand {
+  /**
+   * Lowercase name of the platform.
+   * Example: 'ios', 'visionos'
+   */
+  platformName: string;
 }

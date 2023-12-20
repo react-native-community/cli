@@ -31,20 +31,17 @@ type DeviceOutput = {
   modelUTI: string;
 };
 
-const parseXcdeviceList = (text: string): Device[] => {
+const parseXcdeviceList = (text: string, sdkNames: string[] = []): Device[] => {
   const rawOutput = JSON.parse(text) as DeviceOutput[];
 
   const devices: Device[] = rawOutput
-    .filter(
-      (device) =>
-        !device.platform.includes('appletv') &&
-        !device.platform.includes('macos'),
-    )
+    .filter((device) => sdkNames.includes(stripPlatform(device?.platform)))
     .sort((device) => (device.simulator ? 1 : -1))
     .map((device) => ({
       isAvailable: device.available,
       name: device.name,
       udid: device.identifier,
+      sdk: device.platform,
       version: device.operatingSystemVersion,
       availabilityError: device.error?.description,
       type: device.simulator ? 'simulator' : 'device',
@@ -52,9 +49,13 @@ const parseXcdeviceList = (text: string): Device[] => {
   return devices;
 };
 
-async function listIOSDevices(): Promise<Device[]> {
+async function listDevices(sdkNames: string[]): Promise<Device[]> {
   const out = execa.sync('xcrun', ['xcdevice', 'list']).stdout;
-  return parseXcdeviceList(out);
+  return parseXcdeviceList(out, sdkNames);
 }
 
-export default listIOSDevices;
+function stripPlatform(platform: string): string {
+  return platform.replace('com.apple.platform.', '');
+}
+
+export default listDevices;

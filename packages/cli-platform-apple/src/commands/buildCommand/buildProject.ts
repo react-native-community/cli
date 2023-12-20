@@ -11,15 +11,28 @@ import {
   getLoader,
 } from '@react-native-community/cli-tools';
 import type {BuildFlags} from './buildOptions';
+import {simulatorDestinationMap} from './simulatorDestinationMap';
 
 export function buildProject(
   xcodeProject: IOSProjectInfo,
+  platform: string,
   udid: string | undefined,
   mode: string,
   scheme: string,
   args: BuildFlags,
 ): Promise<string> {
   return new Promise((resolve, reject) => {
+    const simulatorDest = simulatorDestinationMap?.[platform];
+
+    if (!simulatorDest) {
+      reject(
+        new CLIError(
+          `Unknown platform: ${platform}. Please, use one of: ios, macos, visionos, tvos.`,
+        ),
+      );
+      return;
+    }
+
     const xcodebuildArgs = [
       xcodeProject.isWorkspace ? '-workspace' : '-project',
       xcodeProject.name,
@@ -33,8 +46,8 @@ export function buildProject(
       (udid
         ? `id=${udid}`
         : mode === 'Debug'
-        ? 'generic/platform=iOS Simulator'
-        : 'generic/platform=iOS') +
+        ? `generic/platform=${simulatorDest}`
+        : `generic/platform=${platform}`) +
         (args.destination ? ',' + args.destination : ''),
     ];
 
@@ -98,7 +111,7 @@ export function buildProject(
         reject(
           new CLIError(
             `
-            Failed to build iOS project.
+            Failed to build ${platform} project.
 
             "xcodebuild" exited with error code '${code}'. To debug build
             logs further, consider building your app with Xcode.app, by opening

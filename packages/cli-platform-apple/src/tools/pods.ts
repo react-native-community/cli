@@ -33,14 +33,20 @@ export function getPackageJson(root: string) {
   }
 }
 
-export function getIosDependencies(dependencies: NativeDependencies) {
+export function getPlatformDependencies(
+  dependencies: NativeDependencies,
+  platformName: string = 'ios',
+) {
   return Object.keys(dependencies)
-    .filter((dependency) => dependencies[dependency].platforms.ios)
+    .filter((dependency) => dependencies[dependency].platforms?.[platformName])
     .map(
       (dependency) =>
         `${dependency}@${
-          (dependencies[dependency].platforms.ios as IOSDependencyConfig)
-            .version
+          (
+            dependencies[dependency].platforms?.[
+              platformName
+            ] as IOSDependencyConfig
+          ).version
         }`,
     )
     .sort();
@@ -85,17 +91,21 @@ async function install(
 export default async function resolvePods(
   root: string,
   nativeDependencies: NativeDependencies,
+  platformName: string = 'ios',
   options?: ResolvePodsOptions,
 ) {
   const packageJson = getPackageJson(root);
-  const podfilePath = findPodfilePath(root);
-  const iosFolderPath = podfilePath
+  const podfilePath = findPodfilePath(root, platformName);
+  const platformFolderPath = podfilePath
     ? podfilePath.slice(0, podfilePath.lastIndexOf('/'))
-    : path.join(root, 'ios');
-  const podsPath = path.join(iosFolderPath, 'Pods');
+    : path.join(root, platformName);
+  const podsPath = path.join(platformFolderPath, 'Pods');
   const arePodsInstalled = fs.existsSync(podsPath);
-  const iosDependencies = getIosDependencies(nativeDependencies);
-  const dependenciesString = dependenciesToString(iosDependencies);
+  const platformDependencies = getPlatformDependencies(
+    nativeDependencies,
+    platformName,
+  );
+  const dependenciesString = dependenciesToString(platformDependencies);
   const currentDependenciesHash = generateMd5Hash(dependenciesString);
   const cachedDependenciesHash = cacheManager.get(
     packageJson.name,
@@ -107,7 +117,7 @@ export default async function resolvePods(
       packageJson,
       cachedDependenciesHash,
       currentDependenciesHash,
-      iosFolderPath,
+      platformFolderPath,
     );
   } else if (arePodsInstalled && cachedDependenciesHash === undefined) {
     cacheManager.set(packageJson.name, 'dependencies', currentDependenciesHash);
@@ -121,7 +131,7 @@ export default async function resolvePods(
       await installPods(loader, {
         skipBundleInstall: !!cachedDependenciesHash,
         newArchEnabled: options?.newArchEnabled,
-        iosFolderPath,
+        iosFolderPath: platformFolderPath,
       });
       cacheManager.set(
         packageJson.name,

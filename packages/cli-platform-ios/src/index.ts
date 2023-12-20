@@ -3,6 +3,11 @@
  */
 
 export {default as commands} from './commands';
-export {projectConfig, dependencyConfig, findPodfilePaths} from './config';
-export {default as getArchitecture} from './tools/getArchitecture';
-export {default as installPods} from './tools/installPods';
+
+export {
+  findPodfilePaths,
+  getArchitecture,
+  installPods,
+} from '@react-native-community/cli-platform-apple';
+
+export {dependencyConfig, projectConfig} from './config';

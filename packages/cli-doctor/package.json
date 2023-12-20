@@ -11,6 +11,7 @@
     "@react-native-community/cli-config": "13.1.0",
     "@react-native-community/cli-platform-android": "13.1.0",
     "@react-native-community/cli-platform-ios": "13.1.0",
+    "@react-native-community/cli-platform-apple": "13.1.0",
     "@react-native-community/cli-tools": "13.1.0",
     "chalk": "^4.1.2",
     "command-exists": "^1.2.8",

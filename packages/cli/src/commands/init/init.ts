@@ -13,7 +13,7 @@ import {
   cacheManager,
   prompt,
 } from '@react-native-community/cli-tools';
-import {installPods} from '@react-native-community/cli-platform-ios';
+import {installPods} from '@react-native-community/cli-platform-apple';
 import {
   installTemplatePackage,
   getTemplateConfig,

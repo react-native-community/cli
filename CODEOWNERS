@@ -6,4 +6,5 @@ packages/cli-doctor/src/tools/healthchecks/android* @cipolleschi
 
 # iOS
 packages/cli-platform-ios/ @cipolleschi
+packages/cli-platform-apple/ @cipolleschi
 packages/cli-doctor/src/tools/healthchecks/ios* @cipolleschi

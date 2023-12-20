@@ -1,6 +1,9 @@
 import {writeFiles, getTempDirectory, cleanup} from '../../../../jest/helpers';
 import installPods from '../tools/installPods';
-import resolvePods, {compareMd5Hashes, getIosDependencies} from '../tools/pods';
+import resolvePods, {
+  compareMd5Hashes,
+  getPlatformDependencies,
+} from '../tools/pods';
 
 const mockGet = jest.fn();
 const mockSet = jest.fn();
@@ -71,9 +74,9 @@ describe('compareMd5Hashes', () => {
   });
 });
 
-describe('getIosDependencies', () => {
+describe('getPlatformDependencies', () => {
   it('should return only dependencies with native code', () => {
-    const result = getIosDependencies(dependenciesConfig);
+    const result = getPlatformDependencies(dependenciesConfig);
     expect(result).toEqual(['dep1@1.0.0', 'dep2@1.0.0']);
   });
 });
@@ -90,7 +93,7 @@ describe('resolvePods', () => {
   it('should install pods when force option is set to true', async () => {
     createTempFiles();
 
-    await resolvePods(DIR, {}, {forceInstall: true});
+    await resolvePods(DIR, {}, 'ios', {forceInstall: true});
 
     expect(installPods).toHaveBeenCalled();
   });

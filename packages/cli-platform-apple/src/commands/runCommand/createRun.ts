@@ -18,7 +18,6 @@ import {
   findDevServerPort,
   cacheManager,
 } from '@react-native-community/cli-tools';
-import findXcodeProject from '../../config/findXcodeProject';
 import getArchitecture from '../../tools/getArchitecture';
 import getSimulators from '../../tools/getSimulators';
 import listDevices from '../../tools/listDevices';
@@ -97,16 +96,10 @@ const createRun =
       link.setVersion(ctx.reactNativeVersion);
     }
 
-    let {xcodeProject, sourceDir} = getXcodeProjectAndDir(platform);
-
-    // if project is freshly created, revisit Xcode project to verify Pods are installed correctly.
-    // This is needed because ctx project is created before Pods are installed, so it might have outdated information.
-    if (installedPods) {
-      const recheckXcodeProject = findXcodeProject(fs.readdirSync(sourceDir));
-      if (recheckXcodeProject) {
-        xcodeProject = recheckXcodeProject;
-      }
-    }
+    let {xcodeProject, sourceDir} = getXcodeProjectAndDir(
+      platform,
+      installedPods,
+    );
 
     process.chdir(sourceDir);
 

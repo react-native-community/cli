@@ -7,6 +7,7 @@ import getSimulators from '../../tools/getSimulators';
 import listDevices from '../../tools/listDevices';
 import {getPlatformInfo} from '../runCommand/getPlatformInfo';
 import {BuilderCommand} from '../../types';
+import {supportedPlatforms} from '../../config/supportedPlatforms';
 
 /**
  * Starts Apple device syslog tail
@@ -22,7 +23,10 @@ const createLog =
     const platform = ctx.project[platformName] as IOSProjectConfig;
     const {readableName: platformReadableName} = getPlatformInfo(platformName);
 
-    if (platform === undefined) {
+    if (
+      platform === undefined ||
+      supportedPlatforms[platformName] === undefined
+    ) {
       throw new CLIError(`Unable to find ${platform} platform config`);
     }
 

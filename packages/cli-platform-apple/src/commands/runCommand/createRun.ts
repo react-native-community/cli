@@ -33,6 +33,7 @@ import {printFoundDevices, matchingDevice} from './matchingDevice';
 import {runOnDevice} from './runOnDevice';
 import {runOnSimulator} from './runOnSimulator';
 import {BuilderCommand} from '../../types';
+import {supportedPlatforms} from '../../config/supportedPlatforms';
 
 export interface FlagsT extends BuildFlags {
   simulator?: string;
@@ -54,7 +55,10 @@ const createRun =
     const {sdkNames, readableName: platformReadableName} =
       getPlatformInfo(platformName);
 
-    if (platform === undefined) {
+    if (
+      platform === undefined ||
+      supportedPlatforms[platformName] === undefined
+    ) {
       throw new CLIError(
         `Unable to find ${platformReadableName} platform config`,
       );

@@ -1,4 +1,6 @@
-export const simulatorDestinationMap: Record<string, string> = {
+import {ApplePlatform} from '../../types';
+
+export const simulatorDestinationMap: Record<ApplePlatform, string> = {
   ios: 'iOS Simulator',
   macos: 'macOS',
   visionos: 'visionOS Simulator',

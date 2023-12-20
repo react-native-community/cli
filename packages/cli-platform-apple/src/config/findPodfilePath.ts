@@ -9,6 +9,7 @@
 import {inlineString, logger} from '@react-native-community/cli-tools';
 import path from 'path';
 import findAllPodfilePaths from './findAllPodfilePaths';
+import {ApplePlatform} from '../types';
 
 // Regexp matching all test projects
 const TEST_PROJECTS = /test|example|sample/i;
@@ -18,7 +19,7 @@ const BUNDLE_VENDORED_PODFILE = 'vendor/bundle/ruby';
 
 export default function findPodfilePath(
   cwd: string,
-  platformName: string = 'ios',
+  platformName: ApplePlatform,
 ) {
   const podfiles = findAllPodfilePaths(cwd)
     /**

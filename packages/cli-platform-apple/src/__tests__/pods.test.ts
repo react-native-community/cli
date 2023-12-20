@@ -76,7 +76,7 @@ describe('compareMd5Hashes', () => {
 
 describe('getPlatformDependencies', () => {
   it('should return only dependencies with native code', () => {
-    const result = getPlatformDependencies(dependenciesConfig);
+    const result = getPlatformDependencies(dependenciesConfig, 'ios');
     expect(result).toEqual(['dep1@1.0.0', 'dep2@1.0.0']);
   });
 });
@@ -85,7 +85,7 @@ describe('resolvePods', () => {
   it('should install pods if they are not installed', async () => {
     createTempFiles({'ios/Podfile/Manifest.lock': ''});
 
-    await resolvePods(DIR, {});
+    await resolvePods(DIR, {}, 'ios');
 
     expect(installPods).toHaveBeenCalled();
   });
@@ -101,7 +101,7 @@ describe('resolvePods', () => {
   it('should install pods when there is no cached hash of dependencies', async () => {
     createTempFiles();
 
-    await resolvePods(DIR, {});
+    await resolvePods(DIR, {}, 'ios');
 
     expect(mockSet).toHaveBeenCalledWith(
       packageJson.name,
@@ -115,7 +115,7 @@ describe('resolvePods', () => {
 
     mockGet.mockImplementation(() => dependencyHash);
 
-    await resolvePods(DIR, {});
+    await resolvePods(DIR, {}, 'ios');
 
     expect(installPods).not.toHaveBeenCalled();
   });
@@ -125,12 +125,16 @@ describe('resolvePods', () => {
 
     mockGet.mockImplementation(() => dependencyHash);
 
-    await resolvePods(DIR, {
-      dep1: {
-        name: 'dep1',
-        ...commonDepConfig,
+    await resolvePods(
+      DIR,
+      {
+        dep1: {
+          name: 'dep1',
+          ...commonDepConfig,
+        },
       },
-    });
+      'ios',
+    );
 
     expect(installPods).toHaveBeenCalled();
   });

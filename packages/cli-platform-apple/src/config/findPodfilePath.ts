@@ -10,6 +10,7 @@ import {inlineString, logger} from '@react-native-community/cli-tools';
 import path from 'path';
 import findAllPodfilePaths from './findAllPodfilePaths';
 import {ApplePlatform} from '../types';
+import {supportedPlatforms} from './supportedPlatforms';
 
 // Regexp matching all test projects
 const TEST_PROJECTS = /test|example|sample/i;
@@ -50,8 +51,13 @@ export default function findPodfilePath(
      */
     .sort((project) => (path.dirname(project) === platformName ? -1 : 1));
 
+  const supportedPlatformsArray: string[] = Object.values(supportedPlatforms);
+  const containsOnlySupportedPodfiles = podfiles.every((podfile) =>
+    supportedPlatformsArray.includes(podfile.split('/')[0]),
+  );
+
   if (podfiles.length > 0) {
-    if (podfiles.length > 1) {
+    if (podfiles.length > 1 && !containsOnlySupportedPodfiles) {
       logger.warn(
         inlineString(`
           Multiple Podfiles were found: ${podfiles}. Choosing ${podfiles[0]} automatically.

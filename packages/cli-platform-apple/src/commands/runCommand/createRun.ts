@@ -102,6 +102,7 @@ const createRun =
 
     let {xcodeProject, sourceDir} = getXcodeProjectAndDir(
       platform,
+      platformName,
       installedPods,
     );
 

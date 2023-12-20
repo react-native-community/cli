@@ -1,3 +1,5 @@
+import {ApplePlatform} from '../../types';
+
 interface PlatformInfo {
   readableName: string;
   sdkNames: string[];
@@ -9,7 +11,7 @@ interface PlatformInfo {
  *
  * Falls back to iOS if platform is not supported.
  */
-export function getPlatformInfo(platform: string): PlatformInfo {
+export function getPlatformInfo(platform: ApplePlatform): PlatformInfo {
   const iosPlatformInfo: PlatformInfo = {
     readableName: 'iOS',
     sdkNames: ['iphonesimulator', 'iphoneos'],

@@ -7,12 +7,16 @@ import {buildProject} from './buildProject';
 import {getConfiguration} from './getConfiguration';
 import {getXcodeProjectAndDir} from './getXcodeProjectAndDir';
 import {BuilderCommand} from '../../types';
+import {supportedPlatforms} from '../../config/supportedPlatforms';
 
 const createBuild =
   ({platformName}: BuilderCommand) =>
   async (_: Array<string>, ctx: Config, args: BuildFlags) => {
     const platform = ctx.project[platformName] as IOSProjectConfig;
-    if (platform === undefined) {
+    if (
+      platform === undefined ||
+      supportedPlatforms[platformName] === undefined
+    ) {
       throw new CLIError(`Unable to find ${platform} platform config`);
     }
 

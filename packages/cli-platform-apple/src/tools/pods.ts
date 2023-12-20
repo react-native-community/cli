@@ -13,6 +13,7 @@ import {
   DependencyConfig,
   IOSDependencyConfig,
 } from '@react-native-community/cli-types';
+import {ApplePlatform} from '../types';
 
 interface ResolvePodsOptions {
   forceInstall?: boolean;
@@ -35,7 +36,7 @@ export function getPackageJson(root: string) {
 
 export function getPlatformDependencies(
   dependencies: NativeDependencies,
-  platformName: string = 'ios',
+  platformName: ApplePlatform,
 ) {
   return Object.keys(dependencies)
     .filter((dependency) => dependencies[dependency].platforms?.[platformName])
@@ -91,7 +92,7 @@ async function install(
 export default async function resolvePods(
   root: string,
   nativeDependencies: NativeDependencies,
-  platformName: string = 'ios',
+  platformName: ApplePlatform,
   options?: ResolvePodsOptions,
 ) {
   const packageJson = getPackageJson(root);

@@ -1,5 +1,5 @@
 import child_process from 'child_process';
-import {Device} from '../../types';
+import {ApplePlatform, Device} from '../../types';
 import {IOSProjectInfo} from '@react-native-community/cli-types';
 import {CLIError, logger} from '@react-native-community/cli-tools';
 import chalk from 'chalk';
@@ -9,7 +9,7 @@ import {FlagsT} from './createRun';
 
 export async function runOnDevice(
   selectedDevice: Device,
-  platform: string,
+  platform: ApplePlatform,
   mode: string,
   scheme: string,
   xcodeProject: IOSProjectInfo,

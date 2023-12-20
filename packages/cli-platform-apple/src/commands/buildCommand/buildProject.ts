@@ -12,10 +12,12 @@ import {
 } from '@react-native-community/cli-tools';
 import type {BuildFlags} from './buildOptions';
 import {simulatorDestinationMap} from './simulatorDestinationMap';
+import {supportedPlatforms} from '../../config/supportedPlatforms';
+import {ApplePlatform} from '../../types';
 
 export function buildProject(
   xcodeProject: IOSProjectInfo,
-  platform: string,
+  platform: ApplePlatform,
   udid: string | undefined,
   mode: string,
   scheme: string,
@@ -27,7 +29,9 @@ export function buildProject(
     if (!simulatorDest) {
       reject(
         new CLIError(
-          `Unknown platform: ${platform}. Please, use one of: ios, macos, visionos, tvos.`,
+          `Unknown platform: ${platform}. Please, use one of: ${Object.values(
+            supportedPlatforms,
+          ).join(', ')}.`,
         ),
       );
       return;

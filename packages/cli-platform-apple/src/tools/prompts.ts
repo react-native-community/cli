@@ -76,3 +76,20 @@ export async function promptForDeviceSelection(
   });
   return device;
 }
+
+export async function promptForDeviceToTailLogs(
+  platformReadableName: string,
+  simulators: Device[],
+): Promise<string> {
+  const {udid} = await prompt({
+    type: 'select',
+    name: 'udid',
+    message: `Select ${platformReadableName} simulators to tail logs from`,
+    choices: simulators.map((simulator) => ({
+      title: simulator.name,
+      value: simulator.udid,
+    })),
+  });
+
+  return udid;
+}

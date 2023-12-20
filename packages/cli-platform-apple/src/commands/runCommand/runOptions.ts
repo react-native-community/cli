@@ -1,4 +1,5 @@
 import {getDefaultUserTerminal} from '@react-native-community/cli-tools';
+import {buildOptions} from '../buildCommand/buildOptions';
 
 export const runOptions = [
   {
@@ -43,4 +44,5 @@ export const runOptions = [
     name: '--udid <string>',
     description: 'Explicitly set the device to use by UDID',
   },
+  ...buildOptions,
 ];

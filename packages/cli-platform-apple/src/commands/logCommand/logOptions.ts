@@ -1,4 +1,6 @@
-export const logOptions = [
+import {BuilderCommand} from '../../types';
+
+export const getLogOptions = ({}: BuilderCommand) => [
   {
     name: '--interactive',
     description:

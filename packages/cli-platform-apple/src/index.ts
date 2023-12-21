@@ -1,8 +1,12 @@
-export {dependencyConfig, getProjectConfig, findPodfilePaths} from './config';
+export {
+  getDependencyConfig,
+  getProjectConfig,
+  findPodfilePaths,
+} from './config';
 
-export {buildOptions} from './commands/buildCommand/buildOptions';
-export {logOptions} from './commands/logCommand/logOptions';
-export {runOptions} from './commands/runCommand/runOptions';
+export {getBuildOptions} from './commands/buildCommand/buildOptions';
+export {getLogOptions} from './commands/logCommand/logOptions';
+export {getRunOptions} from './commands/runCommand/runOptions';
 
 export {default as createBuild} from './commands/buildCommand/createBuild';
 export {default as createLog} from './commands/logCommand/createLog';

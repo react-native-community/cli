@@ -8,7 +8,7 @@
 
 import {
   createRun,
-  runOptions,
+  getRunOptions,
 } from '@react-native-community/cli-platform-apple';
 
 export default {
@@ -29,5 +29,5 @@ export default {
       cmd: 'npx react-native run-ios --simulator "Apple TV"  --scheme "helloworld-tvOS"',
     },
   ],
-  options: runOptions,
+  options: getRunOptions({platformName: 'ios'}),
 };

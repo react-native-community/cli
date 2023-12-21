@@ -143,7 +143,7 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
             );
           },
         }),
-        commands: [...acc.commands, ...config.commands],
+        commands: [...config.commands, ...acc.commands],
         platforms: {
           ...acc.platforms,
           ...config.platforms,

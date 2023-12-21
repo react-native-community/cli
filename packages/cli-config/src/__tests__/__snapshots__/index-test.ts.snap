@@ -35,11 +35,11 @@ exports[`should load commands from "react-native-foo" and "react-native-bar" pac
 Array [
   Object {
     "func": [Function],
-    "name": "foo-command",
+    "name": "bar-command",
   },
   Object {
     "func": [Function],
-    "name": "bar-command",
+    "name": "foo-command",
   },
 ]
 `;

@@ -230,7 +230,7 @@ const createRun =
 
       logger.info(`Found booted ${booted.map(({name}) => name).join(', ')}`);
 
-      for (const device of devices) {
+      for (const device of bootedDevices) {
         await runOnDevice(
           device,
           platformName,

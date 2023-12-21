@@ -1,4 +1,4 @@
-import {CLIError, logger, prompt} from '@react-native-community/cli-tools';
+import {CLIError, logger} from '@react-native-community/cli-tools';
 import {Config, IOSProjectConfig} from '@react-native-community/cli-types';
 import {spawnSync} from 'child_process';
 import os from 'os';
@@ -8,6 +8,7 @@ import listDevices from '../../tools/listDevices';
 import {getPlatformInfo} from '../runCommand/getPlatformInfo';
 import {BuilderCommand} from '../../types';
 import {supportedPlatforms} from '../../config/supportedPlatforms';
+import {promptForDeviceToTailLogs} from '../../tools/prompts';
 
 /**
  * Starts Apple device syslog tail
@@ -64,15 +65,10 @@ const createLog =
     }
 
     if (args.interactive && bootedAndAvailableSimulators.length > 1) {
-      const {udid} = await prompt({
-        type: 'select',
-        name: 'udid',
-        message: `Select ${platformReadableName} simulators to tail logs from`,
-        choices: bootedAndAvailableSimulators.map((simulator) => ({
-          title: simulator.name,
-          value: simulator.udid,
-        })),
-      });
+      const udid = await promptForDeviceToTailLogs(
+        platformReadableName,
+        bootedAndAvailableSimulators,
+      );
 
       tailDeviceLogs(udid);
     } else {

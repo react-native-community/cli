@@ -85,10 +85,16 @@ export async function promptForDeviceToTailLogs(
     type: 'select',
     name: 'udid',
     message: `Select ${platformReadableName} simulators to tail logs from`,
-    choices: simulators.map((simulator) => ({
-      title: simulator.name,
-      value: simulator.udid,
-    })),
+    choices: simulators.map((simulator) => {
+      const version = simulator.version
+        ? ` (${simulator.version.match(/^(\d+\.\d+)/)?.[1]})`
+        : '';
+
+      return {
+        title: `${simulator.name}${version}`.trim(),
+        value: simulator.udid,
+      };
+    }),
   });
 
   return udid;

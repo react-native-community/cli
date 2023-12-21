@@ -52,12 +52,12 @@ export default function findPodfilePath(
     .sort((project) => (path.dirname(project) === platformName ? -1 : 1));
 
   const supportedPlatformsArray: string[] = Object.values(supportedPlatforms);
-  const containsOnlySupportedPodfiles = podfiles.every((podfile) =>
-    supportedPlatformsArray.includes(podfile.split('/')[0]),
+  const containsUnsupportedPodfiles = podfiles.every(
+    (podfile) => !supportedPlatformsArray.includes(podfile.split('/')[0]),
   );
 
   if (podfiles.length > 0) {
-    if (podfiles.length > 1 && !containsOnlySupportedPodfiles) {
+    if (podfiles.length > 1 && containsUnsupportedPodfiles) {
       logger.warn(
         inlineString(`
           Multiple Podfiles were found: ${podfiles}. Choosing ${podfiles[0]} automatically.

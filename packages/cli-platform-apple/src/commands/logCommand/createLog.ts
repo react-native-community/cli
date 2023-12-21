@@ -21,14 +21,14 @@ type Args = {
 const createLog =
   ({platformName}: BuilderCommand) =>
   async (_: Array<string>, ctx: Config, args: Args) => {
-    const platform = ctx.project[platformName] as IOSProjectConfig;
+    const platformConfig = ctx.project[platformName] as IOSProjectConfig;
     const {readableName: platformReadableName} = getPlatformInfo(platformName);
 
     if (
-      platform === undefined ||
+      platformConfig === undefined ||
       supportedPlatforms[platformName] === undefined
     ) {
-      throw new CLIError(`Unable to find ${platform} platform config`);
+      throw new CLIError(`Unable to find ${platformName} platform config`);
     }
 
     // Here we're using two command because first command `xcrun simctl list --json devices` outputs `state` but doesn't return `available`. But second command `xcrun xcdevice list` outputs `available` but doesn't output `state`. So we need to connect outputs of both commands.

@@ -12,18 +12,18 @@ import {supportedPlatforms} from '../../config/supportedPlatforms';
 const createBuild =
   ({platformName}: BuilderCommand) =>
   async (_: Array<string>, ctx: Config, args: BuildFlags) => {
-    const platform = ctx.project[platformName] as IOSProjectConfig;
+    const platformConfig = ctx.project[platformName] as IOSProjectConfig;
     if (
-      platform === undefined ||
+      platformConfig === undefined ||
       supportedPlatforms[platformName] === undefined
     ) {
-      throw new CLIError(`Unable to find ${platform} platform config`);
+      throw new CLIError(`Unable to find ${platformName} platform config`);
     }
 
     let installedPods = false;
-    if (platform?.automaticPodsInstallation || args.forcePods) {
-      const isAppRunningNewArchitecture = platform?.sourceDir
-        ? await getArchitecture(platform?.sourceDir)
+    if (platformConfig?.automaticPodsInstallation || args.forcePods) {
+      const isAppRunningNewArchitecture = platformConfig?.sourceDir
+        ? await getArchitecture(platformConfig?.sourceDir)
         : undefined;
 
       await resolvePods(ctx.root, ctx.dependencies, platformName, {
@@ -35,7 +35,8 @@ const createBuild =
     }
 
     let {xcodeProject, sourceDir} = getXcodeProjectAndDir(
-      platform,
+      platformConfig,
+      platformName,
       installedPods,
     );
 

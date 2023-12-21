@@ -2,14 +2,19 @@ import fs from 'fs';
 import {IOSProjectConfig} from '@react-native-community/cli-types';
 import {CLIError} from '@react-native-community/cli-tools';
 import findXcodeProject from '../../config/findXcodeProject';
+import {getPlatformInfo} from '../runCommand/getPlatformInfo';
+import {ApplePlatform} from '../../types';
 
 export function getXcodeProjectAndDir(
   iosProjectConfig: IOSProjectConfig | undefined,
+  platformName: ApplePlatform,
   installedPods?: boolean,
 ) {
+  const {readableName: platformReadableName} = getPlatformInfo(platformName);
+
   if (!iosProjectConfig) {
     throw new CLIError(
-      'iOS project folder not found. Are you sure this is a React Native project?',
+      `${platformReadableName} project folder not found. Make sure that project.${platformName}.sourceDir points to a directory with your Xcode project and that you are running this command inside of React Native project.`,
     );
   }
 

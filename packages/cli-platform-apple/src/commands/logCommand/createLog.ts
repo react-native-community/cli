@@ -27,7 +27,7 @@ const createLog =
       platformConfig === undefined ||
       supportedPlatforms[platformName] === undefined
     ) {
-      throw new CLIError(`Unable to find ${platformConfig} platform config`);
+      throw new CLIError(`Unable to find ${platformName} platform config`);
     }
 
     // Here we're using two command because first command `xcrun simctl list --json devices` outputs `state` but doesn't return `available`. But second command `xcrun xcdevice list` outputs `available` but doesn't output `state`. So we need to connect outputs of both commands.

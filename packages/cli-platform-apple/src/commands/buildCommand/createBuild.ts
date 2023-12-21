@@ -17,7 +17,7 @@ const createBuild =
       platformConfig === undefined ||
       supportedPlatforms[platformName] === undefined
     ) {
-      throw new CLIError(`Unable to find ${platformConfig} platform config`);
+      throw new CLIError(`Unable to find ${platformName} platform config`);
     }
 
     let installedPods = false;

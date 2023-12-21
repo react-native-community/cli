@@ -8,12 +8,12 @@
 
 import {
   createLog,
-  logOptions,
+  getLogOptions,
 } from '@react-native-community/cli-platform-apple';
 
 export default {
   name: 'log-ios',
   description: 'starts iOS device syslog tail',
   func: createLog({platformName: 'ios'}),
-  options: logOptions,
+  options: getLogOptions({platformName: 'ios'}),
 };

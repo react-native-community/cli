@@ -55,42 +55,47 @@ export const getProjectConfig =
     };
   };
 
-export function dependencyConfig(
-  folder: string,
-  userConfig: IOSDependencyParams | null = {},
-): IOSDependencyConfig | null {
-  if (userConfig === null) {
-    return null;
-  }
-
-  const podspecPath = findPodspec(folder);
-
-  if (!podspecPath) {
-    return null;
-  }
-
-  let version = 'unresolved';
-
-  try {
-    const packageJson = require(path.join(folder, 'package.json'));
-
-    if (packageJson.version) {
-      version = packageJson.version;
+/**
+ * Make getDependencyConfig follow the same pattern as getProjectConfig
+ */
+export const getDependencyConfig =
+  ({}: BuilderCommand) =>
+  (
+    folder: string,
+    userConfig: IOSDependencyParams | null = {},
+  ): IOSDependencyConfig | null => {
+    if (userConfig === null) {
+      return null;
     }
-  } catch {
-    throw new CLIError(
-      `Failed to locate package.json file from ${chalk.underline(
-        folder,
-      )}. This is most likely issue with your node_modules folder being corrupted. Please force install dependencies and try again`,
-    );
-  }
 
-  return {
-    podspecPath,
-    version,
-    configurations: userConfig.configurations || [],
-    scriptPhases: userConfig.scriptPhases || [],
+    const podspecPath = findPodspec(folder);
+
+    if (!podspecPath) {
+      return null;
+    }
+
+    let version = 'unresolved';
+
+    try {
+      const packageJson = require(path.join(folder, 'package.json'));
+
+      if (packageJson.version) {
+        version = packageJson.version;
+      }
+    } catch {
+      throw new CLIError(
+        `Failed to locate package.json file from ${chalk.underline(
+          folder,
+        )}. This is most likely issue with your node_modules folder being corrupted. Please force install dependencies and try again`,
+      );
+    }
+
+    return {
+      podspecPath,
+      version,
+      configurations: userConfig.configurations || [],
+      scriptPhases: userConfig.scriptPhases || [],
+    };
   };
-}
 
 export const findPodfilePaths = findAllPodfilePaths;

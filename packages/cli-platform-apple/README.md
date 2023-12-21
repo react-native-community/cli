@@ -18,7 +18,7 @@ Inside of `<oot-platform>/packages/react-native/react-native.config.js`:
 
 ```js
 const {
-  buildOptions,
+  getBuildOptions,
   createBuild,
 } = require('@react-native-community/cli-platform-apple');
 
@@ -32,11 +32,29 @@ const buildVisionOS = {
       cmd: 'npx react-native build-visionos --mode "Release"',
     },
   ],
-  options: buildOptions,
+  options: getBuildOptions({platformName: 'visionos'}),
 };
 
 module.exports = {
   commands: [buildVisionOS], // <- Add command here
   //..
 };
+```
+
+`cli-platform-apple` also exports utilities to create OOT platform config.
+
+- `getProjectConfig()` - creates project config for given platform
+- `getDependencyConfg()` - creates dependency config for given platform
+
+Example (`<oot-platform>/packages/react-native/react-native.config.js`):
+
+```js
+platforms: {
+    visionos: {
+      npmPackageName: '@callstack/react-native-visionos',
+      projectConfig: getProjectConfig({platformName: 'visionos'}),
+      dependencyConfig: getDependencyConfg({platformName: 'visionos'}),
+    },
+    ..
+  },
 ```

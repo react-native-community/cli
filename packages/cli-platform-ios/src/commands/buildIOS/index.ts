@@ -7,7 +7,7 @@
  */
 
 import {
-  buildOptions,
+  getBuildOptions,
   createBuild,
 } from '@react-native-community/cli-platform-apple';
 
@@ -21,5 +21,5 @@ export default {
       cmd: 'npx react-native build-ios --mode "Release"',
     },
   ],
-  options: buildOptions,
+  options: getBuildOptions({platformName: 'ios'}),
 };

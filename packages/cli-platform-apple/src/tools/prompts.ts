@@ -2,6 +2,10 @@ import chalk from 'chalk';
 import {Device} from '../types';
 import {prompt} from '@react-native-community/cli-tools';
 
+function getVersionFromDevice({version}: Device) {
+  return version ? ` (${version.match(/^(\d+\.\d+)/)?.[1]})` : '';
+}
+
 export async function promptForSchemeSelection(
   schemes: string[],
 ): Promise<string> {
@@ -57,17 +61,15 @@ export async function promptForDeviceSelection(
     choices: sortedDevices
       .filter(({type}) => type === 'device' || type === 'simulator')
       .map((d) => {
-        const version = d.version
-          ? ` (${d.version.match(/^(\d+\.\d+)/)?.[1]})`
-          : '';
-
         const availability =
           !d.isAvailable && !!d.availabilityError
             ? chalk.red(`(unavailable - ${d.availabilityError})`)
             : '';
 
         return {
-          title: `${chalk.bold(`${d.name}${version}`)} ${availability}`,
+          title: `${chalk.bold(
+            `${d.name}${getVersionFromDevice(d)}`,
+          )} ${availability}`,
           value: d,
           disabled: !d.isAvailable,
         };
@@ -85,16 +87,10 @@ export async function promptForDeviceToTailLogs(
     type: 'select',
     name: 'udid',
     message: `Select ${platformReadableName} simulators to tail logs from`,
-    choices: simulators.map((simulator) => {
-      const version = simulator.version
-        ? ` (${simulator.version.match(/^(\d+\.\d+)/)?.[1]})`
-        : '';
-
-      return {
-        title: `${simulator.name}${version}`.trim(),
-        value: simulator.udid,
-      };
-    }),
+    choices: simulators.map((simulator) => ({
+      title: `${simulator.name}${getVersionFromDevice(simulator)}`.trim(),
+      value: simulator.udid,
+    })),
   });
 
   return udid;

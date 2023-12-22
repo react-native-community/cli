@@ -124,6 +124,7 @@ const createRun =
       xcodeProject,
       sourceDir,
       args,
+      platformName,
     );
 
     if (platformName === 'macos') {

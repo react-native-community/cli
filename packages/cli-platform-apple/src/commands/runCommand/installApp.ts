@@ -5,6 +5,7 @@ import chalk from 'chalk';
 import {getBuildPath} from './getBuildPath';
 import {getBuildSettings} from './getBuildSettings';
 import path from 'path';
+import {ApplePlatform} from '../../types';
 
 function handleLaunchResult(
   success: boolean,
@@ -24,8 +25,9 @@ type Options = {
   mode: string;
   scheme: string;
   target?: string;
-  udid: string;
+  udid?: string;
   binaryPath?: string;
+  platform?: ApplePlatform;
 };
 
 export default async function installApp({
@@ -36,6 +38,7 @@ export default async function installApp({
   target,
   udid,
   binaryPath,
+  platform,
 }: Options) {
   let appPath = binaryPath;
 
@@ -52,11 +55,7 @@ export default async function installApp({
   }
 
   if (!appPath) {
-    appPath = await getBuildPath(buildSettings);
-  }
-
-  if (!buildSettings) {
-    throw new CLIError('Failed to get build settings for your project');
+    appPath = await getBuildPath(buildSettings, platform);
   }
 
   const targetBuildDir = buildSettings.TARGET_BUILD_DIR;
@@ -78,30 +77,38 @@ export default async function installApp({
     });
   }
 
-  const bundleID = child_process
-    .execFileSync(
-      '/usr/libexec/PlistBuddy',
-      [
-        '-c',
-        'Print:CFBundleIdentifier',
-        path.join(targetBuildDir, infoPlistPath),
-      ],
-      {encoding: 'utf8'},
-    )
-    .trim();
+  if (platform === 'macos') {
+    logger.info(`Launching "${chalk.bold(appPath)}"`);
 
-  logger.info(`Launching "${chalk.bold(bundleID)}"`);
+    child_process.exec(`open "${appPath}"`, (error, _, stderr) => {
+      handleLaunchResult(!error, 'Failed to launch the app', stderr);
+    });
+  } else if (udid) {
+    const bundleID = child_process
+      .execFileSync(
+        '/usr/libexec/PlistBuddy',
+        [
+          '-c',
+          'Print:CFBundleIdentifier',
+          path.join(targetBuildDir, infoPlistPath),
+        ],
+        {encoding: 'utf8'},
+      )
+      .trim();
 
-  let result = child_process.spawnSync('xcrun', [
-    'simctl',
-    'launch',
-    udid,
-    bundleID,
-  ]);
+    logger.info(`Launching "${chalk.bold(bundleID)}"`);
 
-  handleLaunchResult(
-    result.status === 0,
-    'Failed to launch the app on simulator',
-    result.stderr.toString(),
-  );
+    let result = child_process.spawnSync('xcrun', [
+      'simctl',
+      'launch',
+      udid,
+      bundleID,
+    ]);
+
+    handleLaunchResult(
+      result.status === 0,
+      'Failed to launch the app on simulator',
+      result.stderr.toString(),
+    );
+  }
 }

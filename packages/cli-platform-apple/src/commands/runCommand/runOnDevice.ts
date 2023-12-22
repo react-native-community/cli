@@ -6,6 +6,7 @@ import chalk from 'chalk';
 import {buildProject} from '../buildCommand/buildProject';
 import {getBuildPath} from './getBuildPath';
 import {FlagsT} from './createRun';
+import {getBuildSettings} from './getBuildSettings';
 
 export async function runOnDevice(
   selectedDevice: Device,
@@ -45,14 +46,14 @@ export async function runOnDevice(
       args,
     );
 
-    const appPath = await getBuildPath(
+    const buildSettings = await getBuildSettings(
       xcodeProject,
       mode,
       buildOutput,
       scheme,
-      args.target,
-      true,
     );
+
+    const appPath = await getBuildPath(buildSettings, true);
     const appProcess = child_process.spawn(`${appPath}/${scheme}`, [], {
       detached: true,
       stdio: 'ignore',
@@ -70,13 +71,14 @@ export async function runOnDevice(
         args,
       );
 
-      appPath = await getBuildPath(
+      const buildSettings = await getBuildSettings(
         xcodeProject,
         mode,
         buildOutput,
         scheme,
-        args.target,
       );
+
+      appPath = await getBuildPath(buildSettings);
     } else {
       appPath = args.binaryPath;
     }

@@ -28,7 +28,7 @@ export async function getConfiguration(
 
   if (!info?.schemes?.includes(scheme)) {
     const {readableName} = getPlatformInfo(platformName);
-    const fallbackScheme = `${scheme}-${readableName}`
+    const fallbackScheme = `${scheme}-${readableName}`;
 
     if (info?.schemes?.includes(fallbackScheme)) {
       logger.warn(

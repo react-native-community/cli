@@ -61,7 +61,7 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
     );
 
     if (startPackager) {
-      await startServerInNewWindow(
+      startServerInNewWindow(
         newPort,
         config.root,
         config.reactNativePath,

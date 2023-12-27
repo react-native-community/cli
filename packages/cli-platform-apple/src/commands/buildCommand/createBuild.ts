@@ -46,6 +46,7 @@ const createBuild =
       xcodeProject,
       sourceDir,
       args,
+      platformName,
     );
 
     return buildProject(

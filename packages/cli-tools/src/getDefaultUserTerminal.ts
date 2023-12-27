@@ -11,6 +11,10 @@ const getDefaultUserTerminal = (): string | undefined => {
     return TERM_PROGRAM;
   }
 
+  if (os.platform() === 'win32') {
+    return 'cmd.exe';
+  }
+
   return TERM;
 };
 

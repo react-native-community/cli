@@ -27,7 +27,7 @@ function startServerInNewWindow(
   const packagerEnvFilename = isWindows ? '.packager.bat' : '.packager.env';
   const packagerEnvFileExportContent = isWindows
     ? `set RCT_METRO_PORT=${port}\nset PROJECT_ROOT=${projectRoot}\nset REACT_NATIVE_PATH=${reactNativePath}`
-    : `export RCT_METRO_PORT=${port}\nexport PROJECT_ROOT=${projectRoot}\nexport REACT_NATIVE_PATH=${reactNativePath}`;
+    : `export RCT_METRO_PORT=${port}\nexport PROJECT_ROOT="${projectRoot}"\nexport REACT_NATIVE_PATH="${reactNativePath}"`;
   const nodeModulesPath = resolveNodeModuleDir(projectRoot, '.bin');
   const cliPluginMetroPath = path.join(
     path.dirname(

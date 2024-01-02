@@ -1,8 +1,9 @@
 import {CLIError} from '@react-native-community/cli-tools';
 import path from 'path';
+import {BuildSettings} from './getBuildSettings';
 
 export async function getBuildPath(
-  buildSettings: any,
+  buildSettings: BuildSettings,
   isCatalyst: boolean = false,
 ) {
   const targetBuildDir = buildSettings.TARGET_BUILD_DIR;

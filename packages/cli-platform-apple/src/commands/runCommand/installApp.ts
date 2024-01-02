@@ -47,8 +47,16 @@ export default async function installApp({
     target,
   );
 
+  if (!buildSettings) {
+    throw new CLIError('Failed to get build settings for your project');
+  }
+
   if (!appPath) {
     appPath = await getBuildPath(buildSettings);
+  }
+
+  if (!buildSettings) {
+    throw new CLIError('Failed to get build settings for your project');
   }
 
   const targetBuildDir = buildSettings.TARGET_BUILD_DIR;
@@ -81,8 +89,6 @@ export default async function installApp({
       {encoding: 'utf8'},
     )
     .trim();
-
-  console.log(bundleID);
 
   logger.info(`Launching "${chalk.bold(bundleID)}"`);
 

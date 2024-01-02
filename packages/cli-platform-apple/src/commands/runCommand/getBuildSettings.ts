@@ -3,13 +3,20 @@ import {IOSProjectInfo} from '@react-native-community/cli-types';
 import chalk from 'chalk';
 import child_process from 'child_process';
 
+export type BuildSettings = {
+  TARGET_BUILD_DIR: string;
+  INFOPLIST_PATH: string;
+  EXECUTABLE_FOLDER_PATH: string;
+  FULL_PRODUCT_NAME: string;
+};
+
 export async function getBuildSettings(
   xcodeProject: IOSProjectInfo,
   mode: string,
   buildOutput: string,
   scheme: string,
   target?: string,
-) {
+): Promise<BuildSettings | null> {
   const buildSettings = child_process.execFileSync(
     'xcodebuild',
     [

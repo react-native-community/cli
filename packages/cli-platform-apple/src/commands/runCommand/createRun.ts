@@ -19,7 +19,6 @@ import {
   cacheManager,
 } from '@react-native-community/cli-tools';
 import getArchitecture from '../../tools/getArchitecture';
-import getSimulators from '../../tools/getSimulators';
 import listDevices from '../../tools/listDevices';
 import resolvePods, {getPackageJson} from '../../tools/pods';
 import {promptForDeviceSelection} from '../../tools/prompts';
@@ -208,12 +207,7 @@ const createRun =
       const bootedDevices = availableDevices.filter(
         ({type}) => type === 'device',
       );
-
-      const simulators = getSimulators();
-      const bootedSimulators = Object.keys(simulators.devices)
-        .map((key) => simulators.devices[key])
-        .reduce((acc, val) => acc.concat(val), [])
-        .filter(({state}) => state === 'Booted');
+      const bootedSimulators = devices.filter(({type}) => type === 'simulator');
 
       const booted = [...bootedDevices, ...bootedSimulators];
       if (booted.length === 0) {

@@ -54,7 +54,7 @@ async function listDevices(sdkNames: string[]): Promise<Device[]> {
   return parseXcdeviceList(out, sdkNames);
 }
 
-function stripPlatform(platform: string): string {
+export function stripPlatform(platform: string): string {
   return platform.replace('com.apple.platform.', '');
 }
 

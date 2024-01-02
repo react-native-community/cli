@@ -4,9 +4,9 @@ import {spawnSync} from 'child_process';
 import os from 'os';
 import path from 'path';
 import getSimulators from '../../tools/getSimulators';
-import listDevices from '../../tools/listDevices';
+import listDevices, {stripPlatform} from '../../tools/listDevices';
 import {getPlatformInfo} from '../runCommand/getPlatformInfo';
-import {BuilderCommand} from '../../types';
+import {BuilderCommand, Device} from '../../types';
 import {supportedPlatforms} from '../../config/supportedPlatforms';
 import {promptForDeviceToTailLogs} from '../../tools/prompts';
 
@@ -50,12 +50,14 @@ const createLog =
       return;
     }
 
-    const bootedAndAvailableSimulators = bootedSimulators.map((booted) => {
-      const available = availableSimulators.find(
-        ({udid}) => udid === booted.udid,
-      );
-      return {...available, ...booted};
-    });
+    const bootedAndAvailableSimulators = bootedSimulators
+      .map((booted) => {
+        const available = availableSimulators.find(
+          ({udid}) => udid === booted.udid,
+        );
+        return {...available, ...booted};
+      })
+      .filter(({sdk}) => sdk && sdkNames.includes(stripPlatform(sdk)));
 
     if (bootedAndAvailableSimulators.length === 0) {
       logger.error(
@@ -70,21 +72,33 @@ const createLog =
         bootedAndAvailableSimulators,
       );
 
-      tailDeviceLogs(udid);
+      const simulator = bootedAndAvailableSimulators.find(
+        ({udid: deviceUDID}) => deviceUDID === udid,
+      );
+
+      if (!simulator) {
+        throw new CLIError(
+          `Unable to find simulator with udid: ${udid} in booted simulators`,
+        );
+      }
+
+      tailDeviceLogs(simulator);
     } else {
-      tailDeviceLogs(bootedAndAvailableSimulators[0].udid);
+      tailDeviceLogs(bootedAndAvailableSimulators[0]);
     }
   };
 
-function tailDeviceLogs(udid: string) {
+function tailDeviceLogs(device: Device) {
   const logDir = path.join(
     os.homedir(),
     'Library',
     'Logs',
     'CoreSimulator',
-    udid,
+    device.udid,
     'asl',
   );
+
+  logger.info(`Tailing logs for device ${device.name} (${device.udid})`);
 
   const log = spawnSync('syslog', ['-w', '-F', 'std', '-d', logDir], {
     stdio: 'inherit',

@@ -253,6 +253,8 @@ const createRun =
           simulator || fallbackSimulator,
         );
       }
+
+      return;
     }
 
     if (args.device && args.udid) {

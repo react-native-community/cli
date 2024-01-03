@@ -1,8 +1,7 @@
-import execa from 'execa';
-import {logger} from '@react-native-community/cli-tools';
 import {getYarnVersionIfAvailable, isProjectUsingYarn} from './yarn';
 import {getBunVersionIfAvailable, isProjectUsingBun} from './bun';
 import {getNpmVersionIfAvailable, isProjectUsingNpm} from './npm';
+import {executeCommand} from './executeCommand';
 
 export type PackageManager = keyof typeof packageManagers;
 
@@ -63,20 +62,6 @@ function configurePackageManager(
   const [executable, ...flags] = packageManagers[pm][action];
   const args = [executable, ...flags, ...packageNames];
   return executeCommand(pm, args, options);
-}
-
-export function executeCommand(
-  command: string,
-  args: Array<string>,
-  options: {
-    root: string;
-    silent?: boolean;
-  },
-) {
-  return execa(command, args, {
-    stdio: options.silent && !logger.isVerbose() ? 'pipe' : 'inherit',
-    cwd: options.root,
-  });
 }
 
 export function shouldUseYarn(options: Options) {

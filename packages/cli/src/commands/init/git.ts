@@ -3,26 +3,31 @@ import execa from 'execa';
 import fs from 'fs';
 import path from 'path';
 
-const createGitRepository = async (folder: string) => {
-  const loader = getLoader();
-
+export const checkGitInstallation = async (): Promise<boolean> => {
   try {
     await execa('git', ['--version'], {stdio: 'ignore'});
+    return true;
   } catch {
-    loader.fail('Unable to initialize Git repo. `git` not in $PATH.');
-    return;
+    return false;
   }
+};
 
+export const checkIfFolderIsGitRepo = async (
+  folder: string,
+): Promise<boolean> => {
   try {
     await execa('git', ['rev-parse', '--is-inside-work-tree'], {
       stdio: 'ignore',
       cwd: folder,
     });
-    loader.succeed(
-      'New project is already inside of a Git repo, skipping git init.',
-    );
-    return;
-  } catch {}
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+export const createGitRepository = async (folder: string) => {
+  const loader = getLoader();
 
   loader.start('Initializing Git repository');
 
@@ -63,5 +68,3 @@ const createGitRepository = async (folder: string) => {
     );
   }
 };
-
-export default createGitRepository;

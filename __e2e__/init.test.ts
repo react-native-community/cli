@@ -66,11 +66,11 @@ test('init should ask and print files in directory if exist', () => {
 
   const {stdout, stderr} = runCLI(DIR, ['init', PROJECT_NAME]);
 
+  expect(stdout).toContain(`Do you want to replace existing files?`);
   expect(stderr).toContain(
     `warn The directory ${PROJECT_NAME} contains files that will be overwritten:`,
   );
-  expect(stdout).toContain(`package.json`);
-  expect(stdout).toContain(`Do you want to replace existing files?`);
+  expect(stderr).toContain(`package.json`);
 });
 
 test('init should prompt for the project name', () => {

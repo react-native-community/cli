@@ -126,15 +126,15 @@ async function setProjectDirectory(
     const conflicts = getConflictsForDirectory(directory);
 
     if (conflicts.length > 0) {
-      logger.warn(
-        `The directory ${chalk.bold(
-          directory,
-        )} contains files that will be overwritten:`,
-      );
+      let warnMessage = `The directory ${chalk.bold(
+        directory,
+      )} contains files that will be overwritten:\n`;
 
       for (const conflict of conflicts) {
-        logger.log(`  ${conflict}`);
+        warnMessage += `   ${conflict}\n`;
       }
+
+      logger.warn(warnMessage);
 
       const {replace} = await prompt({
         type: 'confirm',

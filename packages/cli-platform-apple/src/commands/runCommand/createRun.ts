@@ -33,7 +33,7 @@ import {runOnDevice} from './runOnDevice';
 import {runOnSimulator} from './runOnSimulator';
 import {BuilderCommand} from '../../types';
 import {supportedPlatforms} from '../../config/supportedPlatforms';
-import installApp from './installApp';
+import openApp from './openApp';
 
 export interface FlagsT extends BuildFlags {
   simulator?: string;
@@ -137,14 +137,13 @@ const createRun =
         args,
       );
 
-      installApp({
+      openApp({
         buildOutput,
         xcodeProject,
         mode,
         scheme,
         target: args.target,
         binaryPath: args.binaryPath,
-        platform: 'macos',
       });
 
       return;

@@ -25,7 +25,7 @@ type Options = {
   mode: string;
   scheme: string;
   target?: string;
-  udid?: string;
+  udid: string;
   binaryPath?: string;
   platform?: ApplePlatform;
 };
@@ -77,38 +77,30 @@ export default async function installApp({
     });
   }
 
-  if (platform === 'macos') {
-    logger.info(`Launching "${chalk.bold(appPath)}"`);
+  const bundleID = child_process
+    .execFileSync(
+      '/usr/libexec/PlistBuddy',
+      [
+        '-c',
+        'Print:CFBundleIdentifier',
+        path.join(targetBuildDir, infoPlistPath),
+      ],
+      {encoding: 'utf8'},
+    )
+    .trim();
 
-    child_process.exec(`open "${appPath}"`, (error, _, stderr) => {
-      handleLaunchResult(!error, 'Failed to launch the app', stderr);
-    });
-  } else if (udid) {
-    const bundleID = child_process
-      .execFileSync(
-        '/usr/libexec/PlistBuddy',
-        [
-          '-c',
-          'Print:CFBundleIdentifier',
-          path.join(targetBuildDir, infoPlistPath),
-        ],
-        {encoding: 'utf8'},
-      )
-      .trim();
+  logger.info(`Launching "${chalk.bold(bundleID)}"`);
 
-    logger.info(`Launching "${chalk.bold(bundleID)}"`);
+  let result = child_process.spawnSync('xcrun', [
+    'simctl',
+    'launch',
+    udid,
+    bundleID,
+  ]);
 
-    let result = child_process.spawnSync('xcrun', [
-      'simctl',
-      'launch',
-      udid,
-      bundleID,
-    ]);
-
-    handleLaunchResult(
-      result.status === 0,
-      'Failed to launch the app on simulator',
-      result.stderr.toString(),
-    );
-  }
+  handleLaunchResult(
+    result.status === 0,
+    'Failed to launch the app on simulator',
+    result.stderr.toString(),
+  );
 }

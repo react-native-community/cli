@@ -20,7 +20,7 @@ function handleLaunchResult(
 }
 
 type Options = {
-  buildOutput: any;
+  buildOutput: string;
   xcodeProject: IOSProjectInfo;
   mode: string;
   scheme: string;

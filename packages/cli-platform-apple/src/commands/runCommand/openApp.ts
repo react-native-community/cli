@@ -6,7 +6,7 @@ import {getBuildPath} from './getBuildPath';
 import {getBuildSettings} from './getBuildSettings';
 
 type Options = {
-  buildOutput: any;
+  buildOutput: string;
   xcodeProject: IOSProjectInfo;
   mode: string;
   scheme: string;

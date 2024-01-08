@@ -11,6 +11,7 @@ A project can define a `react-native.config.js` at the root with custom configur
 For example, below configuration informs CLI about a source directory with iOS files.
 
 ```js
+/** @type import("@react-native-community/cli-types").Config */
 module.exports = {
   project: {
     ios: {
@@ -27,6 +28,7 @@ You can check all available options below.
 ## Project interface
 
 ```ts
+// referenced from @react-native-community/cli-types
 type ProjectConfigT = {
   reactNativePath: ?string;
   project: {
@@ -62,6 +64,7 @@ In most cases, as a React Native developer, you should not need to define any of
 The following settings are available on iOS and Android:
 
 ```ts
+// referenced from @react-native-community/cli-types
 type IOSProjectParams = {
   sourceDir?: string;
   watchModeCommandParams?: string[];
@@ -163,6 +166,7 @@ Dependencies is a map where key is the name of the dependency and value is an ob
 For example, you could set:
 
 ```js
+/** @type import("@react-native-community/cli-types").Config */
 module.exports = {
   dependencies: {
     'react-native-webview': {
@@ -179,6 +183,7 @@ in order to disable linking of React Native WebView on iOS.
 or you could set:
 
 ```js
+/** @type import("@react-native-community/cli-types").Config */
 module.exports = {
   dependencies: {
     'react-native-brownfield': {
@@ -198,6 +203,7 @@ in order to use something else than `implementation` _(default scope method)_
 Another use-case would be supporting local libraries that are not discoverable for autolinking, since they're not part of your `dependencies` or `devDependencies`:
 
 ```js
+/** @type import("@react-native-community/cli-types").Config */
 module.exports = {
   dependencies: {
     'local-rn-library': {

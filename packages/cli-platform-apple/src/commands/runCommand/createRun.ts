@@ -151,18 +151,14 @@ const createRun =
 
     const devices = await listDevices(sdkNames);
 
-    const availableDevices = devices.filter(
-      ({isAvailable}) => isAvailable === true,
-    );
-
-    if (availableDevices.length === 0) {
+    if (devices.length === 0) {
       return logger.error(
         `${platformReadableName} devices or simulators not detected. Install simulators via Xcode or connect a physical ${platformReadableName} device`,
       );
     }
 
     const fallbackSimulator =
-      platformName === 'ios' ? getFallbackSimulator(args) : availableDevices[0];
+      platformName === 'ios' ? getFallbackSimulator(args) : devices[0];
 
     if (args.listDevices || args.interactive) {
       if (args.device || args.udid) {
@@ -180,7 +176,7 @@ const createRun =
       );
 
       const selectedDevice = await promptForDeviceSelection(
-        availableDevices,
+        devices,
         preferredDevice,
       );
 
@@ -222,12 +218,10 @@ const createRun =
     }
 
     if (!args.device && !args.udid && !args.simulator) {
-      const bootedDevices = availableDevices.filter(
-        ({type}) => type === 'device',
-      );
-      const bootedSimulators = devices.filter(({type}) => type === 'simulator');
+      const booted = devices.filter(({state}) => state === 'Booted');
+      const bootedSimulators = booted.filter(({type}) => type === 'simulator');
+      const bootedDevices = booted.filter(({type}) => type === 'simulator');
 
-      const booted = [...bootedDevices, ...bootedSimulators];
       if (booted.length === 0) {
         logger.info(
           'No booted devices or simulators found. Launching first available simulator...',
@@ -276,12 +270,12 @@ const createRun =
     }
 
     if (args.udid) {
-      const device = availableDevices.find((d) => d.udid === args.udid);
+      const device = devices.find((d) => d.udid === args.udid);
       if (!device) {
         return logger.error(
           `Could not find a device with udid: "${chalk.bold(
             args.udid,
-          )}". ${printFoundDevices(availableDevices)}`,
+          )}". ${printFoundDevices(devices)}`,
         );
       }
       if (device.type === 'simulator') {
@@ -304,9 +298,7 @@ const createRun =
         );
       }
     } else if (args.device) {
-      const physicalDevices = availableDevices.filter(
-        ({type}) => type !== 'simulator',
-      );
+      const physicalDevices = devices.filter(({type}) => type !== 'simulator');
       const device = matchingDevice(physicalDevices, args.device);
       if (device) {
         return runOnDevice(

@@ -3,8 +3,7 @@ import {Config, IOSProjectConfig} from '@react-native-community/cli-types';
 import {spawnSync} from 'child_process';
 import os from 'os';
 import path from 'path';
-import getSimulators from '../../tools/getSimulators';
-import listDevices, {stripPlatform} from '../../tools/listDevices';
+import listDevices from '../../tools/listDevices';
 import {getPlatformInfo} from '../runCommand/getPlatformInfo';
 import {BuilderCommand, Device} from '../../types';
 import {supportedPlatforms} from '../../config/supportedPlatforms';
@@ -31,48 +30,31 @@ const createLog =
       throw new CLIError(`Unable to find ${platformName} platform config`);
     }
 
-    // Here we're using two command because first command `xcrun simctl list --json devices` outputs `state` but doesn't return `available`. But second command `xcrun xcdevice list` outputs `available` but doesn't output `state`. So we need to connect outputs of both commands.
-    const simulators = getSimulators();
-    const bootedSimulators = Object.keys(simulators.devices)
-      .map((key) => simulators.devices[key])
-      .reduce((acc, val) => acc.concat(val), [])
-      .filter(({state}) => state === 'Booted');
-
     const {sdkNames} = getPlatformInfo(platformName);
-    const devices = await listDevices(sdkNames);
+    const allDevices = await listDevices(sdkNames);
+    const simulators = allDevices.filter(({type}) => type === 'simulator');
 
-    const availableSimulators = devices.filter(
-      ({type, isAvailable}) => type === 'simulator' && isAvailable,
-    );
-
-    if (availableSimulators.length === 0) {
+    if (simulators.length === 0) {
       logger.error('No simulators detected. Install simulators via Xcode.');
       return;
     }
 
-    const bootedAndAvailableSimulators = bootedSimulators
-      .map((booted) => {
-        const available = availableSimulators.find(
-          ({udid}) => udid === booted.udid,
-        );
-        return {...available, ...booted};
-      })
-      .filter(({sdk}) => sdk && sdkNames.includes(stripPlatform(sdk)));
+    const booted = simulators.filter(({state}) => state === 'Booted');
 
-    if (bootedAndAvailableSimulators.length === 0) {
+    if (booted.length === 0) {
       logger.error(
         `No booted and available ${platformReadableName} simulators found.`,
       );
       return;
     }
 
-    if (args.interactive && bootedAndAvailableSimulators.length > 1) {
+    if (args.interactive && booted.length > 1) {
       const udid = await promptForDeviceToTailLogs(
         platformReadableName,
-        bootedAndAvailableSimulators,
+        booted,
       );
 
-      const simulator = bootedAndAvailableSimulators.find(
+      const simulator = booted.find(
         ({udid: deviceUDID}) => deviceUDID === udid,
       );
 
@@ -84,7 +66,7 @@ const createLog =
 
       tailDeviceLogs(simulator);
     } else {
-      tailDeviceLogs(bootedAndAvailableSimulators[0]);
+      tailDeviceLogs(booted[0]);
     }
   };
 

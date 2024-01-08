@@ -1,5 +1,6 @@
 import {Device} from '../types';
 import execa from 'execa';
+import child_process from 'child_process';
 
 type DeviceOutput = {
   modelCode: string;
@@ -49,9 +50,49 @@ const parseXcdeviceList = (text: string, sdkNames: string[] = []): Device[] => {
   return devices;
 };
 
+/**
+ * Executes `xcrun xcdevice list` and `xcrun simctl list --json devices`, and connects parsed output of these two commands. We're executing these two because first one doesn't return `available` but returns `state`, but second return `state` but not `available`.
+ * @param sdkNames
+ * @returns List of available devices and simulators.
+ */
 async function listDevices(sdkNames: string[]): Promise<Device[]> {
-  const out = execa.sync('xcrun', ['xcdevice', 'list']).stdout;
-  return parseXcdeviceList(out, sdkNames);
+  const xcdeviceOutput = execa.sync('xcrun', ['xcdevice', 'list']).stdout;
+  const parsedXcdeviceOutput = parseXcdeviceList(xcdeviceOutput, sdkNames);
+
+  const simctlOutput = JSON.parse(
+    child_process.execFileSync(
+      'xcrun',
+      ['simctl', 'list', '--json', 'devices'],
+      {encoding: 'utf8'},
+    ),
+  );
+
+  const parsedSimctlOutput: Device[] = Object.keys(simctlOutput.devices)
+    .map((key) => simctlOutput.devices[key])
+    .reduce((acc, val) => acc.concat(val), []);
+
+  const merged: Device[] = [];
+  const matchedUdids = new Set();
+
+  parsedXcdeviceOutput.forEach((first) => {
+    const match = parsedSimctlOutput.find(
+      (second) => first.udid === second.udid,
+    );
+    if (match) {
+      matchedUdids.add(first.udid);
+      merged.push({...first, ...match});
+    } else {
+      merged.push({...first});
+    }
+  });
+
+  parsedSimctlOutput.forEach((item) => {
+    if (!matchedUdids.has(item.udid)) {
+      merged.push({...item});
+    }
+  });
+
+  return merged.filter(({isAvailable}) => isAvailable === true);
 }
 
 export function stripPlatform(platform: string): string {

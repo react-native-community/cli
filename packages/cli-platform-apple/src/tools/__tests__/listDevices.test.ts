@@ -186,17 +186,6 @@ describe('listDevices', () => {
       type: 'simulator',
     });
 
-    // Find all available iPhone's event when not available
-    expect(devices).toContainEqual({
-      name: 'Adam’s iPhone',
-      isAvailable: false,
-      udid: '1234567890-0987654321',
-      version: '16.2 (20C65)',
-      sdk: 'com.apple.platform.iphoneos',
-      availabilityError:
-        'To use Adam’s iPhone for development, enable Developer Mode in Settings → Privacy & Security.',
-      type: 'device',
-    });
     // Filter out AppleTV
     expect(devices).not.toContainEqual({
       isAvailable: false,
@@ -242,28 +231,7 @@ describe('listDevices', () => {
       type: 'simulator',
     });
 
-    // Filter out all available iPhone's event when not available
-    expect(devices).not.toContainEqual({
-      name: 'Adam’s iPhone',
-      isAvailable: false,
-      udid: '1234567890-0987654321',
-      version: '16.2 (20C65)',
-      sdk: 'com.apple.platform.iphoneos',
-      availabilityError:
-        'To use Adam’s iPhone for development, enable Developer Mode in Settings → Privacy & Security.',
-      type: 'device',
-    });
-
     // Find AppleTV
-    expect(devices).toContainEqual({
-      isAvailable: false,
-      name: 'Living Room',
-      udid: '7656fbf922891c8a2c7682c9d845eaa6954c24d8',
-      sdk: 'com.apple.platform.appletvos',
-      version: '16.1 (20K71)',
-      availabilityError: 'Living Room is not connected',
-      type: 'device',
-    });
     expect(devices).toContainEqual({
       isAvailable: true,
       name: 'Apple TV 4K (2nd generation)',

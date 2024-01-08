@@ -1,9 +1,9 @@
-import child_process from 'child_process';
 import {CLIError, logger} from '@react-native-community/cli-tools';
 import {IOSProjectInfo} from '@react-native-community/cli-types';
 import chalk from 'chalk';
 import {getBuildPath} from './getBuildPath';
 import {getBuildSettings} from './getBuildSettings';
+import execa from 'execa';
 
 type Options = {
   buildOutput: string;
@@ -42,11 +42,10 @@ export default async function openApp({
 
   logger.info(`Opening "${chalk.bold(appPath)}"`);
 
-  child_process.exec(`open "${appPath}"`, (error, _, stderr) => {
-    if (error) {
-      logger.error('Failed to launch the app', stderr);
-    } else {
-      logger.success('Successfully launched the app');
-    }
-  });
+  try {
+    await execa(`open ${appPath}`);
+    logger.success('Successfully launched the app');
+  } catch (e) {
+    logger.error('Failed to launch the app', e as string);
+  }
 }

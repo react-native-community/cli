@@ -1,9 +1,13 @@
 import path from 'path';
 import fs from 'fs';
 import execa from 'execa';
-import {CLIError} from './errors';
 import resolveNodeModuleDir from './resolveNodeModuleDir';
 import logger from './logger';
+import chalk from 'chalk';
+
+const ERROR = `a dev server manually by running ${chalk.bold(
+  'npm start',
+)} or ${chalk.bold('yarn start')} in other terminal window.`;
 
 function startServerInNewWindow(
   port: number,
@@ -12,9 +16,11 @@ function startServerInNewWindow(
   terminal?: string,
 ) {
   if (!terminal) {
-    throw new CLIError(
-      'Cannot start server in new window because no terminal app was specified.',
+    logger.error(
+      'Cannot start server in new windows because no terminal app was specified, use --terminal to specify, or start ' +
+        ERROR,
     );
+    return;
   }
 
   /**
@@ -73,10 +79,12 @@ function startServerInNewWindow(
       );
     }
   } catch (error) {
-    return new CLIError(
-      `Couldn't copy the script for running bundler. Please check if the "${scriptFile}" file exists in the "node_modules/@react-native-community/cli-tools" folder and try again.`,
+    logger.error(
+      `Couldn't copy the script for running bundler. Please check if the "${scriptFile}" file exists in the "node_modules/@react-native-community/cli-tools" folder, or start ` +
+        ERROR,
       error as any,
     );
+    return;
   }
 
   if (process.platform === 'darwin') {
@@ -109,8 +117,10 @@ function startServerInNewWindow(
       stdio: 'ignore',
     });
   }
+
   logger.error(
-    `Cannot start the packager. Unknown platform ${process.platform}`,
+    `Cannot start the packager. Unknown platform ${process.platform}. Try starting ` +
+      ERROR,
   );
   return;
 }

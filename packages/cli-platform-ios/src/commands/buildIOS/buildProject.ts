@@ -153,7 +153,7 @@ function getProcessOptions<T extends BuildFlags>(
         : '';
 
     const port =
-      'port' in args && typeof args.port === 'string' ? args.port : '';
+      'port' in args && typeof args.port === 'number' ? String(args.port) : '';
 
     return {
       env: {

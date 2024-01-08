@@ -56,7 +56,7 @@ export async function runOnSimulator(
   }
 
   installApp({
-    buildOutput,
+    buildOutput: buildOutput ?? '',
     xcodeProject,
     mode,
     scheme,

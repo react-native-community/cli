@@ -5,6 +5,7 @@ import chalk from 'chalk';
 import {getBuildPath} from './getBuildPath';
 import {getBuildSettings} from './getBuildSettings';
 import path from 'path';
+import {ApplePlatform} from '../../types';
 
 function handleLaunchResult(
   success: boolean,
@@ -19,13 +20,14 @@ function handleLaunchResult(
 }
 
 type Options = {
-  buildOutput: any;
+  buildOutput: string;
   xcodeProject: IOSProjectInfo;
   mode: string;
   scheme: string;
   target?: string;
   udid: string;
   binaryPath?: string;
+  platform?: ApplePlatform;
 };
 
 export default async function installApp({
@@ -36,6 +38,7 @@ export default async function installApp({
   target,
   udid,
   binaryPath,
+  platform,
 }: Options) {
   let appPath = binaryPath;
 
@@ -52,11 +55,7 @@ export default async function installApp({
   }
 
   if (!appPath) {
-    appPath = await getBuildPath(buildSettings);
-  }
-
-  if (!buildSettings) {
-    throw new CLIError('Failed to get build settings for your project');
+    appPath = await getBuildPath(buildSettings, platform);
   }
 
   const targetBuildDir = buildSettings.TARGET_BUILD_DIR;

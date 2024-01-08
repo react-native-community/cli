@@ -1,9 +1,11 @@
 import {CLIError} from '@react-native-community/cli-tools';
 import path from 'path';
 import {BuildSettings} from './getBuildSettings';
+import {ApplePlatform} from '../../types';
 
 export async function getBuildPath(
   buildSettings: BuildSettings,
+  platform: ApplePlatform = 'ios',
   isCatalyst: boolean = false,
 ) {
   const targetBuildDir = buildSettings.TARGET_BUILD_DIR;
@@ -24,6 +26,8 @@ export async function getBuildPath(
 
   if (isCatalyst) {
     return path.join(targetBuildDir, '-maccatalyst', executableFolderPath);
+  } else if (platform === 'macos') {
+    return path.join(targetBuildDir, fullProductName);
   } else {
     return path.join(targetBuildDir, executableFolderPath);
   }

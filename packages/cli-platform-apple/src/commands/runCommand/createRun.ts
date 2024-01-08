@@ -33,6 +33,7 @@ import {runOnDevice} from './runOnDevice';
 import {runOnSimulator} from './runOnSimulator';
 import {BuilderCommand} from '../../types';
 import {supportedPlatforms} from '../../config/supportedPlatforms';
+import openApp from './openApp';
 
 export interface FlagsT extends BuildFlags {
   simulator?: string;
@@ -127,7 +128,24 @@ const createRun =
     );
 
     if (platformName === 'macos') {
-      buildProject(xcodeProject, platformName, undefined, mode, scheme, args);
+      const buildOutput = await buildProject(
+        xcodeProject,
+        platformName,
+        undefined,
+        mode,
+        scheme,
+        args,
+      );
+
+      openApp({
+        buildOutput,
+        xcodeProject,
+        mode,
+        scheme,
+        target: args.target,
+        binaryPath: args.binaryPath,
+      });
+
       return;
     }
 

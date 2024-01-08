@@ -218,9 +218,11 @@ const createRun =
     }
 
     if (!args.device && !args.udid && !args.simulator) {
-      const booted = devices.filter(({state}) => state === 'Booted');
-      const bootedSimulators = booted.filter(({type}) => type === 'simulator');
-      const bootedDevices = booted.filter(({type}) => type === 'simulator');
+      const bootedSimulators = devices.filter(
+        ({state, type}) => state === 'Booted' && type === 'simulator',
+      );
+      const bootedDevices = devices.filter(({type}) => type === 'device'); // Physical devices here are always booted
+      const booted = [...bootedSimulators, ...bootedDevices];
 
       if (booted.length === 0) {
         logger.info(

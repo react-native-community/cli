@@ -69,7 +69,10 @@ exports[`should edit template 4`] = `
 - First value
 + Second value
 
-@@ -8,5 +8,5 @@
+  Array [
+    \\"\\",
+    \\"/android\\",
+    \\"/android/android-java\\",
     \\"/android/android-java/com\\",
 -   \\"/android/android-java/com/placeholdername\\",
 -   \\"/android/android-java/com/placeholdername/MainActivity.java\\",
@@ -78,7 +81,6 @@ exports[`should edit template 4`] = `
 +   \\"/android/android-java/com/projectname/MainActivity.java\\",
 +   \\"/android/android-java/com/projectname/ProjectName.java\\",
     \\"/android/android-kotlin\\",
-@@ -14,14 +14,14 @@
     \\"/android/android-kotlin/com\\",
 -   \\"/android/android-kotlin/com/placeholdername\\",
 -   \\"/android/android-kotlin/com/placeholdername/MainActivity.kt\\",
@@ -102,7 +104,10 @@ exports[`should edit template 4`] = `
 +   \\"/ios/ProjectName/project.pbxproj\\",
 +   \\"/ios/ProjectNameTests\\",
 +   \\"/ios/ProjectNameTests/.gitkeep\\",
-    \\"/node_modules\\","
+    \\"/node_modules\\",
+    \\"/node_modules/PlaceholderName\\",
+    \\"/package.json\\",
+  ]"
 `;
 
 exports[`should edit template with custom title 1`] = `

@@ -112,7 +112,7 @@ skipIfNode20('should edit template', async () => {
       fixtureTree.map(slash).sort(),
       transformedTree.map(slash).sort(),
       {
-        contextLines: 1,
+        contextLines: 5,
       },
     ),
   ).toMatchSnapshot();

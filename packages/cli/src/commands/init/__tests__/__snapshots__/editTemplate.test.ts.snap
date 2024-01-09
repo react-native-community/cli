@@ -21,23 +21,11 @@ exports[`should edit template 1`] = `
 - First value
 + Second value
 
-@@ -515,12 +515,8 @@
-      80,
--     108,
--     97,
--     99,
--     101,
--     104,
-+     114,
-      111,
--     108,
--     100,
-+     106,
-      101,
--     114,
-+     99,
-+     116,
-      78,"
+@@ -15,3 +15,3 @@
+    protected String getMainComponentName() {
+-     return \\"PlaceholderName\\";
++     return \\"ProjectName\\";
+    }"
 `;
 
 exports[`should edit template 2`] = `
@@ -115,21 +103,9 @@ exports[`should edit template with custom title 1`] = `
 - First value
 + Second value
 
-@@ -515,12 +515,8 @@
-      80,
--     108,
--     97,
--     99,
--     101,
--     104,
-+     114,
-      111,
--     108,
--     100,
-+     106,
-      101,
--     114,
-+     99,
-+     116,
-      78,"
+@@ -15,3 +15,3 @@
+    protected String getMainComponentName() {
+-     return \\"PlaceholderName\\";
++     return \\"ProjectName\\";
+    }"
 `;

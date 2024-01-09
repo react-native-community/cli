@@ -67,6 +67,7 @@ skipIfNode20('should edit template', async () => {
       PLACEHOLDER_NAME.toLowerCase(),
       'MainActivity.java',
     ),
+    'utf8',
   );
 
   const newJavaFile = fs.readFileSync(
@@ -78,6 +79,7 @@ skipIfNode20('should edit template', async () => {
       PROJECT_NAME.toLowerCase(),
       'MainActivity.java',
     ),
+    'utf8',
   );
 
   const oldXmlFile = fs.readFileSync(
@@ -136,6 +138,7 @@ skipIfNode20('should edit template with custom title', async () => {
       PLACEHOLDER_NAME.toLowerCase(),
       'MainActivity.java',
     ),
+    'utf8',
   );
 
   const newJavaFile = fs.readFileSync(
@@ -147,6 +150,7 @@ skipIfNode20('should edit template with custom title', async () => {
       PROJECT_NAME.toLowerCase(),
       'MainActivity.java',
     ),
+    'utf8',
   );
 
   const replacedFile = fs.readFileSync(

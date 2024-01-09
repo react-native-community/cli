@@ -1,12 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`command specified in root config should overwrite command in "react-native-foo" and "react-native-bar" packages 1`] = `
-Array [
-  Object {
-    "description": "Custom option",
-    "name": "--option",
-  },
-]
+Object {
+  "func": [Function],
+  "name": "foo-command",
+  "options": Array [
+    Object {
+      "description": "Custom option",
+      "name": "--option",
+    },
+  ],
+}
 `;
 
 exports[`should apply build types from dependency config 1`] = `

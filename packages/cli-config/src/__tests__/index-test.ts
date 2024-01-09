@@ -178,7 +178,7 @@ test('command specified in root config should overwrite command in "react-native
   const commandIndex = commandsNames.indexOf('foo-command');
 
   expect(commands[commandIndex].options).not.toBeNull();
-  expect(commands[commandIndex].options).toMatchSnapshot();
+  expect(commands[commandIndex]).toMatchSnapshot();
 });
 
 test('should merge project configuration with default values', () => {

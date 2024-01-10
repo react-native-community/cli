@@ -169,12 +169,22 @@ export async function replacePlaceholderWithPackageName({
       if (filePath.includes('app.json')) {
         await replaceNameInUTF8File(filePath, projectName, placeholderName);
       } else {
-        // replace main component name for Android package
-        await replaceNameInUTF8File(
-          filePath,
-          `return "${projectName}"`,
-          `return "${placeholderName}"`,
-        );
+        const fileExtension = path.extname(filePath);
+
+        if (fileExtension === '.java') {
+          await replaceNameInUTF8File(
+            filePath,
+            `return "${projectName}"`,
+            `return "${placeholderName}"`,
+          );
+        } else if (fileExtension === '.kt') {
+          await replaceNameInUTF8File(
+            filePath,
+            `= "${projectName}"`,
+            `= "${placeholderName}"`,
+          );
+        }
+
         await replaceNameInUTF8File(
           filePath,
           `<string name="app_name">${projectName}</string>`,

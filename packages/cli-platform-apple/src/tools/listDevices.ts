@@ -51,7 +51,7 @@ const parseXcdeviceList = (text: string, sdkNames: string[] = []): Device[] => {
 };
 
 /**
- * Executes `xcrun xcdevice list` and `xcrun simctl list --json devices`, and connects parsed output of these two commands. We're executing these two because first one doesn't return `available` but returns `state`, but second return `state` but not `available`.
+ * Executes `xcrun xcdevice list` and `xcrun simctl list --json devices`, and connects parsed output of these two commands. We are running these two commands as they are necessary to display both physical devices and simulators. However, it's important to note that neither command provides a combined output of both.
  * @param sdkNames
  * @returns List of available devices and simulators.
  */

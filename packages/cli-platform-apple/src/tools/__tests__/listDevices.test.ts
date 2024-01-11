@@ -13,7 +13,7 @@ jest.mock('execa', () => {
   return {sync: jest.fn()};
 });
 
-const xcrunOut = `
+const xcrunXcdeviceOut = `
 [
   {
     "simulator" : true,
@@ -161,9 +161,56 @@ const xcrunOut = `
 ]
 `;
 
+const xcrunSimctlOut = `
+{
+  "devices" : {
+    "com.apple.CoreSimulator.SimRuntime.iOS-15-4" : [
+      {
+        "lastBootedAt" : "2023-01-28T19:25:34Z",
+        "dataPath" : "/Users/szymonrybczak/Library/Developer/CoreSimulator/Devices/C9A6A919-4F07-4386-9567-3CC655B3FECA/data",
+        "dataPathSize" : 1993961472,
+        "logPath" : "/Users/szymonrybczak/Library/Logs/CoreSimulator/C9A6A919-4F07-4386-9567-3CC655B3FECA",
+        "udid" : "C9A6A919-4F07-4386-9567-3CC655B3FECA",
+        "isAvailable" : false,
+        "availabilityError" : "runtime profile not found using 'System' match policy",
+        "deviceTypeIdentifier" : "com.apple.CoreSimulator.SimDeviceType.iPhone-8",
+        "state" : "Shutdown",
+        "name" : "iPhone 8"
+      },
+      {
+        "lastBootedAt" : "2023-01-28T19:25:34Z",
+        "dataPath" : "/Users/szymonrybczak/Library/Developer/CoreSimulator/Devices/E1556730-042F-433B-A26F-2B9D9805EAFF/data",
+        "dataPathSize" : 331509760,
+        "logPath" : "/Users/szymonrybczak/Library/Logs/CoreSimulator/E1556730-042F-433B-A26F-2B9D9805EAFF",
+        "udid" : "E1556730-042F-433B-A26F-2B9D9805EAFF",
+        "isAvailable" : false,
+        "availabilityError" : "runtime profile not found using 'System' match policy",
+        "deviceTypeIdentifier" : "com.apple.CoreSimulator.SimDeviceType.iPhone-8-Plus",
+        "state" : "Shutdown",
+        "name" : "iPhone 8 Plus"
+      },
+      {
+        "lastBootedAt" : "2023-01-28T19:35:52Z",
+        "dataPath" : "/Users/szymonrybczak/Library/Developer/CoreSimulator/Devices/4A9D2857-0D99-49AC-92CE-CA5BC48EF778/data",
+        "dataPathSize" : 1556078592,
+        "logPath" : "/Users/szymonrybczak/Library/Logs/CoreSimulator/4A9D2857-0D99-49AC-92CE-CA5BC48EF778",
+        "udid" : "4A9D2857-0D99-49AC-92CE-CA5BC48EF778",
+        "isAvailable" : false,
+        "availabilityError" : "runtime profile not found using 'System' match policy",
+        "deviceTypeIdentifier" : "com.apple.CoreSimulator.SimDeviceType.iPhone-11",
+        "state" : "Shutdown",
+        "name" : "iPhone 11"
+      }
+    ]
+  }
+}`;
+
 describe('listDevices', () => {
   it('parses output from xcdevice list for iOS', async () => {
-    (execa.sync as jest.Mock).mockReturnValueOnce({stdout: xcrunOut});
+    (execa.sync as jest.Mock)
+      .mockReturnValueOnce({stdout: xcrunXcdeviceOut})
+      .mockReturnValueOnce({stdout: xcrunSimctlOut});
+
     const devices = await listDevices(['iphoneos', 'iphonesimulator']);
 
     // Find all available simulators
@@ -217,7 +264,9 @@ describe('listDevices', () => {
   });
 
   it('parses output from xcdevice list for tvOS', async () => {
-    (execa.sync as jest.Mock).mockReturnValueOnce({stdout: xcrunOut});
+    (execa.sync as jest.Mock)
+      .mockReturnValueOnce({stdout: xcrunXcdeviceOut})
+      .mockReturnValueOnce({stdout: xcrunSimctlOut});
     const devices = await listDevices(['appletvos', 'appletvsimulator']);
 
     // Filter out all available simulators

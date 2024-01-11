@@ -1,6 +1,5 @@
 import {Device} from '../types';
 import execa from 'execa';
-import child_process from 'child_process';
 
 type DeviceOutput = {
   modelCode: string;
@@ -60,11 +59,7 @@ async function listDevices(sdkNames: string[]): Promise<Device[]> {
   const parsedXcdeviceOutput = parseXcdeviceList(xcdeviceOutput, sdkNames);
 
   const simctlOutput = JSON.parse(
-    child_process.execFileSync(
-      'xcrun',
-      ['simctl', 'list', '--json', 'devices'],
-      {encoding: 'utf8'},
-    ),
+    execa.sync('xcrun', ['simctl', 'list', '--json', 'devices']).stdout,
   );
 
   const parsedSimctlOutput: Device[] = Object.keys(simctlOutput.devices)

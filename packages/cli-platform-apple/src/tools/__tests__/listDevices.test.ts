@@ -13,6 +13,12 @@ jest.mock('execa', () => {
   return {sync: jest.fn()};
 });
 
+beforeEach(() => {
+  (execa.sync as jest.Mock)
+    .mockReturnValueOnce({stdout: xcrunXcdeviceOut})
+    .mockReturnValueOnce({stdout: xcrunSimctlOut});
+});
+
 const xcrunXcdeviceOut = `
 [
   {
@@ -62,6 +68,19 @@ const xcrunXcdeviceOut = `
     "modelUTI" : "com.apple.iphone-se3-1",
     "modelName" : "iPhone SE (3rd generation)",
     "name" : "iPhone SE (3rd generation)"
+  },
+  {
+    "simulator" : true,
+    "operatingSystemVersion" : "17.0 (21A328)",
+    "available" : true,
+    "platform" : "com.apple.platform.iphonesimulator",
+    "modelCode" : "iPhone16,2",
+    "identifier" : "B3D623E3-9907-4E0A-B76B-13B13A47FE92",
+    "architecture" : "arm64",
+    "modelUTI" : "com.apple.iphone-15-pro-max-1",
+    "modelName" : "iPhone 15 Pro Max",
+    "name" : "iPhone 15 Pro Max",
+    "ignored" : false
   },
   {
     "simulator" : false,
@@ -164,53 +183,37 @@ const xcrunXcdeviceOut = `
 const xcrunSimctlOut = `
 {
   "devices" : {
-    "com.apple.CoreSimulator.SimRuntime.iOS-15-4" : [
+    "com.apple.CoreSimulator.SimRuntime.iOS-16-2" : [
       {
-        "lastBootedAt" : "2023-01-28T19:25:34Z",
-        "dataPath" : "/Users/szymonrybczak/Library/Developer/CoreSimulator/Devices/C9A6A919-4F07-4386-9567-3CC655B3FECA/data",
-        "dataPathSize" : 1993961472,
-        "logPath" : "/Users/szymonrybczak/Library/Logs/CoreSimulator/C9A6A919-4F07-4386-9567-3CC655B3FECA",
-        "udid" : "C9A6A919-4F07-4386-9567-3CC655B3FECA",
+        "lastBootedAt" : "2023-05-09T11:08:32Z",
+        "dataPath" : "/Users/szymonrybczak/Library/Developer/CoreSimulator/Devices/54B1D3DE-A943-4867-BA6A-B82BFE3A7904/data",
+        "dataPathSize" : 4630163456,
+        "logPath" : "/Users/szymonrybczak/Library/Logs/CoreSimulator/54B1D3DE-A943-4867-BA6A-B82BFE3A7904",
+        "udid" : "54B1D3DE-A943-4867-BA6A-B82BFE3A7904",
         "isAvailable" : false,
-        "availabilityError" : "runtime profile not found using 'System' match policy",
-        "deviceTypeIdentifier" : "com.apple.CoreSimulator.SimDeviceType.iPhone-8",
+        "availabilityError" : "runtime profile not found using System match policy",
+        "deviceTypeIdentifier" : "com.apple.CoreSimulator.SimDeviceType.iPhone-14",
         "state" : "Shutdown",
-        "name" : "iPhone 8"
+        "name" : "iPhone 14"
       },
       {
-        "lastBootedAt" : "2023-01-28T19:25:34Z",
-        "dataPath" : "/Users/szymonrybczak/Library/Developer/CoreSimulator/Devices/E1556730-042F-433B-A26F-2B9D9805EAFF/data",
-        "dataPathSize" : 331509760,
-        "logPath" : "/Users/szymonrybczak/Library/Logs/CoreSimulator/E1556730-042F-433B-A26F-2B9D9805EAFF",
-        "udid" : "E1556730-042F-433B-A26F-2B9D9805EAFF",
-        "isAvailable" : false,
-        "availabilityError" : "runtime profile not found using 'System' match policy",
-        "deviceTypeIdentifier" : "com.apple.CoreSimulator.SimDeviceType.iPhone-8-Plus",
+        "lastBootedAt" : "2024-01-07T15:33:06Z",
+        "dataPath" : "/Users/szymonrybczak/Library/Developer/CoreSimulator/Devices/B3D623E3-9907-4E0A-B76B-13B13A47FE92/data",
+        "dataPathSize" : 4181225472,
+        "logPath" : "/Users/szymonrybczak/Library/Logs/CoreSimulator/B3D623E3-9907-4E0A-B76B-13B13A47FE92",
+        "udid" : "B3D623E3-9907-4E0A-B76B-13B13A47FE92",
+        "isAvailable" : true,
+        "logPathSize" : 745472,
+        "deviceTypeIdentifier" : "com.apple.CoreSimulator.SimDeviceType.iPhone-15-Pro-Max",
         "state" : "Shutdown",
-        "name" : "iPhone 8 Plus"
-      },
-      {
-        "lastBootedAt" : "2023-01-28T19:35:52Z",
-        "dataPath" : "/Users/szymonrybczak/Library/Developer/CoreSimulator/Devices/4A9D2857-0D99-49AC-92CE-CA5BC48EF778/data",
-        "dataPathSize" : 1556078592,
-        "logPath" : "/Users/szymonrybczak/Library/Logs/CoreSimulator/4A9D2857-0D99-49AC-92CE-CA5BC48EF778",
-        "udid" : "4A9D2857-0D99-49AC-92CE-CA5BC48EF778",
-        "isAvailable" : false,
-        "availabilityError" : "runtime profile not found using 'System' match policy",
-        "deviceTypeIdentifier" : "com.apple.CoreSimulator.SimDeviceType.iPhone-11",
-        "state" : "Shutdown",
-        "name" : "iPhone 11"
+        "name" : "iPhone 15 Pro Max"
       }
     ]
   }
 }`;
 
 describe('listDevices', () => {
-  it('parses output from xcdevice list for iOS', async () => {
-    (execa.sync as jest.Mock)
-      .mockReturnValueOnce({stdout: xcrunXcdeviceOut})
-      .mockReturnValueOnce({stdout: xcrunSimctlOut});
-
+  it('parses output list for iOS', async () => {
     const devices = await listDevices(['iphoneos', 'iphonesimulator']);
 
     // Find all available simulators
@@ -263,10 +266,7 @@ describe('listDevices', () => {
     });
   });
 
-  it('parses output from xcdevice list for tvOS', async () => {
-    (execa.sync as jest.Mock)
-      .mockReturnValueOnce({stdout: xcrunXcdeviceOut})
-      .mockReturnValueOnce({stdout: xcrunSimctlOut});
+  it('parses output for tvOS', async () => {
     const devices = await listDevices(['appletvos', 'appletvsimulator']);
 
     // Filter out all available simulators
@@ -299,6 +299,30 @@ describe('listDevices', () => {
       version: '13.0.1 (22A400)',
       availabilityError: undefined,
       type: 'device',
+    });
+  });
+
+  it('parses and merges output from two commands', async () => {
+    const devices = await listDevices(['iphoneos', 'iphonesimulator']);
+
+    expect(devices).toContainEqual({
+      availabilityError: undefined,
+      dataPath:
+        '/Users/szymonrybczak/Library/Developer/CoreSimulator/Devices/B3D623E3-9907-4E0A-B76B-13B13A47FE92/data',
+      dataPathSize: 4181225472,
+      deviceTypeIdentifier:
+        'com.apple.CoreSimulator.SimDeviceType.iPhone-15-Pro-Max',
+      isAvailable: true,
+      lastBootedAt: '2024-01-07T15:33:06Z',
+      logPath:
+        '/Users/szymonrybczak/Library/Logs/CoreSimulator/B3D623E3-9907-4E0A-B76B-13B13A47FE92',
+      logPathSize: 745472,
+      name: 'iPhone 15 Pro Max',
+      sdk: 'com.apple.platform.iphonesimulator',
+      state: 'Shutdown',
+      type: 'simulator',
+      udid: 'B3D623E3-9907-4E0A-B76B-13B13A47FE92',
+      version: '17.0 (21A328)',
     });
   });
 });

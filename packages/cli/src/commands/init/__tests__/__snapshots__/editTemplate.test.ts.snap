@@ -21,11 +21,11 @@ exports[`should edit template 1`] = `
 - First value
 + Second value
 
-@@ -12,3 +12,3 @@
-    RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
--                                             moduleName:@\\"PlaceholderName\\"
-+                                             moduleName:@\\"ProjectName\\"
-                                              initialProperties:nil];"
+@@ -15,3 +15,3 @@
+    protected String getMainComponentName() {
+-     return \\"PlaceholderName\\";
++     return \\"ProjectName\\";
+    }"
 `;
 
 exports[`should edit template 2`] = `
@@ -33,17 +33,11 @@ exports[`should edit template 2`] = `
 - First value
 + Second value
 
-@@ -1,2 +1,2 @@
-- com.placeholdername;
-+ com.projectname;
-
-@@ -4,4 +4,4 @@
-    public static void run() {
--     String name = \\"PlaceholderName\\";
--     String title = \\"Hello App Display Name\\";
-+     String name = \\"ProjectName\\";
-+     String title = \\"ProjectName\\";
-    }"
+@@ -12,3 +12,3 @@
+    RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
+-                                             moduleName:@\\"PlaceholderName\\"
++                                             moduleName:@\\"ProjectName\\"
+                                              initialProperties:nil];"
 `;
 
 exports[`should edit template 3`] = `
@@ -51,32 +45,57 @@ exports[`should edit template 3`] = `
 - First value
 + Second value
 
-@@ -4,14 +4,14 @@
-    \\"/android/com\\",
--   \\"/android/com/placeholdername\\",
--   \\"/android/com/placeholdername/Main.java\\",
--   \\"/android/com/placeholdername/MainActivity.java\\",
--   \\"/android/com/placeholdername/PlaceholderName.java\\",
-+   \\"/android/com/projectname\\",
-+   \\"/android/com/projectname/Main.java\\",
-+   \\"/android/com/projectname/MainActivity.java\\",
-+   \\"/android/com/projectname/ProjectName.java\\",
+@@ -1,3 +1,3 @@
+  <resources>
+-     <string name=\\"app_name\\">Hello App Display Name</string>
++     <string name=\\"app_name\\">ProjectName</string>
+  </resources>"
+`;
+
+exports[`should edit template 4`] = `
+"Snapshot Diff:
+- First value
++ Second value
+
+  Array [
+    \\"\\",
+    \\"/android\\",
+    \\"/android/android-java\\",
+    \\"/android/android-java/com\\",
+-   \\"/android/android-java/com/placeholdername\\",
+-   \\"/android/android-java/com/placeholdername/MainActivity.java\\",
+-   \\"/android/android-java/com/placeholdername/PlaceholderName.java\\",
++   \\"/android/android-java/com/projectname\\",
++   \\"/android/android-java/com/projectname/MainActivity.java\\",
++   \\"/android/android-java/com/projectname/ProjectName.java\\",
+    \\"/android/android-kotlin\\",
+    \\"/android/android-kotlin/com\\",
+-   \\"/android/android-kotlin/com/placeholdername\\",
+-   \\"/android/android-kotlin/com/placeholdername/MainActivity.kt\\",
+-   \\"/android/android-kotlin/com/placeholdername/PlaceholderName.kt\\",
++   \\"/android/android-kotlin/com/projectname\\",
++   \\"/android/android-kotlin/com/projectname/MainActivity.kt\\",
++   \\"/android/android-kotlin/com/projectname/ProjectName.kt\\",
+    \\"/android/strings.xml\\",
     \\"/ios\\",
 -   \\"/ios/PlaceholderName\\",
--   \\"/ios/PlaceholderName/AppDelegate.m\\",
--   \\"/ios/PlaceholderName/project.pbxproj\\",
 -   \\"/ios/PlaceholderName-tvOS\\",
 -   \\"/ios/PlaceholderName-tvOS/.gitkeep\\",
+-   \\"/ios/PlaceholderName/AppDelegate.m\\",
+-   \\"/ios/PlaceholderName/project.pbxproj\\",
 -   \\"/ios/PlaceholderNameTests\\",
 -   \\"/ios/PlaceholderNameTests/.gitkeep\\",
 +   \\"/ios/ProjectName\\",
-+   \\"/ios/ProjectName/AppDelegate.m\\",
-+   \\"/ios/ProjectName/project.pbxproj\\",
 +   \\"/ios/ProjectName-tvOS\\",
 +   \\"/ios/ProjectName-tvOS/.gitkeep\\",
++   \\"/ios/ProjectName/AppDelegate.m\\",
++   \\"/ios/ProjectName/project.pbxproj\\",
 +   \\"/ios/ProjectNameTests\\",
 +   \\"/ios/ProjectNameTests/.gitkeep\\",
-    \\"/node_modules\\","
+    \\"/node_modules\\",
+    \\"/node_modules/PlaceholderName\\",
+    \\"/package.json\\",
+  ]"
 `;
 
 exports[`should edit template with custom title 1`] = `
@@ -84,15 +103,9 @@ exports[`should edit template with custom title 1`] = `
 - First value
 + Second value
 
-@@ -1,2 +1,2 @@
-- com.placeholdername;
-+ com.projectname;
-
-@@ -4,4 +4,4 @@
-    public static void run() {
--     String name = \\"PlaceholderName\\";
--     String title = \\"Hello App Display Name\\";
-+     String name = \\"ProjectName\\";
-+     String title = \\"ProjectTitle\\";
+@@ -15,3 +15,3 @@
+    protected String getMainComponentName() {
+-     return \\"PlaceholderName\\";
++     return \\"ProjectName\\";
     }"
 `;

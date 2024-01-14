@@ -186,9 +186,9 @@ const xcrunSimctlOut = `
     "com.apple.CoreSimulator.SimRuntime.iOS-16-2" : [
       {
         "lastBootedAt" : "2023-05-09T11:08:32Z",
-        "dataPath" : "/Users/szymonrybczak/Library/Developer/CoreSimulator/Devices/54B1D3DE-A943-4867-BA6A-B82BFE3A7904/data",
+        "dataPath" : "<REPLACED_ROOT>/Library/Developer/CoreSimulator/Devices/54B1D3DE-A943-4867-BA6A-B82BFE3A7904/data",
         "dataPathSize" : 4630163456,
-        "logPath" : "/Users/szymonrybczak/Library/Logs/CoreSimulator/54B1D3DE-A943-4867-BA6A-B82BFE3A7904",
+        "logPath" : "<REPLACED_ROOT>/Library/Logs/CoreSimulator/54B1D3DE-A943-4867-BA6A-B82BFE3A7904",
         "udid" : "54B1D3DE-A943-4867-BA6A-B82BFE3A7904",
         "isAvailable" : false,
         "availabilityError" : "runtime profile not found using System match policy",
@@ -198,9 +198,9 @@ const xcrunSimctlOut = `
       },
       {
         "lastBootedAt" : "2024-01-07T15:33:06Z",
-        "dataPath" : "/Users/szymonrybczak/Library/Developer/CoreSimulator/Devices/B3D623E3-9907-4E0A-B76B-13B13A47FE92/data",
+        "dataPath" : "<REPLACED_ROOT>/Library/Developer/CoreSimulator/Devices/B3D623E3-9907-4E0A-B76B-13B13A47FE92/data",
         "dataPathSize" : 4181225472,
-        "logPath" : "/Users/szymonrybczak/Library/Logs/CoreSimulator/B3D623E3-9907-4E0A-B76B-13B13A47FE92",
+        "logPath" : "<REPLACED_ROOT>/Library/Logs/CoreSimulator/B3D623E3-9907-4E0A-B76B-13B13A47FE92",
         "udid" : "B3D623E3-9907-4E0A-B76B-13B13A47FE92",
         "isAvailable" : true,
         "logPathSize" : 745472,
@@ -308,14 +308,14 @@ describe('listDevices', () => {
     expect(devices).toContainEqual({
       availabilityError: undefined,
       dataPath:
-        '/Users/szymonrybczak/Library/Developer/CoreSimulator/Devices/B3D623E3-9907-4E0A-B76B-13B13A47FE92/data',
+        '<REPLACED_ROOT>/Library/Developer/CoreSimulator/Devices/B3D623E3-9907-4E0A-B76B-13B13A47FE92/data',
       dataPathSize: 4181225472,
       deviceTypeIdentifier:
         'com.apple.CoreSimulator.SimDeviceType.iPhone-15-Pro-Max',
       isAvailable: true,
       lastBootedAt: '2024-01-07T15:33:06Z',
       logPath:
-        '/Users/szymonrybczak/Library/Logs/CoreSimulator/B3D623E3-9907-4E0A-B76B-13B13A47FE92',
+        '<REPLACED_ROOT>/Library/Logs/CoreSimulator/B3D623E3-9907-4E0A-B76B-13B13A47FE92',
       logPathSize: 745472,
       name: 'iPhone 15 Pro Max',
       sdk: 'com.apple.platform.iphonesimulator',

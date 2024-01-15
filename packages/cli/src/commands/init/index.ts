@@ -56,5 +56,9 @@ export default {
       name: '--skip-git-init',
       description: 'Skip git repository initialization',
     },
+    {
+      name: '--replace-directory [boolean]',
+      description: 'Replaces the directory if it already exists.',
+    },
   ],
 };

@@ -1,9 +1,8 @@
 import os from 'os';
 import path from 'path';
-import fs from 'fs-extra';
+import fs, {readdirSync} from 'fs-extra';
 import {validateProjectName} from './validate';
 import chalk from 'chalk';
-import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
 import printRunInstructions from './printRunInstructions';
 import {
   CLIError,
@@ -35,6 +34,7 @@ import {
 } from './git';
 import semver from 'semver';
 import {executeCommand} from '../../tools/executeCommand';
+import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
 
 const DEFAULT_VERSION = 'latest';
 
@@ -51,6 +51,7 @@ type Options = {
   installPods?: string | boolean;
   platformName?: string;
   skipGitInit?: boolean;
+  replaceDirectory?: string | boolean;
 };
 
 interface TemplateOptions {
@@ -65,10 +66,12 @@ interface TemplateOptions {
   packageName?: string;
   installCocoaPods?: string | boolean;
   version?: string;
+  replaceDirectory?: string | boolean;
 }
 
 interface TemplateReturnType {
   didInstallPods?: boolean;
+  replaceDirectory?: string | boolean;
 }
 
 // Here we are defining explicit version of Yarn to be used in the new project because in some cases providing `3.x` don't work.
@@ -101,8 +104,58 @@ function doesDirectoryExist(dir: string) {
   return fs.existsSync(dir);
 }
 
-async function setProjectDirectory(directory: string) {
+function getConflictsForDirectory(directory: string) {
+  return readdirSync(directory);
+}
+
+async function setProjectDirectory(
+  directory: string,
+  replaceDirectory: string,
+) {
+  const directoryExists = doesDirectoryExist(directory);
+
+  if (replaceDirectory === 'false' && directoryExists) {
+    throw new DirectoryAlreadyExistsError(directory);
+  }
+
+  let deleteDirectory = false;
+
+  if (replaceDirectory === 'true' && directoryExists) {
+    deleteDirectory = true;
+  } else if (directoryExists) {
+    const conflicts = getConflictsForDirectory(directory);
+
+    if (conflicts.length > 0) {
+      let warnMessage = `The directory ${chalk.bold(
+        directory,
+      )} contains files that will be overwritten:\n`;
+
+      for (const conflict of conflicts) {
+        warnMessage += `   ${conflict}\n`;
+      }
+
+      logger.warn(warnMessage);
+
+      const {replace} = await prompt({
+        type: 'confirm',
+        name: 'replace',
+        message: 'Do you want to replace existing files?',
+      });
+
+      deleteDirectory = replace;
+
+      if (!replace) {
+        throw new DirectoryAlreadyExistsError(directory);
+      }
+    }
+  }
+
   try {
+    if (deleteDirectory) {
+      fs.removeSync(directory);
+    }
+
+    fs.mkdirSync(directory, {recursive: true});
     process.chdir(directory);
   } catch (error) {
     throw new CLIError(
@@ -145,6 +198,7 @@ async function createFromTemplate({
   skipInstall,
   packageName,
   installCocoaPods,
+  replaceDirectory,
 }: TemplateOptions): Promise<TemplateReturnType> {
   logger.debug('Initializing new project');
   // Only print out the banner if we're not in a CI
@@ -173,7 +227,10 @@ async function createFromTemplate({
   // if the project with the name already has cache, remove the cache to avoid problems with pods installation
   cacheManager.removeProjectCache(projectName);
 
-  const projectDirectory = await setProjectDirectory(directory);
+  const projectDirectory = await setProjectDirectory(
+    directory,
+    String(replaceDirectory),
+  );
 
   const loader = getLoader({text: 'Downloading template'});
   const templateSourceDir = fs.mkdtempSync(
@@ -361,6 +418,7 @@ async function createProject(
     packageName: options.packageName,
     installCocoaPods: options.installPods,
     version,
+    replaceDirectory: options.replaceDirectory,
   });
 }
 
@@ -404,12 +462,6 @@ export default (async function initialize(
       'Seems like the package manager you want to use is not installed. Please install it or choose another package manager.',
     );
     return;
-  }
-
-  if (doesDirectoryExist(projectFolder)) {
-    throw new DirectoryAlreadyExistsError(directoryName);
-  } else {
-    fs.mkdirSync(projectFolder, {recursive: true});
   }
 
   let shouldBumpYarnVersion = true;

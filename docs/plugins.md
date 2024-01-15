@@ -27,6 +27,8 @@ At the startup, React Native CLI reads configuration from all dependencies liste
 
 At the end, an array of commands concatenated from all plugins is passed on to the CLI to be loaded after built-in commands.
 
+Also, you can provide your own configuration by creating a `react-native.config.js` file in the root of the project, which overrides the configuration from plugins.
+
 > See [`healthChecks`](./healthChecks.md) for information on how plugins can provide additional health checks for `npx react-native doctor`.
 
 ## Command interface

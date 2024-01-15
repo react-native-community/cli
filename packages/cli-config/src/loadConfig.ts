@@ -5,6 +5,7 @@ import {
   DependencyConfig,
   UserConfig,
   Config,
+  Command,
 } from '@react-native-community/cli-types';
 import {
   findProjectRoot,
@@ -71,6 +72,16 @@ function getReactNativeVersion(reactNativePath: string) {
   }
   return 'unknown';
 }
+
+const removeDuplicateCommands = <T extends boolean>(commands: Command<T>[]) => {
+  const uniqueCommandsMap = new Map();
+
+  commands.forEach((command) => {
+    uniqueCommandsMap.set(command.name, command);
+  });
+
+  return Array.from(uniqueCommandsMap.values());
+};
 
 /**
  * Loads CLI configuration
@@ -143,7 +154,10 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
             );
           },
         }),
-        commands: [...acc.commands, ...config.commands],
+        commands: removeDuplicateCommands([
+          ...config.commands,
+          ...acc.commands,
+        ]),
         platforms: {
           ...acc.platforms,
           ...config.platforms,

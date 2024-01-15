@@ -128,6 +128,59 @@ test('should read a config of a dependency and use it to load other settings', (
   ).toMatchSnapshot();
 });
 
+test('command specified in root config should overwrite command in "react-native-foo" and "react-native-bar" packages', () => {
+  DIR = getTempDirectory('config_test_packages');
+  writeFiles(DIR, {
+    'node_modules/react-native-foo/package.json': '{}',
+    'node_modules/react-native-foo/react-native.config.js': `module.exports = {
+      commands: [
+        {
+          name: 'foo-command',
+          func: () => console.log('foo')
+        }
+      ]
+    }`,
+    'node_modules/react-native-bar/package.json': '{}',
+    'node_modules/react-native-bar/react-native.config.js': `module.exports = {
+      commands: [
+        {
+          name: 'bar-command',
+          func: () => console.log('bar')
+        }
+      ]
+    }`,
+    'package.json': `{
+      "dependencies": {
+        "react-native-foo": "0.0.1",
+        "react-native-bar": "0.0.1"
+      }
+    }`,
+    'react-native.config.js': `module.exports = {
+      reactNativePath: '.',
+      commands: [
+        {
+          name: 'foo-command',
+          func: () => {
+            console.log('overridden foo command');
+          },
+          options: [
+            {
+              name: '--option',
+              description: 'Custom option',
+            },
+          ],
+        },
+      ],
+    };`,
+  });
+  const {commands} = loadConfig(DIR);
+  const commandsNames = commands.map(({name}) => name);
+  const commandIndex = commandsNames.indexOf('foo-command');
+
+  expect(commands[commandIndex].options).not.toBeNull();
+  expect(commands[commandIndex]).toMatchSnapshot();
+});
+
 test('should merge project configuration with default values', () => {
   DIR = getTempDirectory('config_test_merge');
   writeFiles(DIR, {

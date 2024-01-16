@@ -18,7 +18,7 @@ import {
   IOSProjectConfig,
   IOSDependencyConfig,
 } from '@react-native-community/cli-types';
-import {CLIError} from '@react-native-community/cli-tools';
+import {CLIError, logger} from '@react-native-community/cli-tools';
 import {BuilderCommand} from '../types';
 
 /**
@@ -46,6 +46,13 @@ export const getProjectConfig =
     const sourceDir = path.dirname(podfile);
 
     const xcodeProject = findXcodeProject(fs.readdirSync(sourceDir));
+
+    // @ts-ignore @todo remove for RN 0.75
+    if (userConfig.unstable_reactLegacyComponentNames) {
+      logger.warn(
+        'The "project.ios.unstable_reactLegacyComponentNames" config option is not necessary anymore for React Native 0.74 and does nothing. Please remove it from the "react-native.config.js" file.',
+      );
+    }
 
     return {
       sourceDir,

@@ -68,7 +68,6 @@ The following settings are available on iOS and Android:
 type IOSProjectParams = {
   sourceDir?: string;
   watchModeCommandParams?: string[];
-  unstable_reactLegacyComponentNames?: string[] | null;
   automaticPodsInstallation?: boolean;
 };
 
@@ -79,7 +78,6 @@ type AndroidProjectParams = {
   packageName?: string;
   dependencyConfiguration?: string;
   watchModeCommandParams?: string[];
-  unstable_reactLegacyComponentNames?: string[] | null;
 };
 ```
 
@@ -94,7 +92,8 @@ Array of strings that will be passed to the `npx react-native run-ios` command w
 
 #### project.ios.unstable_reactLegacyComponentNames
 
-> Note: Only applicable when new architecture is turned on.
+> [!CAUTION]
+> Deprecated in React Native 0.74, where this behavior is detected automatically and this config does nothing. You can safely remove it from your project. 
 
 Please note that this is part of the **Unstable Fabric Interop Layer**, and might be subject to breaking change in the future,
 hence the `unstable_` prefix.
@@ -103,6 +102,8 @@ An array with a list of Legacy Component Name that you want to be registered wit
 This will allow you to use libraries that haven't been migrated yet on the New Architecture.
 
 The list should contain the name of the components, as they're registered in the ViewManagers (i.e. just `"Button"`).
+
+Since React Native 0.74, this property is ignored as the Interop Layer is **Automatic**, you don't need to register the Legacy Components anymore and they will be discovered automatically.
 
 #### project.ios.automaticPodsInstallation
 
@@ -141,7 +142,8 @@ Array of strings that will be passed to the `npx react-native run-android` comma
 
 #### project.android.unstable_reactLegacyComponentNames
 
-> Note: Only applicable when new architecture is turned on.
+> [!CAUTION]
+> Deprecated in React Native 0.74, where this behavior is detected automatically and this config does nothing. You can safely remove it from your project. 
 
 Please note that this is part of the **Unstable Fabric Interop Layer**, and might be subject to breaking change in the future,
 hence the `unstable_` prefix.
@@ -150,6 +152,8 @@ An array with a list of Legacy Component Name that you want to be registered wit
 This will allow you to use libraries that haven't been migrated yet on the New Architecture.
 
 The list should contain the name of the components, as they're registered in the ViewManagers (i.e. just `"Button"`).
+
+Since React Native 0.74, this property is ignored as the Interop Layer is **Automatic**, you don't need to register the Legacy Components anymore and they will be discovered automatically.
 
 ### platforms
 

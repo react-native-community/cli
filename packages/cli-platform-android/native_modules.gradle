@@ -142,7 +142,6 @@ class ReactNativeModules {
   private String packageName
   private File root
   private ArrayList<HashMap<String, String>> reactNativeModules
-  private ArrayList<String> unstable_reactLegacyComponentNames
   private HashMap<String, ArrayList> reactNativeModulesBuildVariants
   private String reactNativeVersion
 
@@ -157,7 +156,6 @@ class ReactNativeModules {
     this.reactNativeModules = nativeModules
     this.reactNativeModulesBuildVariants = reactNativeModulesBuildVariants
     this.packageName = androidProject["packageName"]
-    this.unstable_reactLegacyComponentNames = androidProject["unstable_reactLegacyComponentNames"]
     this.reactNativeVersion = reactNativeVersion
   }
 
@@ -296,7 +294,6 @@ class ReactNativeModules {
 
   void generateRncliCpp(File outputDir, String generatedFileName, String generatedFileContentsTemplate) {
     ArrayList<HashMap<String, String>> packages = this.reactNativeModules
-    ArrayList<String> unstable_reactLegacyComponentNames = this.unstable_reactLegacyComponentNames
     String rncliCppIncludes = ""
     String rncliCppModuleProviders = ""
     String rncliCppComponentDescriptors = ""
@@ -331,16 +328,6 @@ class ReactNativeModules {
         }
         result
       }.join("\n")
-    }
-
-    rncliReactLegacyComponentDescriptors = unstable_reactLegacyComponentNames.collect {
-      "  providerRegistry->add(concreteComponentDescriptorProvider<UnstableLegacyViewManagerInteropComponentDescriptor<${it}>>());"
-    }.join("\n")
-    rncliReactLegacyComponentNames = unstable_reactLegacyComponentNames.collect {
-      "extern const char ${it}[] = \"${it}\";"
-    }.join("\n")
-    if (unstable_reactLegacyComponentNames && unstable_reactLegacyComponentNames.size() > 0) {
-      rncliCppIncludes += "\n#include <react/renderer/components/legacyviewmanagerinterop/UnstableLegacyViewManagerInteropComponentDescriptor.h>"
     }
 
     String generatedFileContents = generatedFileContentsTemplate

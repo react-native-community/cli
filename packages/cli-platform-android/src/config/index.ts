@@ -76,8 +76,7 @@ export function projectConfig(
     mainActivity,
     dependencyConfiguration: userConfig.dependencyConfiguration,
     watchModeCommandParams: userConfig.watchModeCommandParams,
-    unstable_reactLegacyComponentNames:
-      userConfig.unstable_reactLegacyComponentNames,
+    unstable_reactLegacyComponentNames: null,
   };
 }
 

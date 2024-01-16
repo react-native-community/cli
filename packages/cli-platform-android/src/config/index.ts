@@ -71,7 +71,7 @@ export function projectConfig(
   // @todo remove for RN 0.75
   if (userConfig.unstable_reactLegacyComponentNames) {
     logger.warn(
-      'The "unstable_reactLegacyComponentNames" config option is not necessary anymore for React Native 0.74 and does nothing. Please remove it from the "react-native.config.js" file.',
+      'The "project.android.unstable_reactLegacyComponentNames" config option is not necessary anymore for React Native 0.74 and does nothing. Please remove it from the "react-native.config.js" file.',
     );
   }
 

@@ -92,7 +92,8 @@ Array of strings that will be passed to the `npx react-native run-ios` command w
 
 #### project.ios.unstable_reactLegacyComponentNames
 
-> Note: Deprecated in React Native 0.74. Only applicable when new architecture is turned on.
+> [!CAUTION]
+> Deprecated in React Native 0.74, where this behavior is detected automatically and this config does nothing. You can safely remove it from your project. 
 
 Please note that this is part of the **Unstable Fabric Interop Layer**, and might be subject to breaking change in the future,
 hence the `unstable_` prefix.
@@ -141,7 +142,8 @@ Array of strings that will be passed to the `npx react-native run-android` comma
 
 #### project.android.unstable_reactLegacyComponentNames
 
-> Note: Deprecated in React Native 0.74. Only applicable when new architecture is turned on.
+> [!CAUTION]
+> Deprecated in React Native 0.74, where this behavior is detected automatically and this config does nothing. You can safely remove it from your project. 
 
 Please note that this is part of the **Unstable Fabric Interop Layer**, and might be subject to breaking change in the future,
 hence the `unstable_` prefix.

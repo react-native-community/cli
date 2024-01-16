@@ -647,10 +647,10 @@ export default {
         '"iPhone 15 (17.0)"',
     },
     {
-      name: '--device <string>',
+      name: '--device [string]', // here we're intentionally using [] over <> to make passed value optional to allow users to run only on physical devices
       description:
-        'Explicitly set the device to use by name. The value is not required ' +
-        'if you have a single device connected.',
+        'Explicitly set the device to use by name. If the value is not provided,' +
+        'the app will run on the first available physical device.',
     },
     {
       name: '--udid <string>',

@@ -12,11 +12,8 @@ import {CopyAssets, IOSCopyAssetsOptions} from './types';
  * except it does not copy assets but creates Xcode Group references
  */
 const copyAssets: CopyAssets = (assetFiles, options) => {
-  const {
-    platformPath,
-    ios_pbxprojFilePath: pbxprojFilePath,
-    ios_addFont: addFont,
-  } = options as IOSCopyAssetsOptions;
+  const {platformPath, pbxprojFilePath, addFont} =
+    options as IOSCopyAssetsOptions;
 
   const project = xcode.project(pbxprojFilePath).parseSync();
   const plist = getPlist(project, platformPath);

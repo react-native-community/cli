@@ -8,11 +8,8 @@ import writePlist from '../helpers/xcode/writePlist';
 import {CleanAssets, IOSCleanAssetsOptions} from './types';
 
 const cleanAssets: CleanAssets = (assetFiles, options) => {
-  const {
-    platformPath,
-    ios_pbxprojFilePath: pbxprojFilePath,
-    ios_addFont: addFont,
-  } = options as IOSCleanAssetsOptions;
+  const {platformPath, pbxprojFilePath, addFont} =
+    options as IOSCleanAssetsOptions;
 
   const project = xcode.project(pbxprojFilePath).parseSync();
   const plist = getPlist(project, platformPath);

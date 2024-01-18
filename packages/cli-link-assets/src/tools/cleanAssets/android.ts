@@ -19,11 +19,8 @@ import {
 import {AndroidCleanAssetsOptions, CleanAssets} from './types';
 
 const cleanAssets: CleanAssets = (assetFiles, options) => {
-  const {
-    platformPath,
-    platformAssetsPath,
-    android_useFontXMLFiles: useFontXMLFiles,
-  } = options as AndroidCleanAssetsOptions;
+  const {platformPath, platformAssetsPath, useFontXMLFiles} =
+    options as AndroidCleanAssetsOptions;
 
   // If the assets are not fonts and are not linked with XML files, just remove them.
   if (!useFontXMLFiles) {

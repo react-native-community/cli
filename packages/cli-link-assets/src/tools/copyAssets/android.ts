@@ -23,11 +23,8 @@ import {
 import {AndroidCopyAssetsOptions, CopyAssets} from './types';
 
 const copyAssets: CopyAssets = (assetFiles, options) => {
-  const {
-    platformPath,
-    platformAssetsPath,
-    android_useFontXMLFiles: useFontXMLFiles,
-  } = options as AndroidCopyAssetsOptions;
+  const {platformPath, platformAssetsPath, useFontXMLFiles} =
+    options as AndroidCopyAssetsOptions;
 
   // If the assets are not fonts and don't need to link with XML files, just copy them.
   if (!useFontXMLFiles) {

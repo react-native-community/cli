@@ -59,6 +59,28 @@ test('launches adb shell with intent to launch com.myapp.MainActivity with diffe
   );
 });
 
+test('launches adb shell with intent to launch com.myapp.MainActivity with different appId than packageName on a simulator when mainActivity is fully qualified name', () => {
+  tryLaunchAppOnDevice(
+    device,
+    {...androidProject, mainActivity: 'com.myapp.MainActivity'},
+    adbPath,
+    args,
+  );
+
+  expect(execa.sync).toHaveBeenCalledWith(
+    'path/to/adb',
+    [
+      '-s',
+      'emulator-5554',
+      ...shellStartCommand,
+      '-n',
+      'com.myapp.custom/com.myapp.MainActivity',
+      ...actionCategoryFlags,
+    ],
+    {stdio: 'inherit'},
+  );
+});
+
 test('launches adb shell with intent to launch com.myapp.MainActivity with same appId as packageName on a simulator', () => {
   tryLaunchAppOnDevice(
     device,

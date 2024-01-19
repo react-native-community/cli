@@ -24,7 +24,9 @@ function tryLaunchAppOnDevice(
     .filter(Boolean)
     .join('.');
 
-  const activityToLaunch = mainActivity.includes('.')
+  const activityToLaunch = mainActivity.startsWith(packageName)
+    ? mainActivity
+    : mainActivity.startsWith('.')
     ? [packageName, mainActivity].join('')
     : [packageName, mainActivity].filter(Boolean).join('.');
 

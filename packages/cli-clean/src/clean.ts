@@ -1,4 +1,4 @@
-import {getLoader, prompt} from '@react-native-community/cli-tools';
+import {getLoader, logger, prompt} from '@react-native-community/cli-tools';
 import type {Config as CLIConfig} from '@react-native-community/cli-types';
 import chalk from 'chalk';
 import execa from 'execa';
@@ -6,6 +6,7 @@ import {existsSync as fileExists, rm} from 'fs';
 import os from 'os';
 import path from 'path';
 import {promisify} from 'util';
+import glob from 'glob';
 
 type Args = {
   include?: string;
@@ -28,13 +29,37 @@ type CleanGroups = {
 const DEFAULT_GROUPS = ['metro', 'watchman'];
 
 const rmAsync = promisify(rm);
+const rmAsyncOptions = {maxRetries: 3, recursive: true, force: true};
 
-function cleanDir(directory: string): Promise<void> {
-  if (!fileExists(directory)) {
-    return Promise.resolve();
+function isDirectoryPattern(directory: string): boolean {
+  return directory.endsWith('*') || directory.endsWith('?');
+}
+
+export async function cleanDir(directory: string): Promise<void> {
+  try {
+    if (isDirectoryPattern(directory)) {
+      const directories = await new Promise<string[]>((resolve, reject) => {
+        glob(directory, {}, (err, foundDirectories) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(foundDirectories);
+          }
+        });
+      });
+
+      for (const dir of directories) {
+        await rmAsync(dir, rmAsyncOptions);
+      }
+    } else {
+      if (!fileExists(directory)) {
+        return;
+      }
+      await rmAsync(directory, rmAsyncOptions);
+    }
+  } catch (error) {
+    logger.error(`An error occurred while cleaning the directory: ${error}`);
   }
-
-  return rmAsync(directory, {maxRetries: 3, recursive: true, force: true});
 }
 
 async function promptForCaches(

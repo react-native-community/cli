@@ -8,7 +8,7 @@
     "**/build": true
   },
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": "explicit"
   },
   "flow.useNPMPackagedFlow": true,
   "javascript.validate.enable": false,

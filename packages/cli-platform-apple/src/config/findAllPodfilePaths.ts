@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import glob from 'glob';
+import {glob} from 'glob';
 
 // These folders will be excluded from search to speed it up
 const GLOB_EXCLUDE_PATTERN = ['**/@(Pods|node_modules|Carthage|vendor)/**'];

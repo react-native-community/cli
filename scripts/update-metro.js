@@ -7,7 +7,7 @@
 const fs = require('fs');
 const path = require('path');
 const cp = require('child_process');
-const glob = require('glob').sync;
+const {glob} = require('glob');
 const chalk = require('chalk');
 
 /**
@@ -42,25 +42,27 @@ const updateDependencies = (depsObject) => {
 };
 
 const start = new Date().getTime();
-['./package.json', ...glob('./packages/*/package.json')].forEach((pkgPath) => {
-  const pkg = require(path.join(process.cwd(), pkgPath));
+['./package.json', ...glob.sync('./packages/*/package.json')].forEach(
+  (pkgPath) => {
+    const pkg = require(path.join(process.cwd(), pkgPath));
 
-  const updatedDependency = pkg.dependencies
-    ? Object.assign(pkg, {
-        dependencies: updateDependencies(pkg.dependencies),
-      })
-    : pkg;
-  const updatedDevDependency = pkg.devDependencies
-    ? Object.assign(updatedDependency, {
-        devDependencies: updateDependencies(pkg.devDependencies),
-      })
-    : updatedDependency;
+    const updatedDependency = pkg.dependencies
+      ? Object.assign(pkg, {
+          dependencies: updateDependencies(pkg.dependencies),
+        })
+      : pkg;
+    const updatedDevDependency = pkg.devDependencies
+      ? Object.assign(updatedDependency, {
+          devDependencies: updateDependencies(pkg.devDependencies),
+        })
+      : updatedDependency;
 
-  fs.writeFileSync(
-    pkgPath,
-    `${JSON.stringify(updatedDevDependency, null, 2)}\n`,
-  );
-});
+    fs.writeFileSync(
+      pkgPath,
+      `${JSON.stringify(updatedDevDependency, null, 2)}\n`,
+    );
+  },
+);
 const end = new Date().getTime();
 const ellapsedTime = (end - start) / 1000;
 console.log(`✨ Done in ${ellapsedTime}s.`);

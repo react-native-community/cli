@@ -7,7 +7,7 @@
  */
 
 import fs from 'fs';
-import glob from 'glob';
+import {glob} from 'glob';
 import path from 'path';
 
 export default function getPackageClassName(folder: string) {

@@ -148,23 +148,23 @@ describeIfSupportedEnv()('native_modules.rb', () => {
             (target) => target.name === 'iOS Target',
           ).dependencies,
         ).toMatchInlineSnapshot(`
-            Array [
-              Object {
-                "ios-dep": Array [
-                  Object {
-                    "path": "node_modules/ios-dep",
-                  },
-                ],
-              },
-              Object {
-                "ios-and-macos-dep": Array [
-                  Object {
-                    "path": "node_modules/ios-and-macos-dep",
-                  },
-                ],
-              },
-            ]
-          `);
+          [
+            {
+              "ios-dep": [
+                {
+                  "path": "node_modules/ios-dep",
+                },
+              ],
+            },
+            {
+              "ios-and-macos-dep": [
+                {
+                  "path": "node_modules/ios-and-macos-dep",
+                },
+              ],
+            },
+          ]
+        `);
       });
     });
 
@@ -175,23 +175,23 @@ describeIfSupportedEnv()('native_modules.rb', () => {
             (target) => target.name === 'macOS Target',
           ).dependencies,
         ).toMatchInlineSnapshot(`
-            Array [
-              Object {
-                "macos-dep": Array [
-                  Object {
-                    "path": "node_modules/macos-dep",
-                  },
-                ],
-              },
-              Object {
-                "ios-and-macos-dep": Array [
-                  Object {
-                    "path": "node_modules/ios-and-macos-dep",
-                  },
-                ],
-              },
-            ]
-          `);
+          [
+            {
+              "macos-dep": [
+                {
+                  "path": "node_modules/macos-dep",
+                },
+              ],
+            },
+            {
+              "ios-and-macos-dep": [
+                {
+                  "path": "node_modules/ios-and-macos-dep",
+                },
+              ],
+            },
+          ]
+        `);
       });
     });
   });
@@ -200,22 +200,22 @@ describeIfSupportedEnv()('native_modules.rb', () => {
     runConfig.podsActivatedByUser = ['ios-dep'];
     return run(runConfig).then(({rootTargetDefinition}: RunResult) => {
       expect(rootTargetDefinition).toMatchInlineSnapshot(`
-        Object {
+        {
           "abstract": true,
-          "children": Array [
-            Object {
+          "children": [
+            {
               "dependencies": null,
               "inheritance": "complete",
               "name": "iOS Target",
               "platform": "ios",
               "podspecs": null,
             },
-            Object {
+            {
               "name": "macOS Target",
               "platform": "osx",
             },
           ],
-          "dependencies": Array [
+          "dependencies": [
             "ios-dep",
           ],
           "name": "Pods",
@@ -230,22 +230,22 @@ describeIfSupportedEnv()('native_modules.rb', () => {
     runConfig.podsActivatedByUser = ['ios-dep/foo/bar'];
     return run(runConfig).then(({rootTargetDefinition}: RunResult) => {
       expect(rootTargetDefinition).toMatchInlineSnapshot(`
-        Object {
+        {
           "abstract": true,
-          "children": Array [
-            Object {
+          "children": [
+            {
               "dependencies": null,
               "inheritance": "complete",
               "name": "iOS Target",
               "platform": "ios",
               "podspecs": null,
             },
-            Object {
+            {
               "name": "macOS Target",
               "platform": "osx",
             },
           ],
-          "dependencies": Array [
+          "dependencies": [
             "ios-dep/foo/bar",
           ],
           "name": "Pods",
@@ -281,14 +281,14 @@ describeIfSupportedEnv()('native_modules.rb', () => {
       return run(runConfig).then(({rootTargetDefinition}: RunResult) => {
         expect(rootTargetDefinition.children[0].script_phases)
           .toMatchInlineSnapshot(`
-            Array [
-              Object {
-                "execution_position": "before_compile",
-                "name": "My Name",
-                "script": "123",
-              },
-            ]
-          `);
+          [
+            {
+              "execution_position": "before_compile",
+              "name": "My Name",
+              "script": "123",
+            },
+          ]
+        `);
       });
     });
 
@@ -305,14 +305,14 @@ describeIfSupportedEnv()('native_modules.rb', () => {
       return run(runConfig).then(({rootTargetDefinition}: RunResult) => {
         expect(rootTargetDefinition.children[0].script_phases)
           .toMatchInlineSnapshot(`
-            Array [
-              Object {
-                "execution_position": "before_compile",
-                "name": "My Name",
-                "script": "contents from some_shell_script.sh",
-              },
-            ]
-          `);
+          [
+            {
+              "execution_position": "before_compile",
+              "name": "My Name",
+              "script": "contents from some_shell_script.sh",
+            },
+          ]
+        `);
       });
     });
   });

@@ -1,11 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`command specified in root config should overwrite command in "react-native-foo" and "react-native-bar" packages 1`] = `
-Object {
+{
   "func": [Function],
   "name": "foo-command",
-  "options": Array [
-    Object {
+  "options": [
+    {
       "description": "Custom option",
       "name": "--option",
     },
@@ -14,16 +14,16 @@ Object {
 `;
 
 exports[`should apply build types from dependency config 1`] = `
-Object {
+{
   "name": "react-native-test",
-  "platforms": Object {
+  "platforms": {
     "android": null,
-    "ios": Object {
-      "configurations": Array [
+    "ios": {
+      "configurations": [
         "debug",
       ],
       "podspecPath": "<<REPLACED>>/node_modules/react-native-test/ReactNativeTest.podspec",
-      "scriptPhases": Array [],
+      "scriptPhases": [],
       "version": "unresolved",
     },
   },
@@ -32,12 +32,12 @@ Object {
 `;
 
 exports[`should have a valid structure by default 1`] = `
-Object {
-  "commands": Array [],
-  "dependencies": Object {},
-  "healthChecks": Array [],
-  "platforms": Object {},
-  "project": Object {},
+{
+  "commands": [],
+  "dependencies": {},
+  "healthChecks": [],
+  "platforms": {},
+  "project": {},
   "reactNativePath": "<<REPLACED>>",
   "reactNativeVersion": "unknown",
   "root": "<<REPLACED>>",
@@ -45,34 +45,28 @@ Object {
 `;
 
 exports[`should load commands from "react-native-foo" and "react-native-bar" packages 1`] = `
-Array [
-  Object {
+[
+  {
     "func": [Function],
     "name": "bar-command",
   },
-  Object {
+  {
     "func": [Function],
     "name": "foo-command",
-    "options": Array [
-      Object {
-        "description": "Custom option",
-        "name": "--option",
-      },
-    ],
   },
 ]
 `;
 
 exports[`should merge project configuration with default values: snapshoting \`react-native-test\` config 1`] = `
-Object {
+{
   "name": "react-native-test",
-  "platforms": Object {
+  "platforms": {
     "android": null,
-    "ios": Object {
-      "configurations": Array [],
+    "ios": {
+      "configurations": [],
       "podspecPath": "<<REPLACED>>/node_modules/react-native-test/ReactNativeTest.podspec",
-      "scriptPhases": Array [
-        Object {
+      "scriptPhases": [
+        {
           "name": "abc",
           "path": "./phase.sh",
         },
@@ -85,42 +79,42 @@ Object {
 `;
 
 exports[`should not skip packages that have invalid configuration (to avoid breaking users): dependencies config 1`] = `
-Object {
-  "react-native": Object {
+{
+  "react-native": {
     "name": "react-native",
-    "platforms": Object {},
+    "platforms": {},
     "root": "<<REPLACED>>/node_modules/react-native",
   },
 }
 `;
 
-exports[`should not skip packages that have invalid configuration (to avoid breaking users): logged warning 1`] = `"warn Package react-native contains invalid configuration: \\"dependency.invalidProperty\\" is not allowed. Please verify it's properly linked using \\"npx react-native config\\" command and contact the package maintainers about this."`;
+exports[`should not skip packages that have invalid configuration (to avoid breaking users): logged warning 1`] = `"warn Package react-native contains invalid configuration: "dependency.invalidProperty" is not allowed. Please verify it's properly linked using "npx react-native config" command and contact the package maintainers about this."`;
 
 exports[`should read a config of a dependency and use it to load other settings 1`] = `
-Object {
+{
   "name": "react-native-test",
-  "platforms": Object {
+  "platforms": {
     "android": null,
-    "ios": Object {
-      "configurations": Array [],
+    "ios": {
+      "configurations": [],
       "podspecPath": "<<REPLACED>>/node_modules/react-native-test/ReactNativeTest.podspec",
-      "scriptPhases": Array [
-        Object {
+      "scriptPhases": [
+        {
           "dependency_file": "/path/to/dependency/file",
           "execution_position": "after_compile",
-          "input_file_lists": Array [
+          "input_file_lists": [
             "input_file_1",
             "input_file_2",
           ],
-          "input_files": Array [
+          "input_files": [
             "input_file",
           ],
           "name": "[TEST] Some Configuration",
-          "output_file_lists": Array [
+          "output_file_lists": [
             "output_file_1",
             "output_file_2",
           ],
-          "output_files": Array [
+          "output_files": [
             "output_file",
           ],
           "path": "./customLocation/custom.sh",
@@ -136,23 +130,23 @@ Object {
 `;
 
 exports[`should return dependencies from package.json 1`] = `
-Object {
-  "react-native": Object {
+{
+  "react-native": {
     "name": "react-native",
-    "platforms": Object {
+    "platforms": {
       "android": null,
       "ios": null,
     },
     "root": "<<REPLACED>>/node_modules/react-native",
   },
-  "react-native-test": Object {
+  "react-native-test": {
     "name": "react-native-test",
-    "platforms": Object {
+    "platforms": {
       "android": null,
-      "ios": Object {
-        "configurations": Array [],
+      "ios": {
+        "configurations": [],
         "podspecPath": "<<REPLACED>>/node_modules/react-native-test/ReactNativeTest.podspec",
-        "scriptPhases": Array [],
+        "scriptPhases": [],
         "version": "unresolved",
       },
     },
@@ -162,16 +156,16 @@ Object {
 `;
 
 exports[`supports dependencies from user configuration with custom build type 1`] = `
-Object {
+{
   "name": "react-native-test",
-  "platforms": Object {
+  "platforms": {
     "android": null,
-    "ios": Object {
-      "configurations": Array [
+    "ios": {
+      "configurations": [
         "custom_build_type",
       ],
       "podspecPath": "<<REPLACED>>/node_modules/react-native-test/ReactNativeTest.podspec",
-      "scriptPhases": Array [],
+      "scriptPhases": [],
       "version": "unresolved",
     },
   },
@@ -180,9 +174,9 @@ Object {
 `;
 
 exports[`supports disabling dependency for ios platform 1`] = `
-Object {
+{
   "name": "react-native-test",
-  "platforms": Object {
+  "platforms": {
     "android": null,
     "ios": null,
   },

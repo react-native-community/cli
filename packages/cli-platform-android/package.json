@@ -22,8 +22,7 @@
   ],
   "devDependencies": {
     "@react-native-community/cli-types": "13.5.1-alpha.0",
-    "@types/fs-extra": "^8.1.0",
-    "@types/glob": "^7.1.1"
+    "@types/fs-extra": "^8.1.0"
   },
   "homepage": "https://github.com/react-native-community/cli/tree/main/packages/cli-platform-android",
   "repository": {

@@ -22,8 +22,7 @@
   ],
   "devDependencies": {
     "@react-native-community/cli-types": "13.5.1-alpha.0",
-    "@types/cosmiconfig": "^5.0.3",
-    "@types/glob": "^7.1.1"
+    "@types/cosmiconfig": "^5.0.3"
   },
   "homepage": "https://github.com/react-native-community/cli/tree/main/packages/cli-config",
   "repository": {

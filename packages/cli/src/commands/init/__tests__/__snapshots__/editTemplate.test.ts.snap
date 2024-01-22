@@ -7,12 +7,12 @@ exports[`changePlaceholderInTemplate should produce a lowercased version of "Pro
 
 @@ -1,6 +1,6 @@
   {
--   \\"name\\": \\"PlaceholderName\\",
-+   \\"name\\": \\"ProjectName\\",
-    \\"version\\": \\"0.0.1\\",
-    \\"scripts\\": {
--     \\"run-ios\\": \\"react-native run-ios --scheme PlaceholderNameDevelopment\\"
-+     \\"run-ios\\": \\"react-native run-ios --scheme ProjectNameDevelopment\\"
+-   "name": "PlaceholderName",
++   "name": "ProjectName",
+    "version": "0.0.1",
+    "scripts": {
+-     "run-ios": "react-native run-ios --scheme PlaceholderNameDevelopment"
++     "run-ios": "react-native run-ios --scheme ProjectNameDevelopment"
     }"
 `;
 
@@ -23,8 +23,8 @@ exports[`should edit template 1`] = `
 
 @@ -15,3 +15,3 @@
     protected String getMainComponentName() {
--     return \\"PlaceholderName\\";
-+     return \\"ProjectName\\";
+-     return "PlaceholderName";
++     return "ProjectName";
     }"
 `;
 
@@ -35,8 +35,8 @@ exports[`should edit template 2`] = `
 
 @@ -12,3 +12,3 @@
     RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
--                                             moduleName:@\\"PlaceholderName\\"
-+                                             moduleName:@\\"ProjectName\\"
+-                                             moduleName:@"PlaceholderName"
++                                             moduleName:@"ProjectName"
                                               initialProperties:nil];"
 `;
 
@@ -47,8 +47,8 @@ exports[`should edit template 3`] = `
 
 @@ -1,3 +1,3 @@
   <resources>
--     <string name=\\"app_name\\">Hello App Display Name</string>
-+     <string name=\\"app_name\\">ProjectName</string>
+-     <string name="app_name">Hello App Display Name</string>
++     <string name="app_name">ProjectName</string>
   </resources>"
 `;
 
@@ -58,43 +58,43 @@ exports[`should edit template 4`] = `
 + Second value
 
   Array [
-    \\"\\",
-    \\"/android\\",
-    \\"/android/android-java\\",
-    \\"/android/android-java/com\\",
--   \\"/android/android-java/com/placeholdername\\",
--   \\"/android/android-java/com/placeholdername/MainActivity.java\\",
--   \\"/android/android-java/com/placeholdername/PlaceholderName.java\\",
-+   \\"/android/android-java/com/projectname\\",
-+   \\"/android/android-java/com/projectname/MainActivity.java\\",
-+   \\"/android/android-java/com/projectname/ProjectName.java\\",
-    \\"/android/android-kotlin\\",
-    \\"/android/android-kotlin/com\\",
--   \\"/android/android-kotlin/com/placeholdername\\",
--   \\"/android/android-kotlin/com/placeholdername/MainActivity.kt\\",
--   \\"/android/android-kotlin/com/placeholdername/PlaceholderName.kt\\",
-+   \\"/android/android-kotlin/com/projectname\\",
-+   \\"/android/android-kotlin/com/projectname/MainActivity.kt\\",
-+   \\"/android/android-kotlin/com/projectname/ProjectName.kt\\",
-    \\"/android/strings.xml\\",
-    \\"/ios\\",
--   \\"/ios/PlaceholderName\\",
--   \\"/ios/PlaceholderName-tvOS\\",
--   \\"/ios/PlaceholderName-tvOS/.gitkeep\\",
--   \\"/ios/PlaceholderName/AppDelegate.m\\",
--   \\"/ios/PlaceholderName/project.pbxproj\\",
--   \\"/ios/PlaceholderNameTests\\",
--   \\"/ios/PlaceholderNameTests/.gitkeep\\",
-+   \\"/ios/ProjectName\\",
-+   \\"/ios/ProjectName-tvOS\\",
-+   \\"/ios/ProjectName-tvOS/.gitkeep\\",
-+   \\"/ios/ProjectName/AppDelegate.m\\",
-+   \\"/ios/ProjectName/project.pbxproj\\",
-+   \\"/ios/ProjectNameTests\\",
-+   \\"/ios/ProjectNameTests/.gitkeep\\",
-    \\"/node_modules\\",
-    \\"/node_modules/PlaceholderName\\",
-    \\"/package.json\\",
+    "",
+    "/android",
+    "/android/android-java",
+    "/android/android-java/com",
+-   "/android/android-java/com/placeholdername",
+-   "/android/android-java/com/placeholdername/MainActivity.java",
+-   "/android/android-java/com/placeholdername/PlaceholderName.java",
++   "/android/android-java/com/projectname",
++   "/android/android-java/com/projectname/MainActivity.java",
++   "/android/android-java/com/projectname/ProjectName.java",
+    "/android/android-kotlin",
+    "/android/android-kotlin/com",
+-   "/android/android-kotlin/com/placeholdername",
+-   "/android/android-kotlin/com/placeholdername/MainActivity.kt",
+-   "/android/android-kotlin/com/placeholdername/PlaceholderName.kt",
++   "/android/android-kotlin/com/projectname",
++   "/android/android-kotlin/com/projectname/MainActivity.kt",
++   "/android/android-kotlin/com/projectname/ProjectName.kt",
+    "/android/strings.xml",
+    "/ios",
+-   "/ios/PlaceholderName",
+-   "/ios/PlaceholderName-tvOS",
+-   "/ios/PlaceholderName-tvOS/.gitkeep",
+-   "/ios/PlaceholderName/AppDelegate.m",
+-   "/ios/PlaceholderName/project.pbxproj",
+-   "/ios/PlaceholderNameTests",
+-   "/ios/PlaceholderNameTests/.gitkeep",
++   "/ios/ProjectName",
++   "/ios/ProjectName-tvOS",
++   "/ios/ProjectName-tvOS/.gitkeep",
++   "/ios/ProjectName/AppDelegate.m",
++   "/ios/ProjectName/project.pbxproj",
++   "/ios/ProjectNameTests",
++   "/ios/ProjectNameTests/.gitkeep",
+    "/node_modules",
+    "/node_modules/PlaceholderName",
+    "/package.json",
   ]"
 `;
 
@@ -105,7 +105,7 @@ exports[`should edit template with custom title 1`] = `
 
 @@ -15,3 +15,3 @@
     protected String getMainComponentName() {
--     return \\"PlaceholderName\\";
-+     return \\"ProjectName\\";
+-     return "PlaceholderName";
++     return "ProjectName";
     }"
 `;

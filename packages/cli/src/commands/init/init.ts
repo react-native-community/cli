@@ -1,9 +1,8 @@
 import os from 'os';
 import path from 'path';
-import fs from 'fs-extra';
+import fs, {readdirSync} from 'fs-extra';
 import {validateProjectName} from './validate';
 import chalk from 'chalk';
-import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
 import printRunInstructions from './printRunInstructions';
 import {
   CLIError,
@@ -13,7 +12,7 @@ import {
   cacheManager,
   prompt,
 } from '@react-native-community/cli-tools';
-import {installPods} from '@react-native-community/cli-platform-ios';
+import {installPods} from '@react-native-community/cli-platform-apple';
 import {
   installTemplatePackage,
   getTemplateConfig,
@@ -28,7 +27,14 @@ import {getBunVersionIfAvailable} from '../../tools/bun';
 import {getNpmVersionIfAvailable} from '../../tools/npm';
 import {getYarnVersionIfAvailable} from '../../tools/yarn';
 import {createHash} from 'crypto';
-import createGitRepository from './createGitRepository';
+import {
+  createGitRepository,
+  checkGitInstallation,
+  checkIfFolderIsGitRepo,
+} from './git';
+import semver from 'semver';
+import {executeCommand} from '../../tools/executeCommand';
+import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
 
 const DEFAULT_VERSION = 'latest';
 
@@ -45,10 +51,13 @@ type Options = {
   installPods?: string | boolean;
   platformName?: string;
   skipGitInit?: boolean;
+  replaceDirectory?: string | boolean;
+  yarnConfigOptions?: Record<string, string>;
 };
 
 interface TemplateOptions {
   projectName: string;
+  shouldBumpYarnVersion: boolean;
   templateUri: string;
   npm?: boolean;
   pm?: PackageManager.PackageManager;
@@ -58,18 +67,96 @@ interface TemplateOptions {
   packageName?: string;
   installCocoaPods?: string | boolean;
   version?: string;
+  replaceDirectory?: string | boolean;
+  yarnConfigOptions?: Record<string, string>;
 }
+
+interface TemplateReturnType {
+  didInstallPods?: boolean;
+  replaceDirectory?: string | boolean;
+}
+
+// Here we are defining explicit version of Yarn to be used in the new project because in some cases providing `3.x` don't work.
+const YARN_VERSION = '3.6.4';
+
+const bumpYarnVersion = async (silent: boolean, root: string) => {
+  try {
+    let yarnVersion = semver.parse(getYarnVersionIfAvailable());
+
+    if (yarnVersion) {
+      await executeCommand('yarn', ['set', 'version', YARN_VERSION], {
+        root,
+        silent,
+      });
+
+      // React Native doesn't support PnP, so we need to set nodeLinker to node-modules. Read more here: https://github.com/react-native-community/cli/issues/27#issuecomment-1772626767
+
+      await executeCommand(
+        'yarn',
+        ['config', 'set', 'nodeLinker', 'node-modules'],
+        {root, silent},
+      );
+    }
+  } catch (e) {
+    logger.debug(e as string);
+  }
+};
 
 function doesDirectoryExist(dir: string) {
   return fs.existsSync(dir);
 }
 
-async function setProjectDirectory(directory: string) {
-  if (doesDirectoryExist(directory)) {
+function getConflictsForDirectory(directory: string) {
+  return readdirSync(directory);
+}
+
+async function setProjectDirectory(
+  directory: string,
+  replaceDirectory: string,
+) {
+  const directoryExists = doesDirectoryExist(directory);
+
+  if (replaceDirectory === 'false' && directoryExists) {
     throw new DirectoryAlreadyExistsError(directory);
   }
 
+  let deleteDirectory = false;
+
+  if (replaceDirectory === 'true' && directoryExists) {
+    deleteDirectory = true;
+  } else if (directoryExists) {
+    const conflicts = getConflictsForDirectory(directory);
+
+    if (conflicts.length > 0) {
+      let warnMessage = `The directory ${chalk.bold(
+        directory,
+      )} contains files that will be overwritten:\n`;
+
+      for (const conflict of conflicts) {
+        warnMessage += `   ${conflict}\n`;
+      }
+
+      logger.warn(warnMessage);
+
+      const {replace} = await prompt({
+        type: 'confirm',
+        name: 'replace',
+        message: 'Do you want to replace existing files?',
+      });
+
+      deleteDirectory = replace;
+
+      if (!replace) {
+        throw new DirectoryAlreadyExistsError(directory);
+      }
+    }
+  }
+
   try {
+    if (deleteDirectory) {
+      fs.removeSync(directory);
+    }
+
     fs.mkdirSync(directory, {recursive: true});
     process.chdir(directory);
   } catch (error) {
@@ -104,6 +191,7 @@ function setEmptyHashForCachedDependencies(projectName: string) {
 
 async function createFromTemplate({
   projectName,
+  shouldBumpYarnVersion,
   templateUri,
   npm,
   pm,
@@ -112,10 +200,15 @@ async function createFromTemplate({
   skipInstall,
   packageName,
   installCocoaPods,
-}: TemplateOptions) {
+  replaceDirectory,
+  yarnConfigOptions,
+}: TemplateOptions): Promise<TemplateReturnType> {
   logger.debug('Initializing new project');
-  logger.log(banner);
-
+  // Only print out the banner if we're not in a CI
+  if (!process.env.CI) {
+    logger.log(banner);
+  }
+  let didInstallPods = String(installCocoaPods) === 'true';
   let packageManager = pm;
 
   if (pm) {
@@ -137,7 +230,10 @@ async function createFromTemplate({
   // if the project with the name already has cache, remove the cache to avoid problems with pods installation
   cacheManager.removeProjectCache(projectName);
 
-  const projectDirectory = await setProjectDirectory(directory);
+  const projectDirectory = await setProjectDirectory(
+    directory,
+    String(replaceDirectory),
+  );
 
   const loader = getLoader({text: 'Downloading template'});
   const templateSourceDir = fs.mkdtempSync(
@@ -151,6 +247,7 @@ async function createFromTemplate({
       templateUri,
       templateSourceDir,
       packageManager,
+      yarnConfigOptions,
     );
 
     loader.succeed();
@@ -175,6 +272,11 @@ async function createFromTemplate({
       packageName,
     });
 
+    if (packageManager === 'yarn' && shouldBumpYarnVersion) {
+      await bumpYarnVersion(false, projectDirectory);
+    }
+
+    loader.succeed();
     const {postInitScript} = templateConfig;
     if (postInitScript) {
       loader.info('Executing post init script ');
@@ -196,6 +298,7 @@ async function createFromTemplate({
         const installPodsValue = String(installCocoaPods);
 
         if (installPodsValue === 'true') {
+          didInstallPods = true;
           await installPods(loader);
           loader.succeed();
           setEmptyHashForCachedDependencies(projectName);
@@ -207,6 +310,7 @@ async function createFromTemplate({
               'Only needed if you run your project in Xcode directly',
             )}`,
           });
+          didInstallPods = installCocoapods;
 
           if (installCocoapods) {
             await installPods(loader);
@@ -216,14 +320,34 @@ async function createFromTemplate({
         }
       }
     } else {
+      didInstallPods = false;
       loader.succeed('Dependencies installation skipped');
     }
   } catch (e) {
+    if (e instanceof Error) {
+      logger.error(
+        'Installing pods failed. This doesn\'t affect project initialization and you can safely proceed. \nHowever, you will need to install pods manually when running iOS, follow additional steps in "Run instructions for iOS" section.\n',
+      );
+    }
     loader.fail();
-    throw e;
+    didInstallPods = false;
   } finally {
     fs.removeSync(templateSourceDir);
   }
+
+  if (process.platform === 'darwin') {
+    logger.log('\n');
+    logger.info(
+      `💡 To enable automatic CocoaPods installation when building for iOS you can create react-native.config.js with automaticPodsInstallation field. \n${chalk.reset.dim(
+        `For more details, see ${chalk.underline(
+          'https://github.com/react-native-community/cli/blob/main/docs/projects.md#projectiosautomaticpodsinstallation',
+        )}`,
+      )}
+            `,
+    );
+  }
+
+  return {didInstallPods};
 }
 
 async function installDependencies({
@@ -281,12 +405,14 @@ async function createProject(
   projectName: string,
   directory: string,
   version: string,
+  shouldBumpYarnVersion: boolean,
   options: Options,
-) {
+): Promise<TemplateReturnType> {
   const templateUri = createTemplateUri(options, version);
 
   return createFromTemplate({
     projectName,
+    shouldBumpYarnVersion,
     templateUri,
     npm: options.npm,
     pm: options.pm,
@@ -296,22 +422,16 @@ async function createProject(
     packageName: options.packageName,
     installCocoaPods: options.installPods,
     version,
+    replaceDirectory: options.replaceDirectory,
+    yarnConfigOptions: options.yarnConfigOptions,
   });
 }
 
 function userAgentPackageManager() {
   const userAgent = process.env.npm_config_user_agent;
 
-  if (userAgent) {
-    if (userAgent.startsWith('yarn')) {
-      return 'yarn';
-    }
-    if (userAgent.startsWith('npm')) {
-      return 'npm';
-    }
-    if (userAgent.startsWith('bun')) {
-      return 'bun';
-    }
+  if (userAgent && userAgent.startsWith('bun')) {
+    return 'bun';
   }
 
   return null;
@@ -340,6 +460,7 @@ export default (async function initialize(
   const version = options.version || DEFAULT_VERSION;
 
   const directoryName = path.relative(root, options.directory || projectName);
+  const projectFolder = path.join(root, directoryName);
 
   if (options.pm && !checkPackageManagerAvailability(options.pm)) {
     logger.error(
@@ -348,13 +469,38 @@ export default (async function initialize(
     return;
   }
 
-  await createProject(projectName, directoryName, version, options);
+  let shouldBumpYarnVersion = true;
+  let shouldCreateGitRepository = false;
 
-  const projectFolder = path.join(root, directoryName);
+  const isGitAvailable = await checkGitInstallation();
 
-  if (!options.skipGitInit) {
+  if (isGitAvailable) {
+    const isFolderGitRepo = await checkIfFolderIsGitRepo(projectFolder);
+
+    if (isFolderGitRepo) {
+      shouldBumpYarnVersion = false;
+    } else {
+      shouldCreateGitRepository = true; // Initialize git repo after creating project
+    }
+  } else {
+    logger.warn(
+      'Git is not installed on your system. This might cause some features to work incorrectly.',
+    );
+  }
+
+  const {didInstallPods} = await createProject(
+    projectName,
+    directoryName,
+    version,
+    shouldBumpYarnVersion,
+    options,
+  );
+
+  if (shouldCreateGitRepository && !options.skipGitInit) {
     await createGitRepository(projectFolder);
   }
 
-  printRunInstructions(projectFolder, projectName);
+  printRunInstructions(projectFolder, projectName, {
+    showPodsInstructions: !didInstallPods,
+  });
 });

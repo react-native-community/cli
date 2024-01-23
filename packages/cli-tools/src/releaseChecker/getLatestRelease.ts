@@ -76,7 +76,7 @@ export default async function getLatestRelease(
         stable,
         candidate,
         changelogUrl: buildChangelogUrl(stable),
-        diffUrl: buildDiffUrl(stable),
+        diffUrl: buildDiffUrl(currentVersion),
       };
     }
   } catch (e) {

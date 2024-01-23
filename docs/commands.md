@@ -102,6 +102,7 @@ Skip dependencies installation
 Determine if CocoaPods should be installed when initializing a project. If set to `true` it will install pods, if set to `false`, it will skip the step entirely. If not used, prompt will be displayed
 
 #### `--npm`
+
 > [!WARNING]  
 > `--npm` is deprecated and will be removed in the future. Please use `--pm npm` instead.
 
@@ -121,6 +122,14 @@ Create project with custom package name for Android and bundle identifier for iO
 #### `--skip-git-init <boolean>`
 
 Skip git repository initialization.
+
+#### `--replace-directory <string>`
+
+Replaces the directory if it already exists
+
+#### `--yarn-config-options <string>`
+
+Passes extra options that will be added to `.yarnrc.yml` file, format: key=value,key2=value2.
 
 ### `upgrade`
 

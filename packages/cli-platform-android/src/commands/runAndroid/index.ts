@@ -61,7 +61,8 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
     );
 
     if (startPackager) {
-      await startServerInNewWindow(
+      // Awaiting this causes the CLI to hang indefinitely, so this must execute without await.
+      startServerInNewWindow(
         newPort,
         config.root,
         config.reactNativePath,

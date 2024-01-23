@@ -21,9 +21,6 @@ _Note: you must use the `--watchFolders` flag with the `start` command when test
 
 Because of a modular design of the CLI, we recommend developing using symbolic links to its packages. This way you can use it seamlessly in the tested project, as you'd use the locally installed CLI. Here's what you need to run in the terminal:
 
-> [!NOTE]
-> `@react-native-community/cli-plugin-metro` has been relocated as [`@react-native/community-cli-plugin`](https://github.com/facebook/react-native/tree/main/packages/community-cli-plugin). To make new contributions to this package, please open a PR in the [React Native repo](https://github.com/facebook/react-native) ([contributing guide](https://github.com/facebook/react-native/tree/main/packages/community-cli-plugin#contributing)).
-
 #### yarn v1
 
 ```sh
@@ -35,7 +32,7 @@ And then:
 
 ```sh
 cd /my/new/react-native/project/
-yarn link "@react-native-community/cli-platform-ios" "@react-native-community/cli-platform-android" "@react-native-community/cli" "@react-native-community/cli-server-api" "@react-native-community/cli-types" "@react-native-community/cli-tools" "@react-native-community/cli-debugger-ui" "@react-native-community/cli-hermes" "@react-native-community/cli-clean" "@react-native-community/cli-doctor" "@react-native-community/cli-config" "@react-native-community/cli-link-assets"
+yarn link "@react-native-community/cli-platform-ios" "@react-native-community/cli-platform-android" "@react-native-community/cli" "@react-native-community/cli-server-api" "@react-native-community/cli-types" "@react-native-community/cli-tools" "@react-native-community/cli-debugger-ui" "@react-native-community/cli-hermes" "@react-native-community/cli-clean" "@react-native-community/cli-doctor" "@react-native-community/cli-config" "@react-native-community/cli-platform-apple" "@react-native-community/cli-link-assets"
 ```
 
 Once you're done with testing and you'd like to get back to regular setup, run `yarn unlink` instead of `yarn link` from above command. Then `yarn install --force`.

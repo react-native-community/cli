@@ -11,6 +11,7 @@ A project can define a `react-native.config.js` at the root with custom configur
 For example, below configuration informs CLI about a source directory with iOS files.
 
 ```js
+/** @type import("@react-native-community/cli-types").Config */
 module.exports = {
   project: {
     ios: {
@@ -27,6 +28,7 @@ You can check all available options below.
 ## Project interface
 
 ```ts
+// referenced from @react-native-community/cli-types
 type ProjectConfigT = {
   reactNativePath: ?string;
   project: {
@@ -62,10 +64,10 @@ In most cases, as a React Native developer, you should not need to define any of
 The following settings are available on iOS and Android:
 
 ```ts
+// referenced from @react-native-community/cli-types
 type IOSProjectParams = {
   sourceDir?: string;
   watchModeCommandParams?: string[];
-  unstable_reactLegacyComponentNames?: string[] | null;
   automaticPodsInstallation?: boolean;
 };
 
@@ -76,7 +78,6 @@ type AndroidProjectParams = {
   packageName?: string;
   dependencyConfiguration?: string;
   watchModeCommandParams?: string[];
-  unstable_reactLegacyComponentNames?: string[] | null;
 };
 ```
 
@@ -91,7 +92,8 @@ Array of strings that will be passed to the `npx react-native run-ios` command w
 
 #### project.ios.unstable_reactLegacyComponentNames
 
-> Note: Only applicable when new architecture is turned on.
+> [!CAUTION]
+> Deprecated in React Native 0.74, where this behavior is detected automatically and this config does nothing. You can safely remove it from your project. 
 
 Please note that this is part of the **Unstable Fabric Interop Layer**, and might be subject to breaking change in the future,
 hence the `unstable_` prefix.
@@ -100,6 +102,8 @@ An array with a list of Legacy Component Name that you want to be registered wit
 This will allow you to use libraries that haven't been migrated yet on the New Architecture.
 
 The list should contain the name of the components, as they're registered in the ViewManagers (i.e. just `"Button"`).
+
+Since React Native 0.74, this property is ignored as the Interop Layer is **Automatic**, you don't need to register the Legacy Components anymore and they will be discovered automatically.
 
 #### project.ios.automaticPodsInstallation
 
@@ -138,7 +142,8 @@ Array of strings that will be passed to the `npx react-native run-android` comma
 
 #### project.android.unstable_reactLegacyComponentNames
 
-> Note: Only applicable when new architecture is turned on.
+> [!CAUTION]
+> Deprecated in React Native 0.74, where this behavior is detected automatically and this config does nothing. You can safely remove it from your project. 
 
 Please note that this is part of the **Unstable Fabric Interop Layer**, and might be subject to breaking change in the future,
 hence the `unstable_` prefix.
@@ -147,6 +152,8 @@ An array with a list of Legacy Component Name that you want to be registered wit
 This will allow you to use libraries that haven't been migrated yet on the New Architecture.
 
 The list should contain the name of the components, as they're registered in the ViewManagers (i.e. just `"Button"`).
+
+Since React Native 0.74, this property is ignored as the Interop Layer is **Automatic**, you don't need to register the Legacy Components anymore and they will be discovered automatically.
 
 ### platforms
 
@@ -163,6 +170,7 @@ Dependencies is a map where key is the name of the dependency and value is an ob
 For example, you could set:
 
 ```js
+/** @type import("@react-native-community/cli-types").Config */
 module.exports = {
   dependencies: {
     'react-native-webview': {
@@ -179,6 +187,7 @@ in order to disable linking of React Native WebView on iOS.
 or you could set:
 
 ```js
+/** @type import("@react-native-community/cli-types").Config */
 module.exports = {
   dependencies: {
     'react-native-brownfield': {
@@ -198,6 +207,7 @@ in order to use something else than `implementation` _(default scope method)_
 Another use-case would be supporting local libraries that are not discoverable for autolinking, since they're not part of your `dependencies` or `devDependencies`:
 
 ```js
+/** @type import("@react-native-community/cli-types").Config */
 module.exports = {
   dependencies: {
     'local-rn-library': {

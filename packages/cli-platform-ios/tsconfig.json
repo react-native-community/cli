@@ -3,7 +3,6 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "build",
-    "typeRoots": ["definitions"]
   },
-  "references": [{"path": "../cli-tools"}, {"path": "../cli-types"}]
+  "references": [{"path": "../cli-platform-apple"}]
 }

@@ -138,24 +138,24 @@ void rncli_registerProviders(std::shared_ptr<ComponentDescriptorProviderRegistry
 
 class ReactNativeModules {
   private Logger logger
+  private ProviderFactory providers
   private String packageName
   private File root
   private ArrayList<HashMap<String, String>> reactNativeModules
-  private ArrayList<String> unstable_reactLegacyComponentNames
   private HashMap<String, ArrayList> reactNativeModulesBuildVariants
   private String reactNativeVersion
 
   private static String LOG_PREFIX = ":ReactNative:"
 
-  ReactNativeModules(Logger logger, File root) {
+  ReactNativeModules(Logger logger, ProviderFactory providers, File root) {
     this.logger = logger
+    this.providers = providers
     this.root = root
 
     def (nativeModules, reactNativeModulesBuildVariants, androidProject, reactNativeVersion) = this.getReactNativeConfig()
     this.reactNativeModules = nativeModules
     this.reactNativeModulesBuildVariants = reactNativeModulesBuildVariants
     this.packageName = androidProject["packageName"]
-    this.unstable_reactLegacyComponentNames = androidProject["unstable_reactLegacyComponentNames"]
     this.reactNativeVersion = reactNativeVersion
   }
 
@@ -294,7 +294,6 @@ class ReactNativeModules {
 
   void generateRncliCpp(File outputDir, String generatedFileName, String generatedFileContentsTemplate) {
     ArrayList<HashMap<String, String>> packages = this.reactNativeModules
-    ArrayList<String> unstable_reactLegacyComponentNames = this.unstable_reactLegacyComponentNames
     String rncliCppIncludes = ""
     String rncliCppModuleProviders = ""
     String rncliCppComponentDescriptors = ""
@@ -331,16 +330,6 @@ class ReactNativeModules {
       }.join("\n")
     }
 
-    rncliReactLegacyComponentDescriptors = unstable_reactLegacyComponentNames.collect {
-      "  providerRegistry->add(concreteComponentDescriptorProvider<UnstableLegacyViewManagerInteropComponentDescriptor<${it}>>());"
-    }.join("\n")
-    rncliReactLegacyComponentNames = unstable_reactLegacyComponentNames.collect {
-      "extern const char ${it}[] = \"${it}\";"
-    }.join("\n")
-    if (unstable_reactLegacyComponentNames && unstable_reactLegacyComponentNames.size() > 0) {
-      rncliCppIncludes += "\n#include <react/renderer/components/legacyviewmanagerinterop/UnstableLegacyViewManagerInteropComponentDescriptor.h>"
-    }
-
     String generatedFileContents = generatedFileContentsTemplate
       .replace("{{ rncliCppIncludes }}", rncliCppIncludes)
       .replace("{{ rncliCppModuleProviders }}", rncliCppModuleProviders)
@@ -366,29 +355,20 @@ class ReactNativeModules {
   }
 
   /**
-   * Runs a specified command using Runtime exec() in a specified directory.
+   * Runs a specified command using providers.exec in a specified directory.
    * Throws when the command result is empty.
    */
   String getCommandOutput(String[] command, File directory) {
     try {
-      def output = ""
-      def cmdProcess = Runtime.getRuntime().exec(command, null, directory)
-      def bufferedReader = new BufferedReader(new InputStreamReader(cmdProcess.getInputStream()))
-      def buff = ""
-      def readBuffer = new StringBuffer()
-      while ((buff = bufferedReader.readLine()) != null) {
-        readBuffer.append(buff)
+      def execOutput = providers.exec {
+        commandLine(command)
+        workingDir(directory)
       }
-      output = readBuffer.toString()
+      def output = execOutput.standardOutput.asText.get().trim()
       if (!output) {
         this.logger.error("${LOG_PREFIX}Unexpected empty result of running '${command}' command.")
-        def bufferedErrorReader = new BufferedReader(new InputStreamReader(cmdProcess.getErrorStream()))
-        def errBuff = ""
-        def readErrorBuffer = new StringBuffer()
-        while ((errBuff = bufferedErrorReader.readLine()) != null) {
-          readErrorBuffer.append(errBuff)
-        }
-        throw new Exception(readErrorBuffer.toString())
+        def error = execOutput.standardError.asText.get().trim()
+        throw new Exception(error)
       }
       return output
     } catch (Exception exception) {
@@ -486,7 +466,7 @@ class ReactNativeModules {
  */
 def projectRoot = rootProject.projectDir
 
-def autoModules = new ReactNativeModules(logger, projectRoot)
+def autoModules = new ReactNativeModules(logger, providers, projectRoot)
 
 def reactNativeVersionRequireNewArchEnabled(autoModules) {
     def rnVersion = autoModules.reactNativeVersion

@@ -1,4 +1,4 @@
-import {findPodfilePaths} from '@react-native-community/cli-platform-ios';
+import {findPodfilePaths} from '@react-native-community/cli-platform-apple';
 import {
   findProjectRoot,
   resolveNodeModuleDir,

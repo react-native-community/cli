@@ -152,10 +152,11 @@ export const projectConfig = t
           .object({
             sourceDir: t.string(),
             watchModeCommandParams: t.array().items(t.string()),
+            // @todo remove for RN 0.75
             unstable_reactLegacyComponentNames: t
               .array()
               .items(t.string())
-              .default([]),
+              .optional(),
             automaticPodsInstallation: t.bool().default(false),
             assets: t.array().items(t.string()).default([]),
           })
@@ -169,10 +170,11 @@ export const projectConfig = t
             packageName: t.string(),
             dependencyConfiguration: t.string(),
             watchModeCommandParams: t.array().items(t.string()),
+            // @todo remove for RN 0.75
             unstable_reactLegacyComponentNames: t
               .array()
               .items(t.string())
-              .default([]),
+              .optional(),
             assets: t.array().items(t.string()).default([]),
           })
           .default({}),

@@ -22,6 +22,8 @@ function createCustomTemplateFiles() {
 
 const customTemplateCopiedFiles = [
   '.git',
+  '.yarn',
+  '.yarnrc.yml',
   'dir',
   'file',
   'node_modules',
@@ -44,13 +46,31 @@ if (process.platform === 'win32') {
   templatePath = `file://${templatePath}`;
 }
 
-test('init fails if the directory already exists', () => {
+test('init fails if the directory already exists and --replace-directory false', () => {
   fs.mkdirSync(path.join(DIR, PROJECT_NAME));
 
-  const {stderr} = runCLI(DIR, ['init', PROJECT_NAME], {expectedFailure: true});
+  const {stderr} = runCLI(
+    DIR,
+    ['init', PROJECT_NAME, '--replace-directory', 'false'],
+    {expectedFailure: true},
+  );
+
   expect(stderr).toContain(
     `error Cannot initialize new project because directory "${PROJECT_NAME}" already exists.`,
   );
+});
+
+test('init should ask and print files in directory if exist', () => {
+  fs.mkdirSync(path.join(DIR, PROJECT_NAME));
+  fs.writeFileSync(path.join(DIR, PROJECT_NAME, 'package.json'), '{}');
+
+  const {stdout, stderr} = runCLI(DIR, ['init', PROJECT_NAME]);
+
+  expect(stdout).toContain(`Do you want to replace existing files?`);
+  expect(stderr).toContain(
+    `warn The directory ${PROJECT_NAME} contains files that will be overwritten:`,
+  );
+  expect(stderr).toContain(`package.json`);
 });
 
 test('init should prompt for the project name', () => {
@@ -119,6 +139,10 @@ test('init skips installation of dependencies with --skip-install', () => {
 
   expect(stdout).toContain('Run instructions');
 
+  if (process.platform === 'darwin') {
+    expect(stdout).toContain('Install Cocoapods');
+  }
+
   // make sure we don't leave garbage
   expect(fs.readdirSync(DIR)).toContain('custom');
 
@@ -151,9 +175,10 @@ test('init uses npm as the package manager with --npm', () => {
 
   const initDirPath = path.join(DIR, PROJECT_NAME);
 
-  // Remove yarn.lock and node_modules
+  // Remove yarn specific files and node_modules
   const filteredFiles = customTemplateCopiedFiles.filter(
-    (file) => !['yarn.lock', 'node_modules'].includes(file),
+    (file) =>
+      !['yarn.lock', 'node_modules', '.yarnrc.yml', '.yarn'].includes(file),
   );
 
   // Add package-lock.json

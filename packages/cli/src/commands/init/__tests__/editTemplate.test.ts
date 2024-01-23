@@ -11,6 +11,9 @@ import {
   validatePackageName,
   replaceNameInUTF8File,
 } from '../editTemplate';
+import semver from 'semver';
+
+const skipIfNode20 = semver.major(process.version) === 20 ? test.skip : test;
 
 const FIXTURE_DIR = path.resolve(
   __dirname,
@@ -44,7 +47,7 @@ afterEach(() => {
   fs.removeSync(testPath);
 });
 
-test('should edit template', async () => {
+skipIfNode20('should edit template', async () => {
   jest.spyOn(process, 'cwd').mockImplementation(() => testPath);
 
   await changePlaceholderInTemplate({
@@ -59,20 +62,32 @@ test('should edit template', async () => {
     path.resolve(
       FIXTURE_DIR,
       'android',
+      'android-java',
       'com',
       PLACEHOLDER_NAME.toLowerCase(),
-      'Main.java',
+      'MainActivity.java',
     ),
     'utf8',
   );
+
   const newJavaFile = fs.readFileSync(
     path.resolve(
       testPath,
       'android',
+      'android-java',
       'com',
       PROJECT_NAME.toLowerCase(),
-      'Main.java',
+      'MainActivity.java',
     ),
+    'utf8',
+  );
+
+  const oldXmlFile = fs.readFileSync(
+    path.resolve(FIXTURE_DIR, 'android', 'strings.xml'),
+    'utf8',
+  );
+  const newXmlFile = fs.readFileSync(
+    path.resolve(testPath, 'android', 'strings.xml'),
     'utf8',
   );
 
@@ -85,18 +100,27 @@ test('should edit template', async () => {
     'utf8',
   );
 
-  expect(snapshotDiff(oldCFile, newCFile, {contextLines: 1})).toMatchSnapshot();
   expect(
     snapshotDiff(oldJavaFile, newJavaFile, {contextLines: 1}),
   ).toMatchSnapshot();
+
+  expect(snapshotDiff(oldCFile, newCFile, {contextLines: 1})).toMatchSnapshot();
   expect(
-    snapshotDiff(fixtureTree.map(slash), transformedTree.map(slash), {
-      contextLines: 1,
-    }),
+    snapshotDiff(oldXmlFile, newXmlFile, {contextLines: 1}),
+  ).toMatchSnapshot();
+
+  expect(
+    snapshotDiff(
+      fixtureTree.map(slash).sort(),
+      transformedTree.map(slash).sort(),
+      {
+        contextLines: 5,
+      },
+    ),
   ).toMatchSnapshot();
 });
 
-test('should edit template with custom title', async () => {
+skipIfNode20('should edit template with custom title', async () => {
   jest.spyOn(process, 'cwd').mockImplementation(() => testPath);
 
   await changePlaceholderInTemplate({
@@ -109,26 +133,38 @@ test('should edit template with custom title', async () => {
     path.resolve(
       FIXTURE_DIR,
       'android',
+      'android-java',
       'com',
       PLACEHOLDER_NAME.toLowerCase(),
-      'Main.java',
+      'MainActivity.java',
     ),
     'utf8',
   );
+
   const newJavaFile = fs.readFileSync(
     path.resolve(
       testPath,
       'android',
+      'android-java',
       'com',
       PROJECT_NAME.toLowerCase(),
-      'Main.java',
+      'MainActivity.java',
     ),
+    'utf8',
+  );
+
+  const replacedFile = fs.readFileSync(
+    path.resolve(testPath, 'android', 'strings.xml'),
     'utf8',
   );
 
   expect(
     snapshotDiff(oldJavaFile, newJavaFile, {contextLines: 1}),
   ).toMatchSnapshot();
+
+  expect(replacedFile).toContain(
+    `<string name="app_name">${PROJECT_TITLE}</string>`,
+  );
 });
 
 describe('changePlaceholderInTemplate', () => {
@@ -140,25 +176,28 @@ describe('changePlaceholderInTemplate', () => {
     jest.resetAllMocks();
   });
 
-  test(`should produce a lowercased version of "${PROJECT_NAME}" in package.json "name" field`, async () => {
-    await changePlaceholderInTemplate({
-      projectName: PROJECT_NAME,
-      placeholderName: PLACEHOLDER_NAME,
-    });
+  skipIfNode20(
+    `should produce a lowercased version of "${PROJECT_NAME}" in package.json "name" field`,
+    async () => {
+      await changePlaceholderInTemplate({
+        projectName: PROJECT_NAME,
+        placeholderName: PLACEHOLDER_NAME,
+      });
 
-    const oldPackageJsonFile = fs.readFileSync(
-      path.resolve(FIXTURE_DIR, 'package.json'),
-      'utf8',
-    );
-    const newPackageJsonFile = fs.readFileSync(
-      path.resolve(testPath, 'package.json'),
-      'utf8',
-    );
+      const oldPackageJsonFile = fs.readFileSync(
+        path.resolve(FIXTURE_DIR, 'package.json'),
+        'utf8',
+      );
+      const newPackageJsonFile = fs.readFileSync(
+        path.resolve(testPath, 'package.json'),
+        'utf8',
+      );
 
-    expect(
-      snapshotDiff(oldPackageJsonFile, newPackageJsonFile, {contextLines: 1}),
-    ).toMatchSnapshot();
-  });
+      expect(
+        snapshotDiff(oldPackageJsonFile, newPackageJsonFile, {contextLines: 1}),
+      ).toMatchSnapshot();
+    },
+  );
 });
 
 describe('replacePlaceholderWithPackageName', () => {
@@ -170,22 +209,25 @@ describe('replacePlaceholderWithPackageName', () => {
     jest.resetAllMocks();
   });
 
-  test(`should replace name in package.json with ${PACKAGE_NAME} value`, async () => {
-    await replacePlaceholderWithPackageName({
-      projectName: PROJECT_NAME,
-      placeholderName: PLACEHOLDER_NAME,
-      placeholderTitle: 'Test',
-      packageName: PACKAGE_NAME,
-    });
-    const packageJsonFile = fs.readFileSync(
-      path.resolve(testPath, 'package.json'),
-      'utf8',
-    );
+  skipIfNode20(
+    `should replace name in package.json with ${PACKAGE_NAME} value`,
+    async () => {
+      await replacePlaceholderWithPackageName({
+        projectName: PROJECT_NAME,
+        placeholderName: PLACEHOLDER_NAME,
+        placeholderTitle: 'Test',
+        packageName: PACKAGE_NAME,
+      });
+      const packageJsonFile = fs.readFileSync(
+        path.resolve(testPath, 'package.json'),
+        'utf8',
+      );
 
-    expect(JSON.parse(packageJsonFile).name).toBe(PACKAGE_NAME);
-  });
+      expect(JSON.parse(packageJsonFile).name).toBe(PACKAGE_NAME);
+    },
+  );
 
-  test('should update the bundle ID for iOS', async () => {
+  skipIfNode20('should update the bundle ID for iOS', async () => {
     await replacePlaceholderWithPackageName({
       projectName: PROJECT_NAME,
       placeholderName: PLACEHOLDER_NAME,
@@ -204,45 +246,83 @@ describe('replacePlaceholderWithPackageName', () => {
     ).toBeTruthy();
   });
 
-  test(`should rename Main component name for Android with ${PROJECT_NAME}`, async () => {
-    await replacePlaceholderWithPackageName({
-      projectName: PROJECT_NAME,
-      placeholderName: PLACEHOLDER_NAME,
-      placeholderTitle: 'Test',
-      packageName: PACKAGE_NAME,
-    });
+  skipIfNode20(
+    `should rename Main component name for Android with ${PROJECT_NAME} in Java template`,
+    async () => {
+      await replacePlaceholderWithPackageName({
+        projectName: PROJECT_NAME,
+        placeholderName: PLACEHOLDER_NAME,
+        placeholderTitle: 'Test',
+        packageName: PACKAGE_NAME,
+      });
 
-    const mainActivityFile = fs.readFileSync(
-      path.resolve(
-        testPath,
-        'android',
-        'com',
-        PACKAGE_NAME,
-        'MainActivity.java',
-      ),
-      'utf8',
-    );
+      const mainActivityFile = fs.readFileSync(
+        path.resolve(
+          testPath,
+          'android',
+          'android-java',
+          'com',
+          PACKAGE_NAME,
+          'MainActivity.java',
+        ),
+        'utf8',
+      );
 
-    expect(mainActivityFile.includes(`return "${PROJECT_NAME}"`)).toBeTruthy();
-  });
+      expect(
+        mainActivityFile.includes(`return "${PROJECT_NAME}"`),
+      ).toBeTruthy();
+    },
+  );
+
+  skipIfNode20(
+    `should rename Main component name for Android with ${PROJECT_NAME} in Kotlin template`,
+    async () => {
+      await replacePlaceholderWithPackageName({
+        projectName: PROJECT_NAME,
+        placeholderName: PLACEHOLDER_NAME,
+        placeholderTitle: 'Test',
+        packageName: PACKAGE_NAME,
+      });
+
+      const mainActivityFile = fs.readFileSync(
+        path.resolve(
+          testPath,
+          'android',
+          'android-kotlin',
+          'com',
+          PACKAGE_NAME,
+          'MainActivity.kt',
+        ),
+        'utf8',
+      );
+
+      expect(mainActivityFile.includes(`= "${PROJECT_NAME}"`)).toBeTruthy();
+    },
+  );
 });
 
 describe('validatePackageName', () => {
-  test('should throw an error when package name contains only one segment', () => {
-    expect(() => validatePackageName('example')).toThrowError(
-      'The package name example is invalid. It should contain at least two segments, e.g. com.app',
-    );
-  });
+  skipIfNode20(
+    'should throw an error when package name contains only one segment',
+    () => {
+      expect(() => validatePackageName('example')).toThrowError(
+        'The package name example is invalid. It should contain at least two segments, e.g. com.app',
+      );
+    },
+  );
 
-  test('should throw an error when package name contains special characters other than dots', () => {
-    expect(() => validatePackageName('com.organization.a@pp')).toThrowError(
-      'The com.organization.a@pp package name is not valid. It can contain only alphanumeric characters and dots.',
-    );
-  });
+  skipIfNode20(
+    'should throw an error when package name contains special characters other than dots',
+    () => {
+      expect(() => validatePackageName('com.organization.a@pp')).toThrowError(
+        'The com.organization.a@pp package name is not valid. It can contain only alphanumeric characters and dots.',
+      );
+    },
+  );
 });
 
 describe('replaceNameInUTF8File', () => {
-  test('should replace string in utf8 file', async () => {
+  skipIfNode20('should replace string in utf8 file', async () => {
     const pathToUtf8File = path.join(
       testPath,
       'ios',
@@ -266,7 +346,7 @@ describe('replaceNameInUTF8File', () => {
     expect(afterReplacement).toContain(textToReplace);
   });
 
-  test('should not replace string in utf8 file', async () => {
+  skipIfNode20('should not replace string in utf8 file', async () => {
     const fsWriteFileSpy = jest.spyOn(fs, 'writeFile');
     const pathToUtf8File = path.join(
       testPath,

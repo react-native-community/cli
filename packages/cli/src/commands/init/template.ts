@@ -20,6 +20,7 @@ export async function installTemplatePackage(
   templateName: string,
   root: string,
   packageManager: PackageManager.PackageManager,
+  yarnConfigOptions?: Record<string, string>,
 ) {
   logger.debug(`Installing template from ${templateName}`);
 
@@ -47,6 +48,13 @@ export async function installTemplatePackage(
       ['config', 'set', 'nmHoistingLimits', 'workspaces'],
       options,
     );
+
+    for (let key in yarnConfigOptions) {
+      if (yarnConfigOptions.hasOwnProperty(key)) {
+        let value = yarnConfigOptions[key];
+        executeCommand('yarn', ['config', 'set', key, value], options);
+      }
+    }
   }
 
   return PackageManager.install([templateName], {

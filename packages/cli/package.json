@@ -29,7 +29,6 @@
     "@react-native-community/cli-debugger-ui": "13.5.1-alpha.0",
     "@react-native-community/cli-doctor": "13.5.1-alpha.0",
     "@react-native-community/cli-hermes": "13.5.1-alpha.0",
-    "@react-native-community/cli-plugin-metro": "13.5.1-alpha.0",
     "@react-native-community/cli-server-api": "13.5.1-alpha.0",
     "@react-native-community/cli-tools": "13.5.1-alpha.0",
     "@react-native-community/cli-types": "13.5.1-alpha.0",

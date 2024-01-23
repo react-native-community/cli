@@ -60,5 +60,18 @@ export default {
       name: '--replace-directory [boolean]',
       description: 'Replaces the directory if it already exists.',
     },
+    {
+      name: '--yarn-config-options <string>',
+      description:
+        'Passes extra options that will be added to `.yarnrc.yml` file, format: key=value,key2=value2.',
+      parse: (val: string): Record<string, string> => {
+        return Object.fromEntries(
+          val.split(',').map((option) => {
+            const [key, value] = option.split('=');
+            return [key, value];
+          }),
+        );
+      },
+    },
   ],
 };

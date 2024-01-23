@@ -52,6 +52,7 @@ type Options = {
   platformName?: string;
   skipGitInit?: boolean;
   replaceDirectory?: string | boolean;
+  yarnConfigOptions?: Record<string, string>;
 };
 
 interface TemplateOptions {
@@ -67,6 +68,7 @@ interface TemplateOptions {
   installCocoaPods?: string | boolean;
   version?: string;
   replaceDirectory?: string | boolean;
+  yarnConfigOptions?: Record<string, string>;
 }
 
 interface TemplateReturnType {
@@ -199,6 +201,7 @@ async function createFromTemplate({
   packageName,
   installCocoaPods,
   replaceDirectory,
+  yarnConfigOptions,
 }: TemplateOptions): Promise<TemplateReturnType> {
   logger.debug('Initializing new project');
   // Only print out the banner if we're not in a CI
@@ -244,6 +247,7 @@ async function createFromTemplate({
       templateUri,
       templateSourceDir,
       packageManager,
+      yarnConfigOptions,
     );
 
     loader.succeed();
@@ -419,6 +423,7 @@ async function createProject(
     installCocoaPods: options.installPods,
     version,
     replaceDirectory: options.replaceDirectory,
+    yarnConfigOptions: options.yarnConfigOptions,
   });
 }
 

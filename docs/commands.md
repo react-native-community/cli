@@ -126,6 +126,10 @@ Skip git repository initialization.
 
 Replaces the directory if it already exists
 
+#### `--yarn-config-options <string>`
+
+Passes extra options that will be added to `.yarnrc.yml` file, format: key=value,key2=value2.
+
 ### `upgrade`
 
 Usage:

@@ -1,4 +1,3 @@
-import {logger} from '@react-native-community/cli-tools';
 import type {Config as CLIConfig} from '@react-native-community/cli-types';
 import fs from 'fs';
 import path from 'path';
@@ -38,30 +37,32 @@ async function linkAssets(
   ctx: CLIConfig,
   linkAssetsOptions: Args,
 ): Promise<void> {
-  logger.info('linkAssets!');
-  console.log(JSON.stringify(ctx));
-
   let androidPath: string = '';
-  let androidAssetsPath: string[] = [];
+  let androidAssetsPath: string[] = ctx.assets;
   let androidAppName: string = '';
   if (ctx.project.android) {
     androidPath = ctx.project.android.sourceDir;
-    androidAssetsPath = ctx.project.android.assets;
+    androidAssetsPath = androidAssetsPath.concat(ctx.project.android.assets);
     androidAppName = ctx.project.android.appName;
   }
 
   let iosPath: string = '';
-  let iosAssetsPath: string[] = [];
+  let iosAssetsPath: string[] = ctx.assets;
   let iosPbxprojFilePath: string | null = null;
   if (ctx.project.ios) {
     iosPath = ctx.project.ios.sourceDir;
-    iosAssetsPath = ctx.project.ios.assets;
-    iosPbxprojFilePath = findPbxprojFile(
+    iosAssetsPath = androidAssetsPath.concat(ctx.project.ios.assets);
+
+    const pbxprojPath = findPbxprojFile(
       fs.readdirSync(iosPath, {
         encoding: 'utf8',
         recursive: true,
       }),
     );
+
+    if (pbxprojPath) {
+      iosPbxprojFilePath = path.join(iosPath, pbxprojPath);
+    }
   }
 
   const rootPath = path.isAbsolute(linkAssetsOptions.projectRoot)

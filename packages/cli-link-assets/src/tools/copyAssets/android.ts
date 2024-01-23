@@ -19,7 +19,7 @@ import {
   toArrayBuffer,
   xmlBuilder,
   xmlParser,
-} from '../androidFontAssetHelpers';
+} from '../helpers/font/androidFontAssetHelpers';
 import {AndroidCopyAssetsOptions, CopyAssets} from './types';
 
 const copyAssets: CopyAssets = (assetFiles, options) => {

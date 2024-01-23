@@ -1,9 +1,9 @@
 import {logger} from '@react-native-community/cli-tools';
 import {XMLBuilder, XMLParser} from 'fast-xml-parser';
 import {sync as globSync} from 'glob';
+import OpenType from 'opentype.js';
 import path from 'path';
 import slugify from 'slugify';
-import OpenType from 'opentype.js';
 
 type FontXMLEntry = {
   '@_app:font': string;
@@ -268,6 +268,9 @@ const xmlBuilder = new XMLBuilder({
 });
 
 export {
+  FontFamilyEntry,
+  FontFamilyMap,
+  FontXMLObject,
   REACT_FONT_MANAGER_JAVA_IMPORT,
   addImportToJavaFile,
   buildXMLFontObject,
@@ -284,7 +287,4 @@ export {
   toArrayBuffer,
   xmlBuilder,
   xmlParser,
-  FontXMLObject,
-  FontFamilyEntry,
-  FontFamilyMap,
 };

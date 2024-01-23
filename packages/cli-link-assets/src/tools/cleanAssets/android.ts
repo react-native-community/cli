@@ -15,7 +15,7 @@ import {
   toArrayBuffer,
   xmlBuilder,
   xmlParser,
-} from '../androidFontAssetHelpers';
+} from '../helpers/font/androidFontAssetHelpers';
 import {AndroidCleanAssetsOptions, CleanAssets} from './types';
 
 const cleanAssets: CleanAssets = (assetFiles, options) => {
@@ -44,7 +44,6 @@ const cleanAssets: CleanAssets = (assetFiles, options) => {
     // Build the font family's map, where each key is the font family name,
     // and each value is a object containing all the font files related to that
     // font family.
-    console.log('font.names', font.names);
     const fontFamily = getFontFamily(
       font.tables.name.fontFamily,
       font.tables.name.preferredFamily,

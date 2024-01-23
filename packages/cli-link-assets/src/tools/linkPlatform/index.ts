@@ -1,4 +1,4 @@
-import {logger} from '@react-native-community/cli-tools';
+import {CLIError, logger} from '@react-native-community/cli-tools';
 import fs from 'fs';
 import path from 'path';
 import sha1File from '../../sha1File';
@@ -61,44 +61,44 @@ type FileFilter = {
   options?: LinkOptionAndroidConfig | LinkOptionIOSConfig;
 };
 
-const uniqWith = <T>(arr: T[], fn: (a: T, b: T) => boolean) => {
+function uniqWith<T>(arr: T[], fn: (a: T, b: T) => boolean) {
   return arr.filter(
     (element, index) => arr.findIndex((step) => fn(element, step)) === index,
   );
-};
+}
 
-const clearDuplicated = (assets: AssetPathAndSHA1[]) => {
+function clearDuplicated(assets: AssetPathAndSHA1[]) {
   return uniqWith(
     assets,
     (a, b) => path.parse(a.path).base === path.parse(b.path).base,
   );
-};
+}
 
 const filesToIgnore = ['.DS_Store', 'Thumbs.db'];
-const filterFilesToIgnore = (asset: AssetPathAndSHA1) => {
+function filterFilesToIgnore(asset: AssetPathAndSHA1) {
   return filesToIgnore.indexOf(path.basename(asset.path)) === -1;
-};
+}
 
-const getAbsolute = (filePath: string, dirPath: string) => {
+function getAbsolute(filePath: string, dirPath: string) {
   return path.isAbsolute(filePath) ? filePath : path.resolve(dirPath, filePath);
-};
-const getRelative = (filePath: string, dirPath: string) => {
+}
+function getRelative(filePath: string, dirPath: string) {
   return path.isAbsolute(filePath)
     ? path.relative(dirPath, filePath)
     : filePath;
-};
+}
 
 const filterAssetByAssetsWhichNotExists =
-  (assets: AssetPathAndSHA1[], normalizeAbsolutePathsTo: string) =>
+  (assets: AssetPathAndSHA1[], rootPath: string) =>
   (asset: AssetPathAndSHA1) => {
-    const relativeFilePath = getRelative(asset.path, normalizeAbsolutePathsTo);
+    const relativeFilePath = getRelative(asset.path, rootPath);
 
     return (
       assets
         .map((otherAsset) => {
           return {
             ...otherAsset,
-            path: getRelative(otherAsset.path, normalizeAbsolutePathsTo),
+            path: getRelative(otherAsset.path, rootPath),
           };
         })
         .findIndex((otherAsset) => {
@@ -109,8 +109,6 @@ const filterAssetByAssetsWhichNotExists =
         }) === -1
     );
   };
-
-// let showAndroidRelinkingWarning = false;
 
 function linkPlatform({
   name,
@@ -124,9 +122,11 @@ function linkPlatform({
   linkOptionsPerExt,
   otherLinkOptions,
 }: LinkPlatformOptions) {
-  let prevRelativeAssets: AssetPathAndSHA1[] = [];
+  let showAndroidRelinkingWarning = false;
+
+  let previouslyLinkedAssets: AssetPathAndSHA1[] = [];
   try {
-    prevRelativeAssets = manifest.read().map((asset) => {
+    previouslyLinkedAssets = manifest.read().map((asset) => {
       return {
         ...asset,
         path: asset.path.split('/').join(path.sep), // Convert path to whatever system this is
@@ -141,68 +141,71 @@ function linkPlatform({
   const loadAsset = (assetMightNotAbsolute: string) => {
     const asset = getAbsolute(assetMightNotAbsolute, rootPath);
 
-    const stats = fs.lstatSync(asset);
-    if (stats.isDirectory()) {
-      fs.readdirSync(asset)
-        .map((file) => path.resolve(asset, file))
-        .forEach(loadAsset);
-    } else {
-      const sha1 = sha1File(asset);
-      assets = assets.concat({
-        path: asset,
-        sha1,
-      });
+    try {
+      const stats = fs.lstatSync(asset);
+
+      if (stats.isDirectory()) {
+        fs.readdirSync(asset)
+          .map((file) => path.resolve(asset, file))
+          .forEach(loadAsset);
+      } else {
+        const sha1 = sha1File(asset);
+        assets = assets.concat({
+          path: asset,
+          sha1,
+        });
+      }
+    } catch (e) {
+      throw new CLIError(
+        `Could not find "${asset}" asset or folder. Please make sure the asset or folder exists.`,
+      );
     }
   };
 
   assetsPaths.forEach(loadAsset);
 
-  assets = clearDuplicated(assets);
+  assets = clearDuplicated(assets).filter(filterFilesToIgnore);
 
-  const fileFilters: FileFilter[] = [];
-  fileFilters
-    .concat(
-      Object.keys(linkOptionsPerExt).map(
-        (fileExt): FileFilter => ({
-          name: fileExt,
-          filter: (asset) => path.extname(asset.path) === `.${fileExt}`,
-          options: linkOptionsPerExt[fileExt as Extensions],
-        }),
-      ),
-    )
+  const fileFilters = Object.keys(linkOptionsPerExt)
+    .map((fileExt): FileFilter => {
+      return {
+        name: fileExt,
+        filter: (asset) => path.extname(asset.path) === `.${fileExt}`,
+        options: linkOptionsPerExt[fileExt as Extensions],
+      };
+    })
     .concat({
       name: 'custom',
       filter: (asset) =>
         Object.keys(linkOptionsPerExt).indexOf(
-          path.extname(asset.path).substr(1),
+          path.extname(asset.path).substring(1),
         ) === -1,
       options: otherLinkOptions,
     });
 
   for (const fileFilter of fileFilters) {
-    const prevRelativeAssetsWithExt = prevRelativeAssets
+    const assetsToUnlink = previouslyLinkedAssets
       .filter(fileFilter.filter)
       .filter(filterAssetByAssetsWhichNotExists(assets, rootPath));
 
-    const prevRelativeAndroidFontAssetsToRelink = prevRelativeAssets
+    const androidAssetsToRelink = previouslyLinkedAssets
       .filter(fileFilter.filter)
       .filter((asset) => asset.shouldRelinkAndroidFonts);
 
-    const assetsWithExt = assets
+    const assetsToLink = assets
       .filter(fileFilter.filter)
-      .filter(filterAssetByAssetsWhichNotExists(prevRelativeAssets, rootPath))
-      .filter(filterFilesToIgnore);
+      .filter(
+        filterAssetByAssetsWhichNotExists(previouslyLinkedAssets, rootPath),
+      );
 
-    if (prevRelativeAndroidFontAssetsToRelink.length > 0) {
-      // showAndroidRelinkingWarning = true;
+    if (androidAssetsToRelink.length > 0) {
+      showAndroidRelinkingWarning = true;
 
       logger.info(
         `Relinking old ${fileFilter.name} assets from ${name} project to use XML resources`,
       );
       cleanAssets(
-        prevRelativeAndroidFontAssetsToRelink.map((asset) =>
-          getAbsolute(asset.path, rootPath),
-        ),
+        androidAssetsToRelink.map((asset) => getAbsolute(asset.path, rootPath)),
         platform === 'android'
           ? {
               platformPath: platformConfig.path,
@@ -220,11 +223,14 @@ function linkPlatform({
       );
 
       copyAssets(
-        prevRelativeAndroidFontAssetsToRelink
+        androidAssetsToRelink
           .filter(
-            (a) => !prevRelativeAssetsWithExt.some((b) => b.path === a.path),
+            (androidAsset) =>
+              !assetsToUnlink.some(
+                (assetToUnlink) => assetToUnlink.path === androidAsset.path,
+              ),
           )
-          .map(({path: assetPath}) => assetPath),
+          .map((asset) => asset.path),
         platform === 'android'
           ? {
               platformPath: platformConfig.path,
@@ -243,40 +249,19 @@ function linkPlatform({
       );
     }
 
-    if (prevRelativeAssetsWithExt.length > 0) {
+    if (assetsToUnlink.length > 0) {
       logger.info(
         `Cleaning previously linked ${fileFilter.name} assets from ${name} project`,
       );
       cleanAssets(
-        prevRelativeAssetsWithExt
+        assetsToUnlink
           .filter(
-            (a) =>
-              !prevRelativeAndroidFontAssetsToRelink.some(
-                (b) => b.path === a.path,
+            (assetToUnlink) =>
+              !androidAssetsToRelink.some(
+                (androidAsset) => androidAsset.path === assetToUnlink.path,
               ),
           )
-          .map(({path: filePath}) => getAbsolute(filePath, rootPath)),
-        platform === 'android'
-          ? {
-              platformPath: platformConfig.path,
-              platformAssetsPath: (
-                fileFilter.options as LinkOptionAndroidConfig
-              ).path,
-              useFontXMLFiles: false,
-            }
-          : {
-              platformPath: platformConfig.path,
-              pbxprojFilePath: (platformConfig as iOSPlatformConfig)
-                .pbxprojFilePath!,
-              addFont: (fileFilter.options as LinkOptionIOSConfig).addFont,
-            },
-      );
-    }
-
-    if (assetsWithExt.length > 0) {
-      logger.info(`Linking ${fileFilter.name} assets to ${name} project`);
-      copyAssets(
-        assetsWithExt.map(({path: assetPath}) => assetPath),
+          .map((asset) => getAbsolute(asset.path, rootPath)),
         platform === 'android'
           ? {
               platformPath: platformConfig.path,
@@ -294,6 +279,41 @@ function linkPlatform({
             },
       );
     }
+
+    if (assetsToLink.length > 0) {
+      logger.info(`Linking ${fileFilter.name} assets to ${name} project`);
+      copyAssets(
+        assetsToLink.map((asset) => asset.path),
+        platform === 'android'
+          ? {
+              platformPath: platformConfig.path,
+              platformAssetsPath: (
+                fileFilter.options as LinkOptionAndroidConfig
+              ).path,
+              useFontXMLFiles: (fileFilter.options as LinkOptionAndroidConfig)
+                .useFontXMLFiles,
+            }
+          : {
+              platformPath: platformConfig.path,
+              pbxprojFilePath: (platformConfig as iOSPlatformConfig)
+                .pbxprojFilePath!,
+              addFont: (fileFilter.options as LinkOptionIOSConfig).addFont,
+            },
+      );
+    }
+  }
+
+  manifest.write(
+    assets.map((asset) => ({
+      ...asset,
+      path: path.relative(rootPath, asset.path).split(path.sep).join('/'), // Convert path to POSIX just for manifest
+    })),
+  ); // Make relative
+
+  if (showAndroidRelinkingWarning) {
+    logger.warn(
+      "The old Android font assets were relinked in order to use XML resources. Please refer to this guide to update your application's code as well: https://github.com/callstack/react-native-asset#font-assets-linking-and-usage",
+    );
   }
 }
 

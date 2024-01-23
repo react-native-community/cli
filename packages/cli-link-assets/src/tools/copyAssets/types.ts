@@ -4,12 +4,12 @@ type CopyAssetsOptions = {
 
 type AndroidCopyAssetsOptions = CopyAssetsOptions & {
   platformAssetsPath: string;
-  useFontXMLFiles: boolean;
+  shouldUseFontXMLFiles: boolean;
 };
 
 type IOSCopyAssetsOptions = CopyAssetsOptions & {
   pbxprojFilePath: string;
-  addFont: boolean;
+  isFontAsset: boolean;
 };
 
 type CopyAssets = (

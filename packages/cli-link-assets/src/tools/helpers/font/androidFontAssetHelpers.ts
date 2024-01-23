@@ -77,7 +77,6 @@ function getFontFamily(
  * @param weight the font's weight.
  * @returns a fallback weight multiple of 100, between 100 and 900, inclusive.
  */
-
 function getFontFallbackWeight(weight: number) {
   if (weight <= 500) {
     return Math.max(Math.floor(weight / 100) * 100, 100);

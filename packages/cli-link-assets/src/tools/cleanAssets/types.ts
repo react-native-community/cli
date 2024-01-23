@@ -4,12 +4,12 @@ type CleanAssetsOptions = {
 
 type AndroidCleanAssetsOptions = CleanAssetsOptions & {
   platformAssetsPath: string;
-  useFontXMLFiles: boolean;
+  shouldUseFontXMLFiles: boolean;
 };
 
 type IOSCleanAssetsOptions = CleanAssetsOptions & {
   pbxprojFilePath: string;
-  addFont: boolean;
+  isFontAsset: boolean;
 };
 
 type CleanAssets = (

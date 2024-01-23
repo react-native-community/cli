@@ -12,7 +12,7 @@ import {CopyAssets, IOSCopyAssetsOptions} from './types';
  * except it does not copy assets but creates Xcode Group references
  */
 const copyAssets: CopyAssets = (assetFiles, options) => {
-  const {platformPath, pbxprojFilePath, addFont} =
+  const {platformPath, pbxprojFilePath, isFontAsset} =
     options as IOSCopyAssetsOptions;
 
   const project = xcode.project(pbxprojFilePath).parseSync();
@@ -39,7 +39,7 @@ const copyAssets: CopyAssets = (assetFiles, options) => {
 
   const addedFiles = addResourceFile(assetFiles);
 
-  if (addFont) {
+  if (isFontAsset) {
     const existingFonts = (plist.UIAppFonts as string[]) ?? [];
     const allFonts = [...existingFonts, ...addedFiles];
     plist.UIAppFonts = Array.from(new Set(allFonts)); // use Set to dedupe w/existing

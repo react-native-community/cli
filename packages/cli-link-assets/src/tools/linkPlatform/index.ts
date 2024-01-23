@@ -19,11 +19,11 @@ type PlatformConfig = (AndroidPlatformConfig | iOSPlatformConfig) & {
 
 type LinkOptionAndroidConfig = {
   path: string;
-  useFontXMLFiles: boolean;
+  shouldUseFontXMLFiles: boolean;
 };
 
 type LinkOptionIOSConfig = {
-  addFont: boolean;
+  isFontAsset: boolean;
 };
 
 type LinkOptions = {
@@ -212,13 +212,14 @@ function linkPlatform({
               platformAssetsPath: (
                 fileFilter.options as LinkOptionAndroidConfig
               ).path,
-              useFontXMLFiles: false,
+              shouldUseFontXMLFiles: false,
             }
           : {
               platformPath: platformConfig.path,
               pbxprojFilePath: (platformConfig as iOSPlatformConfig)
                 .pbxprojFilePath!,
-              addFont: (fileFilter.options as LinkOptionIOSConfig).addFont,
+              isFontAsset: (fileFilter.options as LinkOptionIOSConfig)
+                .isFontAsset,
             },
       );
 
@@ -237,14 +238,16 @@ function linkPlatform({
               platformAssetsPath: (
                 fileFilter.options as LinkOptionAndroidConfig
               ).path,
-              useFontXMLFiles: (fileFilter.options as LinkOptionAndroidConfig)
-                .useFontXMLFiles,
+              shouldUseFontXMLFiles: (
+                fileFilter.options as LinkOptionAndroidConfig
+              ).shouldUseFontXMLFiles,
             }
           : {
               platformPath: platformConfig.path,
               pbxprojFilePath: (platformConfig as iOSPlatformConfig)
                 .pbxprojFilePath!,
-              addFont: (fileFilter.options as LinkOptionIOSConfig).addFont,
+              isFontAsset: (fileFilter.options as LinkOptionIOSConfig)
+                .isFontAsset,
             },
       );
     }
@@ -268,14 +271,16 @@ function linkPlatform({
               platformAssetsPath: (
                 fileFilter.options as LinkOptionAndroidConfig
               ).path,
-              useFontXMLFiles: (fileFilter.options as LinkOptionAndroidConfig)
-                .useFontXMLFiles,
+              shouldUseFontXMLFiles: (
+                fileFilter.options as LinkOptionAndroidConfig
+              ).shouldUseFontXMLFiles,
             }
           : {
               platformPath: platformConfig.path,
               pbxprojFilePath: (platformConfig as iOSPlatformConfig)
                 .pbxprojFilePath!,
-              addFont: (fileFilter.options as LinkOptionIOSConfig).addFont,
+              isFontAsset: (fileFilter.options as LinkOptionIOSConfig)
+                .isFontAsset,
             },
       );
     }
@@ -290,14 +295,16 @@ function linkPlatform({
               platformAssetsPath: (
                 fileFilter.options as LinkOptionAndroidConfig
               ).path,
-              useFontXMLFiles: (fileFilter.options as LinkOptionAndroidConfig)
-                .useFontXMLFiles,
+              shouldUseFontXMLFiles: (
+                fileFilter.options as LinkOptionAndroidConfig
+              ).shouldUseFontXMLFiles,
             }
           : {
               platformPath: platformConfig.path,
               pbxprojFilePath: (platformConfig as iOSPlatformConfig)
                 .pbxprojFilePath!,
-              addFont: (fileFilter.options as LinkOptionIOSConfig).addFont,
+              isFontAsset: (fileFilter.options as LinkOptionIOSConfig)
+                .isFontAsset,
             },
       );
     }

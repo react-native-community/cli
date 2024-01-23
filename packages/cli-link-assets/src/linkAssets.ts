@@ -81,10 +81,10 @@ async function linkAssets(
             'assets',
             'fonts',
           ),
-          useFontXMLFiles: true,
+          shouldUseFontXMLFiles: true,
         },
         ios: {
-          addFont: true,
+          isFontAsset: true,
         },
       };
 
@@ -106,10 +106,10 @@ async function linkAssets(
             'res',
             'drawable',
           ),
-          useFontXMLFiles: false,
+          shouldUseFontXMLFiles: false,
         },
         ios: {
-          addFont: false,
+          isFontAsset: false,
         },
       };
 
@@ -131,10 +131,10 @@ async function linkAssets(
             'res',
             'raw',
           ),
-          useFontXMLFiles: false,
+          shouldUseFontXMLFiles: false,
         },
         ios: {
-          addFont: false,
+          isFontAsset: false,
         },
       };
 
@@ -153,10 +153,10 @@ async function linkAssets(
   const customLinkOptions: LinkOptions = {
     android: {
       path: path.resolve(androidPath, 'app', 'src', 'main', 'assets', 'custom'),
-      useFontXMLFiles: false,
+      shouldUseFontXMLFiles: false,
     },
     ios: {
-      addFont: false,
+      isFontAsset: false,
     },
   };
 

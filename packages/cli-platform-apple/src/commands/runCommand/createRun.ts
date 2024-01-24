@@ -218,6 +218,33 @@ const createRun =
     }
 
     if (!args.device && !args.udid && !args.simulator) {
+      const preferences = process.env.PREFERRED_IOS_DEVICES?.split(',') ?? [];
+      const found = preferences.flatMap((pref) =>
+        devices.filter((dev) => dev.name === pref || dev.udid === pref),
+      )[0];
+      if (found) {
+        logger.info('Running on device from preferred devices list');
+        if (found.type === 'simulator') {
+          return runOnSimulator(
+            xcodeProject,
+            platformName,
+            mode,
+            scheme,
+            args,
+            found,
+          );
+        } else {
+          return runOnDevice(
+            found,
+            platformName,
+            mode,
+            scheme,
+            xcodeProject,
+            args,
+          );
+        }
+      }
+
       const bootedSimulators = devices.filter(
         ({state, type}) => state === 'Booted' && type === 'simulator',
       );

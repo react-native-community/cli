@@ -7,11 +7,11 @@
  */
 
 import fs from 'fs';
-import glob from 'glob';
+import fg from 'fast-glob';
 import path from 'path';
 
 export default function getPackageClassName(folder: string) {
-  const files = glob.sync('**/+(*.java|*.kt)', {cwd: folder});
+  const files = fg.sync('**/+(*.java|*.kt)', {cwd: folder});
 
   const packages = files
     .map((filePath) => fs.readFileSync(path.join(folder, filePath), 'utf8'))

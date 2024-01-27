@@ -12,7 +12,7 @@
     "chalk": "^4.1.2",
     "cosmiconfig": "^5.1.0",
     "deepmerge": "^4.3.0",
-    "glob": "^7.1.3",
+    "fast-glob": "^3.3.2",
     "joi": "^17.2.1"
   },
   "files": [
@@ -22,8 +22,7 @@
   ],
   "devDependencies": {
     "@react-native-community/cli-types": "13.5.1",
-    "@types/cosmiconfig": "^5.0.3",
-    "@types/glob": "^7.1.1"
+    "@types/cosmiconfig": "^5.0.3"
   },
   "homepage": "https://github.com/react-native-community/cli/tree/main/packages/cli-config",
   "repository": {

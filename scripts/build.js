@@ -20,7 +20,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const glob = require('glob');
+const fg = require('fast-glob');
 const babel = require('@babel/core');
 const chalk = require('chalk');
 const micromatch = require('micromatch');
@@ -55,8 +55,8 @@ function getBuildPath(file, buildFolder) {
 function buildNodePackage(p) {
   const srcDir = path.resolve(p, SRC_DIR);
   const pattern = path.resolve(srcDir, '**/*');
-  const files = glob.sync(pattern, {
-    nodir: true,
+  const files = fg.sync(pattern, {
+    onlyFiles: true,
   });
 
   process.stdout.write(adjustToTerminalWidth(`${path.basename(p)}\n`));

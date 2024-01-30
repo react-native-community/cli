@@ -26,13 +26,13 @@ skipIfNode20(
     await copyFiles(src, DIR);
 
     expect(fs.readdirSync(DIR)).toMatchInlineSnapshot(`
-    Array [
-      "binary.keystore",
-      "extraDir",
-      "file1.js",
-      "file2.txt",
-    ]
-  `);
+      [
+        "binary.keystore",
+        "extraDir",
+        "file1.js",
+        "file2.txt",
+      ]
+    `);
 
     ['binary.keystore', 'file1.js', 'file2.txt'].forEach((file) => {
       expect(fs.readFileSync(path.join(src, file))).toEqual(
@@ -41,10 +41,10 @@ skipIfNode20(
     });
 
     expect(fs.readdirSync(path.join(DIR, 'extraDir'))).toMatchInlineSnapshot(`
-    Array [
-      "file3",
-    ]
-  `);
+      [
+        "file3",
+      ]
+    `);
 
     expect(fs.readFileSync(path.join(src, 'extraDir', 'file3'))).toEqual(
       fs.readFileSync(path.join(DIR, 'extraDir', 'file3')),
@@ -61,11 +61,11 @@ skipIfNode20(
       exclude: [new RegExp(replacePathSepForRegex(regexStr))],
     });
     expect(fs.readdirSync(DIR)).toMatchInlineSnapshot(`
-    Array [
-      "binary.keystore",
-      "file1.js",
-      "file2.txt",
-    ]
-  `);
+      [
+        "binary.keystore",
+        "file1.js",
+        "file2.txt",
+      ]
+    `);
   },
 );

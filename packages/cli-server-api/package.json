@@ -13,7 +13,7 @@
     "connect": "^3.6.5",
     "errorhandler": "^1.5.1",
     "nocache": "^3.0.1",
-    "pretty-format": "^26.6.2",
+    "pretty-format": "^29.7.0",
     "serve-static": "^1.13.1",
     "ws": "^7.5.1"
   },

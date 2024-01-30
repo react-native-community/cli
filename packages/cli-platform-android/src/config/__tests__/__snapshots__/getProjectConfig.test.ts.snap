@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`android::getProjectConfig returns an object with android project configuration for flat structure 1`] = `
-Object {
+{
   "appName": "",
   "applicationId": "com.some.example",
   "dependencyConfiguration": undefined,
@@ -14,7 +14,7 @@ Object {
 `;
 
 exports[`android::getProjectConfig returns an object with android project configuration for multiple 1`] = `
-Object {
+{
   "appName": "",
   "applicationId": "com.some.example",
   "dependencyConfiguration": undefined,
@@ -27,7 +27,7 @@ Object {
 `;
 
 exports[`android::getProjectConfig returns an object with android project configuration for nested structure 1`] = `
-Object {
+{
   "appName": "app",
   "applicationId": "com.example",
   "dependencyConfiguration": undefined,

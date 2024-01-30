@@ -1,6 +1,5 @@
 const common = {
   testEnvironment: 'node',
-  snapshotSerializers: [require.resolve('jest-snapshot-serializer-raw')],
   testRunner: 'jest-circus/runner',
 };
 

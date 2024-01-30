@@ -329,14 +329,14 @@ module.exports = {
 
   const {dependencies} = loadConfig(DIR);
   expect(removeString(dependencies['local-lib'], DIR)).toMatchInlineSnapshot(`
-    Object {
+    {
       "name": "local-lib",
-      "platforms": Object {
+      "platforms": {
         "android": null,
-        "ios": Object {
-          "configurations": Array [],
+        "ios": {
+          "configurations": [],
           "podspecPath": "custom-path",
-          "scriptPhases": Array [],
+          "scriptPhases": [],
           "version": "0.0.1",
         },
       },

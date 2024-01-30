@@ -6,7 +6,7 @@ import {existsSync as fileExists, rm} from 'fs';
 import os from 'os';
 import path from 'path';
 import {promisify} from 'util';
-import fg from 'fast-glob';
+import glob from 'fast-glob';
 
 type Args = {
   include?: string;
@@ -38,7 +38,7 @@ function isDirectoryPattern(directory: string): boolean {
 export async function cleanDir(directory: string): Promise<void> {
   try {
     if (isDirectoryPattern(directory)) {
-      const directories = await fg.async(directory, {onlyFiles: false});
+      const directories = await glob.async(directory, {onlyFiles: false});
 
       for (const dir of directories) {
         await rmAsync(dir, rmAsyncOptions);

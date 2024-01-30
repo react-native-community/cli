@@ -7,30 +7,39 @@ jest.mock('fs');
 
 const fs = require('fs');
 
-afterEach(() => {
-  jest.resetAllMocks();
-});
-
 describe('ios::findPodfilePath', () => {
+  beforeAll(() => {
+    fs.__setMockFilesystem({
+      empty: {},
+      flat: {
+        ...projects.project,
+      },
+      multiple: {
+        bar: {
+          ...projects.project,
+        },
+        foo: {
+          ...projects.project,
+        },
+      },
+    });
+  });
+
   it('returns null if there is no Podfile', () => {
-    fs.__setMockFilesystem({});
-    expect(findPodfilePath('/', 'ios')).toBeNull();
+    expect(findPodfilePath('/empty', 'ios')).toBeNull();
   });
 
   it('returns Podfile path if it exists', () => {
-    fs.__setMockFilesystem(projects.project);
-    expect(findPodfilePath('/', 'ios')).toContain('ios/Podfile');
+    expect(findPodfilePath('/flat', 'ios')).toContain('ios/Podfile');
   });
 
   it('prints a warning when multile Podfiles are found', () => {
     const warn = jest.spyOn(logger, 'warn').mockImplementation();
-    fs.__setMockFilesystem({
-      foo: projects.project,
-      bar: projects.project,
-    });
-    expect(findPodfilePath('/', 'ios')).toContain('bar/ios/Podfile');
+    expect(findPodfilePath('/multiple', 'ios')).toContain(
+      '/multiple/bar/ios/Podfile',
+    );
     expect(warn.mock.calls).toMatchSnapshot();
   });
 
-  it('igores Podfiles in Example folder', () => {});
+  it('ignores Podfiles in Example folder', () => {});
 });

@@ -1,11 +1,12 @@
 import fs from 'fs';
 import path from 'path';
-import fg from 'fast-glob';
+import glob from 'fast-glob';
 import {extractComponentDescriptors} from './extractComponentDescriptors';
+import {unixifyPaths} from '@react-native-community/cli-tools';
 
 export function findComponentDescriptors(packageRoot: string) {
-  const files = fg.sync('**/+(*.js|*.jsx|*.ts|*.tsx)', {
-    cwd: packageRoot,
+  const files = glob.sync('**/+(*.js|*.jsx|*.ts|*.tsx)', {
+    cwd: unixifyPaths(packageRoot),
     onlyFiles: true,
     ignore: ['**/node_modules/**'],
   });

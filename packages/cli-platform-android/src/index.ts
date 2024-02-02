@@ -11,3 +11,4 @@ export {
 } from './commands/runAndroid';
 export {projectConfig, dependencyConfig} from './config';
 export {getAndroidProject, getPackageName} from './config/getAndroidProject';
+export {default as isProjectUsingKotlin} from './config/isProjectUsingKotlin';

@@ -10,8 +10,12 @@ import fs from 'fs';
 import glob from 'glob';
 import path from 'path';
 
+export function getMainActivityFiles(folder: string) {
+  return glob.sync('**/+(*.java|*.kt)', {cwd: folder});
+}
+
 export default function getPackageClassName(folder: string) {
-  const files = glob.sync('**/+(*.java|*.kt)', {cwd: folder});
+  const files = getMainActivityFiles(folder);
 
   const packages = files
     .map((filePath) => fs.readFileSync(path.join(folder, filePath), 'utf8'))

@@ -1,3 +1,4 @@
+import {isProjectUsingKotlin} from '@react-native-community/cli-platform-android';
 import {logger} from '@react-native-community/cli-tools';
 import {XMLBuilder, XMLParser} from 'fast-xml-parser';
 import {sync as globSync} from 'glob';
@@ -36,8 +37,8 @@ type FontFamilyEntry = {
 
 type FontFamilyMap = Record<string, FontFamilyEntry>;
 
-const REACT_FONT_MANAGER_JAVA_IMPORT =
-  'com.facebook.react.views.text.ReactFontManager';
+const REACT_FONT_MANAGER_IMPORT =
+  'com.facebook.react.common.assets.ReactFontManager';
 
 function toArrayBuffer(buffer: Buffer) {
   const arrayBuffer = new ArrayBuffer(buffer.length);
@@ -51,12 +52,14 @@ function toArrayBuffer(buffer: Buffer) {
 }
 
 function normalizeString(str: string) {
-  return slugify(str, {lower: true, replacement: '_'});
+  return slugify(str, {lower: true, replacement: '_'}).replace(/-/g, '_');
 }
 
 function getProjectFilePath(rootPath: string, name: string) {
+  const isUsingKotlin = isProjectUsingKotlin(rootPath);
+  const ext = isUsingKotlin ? 'kt' : 'java';
   const filePath = globSync(
-    path.join(rootPath, `app/src/main/java/**/${name}.java`),
+    path.join(rootPath, `app/src/main/java/**/${name}.${ext}`),
   )[0];
   return filePath;
 }
@@ -132,77 +135,93 @@ function buildXMLFontObject(fontFiles: FontFamilyFile[]): FontXMLObject {
   };
 }
 
-function getAddCustomFontMethodCall(fontName: string, fontId: string) {
-  return `ReactFontManager.getInstance().addCustomFont(this, "${fontName}", R.font.${fontId});`;
+function getAddCustomFontMethodCall(
+  fontName: string,
+  fontId: string,
+  isKotlin?: boolean,
+) {
+  return `ReactFontManager.getInstance().addCustomFont(this, "${fontName}", R.font.${fontId})${
+    isKotlin ? '' : ';'
+  }`;
 }
 
-function addImportToJavaFile(javaFileData: string, importToAdd: string) {
-  const importRegex = new RegExp(`import\\s+${importToAdd};`, 'gm');
-  const existingImport = importRegex.exec(javaFileData);
+function addImportToFile(
+  fileData: string,
+  importToAdd: string,
+  isKotlin?: boolean,
+) {
+  const importRegex = new RegExp(
+    `import\\s+${importToAdd}${isKotlin ? '' : ';'}`,
+    'gm',
+  );
+  const existingImport = importRegex.exec(fileData);
 
   if (existingImport) {
-    return javaFileData;
+    return fileData;
   }
 
-  const packageRegex = /package\s+[\w.]+;/;
-  const packageMatch = packageRegex.exec(javaFileData);
-
-  let insertPosition = 0;
+  const packageRegex = isKotlin ? /package\s+[\w.]+/ : /package\s+[\w.]+;/;
+  const packageMatch = packageRegex.exec(fileData);
 
   if (packageMatch) {
-    insertPosition = packageMatch.index + packageMatch[0].length;
+    return fileData.replace(
+      packageMatch[0],
+      `${packageMatch[0]}\n\nimport ${importToAdd}`,
+    );
   }
 
-  return `${javaFileData.slice(
-    0,
-    insertPosition,
-  )}\n\nimport ${importToAdd};${javaFileData.slice(insertPosition)}`;
+  return fileData;
 }
 
-function insertLineInJavaClassMethod(
-  javaFileData: string,
+function insertLineInClassMethod(
+  fileData: string,
   targetClass: string,
   targetMethod: string,
   codeToInsert: string,
   lineToInsertAfter?: string,
+  isKotlin?: boolean,
 ) {
   const classRegex = new RegExp(
-    `class\\s+${targetClass}(\\s+extends\\s+\\S+)?(\\s+implements\\s+\\S+)?\\s*\\{`,
+    isKotlin
+      ? `class\\s+${targetClass}\\s*:\\s*\\S+\\(\\)\\s*,?\\s*(\\S+\\s*)?\\{`
+      : `class\\s+${targetClass}(\\s+extends\\s+\\S+)?(\\s+implements\\s+\\S+)?\\s*\\{`,
     'gm',
   );
-  const classMatch = classRegex.exec(javaFileData);
+  const classMatch = classRegex.exec(fileData);
 
   if (!classMatch) {
     logger.error(`Class ${targetClass} not found.`);
-    return javaFileData;
+    return fileData;
   }
 
   const methodRegex = new RegExp(
-    `(public|protected|private)\\s+(static\\s+)?\\S+\\s+${targetMethod}\\s*\\(`,
+    isKotlin
+      ? `override\\s+fun\\s+${targetMethod}\\s*\\(\\)`
+      : `(public|protected|private)\\s+(static\\s+)?\\S+\\s+${targetMethod}\\s*\\(`,
     'gm',
   );
-  let methodMatch = methodRegex.exec(javaFileData);
+  let methodMatch = methodRegex.exec(fileData);
 
   while (methodMatch) {
     if (methodMatch.index > classMatch.index) {
       break;
     }
-    methodMatch = methodRegex.exec(javaFileData);
+    methodMatch = methodRegex.exec(fileData);
   }
 
   if (!methodMatch) {
     logger.error(`Method ${targetMethod} not found in class ${targetClass}.`);
-    return javaFileData;
+    return fileData;
   }
 
-  const openingBraceIndex = javaFileData.indexOf('{', methodMatch.index);
+  const openingBraceIndex = fileData.indexOf('{', methodMatch.index);
   let closingBraceIndex = -1;
   let braceCount = 1;
 
-  for (let i = openingBraceIndex + 1; i < javaFileData.length; i += 1) {
-    if (javaFileData[i] === '{') {
+  for (let i = openingBraceIndex + 1; i < fileData.length; i += 1) {
+    if (fileData[i] === '{') {
       braceCount += 1;
-    } else if (javaFileData[i] === '}') {
+    } else if (fileData[i] === '}') {
       braceCount -= 1;
     }
 
@@ -216,16 +235,13 @@ function insertLineInJavaClassMethod(
     logger.error(
       `Could not find closing brace for method ${targetMethod} in class ${targetClass}.`,
     );
-    return javaFileData;
+    return fileData;
   }
 
-  const methodBody = javaFileData.slice(
-    openingBraceIndex + 1,
-    closingBraceIndex,
-  );
+  const methodBody = fileData.slice(openingBraceIndex + 1, closingBraceIndex);
 
   if (methodBody.includes(codeToInsert.trim())) {
-    return javaFileData;
+    return fileData;
   }
 
   let insertPosition = closingBraceIndex;
@@ -239,18 +255,18 @@ function insertLineInJavaClassMethod(
       logger.error(
         `Line "${lineToInsertAfter}" not found in method ${targetMethod} of class ${targetClass}.`,
       );
-      return javaFileData;
+      return fileData;
     }
   }
 
-  return `${javaFileData.slice(
+  return `${fileData.slice(
     0,
     insertPosition,
-  )}\n    ${codeToInsert}${javaFileData.slice(insertPosition)}`;
+  )}\n    ${codeToInsert}${fileData.slice(insertPosition)}`;
 }
 
-function removeLineFromJavaFile(javaFileData: string, stringToRemove: string) {
-  const lines = javaFileData.split('\n');
+function removeLineFromFile(fileData: string, stringToRemove: string) {
+  const lines = fileData.split('\n');
   const updatedLines = lines.filter((line) => !line.includes(stringToRemove));
   return updatedLines.join('\n');
 }
@@ -270,8 +286,8 @@ export {
   FontFamilyEntry,
   FontFamilyMap,
   FontXMLObject,
-  REACT_FONT_MANAGER_JAVA_IMPORT,
-  addImportToJavaFile,
+  REACT_FONT_MANAGER_IMPORT,
+  addImportToFile,
   buildXMLFontObject,
   buildXMLFontObjectEntry,
   getAddCustomFontMethodCall,
@@ -280,9 +296,9 @@ export {
   getFontResFolderPath,
   getProjectFilePath,
   getXMLFontId,
-  insertLineInJavaClassMethod,
+  insertLineInClassMethod,
   normalizeString,
-  removeLineFromJavaFile,
+  removeLineFromFile,
   toArrayBuffer,
   xmlBuilder,
   xmlParser,

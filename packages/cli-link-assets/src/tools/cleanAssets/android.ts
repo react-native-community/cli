@@ -4,14 +4,14 @@ import path from 'path';
 import {
   FontFamilyMap,
   FontXMLObject,
-  REACT_FONT_MANAGER_JAVA_IMPORT,
+  REACT_FONT_MANAGER_IMPORT,
   getAddCustomFontMethodCall,
   getFontFamily,
   getFontResFolderPath,
   getProjectFilePath,
   getXMLFontId,
   normalizeString,
-  removeLineFromJavaFile,
+  removeLineFromFile,
   toArrayBuffer,
   xmlBuilder,
   xmlParser,
@@ -82,7 +82,7 @@ const cleanAssetsAndroid: CleanAssets = (assetFiles, options) => {
     });
   });
 
-  // Read MainApplication.java file.
+  // Read MainApplication file.
   const mainApplicationFilePath = getProjectFilePath(
     platformPath,
     'MainApplication',
@@ -143,7 +143,7 @@ const cleanAssetsAndroid: CleanAssets = (assetFiles, options) => {
           );
         }
 
-        mainApplicationFileData = removeLineFromJavaFile(
+        mainApplicationFileData = removeLineFromFile(
           mainApplicationFileData,
           getAddCustomFontMethodCall(fontFamilyName, fontFamilyData.id),
         );
@@ -152,14 +152,14 @@ const cleanAssetsAndroid: CleanAssets = (assetFiles, options) => {
 
     // If there are not usages of ReactFontManager, we try to remove the import as well.
     if (!mainApplicationFileData.includes('ReactFontManager.')) {
-      mainApplicationFileData = removeLineFromJavaFile(
+      mainApplicationFileData = removeLineFromFile(
         mainApplicationFileData,
-        REACT_FONT_MANAGER_JAVA_IMPORT,
+        REACT_FONT_MANAGER_IMPORT,
       );
     }
 
     try {
-      // Write the modified contents to MainApplication.java file.
+      // Write the modified contents to MainApplication file.
       fs.writeFileSync(mainApplicationFilePath, mainApplicationFileData);
     } catch (e) {
       throw new CLIError(

@@ -17,16 +17,26 @@ import {
   xmlParser,
 } from '../helpers/font/androidFontAssetHelpers';
 import {AndroidCleanAssetsOptions, CleanAssets} from './types';
+import {CLIError} from '@react-native-community/cli-tools';
 
-const cleanAssets: CleanAssets = (assetFiles, options) => {
+const cleanAssetsAndroid: CleanAssets = (assetFiles, options) => {
   const {platformPath, platformAssetsPath, shouldUseFontXMLFiles} =
     options as AndroidCleanAssetsOptions;
 
   // If the assets are not fonts and are not linked with XML files, just remove them.
   if (!shouldUseFontXMLFiles) {
-    assetFiles.forEach((file) =>
-      fs.removeSync(path.join(platformAssetsPath, path.basename(file))),
-    );
+    assetFiles.forEach((file) => {
+      const fileName = path.join(platformAssetsPath, path.basename(file));
+      try {
+        fs.removeSync(fileName);
+      } catch (e) {
+        throw new CLIError(
+          `Failed to delete "${fileName}" asset file.`,
+          e as Error,
+        );
+      }
+    });
+
     return;
   }
 
@@ -38,7 +48,16 @@ const cleanAssets: CleanAssets = (assetFiles, options) => {
       normalizeString(path.basename(file)),
     );
 
-    const buffer = fs.readFileSync(fontFilePath);
+    let buffer: Buffer;
+    try {
+      buffer = fs.readFileSync(fontFilePath);
+    } catch (e) {
+      throw new CLIError(
+        `Failed to read "${fontFilePath}" font file.`,
+        e as Error,
+      );
+    }
+
     const font = OpenType.parse(toArrayBuffer(buffer));
 
     // Build the font family's map, where each key is the font family name,
@@ -81,8 +100,15 @@ const cleanAssets: CleanAssets = (assetFiles, options) => {
     let xmlObject: FontXMLObject;
 
     if (fs.existsSync(xmlFilePath)) {
-      // XML font file already exists, so we remove the entries.
-      xmlObject = xmlParser.parse(fs.readFileSync(xmlFilePath));
+      try {
+        // XML font file already exists, so we remove the entries.
+        xmlObject = xmlParser.parse(fs.readFileSync(xmlFilePath));
+      } catch (e) {
+        throw new CLIError(
+          `Failed to read "${xmlFilePath}" XML font file.`,
+          e as Error,
+        );
+      }
 
       fontFamilyData.files.forEach((file) => {
         const foundEntryIndex = xmlObject['font-family'].font.findIndex(
@@ -94,14 +120,28 @@ const cleanAssets: CleanAssets = (assetFiles, options) => {
       });
 
       if (xmlObject['font-family'].font.length > 0) {
-        // We still have some fonts declared in the XML font file.
-        // Write the XML font file.
-        const xmlData = xmlBuilder.build(xmlObject);
-        fs.outputFileSync(xmlFilePath, xmlData);
+        try {
+          // We still have some fonts declared in the XML font file.
+          // Write the XML font file.
+          const xmlData = xmlBuilder.build(xmlObject);
+          fs.outputFileSync(xmlFilePath, xmlData);
+        } catch (e) {
+          throw new CLIError(
+            `Failed to update "${xmlFilePath}" XML font file.`,
+            e as Error,
+          );
+        }
       } else {
-        // We remove the XML font file and method call
-        // because there aren't fonts declared inside it.
-        fs.removeSync(xmlFilePath);
+        try {
+          // We remove the XML font file and method call
+          // because there aren't fonts declared inside it.
+          fs.removeSync(xmlFilePath);
+        } catch (e) {
+          throw new CLIError(
+            `Failed to delete "${xmlFilePath}" XML font file.`,
+            e as Error,
+          );
+        }
 
         mainApplicationFileData = removeLineFromJavaFile(
           mainApplicationFileData,
@@ -118,12 +158,28 @@ const cleanAssets: CleanAssets = (assetFiles, options) => {
       );
     }
 
-    // Write the modified contents to MainApplication.java file.
-    fs.writeFileSync(mainApplicationFilePath, mainApplicationFileData);
+    try {
+      // Write the modified contents to MainApplication.java file.
+      fs.writeFileSync(mainApplicationFilePath, mainApplicationFileData);
+    } catch (e) {
+      throw new CLIError(
+        `Failed to update "${mainApplicationFilePath}" file.`,
+        e as Error,
+      );
+    }
 
     // Remove the font files from assets folder.
-    fontFamilyData.files.forEach((file) => fs.removeSync(file.path));
+    fontFamilyData.files.forEach((file) => {
+      try {
+        fs.removeSync(file.path);
+      } catch (e) {
+        throw new CLIError(
+          `Failed to delete "${file.path}" font file.`,
+          e as Error,
+        );
+      }
+    });
   });
 };
 
-export default cleanAssets;
+export default cleanAssetsAndroid;

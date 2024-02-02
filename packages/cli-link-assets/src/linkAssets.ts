@@ -32,6 +32,50 @@ function findPbxprojFile(files: Array<string>): string | null {
   return null;
 }
 
+function getLinkOptions(
+  assetType: 'font' | 'image' | 'audio' | 'custom',
+  androidPath: string,
+  androidAppName: string,
+): LinkOptions {
+  const baseAndroidPath = [androidPath, androidAppName, 'src', 'main'];
+
+  let shouldUseFontXMLFiles = false;
+  let isFontAsset = false;
+  switch (assetType) {
+    case 'font': {
+      baseAndroidPath.push('assets', 'fonts');
+      shouldUseFontXMLFiles = true;
+      isFontAsset = true;
+      break;
+    }
+
+    case 'image': {
+      baseAndroidPath.push('res', 'drawable');
+      break;
+    }
+
+    case 'audio': {
+      baseAndroidPath.push('res', 'raw');
+      break;
+    }
+
+    case 'custom': {
+      baseAndroidPath.push('assets', 'custom');
+      break;
+    }
+  }
+
+  return {
+    android: {
+      path: path.resolve(...baseAndroidPath),
+      shouldUseFontXMLFiles,
+    },
+    ios: {
+      isFontAsset,
+    },
+  };
+}
+
 async function linkAssets(
   _argv: string[],
   ctx: CLIConfig,
@@ -51,7 +95,7 @@ async function linkAssets(
   let iosPbxprojFilePath: string | null = null;
   if (ctx.project.ios) {
     iosPath = ctx.project.ios.sourceDir;
-    iosAssetsPath = androidAssetsPath.concat(ctx.project.ios.assets);
+    iosAssetsPath = iosAssetsPath.concat(ctx.project.ios.assets);
 
     const pbxprojPath = findPbxprojFile(
       fs.readdirSync(iosPath, {
@@ -71,24 +115,7 @@ async function linkAssets(
 
   const fontLinkOptions = fontTypes.reduce(
     (result: LinkOptionsPerExt, fontType) => {
-      const baseFontOptions: LinkOptions = {
-        android: {
-          path: path.resolve(
-            androidPath,
-            androidAppName,
-            'src',
-            'main',
-            'assets',
-            'fonts',
-          ),
-          shouldUseFontXMLFiles: true,
-        },
-        ios: {
-          isFontAsset: true,
-        },
-      };
-
-      result[fontType] = baseFontOptions;
+      result[fontType] = getLinkOptions('font', androidPath, androidAppName);
       return result;
     },
     {},
@@ -96,24 +123,7 @@ async function linkAssets(
 
   const imageLinkOptions = imageTypes.reduce(
     (result: LinkOptionsPerExt, imageType) => {
-      const baseImageOptions: LinkOptions = {
-        android: {
-          path: path.resolve(
-            androidPath,
-            androidAppName,
-            'src',
-            'main',
-            'res',
-            'drawable',
-          ),
-          shouldUseFontXMLFiles: false,
-        },
-        ios: {
-          isFontAsset: false,
-        },
-      };
-
-      result[imageType] = baseImageOptions;
+      result[imageType] = getLinkOptions('image', androidPath, androidAppName);
       return result;
     },
     {},
@@ -121,24 +131,7 @@ async function linkAssets(
 
   const audioLinkOptions = audioTypes.reduce(
     (result: LinkOptionsPerExt, audioType) => {
-      const baseAudioOptions: LinkOptions = {
-        android: {
-          path: path.resolve(
-            androidPath,
-            androidAppName,
-            'src',
-            'main',
-            'res',
-            'raw',
-          ),
-          shouldUseFontXMLFiles: false,
-        },
-        ios: {
-          isFontAsset: false,
-        },
-      };
-
-      result[audioType] = baseAudioOptions;
+      result[audioType] = getLinkOptions('audio', androidPath, androidAppName);
       return result;
     },
     {},
@@ -150,15 +143,11 @@ async function linkAssets(
     ...audioLinkOptions,
   };
 
-  const customLinkOptions: LinkOptions = {
-    android: {
-      path: path.resolve(androidPath, 'app', 'src', 'main', 'assets', 'custom'),
-      shouldUseFontXMLFiles: false,
-    },
-    ios: {
-      isFontAsset: false,
-    },
-  };
+  const customLinkOptions = getLinkOptions(
+    'custom',
+    androidPath,
+    androidAppName,
+  );
 
   const linkPlatformOptions: LinkPlatformOptions[] = [
     {

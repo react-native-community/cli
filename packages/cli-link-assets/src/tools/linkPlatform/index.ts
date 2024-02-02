@@ -198,6 +198,24 @@ function linkPlatform({
         filterAssetByAssetsWhichNotExists(previouslyLinkedAssets, rootPath),
       );
 
+    const platformPath = platformConfig.path;
+    const androidAssetsPath =
+      platform === 'android'
+        ? (fileFilter.options as LinkOptionAndroidConfig).path
+        : undefined;
+    const shouldUseAndroidFontXMLFiles =
+      platform === 'android'
+        ? (fileFilter.options as LinkOptionAndroidConfig).shouldUseFontXMLFiles
+        : undefined;
+    const iosPbxprojFilePath =
+      platform === 'ios'
+        ? (platformConfig as iOSPlatformConfig).pbxprojFilePath!
+        : undefined;
+    const isIOSFontAsset =
+      platform === 'ios'
+        ? (fileFilter.options as LinkOptionIOSConfig).isFontAsset
+        : undefined;
+
     if (androidAssetsToRelink.length > 0) {
       showAndroidRelinkingWarning = true;
 
@@ -208,18 +226,14 @@ function linkPlatform({
         androidAssetsToRelink.map((asset) => getAbsolute(asset.path, rootPath)),
         platform === 'android'
           ? {
-              platformPath: platformConfig.path,
-              platformAssetsPath: (
-                fileFilter.options as LinkOptionAndroidConfig
-              ).path,
+              platformPath: platformPath,
+              platformAssetsPath: androidAssetsPath!,
               shouldUseFontXMLFiles: false,
             }
           : {
-              platformPath: platformConfig.path,
-              pbxprojFilePath: (platformConfig as iOSPlatformConfig)
-                .pbxprojFilePath!,
-              isFontAsset: (fileFilter.options as LinkOptionIOSConfig)
-                .isFontAsset,
+              platformPath: platformPath,
+              pbxprojFilePath: iosPbxprojFilePath!,
+              isFontAsset: isIOSFontAsset!,
             },
       );
 
@@ -234,20 +248,14 @@ function linkPlatform({
           .map((asset) => asset.path),
         platform === 'android'
           ? {
-              platformPath: platformConfig.path,
-              platformAssetsPath: (
-                fileFilter.options as LinkOptionAndroidConfig
-              ).path,
-              shouldUseFontXMLFiles: (
-                fileFilter.options as LinkOptionAndroidConfig
-              ).shouldUseFontXMLFiles,
+              platformPath: platformPath,
+              platformAssetsPath: androidAssetsPath!,
+              shouldUseFontXMLFiles: shouldUseAndroidFontXMLFiles!,
             }
           : {
-              platformPath: platformConfig.path,
-              pbxprojFilePath: (platformConfig as iOSPlatformConfig)
-                .pbxprojFilePath!,
-              isFontAsset: (fileFilter.options as LinkOptionIOSConfig)
-                .isFontAsset,
+              platformPath: platformPath,
+              pbxprojFilePath: iosPbxprojFilePath!,
+              isFontAsset: isIOSFontAsset!,
             },
       );
     }
@@ -267,20 +275,14 @@ function linkPlatform({
           .map((asset) => getAbsolute(asset.path, rootPath)),
         platform === 'android'
           ? {
-              platformPath: platformConfig.path,
-              platformAssetsPath: (
-                fileFilter.options as LinkOptionAndroidConfig
-              ).path,
-              shouldUseFontXMLFiles: (
-                fileFilter.options as LinkOptionAndroidConfig
-              ).shouldUseFontXMLFiles,
+              platformPath: platformPath,
+              platformAssetsPath: androidAssetsPath!,
+              shouldUseFontXMLFiles: shouldUseAndroidFontXMLFiles!,
             }
           : {
-              platformPath: platformConfig.path,
-              pbxprojFilePath: (platformConfig as iOSPlatformConfig)
-                .pbxprojFilePath!,
-              isFontAsset: (fileFilter.options as LinkOptionIOSConfig)
-                .isFontAsset,
+              platformPath: platformPath,
+              pbxprojFilePath: iosPbxprojFilePath!,
+              isFontAsset: isIOSFontAsset!,
             },
       );
     }
@@ -291,20 +293,14 @@ function linkPlatform({
         assetsToLink.map((asset) => asset.path),
         platform === 'android'
           ? {
-              platformPath: platformConfig.path,
-              platformAssetsPath: (
-                fileFilter.options as LinkOptionAndroidConfig
-              ).path,
-              shouldUseFontXMLFiles: (
-                fileFilter.options as LinkOptionAndroidConfig
-              ).shouldUseFontXMLFiles,
+              platformPath: platformPath,
+              platformAssetsPath: androidAssetsPath!,
+              shouldUseFontXMLFiles: shouldUseAndroidFontXMLFiles!,
             }
           : {
-              platformPath: platformConfig.path,
-              pbxprojFilePath: (platformConfig as iOSPlatformConfig)
-                .pbxprojFilePath!,
-              isFontAsset: (fileFilter.options as LinkOptionIOSConfig)
-                .isFontAsset,
+              platformPath: platformPath,
+              pbxprojFilePath: iosPbxprojFilePath!,
+              isFontAsset: isIOSFontAsset!,
             },
       );
     }

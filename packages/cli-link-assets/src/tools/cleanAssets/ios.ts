@@ -1,4 +1,4 @@
-import {logger} from '@react-native-community/cli-tools';
+import {CLIError} from '@react-native-community/cli-tools';
 import fs from 'fs-extra';
 import path from 'path';
 import xcode, {PBXFile} from 'xcode';
@@ -7,7 +7,7 @@ import getPlist from '../helpers/xcode/getPlist';
 import writePlist from '../helpers/xcode/writePlist';
 import {CleanAssets, IOSCleanAssetsOptions} from './types';
 
-const cleanAssets: CleanAssets = (assetFiles, options) => {
+const cleanAssetsIOS: CleanAssets = (assetFiles, options) => {
   const {platformPath, pbxprojFilePath, isFontAsset} =
     options as IOSCleanAssetsOptions;
 
@@ -15,8 +15,7 @@ const cleanAssets: CleanAssets = (assetFiles, options) => {
   const plist = getPlist(project, platformPath);
 
   if (!plist) {
-    logger.error('Plist could not be found.');
-    return;
+    throw new CLIError('Failed to find PList file.');
   }
 
   createGroupWithMessage(project, 'Resources');
@@ -43,9 +42,16 @@ const cleanAssets: CleanAssets = (assetFiles, options) => {
     plist.UIAppFonts = Array.from(new Set(allFonts)); // use Set to dedupe w/existing
   }
 
-  fs.writeFileSync(pbxprojFilePath, project.writeSync());
+  try {
+    fs.writeFileSync(pbxprojFilePath, project.writeSync());
+  } catch (e) {
+    throw new CLIError(
+      `Failed to update "${pbxprojFilePath}" file.`,
+      e as Error,
+    );
+  }
 
   writePlist(project, platformPath, plist);
 };
 
-export default cleanAssets;
+export default cleanAssetsIOS;

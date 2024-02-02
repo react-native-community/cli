@@ -21,16 +21,22 @@ import {
   xmlParser,
 } from '../helpers/font/androidFontAssetHelpers';
 import {AndroidCopyAssetsOptions, CopyAssets} from './types';
+import {CLIError} from '@react-native-community/cli-tools';
 
-const copyAssets: CopyAssets = (assetFiles, options) => {
+const copyAssetsAndroid: CopyAssets = (assetFiles, options) => {
   const {platformPath, platformAssetsPath, shouldUseFontXMLFiles} =
     options as AndroidCopyAssetsOptions;
 
   // If the assets are not fonts and don't need to link with XML files, just copy them.
   if (!shouldUseFontXMLFiles) {
-    assetFiles.forEach((file) =>
-      fs.copySync(file, path.join(platformAssetsPath, path.basename(file))),
-    );
+    assetFiles.forEach((file) => {
+      const fileName = path.join(platformAssetsPath, path.basename(file));
+      try {
+        fs.copySync(file, fileName);
+      } catch (e) {
+        throw new CLIError(`Failed to copy "${file}" asset file.`, e as Error);
+      }
+    });
     return;
   }
 
@@ -42,7 +48,13 @@ const copyAssets: CopyAssets = (assetFiles, options) => {
   const fontFamilyMap: FontFamilyMap = {};
 
   assetFiles.forEach((file) => {
-    const buffer = fs.readFileSync(file);
+    let buffer: Buffer;
+    try {
+      buffer = fs.readFileSync(file);
+    } catch (e) {
+      throw new CLIError(`Failed to read "${file}" font file.`, e as Error);
+    }
+
     const font = OpenType.parse(toArrayBuffer(buffer));
 
     const {
@@ -135,8 +147,15 @@ const copyAssets: CopyAssets = (assetFiles, options) => {
     let xmlObject: FontXMLObject;
 
     if (fs.existsSync(xmlFilePath)) {
-      // XML font file already exists, so we add new entries or replace existing ones.
-      xmlObject = xmlParser.parse(fs.readFileSync(xmlFilePath));
+      try {
+        // XML font file already exists, so we add new entries or replace existing ones.
+        xmlObject = xmlParser.parse(fs.readFileSync(xmlFilePath));
+      } catch (e) {
+        throw new CLIError(
+          `Failed to read "${xmlFilePath}" XML font file.`,
+          e as Error,
+        );
+      }
 
       fontFamilyData.files.forEach((file) => {
         const xmlEntry = buildXMLFontObjectEntry(file);
@@ -172,15 +191,32 @@ const copyAssets: CopyAssets = (assetFiles, options) => {
     const xmlData = xmlBuilder.build(xmlObject);
 
     // Copy the font files to font folder.
-    fontFamilyData.files.forEach((file) =>
-      fs.copySync(
-        file.path,
-        path.join(getFontResFolderPath(platformPath), path.basename(file.name)),
-      ),
-    );
+    fontFamilyData.files.forEach((file) => {
+      try {
+        fs.copySync(
+          file.path,
+          path.join(
+            getFontResFolderPath(platformPath),
+            path.basename(file.name),
+          ),
+        );
+      } catch (e) {
+        throw new CLIError(
+          `Failed to copy "${file.path}" font file.`,
+          e as Error,
+        );
+      }
+    });
 
-    // Write the XML font file.
-    fs.outputFileSync(xmlFilePath, xmlData);
+    try {
+      // Write the XML font file.
+      fs.outputFileSync(xmlFilePath, xmlData);
+    } catch (e) {
+      throw new CLIError(
+        `Failed to write / update "${xmlFilePath}" XML font file.`,
+        e as Error,
+      );
+    }
 
     // Read MainApplication.java file.
     let mainApplicationFileData = fs
@@ -202,9 +238,16 @@ const copyAssets: CopyAssets = (assetFiles, options) => {
       'super.onCreate();',
     );
 
-    // Write the modified contents to MainApplication.java file.
-    fs.writeFileSync(mainApplicationFilePath, mainApplicationFileData);
+    try {
+      // Write the modified contents to MainApplication.java file.
+      fs.writeFileSync(mainApplicationFilePath, mainApplicationFileData);
+    } catch (e) {
+      throw new CLIError(
+        `Failed to update "${mainApplicationFilePath}" file.`,
+        e as Error,
+      );
+    }
   });
 };
 
-export default copyAssets;
+export default copyAssetsAndroid;

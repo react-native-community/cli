@@ -52,7 +52,7 @@ function toArrayBuffer(buffer: Buffer) {
 }
 
 function normalizeString(str: string) {
-  return slugify(str, {lower: true, replacement: '_'});
+  return slugify(str, {lower: true, replacement: '_'}).replace(/-/g, '_');
 }
 
 function getProjectFilePath(rootPath: string, name: string) {

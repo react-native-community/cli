@@ -4,14 +4,14 @@ import path from 'path';
 import {
   FontFamilyMap,
   FontXMLObject,
-  REACT_FONT_MANAGER_JAVA_IMPORT,
+  REACT_FONT_MANAGER_IMPORT,
   getAddCustomFontMethodCall,
   getFontFamily,
   getFontResFolderPath,
   getProjectFilePath,
   getXMLFontId,
   normalizeString,
-  removeLineFromJavaFile,
+  removeLineFromFile,
   toArrayBuffer,
   xmlBuilder,
   xmlParser,
@@ -103,7 +103,7 @@ const cleanAssets: CleanAssets = (assetFiles, options) => {
         // because there aren't fonts declared inside it.
         fs.removeSync(xmlFilePath);
 
-        mainApplicationFileData = removeLineFromJavaFile(
+        mainApplicationFileData = removeLineFromFile(
           mainApplicationFileData,
           getAddCustomFontMethodCall(fontFamilyName, fontFamilyData.id),
         );
@@ -112,9 +112,9 @@ const cleanAssets: CleanAssets = (assetFiles, options) => {
 
     // If there are not usages of ReactFontManager, we try to remove the import as well.
     if (!mainApplicationFileData.includes('ReactFontManager.')) {
-      mainApplicationFileData = removeLineFromJavaFile(
+      mainApplicationFileData = removeLineFromFile(
         mainApplicationFileData,
-        REACT_FONT_MANAGER_JAVA_IMPORT,
+        REACT_FONT_MANAGER_IMPORT,
       );
     }
 

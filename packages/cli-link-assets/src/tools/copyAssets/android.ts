@@ -4,8 +4,8 @@ import path from 'path';
 import {
   FontFamilyMap,
   FontXMLObject,
-  REACT_FONT_MANAGER_JAVA_IMPORT,
-  addImportToJavaFile,
+  REACT_FONT_MANAGER_IMPORT,
+  addImportToFile,
   buildXMLFontObject,
   buildXMLFontObjectEntry,
   getAddCustomFontMethodCall,
@@ -14,18 +14,19 @@ import {
   getFontResFolderPath,
   getProjectFilePath,
   getXMLFontId,
-  insertLineInJavaClassMethod,
+  insertLineInClassMethod,
   normalizeString,
   toArrayBuffer,
   xmlBuilder,
   xmlParser,
 } from '../helpers/font/androidFontAssetHelpers';
 import {AndroidCopyAssetsOptions, CopyAssets} from './types';
+import {isProjectUsingKotlin} from '@react-native-community/cli-platform-android';
 
 const copyAssets: CopyAssets = (assetFiles, options) => {
   const {platformPath, platformAssetsPath, shouldUseFontXMLFiles} =
     options as AndroidCopyAssetsOptions;
-
+  const isUsingKotlin = isProjectUsingKotlin(platformPath);
   // If the assets are not fonts and don't need to link with XML files, just copy them.
   if (!shouldUseFontXMLFiles) {
     assetFiles.forEach((file) =>
@@ -188,18 +189,24 @@ const copyAssets: CopyAssets = (assetFiles, options) => {
       .toString();
 
     // Add ReactFontManager's import.
-    mainApplicationFileData = addImportToJavaFile(
+    mainApplicationFileData = addImportToFile(
       mainApplicationFileData,
-      REACT_FONT_MANAGER_JAVA_IMPORT,
+      REACT_FONT_MANAGER_IMPORT,
+      isUsingKotlin,
     );
 
     // Insert add custom font's method call.
-    mainApplicationFileData = insertLineInJavaClassMethod(
+    mainApplicationFileData = insertLineInClassMethod(
       mainApplicationFileData,
       'MainApplication',
       'onCreate',
-      getAddCustomFontMethodCall(fontFamilyName, fontFamilyData.id),
-      'super.onCreate();',
+      getAddCustomFontMethodCall(
+        fontFamilyName,
+        fontFamilyData.id,
+        isUsingKotlin,
+      ),
+      `super.onCreate()${isUsingKotlin ? '' : ';'}`,
+      isUsingKotlin,
     );
 
     // Write the modified contents to MainApplication.java file.

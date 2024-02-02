@@ -63,7 +63,7 @@ const cleanAssets: CleanAssets = (assetFiles, options) => {
     });
   });
 
-  // Read MainApplication.java file.
+  // Read MainApplication file.
   const mainApplicationFilePath = getProjectFilePath(
     platformPath,
     'MainApplication',
@@ -118,7 +118,7 @@ const cleanAssets: CleanAssets = (assetFiles, options) => {
       );
     }
 
-    // Write the modified contents to MainApplication.java file.
+    // Write the modified contents to MainApplication file.
     fs.writeFileSync(mainApplicationFilePath, mainApplicationFileData);
 
     // Remove the font files from assets folder.

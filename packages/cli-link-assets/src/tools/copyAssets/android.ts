@@ -183,7 +183,7 @@ const copyAssets: CopyAssets = (assetFiles, options) => {
     // Write the XML font file.
     fs.outputFileSync(xmlFilePath, xmlData);
 
-    // Read MainApplication.java file.
+    // Read MainApplication file.
     let mainApplicationFileData = fs
       .readFileSync(mainApplicationFilePath)
       .toString();
@@ -209,7 +209,7 @@ const copyAssets: CopyAssets = (assetFiles, options) => {
       isUsingKotlin,
     );
 
-    // Write the modified contents to MainApplication.java file.
+    // Write the modified contents to MainApplication file.
     fs.writeFileSync(mainApplicationFilePath, mainApplicationFileData);
   });
 };

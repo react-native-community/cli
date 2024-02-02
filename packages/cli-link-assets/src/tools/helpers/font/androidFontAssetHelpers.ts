@@ -4,7 +4,6 @@ import {XMLBuilder, XMLParser} from 'fast-xml-parser';
 import {sync as globSync} from 'glob';
 import OpenType from 'opentype.js';
 import path from 'path';
-import slugify from 'slugify';
 
 type FontXMLEntry = {
   '@_app:font': string;
@@ -52,7 +51,7 @@ function toArrayBuffer(buffer: Buffer) {
 }
 
 function normalizeString(str: string) {
-  return slugify(str, {lower: true, replacement: '_'});
+  return str.replace(/[\s-]+/g, '_').toLowerCase();
 }
 
 function getProjectFilePath(rootPath: string, name: string) {

@@ -12,7 +12,10 @@ import {supportedPlatforms} from '../../config/supportedPlatforms';
 const createBuild =
   ({platformName}: BuilderCommand) =>
   async (_: Array<string>, ctx: Config, args: BuildFlags) => {
-    const platformConfig = ctx.project[platformName] as IOSProjectConfig;
+    const platformConfig = ctx.project[platformName] as
+      | IOSProjectConfig
+      | undefined;
+
     if (
       platformConfig === undefined ||
       supportedPlatforms[platformName] === undefined
@@ -21,9 +24,9 @@ const createBuild =
     }
 
     let installedPods = false;
-    if (platformConfig?.automaticPodsInstallation || args.forcePods) {
-      const isAppRunningNewArchitecture = platformConfig?.sourceDir
-        ? await getArchitecture(platformConfig?.sourceDir)
+    if (platformConfig.automaticPodsInstallation || args.forcePods) {
+      const isAppRunningNewArchitecture = platformConfig.sourceDir
+        ? await getArchitecture(platformConfig.sourceDir)
         : undefined;
 
       await resolvePods(ctx.root, ctx.dependencies, platformName, {

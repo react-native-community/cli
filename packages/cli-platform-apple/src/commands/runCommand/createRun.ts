@@ -51,7 +51,9 @@ const createRun =
   async (_: Array<string>, ctx: Config, args: FlagsT) => {
     // React Native docs assume platform is always ios/android
     link.setPlatform('ios');
-    const platformConfig = ctx.project[platformName] as IOSProjectConfig;
+    const platformConfig = ctx.project[platformName] as
+      | IOSProjectConfig
+      | undefined;
     const {sdkNames, readableName: platformReadableName} =
       getPlatformInfo(platformName);
 
@@ -67,9 +69,9 @@ const createRun =
     let {packager, port} = args;
     let installedPods = false;
     // check if pods need to be installed
-    if (platformConfig?.automaticPodsInstallation || args.forcePods) {
-      const isAppRunningNewArchitecture = platformConfig?.sourceDir
-        ? await getArchitecture(platformConfig?.sourceDir)
+    if (platformConfig.automaticPodsInstallation || args.forcePods) {
+      const isAppRunningNewArchitecture = platformConfig.sourceDir
+        ? await getArchitecture(platformConfig.sourceDir)
         : undefined;
 
       await resolvePods(ctx.root, ctx.dependencies, platformName, {

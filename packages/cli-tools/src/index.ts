@@ -17,5 +17,6 @@ export {default as findDevServerPort} from './findDevServerPort';
 export * from './port';
 export {default as cacheManager} from './cacheManager';
 export {default as runSudo} from './runSudo';
+export {default as unixifyPaths} from './unixifyPaths';
 
 export * from './errors';

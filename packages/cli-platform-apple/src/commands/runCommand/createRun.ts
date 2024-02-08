@@ -51,9 +51,7 @@ const createRun =
   async (_: Array<string>, ctx: Config, args: FlagsT) => {
     // React Native docs assume platform is always ios/android
     link.setPlatform('ios');
-    const platformConfig = ctx.project[platformName] as
-      | IOSProjectConfig
-      | undefined;
+    const platformConfig = ctx.project[platformName] as IOSProjectConfig;
     const {sdkNames, readableName: platformReadableName} =
       getPlatformInfo(platformName);
 

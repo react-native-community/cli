@@ -12,9 +12,7 @@ import {supportedPlatforms} from '../../config/supportedPlatforms';
 const createBuild =
   ({platformName}: BuilderCommand) =>
   async (_: Array<string>, ctx: Config, args: BuildFlags) => {
-    const platformConfig = ctx.project[platformName] as
-      | IOSProjectConfig
-      | undefined;
+    const platformConfig = ctx.project[platformName] as IOSProjectConfig;
 
     if (
       platformConfig === undefined ||

@@ -12,6 +12,7 @@ export interface IOSProjectParams {
 
 export type IOSProjectInfo = {
   name: string;
+  path: string;
   isWorkspace: boolean;
 };
 

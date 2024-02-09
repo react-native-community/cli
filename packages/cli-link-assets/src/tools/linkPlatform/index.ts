@@ -9,7 +9,7 @@ import {AssetPathAndSHA1, Manifest} from '../manifest';
 type AndroidPlatformConfig = {};
 
 type iOSPlatformConfig = {
-  pbxprojFilePath: string | null;
+  pbxprojFilePath: string;
 };
 
 type PlatformConfig = (AndroidPlatformConfig | iOSPlatformConfig) & {
@@ -209,7 +209,7 @@ function linkPlatform({
         : undefined;
     const iosPbxprojFilePath =
       platform === 'ios'
-        ? (platformConfig as iOSPlatformConfig).pbxprojFilePath!
+        ? (platformConfig as iOSPlatformConfig).pbxprojFilePath
         : undefined;
     const isIOSFontAsset =
       platform === 'ios'

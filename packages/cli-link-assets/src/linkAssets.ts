@@ -1,3 +1,8 @@
+import {
+  findPbxprojFile,
+  findXcodeProject,
+} from '@react-native-community/cli-platform-apple';
+import {CLIError} from '@react-native-community/cli-tools';
 import type {Config as CLIConfig} from '@react-native-community/cli-types';
 import fs from 'fs';
 import path from 'path';
@@ -16,21 +21,6 @@ import getManifest from './tools/manifest';
 type Args = {
   projectRoot: string;
 };
-
-function findPbxprojFile(files: Array<string>): string | null {
-  const sortedFiles = files.sort();
-
-  for (let i = sortedFiles.length - 1; i >= 0; i--) {
-    const fileName = files[i];
-    const ext = path.extname(fileName);
-
-    if (ext === '.pbxproj') {
-      return fileName;
-    }
-  }
-
-  return null;
-}
 
 function getLinkOptions(
   assetType: 'font' | 'image' | 'audio' | 'custom',
@@ -97,16 +87,21 @@ async function linkAssets(
     iosPath = ctx.project.ios.sourceDir;
     iosAssetsPath = iosAssetsPath.concat(ctx.project.ios.assets);
 
-    const pbxprojPath = findPbxprojFile(
+    const iosProjectInfo = findXcodeProject(
       fs.readdirSync(iosPath, {
         encoding: 'utf8',
         recursive: true,
       }),
     );
 
-    if (pbxprojPath) {
-      iosPbxprojFilePath = path.join(iosPath, pbxprojPath);
+    if (!iosProjectInfo) {
+      throw new CLIError(
+        `Could not find Xcode project files in "${iosPath}" folder`,
+      );
     }
+
+    const pbxprojPath = findPbxprojFile(iosProjectInfo);
+    iosPbxprojFilePath = path.join(iosPath, pbxprojPath);
   }
 
   const rootPath = path.isAbsolute(linkAssetsOptions.projectRoot)
@@ -183,7 +178,7 @@ async function linkAssets(
       platformConfig: {
         exists: !!ctx.project.ios,
         path: iosPath,
-        pbxprojFilePath: iosPbxprojFilePath,
+        pbxprojFilePath: iosPbxprojFilePath!,
       },
       cleanAssets: cleanIOSAssets,
       copyAssets: copyIOSAssets,
@@ -214,3 +209,5 @@ export default {
     },
   ],
 };
+
+export {linkAssets};

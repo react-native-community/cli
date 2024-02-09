@@ -14,3 +14,6 @@ export {default as createRun} from './commands/runCommand/createRun';
 
 export {default as getArchitecture} from './tools/getArchitecture';
 export {default as installPods} from './tools/installPods';
+
+export {default as findXcodeProject} from './config/findXcodeProject';
+export {default as findPbxprojFile} from './config/findPbxprojFile';

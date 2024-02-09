@@ -58,7 +58,7 @@ Launches the Metro Bundler in a new window using the specified terminal path.
 
 > default: 'installDebug'
 
-Run custom gradle tasks. If this argument is provided, then `--variant` option is ignored.
+Run custom gradle tasks. If this argument is provided, then `--mode` option is ignored.
 Example: `yarn react-native run-android --tasks clean,installDebug`.
 
 #### `--active-arch-only`
@@ -72,7 +72,6 @@ Build native libraries only for the current device architecture for debug builds
 > default: false
 
 List all available Android devices and simulators and let you choose one to run the app.
-
 
 #### `--interactive`
 

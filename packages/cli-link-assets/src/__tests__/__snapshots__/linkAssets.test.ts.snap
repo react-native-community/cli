@@ -376,3 +376,125 @@ exports[`linkAssets should link all types of assets in a Kotlin project for the 
 + }
 +"
 `;
+
+exports[`linkAssets should link new assets in a project 1`] = `
+"Snapshot Diff:
+- First value
++ Second value
+
+@@ -12,10 +12,14 @@
+      {
+        \\"path\\": \\"assets/shared/fonts/FiraCode-Regular.otf\\",
+        \\"sha1\\": \\"5115ac0f821964b0bc2938273b37be4088f3cd8e\\"
+      },
+      {
++       \\"path\\": \\"assets/shared/fonts/Lato-Light.ttf\\",
++       \\"sha1\\": \\"ad0d178564445a535b15d417f5b18019923d3bab\\"
++     },
++     {
+        \\"path\\": \\"assets/shared/fonts/Lato-Regular.ttf\\",
+        \\"sha1\\": \\"e923c72eda5e50a87e18ff5c71e9ef4b3b6455a3\\"
+      },
+      {
+        \\"path\\": \\"assets/shared/image_gif.gif\\",
+@@ -38,9 +42,13 @@
+        \\"sha1\\": \\"542498221d97bee5bdbccf86ee8890bf8e8005c9\\"
+      },
+      {
+        \\"path\\": \\"assets/android/fonts/Lato-BoldItalic.ttf\\",
+        \\"sha1\\": \\"6bf491e78e16d3b9c8a55752e1bd658e15ed7f19\\"
++     },
++     {
++       \\"path\\": \\"assets/android/fonts/Montserrat-Regular.ttf\\",
++       \\"sha1\\": \\"bb895d19b8a1fbe1c57fc89cac5da82fdc8fdef4\\"
+      }
+    ]
+  }
+"
+`;
+
+exports[`linkAssets should link new assets in a project 2`] = `
+"Snapshot Diff:
+- First value
++ Second value
+
+@@ -6,10 +6,11 @@
+  import com.facebook.react.ReactApplication
+
+  class MainApplication : Application(), ReactApplication {
+    override fun onCreate() {
+      super.onCreate()
++     ReactFontManager.getInstance().addCustomFont(this, \\"Montserrat\\", R.font.montserrat)
+      ReactFontManager.getInstance().addCustomFont(this, \\"Lato\\", R.font.lato)
+      ReactFontManager.getInstance().addCustomFont(this, \\"Fira Code\\", R.font.fira_code)
+      SoLoader.init(this, false)
+    }
+  }"
+`;
+
+exports[`linkAssets should link new assets in a project 3`] = `
+"Snapshot Diff:
+- First value
++ Second value
+
+  <?xml version=\\"1.0\\" encoding=\\"utf-8\\"?>
+  <font-family xmlns:app=\\"http://schemas.android.com/apk/res-auto\\">
++   <font app:fontStyle=\\"normal\\" app:fontWeight=\\"300\\" app:font=\\"@font/lato_light\\"/>
+    <font app:fontStyle=\\"normal\\" app:fontWeight=\\"400\\" app:font=\\"@font/lato_regular\\"/>
+    <font app:fontStyle=\\"italic\\" app:fontWeight=\\"700\\" app:font=\\"@font/lato_bolditalic\\"/>
+    <font app:fontStyle=\\"normal\\" app:fontWeight=\\"700\\" app:font=\\"@font/lato_bold\\"/>
+  </font-family>
+"
+`;
+
+exports[`linkAssets should link new assets in a project 4`] = `
+"Snapshot Diff:
+- First value
++ Second value
+
++ <?xml version=\\"1.0\\" encoding=\\"utf-8\\"?>
++ <font-family xmlns:app=\\"http://schemas.android.com/apk/res-auto\\">
++   <font app:fontStyle=\\"normal\\" app:fontWeight=\\"400\\" app:font=\\"@font/montserrat_regular\\"/>
++ </font-family>
++"
+`;
+
+exports[`linkAssets should link new assets in a project 5`] = `
+"Snapshot Diff:
+- First value
++ Second value
+
+@@ -12,10 +12,14 @@
+      {
+        \\"path\\": \\"assets/shared/fonts/FiraCode-Regular.otf\\",
+        \\"sha1\\": \\"5115ac0f821964b0bc2938273b37be4088f3cd8e\\"
+      },
+      {
++       \\"path\\": \\"assets/shared/fonts/Lato-Light.ttf\\",
++       \\"sha1\\": \\"ad0d178564445a535b15d417f5b18019923d3bab\\"
++     },
++     {
+        \\"path\\": \\"assets/shared/fonts/Lato-Regular.ttf\\",
+        \\"sha1\\": \\"e923c72eda5e50a87e18ff5c71e9ef4b3b6455a3\\"
+      },
+      {
+        \\"path\\": \\"assets/shared/image_gif.gif\\","
+`;
+
+exports[`linkAssets should link new assets in a project 6`] = `
+"Snapshot Diff:
+- First value
++ Second value
+
+@@ -51,9 +51,10 @@
+  	<array>
+  		<string>FiraCode-Bold.otf</string>
+  		<string>FiraCode-Regular.otf</string>
+  		<string>Lato-Regular.ttf</string>
+  		<string>Raleway-Regular.ttf</string>
++ 		<string>Lato-Light.ttf</string>
+  	</array>
+  </dict>
+  </plist>
+"
+`;

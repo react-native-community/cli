@@ -13,10 +13,12 @@ const fixtureFilePaths = {
   projectPbxproj: 'ios/Example.xcodeproj/project.pbxproj',
   latoBoldFont: 'assets/android/fonts/Lato-Bold.ttf',
   latoBoldItalicFont: 'assets/android/fonts/Lato-BoldItalic.ttf',
+  montserratRegularFont: 'assets/android/fonts/Montserrat-Regular.ttf',
   ralewayRegularFont: 'assets/ios/fonts/Raleway-Regular.ttf',
   firaCodeBoldFont: 'assets/shared/fonts/FiraCode-Bold.otf',
   firaCodeRegularFont: 'assets/shared/fonts/FiraCode-Regular.otf',
   latoRegularFont: 'assets/shared/fonts/Lato-Regular.ttf',
+  latoLightFont: 'assets/shared/fonts/Lato-Light.ttf',
   documentPdf: 'assets/shared/document.pdf',
   imageGif: 'assets/shared/image_gif.gif',
   imageJpg: 'assets/shared/image_jpg.jpg',
@@ -39,6 +41,9 @@ const fixtureFiles = {
   latoBoldItalicFont: fs.readFileSync(
     path.join(__dirname, './files/Lato-BoldItalic.ttf'),
   ),
+  montserratRegularFont: fs.readFileSync(
+    path.join(__dirname, './files/Montserrat-Regular.ttf'),
+  ),
   ralewayRegularFont: fs.readFileSync(
     path.join(__dirname, './files/Raleway-Regular.ttf'),
   ),
@@ -50,6 +55,9 @@ const fixtureFiles = {
   ),
   latoRegularFont: fs.readFileSync(
     path.join(__dirname, './files/Lato-Regular.ttf'),
+  ),
+  latoLightFont: fs.readFileSync(
+    path.join(__dirname, './files/Lato-Light.ttf'),
   ),
   documentPdf: fs.readFileSync(path.join(__dirname, './files/document.pdf')),
   imageGif: fs.readFileSync(path.join(__dirname, './files/image_gif.gif')),
@@ -91,4 +99,4 @@ const baseProjectJava = {
   [fixtureFilePaths.mainApplicationJava]: fixtureFiles.mainApplicationJava,
 } as const;
 
-export {fixtureFilePaths, baseProjectKotlin, baseProjectJava};
+export {fixtureFilePaths, fixtureFiles, baseProjectKotlin, baseProjectJava};

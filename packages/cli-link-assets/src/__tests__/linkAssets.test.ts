@@ -9,6 +9,7 @@ import {
   baseProjectKotlin,
   baseProjectJava,
   fixtureFilePaths,
+  fixtureFiles,
 } from '../__fixtures__/projects';
 import {linkAssets} from '../linkAssets';
 import getGroup from '../tools/helpers/xcode/getGroup';
@@ -40,11 +41,14 @@ const readAndroidLinkAssetsManifestFile = () =>
 const readInfoPlistFile = () =>
   fs.readFileSync(path.resolve(DIR, fixtureFilePaths.infoPlist), 'utf8');
 
-// const readProjectPbxprojFile = () =>
-//   fs.readFileSync(path.resolve(DIR, fixtureFilePaths.projectPbxproj), 'utf8');
-
 const readIOSLinkAssetsManifestFile = () =>
   fs.readFileSync(path.resolve(DIR, 'ios/link-assets-manifest.json'), 'utf8');
+
+const readLatoXMLFontFile = () =>
+  fs.readFileSync(
+    path.resolve(DIR, 'android/app/src/main/res/font/lato.xml'),
+    'utf8',
+  );
 
 const readLatoBoldFontFile = () =>
   fs.readFileSync(
@@ -55,6 +59,24 @@ const readLatoBoldFontFile = () =>
 const readLatoBoldItalicFontFile = () =>
   fs.readFileSync(
     path.resolve(DIR, 'android/app/src/main/res/font/lato_bolditalic.ttf'),
+    'utf8',
+  );
+
+const readLatoRegularFontFile = () =>
+  fs.readFileSync(
+    path.resolve(DIR, 'android/app/src/main/res/font/lato_regular.ttf'),
+    'utf8',
+  );
+
+const readLatoLightFontFile = () =>
+  fs.readFileSync(
+    path.resolve(DIR, 'android/app/src/main/res/font/lato_light.ttf'),
+    'utf8',
+  );
+
+const readFiraCodeXMLFontFile = () =>
+  fs.readFileSync(
+    path.resolve(DIR, 'android/app/src/main/res/font/fira_code.xml'),
     'utf8',
   );
 
@@ -70,9 +92,15 @@ const readFiraCodeRegularFontFile = () =>
     'utf8',
   );
 
-const readLatoRegularFontFile = () =>
+const readMontserratXMLFontFile = () =>
   fs.readFileSync(
-    path.resolve(DIR, 'android/app/src/main/res/font/lato_regular.ttf'),
+    path.resolve(DIR, 'android/app/src/main/res/font/montserrat.xml'),
+    'utf8',
+  );
+
+const readMontserratRegularFontFile = () =>
+  fs.readFileSync(
+    path.resolve(DIR, 'android/app/src/main/res/font/montserrat_regular.ttf'),
     'utf8',
   );
 
@@ -106,17 +134,12 @@ const readSoundMp3File = () =>
     'utf8',
   );
 
-const readFiraCodeXMLFontFile = () =>
-  fs.readFileSync(
-    path.resolve(DIR, 'android/app/src/main/res/font/fira_code.xml'),
-    'utf8',
-  );
-
-const readLatoXMLFontFile = () =>
-  fs.readFileSync(
-    path.resolve(DIR, 'android/app/src/main/res/font/lato.xml'),
-    'utf8',
-  );
+const getIOSProjectResourcesGroup = () => {
+  const project = xcode
+    .project(path.resolve(DIR, fixtureFilePaths.projectPbxproj))
+    .parseSync();
+  return getGroup(project, 'Resources');
+};
 
 const testBaseProjectStructure = (isKotlinProject = true) => {
   const baseProject = isKotlinProject ? baseProjectKotlin : baseProjectJava;
@@ -181,11 +204,7 @@ const testBaseProjectStructure = (isKotlinProject = true) => {
   ).toMatchSnapshot();
   expect(snapshotDiff('', readIOSLinkAssetsManifestFile())).toMatchSnapshot();
 
-  const project = xcode
-    .project(path.resolve(DIR, fixtureFilePaths.projectPbxproj))
-    .parseSync();
-  const resourcesGroup = getGroup(project, 'Resources');
-
+  const resourcesGroup = getIOSProjectResourcesGroup();
   expect(resourcesGroup?.children.length).toBe(9);
   [
     fixtureFilePaths.firaCodeBoldFont,
@@ -250,7 +269,79 @@ describe('linkAssets', () => {
     testBaseProjectStructure(false);
   });
 
-  it('should link new assets in a project', async () => {});
+  it('should link new assets in a project', async () => {
+    writeFiles(DIR, baseProjectKotlin);
+
+    await linkAssets([], configMock as CLIConfig, linkAssetsOptions);
+
+    const oldAndroidLinkAssetsManifestFile =
+      readAndroidLinkAssetsManifestFile();
+    const oldMainApplicationFile = readMainApplicationKotlinFile();
+    const oldLatoXMLFontFile = readLatoXMLFontFile();
+    const oldIOSLinkAssetsManifestFile = readIOSLinkAssetsManifestFile();
+    const oldInfoPlistFile = readInfoPlistFile();
+
+    writeFiles(DIR, {
+      [fixtureFilePaths.latoLightFont]: fixtureFiles.latoLightFont,
+      [fixtureFilePaths.montserratRegularFont]:
+        fixtureFiles.montserratRegularFont,
+    });
+
+    await linkAssets([], configMock as CLIConfig, linkAssetsOptions);
+
+    // Android
+    expect(
+      snapshotDiff(
+        oldAndroidLinkAssetsManifestFile,
+        readAndroidLinkAssetsManifestFile(),
+      ),
+    ).toMatchSnapshot();
+    expect(
+      snapshotDiff(oldMainApplicationFile, readMainApplicationKotlinFile()),
+    ).toMatchSnapshot();
+    expect(
+      snapshotDiff(oldLatoXMLFontFile, readLatoXMLFontFile()),
+    ).toMatchSnapshot();
+    expect(fixtureFiles.latoLightFont.toString()).toEqual(
+      readLatoLightFontFile(),
+    );
+    expect(snapshotDiff('', readMontserratXMLFontFile())).toMatchSnapshot();
+    expect(fixtureFiles.montserratRegularFont.toString()).toEqual(
+      readMontserratRegularFontFile(),
+    );
+
+    // iOS
+    expect(
+      snapshotDiff(
+        oldIOSLinkAssetsManifestFile,
+        readIOSLinkAssetsManifestFile(),
+      ),
+    ).toMatchSnapshot();
+    expect(
+      snapshotDiff(oldInfoPlistFile, readInfoPlistFile()),
+    ).toMatchSnapshot();
+
+    const resourcesGroup = getIOSProjectResourcesGroup();
+    expect(resourcesGroup?.children.length).toBe(10);
+    [
+      fixtureFilePaths.firaCodeBoldFont,
+      fixtureFilePaths.firaCodeRegularFont,
+      fixtureFilePaths.latoRegularFont,
+      fixtureFilePaths.ralewayRegularFont,
+      fixtureFilePaths.soundMp3,
+      fixtureFilePaths.imageGif,
+      fixtureFilePaths.imageJpg,
+      fixtureFilePaths.imagePng,
+      fixtureFilePaths.documentPdf,
+      fixtureFilePaths.latoLightFont,
+    ]
+      .map((filePath) => path.basename(filePath))
+      .forEach((fileName) => {
+        expect(
+          resourcesGroup?.children.some((r) => r.comment === fileName),
+        ).toBeTruthy();
+      });
+  });
 
   it('should unlink deleted assets in a project', async () => {});
 

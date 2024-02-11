@@ -60,7 +60,7 @@ export const cleanup = (directory: string) => {
  */
 export const writeFiles = (
   directory: string,
-  files: {[filename: string]: string},
+  files: {[filename: string]: string | NodeJS.ArrayBufferView},
 ) => {
   createDirectory(directory);
   Object.keys(files).forEach((fileOrPath) => {

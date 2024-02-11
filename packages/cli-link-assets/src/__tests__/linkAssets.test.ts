@@ -136,7 +136,7 @@ describe('linkAssets', () => {
     projectRoot: DIR,
   };
 
-  it('should link all types of assets in a project for the first time', async () => {
+  it('should link all types of assets in a Kotlin project for the first time', async () => {
     writeFiles(DIR, baseProjectKotlin);
 
     await linkAssets([], configMock as CLIConfig, linkAssetsOptions);
@@ -221,3 +221,13 @@ describe('linkAssets', () => {
       });
   });
 });
+
+it('should link all types of assets in a Java project for the first time', async () => {});
+
+it('should link new assets in a project', async () => {});
+
+it('should unlink deleted assets in a project', async () => {});
+
+it('should unlink all assets in a project', async () => {});
+
+it('should relink font assets from an Android project to use XML resources', async () => {});

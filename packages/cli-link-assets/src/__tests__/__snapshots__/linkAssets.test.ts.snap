@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`linkAssets should link all types of assets in a project for the first time 1`] = `
+exports[`linkAssets should link all types of assets in a Kotlin project for the first time 1`] = `
 "Snapshot Diff:
 - First value
 + Second value
@@ -22,7 +22,7 @@ exports[`linkAssets should link all types of assets in a project for the first t
 "
 `;
 
-exports[`linkAssets should link all types of assets in a project for the first time 2`] = `
+exports[`linkAssets should link all types of assets in a Kotlin project for the first time 2`] = `
 "Snapshot Diff:
 - First value
 + Second value
@@ -75,7 +75,7 @@ exports[`linkAssets should link all types of assets in a project for the first t
 +"
 `;
 
-exports[`linkAssets should link all types of assets in a project for the first time 3`] = `
+exports[`linkAssets should link all types of assets in a Kotlin project for the first time 3`] = `
 "Snapshot Diff:
 - First value
 + Second value
@@ -89,7 +89,7 @@ exports[`linkAssets should link all types of assets in a project for the first t
 +"
 `;
 
-exports[`linkAssets should link all types of assets in a project for the first time 4`] = `
+exports[`linkAssets should link all types of assets in a Kotlin project for the first time 4`] = `
 "Snapshot Diff:
 - First value
 + Second value
@@ -102,7 +102,7 @@ exports[`linkAssets should link all types of assets in a project for the first t
 +"
 `;
 
-exports[`linkAssets should link all types of assets in a project for the first time 5`] = `
+exports[`linkAssets should link all types of assets in a Kotlin project for the first time 5`] = `
 "Snapshot Diff:
 - First value
 + Second value
@@ -138,7 +138,7 @@ exports[`linkAssets should link all types of assets in a project for the first t
 "
 `;
 
-exports[`linkAssets should link all types of assets in a project for the first time 6`] = `
+exports[`linkAssets should link all types of assets in a Kotlin project for the first time 6`] = `
 "Snapshot Diff:
 - First value
 + Second value

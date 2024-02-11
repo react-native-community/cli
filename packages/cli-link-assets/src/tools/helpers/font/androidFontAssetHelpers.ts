@@ -166,7 +166,7 @@ function addImportToFile(
   if (packageMatch) {
     return fileData.replace(
       packageMatch[0],
-      `${packageMatch[0]}\n\nimport ${importToAdd}`,
+      `${packageMatch[0]}\n\nimport ${importToAdd}${isKotlin ? '' : ';'}`,
     );
   }
 

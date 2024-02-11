@@ -1,3 +1,5 @@
+import {isProjectUsingKotlin} from '@react-native-community/cli-platform-android';
+import {CLIError} from '@react-native-community/cli-tools';
 import fs from 'fs-extra';
 import OpenType from 'opentype.js';
 import path from 'path';
@@ -17,11 +19,11 @@ import {
   xmlParser,
 } from '../helpers/font/androidFontAssetHelpers';
 import {AndroidCleanAssetsOptions, CleanAssets} from './types';
-import {CLIError} from '@react-native-community/cli-tools';
 
 const cleanAssetsAndroid: CleanAssets = (assetFiles, options) => {
   const {platformPath, platformAssetsPath, shouldUseFontXMLFiles} =
     options as AndroidCleanAssetsOptions;
+  const isUsingKotlin = isProjectUsingKotlin(platformPath);
 
   // If the assets are not fonts and are not linked with XML files, just remove them.
   if (!shouldUseFontXMLFiles) {
@@ -154,7 +156,7 @@ const cleanAssetsAndroid: CleanAssets = (assetFiles, options) => {
     if (!mainApplicationFileData.includes('ReactFontManager.')) {
       mainApplicationFileData = removeLineFromFile(
         mainApplicationFileData,
-        REACT_FONT_MANAGER_IMPORT,
+        `${REACT_FONT_MANAGER_IMPORT}${isUsingKotlin ? '' : ';'}`,
       );
     }
 

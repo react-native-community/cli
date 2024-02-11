@@ -28,6 +28,7 @@ const copyAssetsAndroid: CopyAssets = (assetFiles, options) => {
   const {platformPath, platformAssetsPath, shouldUseFontXMLFiles} =
     options as AndroidCopyAssetsOptions;
   const isUsingKotlin = isProjectUsingKotlin(platformPath);
+
   // If the assets are not fonts and don't need to link with XML files, just copy them.
   if (!shouldUseFontXMLFiles) {
     assetFiles.forEach((file) => {

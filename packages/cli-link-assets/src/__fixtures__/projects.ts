@@ -7,6 +7,8 @@ const path = jest.requireActual('path') as typeof Path;
 const fixtureFilePaths = {
   mainApplicationKotlin:
     'android/app/src/main/java/com/example/MainApplication.kt',
+  mainApplicationJava:
+    'android/app/src/main/java/com/example/MainApplication.java',
   infoPlist: 'ios/Example/Info.plist',
   projectPbxproj: 'ios/Example.xcodeproj/project.pbxproj',
   latoBoldFont: 'assets/android/fonts/Lato-Bold.ttf',
@@ -25,6 +27,9 @@ const fixtureFilePaths = {
 const fixtureFiles = {
   mainApplicationKotlin: fs.readFileSync(
     path.join(__dirname, './files/MainApplication.kt'),
+  ),
+  mainApplicationJava: fs.readFileSync(
+    path.join(__dirname, './files/MainApplication.java'),
   ),
   infoPlist: fs.readFileSync(path.join(__dirname, './files/Info.plist')),
   projectPbxproj: fs.readFileSync(
@@ -79,4 +84,11 @@ const baseProjectKotlin = {
   [fixtureFilePaths.mainApplicationKotlin]: fixtureFiles.mainApplicationKotlin,
 } as const;
 
-export {baseProject, baseProjectKotlin, fixtureFilePaths};
+const baseProjectJava = {
+  ...baseProject,
+
+  // Android project
+  [fixtureFilePaths.mainApplicationJava]: fixtureFiles.mainApplicationJava,
+} as const;
+
+export {fixtureFilePaths, baseProjectKotlin, baseProjectJava};

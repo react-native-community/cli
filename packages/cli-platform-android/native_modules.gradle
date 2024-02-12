@@ -101,7 +101,7 @@ std::shared_ptr<TurboModule> rncli_ModuleProvider(const std::string moduleName, 
   return nullptr;
 }
 
-std::shared_ptr<TurboModule> rncli_cxxModuleProvider(const std::string moduleName, const JavaTurboModule::InitParams &params) {
+std::shared_ptr<TurboModule> rncli_cxxModuleProvider(const std::string moduleName, const std::shared_ptr<CallInvoker>& jsInvoker) {
 {{ rncliCppTurboModuleCxxProviders }}
   return nullptr;
 }
@@ -126,6 +126,7 @@ def rncliHTemplate = """/**
 
 #pragma once
 
+#include <ReactCommon/CallInvoker.h>
 #include <ReactCommon/JavaTurboModule.h>
 #include <ReactCommon/TurboModule.h>
 #include <jsi/jsi.h>

@@ -97,7 +97,12 @@ namespace react {
 {{ rncliReactLegacyComponentNames }}
 
 std::shared_ptr<TurboModule> rncli_ModuleProvider(const std::string moduleName, const JavaTurboModule::InitParams &params) {
-{{ rncliCppModuleProviders }}
+{{ rncliCppTurboModuleJavaProviders }}
+  return nullptr;
+}
+
+std::shared_ptr<TurboModule> rncli_cxxModuleProvider(const std::string moduleName, const JavaTurboModule::InitParams &params) {
+{{ rncliCppTurboModuleCxxProviders }}
   return nullptr;
 }
 
@@ -130,6 +135,7 @@ namespace facebook {
 namespace react {
 
 std::shared_ptr<TurboModule> rncli_ModuleProvider(const std::string moduleName, const JavaTurboModule::InitParams &params);
+std::shared_ptr<TurboModule> rncli_cxxModuleProvider(const std::string moduleName, const std::shared_ptr<CallInvoker>& jsInvoker);
 void rncli_registerProviders(std::shared_ptr<ComponentDescriptorProviderRegistry const> providerRegistry);
 
 } // namespace react
@@ -295,7 +301,9 @@ class ReactNativeModules {
   void generateRncliCpp(File outputDir, String generatedFileName, String generatedFileContentsTemplate) {
     ArrayList<HashMap<String, String>> packages = this.reactNativeModules
     String rncliCppIncludes = ""
-    String rncliCppModuleProviders = ""
+    String rncliCppTurboModuleJavaProviders = ""
+    String rncliCppTurboModuleCxxProviders = ""
+    String rncliCppTurboModuleCxxProviders = ""
     String rncliCppComponentDescriptors = ""
     String rncliReactLegacyComponentDescriptors = ""
     String rncliReactLegacyComponentNames = ""
@@ -313,12 +321,20 @@ class ReactNativeModules {
         }
         result
       }.minus(null).join('\n')
-      rncliCppModuleProviders = packages.collect {
+      rncliCppTurboModuleJavaProviders = packages.collect {
         it.libraryName ? """  auto module_${it.libraryName} = ${it.libraryName}_ModuleProvider(moduleName, params);
   if (module_${it.libraryName} != nullptr) {
     return module_${it.libraryName};
   }""" : null
       }.minus(null).join("\n")
+
+      rncliCppTurboModuleCxxProviders = packages.collect {
+        it.libraryName ? """  auto module_${it.libraryName} = ${it.libraryName}_cxxModuleProvider(moduleName, params);
+  if (module_${it.libraryName} != nullptr) {
+    return module_${it.libraryName};
+  }""" : null
+      }.minus(null).join("\n")
+
       rncliCppComponentDescriptors = packages.collect {
         def result = ""
         if (it.componentDescriptors && it.componentDescriptors.size() > 0) {
@@ -332,7 +348,8 @@ class ReactNativeModules {
 
     String generatedFileContents = generatedFileContentsTemplate
       .replace("{{ rncliCppIncludes }}", rncliCppIncludes)
-      .replace("{{ rncliCppModuleProviders }}", rncliCppModuleProviders)
+      .replace("{{ rncliCppTurboModuleJavaProviders }}", rncliCppTurboModuleJavaProviders)
+      .replace("{{ rncliCppTurboModuleCxxProviders }}", rncliCppTurboModuleCxxProviders)
       .replace("{{ rncliCppComponentDescriptors }}", rncliCppComponentDescriptors)
       .replace("{{ rncliReactLegacyComponentDescriptors }}", rncliReactLegacyComponentDescriptors)
       .replace("{{ rncliReactLegacyComponentNames }}", rncliReactLegacyComponentNames)

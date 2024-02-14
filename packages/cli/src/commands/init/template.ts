@@ -14,7 +14,7 @@ export type TemplateConfig = {
   templateDir: string;
   postInitScript?: string;
   titlePlaceholder?: string;
-  platformName: string;
+  platforms?: string[];
 };
 
 export async function installTemplatePackage(
@@ -92,7 +92,7 @@ export async function copyTemplate(
   templateName: string,
   templateDir: string,
   templateSourceDir: string,
-  platformName: string = '',
+  platform: string = '',
 ) {
   const templatePath = path.resolve(
     templateSourceDir,
@@ -103,13 +103,9 @@ export async function copyTemplate(
 
   logger.debug(`Copying template from ${templatePath}`);
   let regexStr = path.resolve(templatePath, 'node_modules');
-  await copyFiles(
-    join(templatePath, platformName),
-    join(process.cwd(), platformName),
-    {
-      exclude: [new RegExp(replacePathSepForRegex(regexStr))],
-    },
-  );
+  await copyFiles(join(templatePath, platform), join(process.cwd(), platform), {
+    exclude: [new RegExp(replacePathSepForRegex(regexStr))],
+  });
 }
 
 export function executePostInitScript(

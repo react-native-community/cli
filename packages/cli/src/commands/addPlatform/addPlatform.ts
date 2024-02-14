@@ -168,29 +168,33 @@ async function addPlatform(
   const templateName = getTemplateName(templateSourceDir);
   const templateConfig = getTemplateConfig(templateName, templateSourceDir);
 
-  if (!templateConfig.platformName) {
+  if (!templateConfig.platforms) {
     throw new CLIError(
-      `Template ${templateName} is missing platformName in its template.config.js`,
+      `Template ${templateName} is missing "platforms" in its "template.config.js"`,
     );
   }
 
-  await copyTemplate(
-    templateName,
-    templateConfig.templateDir,
-    templateSourceDir,
-    templateConfig.platformName,
-  );
+  for (const platform of templateConfig.platforms) {
+    await copyTemplate(
+      templateName,
+      templateConfig.templateDir,
+      templateSourceDir,
+      platform,
+    );
+  }
 
   loader.succeed();
   loader.start('Processing template');
 
-  await changePlaceholderInTemplate({
-    projectName,
-    projectTitle: title,
-    placeholderName: templateConfig.placeholderName,
-    placeholderTitle: templateConfig.titlePlaceholder,
-    projectPath: join(root, templateConfig.platformName),
-  });
+  for (const platform of templateConfig.platforms) {
+    await changePlaceholderInTemplate({
+      projectName,
+      projectTitle: title,
+      placeholderName: templateConfig.placeholderName,
+      placeholderTitle: templateConfig.titlePlaceholder,
+      projectPath: join(root, platform),
+    });
+  }
 
   loader.succeed();
 

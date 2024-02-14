@@ -146,7 +146,7 @@ export async function replacePlaceholderWithPackageName({
   placeholderName,
   placeholderTitle,
   packageName,
-  projectPath,
+  projectPath = process.cwd(),
 }: Omit<Required<PlaceholderConfig>, 'projectTitle'>) {
   validatePackageName(packageName);
   const cleanPackageName = packageName.replace(/[^\p{L}\p{N}.]+/gu, '');

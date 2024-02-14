@@ -147,7 +147,11 @@ const cleanAssetsAndroid: CleanAssets = (assetFiles, options) => {
 
         mainApplicationFileData = removeLineFromFile(
           mainApplicationFileData,
-          getAddCustomFontMethodCall(fontFamilyName, fontFamilyData.id),
+          getAddCustomFontMethodCall(
+            fontFamilyName,
+            fontFamilyData.id,
+            isUsingKotlin,
+          ),
         );
       }
     }

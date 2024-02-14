@@ -138,7 +138,7 @@ function buildXMLFontObject(fontFiles: FontFamilyFile[]): FontXMLObject {
 function getAddCustomFontMethodCall(
   fontName: string,
   fontId: string,
-  isKotlin?: boolean,
+  isKotlin: boolean,
 ) {
   return `ReactFontManager.getInstance().addCustomFont(this, "${fontName}", R.font.${fontId})${
     isKotlin ? '' : ';'
@@ -148,7 +148,7 @@ function getAddCustomFontMethodCall(
 function addImportToFile(
   fileData: string,
   importToAdd: string,
-  isKotlin?: boolean,
+  isKotlin: boolean,
 ) {
   const importRegex = new RegExp(
     `import\\s+${importToAdd}${isKotlin ? '' : ';'}`,
@@ -178,8 +178,8 @@ function insertLineInClassMethod(
   targetClass: string,
   targetMethod: string,
   codeToInsert: string,
-  lineToInsertAfter?: string,
-  isKotlin?: boolean,
+  lineToInsertAfter: string | undefined,
+  isKotlin: boolean,
 ) {
   const classRegex = new RegExp(
     isKotlin

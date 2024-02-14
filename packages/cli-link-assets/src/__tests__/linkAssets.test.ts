@@ -343,7 +343,74 @@ describe('linkAssets', () => {
       });
   });
 
-  it('should unlink deleted assets in a project', async () => {});
+  it('should unlink deleted assets in a project', async () => {
+    writeFiles(DIR, baseProjectKotlin);
+
+    await linkAssets([], configMock as CLIConfig, linkAssetsOptions);
+
+    const oldAndroidLinkAssetsManifestFile =
+      readAndroidLinkAssetsManifestFile();
+    const oldMainApplicationFile = readMainApplicationKotlinFile();
+    const oldLatoXMLFontFile = readLatoXMLFontFile();
+    const oldIOSLinkAssetsManifestFile = readIOSLinkAssetsManifestFile();
+    const oldInfoPlistFile = readInfoPlistFile();
+
+    fs.rmSync(path.resolve(DIR, fixtureFilePaths.firaCodeBoldFont));
+    fs.rmSync(path.resolve(DIR, fixtureFilePaths.firaCodeRegularFont));
+    fs.rmSync(path.resolve(DIR, fixtureFilePaths.latoBoldItalicFont));
+    fs.rmSync(path.resolve(DIR, fixtureFilePaths.documentPdf));
+    fs.rmSync(path.resolve(DIR, fixtureFilePaths.imageGif));
+    fs.rmSync(path.resolve(DIR, fixtureFilePaths.soundMp3));
+
+    await linkAssets([], configMock as CLIConfig, linkAssetsOptions);
+
+    // Android
+    expect(
+      snapshotDiff(
+        oldAndroidLinkAssetsManifestFile,
+        readAndroidLinkAssetsManifestFile(),
+      ),
+    ).toMatchSnapshot();
+    expect(
+      snapshotDiff(oldMainApplicationFile, readMainApplicationKotlinFile()),
+    ).toMatchSnapshot();
+    expect(
+      snapshotDiff(oldLatoXMLFontFile, readLatoXMLFontFile()),
+    ).toMatchSnapshot();
+    expect(readFiraCodeXMLFontFile).toThrow();
+    expect(readFiraCodeBoldFontFile).toThrow();
+    expect(readFiraCodeRegularFontFile).toThrow();
+    expect(readLatoBoldItalicFontFile).toThrow();
+    expect(readDocumentPdfFile).toThrow();
+    expect(readImageGifFile).toThrow();
+    expect(readSoundMp3File).toThrow();
+
+    // iOS
+    expect(
+      snapshotDiff(
+        oldIOSLinkAssetsManifestFile,
+        readIOSLinkAssetsManifestFile(),
+      ),
+    ).toMatchSnapshot();
+    expect(
+      snapshotDiff(oldInfoPlistFile, readInfoPlistFile()),
+    ).toMatchSnapshot();
+
+    const resourcesGroup = getIOSProjectResourcesGroup();
+    expect(resourcesGroup?.children.length).toBe(4);
+    [
+      fixtureFilePaths.latoRegularFont,
+      fixtureFilePaths.ralewayRegularFont,
+      fixtureFilePaths.imageJpg,
+      fixtureFilePaths.imagePng,
+    ]
+      .map((filePath) => path.basename(filePath))
+      .forEach((fileName) => {
+        expect(
+          resourcesGroup?.children.some((r) => r.comment === fileName),
+        ).toBeTruthy();
+      });
+  });
 
   it('should unlink all assets in a project', async () => {});
 

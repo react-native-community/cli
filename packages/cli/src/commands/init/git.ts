@@ -68,3 +68,14 @@ export const createGitRepository = async (folder: string) => {
     );
   }
 };
+
+export const isGitTreeDirty = async (folder: string) => {
+  try {
+    const {stdout} = await execa('git', ['status', '--porcelain'], {
+      cwd: folder,
+    });
+    return stdout !== '';
+  } catch {
+    return false;
+  }
+};

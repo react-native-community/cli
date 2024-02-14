@@ -1,0 +1,208 @@
+import {
+  CLIError,
+  getLoader,
+  logger,
+  prompt,
+} from '@react-native-community/cli-tools';
+import {Config} from '@react-native-community/cli-types';
+import {join} from 'path';
+import {readFileSync} from 'fs';
+import chalk from 'chalk';
+import {install, PackageManager} from './../../tools/packageManager';
+import npmFetch from 'npm-registry-fetch';
+import semver from 'semver';
+import {checkGitInstallation, isGitTreeDirty} from '../init/git';
+import {
+  changePlaceholderInTemplate,
+  getTemplateName,
+} from '../init/editTemplate';
+import {
+  copyTemplate,
+  executePostInitScript,
+  getTemplateConfig,
+  installTemplatePackage,
+} from '../init/template';
+import {tmpdir} from 'os';
+import {mkdtempSync} from 'graceful-fs';
+
+type Options = {
+  packageName: string;
+  version: string;
+  pm: PackageManager;
+  title: string;
+};
+
+const NPM_REGISTRY_URL = 'http://registry.npmjs.org'; // TODO: Support local registry
+
+const getAppName = async (root: string) => {
+  logger.log(`Reading ${chalk.cyan('name')} from package.json…`);
+  const pkgJsonPath = join(root, 'package.json');
+
+  if (!pkgJsonPath) {
+    throw new CLIError(`Unable to find package.json inside ${root}`);
+  }
+
+  let {name} = JSON.parse(readFileSync(pkgJsonPath, 'utf8'));
+
+  if (!name) {
+    const appJson = join(root, 'app.json');
+    if (appJson) {
+      logger.log(`Reading ${chalk.cyan('name')} from app.json…`);
+      name = JSON.parse(readFileSync(appJson, 'utf8')).name;
+    }
+
+    if (!name) {
+      throw new CLIError('Please specify name in package.json or app.json.');
+    }
+  }
+
+  return name;
+};
+
+const getPackageMatchingVersion = async (
+  packageName: string,
+  version: string,
+) => {
+  const npmResponse = await npmFetch.json(packageName, {
+    registry: NPM_REGISTRY_URL,
+  });
+
+  if ('dist-tags' in npmResponse) {
+    const distTags = npmResponse['dist-tags'] as Record<string, string>;
+    if (version in distTags) {
+      return distTags[version];
+    }
+  }
+
+  if ('versions' in npmResponse) {
+    const versions = Object.keys(
+      npmResponse.versions as Record<string, unknown>,
+    );
+    if (versions.length > 0) {
+      const candidates = versions
+        .filter((v) => semver.satisfies(v, version))
+        .sort(semver.rcompare);
+
+      if (candidates.length > 0) {
+        return candidates[0];
+      }
+    }
+  }
+
+  throw new Error(
+    `Cannot find matching version of ${packageName} to react-native${version}, please provide version manually with --version flag.`,
+  );
+};
+
+async function addPlatform(
+  [packageName]: string[],
+  {root, reactNativeVersion}: Config,
+  {version, pm, title}: Options,
+) {
+  if (!packageName) {
+    throw new CLIError('Please provide package name e.g. react-native-macos');
+  }
+
+  const isGitAvailable = await checkGitInstallation();
+
+  if (isGitAvailable) {
+    const dirty = await isGitTreeDirty(root);
+
+    if (dirty) {
+      logger.warn(
+        'Your git tree is dirty. We recommend committing or stashing changes first.',
+      );
+      const {proceed} = await prompt({
+        type: 'confirm',
+        name: 'proceed',
+        message: 'Would you like to proceed?',
+      });
+
+      if (!proceed) {
+        return;
+      }
+
+      logger.info('Proceeding with the installation');
+    }
+  }
+
+  const projectName = await getAppName(root);
+
+  const matchingVersion = await getPackageMatchingVersion(
+    packageName,
+    version ?? reactNativeVersion,
+  );
+
+  logger.log(
+    `Found matching version ${chalk.cyan(matchingVersion)} for ${chalk.cyan(
+      packageName,
+    )}`,
+  );
+
+  const loader = getLoader({
+    text: `Installing ${packageName}@${matchingVersion}`,
+  });
+
+  loader.start();
+
+  try {
+    await install([`${packageName}@${matchingVersion}`], {
+      packageManager: pm,
+      silent: true,
+      root,
+    });
+    loader.succeed();
+  } catch (e) {
+    loader.fail();
+    throw e;
+  }
+
+  loader.start('Copying template files');
+  const templateSourceDir = mkdtempSync(join(tmpdir(), 'rncli-init-template-'));
+  await installTemplatePackage(
+    `${packageName}@${matchingVersion}`,
+    templateSourceDir,
+    pm,
+  );
+
+  const templateName = getTemplateName(templateSourceDir);
+  const templateConfig = getTemplateConfig(templateName, templateSourceDir);
+
+  if (!templateConfig.platformName) {
+    throw new CLIError(
+      `Template ${templateName} is missing platformName in its template.config.js`,
+    );
+  }
+
+  await copyTemplate(
+    templateName,
+    templateConfig.templateDir,
+    templateSourceDir,
+    templateConfig.platformName,
+  );
+
+  loader.succeed();
+  loader.start('Processing template');
+
+  await changePlaceholderInTemplate({
+    projectName,
+    projectTitle: title,
+    placeholderName: templateConfig.placeholderName,
+    placeholderTitle: templateConfig.titlePlaceholder,
+    projectPath: join(root, templateConfig.platformName),
+  });
+
+  loader.succeed();
+
+  const {postInitScript} = templateConfig;
+  if (postInitScript) {
+    logger.debug('Executing post init script ');
+    await executePostInitScript(
+      templateName,
+      postInitScript,
+      templateSourceDir,
+    );
+  }
+}
+
+export default addPlatform;

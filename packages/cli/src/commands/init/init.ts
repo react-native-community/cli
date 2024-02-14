@@ -19,7 +19,7 @@ import {
   copyTemplate,
   executePostInitScript,
 } from './template';
-import {changePlaceholderInTemplate} from './editTemplate';
+import {changePlaceholderInTemplate, getTemplateName} from './editTemplate';
 import * as PackageManager from '../../tools/packageManager';
 import banner from './banner';
 import TemplateAndVersionError from './errors/TemplateAndVersionError';
@@ -179,17 +179,6 @@ async function setProjectDirectory(
   }
 
   return process.cwd();
-}
-
-function getTemplateName(cwd: string) {
-  // We use package manager to infer the name of the template module for us.
-  // That's why we get it from temporary package.json, where the name is the
-  // first and only dependency (hence 0).
-  const name = Object.keys(
-    JSON.parse(fs.readFileSync(path.join(cwd, './package.json'), 'utf8'))
-      .dependencies,
-  )[0];
-  return name;
 }
 
 //set cache to empty string to prevent installing cocoapods on freshly created project

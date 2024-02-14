@@ -412,7 +412,71 @@ describe('linkAssets', () => {
       });
   });
 
-  it('should unlink all assets in a project', async () => {});
+  it('should unlink all assets in a project', async () => {
+    writeFiles(DIR, baseProjectKotlin);
+
+    await linkAssets([], configMock as CLIConfig, linkAssetsOptions);
+
+    const oldAndroidLinkAssetsManifestFile =
+      readAndroidLinkAssetsManifestFile();
+    const oldMainApplicationFile = readMainApplicationKotlinFile();
+    const oldIOSLinkAssetsManifestFile = readIOSLinkAssetsManifestFile();
+    const oldInfoPlistFile = readInfoPlistFile();
+
+    const sharedAssetsPath = path.resolve(DIR, 'assets/shared');
+    const androidAssetsPath = path.resolve(DIR, 'assets/android');
+    const iosAssetsPath = path.resolve(DIR, 'assets/ios');
+    fs.readdirSync(sharedAssetsPath).forEach((file) =>
+      fs.rmSync(path.resolve(sharedAssetsPath, file), {recursive: true}),
+    );
+    fs.readdirSync(androidAssetsPath).forEach((file) =>
+      fs.rmSync(path.resolve(androidAssetsPath, file), {recursive: true}),
+    );
+    fs.readdirSync(iosAssetsPath).forEach((file) =>
+      fs.rmSync(path.resolve(iosAssetsPath, file), {recursive: true}),
+    );
+
+    await linkAssets([], configMock as CLIConfig, linkAssetsOptions);
+
+    // Android
+    expect(
+      snapshotDiff(
+        oldAndroidLinkAssetsManifestFile,
+        readAndroidLinkAssetsManifestFile(),
+      ),
+    ).toMatchSnapshot();
+    expect(
+      snapshotDiff(oldMainApplicationFile, readMainApplicationKotlinFile()),
+    ).toMatchSnapshot();
+    expect(
+      fs.readdirSync(path.resolve(DIR, 'android/app/src/main/assets/custom'))
+        .length,
+    ).toBe(0);
+    expect(
+      fs.readdirSync(path.resolve(DIR, 'android/app/src/main/res/drawable'))
+        .length,
+    ).toBe(0);
+    expect(
+      fs.readdirSync(path.resolve(DIR, 'android/app/src/main/res/font')).length,
+    ).toBe(0);
+    expect(
+      fs.readdirSync(path.resolve(DIR, 'android/app/src/main/res/raw')).length,
+    ).toBe(0);
+
+    // iOS
+    expect(
+      snapshotDiff(
+        oldIOSLinkAssetsManifestFile,
+        readIOSLinkAssetsManifestFile(),
+      ),
+    ).toMatchSnapshot();
+    expect(
+      snapshotDiff(oldInfoPlistFile, readInfoPlistFile()),
+    ).toMatchSnapshot();
+
+    const resourcesGroup = getIOSProjectResourcesGroup();
+    expect(resourcesGroup?.children.length).toBe(0);
+  });
 
   it('should relink font assets from an Android project to use XML resources', async () => {});
 });

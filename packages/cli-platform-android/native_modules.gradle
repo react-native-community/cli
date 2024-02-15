@@ -266,6 +266,7 @@ class ReactNativeModules {
     }
   }
 
+  
   void generateCmakeFile(File outputDir, String generatedFileName, String generatedFileContentsTemplate) {
     ArrayList<HashMap<String, String>> packages = this.reactNativeModules
     String packageName = this.packageName
@@ -284,7 +285,14 @@ class ReactNativeModules {
         }
       }.minus(null).join('\n')
       libraryModules = packages.collect {
-        it.libraryName ? "${codegenLibPrefix}${it.libraryName}" : null
+        if (it.cmakeModuleName != null) {
+          // If user provided a custom cmakeModuleName, let's honor it.
+          cmakeModuleName
+        } else if (it.libraryName != null) {
+          "${codegenLibPrefix}${it.libraryName}"
+        } else {
+          null
+        }
       }.minus(null).join('\n  ')
     }
 
@@ -304,7 +312,6 @@ class ReactNativeModules {
     String rncliCppIncludes = ""
     String rncliCppTurboModuleJavaProviders = ""
     String rncliCppTurboModuleCxxProviders = ""
-    String rncliCppTurboModuleCxxProviders = ""
     String rncliCppComponentDescriptors = ""
     String rncliReactLegacyComponentDescriptors = ""
     String rncliReactLegacyComponentNames = ""
@@ -320,6 +327,9 @@ class ReactNativeModules {
         if (it.componentDescriptors && it.componentDescriptors.size() > 0) {
           result += "\n#include <${codegenReactComponentsDir}/${it.libraryName}/${codegenComponentDescriptorsHeaderFile}>"
         }
+        if (it.cxxTurboModuleName) {
+          result += "\n#include <${it.cxxTurboModuleName}.h>"
+        }
         result
       }.minus(null).join('\n')
       rncliCppTurboModuleJavaProviders = packages.collect {
@@ -330,9 +340,9 @@ class ReactNativeModules {
       }.minus(null).join("\n")
 
       rncliCppTurboModuleCxxProviders = packages.collect {
-        it.libraryName ? """  auto module_${it.libraryName} = ${it.libraryName}_cxxModuleProvider(moduleName, params);
-  if (module_${it.libraryName} != nullptr) {
-    return module_${it.libraryName};
+        it.cxxTurboModuleName ? """
+  if (name == ${it.cxxTurboModuleName}::kModuleName) {
+    return std::make_shared<${it.cxxTurboModuleName}>(jsInvoker);
   }""" : null
       }.minus(null).join("\n")
 
@@ -452,6 +462,9 @@ class ReactNativeModules {
         reactNativeModuleConfig.put("libraryName", androidConfig["libraryName"])
         reactNativeModuleConfig.put("componentDescriptors", androidConfig["componentDescriptors"])
         reactNativeModuleConfig.put("cmakeListsPath", androidConfig["cmakeListsPath"])
+        
+        // TODO Change me afterwards
+        reactNativeModuleConfig.put("cxxTurboModuleName", "NativeCxxModuleExample")
 
         if (androidConfig["buildTypes"] && !androidConfig["buildTypes"].isEmpty()) {
           reactNativeModulesBuildVariants.put(nameCleansed, androidConfig["buildTypes"])

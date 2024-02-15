@@ -276,22 +276,28 @@ class ReactNativeModules {
 
     if (packages.size() > 0) {
       libraryIncludes = packages.collect {
+        def addDirectoryString = ""
         if (it.libraryName != null && it.cmakeListsPath != null) {
           // If user provided a custom cmakeListsPath, let's honor it.
           String nativeFolderPath = it.cmakeListsPath.replace("CMakeLists.txt", "")
-          "add_subdirectory($nativeFolderPath ${it.libraryName}_autolinked_build)"
+          addDirectoryString += "add_subdirectory($nativeFolderPath ${it.libraryName}_autolinked_build)"
         } else {
           null
         }
+        if (it.cxxModuleCMakeListsPath != null) {
+          // If user provided a custom cxxModuleCMakeListsPath, let's honor it.
+          String nativeFolderPath = it.cxxModuleCMakeListsPath.replace("CMakeLists.txt", "")
+          addDirectoryString += "\nadd_subdirectory($nativeFolderPath ${it.libraryName}_cxxmodule_autolinked_build)"
+        }
+        addDirectoryString
       }.minus(null).join('\n')
       libraryModules = packages.collect {
-        if (it.cmakeModuleName != null) {
-          // If user provided a custom cmakeModuleName, let's honor it.
-          cmakeModuleName
-        } else if (it.libraryName != null) {
-          "${codegenLibPrefix}${it.libraryName}"
-        } else {
-          null
+        def autolinkedLibraries = ""
+        if (it.libraryName != null) {
+          autolinkedLibraries += "${codegenLibPrefix}${it.libraryName}"
+        }
+        if (it.cxxModuleCMakeListsModuleName != null) {
+          autolinkedLibraries += "\n${it.cxxModuleCMakeListsModuleName}"
         }
       }.minus(null).join('\n  ')
     }
@@ -327,8 +333,8 @@ class ReactNativeModules {
         if (it.componentDescriptors && it.componentDescriptors.size() > 0) {
           result += "\n#include <${codegenReactComponentsDir}/${it.libraryName}/${codegenComponentDescriptorsHeaderFile}>"
         }
-        if (it.cxxTurboModuleName) {
-          result += "\n#include <${it.cxxTurboModuleName}.h>"
+        if (it.cxxModuleHeaderName) {
+          result += "\n#include <${it.cxxModuleHeaderName}.h>"
         }
         result
       }.minus(null).join('\n')
@@ -340,9 +346,9 @@ class ReactNativeModules {
       }.minus(null).join("\n")
 
       rncliCppTurboModuleCxxProviders = packages.collect {
-        it.cxxTurboModuleName ? """
-  if (name == ${it.cxxTurboModuleName}::kModuleName) {
-    return std::make_shared<${it.cxxTurboModuleName}>(jsInvoker);
+        it.cxxModuleHeaderName ? """
+  if (moduleName == ${it.cxxModuleHeaderName}::kModuleName) {
+    return std::make_shared<${it.cxxModuleHeaderName}>(jsInvoker);
   }""" : null
       }.minus(null).join("\n")
 
@@ -426,7 +432,7 @@ class ReactNativeModules {
     String[] nodeCommand = ["node", "-e", cliResolveScript]
     def cliPath = this.getCommandOutput(nodeCommand, this.root)
 
-    String[] reactNativeConfigCommand = ["node", cliPath, "config"]
+    String[] reactNativeConfigCommand = ["cat", "/Users/ncor/config.json"]
     def reactNativeConfigOutput = this.getCommandOutput(reactNativeConfigCommand, this.root)
 
     def json
@@ -462,9 +468,9 @@ class ReactNativeModules {
         reactNativeModuleConfig.put("libraryName", androidConfig["libraryName"])
         reactNativeModuleConfig.put("componentDescriptors", androidConfig["componentDescriptors"])
         reactNativeModuleConfig.put("cmakeListsPath", androidConfig["cmakeListsPath"])
-        
-        // TODO Change me afterwards
-        reactNativeModuleConfig.put("cxxTurboModuleName", "NativeCxxModuleExample")
+        reactNativeModuleConfig.put("cxxModuleCMakeListsModuleName", androidConfig["cxxModuleCMakeListsModuleName"])
+        reactNativeModuleConfig.put("cxxModuleCMakeListsPath", androidConfig["cxxModuleCMakeListsPath"])
+        reactNativeModuleConfig.put("cxxModuleHeaderName", androidConfig["cxxModuleHeaderName"])
 
         if (androidConfig["buildTypes"] && !androidConfig["buildTypes"].isEmpty()) {
           reactNativeModulesBuildVariants.put(nameCleansed, androidConfig["buildTypes"])

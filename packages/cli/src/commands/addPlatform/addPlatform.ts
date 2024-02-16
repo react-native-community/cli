@@ -24,6 +24,7 @@ import {
 } from '../init/template';
 import {tmpdir} from 'os';
 import {mkdtempSync} from 'graceful-fs';
+import {existsSync} from 'fs';
 
 type Options = {
   packageName: string;
@@ -175,6 +176,15 @@ async function addPlatform(
   }
 
   for (const platform of templateConfig.platforms) {
+    if (existsSync(join(root, platform))) {
+      throw new CLIError(
+        `Platform ${platform} already exists in the project. Directory ${join(
+          root,
+          platform,
+        )} is not empty.`,
+      );
+    }
+
     await copyTemplate(
       templateName,
       templateConfig.templateDir,

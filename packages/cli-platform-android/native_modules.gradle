@@ -265,7 +265,6 @@ class ReactNativeModules {
       w << generatedFileContents
     }
   }
-
   
   void generateCmakeFile(File outputDir, String generatedFileName, String generatedFileContentsTemplate) {
     ArrayList<HashMap<String, String>> packages = this.reactNativeModules
@@ -432,7 +431,7 @@ class ReactNativeModules {
     String[] nodeCommand = ["node", "-e", cliResolveScript]
     def cliPath = this.getCommandOutput(nodeCommand, this.root)
 
-    String[] reactNativeConfigCommand = ["cat", "/Users/ncor/config.json"]
+    String[] reactNativeConfigCommand = ["node", cliPath, "config"]
     def reactNativeConfigOutput = this.getCommandOutput(reactNativeConfigCommand, this.root)
 
     def json

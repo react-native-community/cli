@@ -10,6 +10,7 @@ type Options = {
   port: string;
   appId?: string;
   appIdSuffix?: string;
+  host?: string;
 };
 
 async function profileHermes(
@@ -34,6 +35,7 @@ async function profileHermes(
       options.port,
       options.appId,
       options.appIdSuffix,
+      options.host,
     );
   } catch (err) {
     throw err as CLIError;
@@ -77,6 +79,11 @@ export default {
     {
       name: '--appIdSuffix <string>',
       description: 'Specify an applicationIdSuffix to launch after build.',
+    },
+    {
+      name: '--host <string>',
+      description: 'The host of the packager.',
+      default: 'localhost',
     },
   ],
   examples: [

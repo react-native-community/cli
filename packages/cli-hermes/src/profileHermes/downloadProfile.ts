@@ -59,6 +59,7 @@ export async function downloadProfile(
   port: string = '8081',
   appId?: string,
   appIdSuffix?: string,
+  host: string = 'localhost',
 ) {
   try {
     const androidProject = getAndroidProject(ctx);
@@ -101,7 +102,7 @@ export async function downloadProfile(
         `adb shell run-as ${packageNameWithSuffix} cat cache/${file} > ${tempFilePath}`,
       );
 
-      const bundleOptions = getMetroBundleOptions(tempFilePath);
+      const bundleOptions = getMetroBundleOptions(tempFilePath, host);
 
       // If path to source map is not given
       if (!sourcemapPath) {

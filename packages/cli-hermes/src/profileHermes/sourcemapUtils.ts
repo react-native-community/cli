@@ -4,7 +4,6 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 import {SourceMap} from 'hermes-profile-transformer';
-import ip from 'ip';
 import {MetroBundleOptions} from './metroBundleOptions';
 
 function getTempFilePath(filename: string) {
@@ -31,12 +30,11 @@ function writeJsonSync(targetPath: string, data: any) {
 
 async function getSourcemapFromServer(
   port: string,
-  {platform, dev, minify}: MetroBundleOptions,
+  {platform, dev, minify, host}: MetroBundleOptions,
 ): Promise<SourceMap | undefined> {
   logger.debug('Getting source maps from Metro packager server');
-  const IP_ADDRESS = ip.address();
 
-  const requestURL = `http://${IP_ADDRESS}:${port}/index.map?platform=${platform}&dev=${dev}&minify=${minify}`;
+  const requestURL = `http://${host}:${port}/index.map?platform=${platform}&dev=${dev}&minify=${minify}`;
   logger.debug(`Downloading from ${requestURL}`);
   try {
     const {data} = await fetch(requestURL);

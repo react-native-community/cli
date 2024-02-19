@@ -97,7 +97,12 @@ namespace react {
 {{ rncliReactLegacyComponentNames }}
 
 std::shared_ptr<TurboModule> rncli_ModuleProvider(const std::string moduleName, const JavaTurboModule::InitParams &params) {
-{{ rncliCppModuleProviders }}
+{{ rncliCppTurboModuleJavaProviders }}
+  return nullptr;
+}
+
+std::shared_ptr<TurboModule> rncli_cxxModuleProvider(const std::string moduleName, const std::shared_ptr<CallInvoker>& jsInvoker) {
+{{ rncliCppTurboModuleCxxProviders }}
   return nullptr;
 }
 
@@ -121,6 +126,7 @@ def rncliHTemplate = """/**
 
 #pragma once
 
+#include <ReactCommon/CallInvoker.h>
 #include <ReactCommon/JavaTurboModule.h>
 #include <ReactCommon/TurboModule.h>
 #include <jsi/jsi.h>
@@ -130,6 +136,7 @@ namespace facebook {
 namespace react {
 
 std::shared_ptr<TurboModule> rncli_ModuleProvider(const std::string moduleName, const JavaTurboModule::InitParams &params);
+std::shared_ptr<TurboModule> rncli_cxxModuleProvider(const std::string moduleName, const std::shared_ptr<CallInvoker>& jsInvoker);
 void rncli_registerProviders(std::shared_ptr<ComponentDescriptorProviderRegistry const> providerRegistry);
 
 } // namespace react
@@ -258,7 +265,7 @@ class ReactNativeModules {
       w << generatedFileContents
     }
   }
-
+  
   void generateCmakeFile(File outputDir, String generatedFileName, String generatedFileContentsTemplate) {
     ArrayList<HashMap<String, String>> packages = this.reactNativeModules
     String packageName = this.packageName
@@ -268,16 +275,29 @@ class ReactNativeModules {
 
     if (packages.size() > 0) {
       libraryIncludes = packages.collect {
+        def addDirectoryString = ""
         if (it.libraryName != null && it.cmakeListsPath != null) {
           // If user provided a custom cmakeListsPath, let's honor it.
           String nativeFolderPath = it.cmakeListsPath.replace("CMakeLists.txt", "")
-          "add_subdirectory($nativeFolderPath ${it.libraryName}_autolinked_build)"
+          addDirectoryString += "add_subdirectory($nativeFolderPath ${it.libraryName}_autolinked_build)"
         } else {
           null
         }
+        if (it.cxxModuleCMakeListsPath != null) {
+          // If user provided a custom cxxModuleCMakeListsPath, let's honor it.
+          String nativeFolderPath = it.cxxModuleCMakeListsPath.replace("CMakeLists.txt", "")
+          addDirectoryString += "\nadd_subdirectory($nativeFolderPath ${it.libraryName}_cxxmodule_autolinked_build)"
+        }
+        addDirectoryString
       }.minus(null).join('\n')
       libraryModules = packages.collect {
-        it.libraryName ? "${codegenLibPrefix}${it.libraryName}" : null
+        def autolinkedLibraries = ""
+        if (it.libraryName != null) {
+          autolinkedLibraries += "${codegenLibPrefix}${it.libraryName}"
+        }
+        if (it.cxxModuleCMakeListsModuleName != null) {
+          autolinkedLibraries += "\n${it.cxxModuleCMakeListsModuleName}"
+        }
       }.minus(null).join('\n  ')
     }
 
@@ -295,7 +315,8 @@ class ReactNativeModules {
   void generateRncliCpp(File outputDir, String generatedFileName, String generatedFileContentsTemplate) {
     ArrayList<HashMap<String, String>> packages = this.reactNativeModules
     String rncliCppIncludes = ""
-    String rncliCppModuleProviders = ""
+    String rncliCppTurboModuleJavaProviders = ""
+    String rncliCppTurboModuleCxxProviders = ""
     String rncliCppComponentDescriptors = ""
     String rncliReactLegacyComponentDescriptors = ""
     String rncliReactLegacyComponentNames = ""
@@ -311,14 +332,25 @@ class ReactNativeModules {
         if (it.componentDescriptors && it.componentDescriptors.size() > 0) {
           result += "\n#include <${codegenReactComponentsDir}/${it.libraryName}/${codegenComponentDescriptorsHeaderFile}>"
         }
+        if (it.cxxModuleHeaderName) {
+          result += "\n#include <${it.cxxModuleHeaderName}.h>"
+        }
         result
       }.minus(null).join('\n')
-      rncliCppModuleProviders = packages.collect {
+      rncliCppTurboModuleJavaProviders = packages.collect {
         it.libraryName ? """  auto module_${it.libraryName} = ${it.libraryName}_ModuleProvider(moduleName, params);
   if (module_${it.libraryName} != nullptr) {
     return module_${it.libraryName};
   }""" : null
       }.minus(null).join("\n")
+
+      rncliCppTurboModuleCxxProviders = packages.collect {
+        it.cxxModuleHeaderName ? """
+  if (moduleName == ${it.cxxModuleHeaderName}::kModuleName) {
+    return std::make_shared<${it.cxxModuleHeaderName}>(jsInvoker);
+  }""" : null
+      }.minus(null).join("\n")
+
       rncliCppComponentDescriptors = packages.collect {
         def result = ""
         if (it.componentDescriptors && it.componentDescriptors.size() > 0) {
@@ -332,7 +364,8 @@ class ReactNativeModules {
 
     String generatedFileContents = generatedFileContentsTemplate
       .replace("{{ rncliCppIncludes }}", rncliCppIncludes)
-      .replace("{{ rncliCppModuleProviders }}", rncliCppModuleProviders)
+      .replace("{{ rncliCppTurboModuleJavaProviders }}", rncliCppTurboModuleJavaProviders)
+      .replace("{{ rncliCppTurboModuleCxxProviders }}", rncliCppTurboModuleCxxProviders)
       .replace("{{ rncliCppComponentDescriptors }}", rncliCppComponentDescriptors)
       .replace("{{ rncliReactLegacyComponentDescriptors }}", rncliReactLegacyComponentDescriptors)
       .replace("{{ rncliReactLegacyComponentNames }}", rncliReactLegacyComponentNames)
@@ -434,6 +467,9 @@ class ReactNativeModules {
         reactNativeModuleConfig.put("libraryName", androidConfig["libraryName"])
         reactNativeModuleConfig.put("componentDescriptors", androidConfig["componentDescriptors"])
         reactNativeModuleConfig.put("cmakeListsPath", androidConfig["cmakeListsPath"])
+        reactNativeModuleConfig.put("cxxModuleCMakeListsModuleName", androidConfig["cxxModuleCMakeListsModuleName"])
+        reactNativeModuleConfig.put("cxxModuleCMakeListsPath", androidConfig["cxxModuleCMakeListsPath"])
+        reactNativeModuleConfig.put("cxxModuleHeaderName", androidConfig["cxxModuleHeaderName"])
 
         if (androidConfig["buildTypes"] && !androidConfig["buildTypes"].isEmpty()) {
           reactNativeModulesBuildVariants.put(nameCleansed, androidConfig["buildTypes"])

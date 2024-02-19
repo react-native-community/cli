@@ -30,6 +30,9 @@ export type AndroidDependencyConfig = {
   libraryName?: string | null;
   componentDescriptors?: string[] | null;
   cmakeListsPath?: string | null;
+  cxxModuleCMakeListsModuleName?: string | null;
+  cxxModuleCMakeListsPath?: string | null;
+  cxxModuleHeaderName?: string | null;
 };
 
 export type AndroidDependencyParams = {
@@ -43,4 +46,7 @@ export type AndroidDependencyParams = {
   libraryName?: string | null;
   componentDescriptors?: string[] | null;
   cmakeListsPath?: string | null;
+  cxxModuleCMakeListsModuleName?: string | null;
+  cxxModuleCMakeListsPath?: string | null;
+  cxxModuleHeaderName?: string | null;
 };

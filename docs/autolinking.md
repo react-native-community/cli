@@ -29,7 +29,7 @@ Each platform defines its own [`platforms`](./platforms.md) configuration. It in
 
 ## Platform iOS
 
-The [react-native/scripts/react_native_pods.rb](https://github.com/robhogan/react-native/blob/master/packages/react-native/scripts/react_native_pods.rb) script required by `Podfile` requires the [native_modules.rb](https://github.com/react-native-community/cli/blob/main/packages/cli-platform-ios/native_modules.rb) script, which gets the package metadata from `react-native config` during install phase and:
+The [react-native/scripts/react_native_pods.rb](https://github.com/facebook/react-native/blob/master/packages/react-native/scripts/react_native_pods.rb) script required by `Podfile` requires the [native_modules.rb](https://github.com/react-native-community/cli/blob/main/packages/cli-platform-ios/native_modules.rb) script, which gets the package metadata from `react-native config` during install phase and:
 
 1. Adds dependencies via CocoaPods dev pods (using files from a local path).
 1. Adds build phase scripts to the App project’s build phase. (see examples below)

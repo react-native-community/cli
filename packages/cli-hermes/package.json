@@ -11,8 +11,7 @@
     "@react-native-community/cli-platform-android": "11.4.0",
     "@react-native-community/cli-tools": "11.4.0",
     "chalk": "^4.1.2",
-    "hermes-profile-transformer": "^0.0.6",
-    "ip": "^1.1.5"
+    "hermes-profile-transformer": "^0.0.6"
   },
   "files": [
     "build",

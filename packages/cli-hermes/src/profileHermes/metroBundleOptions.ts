@@ -6,15 +6,18 @@ export interface MetroBundleOptions {
   platform: string;
   dev: boolean;
   minify: boolean;
+  host: string;
 }
 
 export function getMetroBundleOptions(
   downloadedProfileFilePath: string,
+  host: string,
 ): MetroBundleOptions {
   let options: MetroBundleOptions = {
     platform: 'android',
     dev: true,
     minify: false,
+    host,
   };
 
   try {

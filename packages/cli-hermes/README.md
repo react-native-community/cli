@@ -57,6 +57,12 @@ Specify an `applicationId` to launch after build. If not specified, `package` fr
 
 Specify an `applicationIdSuffix` to launch after build.
 
+#### `--host <string>`
+
+The host of the packager.
+
+> default: localhost
+
 ### Notes on source map
 
 This step is recommended in order for the source map to be generated:

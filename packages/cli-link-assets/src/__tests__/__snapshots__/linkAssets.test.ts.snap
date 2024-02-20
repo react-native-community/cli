@@ -499,6 +499,102 @@ exports[`linkAssets should link new assets in a project 6`] = `
 "
 `;
 
+exports[`linkAssets should relink font assets from an Android project to use XML resources 1`] = `
+"Snapshot Diff:
+- First value
++ Second value
+
+@@ -1,7 +1,7 @@
+  {
+-   \\"migIndex\\": 1,
++   \\"migIndex\\": 2,
+    \\"data\\": [
+      {
+        \\"path\\": \\"assets/shared/document.pdf\\",
+        \\"sha1\\": \\"0ba2141b8996a615d7484536d7a97c27a1768407\\"
+      },
+@@ -41,5 +41,6 @@
+        \\"path\\": \\"assets/android/fonts/Lato-BoldItalic.ttf\\",
+        \\"sha1\\": \\"6bf491e78e16d3b9c8a55752e1bd658e15ed7f19\\"
+      }
+    ]
+  }
++"
+`;
+
+exports[`linkAssets should relink font assets from an Android project to use XML resources 2`] = `
+"Snapshot Diff:
+- First value
++ Second value
+
+  package com.example
+
++ import com.facebook.react.common.assets.ReactFontManager
++
+  import android.app.Application
+  import com.facebook.react.ReactApplication
+
+  class MainApplication : Application(), ReactApplication {
+    override fun onCreate() {
+      super.onCreate()
++     ReactFontManager.getInstance().addCustomFont(this, \\"Lato\\", R.font.lato)
++     ReactFontManager.getInstance().addCustomFont(this, \\"Fira Code\\", R.font.fira_code)
+      SoLoader.init(this, false)
+    }
+  }
+"
+`;
+
+exports[`linkAssets should relink font assets from an Android project to use XML resources 3`] = `
+"Snapshot Diff:
+- First value
++ Second value
+
++ <?xml version=\\"1.0\\" encoding=\\"utf-8\\"?>
++ <font-family xmlns:app=\\"http://schemas.android.com/apk/res-auto\\">
++   <font app:fontStyle=\\"normal\\" app:fontWeight=\\"400\\" app:font=\\"@font/lato_regular\\"/>
++   <font app:fontStyle=\\"italic\\" app:fontWeight=\\"700\\" app:font=\\"@font/lato_bolditalic\\"/>
++   <font app:fontStyle=\\"normal\\" app:fontWeight=\\"700\\" app:font=\\"@font/lato_bold\\"/>
++ </font-family>
++"
+`;
+
+exports[`linkAssets should relink font assets from an Android project to use XML resources 4`] = `
+"Snapshot Diff:
+- First value
++ Second value
+
++ <?xml version=\\"1.0\\" encoding=\\"utf-8\\"?>
++ <font-family xmlns:app=\\"http://schemas.android.com/apk/res-auto\\">
++   <font app:fontStyle=\\"normal\\" app:fontWeight=\\"400\\" app:font=\\"@font/firacode_regular\\"/>
++   <font app:fontStyle=\\"normal\\" app:fontWeight=\\"700\\" app:font=\\"@font/firacode_bold\\"/>
++ </font-family>
++"
+`;
+
+exports[`linkAssets should relink font assets from an Android project to use XML resources 5`] = `
+"Snapshot Diff:
+- First value
++ Second value
+
+@@ -1,7 +1,7 @@
+  {
+-   \\"migIndex\\": 1,
++   \\"migIndex\\": 2,
+    \\"data\\": [
+      {
+        \\"path\\": \\"assets/shared/document.pdf\\",
+        \\"sha1\\": \\"0ba2141b8996a615d7484536d7a97c27a1768407\\"
+      },
+@@ -37,5 +37,6 @@
+        \\"path\\": \\"assets/ios/fonts/Raleway-Regular.ttf\\",
+        \\"sha1\\": \\"c01aaff04ead4a08b89bcb81d3d3d954345eb67f\\"
+      }
+    ]
+  }
++"
+`;
+
 exports[`linkAssets should unlink all assets in a project 1`] = `
 "Snapshot Diff:
 - First value

@@ -6,17 +6,18 @@ import {PartialDeep} from 'type-fest';
 import xcode from 'xcode';
 import {cleanup, getTempDirectory, writeFiles} from '../../../../jest/helpers';
 import {
-  baseProjectKotlin,
   baseProjectJava,
+  baseProjectKotlin,
   fixtureFilePaths,
   fixtureFiles,
 } from '../__fixtures__/projects';
 import {linkAssets} from '../linkAssets';
 import getGroup from '../tools/helpers/xcode/getGroup';
+import {ManifestFile} from '../tools/manifest';
 import '../xcode.d.ts';
 
-const fs = jest.requireActual('fs') as typeof FS;
-const path = jest.requireActual('path') as typeof Path;
+const fs = jest.requireActual<typeof FS>('fs');
+const path = jest.requireActual<typeof Path>('path');
 
 const DIR = getTempDirectory('temp-project');
 
@@ -478,5 +479,160 @@ describe('linkAssets', () => {
     expect(resourcesGroup?.children.length).toBe(0);
   });
 
-  it('should relink font assets from an Android project to use XML resources', async () => {});
+  it('should relink font assets from an Android project to use XML resources', async () => {
+    writeFiles(DIR, baseProjectKotlin);
+
+    await linkAssets([], configMock as CLIConfig, linkAssetsOptions);
+
+    // Change link-assets-manifest.json to simulate old version
+    const oldAndroidLinkAssetsManifestJson = JSON.parse(
+      readAndroidLinkAssetsManifestFile(),
+    ) as ManifestFile;
+    oldAndroidLinkAssetsManifestJson.migIndex = 1;
+    const oldAndroidLinkAssetsManifestFile = JSON.stringify(
+      oldAndroidLinkAssetsManifestJson,
+      undefined,
+      2,
+    );
+    fs.writeFileSync(
+      path.resolve(DIR, 'android/link-assets-manifest.json'),
+      oldAndroidLinkAssetsManifestFile,
+    );
+
+    // Restore MainApplication.kt to original state to simulate old version
+    const oldMainApplicationFile =
+      fixtureFiles.mainApplicationKotlin.toString();
+    fs.writeFileSync(
+      path.resolve(DIR, fixtureFilePaths.mainApplicationKotlin),
+      oldMainApplicationFile,
+    );
+
+    // Change link-assets-manifest.json to simulate old version
+    const oldIOSLinkAssetsManifestJson = JSON.parse(
+      readIOSLinkAssetsManifestFile(),
+    ) as ManifestFile;
+    oldIOSLinkAssetsManifestJson.migIndex = 1;
+    const oldIOSLinkAssetsManifestFile = JSON.stringify(
+      oldIOSLinkAssetsManifestJson,
+      undefined,
+      2,
+    );
+    fs.writeFileSync(
+      path.resolve(DIR, 'ios/link-assets-manifest.json'),
+      oldIOSLinkAssetsManifestFile,
+    );
+
+    // Remove fonts from `res/font` to simulate old version
+    fs.readdirSync(path.resolve(DIR, 'android/app/src/main/res/font')).forEach(
+      (file) =>
+        fs.rmSync(
+          path.resolve(
+            path.resolve(DIR, 'android/app/src/main/res/font'),
+            file,
+          ),
+          {recursive: true},
+        ),
+    );
+
+    // Add fonts to `assets/font` to simulate old version
+    writeFiles(DIR, {
+      'android/app/src/main/assets/fonts/FireCode-Bold.otf':
+        fixtureFiles.firaCodeBoldFont,
+      'android/app/src/main/assets/fonts/FireCode-Regular.otf':
+        fixtureFiles.firaCodeRegularFont,
+      'android/app/src/main/assets/fonts/Lato-Bold.ttf':
+        fixtureFiles.latoBoldFont,
+      'android/app/src/main/assets/fonts/Lato-BoldItalic.ttf':
+        fixtureFiles.latoBoldItalicFont,
+      'android/app/src/main/assets/fonts/Lato-Regular.ttf':
+        fixtureFiles.latoRegularFont,
+    });
+
+    await linkAssets([], configMock as CLIConfig, linkAssetsOptions);
+
+    // Android
+    expect(
+      snapshotDiff(
+        oldAndroidLinkAssetsManifestFile,
+        readAndroidLinkAssetsManifestFile(),
+      ),
+    ).toMatchSnapshot();
+    expect(
+      snapshotDiff(oldMainApplicationFile, readMainApplicationKotlinFile()),
+    ).toMatchSnapshot();
+
+    expect(snapshotDiff('', readLatoXMLFontFile())).toMatchSnapshot();
+    expect(baseProjectKotlin[fixtureFilePaths.latoBoldFont].toString()).toEqual(
+      readLatoBoldFontFile(),
+    );
+    expect(
+      baseProjectKotlin[fixtureFilePaths.latoBoldItalicFont].toString(),
+    ).toEqual(readLatoBoldItalicFontFile());
+    expect(
+      baseProjectKotlin[fixtureFilePaths.latoRegularFont].toString(),
+    ).toEqual(readLatoRegularFontFile());
+
+    expect(snapshotDiff('', readFiraCodeXMLFontFile())).toMatchSnapshot();
+    expect(
+      baseProjectKotlin[fixtureFilePaths.firaCodeBoldFont].toString(),
+    ).toEqual(readFiraCodeBoldFontFile());
+    expect(
+      baseProjectKotlin[fixtureFilePaths.firaCodeRegularFont].toString(),
+    ).toEqual(readFiraCodeRegularFontFile());
+
+    expect(baseProjectKotlin[fixtureFilePaths.documentPdf].toString()).toEqual(
+      readDocumentPdfFile(),
+    );
+    expect(baseProjectKotlin[fixtureFilePaths.soundMp3].toString()).toEqual(
+      readSoundMp3File(),
+    );
+    expect(baseProjectKotlin[fixtureFilePaths.imageGif].toString()).toEqual(
+      readImageGifFile(),
+    );
+    expect(baseProjectKotlin[fixtureFilePaths.imageJpg].toString()).toEqual(
+      readImageJpgFile(),
+    );
+    expect(baseProjectKotlin[fixtureFilePaths.imagePng].toString()).toEqual(
+      readImagePngFile(),
+    );
+
+    expect(() =>
+      fs.readFileSync(
+        path.resolve(DIR, 'android/app/src/main/res/font/FiraCode-Bold.otf'),
+        'utf8',
+      ),
+    ).toThrow();
+    expect(() =>
+      fs.readFileSync(
+        path.resolve(DIR, 'android/app/src/main/res/font/FiraCode-Regular.otf'),
+        'utf8',
+      ),
+    ).toThrow();
+    expect(() =>
+      fs.readFileSync(
+        path.resolve(DIR, 'android/app/src/main/res/font/Lato-Bold.ttf'),
+        'utf8',
+      ),
+    ).toThrow();
+    expect(() =>
+      fs.readFileSync(
+        path.resolve(DIR, 'android/app/src/main/res/font/Lato-BoldItalic.ttf'),
+        'utf8',
+      ),
+    ).toThrow();
+    expect(() =>
+      fs.readFileSync(
+        path.resolve(DIR, 'android/app/src/main/res/font/Lato-Regular.ttf'),
+        'utf8',
+      ),
+    ).toThrow();
+
+    // iOS
+    expect(
+      snapshotDiff(
+        oldIOSLinkAssetsManifestFile,
+        readIOSLinkAssetsManifestFile(),
+      ),
+    ).toMatchSnapshot();
+  });
 });

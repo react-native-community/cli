@@ -245,7 +245,7 @@ function linkPlatform({
                 (assetToUnlink) => assetToUnlink.path === androidAsset.path,
               ),
           )
-          .map((asset) => asset.path),
+          .map((asset) => getAbsolute(asset.path, rootPath)),
         platform === 'android'
           ? {
               platformPath: platformPath,

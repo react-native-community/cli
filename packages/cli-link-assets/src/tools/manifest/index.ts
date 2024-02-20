@@ -59,4 +59,4 @@ const getManifest = (
 });
 
 export default getManifest;
-export {Manifest, AssetPathAndSHA1};
+export {Manifest, ManifestFile, AssetPathAndSHA1};

@@ -86,6 +86,9 @@ export const dependencyConfig = t
                 libraryName: t.string().allow(null),
                 componentDescriptors: t.array().items(t.string()).allow(null),
                 cmakeListsPath: t.string().allow(null),
+                cxxModuleCMakeListsModuleName: t.string().allow(null),
+                cxxModuleCMakeListsPath: t.string().allow(null),
+                cxxModuleHeaderName: t.string().allow(null),
               })
               .allow(null),
           })

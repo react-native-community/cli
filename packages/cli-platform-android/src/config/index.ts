@@ -167,9 +167,17 @@ export function dependencyConfig(
   let cmakeListsPath = userConfig.cmakeListsPath
     ? path.join(sourceDir, userConfig.cmakeListsPath)
     : path.join(sourceDir, 'build/generated/source/codegen/jni/CMakeLists.txt');
+  const cxxModuleCMakeListsModuleName =
+    userConfig.cxxModuleCMakeListsModuleName || null;
+  const cxxModuleHeaderName = userConfig.cxxModuleHeaderName || null;
+  let cxxModuleCMakeListsPath = userConfig.cxxModuleCMakeListsPath || null;
   if (process.platform === 'win32') {
     cmakeListsPath = cmakeListsPath.replace(/\\/g, '/');
+    if (cxxModuleCMakeListsPath) {
+      cxxModuleCMakeListsPath = cxxModuleCMakeListsPath.replace(/\\/g, '/');
+    }
   }
+
   return {
     sourceDir,
     packageImportPath,
@@ -179,5 +187,8 @@ export function dependencyConfig(
     libraryName,
     componentDescriptors,
     cmakeListsPath,
+    cxxModuleCMakeListsModuleName,
+    cxxModuleCMakeListsPath,
+    cxxModuleHeaderName,
   };
 }

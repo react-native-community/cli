@@ -29,7 +29,7 @@ Each platform defines its own [`platforms`](./platforms.md) configuration. It in
 
 ## Platform iOS
 
-The [native_modules.rb](https://github.com/react-native-community/cli/blob/main/packages/cli-platform-ios/native_modules.rb) script required by `Podfile` gets the package metadata from `react-native config` during install phase and:
+The [react-native/scripts/react_native_pods.rb](https://github.com/facebook/react-native/blob/master/packages/react-native/scripts/react_native_pods.rb) script required by `Podfile` requires the [native_modules.rb](https://github.com/react-native-community/cli/blob/main/packages/cli-platform-ios/native_modules.rb) script, which gets the package metadata from `react-native config` during install phase and:
 
 1. Adds dependencies via CocoaPods dev pods (using files from a local path).
 1. Adds build phase scripts to the App project’s build phase. (see examples below)
@@ -50,7 +50,6 @@ The [native_modules.gradle](https://github.com/react-native-community/cli/blob/m
    1. A first Gradle plugin (in `settings.gradle`) runs `applyNativeModulesSettingsGradle` method. It uses the package metadata from `react-native config` to add Android projects.
    1. A second Gradle plugin (in `app/build.gradle`) runs `applyNativeModulesAppBuildGradle` method. It creates a list of React Native packages to include in the generated `/android/build/generated/rn/src/main/java/com/facebook/react/PackageList.java` file.
       1. When the new architecture is turned on, the `generateNewArchitectureFiles` task is fired, generating `/android/build/generated/rn/src/main/jni` directory with the following files:
-         - `Android-rncli.mk` – creates a list of codegen'd libs. Used by the project's `Android.mk`.
          - `Android-rncli.cmake` – creates a list of codegen'd libs. Used by the project's `CMakeLists.txt`.
          - `rncli.cpp` – registers codegen'd Turbo Modules and Fabric component providers. Used by `MainApplicationModuleProvider.cpp` and `MainComponentsRegistry.cpp`.
          - `rncli.h` - a header file for `rncli.cpp`.
@@ -117,6 +116,9 @@ module.exports = {
           libraryName: null,
           componentDescriptors: null,
           cmakeListsPath: null,
+          cxxModuleCMakeListsModuleName: null,
+          cxxModuleCMakeListsPath: null,
+          cxxModuleHeaderName: null,
         },
       },
     },
@@ -146,7 +148,7 @@ There is nothing extra you need to do - monorepos are supported by default.
 Please note that in certain scenarios, such as when using Yarn workspaces, your packages might be hoisted to the root of the repository. If that is the case, please make sure that the following paths are pointing to the
 correct location and update them accordingly:
 
-- path to `native_modules.rb` in your `ios/Podfile`
+- path to `native_modules.rb` in your `ios/Podfile` (the right path should be resolved automatically in react-native >0.73)
 - path to `native_modules.gradle` in your `android/settings.gradle`
 - path to `native_modules.gradle` in your `android/app/build.gradle`
 

@@ -7,11 +7,12 @@
  */
 
 import fs from 'fs';
-import glob from 'glob';
+import glob from 'fast-glob';
 import path from 'path';
+import {unixifyPaths} from '@react-native-community/cli-tools';
 
 export function getMainActivityFiles(folder: string) {
-  return glob.sync('**/+(*.java|*.kt)', {cwd: folder});
+  return glob.sync('**/+(*.java|*.kt)', {cwd: unixifyPaths(folder)});
 }
 
 export default function getPackageClassName(folder: string) {

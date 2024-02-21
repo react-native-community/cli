@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/cli-doctor",
-  "version": "13.5.1",
+  "version": "13.6.0",
   "license": "MIT",
   "main": "build/index.js",
   "publishConfig": {
@@ -8,18 +8,17 @@
   },
   "types": "build/index.d.ts",
   "dependencies": {
-    "@react-native-community/cli-config": "13.5.1",
-    "@react-native-community/cli-platform-android": "13.5.1",
-    "@react-native-community/cli-platform-apple": "13.5.1",
-    "@react-native-community/cli-platform-ios": "13.5.1",
-    "@react-native-community/cli-tools": "13.5.1",
+    "@react-native-community/cli-config": "13.6.0",
+    "@react-native-community/cli-platform-android": "13.6.0",
+    "@react-native-community/cli-platform-apple": "13.6.0",
+    "@react-native-community/cli-platform-ios": "13.6.0",
+    "@react-native-community/cli-tools": "13.6.0",
     "chalk": "^4.1.2",
     "command-exists": "^1.2.8",
     "deepmerge": "^4.3.0",
     "envinfo": "^7.10.0",
     "execa": "^5.0.0",
     "hermes-profile-transformer": "^0.0.6",
-    "ip": "^1.1.5",
     "node-stream-zip": "^1.9.1",
     "ora": "^5.4.1",
     "semver": "^7.5.2",
@@ -33,7 +32,7 @@
     "!*.map"
   ],
   "devDependencies": {
-    "@react-native-community/cli-types": "13.5.1",
+    "@react-native-community/cli-types": "13.6.0",
     "@types/command-exists": "^1.2.0",
     "@types/envinfo": "^7.8.1",
     "@types/ip": "^1.1.0",

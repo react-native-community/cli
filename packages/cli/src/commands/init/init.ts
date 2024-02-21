@@ -206,7 +206,7 @@ async function createFromTemplate({
   logger.debug('Initializing new project');
 
   // We print this info notice as per https://github.com/react-native-community/discussions-and-proposals/pull/759
-  logger.log(`
+  logger.info(`
   Running: npx @react-native-community/cli init
 
   `);

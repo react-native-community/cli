@@ -16,8 +16,7 @@ function createGroupWithMessage(project: XcodeProject, path: string) {
   if (!group) {
     group = createGroup(project, path);
 
-    logger.warn(
-      'ERRGROUP',
+    logger.info(
       `Group '${path}' does not exist in your Xcode project. We have created it automatically for you.`,
     );
   }

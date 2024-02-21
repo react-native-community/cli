@@ -204,6 +204,13 @@ async function createFromTemplate({
   yarnConfigOptions,
 }: TemplateOptions): Promise<TemplateReturnType> {
   logger.debug('Initializing new project');
+
+  // We print this info notice as per https://github.com/react-native-community/discussions-and-proposals/pull/759
+  logger.log(`
+  Running: npx @react-native-community/cli init
+
+  `);
+
   // Only print out the banner if we're not in a CI
   if (!process.env.CI) {
     logger.log(banner);

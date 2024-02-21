@@ -195,7 +195,7 @@ async function linkAssets(
 export default {
   func: linkAssets,
   name: 'link-assets',
-  description: 'TODO',
+  description: 'Links your assets to Android / iOS projects.',
   options: [],
 };
 

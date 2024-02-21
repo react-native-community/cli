@@ -250,14 +250,12 @@ describe('linkAssets', () => {
     },
   };
 
-  const linkAssetsOptions = {
-    projectRoot: DIR,
-  };
+  process.cwd = () => DIR;
 
   it('should link all types of assets in a Kotlin project for the first time', async () => {
     writeFiles(DIR, baseProjectKotlin);
 
-    await linkAssets([], configMock as CLIConfig, linkAssetsOptions);
+    await linkAssets([], configMock as CLIConfig, {});
 
     testBaseProjectStructure(true);
   });
@@ -265,7 +263,7 @@ describe('linkAssets', () => {
   it('should link all types of assets in a Java project for the first time', async () => {
     writeFiles(DIR, baseProjectJava);
 
-    await linkAssets([], configMock as CLIConfig, linkAssetsOptions);
+    await linkAssets([], configMock as CLIConfig, {});
 
     testBaseProjectStructure(false);
   });
@@ -273,7 +271,7 @@ describe('linkAssets', () => {
   it('should link new assets in a project', async () => {
     writeFiles(DIR, baseProjectKotlin);
 
-    await linkAssets([], configMock as CLIConfig, linkAssetsOptions);
+    await linkAssets([], configMock as CLIConfig, {});
 
     const oldAndroidLinkAssetsManifestFile =
       readAndroidLinkAssetsManifestFile();
@@ -288,7 +286,7 @@ describe('linkAssets', () => {
         fixtureFiles.montserratRegularFont,
     });
 
-    await linkAssets([], configMock as CLIConfig, linkAssetsOptions);
+    await linkAssets([], configMock as CLIConfig, {});
 
     // Android
     expect(
@@ -347,7 +345,7 @@ describe('linkAssets', () => {
   it('should unlink deleted assets in a project', async () => {
     writeFiles(DIR, baseProjectKotlin);
 
-    await linkAssets([], configMock as CLIConfig, linkAssetsOptions);
+    await linkAssets([], configMock as CLIConfig, {});
 
     const oldAndroidLinkAssetsManifestFile =
       readAndroidLinkAssetsManifestFile();
@@ -363,7 +361,7 @@ describe('linkAssets', () => {
     fs.rmSync(path.resolve(DIR, fixtureFilePaths.imageGif));
     fs.rmSync(path.resolve(DIR, fixtureFilePaths.soundMp3));
 
-    await linkAssets([], configMock as CLIConfig, linkAssetsOptions);
+    await linkAssets([], configMock as CLIConfig, {});
 
     // Android
     expect(
@@ -416,7 +414,7 @@ describe('linkAssets', () => {
   it('should unlink all assets in a project', async () => {
     writeFiles(DIR, baseProjectKotlin);
 
-    await linkAssets([], configMock as CLIConfig, linkAssetsOptions);
+    await linkAssets([], configMock as CLIConfig, {});
 
     const oldAndroidLinkAssetsManifestFile =
       readAndroidLinkAssetsManifestFile();
@@ -437,7 +435,7 @@ describe('linkAssets', () => {
       fs.rmSync(path.resolve(iosAssetsPath, file), {recursive: true}),
     );
 
-    await linkAssets([], configMock as CLIConfig, linkAssetsOptions);
+    await linkAssets([], configMock as CLIConfig, {});
 
     // Android
     expect(
@@ -482,7 +480,7 @@ describe('linkAssets', () => {
   it('should relink font assets from an Android project to use XML resources', async () => {
     writeFiles(DIR, baseProjectKotlin);
 
-    await linkAssets([], configMock as CLIConfig, linkAssetsOptions);
+    await linkAssets([], configMock as CLIConfig, {});
 
     // Change link-assets-manifest.json to simulate old version
     const oldAndroidLinkAssetsManifestJson = JSON.parse(
@@ -548,7 +546,7 @@ describe('linkAssets', () => {
         fixtureFiles.latoRegularFont,
     });
 
-    await linkAssets([], configMock as CLIConfig, linkAssetsOptions);
+    await linkAssets([], configMock as CLIConfig, {});
 
     // Android
     expect(

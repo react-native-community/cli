@@ -18,9 +18,7 @@ import linkPlatform, {
 } from './tools/linkPlatform';
 import getManifest from './tools/manifest';
 
-type Args = {
-  projectRoot: string;
-};
+type Args = {};
 
 function getLinkOptions(
   assetType: 'font' | 'image' | 'audio' | 'custom',
@@ -69,7 +67,7 @@ function getLinkOptions(
 async function linkAssets(
   _argv: string[],
   ctx: CLIConfig,
-  linkAssetsOptions: Args,
+  _options: Args,
 ): Promise<void> {
   let androidPath: string = '';
   let androidAssetsPath: string[] = ctx.assets;
@@ -104,9 +102,7 @@ async function linkAssets(
     iosPbxprojFilePath = path.join(iosPath, pbxprojPath);
   }
 
-  const rootPath = path.isAbsolute(linkAssetsOptions.projectRoot)
-    ? linkAssetsOptions.projectRoot
-    : path.resolve(process.cwd(), linkAssetsOptions.projectRoot);
+  const rootPath = process.cwd();
 
   const fontLinkOptions = fontTypes.reduce(
     (result: LinkOptionsPerExt, fontType) => {
@@ -200,14 +196,7 @@ export default {
   func: linkAssets,
   name: 'link-assets',
   description: 'TODO',
-  options: [
-    {
-      name: '--project-root <string>',
-      description:
-        'Root path to your React Native project. When not specified, defaults to current working directory.',
-      default: process.cwd(),
-    },
-  ],
+  options: [],
 };
 
 export {linkAssets};

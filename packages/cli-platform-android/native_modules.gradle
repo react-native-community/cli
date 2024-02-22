@@ -298,6 +298,7 @@ class ReactNativeModules {
         if (it.cxxModuleCMakeListsModuleName != null) {
           autolinkedLibraries += "\n${it.cxxModuleCMakeListsModuleName}"
         }
+        autolinkedLibraries
       }.minus(null).join('\n  ')
     }
 

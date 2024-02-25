@@ -278,9 +278,17 @@ export function getTemplateName(cwd: string) {
   // We use package manager to infer the name of the template module for us.
   // That's why we get it from temporary package.json, where the name is the
   // first and only dependency (hence 0).
-  const name = Object.keys(
-    JSON.parse(fs.readFileSync(path.join(cwd, './package.json'), 'utf8'))
-      .dependencies,
-  )[0];
+  let name;
+  try {
+    name = Object.keys(
+      JSON.parse(fs.readFileSync(path.join(cwd, './package.json'), 'utf8'))
+        .dependencies,
+    )[0];
+  } catch {
+    throw new CLIError(
+      'Failed to read template name from package.json. Please make sure that the template you are using has a valid package.json file.',
+    );
+  }
+
   return name;
 }

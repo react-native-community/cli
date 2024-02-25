@@ -43,13 +43,23 @@ const getAppName = async (root: string) => {
     throw new CLIError(`Unable to find package.json inside ${root}`);
   }
 
-  let {name} = JSON.parse(readFileSync(pkgJsonPath, 'utf8'));
+  let name;
+
+  try {
+    name = JSON.parse(readFileSync(pkgJsonPath, 'utf8'));
+  } catch (e) {
+    throw new CLIError(`Failed to read ${pkgJsonPath} file.`, e as Error);
+  }
 
   if (!name) {
     const appJson = join(root, 'app.json');
     if (appJson) {
       logger.log(`Reading ${chalk.cyan('name')} from app.json…`);
-      name = JSON.parse(readFileSync(appJson, 'utf8')).name;
+      try {
+        name = JSON.parse(readFileSync(appJson, 'utf8')).name;
+      } catch (e) {
+        throw new CLIError(`Failed to read ${pkgJsonPath} file.`, e as Error);
+      }
     }
 
     if (!name) {

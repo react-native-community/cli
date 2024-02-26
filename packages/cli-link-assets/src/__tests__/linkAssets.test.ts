@@ -107,31 +107,34 @@ const readMontserratRegularFontFile = () =>
 
 const readDocumentPdfFile = () =>
   fs.readFileSync(
-    path.resolve(DIR, 'android/app/src/main/assets/custom/document.pdf'),
+    path.resolve(
+      DIR,
+      'android/app/src/main/assets/custom/TestSample Document.pdf',
+    ),
     'utf8',
   );
 
 const readImageGifFile = () =>
   fs.readFileSync(
-    path.resolve(DIR, 'android/app/src/main/res/drawable/image_gif.gif'),
+    path.resolve(DIR, 'android/app/src/main/res/drawable/gif_image.gif'),
     'utf8',
   );
 
 const readImageJpgFile = () =>
   fs.readFileSync(
-    path.resolve(DIR, 'android/app/src/main/res/drawable/image_jpg.jpg'),
+    path.resolve(DIR, 'android/app/src/main/res/drawable/jpg_image.jpg'),
     'utf8',
   );
 
 const readImagePngFile = () =>
   fs.readFileSync(
-    path.resolve(DIR, 'android/app/src/main/res/drawable/image_png.png'),
+    path.resolve(DIR, 'android/app/src/main/res/drawable/png_image.png'),
     'utf8',
   );
 
 const readSoundMp3File = () =>
   fs.readFileSync(
-    path.resolve(DIR, 'android/app/src/main/res/raw/sound.mp3'),
+    path.resolve(DIR, 'android/app/src/main/res/raw/mp3_sound__1_.mp3'),
     'utf8',
   );
 

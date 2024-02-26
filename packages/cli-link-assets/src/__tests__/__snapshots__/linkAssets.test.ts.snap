@@ -33,7 +33,23 @@ exports[`linkAssets should link all types of assets in a Java project for the fi
 +   \\"migIndex\\": 2,
 +   \\"data\\": [
 +     {
-+       \\"path\\": \\"assets/shared/document.pdf\\",
++       \\"path\\": \\"assets/shared/GIF Image.gif\\",
++       \\"sha1\\": \\"da39a3ee5e6b4b0d3255bfef95601890afd80709\\"
++     },
++     {
++       \\"path\\": \\"assets/shared/JPG Image.jpg\\",
++       \\"sha1\\": \\"255148944427577e1a21a5a62a1d98aa3269e9e8\\"
++     },
++     {
++       \\"path\\": \\"assets/shared/MP3 Sound (1).mp3\\",
++       \\"sha1\\": \\"1bd4b065508235aaa400ba4e019fbfb2cb7d291c\\"
++     },
++     {
++       \\"path\\": \\"assets/shared/PNG Image.png\\",
++       \\"sha1\\": \\"f1498c79d91acbb2291368fa1ea629ad2332a935\\"
++     },
++     {
++       \\"path\\": \\"assets/shared/TestSample Document.pdf\\",
 +       \\"sha1\\": \\"0ba2141b8996a615d7484536d7a97c27a1768407\\"
 +     },
 +     {
@@ -47,22 +63,6 @@ exports[`linkAssets should link all types of assets in a Java project for the fi
 +     {
 +       \\"path\\": \\"assets/shared/fonts/Lato-Regular.ttf\\",
 +       \\"sha1\\": \\"e923c72eda5e50a87e18ff5c71e9ef4b3b6455a3\\"
-+     },
-+     {
-+       \\"path\\": \\"assets/shared/image_gif.gif\\",
-+       \\"sha1\\": \\"da39a3ee5e6b4b0d3255bfef95601890afd80709\\"
-+     },
-+     {
-+       \\"path\\": \\"assets/shared/image_jpg.jpg\\",
-+       \\"sha1\\": \\"255148944427577e1a21a5a62a1d98aa3269e9e8\\"
-+     },
-+     {
-+       \\"path\\": \\"assets/shared/image_png.png\\",
-+       \\"sha1\\": \\"f1498c79d91acbb2291368fa1ea629ad2332a935\\"
-+     },
-+     {
-+       \\"path\\": \\"assets/shared/sound.mp3\\",
-+       \\"sha1\\": \\"1bd4b065508235aaa400ba4e019fbfb2cb7d291c\\"
 +     },
 +     {
 +       \\"path\\": \\"assets/android/fonts/Lato-Bold.ttf\\",
@@ -149,7 +149,23 @@ exports[`linkAssets should link all types of assets in a Java project for the fi
 +   \\"migIndex\\": 2,
 +   \\"data\\": [
 +     {
-+       \\"path\\": \\"assets/shared/document.pdf\\",
++       \\"path\\": \\"assets/shared/GIF Image.gif\\",
++       \\"sha1\\": \\"da39a3ee5e6b4b0d3255bfef95601890afd80709\\"
++     },
++     {
++       \\"path\\": \\"assets/shared/JPG Image.jpg\\",
++       \\"sha1\\": \\"255148944427577e1a21a5a62a1d98aa3269e9e8\\"
++     },
++     {
++       \\"path\\": \\"assets/shared/MP3 Sound (1).mp3\\",
++       \\"sha1\\": \\"1bd4b065508235aaa400ba4e019fbfb2cb7d291c\\"
++     },
++     {
++       \\"path\\": \\"assets/shared/PNG Image.png\\",
++       \\"sha1\\": \\"f1498c79d91acbb2291368fa1ea629ad2332a935\\"
++     },
++     {
++       \\"path\\": \\"assets/shared/TestSample Document.pdf\\",
 +       \\"sha1\\": \\"0ba2141b8996a615d7484536d7a97c27a1768407\\"
 +     },
 +     {
@@ -163,22 +179,6 @@ exports[`linkAssets should link all types of assets in a Java project for the fi
 +     {
 +       \\"path\\": \\"assets/shared/fonts/Lato-Regular.ttf\\",
 +       \\"sha1\\": \\"e923c72eda5e50a87e18ff5c71e9ef4b3b6455a3\\"
-+     },
-+     {
-+       \\"path\\": \\"assets/shared/image_gif.gif\\",
-+       \\"sha1\\": \\"da39a3ee5e6b4b0d3255bfef95601890afd80709\\"
-+     },
-+     {
-+       \\"path\\": \\"assets/shared/image_jpg.jpg\\",
-+       \\"sha1\\": \\"255148944427577e1a21a5a62a1d98aa3269e9e8\\"
-+     },
-+     {
-+       \\"path\\": \\"assets/shared/image_png.png\\",
-+       \\"sha1\\": \\"f1498c79d91acbb2291368fa1ea629ad2332a935\\"
-+     },
-+     {
-+       \\"path\\": \\"assets/shared/sound.mp3\\",
-+       \\"sha1\\": \\"1bd4b065508235aaa400ba4e019fbfb2cb7d291c\\"
 +     },
 +     {
 +       \\"path\\": \\"assets/ios/fonts/Raleway-Regular.ttf\\",
@@ -221,7 +221,23 @@ exports[`linkAssets should link all types of assets in a Kotlin project for the 
 +   \\"migIndex\\": 2,
 +   \\"data\\": [
 +     {
-+       \\"path\\": \\"assets/shared/document.pdf\\",
++       \\"path\\": \\"assets/shared/GIF Image.gif\\",
++       \\"sha1\\": \\"da39a3ee5e6b4b0d3255bfef95601890afd80709\\"
++     },
++     {
++       \\"path\\": \\"assets/shared/JPG Image.jpg\\",
++       \\"sha1\\": \\"255148944427577e1a21a5a62a1d98aa3269e9e8\\"
++     },
++     {
++       \\"path\\": \\"assets/shared/MP3 Sound (1).mp3\\",
++       \\"sha1\\": \\"1bd4b065508235aaa400ba4e019fbfb2cb7d291c\\"
++     },
++     {
++       \\"path\\": \\"assets/shared/PNG Image.png\\",
++       \\"sha1\\": \\"f1498c79d91acbb2291368fa1ea629ad2332a935\\"
++     },
++     {
++       \\"path\\": \\"assets/shared/TestSample Document.pdf\\",
 +       \\"sha1\\": \\"0ba2141b8996a615d7484536d7a97c27a1768407\\"
 +     },
 +     {
@@ -235,22 +251,6 @@ exports[`linkAssets should link all types of assets in a Kotlin project for the 
 +     {
 +       \\"path\\": \\"assets/shared/fonts/Lato-Regular.ttf\\",
 +       \\"sha1\\": \\"e923c72eda5e50a87e18ff5c71e9ef4b3b6455a3\\"
-+     },
-+     {
-+       \\"path\\": \\"assets/shared/image_gif.gif\\",
-+       \\"sha1\\": \\"da39a3ee5e6b4b0d3255bfef95601890afd80709\\"
-+     },
-+     {
-+       \\"path\\": \\"assets/shared/image_jpg.jpg\\",
-+       \\"sha1\\": \\"255148944427577e1a21a5a62a1d98aa3269e9e8\\"
-+     },
-+     {
-+       \\"path\\": \\"assets/shared/image_png.png\\",
-+       \\"sha1\\": \\"f1498c79d91acbb2291368fa1ea629ad2332a935\\"
-+     },
-+     {
-+       \\"path\\": \\"assets/shared/sound.mp3\\",
-+       \\"sha1\\": \\"1bd4b065508235aaa400ba4e019fbfb2cb7d291c\\"
 +     },
 +     {
 +       \\"path\\": \\"assets/android/fonts/Lato-Bold.ttf\\",
@@ -337,7 +337,23 @@ exports[`linkAssets should link all types of assets in a Kotlin project for the 
 +   \\"migIndex\\": 2,
 +   \\"data\\": [
 +     {
-+       \\"path\\": \\"assets/shared/document.pdf\\",
++       \\"path\\": \\"assets/shared/GIF Image.gif\\",
++       \\"sha1\\": \\"da39a3ee5e6b4b0d3255bfef95601890afd80709\\"
++     },
++     {
++       \\"path\\": \\"assets/shared/JPG Image.jpg\\",
++       \\"sha1\\": \\"255148944427577e1a21a5a62a1d98aa3269e9e8\\"
++     },
++     {
++       \\"path\\": \\"assets/shared/MP3 Sound (1).mp3\\",
++       \\"sha1\\": \\"1bd4b065508235aaa400ba4e019fbfb2cb7d291c\\"
++     },
++     {
++       \\"path\\": \\"assets/shared/PNG Image.png\\",
++       \\"sha1\\": \\"f1498c79d91acbb2291368fa1ea629ad2332a935\\"
++     },
++     {
++       \\"path\\": \\"assets/shared/TestSample Document.pdf\\",
 +       \\"sha1\\": \\"0ba2141b8996a615d7484536d7a97c27a1768407\\"
 +     },
 +     {
@@ -353,22 +369,6 @@ exports[`linkAssets should link all types of assets in a Kotlin project for the 
 +       \\"sha1\\": \\"e923c72eda5e50a87e18ff5c71e9ef4b3b6455a3\\"
 +     },
 +     {
-+       \\"path\\": \\"assets/shared/image_gif.gif\\",
-+       \\"sha1\\": \\"da39a3ee5e6b4b0d3255bfef95601890afd80709\\"
-+     },
-+     {
-+       \\"path\\": \\"assets/shared/image_jpg.jpg\\",
-+       \\"sha1\\": \\"255148944427577e1a21a5a62a1d98aa3269e9e8\\"
-+     },
-+     {
-+       \\"path\\": \\"assets/shared/image_png.png\\",
-+       \\"sha1\\": \\"f1498c79d91acbb2291368fa1ea629ad2332a935\\"
-+     },
-+     {
-+       \\"path\\": \\"assets/shared/sound.mp3\\",
-+       \\"sha1\\": \\"1bd4b065508235aaa400ba4e019fbfb2cb7d291c\\"
-+     },
-+     {
 +       \\"path\\": \\"assets/ios/fonts/Raleway-Regular.ttf\\",
 +       \\"sha1\\": \\"c01aaff04ead4a08b89bcb81d3d3d954345eb67f\\"
 +     }
@@ -382,7 +382,7 @@ exports[`linkAssets should link new assets in a project 1`] = `
 - First value
 + Second value
 
-@@ -12,10 +12,14 @@
+@@ -28,19 +28,27 @@
       {
         \\"path\\": \\"assets/shared/fonts/FiraCode-Regular.otf\\",
         \\"sha1\\": \\"5115ac0f821964b0bc2938273b37be4088f3cd8e\\"
@@ -396,8 +396,7 @@ exports[`linkAssets should link new assets in a project 1`] = `
         \\"sha1\\": \\"e923c72eda5e50a87e18ff5c71e9ef4b3b6455a3\\"
       },
       {
-        \\"path\\": \\"assets/shared/image_gif.gif\\",
-@@ -38,9 +42,13 @@
+        \\"path\\": \\"assets/android/fonts/Lato-Bold.ttf\\",
         \\"sha1\\": \\"542498221d97bee5bdbccf86ee8890bf8e8005c9\\"
       },
       {
@@ -464,7 +463,7 @@ exports[`linkAssets should link new assets in a project 5`] = `
 - First value
 + Second value
 
-@@ -12,10 +12,14 @@
+@@ -28,10 +28,14 @@
       {
         \\"path\\": \\"assets/shared/fonts/FiraCode-Regular.otf\\",
         \\"sha1\\": \\"5115ac0f821964b0bc2938273b37be4088f3cd8e\\"
@@ -478,7 +477,7 @@ exports[`linkAssets should link new assets in a project 5`] = `
         \\"sha1\\": \\"e923c72eda5e50a87e18ff5c71e9ef4b3b6455a3\\"
       },
       {
-        \\"path\\": \\"assets/shared/image_gif.gif\\","
+        \\"path\\": \\"assets/ios/fonts/Raleway-Regular.ttf\\","
 `;
 
 exports[`linkAssets should link new assets in a project 6`] = `
@@ -510,8 +509,8 @@ exports[`linkAssets should relink font assets from an Android project to use XML
 +   \\"migIndex\\": 2,
     \\"data\\": [
       {
-        \\"path\\": \\"assets/shared/document.pdf\\",
-        \\"sha1\\": \\"0ba2141b8996a615d7484536d7a97c27a1768407\\"
+        \\"path\\": \\"assets/shared/GIF Image.gif\\",
+        \\"sha1\\": \\"da39a3ee5e6b4b0d3255bfef95601890afd80709\\"
       },
 @@ -41,5 +41,6 @@
         \\"path\\": \\"assets/android/fonts/Lato-BoldItalic.ttf\\",
@@ -583,8 +582,8 @@ exports[`linkAssets should relink font assets from an Android project to use XML
 +   \\"migIndex\\": 2,
     \\"data\\": [
       {
-        \\"path\\": \\"assets/shared/document.pdf\\",
-        \\"sha1\\": \\"0ba2141b8996a615d7484536d7a97c27a1768407\\"
+        \\"path\\": \\"assets/shared/GIF Image.gif\\",
+        \\"sha1\\": \\"da39a3ee5e6b4b0d3255bfef95601890afd80709\\"
       },
 @@ -37,5 +37,6 @@
         \\"path\\": \\"assets/ios/fonts/Raleway-Regular.ttf\\",
@@ -604,7 +603,23 @@ exports[`linkAssets should unlink all assets in a project 1`] = `
     \\"migIndex\\": 2,
 -   \\"data\\": [
 -     {
--       \\"path\\": \\"assets/shared/document.pdf\\",
+-       \\"path\\": \\"assets/shared/GIF Image.gif\\",
+-       \\"sha1\\": \\"da39a3ee5e6b4b0d3255bfef95601890afd80709\\"
+-     },
+-     {
+-       \\"path\\": \\"assets/shared/JPG Image.jpg\\",
+-       \\"sha1\\": \\"255148944427577e1a21a5a62a1d98aa3269e9e8\\"
+-     },
+-     {
+-       \\"path\\": \\"assets/shared/MP3 Sound (1).mp3\\",
+-       \\"sha1\\": \\"1bd4b065508235aaa400ba4e019fbfb2cb7d291c\\"
+-     },
+-     {
+-       \\"path\\": \\"assets/shared/PNG Image.png\\",
+-       \\"sha1\\": \\"f1498c79d91acbb2291368fa1ea629ad2332a935\\"
+-     },
+-     {
+-       \\"path\\": \\"assets/shared/TestSample Document.pdf\\",
 -       \\"sha1\\": \\"0ba2141b8996a615d7484536d7a97c27a1768407\\"
 -     },
 -     {
@@ -618,22 +633,6 @@ exports[`linkAssets should unlink all assets in a project 1`] = `
 -     {
 -       \\"path\\": \\"assets/shared/fonts/Lato-Regular.ttf\\",
 -       \\"sha1\\": \\"e923c72eda5e50a87e18ff5c71e9ef4b3b6455a3\\"
--     },
--     {
--       \\"path\\": \\"assets/shared/image_gif.gif\\",
--       \\"sha1\\": \\"da39a3ee5e6b4b0d3255bfef95601890afd80709\\"
--     },
--     {
--       \\"path\\": \\"assets/shared/image_jpg.jpg\\",
--       \\"sha1\\": \\"255148944427577e1a21a5a62a1d98aa3269e9e8\\"
--     },
--     {
--       \\"path\\": \\"assets/shared/image_png.png\\",
--       \\"sha1\\": \\"f1498c79d91acbb2291368fa1ea629ad2332a935\\"
--     },
--     {
--       \\"path\\": \\"assets/shared/sound.mp3\\",
--       \\"sha1\\": \\"1bd4b065508235aaa400ba4e019fbfb2cb7d291c\\"
 -     },
 -     {
 -       \\"path\\": \\"assets/android/fonts/Lato-Bold.ttf\\",
@@ -681,7 +680,23 @@ exports[`linkAssets should unlink all assets in a project 3`] = `
     \\"migIndex\\": 2,
 -   \\"data\\": [
 -     {
--       \\"path\\": \\"assets/shared/document.pdf\\",
+-       \\"path\\": \\"assets/shared/GIF Image.gif\\",
+-       \\"sha1\\": \\"da39a3ee5e6b4b0d3255bfef95601890afd80709\\"
+-     },
+-     {
+-       \\"path\\": \\"assets/shared/JPG Image.jpg\\",
+-       \\"sha1\\": \\"255148944427577e1a21a5a62a1d98aa3269e9e8\\"
+-     },
+-     {
+-       \\"path\\": \\"assets/shared/MP3 Sound (1).mp3\\",
+-       \\"sha1\\": \\"1bd4b065508235aaa400ba4e019fbfb2cb7d291c\\"
+-     },
+-     {
+-       \\"path\\": \\"assets/shared/PNG Image.png\\",
+-       \\"sha1\\": \\"f1498c79d91acbb2291368fa1ea629ad2332a935\\"
+-     },
+-     {
+-       \\"path\\": \\"assets/shared/TestSample Document.pdf\\",
 -       \\"sha1\\": \\"0ba2141b8996a615d7484536d7a97c27a1768407\\"
 -     },
 -     {
@@ -695,22 +710,6 @@ exports[`linkAssets should unlink all assets in a project 3`] = `
 -     {
 -       \\"path\\": \\"assets/shared/fonts/Lato-Regular.ttf\\",
 -       \\"sha1\\": \\"e923c72eda5e50a87e18ff5c71e9ef4b3b6455a3\\"
--     },
--     {
--       \\"path\\": \\"assets/shared/image_gif.gif\\",
--       \\"sha1\\": \\"da39a3ee5e6b4b0d3255bfef95601890afd80709\\"
--     },
--     {
--       \\"path\\": \\"assets/shared/image_jpg.jpg\\",
--       \\"sha1\\": \\"255148944427577e1a21a5a62a1d98aa3269e9e8\\"
--     },
--     {
--       \\"path\\": \\"assets/shared/image_png.png\\",
--       \\"sha1\\": \\"f1498c79d91acbb2291368fa1ea629ad2332a935\\"
--     },
--     {
--       \\"path\\": \\"assets/shared/sound.mp3\\",
--       \\"sha1\\": \\"1bd4b065508235aaa400ba4e019fbfb2cb7d291c\\"
 -     },
 -     {
 -       \\"path\\": \\"assets/ios/fonts/Raleway-Regular.ttf\\",
@@ -754,38 +753,38 @@ exports[`linkAssets should unlink deleted assets in a project 1`] = `
     \\"migIndex\\": 2,
     \\"data\\": [
       {
--       \\"path\\": \\"assets/shared/document.pdf\\",
+-       \\"path\\": \\"assets/shared/GIF Image.gif\\",
+-       \\"sha1\\": \\"da39a3ee5e6b4b0d3255bfef95601890afd80709\\"
+-     },
+-     {
+        \\"path\\": \\"assets/shared/JPG Image.jpg\\",
+        \\"sha1\\": \\"255148944427577e1a21a5a62a1d98aa3269e9e8\\"
+-     },
+-     {
+-       \\"path\\": \\"assets/shared/MP3 Sound (1).mp3\\",
+-       \\"sha1\\": \\"1bd4b065508235aaa400ba4e019fbfb2cb7d291c\\"
+      },
+      {
+        \\"path\\": \\"assets/shared/PNG Image.png\\",
+        \\"sha1\\": \\"f1498c79d91acbb2291368fa1ea629ad2332a935\\"
+-     },
+-     {
+-       \\"path\\": \\"assets/shared/TestSample Document.pdf\\",
 -       \\"sha1\\": \\"0ba2141b8996a615d7484536d7a97c27a1768407\\"
 -     },
 -     {
 -       \\"path\\": \\"assets/shared/fonts/FiraCode-Bold.otf\\",
 -       \\"sha1\\": \\"cdb344c9982562a59831836170615e503af0db22\\"
--     },
--     {
+      },
+      {
 -       \\"path\\": \\"assets/shared/fonts/FiraCode-Regular.otf\\",
 -       \\"sha1\\": \\"5115ac0f821964b0bc2938273b37be4088f3cd8e\\"
 -     },
 -     {
         \\"path\\": \\"assets/shared/fonts/Lato-Regular.ttf\\",
         \\"sha1\\": \\"e923c72eda5e50a87e18ff5c71e9ef4b3b6455a3\\"
--     },
--     {
--       \\"path\\": \\"assets/shared/image_gif.gif\\",
--       \\"sha1\\": \\"da39a3ee5e6b4b0d3255bfef95601890afd80709\\"
       },
       {
-        \\"path\\": \\"assets/shared/image_jpg.jpg\\",
-        \\"sha1\\": \\"255148944427577e1a21a5a62a1d98aa3269e9e8\\"
-      },
-      {
-        \\"path\\": \\"assets/shared/image_png.png\\",
-        \\"sha1\\": \\"f1498c79d91acbb2291368fa1ea629ad2332a935\\"
-      },
-      {
--       \\"path\\": \\"assets/shared/sound.mp3\\",
--       \\"sha1\\": \\"1bd4b065508235aaa400ba4e019fbfb2cb7d291c\\"
--     },
--     {
         \\"path\\": \\"assets/android/fonts/Lato-Bold.ttf\\",
         \\"sha1\\": \\"542498221d97bee5bdbccf86ee8890bf8e8005c9\\"
 -     },
@@ -835,12 +834,28 @@ exports[`linkAssets should unlink deleted assets in a project 4`] = `
 - First value
 + Second value
 
-@@ -1,39 +1,19 @@
+@@ -1,35 +1,15 @@
   {
     \\"migIndex\\": 2,
     \\"data\\": [
       {
--       \\"path\\": \\"assets/shared/document.pdf\\",
+-       \\"path\\": \\"assets/shared/GIF Image.gif\\",
+-       \\"sha1\\": \\"da39a3ee5e6b4b0d3255bfef95601890afd80709\\"
+-     },
+-     {
+        \\"path\\": \\"assets/shared/JPG Image.jpg\\",
+        \\"sha1\\": \\"255148944427577e1a21a5a62a1d98aa3269e9e8\\"
+-     },
+-     {
+-       \\"path\\": \\"assets/shared/MP3 Sound (1).mp3\\",
+-       \\"sha1\\": \\"1bd4b065508235aaa400ba4e019fbfb2cb7d291c\\"
+      },
+      {
+        \\"path\\": \\"assets/shared/PNG Image.png\\",
+        \\"sha1\\": \\"f1498c79d91acbb2291368fa1ea629ad2332a935\\"
+-     },
+-     {
+-       \\"path\\": \\"assets/shared/TestSample Document.pdf\\",
 -       \\"sha1\\": \\"0ba2141b8996a615d7484536d7a97c27a1768407\\"
 -     },
 -     {
@@ -850,31 +865,11 @@ exports[`linkAssets should unlink deleted assets in a project 4`] = `
 -     {
 -       \\"path\\": \\"assets/shared/fonts/FiraCode-Regular.otf\\",
 -       \\"sha1\\": \\"5115ac0f821964b0bc2938273b37be4088f3cd8e\\"
--     },
--     {
+      },
+      {
         \\"path\\": \\"assets/shared/fonts/Lato-Regular.ttf\\",
         \\"sha1\\": \\"e923c72eda5e50a87e18ff5c71e9ef4b3b6455a3\\"
-      },
-      {
--       \\"path\\": \\"assets/shared/image_gif.gif\\",
--       \\"sha1\\": \\"da39a3ee5e6b4b0d3255bfef95601890afd80709\\"
--     },
--     {
-        \\"path\\": \\"assets/shared/image_jpg.jpg\\",
-        \\"sha1\\": \\"255148944427577e1a21a5a62a1d98aa3269e9e8\\"
-      },
-      {
-        \\"path\\": \\"assets/shared/image_png.png\\",
-        \\"sha1\\": \\"f1498c79d91acbb2291368fa1ea629ad2332a935\\"
--     },
--     {
--       \\"path\\": \\"assets/shared/sound.mp3\\",
--       \\"sha1\\": \\"1bd4b065508235aaa400ba4e019fbfb2cb7d291c\\"
-      },
-      {
-        \\"path\\": \\"assets/ios/fonts/Raleway-Regular.ttf\\",
-        \\"sha1\\": \\"c01aaff04ead4a08b89bcb81d3d3d954345eb67f\\"
-      }"
+      },"
 `;
 
 exports[`linkAssets should unlink deleted assets in a project 5`] = `

@@ -1,8 +1,8 @@
 import type FS from 'fs';
 import type Path from 'path';
 
-const fs = jest.requireActual('fs') as typeof FS;
-const path = jest.requireActual('path') as typeof Path;
+const fs = jest.requireActual<typeof FS>('fs');
+const path = jest.requireActual<typeof Path>('path');
 
 const fixtureFilePaths = {
   mainApplicationKotlin:
@@ -19,11 +19,11 @@ const fixtureFilePaths = {
   firaCodeRegularFont: 'assets/shared/fonts/FiraCode-Regular.otf',
   latoRegularFont: 'assets/shared/fonts/Lato-Regular.ttf',
   latoLightFont: 'assets/shared/fonts/Lato-Light.ttf',
-  documentPdf: 'assets/shared/document.pdf',
-  imageGif: 'assets/shared/image_gif.gif',
-  imageJpg: 'assets/shared/image_jpg.jpg',
-  imagePng: 'assets/shared/image_png.png',
-  soundMp3: 'assets/shared/sound.mp3',
+  documentPdf: 'assets/shared/TestSample Document.pdf',
+  imageGif: 'assets/shared/GIF Image.gif',
+  imageJpg: 'assets/shared/JPG Image.jpg',
+  imagePng: 'assets/shared/PNG Image.png',
+  soundMp3: 'assets/shared/MP3 Sound (1).mp3',
 } as const;
 
 const fixtureFiles = {
@@ -59,11 +59,13 @@ const fixtureFiles = {
   latoLightFont: fs.readFileSync(
     path.join(__dirname, './files/Lato-Light.ttf'),
   ),
-  documentPdf: fs.readFileSync(path.join(__dirname, './files/document.pdf')),
-  imageGif: fs.readFileSync(path.join(__dirname, './files/image_gif.gif')),
-  imageJpg: fs.readFileSync(path.join(__dirname, './files/image_jpg.jpg')),
-  imagePng: fs.readFileSync(path.join(__dirname, './files/image_png.png')),
-  soundMp3: fs.readFileSync(path.join(__dirname, './files/sound.mp3')),
+  documentPdf: fs.readFileSync(
+    path.join(__dirname, './files/TestSample Document.pdf'),
+  ),
+  imageGif: fs.readFileSync(path.join(__dirname, './files/GIF Image.gif')),
+  imageJpg: fs.readFileSync(path.join(__dirname, './files/JPG Image.jpg')),
+  imagePng: fs.readFileSync(path.join(__dirname, './files/PNG Image.png')),
+  soundMp3: fs.readFileSync(path.join(__dirname, './files/MP3 Sound (1).mp3')),
 } as const;
 
 const baseProject = {

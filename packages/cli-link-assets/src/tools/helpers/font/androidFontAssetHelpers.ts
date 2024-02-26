@@ -5,7 +5,6 @@ import fs from 'fs-extra';
 import {sync as globSync} from 'glob';
 import OpenType from 'opentype.js';
 import path from 'path';
-import slugify from 'slugify';
 
 type FontXMLEntry = {
   '@_app:font': string;
@@ -52,8 +51,27 @@ function toArrayBuffer(buffer: Buffer) {
   return arrayBuffer;
 }
 
-function normalizeString(str: string) {
-  return slugify(str, {lower: true, replacement: '_'}).replace(/-/g, '_');
+function convertToAndroidResourceName(str: string) {
+  // Extract the file name (without extension) and the extension
+  const extension = path.extname(str);
+  const baseName = path.basename(str, extension);
+
+  // Remove any leading numbers from the base name and replace invalid characters with underscores
+  let cleanedBaseName = baseName.replace(/[^a-zA-Z0-9_]/g, '_').toLowerCase();
+
+  // Ensure the cleaned base name does not start with a number (prepend with an underscore if it does)
+  if (cleanedBaseName.match(/^[0-9]/)) {
+    cleanedBaseName = '_' + cleanedBaseName;
+  }
+
+  // Clean the extension by removing any invalid characters and convert to lowercase
+  // Note: path.extname includes the dot (.) in the extension, we preserve that
+  const cleanedExtension = extension
+    .replace(/[^a-zA-Z0-9_.]/g, '')
+    .toLowerCase();
+
+  // Reconstruct the file path with the cleaned base name and cleaned extension
+  return cleanedBaseName + cleanedExtension;
 }
 
 function getProjectFilePath(rootPath: string, name: string) {
@@ -331,6 +349,7 @@ export {
   addImportToFile,
   buildXMLFontObject,
   buildXMLFontObjectEntry,
+  convertToAndroidResourceName,
   getAddCustomFontMethodCall,
   getFontFallbackWeight,
   getFontFamily,
@@ -339,7 +358,6 @@ export {
   getXMLFontFilePath,
   getXMLFontId,
   insertLineInClassMethod,
-  normalizeString,
   readAndParseFontFile,
   readAndParseFontXMLFile,
   removeLineFromFile,

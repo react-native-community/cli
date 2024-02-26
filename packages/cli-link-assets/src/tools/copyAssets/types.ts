@@ -5,6 +5,7 @@ type CopyAssetsOptions = {
 type AndroidCopyAssetsOptions = CopyAssetsOptions & {
   platformAssetsPath: string;
   shouldUseFontXMLFiles: boolean;
+  isResourceFile: boolean;
 };
 
 type IOSCopyAssetsOptions = CopyAssetsOptions & {

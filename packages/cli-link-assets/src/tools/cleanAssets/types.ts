@@ -5,6 +5,7 @@ type CleanAssetsOptions = {
 type AndroidCleanAssetsOptions = CleanAssetsOptions & {
   platformAssetsPath: string;
   shouldUseFontXMLFiles: boolean;
+  isResourceFile: boolean;
 };
 
 type IOSCleanAssetsOptions = CleanAssetsOptions & {

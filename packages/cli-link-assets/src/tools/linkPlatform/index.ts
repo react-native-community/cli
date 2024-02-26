@@ -20,6 +20,7 @@ type PlatformConfig = (AndroidPlatformConfig | iOSPlatformConfig) & {
 type LinkOptionAndroidConfig = {
   path: string;
   shouldUseFontXMLFiles: boolean;
+  isResourceFile: boolean;
 };
 
 type LinkOptionIOSConfig = {
@@ -207,6 +208,10 @@ function linkPlatform({
       platform === 'android'
         ? (fileFilter.options as LinkOptionAndroidConfig).shouldUseFontXMLFiles
         : undefined;
+    const isAndroidResourceFile =
+      platform === 'android'
+        ? (fileFilter.options as LinkOptionAndroidConfig).isResourceFile
+        : undefined;
     const iosPbxprojFilePath =
       platform === 'ios'
         ? (platformConfig as iOSPlatformConfig).pbxprojFilePath
@@ -229,6 +234,7 @@ function linkPlatform({
               platformPath: platformPath,
               platformAssetsPath: androidAssetsPath!,
               shouldUseFontXMLFiles: false,
+              isResourceFile: isAndroidResourceFile!,
             }
           : {
               platformPath: platformPath,
@@ -251,6 +257,7 @@ function linkPlatform({
               platformPath: platformPath,
               platformAssetsPath: androidAssetsPath!,
               shouldUseFontXMLFiles: shouldUseAndroidFontXMLFiles!,
+              isResourceFile: isAndroidResourceFile!,
             }
           : {
               platformPath: platformPath,
@@ -278,6 +285,7 @@ function linkPlatform({
               platformPath: platformPath,
               platformAssetsPath: androidAssetsPath!,
               shouldUseFontXMLFiles: shouldUseAndroidFontXMLFiles!,
+              isResourceFile: isAndroidResourceFile!,
             }
           : {
               platformPath: platformPath,
@@ -296,6 +304,7 @@ function linkPlatform({
               platformPath: platformPath,
               platformAssetsPath: androidAssetsPath!,
               shouldUseFontXMLFiles: shouldUseAndroidFontXMLFiles!,
+              isResourceFile: isAndroidResourceFile!,
             }
           : {
               platformPath: platformPath,

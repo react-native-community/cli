@@ -9,6 +9,7 @@ import {
   addImportToFile,
   buildXMLFontObject,
   buildXMLFontObjectEntry,
+  convertToAndroidResourceName,
   getAddCustomFontMethodCall,
   getFontFallbackWeight,
   getFontFamily,
@@ -17,7 +18,6 @@ import {
   getXMLFontFilePath,
   getXMLFontId,
   insertLineInClassMethod,
-  normalizeString,
   readAndParseFontFile,
   readAndParseFontXMLFile,
   writeFontXMLFile,
@@ -26,18 +26,28 @@ import {
 import {AndroidCopyAssetsOptions, CopyAssets} from './types';
 
 const copyAssetsAndroid: CopyAssets = (assetFiles, options) => {
-  const {platformPath, platformAssetsPath, shouldUseFontXMLFiles} =
-    options as AndroidCopyAssetsOptions;
+  const {
+    platformPath,
+    platformAssetsPath,
+    shouldUseFontXMLFiles,
+    isResourceFile,
+  } = options as AndroidCopyAssetsOptions;
   const isUsingKotlin = isProjectUsingKotlin(platformPath);
 
   // If the assets are not fonts and don't need to link with XML files, just copy them.
   if (!shouldUseFontXMLFiles) {
     assetFiles.forEach((file) => {
-      const fileName = path.join(platformAssetsPath, path.basename(file));
+      const fileName = isResourceFile
+        ? convertToAndroidResourceName(path.basename(file))
+        : path.basename(file);
+      const filePath = path.join(platformAssetsPath, fileName);
       try {
-        fs.copySync(file, fileName);
+        fs.copySync(file, filePath);
       } catch (e) {
-        throw new CLIError(`Failed to copy "${file}" asset file.`, e as Error);
+        throw new CLIError(
+          `Failed to copy "${filePath}" asset file.`,
+          e as Error,
+        );
       }
     });
     return;
@@ -121,13 +131,13 @@ const copyAssetsAndroid: CopyAssets = (assetFiles, options) => {
     );
     if (!fontFamilyMap[fontFamily]) {
       fontFamilyMap[fontFamily] = {
-        id: normalizeString(fontFamily),
+        id: convertToAndroidResourceName(fontFamily),
         files: [],
       };
     }
 
     fontFamilyMap[fontFamily].files.push({
-      name: normalizeString(path.basename(file)),
+      name: convertToAndroidResourceName(path.basename(file)),
       path: file,
       weight,
       isItalic,

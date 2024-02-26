@@ -6,13 +6,13 @@ import {
   FontFamilyMap,
   FontXMLObject,
   REACT_FONT_MANAGER_IMPORT,
+  convertToAndroidResourceName,
   getAddCustomFontMethodCall,
   getFontFamily,
   getFontResFolderPath,
   getProjectFilePath,
   getXMLFontFilePath,
   getXMLFontId,
-  normalizeString,
   readAndParseFontFile,
   readAndParseFontXMLFile,
   removeLineFromFile,
@@ -22,19 +22,26 @@ import {
 import {AndroidCleanAssetsOptions, CleanAssets} from './types';
 
 const cleanAssetsAndroid: CleanAssets = (assetFiles, options) => {
-  const {platformPath, platformAssetsPath, shouldUseFontXMLFiles} =
-    options as AndroidCleanAssetsOptions;
+  const {
+    platformPath,
+    platformAssetsPath,
+    shouldUseFontXMLFiles,
+    isResourceFile,
+  } = options as AndroidCleanAssetsOptions;
   const isUsingKotlin = isProjectUsingKotlin(platformPath);
 
   // If the assets are not fonts and are not linked with XML files, just remove them.
   if (!shouldUseFontXMLFiles) {
     assetFiles.forEach((file) => {
-      const fileName = path.join(platformAssetsPath, path.basename(file));
+      const fileName = isResourceFile
+        ? convertToAndroidResourceName(path.basename(file))
+        : path.basename(file);
+      const filePath = path.join(platformAssetsPath, fileName);
       try {
-        fs.removeSync(fileName);
+        fs.removeSync(filePath);
       } catch (e) {
         throw new CLIError(
-          `Failed to delete "${fileName}" asset file.`,
+          `Failed to delete "${filePath}" asset file.`,
           e as Error,
         );
       }
@@ -48,7 +55,7 @@ const cleanAssetsAndroid: CleanAssets = (assetFiles, options) => {
   assetFiles.forEach((file) => {
     const fontFilePath = path.join(
       getFontResFolderPath(platformPath),
-      normalizeString(path.basename(file)),
+      convertToAndroidResourceName(path.basename(file)),
     );
 
     const font = readAndParseFontFile(fontFilePath);
@@ -62,13 +69,13 @@ const cleanAssetsAndroid: CleanAssets = (assetFiles, options) => {
     );
     if (!fontFamilyMap[fontFamily]) {
       fontFamilyMap[fontFamily] = {
-        id: normalizeString(fontFamily),
+        id: convertToAndroidResourceName(fontFamily),
         files: [],
       };
     }
 
     fontFamilyMap[fontFamily].files.push({
-      name: normalizeString(path.basename(file)),
+      name: convertToAndroidResourceName(path.basename(file)),
       path: fontFilePath,
       weight: 0,
       isItalic: false,

@@ -27,6 +27,7 @@ function getLinkOptions(
 
   let shouldUseFontXMLFiles = false;
   let isFontAsset = false;
+  let isResourceFile = false;
   switch (assetType) {
     case 'font': {
       baseAndroidPath.push('assets', 'fonts');
@@ -37,11 +38,13 @@ function getLinkOptions(
 
     case 'image': {
       baseAndroidPath.push('res', 'drawable');
+      isResourceFile = true;
       break;
     }
 
     case 'audio': {
       baseAndroidPath.push('res', 'raw');
+      isResourceFile = true;
       break;
     }
 
@@ -55,6 +58,7 @@ function getLinkOptions(
     android: {
       path: path.resolve(...baseAndroidPath),
       shouldUseFontXMLFiles,
+      isResourceFile,
     },
     ios: {
       isFontAsset,

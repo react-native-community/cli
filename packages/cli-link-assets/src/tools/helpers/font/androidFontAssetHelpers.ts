@@ -1,6 +1,7 @@
 import {isProjectUsingKotlin} from '@react-native-community/cli-platform-android';
-import {logger} from '@react-native-community/cli-tools';
+import {CLIError, logger} from '@react-native-community/cli-tools';
 import {XMLBuilder, XMLParser} from 'fast-xml-parser';
+import fs from 'fs-extra';
 import {sync as globSync} from 'glob';
 import OpenType from 'opentype.js';
 import path from 'path';
@@ -271,6 +272,46 @@ function removeLineFromFile(fileData: string, stringToRemove: string) {
   return updatedLines.join('\n');
 }
 
+function readAndParseFontFile(filePath: string): OpenType.Font {
+  let buffer: Buffer;
+  try {
+    buffer = fs.readFileSync(filePath);
+  } catch (e) {
+    throw new CLIError(`Failed to read "${filePath}" font file.`, e as Error);
+  }
+
+  return OpenType.parse(toArrayBuffer(buffer));
+}
+
+function readAndParseFontXMLFile(xmlFilePath: string): FontXMLObject {
+  try {
+    return xmlParser.parse(fs.readFileSync(xmlFilePath));
+  } catch (e) {
+    throw new CLIError(
+      `Failed to read "${xmlFilePath}" XML font file.`,
+      e as Error,
+    );
+  }
+}
+
+function writeFontXMLFile(xmlFilePath: string, xmlData: string): void {
+  try {
+    fs.outputFileSync(xmlFilePath, xmlData);
+  } catch (e) {
+    throw new CLIError(
+      `Failed to write / update "${xmlFilePath}" XML font file.`,
+      e as Error,
+    );
+  }
+}
+
+function getXMLFontFilePath(
+  platformPath: string,
+  fontFamilyId: string,
+): string {
+  return path.join(getFontResFolderPath(platformPath), `${fontFamilyId}.xml`);
+}
+
 const xmlParser = new XMLParser({
   ignoreAttributes: false,
   isArray: (tagName) => tagName === 'font',
@@ -295,11 +336,13 @@ export {
   getFontFamily,
   getFontResFolderPath,
   getProjectFilePath,
+  getXMLFontFilePath,
   getXMLFontId,
   insertLineInClassMethod,
   normalizeString,
+  readAndParseFontFile,
+  readAndParseFontXMLFile,
   removeLineFromFile,
-  toArrayBuffer,
+  writeFontXMLFile,
   xmlBuilder,
-  xmlParser,
 };

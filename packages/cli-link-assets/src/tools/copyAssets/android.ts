@@ -1,5 +1,6 @@
+import {isProjectUsingKotlin} from '@react-native-community/cli-platform-android';
+import {CLIError} from '@react-native-community/cli-tools';
 import fs from 'fs-extra';
-import OpenType from 'opentype.js';
 import path from 'path';
 import {
   FontFamilyMap,
@@ -13,16 +14,16 @@ import {
   getFontFamily,
   getFontResFolderPath,
   getProjectFilePath,
+  getXMLFontFilePath,
   getXMLFontId,
   insertLineInClassMethod,
   normalizeString,
-  toArrayBuffer,
+  readAndParseFontFile,
+  readAndParseFontXMLFile,
+  writeFontXMLFile,
   xmlBuilder,
-  xmlParser,
 } from '../helpers/font/androidFontAssetHelpers';
 import {AndroidCopyAssetsOptions, CopyAssets} from './types';
-import {CLIError} from '@react-native-community/cli-tools';
-import {isProjectUsingKotlin} from '@react-native-community/cli-platform-android';
 
 const copyAssetsAndroid: CopyAssets = (assetFiles, options) => {
   const {platformPath, platformAssetsPath, shouldUseFontXMLFiles} =
@@ -50,14 +51,7 @@ const copyAssetsAndroid: CopyAssets = (assetFiles, options) => {
   const fontFamilyMap: FontFamilyMap = {};
 
   assetFiles.forEach((file) => {
-    let buffer: Buffer;
-    try {
-      buffer = fs.readFileSync(file);
-    } catch (e) {
-      throw new CLIError(`Failed to read "${file}" font file.`, e as Error);
-    }
-
-    const font = OpenType.parse(toArrayBuffer(buffer));
+    const font = readAndParseFontFile(file);
 
     const {
       /**
@@ -141,23 +135,13 @@ const copyAssetsAndroid: CopyAssets = (assetFiles, options) => {
   });
 
   Object.entries(fontFamilyMap).forEach(([fontFamilyName, fontFamilyData]) => {
-    const xmlFileName = `${fontFamilyData.id}.xml`;
-    const xmlFilePath = path.join(
-      getFontResFolderPath(platformPath),
-      xmlFileName,
-    );
+    const xmlFilePath = getXMLFontFilePath(platformPath, fontFamilyData.id);
+
     let xmlObject: FontXMLObject;
 
     if (fs.existsSync(xmlFilePath)) {
-      try {
-        // XML font file already exists, so we add new entries or replace existing ones.
-        xmlObject = xmlParser.parse(fs.readFileSync(xmlFilePath));
-      } catch (e) {
-        throw new CLIError(
-          `Failed to read "${xmlFilePath}" XML font file.`,
-          e as Error,
-        );
-      }
+      // XML font file already exists, so we add new entries or replace existing ones.
+      xmlObject = readAndParseFontXMLFile(xmlFilePath);
 
       fontFamilyData.files.forEach((file) => {
         const xmlEntry = buildXMLFontObjectEntry(file);
@@ -210,15 +194,8 @@ const copyAssetsAndroid: CopyAssets = (assetFiles, options) => {
       }
     });
 
-    try {
-      // Write the XML font file.
-      fs.outputFileSync(xmlFilePath, xmlData);
-    } catch (e) {
-      throw new CLIError(
-        `Failed to write / update "${xmlFilePath}" XML font file.`,
-        e as Error,
-      );
-    }
+    // Write the XML font file.
+    writeFontXMLFile(xmlFilePath, xmlData);
 
     // Read MainApplication file.
     let mainApplicationFileData = fs

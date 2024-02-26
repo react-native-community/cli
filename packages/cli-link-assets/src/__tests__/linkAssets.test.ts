@@ -162,39 +162,23 @@ const testBaseProjectStructure = (isKotlinProject = true) => {
   ).toMatchSnapshot();
 
   expect(snapshotDiff('', readLatoXMLFontFile())).toMatchSnapshot();
-  expect(baseProjectKotlin[fixtureFilePaths.latoBoldFont].toString()).toEqual(
-    readLatoBoldFontFile(),
-  );
-  expect(
-    baseProjectKotlin[fixtureFilePaths.latoBoldItalicFont].toString(),
-  ).toEqual(readLatoBoldItalicFontFile());
-  expect(
-    baseProjectKotlin[fixtureFilePaths.latoRegularFont].toString(),
-  ).toEqual(readLatoRegularFontFile());
-
   expect(snapshotDiff('', readFiraCodeXMLFontFile())).toMatchSnapshot();
-  expect(
-    baseProjectKotlin[fixtureFilePaths.firaCodeBoldFont].toString(),
-  ).toEqual(readFiraCodeBoldFontFile());
-  expect(
-    baseProjectKotlin[fixtureFilePaths.firaCodeRegularFont].toString(),
-  ).toEqual(readFiraCodeRegularFontFile());
 
-  expect(baseProjectKotlin[fixtureFilePaths.documentPdf].toString()).toEqual(
-    readDocumentPdfFile(),
-  );
-  expect(baseProjectKotlin[fixtureFilePaths.soundMp3].toString()).toEqual(
-    readSoundMp3File(),
-  );
-  expect(baseProjectKotlin[fixtureFilePaths.imageGif].toString()).toEqual(
-    readImageGifFile(),
-  );
-  expect(baseProjectKotlin[fixtureFilePaths.imageJpg].toString()).toEqual(
-    readImageJpgFile(),
-  );
-  expect(baseProjectKotlin[fixtureFilePaths.imagePng].toString()).toEqual(
-    readImagePngFile(),
-  );
+  const linkedAssetsMap = {
+    [fixtureFilePaths.latoBoldFont]: readLatoBoldFontFile(),
+    [fixtureFilePaths.latoBoldItalicFont]: readLatoBoldItalicFontFile(),
+    [fixtureFilePaths.latoRegularFont]: readLatoRegularFontFile(),
+    [fixtureFilePaths.firaCodeBoldFont]: readFiraCodeBoldFontFile(),
+    [fixtureFilePaths.firaCodeRegularFont]: readFiraCodeRegularFontFile(),
+    [fixtureFilePaths.documentPdf]: readDocumentPdfFile(),
+    [fixtureFilePaths.soundMp3]: readSoundMp3File(),
+    [fixtureFilePaths.imageGif]: readImageGifFile(),
+    [fixtureFilePaths.imageJpg]: readImageJpgFile(),
+    [fixtureFilePaths.imagePng]: readImagePngFile(),
+  };
+  for (const assetEntry of Object.entries(linkedAssetsMap)) {
+    expect(baseProjectKotlin[assetEntry[0]].toString()).toEqual(assetEntry[1]);
+  }
 
   // iOS
   expect(
@@ -560,70 +544,36 @@ describe('linkAssets', () => {
     ).toMatchSnapshot();
 
     expect(snapshotDiff('', readLatoXMLFontFile())).toMatchSnapshot();
-    expect(baseProjectKotlin[fixtureFilePaths.latoBoldFont].toString()).toEqual(
-      readLatoBoldFontFile(),
-    );
-    expect(
-      baseProjectKotlin[fixtureFilePaths.latoBoldItalicFont].toString(),
-    ).toEqual(readLatoBoldItalicFontFile());
-    expect(
-      baseProjectKotlin[fixtureFilePaths.latoRegularFont].toString(),
-    ).toEqual(readLatoRegularFontFile());
-
     expect(snapshotDiff('', readFiraCodeXMLFontFile())).toMatchSnapshot();
-    expect(
-      baseProjectKotlin[fixtureFilePaths.firaCodeBoldFont].toString(),
-    ).toEqual(readFiraCodeBoldFontFile());
-    expect(
-      baseProjectKotlin[fixtureFilePaths.firaCodeRegularFont].toString(),
-    ).toEqual(readFiraCodeRegularFontFile());
 
-    expect(baseProjectKotlin[fixtureFilePaths.documentPdf].toString()).toEqual(
-      readDocumentPdfFile(),
-    );
-    expect(baseProjectKotlin[fixtureFilePaths.soundMp3].toString()).toEqual(
-      readSoundMp3File(),
-    );
-    expect(baseProjectKotlin[fixtureFilePaths.imageGif].toString()).toEqual(
-      readImageGifFile(),
-    );
-    expect(baseProjectKotlin[fixtureFilePaths.imageJpg].toString()).toEqual(
-      readImageJpgFile(),
-    );
-    expect(baseProjectKotlin[fixtureFilePaths.imagePng].toString()).toEqual(
-      readImagePngFile(),
-    );
+    const linkedAssetsMap = {
+      [fixtureFilePaths.latoBoldFont]: readLatoBoldFontFile(),
+      [fixtureFilePaths.latoBoldItalicFont]: readLatoBoldItalicFontFile(),
+      [fixtureFilePaths.latoRegularFont]: readLatoRegularFontFile(),
+      [fixtureFilePaths.firaCodeBoldFont]: readFiraCodeBoldFontFile(),
+      [fixtureFilePaths.firaCodeRegularFont]: readFiraCodeRegularFontFile(),
+      [fixtureFilePaths.documentPdf]: readDocumentPdfFile(),
+      [fixtureFilePaths.soundMp3]: readSoundMp3File(),
+      [fixtureFilePaths.imageGif]: readImageGifFile(),
+      [fixtureFilePaths.imageJpg]: readImageJpgFile(),
+      [fixtureFilePaths.imagePng]: readImagePngFile(),
+    };
+    for (const assetEntry of Object.entries(linkedAssetsMap)) {
+      expect(baseProjectKotlin[assetEntry[0]].toString()).toEqual(
+        assetEntry[1],
+      );
+    }
 
-    expect(() =>
-      fs.readFileSync(
-        path.resolve(DIR, 'android/app/src/main/res/font/FiraCode-Bold.otf'),
-        'utf8',
-      ),
-    ).toThrow();
-    expect(() =>
-      fs.readFileSync(
-        path.resolve(DIR, 'android/app/src/main/res/font/FiraCode-Regular.otf'),
-        'utf8',
-      ),
-    ).toThrow();
-    expect(() =>
-      fs.readFileSync(
-        path.resolve(DIR, 'android/app/src/main/res/font/Lato-Bold.ttf'),
-        'utf8',
-      ),
-    ).toThrow();
-    expect(() =>
-      fs.readFileSync(
-        path.resolve(DIR, 'android/app/src/main/res/font/Lato-BoldItalic.ttf'),
-        'utf8',
-      ),
-    ).toThrow();
-    expect(() =>
-      fs.readFileSync(
-        path.resolve(DIR, 'android/app/src/main/res/font/Lato-Regular.ttf'),
-        'utf8',
-      ),
-    ).toThrow();
+    const deletedFontAssets = [
+      'android/app/src/main/res/font/FiraCode-Bold.otf',
+      'android/app/src/main/res/font/FiraCode-Regular.otf',
+      'android/app/src/main/res/font/Lato-Bold.ttf',
+      'android/app/src/main/res/font/Lato-BoldItalic.ttf',
+      'android/app/src/main/res/font/Lato-Regular.ttf',
+    ];
+    for (const asset of deletedFontAssets) {
+      expect(() => fs.readFileSync(path.resolve(DIR, asset), 'utf8')).toThrow();
+    }
 
     // iOS
     expect(

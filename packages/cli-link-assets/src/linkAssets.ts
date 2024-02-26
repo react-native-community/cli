@@ -18,8 +18,6 @@ import linkPlatform, {
 } from './tools/linkPlatform';
 import getManifest from './tools/manifest';
 
-type Args = {};
-
 function getLinkOptions(
   assetType: 'font' | 'image' | 'audio' | 'custom',
   androidPath: string,
@@ -64,11 +62,7 @@ function getLinkOptions(
   };
 }
 
-async function linkAssets(
-  _argv: string[],
-  ctx: CLIConfig,
-  _options: Args,
-): Promise<void> {
+async function linkAssets(_argv: string[], ctx: CLIConfig): Promise<void> {
   let androidPath: string = '';
   let androidAssetsPath: string[] = ctx.assets;
   let androidAppName: string = '';
@@ -102,7 +96,7 @@ async function linkAssets(
     iosPbxprojFilePath = path.join(iosPath, pbxprojPath);
   }
 
-  const rootPath = process.cwd();
+  const rootPath = ctx.root;
 
   const fontLinkOptions = fontTypes.reduce(
     (result: LinkOptionsPerExt, fontType) => {

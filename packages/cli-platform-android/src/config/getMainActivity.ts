@@ -31,6 +31,7 @@ export default function getMainActivity(manifestPath: string): string | null {
 
       const application = manifest.application || {};
       const activity = application.activity || {};
+      const activityAlias = application['activity-alias'] || {};
 
       let activities: Activity[] = [];
 
@@ -38,6 +39,12 @@ export default function getMainActivity(manifestPath: string): string | null {
         activities = [activity];
       } else {
         activities = activity;
+      }
+
+      if (!Array.isArray(activityAlias)) {
+        activities.push(activityAlias);
+      } else {
+        activities = activities.concat(activityAlias);
       }
 
       const mainActivity = activities.find((act: Activity) => {

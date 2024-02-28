@@ -8,15 +8,13 @@ import path from 'path';
 import {promisify} from 'util';
 import glob from 'fast-glob';
 
+import * as cli from '@react-native/cli';
+import type {Task} from '@react-native/cli';
+
 type Args = {
   include?: string;
   projectRoot: string;
   verifyCache?: boolean;
-};
-
-type Task = {
-  label: string;
-  action: () => Promise<void>;
 };
 
 type CleanGroups = {
@@ -84,139 +82,37 @@ export async function clean(
   const COMMANDS: CleanGroups = {
     android: {
       description: 'Android build caches, e.g. Gradle',
-      tasks: [
-        {
-          label: 'Clean Gradle cache',
-          action: async () => {
-            const gradlew =
-              os.platform() === 'win32'
-                ? path.join(
-                    ctx.project.android?.sourceDir ?? 'android',
-                    'gradlew.bat',
-                  )
-                : path.join(
-                    ctx.project.android?.sourceDir ?? 'android',
-                    'gradlew',
-                  );
-
-            if (fileExists(gradlew)) {
-              const script = path.basename(gradlew);
-              await execa(
-                os.platform() === 'win32' ? script : `./${script}`,
-                ['clean'],
-                {cwd: path.dirname(gradlew)},
-              );
-            }
-          },
-        },
-      ],
+      tasks: cli.clean.android(ctx.project.android?.sourceDir ?? 'android'),
     },
-    ...(os.platform() === 'darwin'
-      ? {
-          cocoapods: {
-            description: 'CocoaPods cache',
-            tasks: [
-              {
-                label: 'Clean CocoaPods pod cache',
-                action: async () => {
-                  await execa('pod', ['cache', 'clean', '--all'], {
-                    cwd: projectRoot,
-                  });
-                },
-              },
-              {
-                label: 'Remove installed CocoaPods',
-                action: () => cleanDir('ios/Pods'),
-              },
-              {
-                label: 'Remove CocoaPods spec cache',
-                action: () => cleanDir('~/.cocoapods'),
-              },
-            ],
-          },
-        }
-      : undefined),
     metro: {
       description: 'Metro, haste-map caches',
-      tasks: [
-        {
-          label: 'Clean Metro cache',
-          action: () => cleanDir(`${os.tmpdir()}/metro-*`),
-        },
-        {
-          label: 'Clean Haste cache',
-          action: () => cleanDir(`${os.tmpdir()}/haste-map-*`),
-        },
-        {
-          label: 'Clean React Native cache',
-          action: () => cleanDir(`${os.tmpdir()}/react-*`),
-        },
-      ],
+      tasks: cli.clean.metro(),
     },
     npm: {
       description:
         '`node_modules` folder in the current package, and optionally verify npm cache',
-      tasks: [
-        {
-          label: 'Remove node_modules',
-          action: () => cleanDir(`${projectRoot}/node_modules`),
-        },
-        ...(verifyCache
-          ? [
-              {
-                label: 'Verify npm cache',
-                action: async () => {
-                  await execa('npm', ['cache', 'verify'], {cwd: projectRoot});
-                },
-              },
-            ]
-          : []),
-      ],
+      tasks: cli.clean.npm(projectRoot, !!verifyCache),
     },
     bun: {
       description: 'Bun cache',
-      tasks: [
-        {
-          label: 'Clean Bun cache',
-          action: async () => {
-            await execa('bun', ['pm', 'cache', 'rm'], {cwd: projectRoot});
-          },
-        },
-      ],
+      tasks: cli.clean.bun(projectRoot),
     },
     watchman: {
       description: 'Stop Watchman and delete its cache',
-      tasks: [
-        {
-          label: 'Stop Watchman',
-          action: async () => {
-            await execa(
-              os.platform() === 'win32' ? 'tskill' : 'killall',
-              ['watchman'],
-              {cwd: projectRoot},
-            );
-          },
-        },
-        {
-          label: 'Delete Watchman cache',
-          action: async () => {
-            await execa('watchman', ['watch-del-all'], {cwd: projectRoot});
-          },
-        },
-      ],
+      tasks: cli.clean.watchman(projectRoot),
     },
     yarn: {
       description: 'Yarn cache',
-      tasks: [
-        {
-          label: 'Clean Yarn cache',
-          action: async () => {
-            await execa('yarn', ['cache', 'clean'], {cwd: projectRoot});
-          },
-        },
-      ],
+      tasks: cli.clean.yarn(projectRoot),
     },
   };
+
+  if (cli.clean.cocoapods) {
+    COMMANDS.cocoapods = {
+      description: 'CocoaPods cache',
+      tasks: cli.clean.cocoapods!(projectRoot),
+    };
+  }
 
   const groups = include ? include.split(',') : await promptForCaches(COMMANDS);
   if (!groups || groups.length === 0) {

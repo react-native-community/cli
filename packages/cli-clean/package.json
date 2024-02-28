@@ -9,6 +9,7 @@
   "types": "build/index.d.ts",
   "dependencies": {
     "@react-native-community/cli-tools": "13.6.1",
+    "@react-native/cli": "file:/Users/blakef/fbsource/xplat/js/react-native-github/packages/cli",
     "chalk": "^4.1.2",
     "execa": "^5.0.0",
     "fast-glob": "^3.3.2"

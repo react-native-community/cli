@@ -2,8 +2,13 @@ import {
   findPbxprojFile,
   findXcodeProject,
 } from '@react-native-community/cli-platform-apple';
-import {CLIError} from '@react-native-community/cli-tools';
+import {
+  CLIError,
+  inlineString,
+  logger,
+} from '@react-native-community/cli-tools';
 import type {Config as CLIConfig} from '@react-native-community/cli-types';
+import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
 import {audioTypes, fontTypes, imageTypes} from './fileTypes';
@@ -100,6 +105,22 @@ async function linkAssets(_argv: string[], ctx: CLIConfig): Promise<void> {
     iosPbxprojFilePath = path.join(iosPath, pbxprojPath);
   }
 
+  if (androidAssetsPath.length === 0 && iosAssetsPath.length === 0) {
+    logger.info(
+      inlineString(
+        `It looks like you haven't configured your assets paths in ${chalk.bold(
+          'react-native.config.js',
+        )} file.
+        To can learn more about ${chalk.bold(
+          'link-assets',
+        )} command visit: ${chalk.underline(
+          'https://github.com/react-native-community/cli/blob/main/packages/cli-link-assets/README.md',
+        )}`,
+      ),
+    );
+    return;
+  }
+
   const rootPath = ctx.root;
 
   const fontLinkOptions = fontTypes.reduce(
@@ -185,9 +206,13 @@ async function linkAssets(_argv: string[], ctx: CLIConfig): Promise<void> {
     },
   ];
 
+  logger.info('Linking your assets...');
+
   linkPlatformOptions
     .filter(({enabled, platformConfig}) => enabled && platformConfig.exists)
     .forEach(linkPlatform);
+
+  logger.success('Done 🎉');
 }
 
 export default {

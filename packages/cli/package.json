@@ -28,7 +28,6 @@
     "@react-native-community/cli-config": "13.6.1",
     "@react-native-community/cli-debugger-ui": "13.6.1",
     "@react-native-community/cli-doctor": "13.6.1",
-    "@react-native-community/cli-hermes": "13.6.1",
     "@react-native-community/cli-server-api": "13.6.1",
     "@react-native-community/cli-tools": "13.6.1",
     "@react-native-community/cli-types": "13.6.1",

@@ -25,7 +25,7 @@ export async function getBuildPath(
   }
 
   if (isCatalyst) {
-    return path.join(targetBuildDir, '-maccatalyst', executableFolderPath);
+    return path.join(`${targetBuildDir}-maccatalyst`, executableFolderPath);
   } else if (platform === 'macos') {
     return path.join(targetBuildDir, fullProductName);
   } else {

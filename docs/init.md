@@ -73,6 +73,8 @@ module.exports = {
 
   // Path to script, which will be executed after initialization process, but before installing all the dependencies specified in the template. This script runs as a shell script but you can change that (e.g. to Node) by using a shebang (see example custom template).
   postInitScript: './script.js',
+  // We're also using `template.config.js` when adding new platforms to existing project in `add-platform` command. Thanks to value passed to `platformName` we know which folder we should copy to the project.
+  platformName: 'visionos',
 };
 ```
 
@@ -91,12 +93,16 @@ new Promise((resolve) => {
   spinner.start();
   // do something
   resolve();
-}).then(() => {
-  spinner.succeed();
-}).catch(() => {
-  spinner.fail();
-  throw new Error('Something went wrong during the post init script execution');
-});
+})
+  .then(() => {
+    spinner.succeed();
+  })
+  .catch(() => {
+    spinner.fail();
+    throw new Error(
+      'Something went wrong during the post init script execution',
+    );
+  });
 ```
 
 You can find example custom template [here](https://github.com/Esemesek/react-native-new-template).

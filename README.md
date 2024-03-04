@@ -97,7 +97,6 @@ React Native CLI is a dependency of `react-native`, which makes it a transitive 
     "@react-native-community/cli-config": "VERSION",
     "@react-native-community/cli-debugger-ui": "VERSION",
     "@react-native-community/cli-doctor": "VERSION",
-    "@react-native-community/cli-hermes": "VERSION",
     "@react-native-community/cli-platform-android": "VERSION",
     "@react-native-community/cli-platform-ios": "VERSION",
     "@react-native-community/cli-server-api": "VERSION",

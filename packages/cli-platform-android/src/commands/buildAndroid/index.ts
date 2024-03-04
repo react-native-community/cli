@@ -4,6 +4,8 @@ import {
   printRunDoctorTip,
 } from '@react-native-community/cli-tools';
 import {Config} from '@react-native-community/cli-types';
+import {android} from '@react-native/core-cli-utils';
+import type {AndroidBuild} from '@react-native/core-cli-utils';
 import execa from 'execa';
 import {getAndroidProject} from '../../config/getAndroidProject';
 import adb from '../runAndroid/adb';
@@ -44,16 +46,7 @@ async function buildAndroid(
     }
   }
 
-  let gradleArgs = getTaskNames(
-    androidProject.appName,
-    args.mode,
-    tasks,
-    'bundle',
-  );
-
-  if (args.extraParams) {
-    gradleArgs.push(...args.extraParams);
-  }
+  const extraParams = args.extraParams ?? [];
 
   if (args.activeArchOnly) {
     const adbPath = getAdbPath();
@@ -69,11 +62,55 @@ async function buildAndroid(
       logger.info(`Detected architectures ${architectures.join(', ')}`);
       // `reactNativeDebugArchitectures` was renamed to `reactNativeArchitectures` in 0.68.
       // Can be removed when 0.67 no longer needs to be supported.
-      gradleArgs.push(
+      extraParams.push(
         '-PreactNativeDebugArchitectures=' + architectures.join(','),
       );
-      gradleArgs.push('-PreactNativeArchitectures=' + architectures.join(','));
+      extraParams.push('-PreactNativeArchitectures=' + architectures.join(','));
     }
+  }
+
+  // Handle the simple cases:
+  if (tasks?.length === 1) {
+    const options = {
+      sourceDir: androidProject.sourceDir,
+      appName: androidProject.appName,
+      mode: args.mode as AndroidBuild['mode'],
+    };
+
+    const task: string = tasks[0];
+
+    try {
+      switch (task) {
+        case 'assemble':
+          logger.info('Assembling the app...');
+          await android.assemble(options, ...extraParams);
+          break;
+        case 'build':
+          logger.info('Building the app...');
+          await android.build(options, ...extraParams);
+          break;
+        case 'install':
+          logger.info('Installing the app...');
+          await android.install(options, ...extraParams);
+          break;
+      }
+    } catch (error) {
+      printRunDoctorTip();
+      throw new CLIError(`Failed to ${task} the app.`, error as Error);
+    }
+    return;
+  }
+
+  // User probably wants to run multiple tasks:
+  let gradleArgs = getTaskNames(
+    androidProject.appName,
+    args.mode,
+    tasks,
+    'bundle',
+  );
+
+  if (args.extraParams) {
+    gradleArgs.push(...args.extraParams);
   }
 
   return build(gradleArgs, androidProject.sourceDir);

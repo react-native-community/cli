@@ -9,7 +9,7 @@ export default {
   options: [
     {
       name: '--version <string>',
-      description: 'Shortcut for `--template react-native@version`',
+      description: 'React Native version to install in the template',
     },
     {
       name: '--template <string>',

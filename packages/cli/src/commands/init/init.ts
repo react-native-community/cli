@@ -1,5 +1,6 @@
 import os from 'os';
 import path from 'path';
+import {execSync} from 'child_process';
 import fs, {readdirSync} from 'fs-extra';
 import {validateProjectName} from './validate';
 import chalk from 'chalk';
@@ -37,6 +38,9 @@ import {executeCommand} from '../../tools/executeCommand';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
 
 const DEFAULT_VERSION = 'latest';
+const TEMPLATE_PACKAGE_COMMUNITY = '@react-native-community/template';
+const TEMPLATE_PACKAGE_LEGACY = 'react-native';
+const TEMPLATE_PACKAGE_LEGACY_TYPESCRIPT = 'react-native-template-typescript';
 
 type Options = {
   template?: string;
@@ -389,21 +393,80 @@ function checkPackageManagerAvailability(
   return false;
 }
 
-function createTemplateUri(options: Options, version: string): string {
-  const isTypescriptTemplate =
-    options.template === 'react-native-template-typescript';
+function getNpmRegistryUrl(): string {
+  try {
+    return execSync('npm config get registry').toString().trim();
+  } catch {
+    return 'https://registry.npmjs.org/';
+  }
+}
 
-  // This allows to correctly retrieve template uri for out of tree platforms.
-  const platform = options.platformName || 'react-native';
+async function urlExists(url: string): Promise<boolean> {
+  try {
+    // @ts-ignore-line: TS2304
+    const {status} = await fetch(url, {method: 'HEAD'});
+    return (
+      [
+        200, // OK
+        301, // Moved Permanemently
+        302, // Found
+        304, // Not Modified
+        307, // Temporary Redirect
+        308, // Permanent Redirect
+      ].indexOf(status) !== -1
+    );
+  } catch {
+    return false;
+  }
+}
 
-  if (isTypescriptTemplate) {
+async function createTemplateUri(options: Options): Promise<string> {
+  if (options.platformName) {
+    logger.debug('User has specified an out-of-tree platform, using it');
+    return `${options.platformName}@${options.version ?? DEFAULT_VERSION}`;
+  }
+
+  if (options.template === TEMPLATE_PACKAGE_LEGACY_TYPESCRIPT) {
     logger.warn(
       "Ignoring custom template: 'react-native-template-typescript'. Starting from React Native v0.71 TypeScript is used by default.",
     );
-    return platform;
+    return TEMPLATE_PACKAGE_LEGACY;
   }
 
-  return options.template || `${platform}@${version}`;
+  if (options.template) {
+    logger.debug(`Use the user provided --template=${options.template}`);
+    return options.template;
+  }
+
+  // Figure out whether we should use the @react-native-community/template over react-native/template,
+  // this requires 2 tests.
+  const registryHost = getNpmRegistryUrl();
+
+  // Test #1: Does the @react-native-community/template@latest exist?
+  const templateNpmRegistryUrl = `${registryHost}${TEMPLATE_PACKAGE_COMMUNITY}/latest`;
+  const canUseCommunityTemplate = await urlExists(templateNpmRegistryUrl);
+
+  const reactNativeVersion = options.version ?? DEFAULT_VERSION;
+  let gitTagFromVersion = semver.valid(reactNativeVersion);
+  if (gitTagFromVersion != null) {
+    // The React Native project prefixes tags with a 'v', for example v0.73.5,
+    gitTagFromVersion = `v${gitTagFromVersion}`;
+  } else {
+    gitTagFromVersion = reactNativeVersion;
+  }
+
+  // Test #2: Does the react-native@version package *not* have a template embedded.
+  const reactNativeGithubTemplateUrl = `https://raw.githubusercontent.com/facebook/react-native/${gitTagFromVersion}/packages/react-native/template/package.json`;
+  const useLegacyTemplate = await urlExists(reactNativeGithubTemplateUrl);
+
+  if (!useLegacyTemplate && canUseCommunityTemplate) {
+    return `${TEMPLATE_PACKAGE_COMMUNITY}@latest`;
+  }
+
+  logger.debug(
+    `Using the legacy template because '${TEMPLATE_PACKAGE_LEGACY}' still contains a template folder`,
+  );
+  return `${TEMPLATE_PACKAGE_LEGACY}@${reactNativeVersion}`;
 }
 
 async function createProject(
@@ -413,7 +476,21 @@ async function createProject(
   shouldBumpYarnVersion: boolean,
   options: Options,
 ): Promise<TemplateReturnType> {
-  const templateUri = createTemplateUri(options, version);
+  // Handle these cases (when community template is published and react-native
+  // doesn't have a template in 'react-native/template'):
+  //
+  // +==================================================================+==========+==============+
+  // | Arguments                                                        | Template | React Native |
+  // +==================================================================+==========+==============+
+  // | <None>                                                           | latest   | latest       |
+  // +------------------------------------------------------------------+----------+--------------+
+  // | --version 0.75.0                                                 | latest   | 0.75.0       |
+  // +------------------------------------------------------------------+----------+--------------+
+  // | --template @react-native-community/template@0.75.1               | 0.75.1   | latest       |
+  // +------------------------------------------------------------------+----------+--------------+
+  // | --template @react-native-community/template@0.75.1 --version 0.75| 0.75.1   | 0.75.x       |
+  // +------------------------------------------------------------------+----------+--------------+
+  const templateUri = await createTemplateUri(options);
 
   return createFromTemplate({
     projectName,
@@ -462,7 +539,7 @@ export default (async function initialize(
   }
 
   const root = process.cwd();
-  const version = options.version || DEFAULT_VERSION;
+  const version = options.version ?? DEFAULT_VERSION;
 
   const directoryName = path.relative(root, options.directory || projectName);
   const projectFolder = path.join(root, directoryName);

@@ -22,7 +22,7 @@ React Native CLI comes with following commands:
 
 > Available since 0.60.0
 
-> **IMPORTANT**: Please note that this command is not available through `react-native-cli`, hence you need to either invoke it directly from `@react-native-community/cli` or `react-native` package which proxies binary to this CLI since 0.60.0, so it's possible to use it with e.g. `npx`.
+> **IMPORTANT**: Please note that this command is not available through `react-native-cli`, hence you need to either invoke it directly from the `@react-native-community/cli`  package which proxies binary to this CLI since 0.60.0, so it's possible to use it with e.g. `npx`.
 
 Usage (with `npx`):
 
@@ -36,7 +36,7 @@ Initialize a new React Native project named <projectName> in a directory of the 
 
 #### `--version <string>`
 
-Shortcut for `--template react-native@version`.
+The version of React Native to use with the template.
 
 #### `--directory <string>`
 
@@ -58,10 +58,12 @@ Uses a custom template. Accepts following template sources:
 Example:
 
 ```sh
-npx react-native@latest init MyApp --template react-native-custom-template
-npx react-native@latest init MyApp --template file:///Users/name/template-path
-npx react-native@latest init MyApp --template file:///Users/name/template-name-1.0.0.tgz
-npx react-native@latest init MyApp --template Esemesek/react-native-new-template
+npx react-native-community/cli@latest init MyApp --template react-native-community/cli-custom-template
+npx react-native-community/cli@latest init MyApp --template file:///Users/name/template-path
+npx react-native-community/cli@latest init MyApp --template file:///Users/name/template-name-1.0.0.tgz
+npx react-native-community/cli@latest init MyApp --template Esemesek/react-native-community/cli-new-template
+# Use a specific version of the community template with the nightly release of React Native
+npx react-native-community/cli@latest init MyApp --template @react-native-community/template0.74.0 --version nightly
 ```
 
 A template is any directory or npm package that contains a `template.config.js` file in the root with the following type:

@@ -12,6 +12,11 @@
 require 'pathname'
 require 'cocoapods'
 
+VERSIONS = { 
+  :warn => Pod::Version.create("0.75"),
+  :deprecated => Pod::Version.create("0.76"),
+} 
+
 def use_native_modules!(config = nil)
   if (config.is_a? String)
     Pod::UI.warn("Passing custom root to use_native_modules! is deprecated.",
@@ -35,6 +40,20 @@ def use_native_modules!(config = nil)
     end
 
     config = JSON.parse(json.join("\n"))
+  end
+
+  version = Pod::Version.new(config["reactNativeVersion"])
+  if version >= VERSIONS.deprecated
+    Pod::UI.warn("use_native_modules! is deprecated since #{VERSIONS.deprecated}", [
+      "Please consult the React Native Upgrade Helper to upgrade your iOS Podfile:",
+      "https://react-native-community.github.io/upgrade-helper/?from=#{version}#RnDiffApp-ios-Podfile"
+    ])
+    abort "use_native_modules! is depreacted"
+  elsif version >= VERSIONS.warn
+    Pod::UI.warn("use_native_modules! is going to be deprecated in #{VERSIONS.deprecated}", [
+      "Please consult the React Native Upgrade Helper to upgrade your iOS Podfile:",
+      "https://react-native-community.github.io/upgrade-helper/?from=#{version}#RnDiffApp-ios-Podfile"
+    ])
   end
 
   project_root = Pathname.new(config["project"]["ios"]["sourceDir"])

@@ -7,12 +7,17 @@
     "access": "public"
   },
   "dependencies": {
-    "@react-native-community/cli-platform-apple": "14.0.0-alpha.0"
+    "@react-native-community/cli-platform-apple": "14.0.0-alpha.0",
+    "@react-native/core-cli-utils": "nightly"
+  },
+  "peerDependencies": {
+    "react-native": ">= 0.75"
   },
   "files": [
     "build",
     "!*.d.ts",
     "!*.map",
+    "autolinking.rb",
     "native_modules.rb"
   ],
   "homepage": "https://github.com/react-native-community/cli/tree/main/packages/cli-platform-ios",

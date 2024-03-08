@@ -14,16 +14,19 @@ module.exports = {
     {
       label: 'Foo',
       healthchecks: [
-        label: 'bar-installed',
+        {
+          label: 'bar-installed',
           getDiagnostics: async () => ({
-            needsToBeFixed: !isBarInstalled()
+            needsToBeFixed: !isBarInstalled(),
           }),
           runAutomaticFix: async ({loader}) => {
             await installBar();
             loader.succeed();
           },
-        }
+        },
       ],
+    },
+  ],
 };
 ```
 

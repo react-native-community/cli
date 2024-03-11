@@ -200,6 +200,9 @@ async function linkAssets(_argv: string[], ctx: CLIConfig): Promise<void> {
       linkOptionsPerExt: {
         otf: linkOptionsPerExt?.otf?.ios,
         ttf: linkOptionsPerExt?.ttf?.ios,
+        png: linkOptionsPerExt?.png?.ios,
+        jpg: linkOptionsPerExt?.jpg?.ios,
+        gif: linkOptionsPerExt?.gif?.ios,
         mp3: linkOptionsPerExt?.mp3?.ios,
       },
       otherLinkOptions: customLinkOptions.ios,

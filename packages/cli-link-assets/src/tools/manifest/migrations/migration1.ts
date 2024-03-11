@@ -1,9 +1,10 @@
 import {MigrationFn} from '.';
 import {AssetPathAndSHA1} from '..';
+import {Platform} from '../../linkPlatform';
 
 const migration1: MigrationFn = (
   assets: string[] | AssetPathAndSHA1[],
-  _platform: 'android' | 'ios',
+  _platform: Platform,
 ) => {
   return (assets as AssetPathAndSHA1[]).map(({path, sha1}) => ({
     sha1,

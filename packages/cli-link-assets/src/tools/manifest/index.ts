@@ -1,5 +1,6 @@
 import fs from 'fs-extra';
 import path from 'path';
+import {Platform} from '../linkPlatform';
 import migrations from './migrations';
 
 type Manifest = {
@@ -34,10 +35,7 @@ function writeManifest(folderPath: string, data: ManifestFile) {
   );
 }
 
-const getManifest = (
-  folderPath: string,
-  platform: 'android' | 'ios',
-): Manifest => ({
+const getManifest = (folderPath: string, platform: Platform): Manifest => ({
   read: (): AssetPathAndSHA1[] => {
     const initialData = readManifest(folderPath);
 
@@ -59,4 +57,4 @@ const getManifest = (
 });
 
 export default getManifest;
-export {Manifest, ManifestFile, AssetPathAndSHA1};
+export {AssetPathAndSHA1, Manifest, ManifestFile};

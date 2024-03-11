@@ -6,6 +6,8 @@ import {CleanAssets} from '../cleanAssets/types';
 import {CopyAssets} from '../copyAssets/types';
 import {AssetPathAndSHA1, Manifest} from '../manifest';
 
+type Platform = 'android' | 'ios';
+
 type AndroidPlatformConfig = {};
 
 type iOSPlatformConfig = {
@@ -32,20 +34,20 @@ type LinkOptions = {
   ios: LinkOptionIOSConfig;
 };
 
-type Extensions = 'otf' | 'ttf' | 'png' | 'jpg' | 'gif' | 'mp3';
+type Extension = 'otf' | 'ttf' | 'png' | 'jpg' | 'gif' | 'mp3';
 
 type LinkOptionsPerExt = {
-  [ext in Extensions]?: LinkOptions;
+  [ext in Extension]?: LinkOptions;
 };
 
 type LinkPlatformOptionsPerExt = {
-  [ext in Extensions]?: LinkOptionAndroidConfig | LinkOptionIOSConfig;
+  [ext in Extension]?: LinkOptionAndroidConfig | LinkOptionIOSConfig;
 };
 
 type LinkPlatformOptions = {
   name: string;
   enabled: boolean;
-  platform: 'android' | 'ios';
+  platform: Platform;
   rootPath: string;
   assetsPaths: string[];
   manifest: Manifest;
@@ -172,7 +174,7 @@ function linkPlatform({
       return {
         name: fileExt,
         filter: (asset) => path.extname(asset.path) === `.${fileExt}`,
-        options: linkOptionsPerExt[fileExt as Extensions],
+        options: linkOptionsPerExt[fileExt as Extension],
       };
     })
     .concat({
@@ -331,6 +333,7 @@ function linkPlatform({
 
 export default linkPlatform;
 export {
+  Platform,
   LinkOptionAndroidConfig,
   LinkOptionIOSConfig,
   LinkOptions,

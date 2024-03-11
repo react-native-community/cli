@@ -1,10 +1,11 @@
 import path from 'path';
 import {AssetPathAndSHA1} from '..';
 import {fontTypes} from '../../../fileTypes';
+import {Platform} from '../../linkPlatform';
 
 function migration2(
   assets: string[] | AssetPathAndSHA1[],
-  platform: 'android' | 'ios',
+  platform: Platform,
 ): AssetPathAndSHA1[] {
   return (assets as AssetPathAndSHA1[]).map((asset) => ({
     ...asset,

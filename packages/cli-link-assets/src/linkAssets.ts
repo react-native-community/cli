@@ -21,7 +21,7 @@ import linkPlatform, {
   LinkOptionsPerExt,
   LinkPlatformOptions,
 } from './tools/linkPlatform';
-import getManifest from './tools/manifest';
+import getManifest, {AssetPathAndSHA1} from './tools/manifest';
 
 function getLinkOptions(
   assetType: 'font' | 'image' | 'audio' | 'custom',
@@ -105,22 +105,6 @@ async function linkAssets(_argv: string[], ctx: CLIConfig): Promise<void> {
     iosPbxprojFilePath = path.join(iosPath, pbxprojPath);
   }
 
-  if (androidAssetsPath.length === 0 && iosAssetsPath.length === 0) {
-    logger.info(
-      inlineString(
-        `It looks like you haven't configured your assets paths in ${chalk.bold(
-          'react-native.config.js',
-        )} file.
-        To can learn more about ${chalk.bold(
-          'link-assets',
-        )} command visit: ${chalk.underline(
-          'https://github.com/react-native-community/cli/blob/main/packages/cli-link-assets/README.md',
-        )}`,
-      ),
-    );
-    return;
-  }
-
   const rootPath = ctx.root;
 
   const fontLinkOptions = fontTypes.reduce(
@@ -159,59 +143,86 @@ async function linkAssets(_argv: string[], ctx: CLIConfig): Promise<void> {
     androidAppName,
   );
 
-  const linkPlatformOptions: LinkPlatformOptions[] = [
-    {
-      name: 'Android',
-      enabled: true,
-      platform: 'android',
-      rootPath,
-      assetsPaths: androidAssetsPath,
-      manifest: getManifest(androidPath, 'android'),
-      platformConfig: {
-        exists: !!ctx.project.android,
-        path: androidPath,
-      },
-      cleanAssets: cleanAndroidAssets,
-      copyAssets: copyAndroidAssets,
-      linkOptionsPerExt: {
-        otf: linkOptionsPerExt?.otf?.android,
-        ttf: linkOptionsPerExt?.ttf?.android,
-        png: linkOptionsPerExt?.png?.android,
-        jpg: linkOptionsPerExt?.jpg?.android,
-        gif: linkOptionsPerExt?.gif?.android,
-        mp3: linkOptionsPerExt?.mp3?.android,
-      },
-      otherLinkOptions: customLinkOptions.android,
+  const androidLinkPlatformOptions: LinkPlatformOptions = {
+    name: 'Android',
+    enabled: true,
+    platform: 'android',
+    rootPath,
+    assetsPaths: androidAssetsPath,
+    manifest: getManifest(androidPath, 'android'),
+    platformConfig: {
+      exists: !!ctx.project.android,
+      path: androidPath,
     },
-    {
-      name: 'iOS',
-      enabled: true,
-      platform: 'ios',
-      rootPath,
-      assetsPaths: iosAssetsPath,
-      manifest: getManifest(iosPath, 'ios'),
-      platformConfig: {
-        exists: !!ctx.project.ios,
-        path: iosPath,
-        pbxprojFilePath: iosPbxprojFilePath!,
-      },
-      cleanAssets: cleanIOSAssets,
-      copyAssets: copyIOSAssets,
-      linkOptionsPerExt: {
-        otf: linkOptionsPerExt?.otf?.ios,
-        ttf: linkOptionsPerExt?.ttf?.ios,
-        png: linkOptionsPerExt?.png?.ios,
-        jpg: linkOptionsPerExt?.jpg?.ios,
-        gif: linkOptionsPerExt?.gif?.ios,
-        mp3: linkOptionsPerExt?.mp3?.ios,
-      },
-      otherLinkOptions: customLinkOptions.ios,
+    cleanAssets: cleanAndroidAssets,
+    copyAssets: copyAndroidAssets,
+    linkOptionsPerExt: {
+      otf: linkOptionsPerExt?.otf?.android,
+      ttf: linkOptionsPerExt?.ttf?.android,
+      png: linkOptionsPerExt?.png?.android,
+      jpg: linkOptionsPerExt?.jpg?.android,
+      gif: linkOptionsPerExt?.gif?.android,
+      mp3: linkOptionsPerExt?.mp3?.android,
     },
-  ];
+    otherLinkOptions: customLinkOptions.android,
+  };
+
+  const iosLinkPlatformOptions: LinkPlatformOptions = {
+    name: 'iOS',
+    enabled: true,
+    platform: 'ios',
+    rootPath,
+    assetsPaths: iosAssetsPath,
+    manifest: getManifest(iosPath, 'ios'),
+    platformConfig: {
+      exists: !!ctx.project.ios,
+      path: iosPath,
+      pbxprojFilePath: iosPbxprojFilePath!,
+    },
+    cleanAssets: cleanIOSAssets,
+    copyAssets: copyIOSAssets,
+    linkOptionsPerExt: {
+      otf: linkOptionsPerExt?.otf?.ios,
+      ttf: linkOptionsPerExt?.ttf?.ios,
+      png: linkOptionsPerExt?.png?.ios,
+      jpg: linkOptionsPerExt?.jpg?.ios,
+      gif: linkOptionsPerExt?.gif?.ios,
+      mp3: linkOptionsPerExt?.mp3?.ios,
+    },
+    otherLinkOptions: customLinkOptions.ios,
+  };
+
+  let previouslyAndroidLinkedAssets: AssetPathAndSHA1[] = [];
+  let previouslyIOSLinkedAssets: AssetPathAndSHA1[] = [];
+  try {
+    previouslyAndroidLinkedAssets = androidLinkPlatformOptions.manifest.read();
+    previouslyIOSLinkedAssets = iosLinkPlatformOptions.manifest.read();
+  } catch (e) {}
+
+  if (
+    androidAssetsPath.length === 0 &&
+    iosAssetsPath.length === 0 &&
+    previouslyAndroidLinkedAssets.length === 0 &&
+    previouslyIOSLinkedAssets.length === 0
+  ) {
+    logger.info(
+      inlineString(
+        `It looks like you haven't configured your assets paths in ${chalk.bold(
+          'react-native.config.js',
+        )} file.
+        To can learn more about ${chalk.bold(
+          'link-assets',
+        )} command visit: ${chalk.underline(
+          'https://github.com/react-native-community/cli/blob/main/packages/cli-link-assets/README.md',
+        )}`,
+      ),
+    );
+    return;
+  }
 
   logger.info('Linking your assets...');
 
-  linkPlatformOptions
+  [androidLinkPlatformOptions, iosLinkPlatformOptions]
     .filter(({enabled, platformConfig}) => enabled && platformConfig.exists)
     .forEach(linkPlatform);
 

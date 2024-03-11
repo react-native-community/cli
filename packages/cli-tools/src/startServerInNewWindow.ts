@@ -42,13 +42,7 @@ async function startServerInNewWindow(
 
   if (!generatedPath) {
     const newPath = path.join(projectRoot, 'node_modules', '.generated');
-
-    try {
-      await mkdir(newPath);
-    } catch (e) {
-      throw new CLIError(`Failed to create ${newPath}`);
-    }
-
+    fs.mkdirSync(newPath, { recursive: true, mode: 0o755 });
     generatedPath = newPath;
   }
 

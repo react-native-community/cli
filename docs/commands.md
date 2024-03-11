@@ -17,8 +17,6 @@ React Native CLI comes with following commands:
 - [`run-ios`](/packages/cli-platform-ios/README.md#run-ios)
 - [`build-ios`](/packages/cli-platform-ios/README.md#build-ios)
 - [`start`](https://github.com/facebook/react-native/tree/main/packages/community-cli-plugin#start)
-- [`upgrade`](#upgrade)
-- [`profile-hermes`](/packages/cli-hermes/README.md#profile-hermes)
 
 ### `init`
 
@@ -130,13 +128,3 @@ Replaces the directory if it already exists
 #### `--yarn-config-options <string>`
 
 Passes extra options that will be added to `.yarnrc.yml` file, format: key=value,key2=value2.
-
-### `upgrade`
-
-Usage:
-
-```sh
-npx react-native upgrade
-```
-
-This command generates a relevant link to the [Upgrade Helper](https://react-native-community.github.io/upgrade-helper/) to help you upgrade manually.

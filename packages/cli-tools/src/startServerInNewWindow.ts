@@ -4,8 +4,6 @@ import execa from 'execa';
 import logger from './logger';
 import chalk from 'chalk';
 import {findPackageDependencyDir} from './findPackageDependencyDir';
-import {mkdir} from 'fs-extra';
-import {CLIError} from './errors';
 
 const ERROR = `a dev server manually by running ${chalk.bold(
   'npm start',
@@ -42,7 +40,7 @@ async function startServerInNewWindow(
 
   if (!generatedPath) {
     const newPath = path.join(projectRoot, 'node_modules', '.generated');
-    fs.mkdirSync(newPath, { recursive: true, mode: 0o755 });
+    fs.mkdirSync(newPath, {recursive: true, mode: 0o755});
     generatedPath = newPath;
   }
 

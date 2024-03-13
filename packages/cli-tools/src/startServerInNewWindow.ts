@@ -9,7 +9,7 @@ const ERROR = `a dev server manually by running ${chalk.bold(
   'npm start',
 )} or ${chalk.bold('yarn start')} in other terminal window.`;
 
-async function startServerInNewWindow(
+function startServerInNewWindow(
   port: number,
   projectRoot: string,
   reactNativePath: string,

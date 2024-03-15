@@ -37,6 +37,9 @@ import {executeCommand} from '../../tools/executeCommand';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
 
 const DEFAULT_VERSION = 'latest';
+const TEMPLATE_PACKAGE_COMMUNITY = '@react-native-community/template';
+const TEMPLATE_PACKAGE_LEGACY = 'react-native';
+const TEMPLATE_PACKAGE_LEGACY_TYPESCRIPT = 'react-native-template-typescript';
 
 type Options = {
   template?: string;
@@ -384,12 +387,62 @@ function checkPackageManagerAvailability(
   return false;
 }
 
-function createTemplateUri(options: Options, version: string): string {
+async function createTemplateUri(
+  options: Options,
+  version: string,
+): Promise<string> {
   const isTypescriptTemplate =
-    options.template === 'react-native-template-typescript';
+    options.template === TEMPLATE_PACKAGE_LEGACY_TYPESCRIPT;
 
   // This allows to correctly retrieve template uri for out of tree platforms.
-  const platform = options.platformName || 'react-native';
+  const platform = options.platformName ?? TEMPLATE_PACKAGE_COMMUNITY;
+
+  let npmVersion: string | undefined;
+
+  if (platform === TEMPLATE_PACKAGE_COMMUNITY) {
+    const url = `https://regsitry.npmjs.org/${platform}/${version}`;
+    try {
+      // @ts-ignore: TS2304
+      const json = await fetch(url).then((resp: any) => resp.json());
+      npmVersion = json.version;
+    } catch (e: any) {
+      // This is a best attempt, if it doesn't work we try do what the
+      // user originally requested.
+      logger.debug(
+        `Couldn't fetch the npm package info from the registry: ${url}\n${e.message}`,
+      );
+    }
+  }
+
+  let useLegacyTemplate = false;
+
+  // The React Native project prefixes tags with a 'v', for example v0.73.5,
+  // but only try relabel if we get a semver tag.
+  const gitTagFromVersion =
+    npmVersion && semver.valid(version) ? `v${npmVersion}` : version;
+  const url = `https://raw.githubusercontent.com/facebook/react-native/${gitTagFromVersion}/packages/react-native/template/package.json`;
+
+  logger.debug(
+    `Looking for template folder in '${TEMPLATE_PACKAGE_LEGACY}': ${url}`,
+  );
+
+  try {
+    // @ts-ignore-line: TS2304
+    const {status} = await fetch(url, {method: 'HEAD'});
+    useLegacyTemplate =
+      [
+        200, // OK
+        301, // Moved Permanemently
+        302, // Found
+        304, // Not Modified
+        307, // Temporary Redirect
+        308, // Permanent Redirect
+      ].indexOf(status) !== -1;
+  } catch (e: any) {
+    logger.debug(
+      `Unable to validate the template folder exists at '${url}': ${e.message}`,
+    );
+  }
 
   if (isTypescriptTemplate) {
     logger.warn(
@@ -398,7 +451,12 @@ function createTemplateUri(options: Options, version: string): string {
     return platform;
   }
 
-  return options.template || `${platform}@${version}`;
+  return (
+    options.template ??
+    `${
+      useLegacyTemplate ? TEMPLATE_PACKAGE_LEGACY : TEMPLATE_PACKAGE_COMMUNITY
+    }@${version}`
+  );
 }
 
 async function createProject(
@@ -408,7 +466,7 @@ async function createProject(
   shouldBumpYarnVersion: boolean,
   options: Options,
 ): Promise<TemplateReturnType> {
-  const templateUri = createTemplateUri(options, version);
+  const templateUri = await createTemplateUri(options, version);
 
   return createFromTemplate({
     projectName,

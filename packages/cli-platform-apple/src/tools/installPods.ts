@@ -9,7 +9,7 @@ import {
   CLIError,
   runSudo,
 } from '@react-native-community/cli-tools';
-import runBundleInstall from './runBundleInstall';
+import {apple} from '@react-native/core-cli-utils';
 
 interface PodInstallOptions {
   skipBundleInstall?: boolean;
@@ -18,8 +18,9 @@ interface PodInstallOptions {
 }
 
 interface RunPodInstallOptions {
-  shouldHandleRepoUpdate?: boolean;
   newArchEnabled?: boolean;
+  shouldHandleRepoUpdate?: boolean;
+  skipBundleInstall?: boolean;
 }
 
 async function runPodInstall(loader: Ora, options?: RunPodInstallOptions) {
@@ -30,11 +31,10 @@ async function runPodInstall(loader: Ora, options?: RunPodInstallOptions) {
         options?.newArchEnabled ? 'with New Architecture' : '',
       )} ${chalk.dim('(this may take a few minutes)')}`,
     );
-
-    await execa('bundle', ['exec', 'pod', 'install'], {
-      env: {
-        RCT_NEW_ARCH_ENABLED: options?.newArchEnabled ? '1' : '0',
-      },
+    await apple.bootstrap({
+      cwd: process.cwd(),
+      bundleInstall: !options?.skipBundleInstall,
+      newArchitecture: !!options?.newArchEnabled,
     });
   } catch (error) {
     logger.debug(error as string);
@@ -51,8 +51,8 @@ async function runPodInstall(loader: Ora, options?: RunPodInstallOptions) {
     if (stderr.includes('pod repo update') && shouldHandleRepoUpdate) {
       await runPodUpdate(loader);
       await runPodInstall(loader, {
+        ...options,
         shouldHandleRepoUpdate: false,
-        newArchEnabled: options?.newArchEnabled,
       });
     } else {
       loader.fail();
@@ -138,9 +138,7 @@ async function installPods(loader?: Ora, options?: PodInstallOptions) {
       return;
     }
 
-    if (fs.existsSync('../Gemfile') && !options?.skipBundleInstall) {
-      await runBundleInstall(loader);
-    } else if (!fs.existsSync('../Gemfile')) {
+    if (!fs.existsSync('../Gemfile')) {
       throw new CLIError(
         'Could not find the Gemfile. Currently the CLI requires to have this file in the root directory of the project to install CocoaPods. If your configuration is different, please install the CocoaPods manually.',
       );
@@ -156,7 +154,9 @@ async function installPods(loader?: Ora, options?: PodInstallOptions) {
       await installCocoaPods(loader);
     }
 
-    await runPodInstall(loader, {newArchEnabled: options?.newArchEnabled});
+    await runPodInstall(loader, {
+      ...options,
+    });
   } finally {
     process.chdir('..');
   }

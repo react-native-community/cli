@@ -11,6 +11,7 @@ import {
   AndroidDependencyConfig,
   AndroidDependencyParams,
 } from './android';
+export type {CocoaPodDescription, ListModules} from './autolinking';
 
 export type Prompt = any;
 

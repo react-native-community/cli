@@ -108,7 +108,7 @@ function buildFile(file, silent) {
     let {code, map} = babel.transformFileSync(file, options);
 
     if (!file.endsWith('.d.ts') && map.sources.length > 0) {
-      code = `${code}\n\n//# sourceMappingURL=${fileName}.map`;
+      code = `${code}\n\n//# sourceMappingURL=${destPath}.map`;
       map.sources = [path.relative(path.dirname(destPath), file)];
       fs.writeFileSync(`${destPath}.map`, JSON.stringify(map));
     }

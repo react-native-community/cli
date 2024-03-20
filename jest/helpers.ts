@@ -45,7 +45,7 @@ export const makeTemplate =
     });
 
 export const cleanup = (directory: string) => {
-  fs.rmSync(directory, {recursive: true, force: true});
+  fs.rmSync(directory, {recursive: true, force: true, maxRetries: 10});
 };
 
 /**
@@ -142,18 +142,18 @@ function getExecaOptions(options: SpawnOptions) {
 function handleTestFailure(
   cmd: string,
   options: SpawnOptions,
-  result: {[key: string]: any},
+  result: execa.ExecaReturnBase<string>,
   args: string[] | undefined,
 ) {
-  if (!options.expectedFailure && result.code !== 0) {
+  if (!options.expectedFailure && result.exitCode !== 0) {
     console.log(`Running ${cmd} command failed for unexpected reason. Here's more info:
 ${chalk.bold('cmd:')}     ${cmd}
 ${chalk.bold('options:')} ${JSON.stringify(options)}
 ${chalk.bold('args:')}    ${(args || []).join(' ')}
 ${chalk.bold('stderr:')}  ${result.stderr}
 ${chalk.bold('stdout:')}  ${result.stdout}
-${chalk.bold('code:')}    ${result.code}`);
-  } else if (options.expectedFailure && result.code === 0) {
+${chalk.bold('exitCode:')}${result.exitCode}`);
+  } else if (options.expectedFailure && result.exitCode === 0) {
     throw new Error("Expected command to fail, but it didn't");
   }
 }

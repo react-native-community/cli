@@ -11,7 +11,7 @@ import path from 'path';
 import {unixifyPaths} from '@react-native-community/cli-tools';
 
 export default function findManifest(folder: string) {
-  let manifestPaths = glob.sync(path.join('**', 'AndroidManifest.xml'), {
+  let manifestPaths = glob.sync('**/AndroidManifest.xml', {
     cwd: unixifyPaths(folder),
     ignore: [
       'node_modules/**',

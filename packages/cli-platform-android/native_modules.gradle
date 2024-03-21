@@ -520,7 +520,7 @@ def getAutoModules(customPathToProject) {
     projectRoot = rootProject.projectDir
   }
 
-  return new ReactNativeModules(logger, projectRoot)
+  return new ReactNativeModules(logger, providers, projectRoot)
 }
 
 /** -----------------------
@@ -532,8 +532,9 @@ ext.applyNativeModulesSettingsGradle = { DefaultSettings defaultSettings, String
   autoModules.addReactNativeModuleProjects(defaultSettings)
 }
 
-ext.applyNativeModulesAppBuildGradle = { Project project, String customPathToProject = null ->
-  def autoModules = getAutoModules(customPathToProject)
+ext.applyNativeModulesAppBuildGradle = { Project project ->
+  def reactExtension = rootProject.extensions.getByName("privateReact")
+  def autoModules = new ReactNativeModules(logger, reactExtension.root.getAsFile().getOrNull() ?: rootProject.projectDir)
   autoModules.addReactNativeModuleDependencies(project)
 
   def generatedSrcDir = new File(buildDir, "generated/rncli/src/main/java")

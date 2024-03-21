@@ -511,24 +511,13 @@ def reactNativeVersionRequireNewArchEnabled(autoModules) {
     return false
 }
 
-def getAutoModules(customPathToProject) {
-  def projectRoot
-
-  if (customPathToProject != null) {
-    projectRoot = new File(rootProject.projectDir, customPathToProject)
-  } else {
-    projectRoot = rootProject.projectDir
-  }
-
-  return new ReactNativeModules(logger, providers, projectRoot)
-}
-
 /** -----------------------
  *    Exported Extensions
  * ------------------------ */
 
-ext.applyNativeModulesSettingsGradle = { DefaultSettings defaultSettings, String customPathToProject = null ->
-  def autoModules = getAutoModules(customPathToProject)
+ext.applyNativeModulesSettingsGradle = { DefaultSettings defaultSettings, File reactRoot = null ->
+  def projectRoot = reactRoot != null ? reactRoot : rootProject.projectDir
+  def autoModules = new ReactNativeModules(logger, providers, projectRoot)
   autoModules.addReactNativeModuleProjects(defaultSettings)
 }
 

@@ -496,15 +496,6 @@ class ReactNativeModules {
   }
 }
 
-
-/*
- * Sometimes Gradle can be called outside of JavaScript hierarchy. Detect the directory
- * where build files of an active project are located.
- */
-def projectRoot = rootProject.projectDir
-
-def autoModules = new ReactNativeModules(logger, providers, projectRoot)
-
 def reactNativeVersionRequireNewArchEnabled(autoModules) {
     def rnVersion = autoModules.reactNativeVersion
     def regexPattern = /^(\d+)\.(\d+)\.(\d+)(?:-(\w+(?:[-.]\d+)?))?$/
@@ -520,15 +511,29 @@ def reactNativeVersionRequireNewArchEnabled(autoModules) {
     return false
 }
 
+def getAutoModules(customPathToProject) {
+  def projectRoot
+
+  if (customPathToProject != null) {
+    projectRoot = new File(rootProject.projectDir, customPathToProject)
+  } else {
+    projectRoot = rootProject.projectDir
+  }
+
+  return new ReactNativeModules(logger, projectRoot)
+}
+
 /** -----------------------
  *    Exported Extensions
  * ------------------------ */
 
-ext.applyNativeModulesSettingsGradle = { DefaultSettings defaultSettings ->
+ext.applyNativeModulesSettingsGradle = { DefaultSettings defaultSettings, String customPathToProject = null ->
+  def autoModules = getAutoModules(customPathToProject)
   autoModules.addReactNativeModuleProjects(defaultSettings)
 }
 
-ext.applyNativeModulesAppBuildGradle = { Project project ->
+ext.applyNativeModulesAppBuildGradle = { Project project, String customPathToProject = null ->
+  def autoModules = getAutoModules(customPathToProject)
   autoModules.addReactNativeModuleDependencies(project)
 
   def generatedSrcDir = new File(buildDir, "generated/rncli/src/main/java")

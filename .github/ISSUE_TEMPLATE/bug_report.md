@@ -7,7 +7,8 @@ labels: 'bug report'
 ## Environment
 
 <!-- 
-  Run `npx react-native info` in your terminal and paste its contents here. 
+  Run `npx react-native info` in your terminal inside a react-native project 
+  and paste its contents here. 
   Also please make sure that `npx react-native doctor` is passing.
 -->
 

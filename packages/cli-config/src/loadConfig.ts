@@ -102,7 +102,7 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
     },
     dependencies: userConfig.dependencies,
     commands: userConfig.commands,
-    healthChecks: [],
+    healthChecks: userConfig.healthChecks || [],
     platforms: userConfig.platforms,
     assets: userConfig.assets,
     get project() {

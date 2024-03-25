@@ -28,7 +28,6 @@
     "@react-native-community/cli-config": "14.0.0-alpha.1",
     "@react-native-community/cli-debugger-ui": "14.0.0-alpha.1",
     "@react-native-community/cli-doctor": "14.0.0-alpha.1",
-    "@react-native-community/cli-link-assets": "14.0.0-alpha.1",
     "@react-native-community/cli-server-api": "14.0.0-alpha.1",
     "@react-native-community/cli-tools": "14.0.0-alpha.1",
     "@react-native-community/cli-types": "14.0.0-alpha.1",

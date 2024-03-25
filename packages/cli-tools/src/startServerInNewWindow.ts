@@ -1,9 +1,9 @@
 import path from 'path';
 import fs from 'fs';
 import execa from 'execa';
-import resolveNodeModuleDir from './resolveNodeModuleDir';
 import logger from './logger';
 import chalk from 'chalk';
+import {findPackageDependencyDir} from './findPackageDependencyDir';
 
 const ERROR = `a dev server manually by running ${chalk.bold(
   'npm start',
@@ -34,7 +34,16 @@ function startServerInNewWindow(
   const packagerEnvFileExportContent = isWindows
     ? `set RCT_METRO_PORT=${port}\nset PROJECT_ROOT=${projectRoot}\nset REACT_NATIVE_PATH=${reactNativePath}`
     : `export RCT_METRO_PORT=${port}\nexport PROJECT_ROOT="${projectRoot}"\nexport REACT_NATIVE_PATH="${reactNativePath}"`;
-  const nodeModulesPath = resolveNodeModuleDir(projectRoot, '.bin');
+  let generatedPath = findPackageDependencyDir('.generated', {
+    startDir: projectRoot,
+  });
+
+  if (!generatedPath) {
+    const newPath = path.join(projectRoot, 'node_modules', '.generated');
+    fs.mkdirSync(newPath, {recursive: true, mode: 0o755});
+    generatedPath = newPath;
+  }
+
   const cliPluginMetroPath = path.join(
     path.dirname(
       require.resolve('@react-native-community/cli-tools/package.json'),
@@ -45,13 +54,13 @@ function startServerInNewWindow(
   /**
    * Set up the `.packager.(env|bat)` file to ensure the packager starts on the right port and in right directory.
    */
-  const packagerEnvFile = path.join(nodeModulesPath, `${packagerEnvFilename}`);
+  const packagerEnvFile = path.join(generatedPath, `${packagerEnvFilename}`);
 
   /**
    * Set up the `launchPackager.(command|bat)` file.
    * It lives next to `.packager.(bat|env)`
    */
-  const launchPackagerScript = path.join(nodeModulesPath, scriptFile);
+  const launchPackagerScript = path.join(generatedPath, scriptFile);
   const procConfig: execa.SyncOptions = {cwd: path.dirname(packagerEnvFile)};
 
   /**
@@ -63,19 +72,19 @@ function startServerInNewWindow(
   });
 
   /**
-   * Copy files into `node_modules/.bin`.
+   * Copy files into `node_modules/.generated`.
    */
 
   try {
     if (isWindows) {
       fs.copyFileSync(
         path.join(cliPluginMetroPath, 'launchPackager.bat'),
-        path.join(nodeModulesPath, 'launchPackager.bat'),
+        path.join(generatedPath, 'launchPackager.bat'),
       );
     } else {
       fs.copyFileSync(
         path.join(cliPluginMetroPath, 'launchPackager.command'),
-        path.join(nodeModulesPath, 'launchPackager.command'),
+        path.join(generatedPath, 'launchPackager.command'),
       );
     }
   } catch (error) {

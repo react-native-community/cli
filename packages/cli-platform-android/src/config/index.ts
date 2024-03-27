@@ -169,7 +169,10 @@ export function dependencyConfig(
   const cxxModuleCMakeListsModuleName =
     userConfig.cxxModuleCMakeListsModuleName || null;
   const cxxModuleHeaderName = userConfig.cxxModuleHeaderName || null;
-  let cxxModuleCMakeListsPath = userConfig.cxxModuleCMakeListsPath || null;
+  let cxxModuleCMakeListsPath = userConfig.cxxModuleCMakeListsPath
+    ? path.join(sourceDir, userConfig.cxxModuleCMakeListsPath)
+    : null;
+
   if (process.platform === 'win32') {
     cmakeListsPath = cmakeListsPath.replace(/\\/g, '/');
     if (cxxModuleCMakeListsPath) {

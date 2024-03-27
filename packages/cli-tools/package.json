@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/cli-tools",
-  "version": "13.6.3",
+  "version": "13.6.4",
   "license": "MIT",
   "main": "build/index.js",
   "publishConfig": {
@@ -20,7 +20,7 @@
     "sudo-prompt": "^9.0.0"
   },
   "devDependencies": {
-    "@react-native-community/cli-types": "13.6.3",
+    "@react-native-community/cli-types": "13.6.4",
     "@types/lodash": "^4.14.149",
     "@types/mime": "^2.0.1",
     "@types/node": "^18.0.0",

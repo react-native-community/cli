@@ -34,6 +34,10 @@ const customFlavorManifest = fs.readFileSync(
   path.join(__dirname, './files/AndroidManifest-custom-flavor.xml'),
 );
 
+const activityAliasManifest = fs.readFileSync(
+  path.join(__dirname, './files/AndroidManifest-activity-alias.xml'),
+);
+
 const mainManifest = fs.readFileSync(
   path.join(__dirname, './files/AndroidManifest.xml'),
 );
@@ -304,6 +308,12 @@ export const fewActivities = {
 export const className = {
   src: {
     'AndroidManifest.xml': classNameManifest,
+  },
+};
+
+export const activityAlias = {
+  src: {
+    'AndroidManifest.xml': activityAliasManifest,
   },
 };
 

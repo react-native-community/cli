@@ -31,6 +31,11 @@ describe('android::getMainActivity', () => {
           app: mocks.customFlavor,
         },
       },
+      activityAlias: {
+        android: {
+          app: mocks.activityAlias,
+        },
+      },
     });
   });
 
@@ -69,5 +74,13 @@ describe('android::getMainActivity', () => {
   it('returns null if file do not exist', () => {
     const fakeManifestPath = findManifest('/empty');
     expect(getMainActivity(fakeManifestPath || '')).toBeNull();
+  });
+
+  it('returns activity defined as alias in the manifest', () => {
+    const manifestPath = findManifest('/activityAlias');
+    const manifest = getMainActivity(manifestPath || '');
+    expect(manifest).not.toBeNull();
+    expect(typeof manifest).toBe('string');
+    expect(manifest).toBe('.MainActivityAlias');
   });
 });

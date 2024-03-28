@@ -8,6 +8,7 @@
     {"path": "../cli-clean"},
     {"path": "../cli-config"},
     {"path": "../cli-doctor"},
+    {"path": "../cli-link-assets"},
     {"path": "../cli-server-api"},
     {"path": "../cli-types"},
     {"path": "../cli-debugger-ui"},

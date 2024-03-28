@@ -4,6 +4,7 @@ exports[`android::getProjectConfig returns an object with android project config
 Object {
   "appName": "",
   "applicationId": "com.some.example",
+  "assets": Array [],
   "dependencyConfiguration": undefined,
   "mainActivity": ".MainActivity",
   "packageName": "com.some.example",
@@ -17,6 +18,7 @@ exports[`android::getProjectConfig returns an object with android project config
 Object {
   "appName": "",
   "applicationId": "com.some.example",
+  "assets": Array [],
   "dependencyConfiguration": undefined,
   "mainActivity": ".MainActivity",
   "packageName": "com.some.example",
@@ -30,6 +32,7 @@ exports[`android::getProjectConfig returns an object with android project config
 Object {
   "appName": "app",
   "applicationId": "com.example",
+  "assets": Array [],
   "dependencyConfiguration": undefined,
   "mainActivity": ".MainActivity",
   "packageName": "com.some.example",

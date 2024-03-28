@@ -15,16 +15,19 @@ function findXcodeProject(files: Array<string>): IOSProjectInfo | null {
   for (let i = sortedFiles.length - 1; i >= 0; i--) {
     const fileName = files[i];
     const ext = path.extname(fileName);
+    const projectPath = path.dirname(fileName);
 
     if (ext === '.xcworkspace') {
       return {
         name: fileName,
+        path: projectPath,
         isWorkspace: true,
       };
     }
     if (ext === '.xcodeproj') {
       return {
         name: fileName,
+        path: projectPath,
         isWorkspace: false,
       };
     }

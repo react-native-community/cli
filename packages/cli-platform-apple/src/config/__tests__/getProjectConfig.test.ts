@@ -43,6 +43,7 @@ describe('ios::getProjectConfig', () => {
   it('returns an object with ios project configuration', () => {
     expect(projectConfig('/flat', {})).toMatchInlineSnapshot(`
       Object {
+        "assets": Array [],
         "automaticPodsInstallation": undefined,
         "sourceDir": "/flat/ios",
         "watchModeCommandParams": undefined,
@@ -53,6 +54,7 @@ describe('ios::getProjectConfig', () => {
   it('returns correct configuration when multiple Podfile are present', () => {
     expect(projectConfig('/multiple', {})).toMatchInlineSnapshot(`
       Object {
+        "assets": Array [],
         "automaticPodsInstallation": undefined,
         "sourceDir": "/multiple/ios",
         "watchModeCommandParams": undefined,

@@ -47,6 +47,7 @@ type ProjectConfigT = {
     [key: string]: DependencyConfig;
   };
   commands: Command[];
+  assets?: string[];
 };
 ```
 
@@ -69,6 +70,7 @@ type IOSProjectParams = {
   sourceDir?: string;
   watchModeCommandParams?: string[];
   automaticPodsInstallation?: boolean;
+  assets?: string[];
 };
 
 type AndroidProjectParams = {
@@ -78,6 +80,7 @@ type AndroidProjectParams = {
   packageName?: string;
   dependencyConfiguration?: string;
   watchModeCommandParams?: string[];
+  assets?: string[];
 };
 ```
 
@@ -115,6 +118,10 @@ A boolean value to determine if you want to automatically install CocoaPods when
 If set to `true`, you can skip running `pod install` manually whenever it's needed.
 
 > Note: Starting from React Native 0.73, CLI's `init` command scaffolds the project with `react-native.config.js` file with this value set to `true` by default. Older projects can opt-in after migrating to 0.73. Please note that if your setup does not follow the standard React Native template, e.g. you are not using Gems to install CocoaPods, this might not work properly for you.
+
+### project.ios.assets
+
+Array of folder paths that will be passed to the `npx react-native link-assets` command to specify the assets to be linked to iOS project.
 
 #### project.android.appName
 
@@ -154,6 +161,10 @@ This will allow you to use libraries that haven't been migrated yet on the New A
 The list should contain the name of the components, as they're registered in the ViewManagers (i.e. just `"Button"`).
 
 Since React Native 0.74, this property is ignored as the Interop Layer is **Automatic**, you don't need to register the Legacy Components anymore and they will be discovered automatically.
+
+### project.android.assets
+
+Array of folder paths that will be passed to the `npx react-native link-assets` command to specify the assets to be linked to Android project.
 
 ### platforms
 
@@ -220,3 +231,7 @@ module.exports = {
 The object provided here is deep merged with the dependency config. Check [`projectConfig`](platforms.md#projectconfig) and [`dependencyConfig`](platforms.md#dependencyConfig) return values for a full list of properties that you can override.
 
 > Note: This is an advanced feature and you should not need to use it most of the time.
+
+### assets
+
+Array of folder paths that will be passed to the `npx react-native link-assets` command to specify the assets to be linked to Android / iOS projects.

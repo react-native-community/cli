@@ -33,6 +33,7 @@ Object {
 
 exports[`should have a valid structure by default 1`] = `
 Object {
+  "assets": Array [],
   "commands": Array [],
   "dependencies": Object {},
   "healthChecks": Array [],

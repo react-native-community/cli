@@ -85,6 +85,7 @@ export function projectConfig(
     watchModeCommandParams: userConfig.watchModeCommandParams,
     // @todo remove for RN 0.75
     unstable_reactLegacyComponentNames: undefined,
+    assets: userConfig.assets ?? [],
   };
 }
 

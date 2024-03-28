@@ -24,6 +24,7 @@ describe('findXcodeProject', () => {
       ]),
     ).toEqual({
       name: 'AwesomeApp.xcodeproj',
+      path: '.',
       isWorkspace: false,
     });
   });
@@ -42,7 +43,26 @@ describe('findXcodeProject', () => {
       ]),
     ).toEqual({
       name: 'AwesomeApp.xcworkspace',
+      path: '.',
       isWorkspace: true,
+    });
+  });
+
+  it('should find *.xcodeproj file inside a folder', () => {
+    expect(
+      findXcodeProject([
+        '.DS_Store',
+        'AwesomeApp',
+        'AwesomeApp/AwesomeApp.xcodeproj',
+        'AwesomeAppTests',
+        'PodFile',
+        'Podfile.lock',
+        'Pods',
+      ]),
+    ).toEqual({
+      name: 'AwesomeApp/AwesomeApp.xcodeproj',
+      path: 'AwesomeApp',
+      isWorkspace: false,
     });
   });
 

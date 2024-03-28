@@ -116,3 +116,35 @@ test('should log only valid JSON config if setting up env throws an error', () =
   expect(isValidJSON(stdout)).toBe(true);
   expect(filteredStderr).toBe('');
 });
+
+const USER_CONFIG = `
+module.exports = {
+  commands: [
+    {
+      name: 'test-command',
+      description: 'test command',
+      func: () => {
+        console.log('test-command');
+      },
+    },
+  ],
+};
+`;
+
+test('should read user config from react-native.config.js', () => {
+  writeFiles(path.join(DIR, 'TestProject'), {
+    'react-native.config.js': USER_CONFIG,
+  });
+
+  const {stdout} = runCLI(path.join(DIR, 'TestProject'), ['test-command']);
+  expect(stdout).toBe('test-command');
+});
+
+test('should read user config from react-native.config.ts', () => {
+  writeFiles(path.join(DIR, 'TestProject'), {
+    'react-native.config.ts': USER_CONFIG,
+  });
+
+  const {stdout} = runCLI(path.join(DIR, 'TestProject'), ['test-command']);
+  expect(stdout).toBe('test-command');
+});

@@ -216,6 +216,7 @@ describe('replacePlaceholderWithPackageName', () => {
         projectName: PROJECT_NAME,
         placeholderName: PLACEHOLDER_NAME,
         placeholderTitle: 'Test',
+        projectTitle: PROJECT_TITLE,
         packageName: PACKAGE_NAME,
       });
       const packageJsonFile = fs.readFileSync(
@@ -232,6 +233,7 @@ describe('replacePlaceholderWithPackageName', () => {
       projectName: PROJECT_NAME,
       placeholderName: PLACEHOLDER_NAME,
       placeholderTitle: 'Test',
+      projectTitle: PROJECT_TITLE,
       packageName: PACKAGE_NAME,
     });
 
@@ -253,6 +255,7 @@ describe('replacePlaceholderWithPackageName', () => {
         projectName: PROJECT_NAME,
         placeholderName: PLACEHOLDER_NAME,
         placeholderTitle: 'Test',
+        projectTitle: PROJECT_TITLE,
         packageName: PACKAGE_NAME,
       });
 
@@ -281,6 +284,7 @@ describe('replacePlaceholderWithPackageName', () => {
         projectName: PROJECT_NAME,
         placeholderName: PLACEHOLDER_NAME,
         placeholderTitle: 'Test',
+        projectTitle: PROJECT_TITLE,
         packageName: PACKAGE_NAME,
       });
 

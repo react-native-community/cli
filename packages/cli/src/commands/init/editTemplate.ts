@@ -40,7 +40,7 @@ export async function replaceNameInUTF8File(
   projectName: string,
   templateName: string,
 ) {
-  logger.debug(`Replacing in ${filePath}`);
+  logger.debug(`Replacing in ${filePath} : ${templateName} -> ${projectName}`);
   const fileContent = await fs.readFile(filePath, 'utf8');
   const replacedFileContent = fileContent
     .replace(new RegExp(templateName, 'g'), projectName)
@@ -144,8 +144,9 @@ export async function replacePlaceholderWithPackageName({
   projectName,
   placeholderName,
   placeholderTitle,
+  projectTitle,
   packageName,
-}: Omit<Required<PlaceholderConfig>, 'projectTitle'>) {
+}: Required<PlaceholderConfig>) {
   validatePackageName(packageName);
   const cleanPackageName = packageName.replace(/[^\p{L}\p{N}.]+/gu, '');
 
@@ -187,7 +188,7 @@ export async function replacePlaceholderWithPackageName({
 
         await replaceNameInUTF8File(
           filePath,
-          `<string name="app_name">${projectName}</string>`,
+          `<string name="app_name">${projectTitle}</string>`,
           `<string name="app_name">${placeholderTitle}</string>`,
         );
 
@@ -197,7 +198,7 @@ export async function replacePlaceholderWithPackageName({
           `com.${placeholderName}`,
         );
         await replaceNameInUTF8File(filePath, newName, placeholderName);
-        await replaceNameInUTF8File(filePath, newName, placeholderTitle);
+        await replaceNameInUTF8File(filePath, projectTitle, placeholderTitle);
       }
     }
 
@@ -241,6 +242,7 @@ export async function changePlaceholderInTemplate({
         projectName,
         placeholderName,
         placeholderTitle,
+        projectTitle,
         packageName,
       });
     } catch (error) {

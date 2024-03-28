@@ -1,4 +1,4 @@
-import cosmiconfig from 'cosmiconfig';
+import {cosmiconfigSync} from 'cosmiconfig';
 import {JoiError} from './errors';
 import * as schema from './schema';
 import {
@@ -11,19 +11,18 @@ import chalk from 'chalk';
 /**
  * Places to look for the configuration file.
  */
-const searchPlaces = ['react-native.config.js'];
+const searchPlaces = ['react-native.config.js', 'react-native.config.ts'];
 
 /**
  * Reads a project configuration as defined by the user in the current
  * workspace.
  */
 export function readConfigFromDisk(rootFolder: string): UserConfig {
-  const explorer = cosmiconfig('react-native', {
-    searchPlaces,
+  const explorer = cosmiconfigSync('react-native', {
     stopDir: rootFolder,
   });
 
-  const searchResult = explorer.searchSync(rootFolder);
+  const searchResult = explorer.search(rootFolder);
   const config = searchResult ? searchResult.config : undefined;
   const result = schema.projectConfig.validate(config);
 
@@ -42,12 +41,12 @@ export function readDependencyConfigFromDisk(
   rootFolder: string,
   dependencyName: string,
 ): UserDependencyConfig {
-  const explorer = cosmiconfig('react-native', {
+  const explorer = cosmiconfigSync('react-native', {
     stopDir: rootFolder,
     searchPlaces,
   });
 
-  const searchResult = explorer.searchSync(rootFolder);
+  const searchResult = explorer.search(rootFolder);
   const config = searchResult ? searchResult.config : emptyDependencyConfig;
 
   const result = schema.dependencyConfig.validate(config, {abortEarly: false});

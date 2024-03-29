@@ -82,14 +82,16 @@ exports[`shows up current config without unnecessary output 1`] = `
   "assets": [],
   "project": {
     "ios": {
-      "sourceDir": "<<REPLACED_ROOT>>/TestProject/ios"
+      "sourceDir": "<<REPLACED_ROOT>>/TestProject/ios",
+      "assets": []
     },
     "android": {
       "sourceDir": "<<REPLACED_ROOT>>/TestProject/android",
       "appName": "app",
       "packageName": "com.testproject",
       "applicationId": "com.testproject",
-      "mainActivity": ".MainActivity"
+      "mainActivity": ".MainActivity",
+      "assets": []
     }
   }
 }

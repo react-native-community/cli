@@ -11,7 +11,7 @@
     "chalk": "^4.1.2",
     "execa": "^5.0.0",
     "fast-glob": "^3.3.2",
-    "fast-xml-parser": "^4.0.12",
+    "fast-xml-parser": "^4.2.4",
     "ora": "^5.4.1"
   },
   "devDependencies": {

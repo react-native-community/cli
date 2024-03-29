@@ -122,6 +122,7 @@ export interface Config {
     ios: IOSPlatformConfig;
     [name: string]: PlatformConfig<any, any, any, any>;
   };
+  assets: string[];
   commands: Command[];
   // @todo this should be removed: https://github.com/react-native-community/cli/issues/1261
   healthChecks: [];

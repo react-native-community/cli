@@ -8,6 +8,7 @@ export interface AndroidProjectConfig {
   watchModeCommandParams?: string[];
   // @todo remove for RN 0.75
   unstable_reactLegacyComponentNames?: string[] | null;
+  assets: string[];
 }
 
 export type AndroidProjectParams = {
@@ -19,6 +20,7 @@ export type AndroidProjectParams = {
   watchModeCommandParams?: string[];
   // @todo remove for RN 0.75
   unstable_reactLegacyComponentNames?: string[] | null;
+  assets?: string[];
 };
 
 export type AndroidDependencyConfig = {

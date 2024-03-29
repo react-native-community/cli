@@ -51,12 +51,9 @@ export default async function getLatestRelease(
   try {
     logger.debug(`Current version: ${currentVersion}`);
 
-    // if the version is a 1000.0.0 version or 0.0.0, we want to bail
+    // if the version is a nightly/canary build, we want to bail
     // since they are nightlies or unreleased versions
-    if (
-      currentVersion.includes('1000.0.0') ||
-      currentVersion.includes('0.0.0')
-    ) {
+    if (['-canary', '-nightly'].some((s) => currentVersion.includes(s))) {
       return;
     }
 

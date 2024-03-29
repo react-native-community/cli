@@ -4,7 +4,7 @@ import semver, {SemVer} from 'semver';
 import {UnknownProjectError} from '../errors';
 import logger from '../logger';
 import resolveNodeModuleDir from '../resolveNodeModuleDir';
-import getLatestRelease, {Release} from './getLatestRelease';
+import getLatestRelease, {type Release} from './getLatestRelease';
 import printNewRelease from './printNewRelease';
 
 const getReactNativeVersion = (projectRoot: string): string | undefined =>

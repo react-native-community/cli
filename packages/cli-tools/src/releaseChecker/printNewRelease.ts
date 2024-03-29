@@ -3,7 +3,7 @@ import chalk from 'chalk';
 import * as link from '../doclink';
 
 import logger from '../logger';
-import {Release} from './getLatestRelease';
+import type {Release} from './getLatestRelease';
 import cacheManager from '../cacheManager';
 
 /**

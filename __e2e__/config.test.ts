@@ -79,10 +79,12 @@ test('shows up current config without unnecessary output', () => {
       ? {
           name: 'TestProject.xcworkspace',
           isWorkspace: true,
+          path: '.',
         }
       : {
           name: 'TestProject.xcodeproj',
           isWorkspace: false,
+          path: '.',
         };
 
   expect(parsedStdout.project.ios.xcodeProject).toStrictEqual(

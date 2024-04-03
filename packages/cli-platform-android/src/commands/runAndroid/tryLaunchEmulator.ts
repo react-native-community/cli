@@ -9,7 +9,8 @@ const emulatorCommand = process.env.ANDROID_HOME
 export const getEmulators = () => {
   try {
     const emulatorsOutput = execa.sync(emulatorCommand, ['-list-avds']).stdout;
-    return emulatorsOutput.split(os.EOL).filter((name) => name !== '');
+    return emulatorsOutput.split(os.EOL)
+      .filter((name) => name !== '' && !name.startsWith('INFO    | '));
   } catch {
     return [];
   }

@@ -15,9 +15,11 @@
   ],
   "devDependencies": {
     "@babel/core": "^7.6.4",
+    "@babel/plugin-transform-runtime": "^7.6.2",
     "parcel-bundler": "^1.12.5"
   },
   "dependencies": {
+    "@babel/runtime": "^7.8.4",
     "serve-static": "^1.13.1"
   },
   "homepage": "https://github.com/react-native-community/cli/tree/main/packages/cli-debugger-ui",

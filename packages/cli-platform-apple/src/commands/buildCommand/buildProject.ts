@@ -15,6 +15,29 @@ import {simulatorDestinationMap} from './simulatorDestinationMap';
 import {supportedPlatforms} from '../../config/supportedPlatforms';
 import {ApplePlatform} from '../../types';
 
+function prettifyXcodebuildMessages(
+  output: string,
+  type: 'error' | 'warning',
+): void {
+  const errorRegex =
+    type === 'error'
+      ? /error\b[^\S\r\n]*[:\-\s]*([^\r\n]*)/gim
+      : /warning\b[^\S\r\n]*[:\-\s]*([^\r\n]*)/gim;
+  const results = new Set<string>();
+
+  let match;
+  while ((match = errorRegex.exec(output)) !== null) {
+    if (match[1]) {
+      // match[1] contains the captured group that excludes any leading colons or spaces
+      results.add(match[1].trim());
+    }
+  }
+
+  results.forEach((result) =>
+    type === 'error' ? logger.error(result) : logger.warn(result),
+  );
+}
+
 export function buildProject(
   xcodeProject: IOSProjectInfo,
   platform: ApplePlatform,
@@ -84,7 +107,6 @@ export function buildProject(
       getProcessOptions(args),
     );
     let buildOutput = '';
-    let errorOutput = '';
     buildProcess.stdout.on('data', (data: Buffer) => {
       const stringData = data.toString();
       buildOutput += stringData;
@@ -100,10 +122,6 @@ export function buildProject(
         }
       }
     });
-
-    buildProcess.stderr.on('data', (data: Buffer) => {
-      errorOutput += data;
-    });
     buildProcess.on('close', (code: number) => {
       if (xcodebuildOutputFormatter) {
         xcodebuildOutputFormatter.stdin.end();
@@ -112,20 +130,7 @@ export function buildProject(
       }
       if (code !== 0) {
         printRunDoctorTip();
-        reject(
-          new CLIError(
-            `
-            Failed to build ${platform} project.
-
-            "xcodebuild" exited with error code '${code}'. To debug build
-            logs further, consider building your app with Xcode.app, by opening
-            '${xcodeProject.name}'.
-          `,
-            xcodebuildOutputFormatter
-              ? undefined
-              : buildOutput + '\n' + errorOutput,
-          ),
-        );
+        prettifyXcodebuildMessages(buildOutput, 'error');
         return;
       }
       logger.success('Successfully built the app');

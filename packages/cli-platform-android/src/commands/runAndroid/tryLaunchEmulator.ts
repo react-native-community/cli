@@ -11,7 +11,7 @@ export const getEmulators = () => {
     const emulatorsOutput = execa.sync(emulatorCommand, ['-list-avds']).stdout;
     return emulatorsOutput
       .split(os.EOL)
-      .filter((name) => name !== '' && !name.startsWith('INFO    | '));
+      .filter((name) => name !== '' && !name.includes(' '));
   } catch {
     return [];
   }

@@ -11,6 +11,10 @@ export const getEmulators = () => {
     const emulatorsOutput = execa.sync(emulatorCommand, ['-list-avds']).stdout;
     return emulatorsOutput
       .split(os.EOL)
+      // The `name` is AVD ID which is expected to not contain whitespace.
+      // The `emulator` command, however, can occasionally return verbose
+      // information about crashes or similar. Hence filtering out anything 
+      // that has basic whitespace.
       .filter((name) => name !== '' && !name.includes(' '));
   } catch {
     return [];

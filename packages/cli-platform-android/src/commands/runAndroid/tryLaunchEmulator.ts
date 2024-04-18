@@ -9,7 +9,13 @@ const emulatorCommand = process.env.ANDROID_HOME
 export const getEmulators = () => {
   try {
     const emulatorsOutput = execa.sync(emulatorCommand, ['-list-avds']).stdout;
-    return emulatorsOutput.split(os.EOL).filter((name) => name !== '');
+    return emulatorsOutput
+      .split(os.EOL)
+      .filter((name) => name !== '' && !name.includes(' '));
+    // The `name` is AVD ID which is expected to not contain whitespace.
+    // The `emulator` command, however, can occasionally return verbose
+    // information about crashes or similar. Hence filtering out anything
+    // that has basic whitespace.
   } catch {
     return [];
   }

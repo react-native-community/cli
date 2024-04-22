@@ -15,27 +15,19 @@ import {simulatorDestinationMap} from './simulatorDestinationMap';
 import {supportedPlatforms} from '../../config/supportedPlatforms';
 import {ApplePlatform} from '../../types';
 
-function prettifyXcodebuildMessages(
-  output: string,
-  type: 'error' | 'warning',
-): void {
-  const errorRegex =
-    type === 'error'
-      ? /error\b[^\S\r\n]*[:\-\s]*([^\r\n]*)/gim
-      : /warning\b[^\S\r\n]*[:\-\s]*([^\r\n]*)/gim;
-  const results = new Set<string>();
+function prettifyXcodebuildMessages(output: string): Set<string> {
+  const errorRegex = /error\b[^\S\r\n]*[:\-\s]*([^\r\n]*)/gim;
+  const errors = new Set<string>();
 
   let match;
   while ((match = errorRegex.exec(output)) !== null) {
     if (match[1]) {
       // match[1] contains the captured group that excludes any leading colons or spaces
-      results.add(match[1].trim());
+      errors.add(match[1].trim());
     }
   }
 
-  results.forEach((result) =>
-    type === 'error' ? logger.error(result) : logger.warn(result),
-  );
+  return errors;
 }
 
 export function buildProject(
@@ -130,7 +122,22 @@ export function buildProject(
       }
       if (code !== 0) {
         printRunDoctorTip();
-        prettifyXcodebuildMessages(buildOutput, 'error');
+        if (!xcodebuildOutputFormatter) {
+          logger.log(buildOutput);
+        }
+        reject(
+          new CLIError(
+            xcbeautifyAvailable()
+              ? `
+        Failed to build ${platform} project.
+
+        "xcodebuild" exited with error code '${code}'. To debug build
+        logs further, consider building your app with Xcode.app, by opening
+        '${xcodeProject.name}'.
+      `
+              : Array.from(prettifyXcodebuildMessages(buildOutput)).join('\n'),
+          ),
+        );
         return;
       }
       logger.success('Successfully built the app');

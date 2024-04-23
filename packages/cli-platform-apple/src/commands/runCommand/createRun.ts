@@ -240,17 +240,6 @@ const createRun =
 
       logger.info(`Found booted ${booted.map(({name}) => name).join(', ')}`);
 
-      for (const device of bootedDevices) {
-        await runOnDevice(
-          device,
-          platformName,
-          mode,
-          scheme,
-          xcodeProject,
-          args,
-        );
-      }
-
       for (const simulator of bootedSimulators) {
         await runOnSimulator(
           xcodeProject,
@@ -259,6 +248,17 @@ const createRun =
           scheme,
           args,
           simulator || fallbackSimulator,
+        );
+      }
+
+      for (const device of bootedDevices) {
+        await runOnDevice(
+          device,
+          platformName,
+          mode,
+          scheme,
+          xcodeProject,
+          args,
         );
       }
 

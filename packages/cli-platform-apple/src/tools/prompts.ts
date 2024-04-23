@@ -40,25 +40,12 @@ export async function promptForConfigurationSelection(
 
 export async function promptForDeviceSelection(
   devices: Device[],
-  lastUsedIOSDeviceId?: string,
 ): Promise<Device | undefined> {
-  const sortedDevices = [...devices];
-  const devicesIds = sortedDevices.map(({udid}) => udid);
-
-  if (lastUsedIOSDeviceId) {
-    const preferredDeviceIndex = devicesIds.indexOf(lastUsedIOSDeviceId);
-
-    if (preferredDeviceIndex > -1) {
-      const [preferredDevice] = sortedDevices.splice(preferredDeviceIndex, 1);
-      sortedDevices.unshift(preferredDevice);
-    }
-  }
-
   const {device} = await prompt({
     type: 'select',
     name: 'device',
     message: 'Select the device you want to use',
-    choices: sortedDevices
+    choices: devices
       .filter(({type}) => type === 'device' || type === 'simulator')
       .map((d) => {
         const availability =

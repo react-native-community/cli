@@ -82,7 +82,6 @@ interface TemplateReturnType {
 
 // Here we are defining explicit version of Yarn to be used in the new project because in some cases providing `3.x` don't work.
 const YARN_VERSION = '3.6.4';
-const YARN_LEGACY_VERSION = '1.22.22';
 
 const bumpYarnVersion = async (silent: boolean, root: string) => {
   try {
@@ -91,9 +90,10 @@ const bumpYarnVersion = async (silent: boolean, root: string) => {
     if (yarnVersion) {
       // `yarn set` is unsupported until 1.22, however it's a alias (yarnpkg/yarn/pull/7862) calling `policies set-version`.
       const setVersionArgs =
-        yarnVersion.major > 1
+        yarnVersion.major > 1 && yarnVersion.minor >= 22
           ? ['set', 'version', YARN_VERSION]
-          : ['policies', 'set-version', YARN_LEGACY_VERSION];
+          : ['policies', 'set-version', YARN_VERSION];
+
       await executeCommand('yarn', setVersionArgs, {
         root,
         silent,

@@ -123,23 +123,22 @@ export function buildProject(
       if (code !== 0) {
         printRunDoctorTip();
         if (!xcodebuildOutputFormatter) {
-          logger.log(buildOutput);
+          Array.from(prettifyXcodebuildMessages(buildOutput)).forEach((error) =>
+            logger.error(error),
+          );
         }
+
         reject(
-          new CLIError(
-            xcbeautifyAvailable()
-              ? `
+          new CLIError(`
         Failed to build ${platform} project.
 
         "xcodebuild" exited with error code '${code}'. To debug build
         logs further, consider building your app with Xcode.app, by opening
-        '${xcodeProject.name}'.
-      `
-              : Array.from(prettifyXcodebuildMessages(buildOutput)).join('\n'),
-          ),
+        '${xcodeProject.name}'.`),
         );
         return;
       }
+
       logger.success('Successfully built the app');
       resolve(buildOutput);
     });

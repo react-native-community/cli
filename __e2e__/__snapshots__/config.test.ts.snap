@@ -4,7 +4,7 @@ exports[`shows up current config without unnecessary output 1`] = `
 {
   "root": "<<REPLACED_ROOT>>/TestProject",
   "reactNativePath": "<<REPLACED_ROOT>>/TestProject/node_modules/react-native",
-  "reactNativeVersion": "0.73",
+  "reactNativeVersion": "0.74",
   "dependencies": {},
   "commands": [
     {
@@ -69,6 +69,12 @@ exports[`shows up current config without unnecessary output 1`] = `
     {
       "name": "start",
       "description": "Start the React Native development server.",
+      "options": [
+        "<<REPLACED>>"
+      ]
+    },
+    {
+      "name": "codegen",
       "options": [
         "<<REPLACED>>"
       ]

@@ -1,14 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import {runCLI, getTempDirectory, cleanup, writeFiles} from '../jest/helpers';
-import {execSync} from 'child_process';
-import semver from 'semver';
 import slash from 'slash';
-
-const yarnVersion = semver.parse(execSync('yarn --version').toString().trim())!;
-
-// .yarnrc -> .yarnrc.yml >= 2.0.0: yarnpkg/berry/issues/239
-const yarnConfigFile = yarnVersion.major > 1 ? '.yarnrc.yml' : '.yarnrc';
 
 const DIR = getTempDirectory('command-init');
 const PROJECT_NAME = 'TestInit';
@@ -30,7 +23,7 @@ function createCustomTemplateFiles() {
 const customTemplateCopiedFiles = [
   '.git',
   '.yarn',
-  yarnConfigFile,
+  '.yarnrc.yml', // .yarnrc.yml for Yarn versions >= 2.0.0
   'dir',
   'file',
   'node_modules',
@@ -185,7 +178,7 @@ test('init uses npm as the package manager with --npm', () => {
   // Remove yarn specific files and node_modules
   const filteredFiles = customTemplateCopiedFiles.filter(
     (file) =>
-      !['yarn.lock', 'node_modules', yarnConfigFile, '.yarn'].includes(file),
+      !['yarn.lock', 'node_modules', '.yarnrc.yml', '.yarn'].includes(file),
   );
 
   // Add package-lock.json

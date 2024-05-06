@@ -8,8 +8,6 @@ import {
   writeFiles,
   spawnScript,
   replaceProjectRootInOutput,
-  getAllPackages,
-  addRNCPrefix,
 } from '../jest/helpers';
 
 const DIR = getTempDirectory('test_root');
@@ -38,15 +36,6 @@ function createCorruptedSetupEnvScript() {
 }
 
 beforeAll(() => {
-  const packages = getAllPackages();
-
-  // Register all packages to be linked
-  for (const pkg of packages) {
-    spawnScript('yarn', ['link'], {
-      cwd: path.join(__dirname, `../packages/${pkg}`),
-    });
-  }
-
   // Clean up folder and re-create a new project
   cleanup(DIR);
   writeFiles(DIR, {});
@@ -55,7 +44,7 @@ beforeAll(() => {
   runCLI(DIR, ['init', 'TestProject', '--install-pods']);
 
   // Link CLI to the project
-  spawnScript('yarn', ['link', ...addRNCPrefix(packages)], {
+  spawnScript('yarn', ['link', __dirname, '--all'], {
     cwd: path.join(DIR, 'TestProject'),
   });
 });

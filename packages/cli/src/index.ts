@@ -179,7 +179,21 @@ async function setupAndRun(platformName?: string) {
 
   let config: Config | undefined;
   try {
-    config = loadConfig();
+    let platform: string | undefined;
+
+    /*
+      When linking dependencies in iOS and Android build we're passing `--platform` argument,
+    to only load the configuration for the specific platform.
+    */
+    if (isCommandPassed('config')) {
+      const platformIndex = process.argv.indexOf('--platform');
+
+      if (platformIndex !== -1 && platformIndex < process.argv.length - 1) {
+        platform = process.argv[platformIndex + 1];
+      }
+    }
+
+    config = loadConfig(platform);
 
     logger.enable();
 

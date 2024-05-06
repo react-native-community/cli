@@ -28,7 +28,7 @@ def use_native_modules!(config = nil)
   if (!config)
     json = []
 
-    IO.popen(["node", cli_bin, "config"]) do |data|
+    IO.popen(["node", cli_bin, "config", '--platform', 'ios']) do |data|
       while line = data.gets
         json << line
       end

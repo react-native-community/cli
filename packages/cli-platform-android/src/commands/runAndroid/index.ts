@@ -38,6 +38,7 @@ export interface Flags extends BuildFlags {
   port: number;
   terminal?: string;
   packager?: boolean;
+  device?: string | true;
   deviceId?: string;
   listDevices?: boolean;
   binaryPath?: string;
@@ -122,6 +123,13 @@ async function getAvailableDevicePort(
 
 // Builds the app and runs it on a connected emulator / device.
 async function buildAndRun(args: Flags, androidProject: AndroidProject) {
+  if (args.deviceId) {
+    logger.warn(
+      'The `deviceId` parameter is deprecated. Please use `device` instead.',
+    );
+    args.device = args.deviceId;
+  }
+
   process.chdir(androidProject.sourceDir);
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
 
@@ -140,9 +148,11 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
   }
 
   if (args.listDevices || args.interactive) {
-    if (args.deviceId) {
+    if (args.device) {
       logger.warn(
-        'Both "deviceId" and "list-devices" parameters were passed to "run" command. We will list available devices and let you choose from one',
+        `Both ${
+          args.deviceId ? 'deviceId' : 'device'
+        } and "list-devices" parameters were passed to "run" command. We will list available devices and let you choose from one`,
       );
     }
 
@@ -193,7 +203,7 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
     );
   }
 
-  if (args.deviceId) {
+  if (args.device) {
     return runOnSpecificDevice(args, adbPath, androidProject, selectedTask);
   } else {
     return runOnAllDevices(args, cmd, adbPath, androidProject);
@@ -327,9 +337,15 @@ export default {
       description: 'Name of the activity to start',
     },
     {
+      name: '--device [string]',
+      description:
+        'Explicitly set the device to use by name. The value is not required ' +
+        'if you have a single device connected.',
+    },
+    {
       name: '--deviceId <string>',
       description:
-        'builds your app and starts it on a specific device/simulator with the ' +
+        '**DEPRECATED** Builds your app and starts it on a specific device/simulator with the ' +
         'given device id (listed by running "adb devices" on the command line).',
     },
     {

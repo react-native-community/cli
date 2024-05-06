@@ -12,9 +12,11 @@ export interface Device {
   version?: string;
   sdk?: string;
   availabilityError?: string;
-  type?: 'simulator' | 'device' | 'catalyst';
+  type?: DeviceType;
   lastBootedAt?: string;
 }
+
+export type DeviceType = 'simulator' | 'device' | 'catalyst';
 
 export interface IosInfo {
   name: string;

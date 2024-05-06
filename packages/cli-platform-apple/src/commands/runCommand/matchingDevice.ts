@@ -6,6 +6,7 @@ export function matchingDevice(
   devices: Array<Device>,
   deviceName: string | true | undefined,
 ) {
+  // The condition specifically checks if the value is `true`, not just truthy to allow for `--device` flag without a value
   if (deviceName === true) {
     const firstIOSDevice = devices.find((d) => d.type === 'device')!;
     if (firstIOSDevice) {

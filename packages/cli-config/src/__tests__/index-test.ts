@@ -66,7 +66,7 @@ test('should have a valid structure by default', () => {
       reactNativePath: "."
     }`,
   });
-  const config = loadConfig(DIR);
+  const config = loadConfig({projectRoot: DIR});
   expect(removeString(config, DIR)).toMatchSnapshot();
 });
 
@@ -83,7 +83,7 @@ test('should return dependencies from package.json', () => {
       }
     }`,
   });
-  const {dependencies} = loadConfig(DIR);
+  const {dependencies} = loadConfig({projectRoot: DIR});
   expect(removeString(dependencies, DIR)).toMatchSnapshot();
 });
 
@@ -122,7 +122,7 @@ test('should read a config of a dependency and use it to load other settings', (
       }
     }`,
   });
-  const {dependencies} = loadConfig(DIR);
+  const {dependencies} = loadConfig({projectRoot: DIR});
   expect(
     removeString(dependencies['react-native-test'], DIR),
   ).toMatchSnapshot();
@@ -173,7 +173,7 @@ test('command specified in root config should overwrite command in "react-native
       ],
     };`,
   });
-  const {commands} = loadConfig(DIR);
+  const {commands} = loadConfig({projectRoot: DIR});
   const commandsNames = commands.map(({name}) => name);
   const commandIndex = commandsNames.indexOf('foo-command');
 
@@ -206,7 +206,7 @@ test('should merge project configuration with default values', () => {
       }
     }`,
   });
-  const {dependencies} = loadConfig(DIR);
+  const {dependencies} = loadConfig({projectRoot: DIR});
   expect(removeString(dependencies['react-native-test'], DIR)).toMatchSnapshot(
     'snapshoting `react-native-test` config',
   );
@@ -241,7 +241,7 @@ test('should load commands from "react-native-foo" and "react-native-bar" packag
       }
     }`,
   });
-  const {commands} = loadConfig(DIR);
+  const {commands} = loadConfig({projectRoot: DIR});
   expect(commands).toMatchSnapshot();
 });
 
@@ -261,7 +261,7 @@ test('should not skip packages that have invalid configuration (to avoid breakin
       }
     }`,
   });
-  const {dependencies} = loadConfig(DIR);
+  const {dependencies} = loadConfig({projectRoot: DIR});
   expect(removeString(dependencies, DIR)).toMatchSnapshot(
     'dependencies config',
   );
@@ -281,7 +281,7 @@ test('does not use restricted "react-native" key to resolve config from package.
       }
     }`,
   });
-  const {dependencies} = loadConfig(DIR);
+  const {dependencies} = loadConfig({projectRoot: DIR});
   expect(dependencies).toHaveProperty('react-native-netinfo');
   expect(spy).not.toHaveBeenCalled();
 });
@@ -327,7 +327,7 @@ module.exports = {
     }`,
   });
 
-  const {dependencies} = loadConfig(DIR);
+  const {dependencies} = loadConfig({projectRoot: DIR});
   expect(removeString(dependencies['local-lib'], DIR)).toMatchInlineSnapshot(`
     Object {
       "name": "local-lib",
@@ -367,7 +367,7 @@ test('should apply build types from dependency config', () => {
       }
     }`,
   });
-  const {dependencies} = loadConfig(DIR);
+  const {dependencies} = loadConfig({projectRoot: DIR});
   expect(
     removeString(dependencies['react-native-test'], DIR),
   ).toMatchSnapshot();
@@ -400,7 +400,7 @@ test('supports dependencies from user configuration with custom build type', () 
     }`,
   });
 
-  const {dependencies} = loadConfig(DIR);
+  const {dependencies} = loadConfig({projectRoot: DIR});
   expect(
     removeString(dependencies['react-native-test'], DIR),
   ).toMatchSnapshot();
@@ -429,7 +429,7 @@ test('supports disabling dependency for ios platform', () => {
     }`,
   });
 
-  const {dependencies} = loadConfig(DIR);
+  const {dependencies} = loadConfig({projectRoot: DIR});
   expect(
     removeString(dependencies['react-native-test'], DIR),
   ).toMatchSnapshot();
@@ -494,7 +494,7 @@ test('should convert project sourceDir relative path to absolute', () => {
     `,
   });
 
-  const config = loadConfig(DIR);
+  const config = loadConfig({projectRoot: DIR});
 
   expect(config.project.ios?.sourceDir).toBe(path.join(DIR, iosProjectDir));
   expect(config.project.android?.sourceDir).toBe(

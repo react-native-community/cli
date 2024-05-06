@@ -85,10 +85,13 @@ const removeDuplicateCommands = <T extends boolean>(commands: Command<T>[]) => {
 /**
  * Loads CLI configuration
  */
-function loadConfig(
-  projectRoot: string = findProjectRoot(),
-  selectedPlatform?: string,
-): Config {
+function loadConfig({
+  projectRoot = findProjectRoot(),
+  selectedPlatform,
+}: {
+  projectRoot?: string;
+  selectedPlatform?: string;
+}): Config {
   let lazyProject: ProjectConfig;
   const userConfig = readConfigFromDisk(projectRoot);
 

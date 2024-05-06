@@ -14,7 +14,7 @@ beforeEach(() => {
   jest.resetAllMocks();
 });
 
-const config = loadConfig();
+const config = loadConfig({});
 
 test('prints output without arguments', async () => {
   await info.func([], config);

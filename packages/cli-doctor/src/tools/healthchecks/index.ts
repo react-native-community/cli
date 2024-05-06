@@ -36,7 +36,7 @@ export const getHealthchecks = ({contributor}: Options): Healthchecks => {
 
   // Doctor can run in a detached mode, where there isn't a config so this can fail
   try {
-    config = loadConfig();
+    config = loadConfig({});
     additionalChecks = config.healthChecks;
 
     if (config.reactNativePath) {

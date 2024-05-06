@@ -38,7 +38,7 @@ export interface Flags extends BuildFlags {
   port: number;
   terminal?: string;
   packager?: boolean;
-  device?: string | true;
+  device?: string;
   deviceId?: string;
   listDevices?: boolean;
   binaryPath?: string;
@@ -337,7 +337,7 @@ export default {
       description: 'Name of the activity to start',
     },
     {
-      name: '--device [string]',
+      name: '--device <string>',
       description:
         'Explicitly set the device to use by name. The value is not required ' +
         'if you have a single device connected.',

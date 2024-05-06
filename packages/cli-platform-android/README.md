@@ -36,13 +36,13 @@ Specify an `applicationIdSuffix` to launch after build.
 
 Name of the activity to start.
 
-#### `--device [string]`
+#### `--device <string>`
 
 Explicitly set the device to use by name. The value is not required if you have a single device connected.
 
 #### `--deviceId <string>`
 
-> **DEPRECATED** - use `--device [string]` instead
+> **DEPRECATED** - use `--device <string>` instead
 
 Builds your app and starts it on a specific device with the given device id (listed by running "adb devices" on the command line).
 

@@ -142,21 +142,23 @@ export function dependencyConfig(
 
   const packageName =
     userConfig.packageName || getPackageName(manifestPath, buildGradlePath);
-  const packageClassName = findPackageClassName(sourceDir);
 
-  /**
-   * This module has no package to export
-   */
-  if (!packageClassName) {
-    return null;
+  let packageImportPath = userConfig.packageImportPath;
+  let packageInstance = userConfig.packageInstance;
+
+  if (!packageImportPath || !packageInstance) {
+    const packageClassName = findPackageClassName(sourceDir);
+
+    /**
+     * This module has no package to export
+     */
+    if (!packageClassName) {
+      return null;
+    }
+
+    packageImportPath = `import ${packageName}.${packageClassName};`;
+    packageInstance = `new ${packageClassName}()`;
   }
-
-  const packageImportPath =
-    userConfig.packageImportPath ||
-    `import ${packageName}.${packageClassName};`;
-
-  const packageInstance =
-    userConfig.packageInstance || `new ${packageClassName}()`;
 
   const buildTypes = userConfig.buildTypes || [];
   const dependencyConfiguration = userConfig.dependencyConfiguration;

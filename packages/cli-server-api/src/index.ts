@@ -5,7 +5,6 @@ import connect from 'connect';
 import errorhandler from 'errorhandler';
 import nocache from 'nocache';
 import serveStatic from 'serve-static';
-import {debuggerUIMiddleware} from '@react-native-community/cli-debugger-ui';
 
 import devToolsMiddleware from './devToolsMiddleware';
 import indexPageMiddleware from './indexPageMiddleware';
@@ -49,7 +48,6 @@ export function createDevServerMiddleware(options: MiddlewareOptions) {
     // @ts-ignore compression and connect types mismatch
     .use(compression())
     .use(nocache())
-    .use('/debugger-ui', debuggerUIMiddleware())
     .use(
       '/launch-js-devtools',
       devToolsMiddleware(options, isDebuggerConnected),

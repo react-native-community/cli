@@ -8,7 +8,7 @@ build/
 .eslintcache
 !packages/cli/src/commands/init/__fixtures__/editTemplate/node_modules
 *.tsbuildinfo
-.cache
+.parcel-cache
 .watchmanconfig
 coverage
 !packages/cli-platform-ios/src/config/__fixtures__/native_modules/node_modules

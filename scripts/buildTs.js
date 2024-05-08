@@ -35,7 +35,7 @@ console.log(chalk.inverse('Building TypeScript definition files'));
 process.stdout.write(adjustToTerminalWidth('Building\n'));
 
 try {
-  execa.sync('node', args, {stdio: 'inherit'});
+  execa.sync('node', args, {stdio: 'inherit', shell: true});
   process.stdout.write(`${OK}\n`);
 } catch (e) {
   process.stdout.write('\n');

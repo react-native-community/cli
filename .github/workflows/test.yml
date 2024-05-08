@@ -58,9 +58,7 @@ jobs:
           distribution: 'zulu'
           java-version: 17
 
-      - uses: gradle/gradle-build-action@v2
-        with:
-          gradle-version: 8.0.1
+      - uses: gradle/actions/setup-gradle@v3
 
       - uses: ruby/setup-ruby@v1
         if: runner.os == 'macOS'

@@ -6,45 +6,33 @@ import {
   getTempDirectory,
   cleanup,
   writeFiles,
-  addRNCPrefix,
-  getAllPackages,
 } from '../jest/helpers';
 
-const cwd = getTempDirectory('test_different_roots');
+const DIR = getTempDirectory('test_different_roots');
 
 beforeAll(() => {
-  const packages = getAllPackages();
-
-  // Register all packages to be linked
-  for (const pkg of packages) {
-    spawnScript('yarn', ['link'], {
-      cwd: path.join(__dirname, `../packages/${pkg}`),
-    });
-  }
-
   // Clean up folder and re-create a new project
-  cleanup(cwd);
-  writeFiles(cwd, {});
+  cleanup(DIR);
+  writeFiles(DIR, {});
 
   // Initialise React Native project
-  runCLI(cwd, ['init', 'TestProject']);
+  runCLI(DIR, ['init', 'TestProject', '--install-pods']);
 
   // Link CLI to the project
-
-  spawnScript('yarn', ['link', ...addRNCPrefix(packages)], {
-    cwd: path.join(cwd, 'TestProject'),
+  spawnScript('yarn', ['link', __dirname, '--all'], {
+    cwd: path.join(DIR, 'TestProject'),
   });
 });
 
 afterAll(() => {
-  cleanup(cwd);
+  cleanup(DIR);
 });
 
 test('works when Gradle is run outside of the project hierarchy', async () => {
   /**
    * Location of Android project
    */
-  const androidProjectRoot = path.join(cwd, 'TestProject/android');
+  const androidProjectRoot = path.join(DIR, 'TestProject/android');
 
   /*
    * Grab absolute path to Gradle wrapper. The fact that we are using
@@ -54,13 +42,9 @@ test('works when Gradle is run outside of the project hierarchy', async () => {
   const gradleWrapper = path.join(androidProjectRoot, 'gradlew');
 
   // Make sure that we use `-bin` distribution of Gradle
-  await spawnScript(
-    gradleWrapper,
-    ['wrapper', '--gradle-version=8.0.1', '--distribution-type', 'bin'],
-    {
-      cwd: androidProjectRoot,
-    },
-  );
+  await spawnScript(gradleWrapper, ['wrapper', '--distribution-type', 'bin'], {
+    cwd: androidProjectRoot,
+  });
 
   // Execute `gradle` with `-p` flag and `cwd` outside of project hierarchy
   const {stdout} = spawnScript(gradleWrapper, ['-p', androidProjectRoot], {

@@ -8,7 +8,8 @@
     "access": "public"
   },
   "bin": {
-    "react-native": "build/bin.js"
+    "rnccli": "build/bin.js",
+    "@react-native-community/cli": "build/bin.js"
   },
   "files": [
     "build",

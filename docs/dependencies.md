@@ -189,7 +189,6 @@ std::shared_ptr<TurboModule> rncli_cxxModuleProvider(
 }
 ```
 
-
 #### platforms.android.cxxOnly
 
 > Note: Only applicable when new architecture is turned on and for C++ TurboModules.

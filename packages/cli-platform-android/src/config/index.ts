@@ -135,8 +135,9 @@ export function dependencyConfig(
     ? path.join(sourceDir, userConfig.manifestPath)
     : findManifest(sourceDir);
   const buildGradlePath = findBuildGradle(sourceDir, true);
+  const cxxOnly = userConfig.cxxOnly || false;
 
-  if (!manifestPath && !buildGradlePath) {
+  if (!cxxOnly && !manifestPath && !buildGradlePath) {
     return null;
   }
 
@@ -147,7 +148,7 @@ export function dependencyConfig(
   /**
    * This module has no package to export
    */
-  if (!packageClassName) {
+  if (!cxxOnly && !packageClassName) {
     return null;
   }
 
@@ -193,5 +194,6 @@ export function dependencyConfig(
     cxxModuleCMakeListsModuleName,
     cxxModuleCMakeListsPath,
     cxxModuleHeaderName,
+    cxxOnly,
   };
 }

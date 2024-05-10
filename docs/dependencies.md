@@ -61,6 +61,7 @@ type AndroidDependencyParams = {
   cxxModuleCMakeListsModuleName?: string | null;
   cxxModuleCMakeListsPath?: string | null;
   cxxModuleHeaderName?: string | null;
+  cxxOnly?: boolean;
 };
 ```
 
@@ -187,3 +188,10 @@ std::shared_ptr<TurboModule> rncli_cxxModuleProvider(
   return nullptr;
 }
 ```
+
+
+#### platforms.android.cxxOnly
+
+> Note: Only applicable when new architecture is turned on and for C++ TurboModules.
+
+When this flag is set to `true`, the dependency will be treated as a C++ only module. This means that the dependency will not be included in the autolinking logic for Java modules. This is useful when you have a C++ only module that does not have any Java code.

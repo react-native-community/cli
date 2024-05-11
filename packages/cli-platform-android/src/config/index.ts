@@ -135,29 +135,38 @@ export function dependencyConfig(
     ? path.join(sourceDir, userConfig.manifestPath)
     : findManifest(sourceDir);
   const buildGradlePath = findBuildGradle(sourceDir, true);
-  const cxxOnly = userConfig.cxxOnly || false;
+  const isPureCxxDependency =
+    userConfig.cxxModuleCMakeListsModuleName != null &&
+    userConfig.cxxModuleCMakeListsPath != null &&
+    userConfig.cxxModuleHeaderName != null &&
+    !manifestPath &&
+    !buildGradlePath;
 
-  if (!cxxOnly && !manifestPath && !buildGradlePath) {
+  if (!manifestPath && !buildGradlePath && !isPureCxxDependency) {
     return null;
   }
 
-  const packageName =
-    userConfig.packageName || getPackageName(manifestPath, buildGradlePath);
-  const packageClassName = findPackageClassName(sourceDir);
+  let packageImportPath = null,
+    packageInstance = null;
 
-  /**
-   * This module has no package to export
-   */
-  if (!cxxOnly && !packageClassName) {
-    return null;
+  if (!isPureCxxDependency) {
+    const packageName =
+      userConfig.packageName || getPackageName(manifestPath, buildGradlePath);
+    const packageClassName = findPackageClassName(sourceDir);
+
+    /**
+     * This module has no package to export
+     */
+    if (!packageClassName) {
+      return null;
+    }
+
+    packageImportPath =
+      userConfig.packageImportPath ||
+      `import ${packageName}.${packageClassName};`;
+
+    packageInstance = userConfig.packageInstance || `new ${packageClassName}()`;
   }
-
-  const packageImportPath =
-    userConfig.packageImportPath ||
-    `import ${packageName}.${packageClassName};`;
-
-  const packageInstance =
-    userConfig.packageInstance || `new ${packageClassName}()`;
 
   const buildTypes = userConfig.buildTypes || [];
   const dependencyConfiguration = userConfig.dependencyConfiguration;
@@ -194,6 +203,6 @@ export function dependencyConfig(
     cxxModuleCMakeListsModuleName,
     cxxModuleCMakeListsPath,
     cxxModuleHeaderName,
-    cxxOnly,
+    isPureCxxDependency,
   };
 }

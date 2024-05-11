@@ -35,7 +35,6 @@ export type AndroidDependencyConfig = {
   cxxModuleCMakeListsModuleName?: string | null;
   cxxModuleCMakeListsPath?: string | null;
   cxxModuleHeaderName?: string | null;
-  cxxOnly?: boolean;
 };
 
 export type AndroidDependencyParams = {
@@ -52,5 +51,4 @@ export type AndroidDependencyParams = {
   cxxModuleCMakeListsModuleName?: string | null;
   cxxModuleCMakeListsPath?: string | null;
   cxxModuleHeaderName?: string | null;
-  cxxOnly?: boolean;
 };

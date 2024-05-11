@@ -481,7 +481,6 @@ class ReactNativeModules {
         reactNativeModuleConfig.put("cxxModuleCMakeListsModuleName", androidConfig["cxxModuleCMakeListsModuleName"])
         reactNativeModuleConfig.put("cxxModuleCMakeListsPath", androidConfig["cxxModuleCMakeListsPath"])
         reactNativeModuleConfig.put("cxxModuleHeaderName", androidConfig["cxxModuleHeaderName"])
-        reactNativeModuleConfig.put("cxxOnly", androidConfig["cxxOnly"])
 
         if (androidConfig["buildTypes"] && !androidConfig["buildTypes"].isEmpty()) {
           reactNativeModulesBuildVariants.put(nameCleansed, androidConfig["buildTypes"])

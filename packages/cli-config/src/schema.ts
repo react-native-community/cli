@@ -89,7 +89,6 @@ export const dependencyConfig = t
                 cxxModuleCMakeListsModuleName: t.string().allow(null),
                 cxxModuleCMakeListsPath: t.string().allow(null),
                 cxxModuleHeaderName: t.string().allow(null),
-                cxxOnly: t.boolean(),
               })
               .allow(null),
           })

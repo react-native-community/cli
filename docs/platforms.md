@@ -128,6 +128,5 @@ type AndroidDependencyConfig = {
   cxxModuleCMakeListsModuleName? : string | null;
   cxxModuleCMakeListsPath? : string | null;
   cxxModuleHeaderName? : string | null;
-  cxxOnly?: boolean;
 };
 ```

@@ -310,26 +310,32 @@ async function createFromTemplate({
       if (process.platform === 'darwin') {
         const installPodsValue = String(installCocoaPods);
 
-        if (installPodsValue === 'true') {
-          didInstallPods = true;
-          await installPods(loader);
-          loader.succeed();
-          setEmptyHashForCachedDependencies(projectName);
-        } else if (installPodsValue === 'undefined') {
-          const {installCocoapods} = await prompt({
-            type: 'confirm',
-            name: 'installCocoapods',
-            message: `Do you want to install CocoaPods now? ${chalk.reset.dim(
-              'Only needed if you run your project in Xcode directly',
-            )}`,
-          });
-          didInstallPods = installCocoapods;
-
-          if (installCocoapods) {
+        try {
+          if (installPodsValue === 'true') {
+            didInstallPods = true;
             await installPods(loader);
             loader.succeed();
             setEmptyHashForCachedDependencies(projectName);
+          } else if (installPodsValue === 'undefined') {
+            const {installCocoapods} = await prompt({
+              type: 'confirm',
+              name: 'installCocoapods',
+              message: `Do you want to install CocoaPods now? ${chalk.reset.dim(
+                'Only needed if you run your project in Xcode directly',
+              )}`,
+            });
+            didInstallPods = installCocoapods;
+
+            if (installCocoapods) {
+              await installPods(loader);
+              loader.succeed();
+              setEmptyHashForCachedDependencies(projectName);
+            }
           }
+        } catch (e) {
+          throw new CLIError(
+            'Installing pods failed. This doesn\'t affect project initialization and you can safely proceed. \nHowever, you will need to install pods manually when running iOS, follow additional steps in "Run instructions for iOS" section.\n',
+          );
         }
       }
     } else {
@@ -340,8 +346,9 @@ async function createFromTemplate({
     if (e instanceof CLIError) {
       logger.error(e.message);
     } else if (e instanceof Error) {
+      const unknownErrorMessage = 'Please report this issue';
       logger.error(
-        'Installing pods failed. This doesn\'t affect project initialization and you can safely proceed. \nHowever, you will need to install pods manually when running iOS, follow additional steps in "Run instructions for iOS" section.\n',
+        `An unexpected error occurred: ${e.message}. ${unknownErrorMessage}`,
       );
       logger.debug(e as any);
     }

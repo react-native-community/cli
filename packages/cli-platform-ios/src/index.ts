@@ -11,3 +11,5 @@ export {
 } from '@react-native-community/cli-platform-apple';
 
 export {dependencyConfig, projectConfig} from './config';
+
+// another command to test github action

@@ -8,7 +8,7 @@
     "access": "public"
   },
   "bin": {
-    "rnccli": "build/bin.js"
+    "rnc-cli": "build/bin.js"
   },
   "files": [
     "build",

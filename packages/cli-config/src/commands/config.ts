@@ -21,6 +21,12 @@ function filterConfig(config: Config) {
 export default {
   name: 'config',
   description: 'Print CLI configuration',
+  options: [
+    {
+      name: '--platform <platform>',
+      description: 'Output configuration for a specific platform',
+    },
+  ],
   func: async (_argv: string[], ctx: Config) => {
     console.log(JSON.stringify(filterConfig(ctx), null, 2));
   },

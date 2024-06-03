@@ -28,7 +28,6 @@ function getDependencyConfig(
   finalConfig: Config,
   config: UserDependencyConfig,
   userConfig: UserConfig,
-  isPlatform: boolean,
 ): DependencyConfig {
   return merge(
     {
@@ -39,7 +38,7 @@ function getDependencyConfig(
           const platformConfig = finalConfig.platforms[platform];
           dependency[platform] =
             // Linking platforms is not supported
-            isPlatform || !platformConfig
+            Object.keys(config.platforms).length > 0 || !platformConfig
               ? null
               : platformConfig.dependencyConfig(
                   root,
@@ -86,7 +85,13 @@ const removeDuplicateCommands = <T extends boolean>(commands: Command<T>[]) => {
 /**
  * Loads CLI configuration
  */
-function loadConfig(projectRoot: string = findProjectRoot()): Config {
+function loadConfig({
+  projectRoot = findProjectRoot(),
+  selectedPlatform,
+}: {
+  projectRoot?: string;
+  selectedPlatform?: string;
+}): Config {
   let lazyProject: ProjectConfig;
   const userConfig = readConfigFromDisk(projectRoot);
 
@@ -140,8 +145,6 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
         resolveNodeModuleDir(projectRoot, dependencyName);
       let config = readDependencyConfigFromDisk(root, dependencyName);
 
-      const isPlatform = Object.keys(config.platforms).length > 0;
-
       return assign({}, acc, {
         dependencies: assign({}, acc.dependencies, {
           get [dependencyName](): DependencyConfig {
@@ -151,7 +154,6 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
               finalConfig,
               config,
               userConfig,
-              isPlatform,
             );
           },
         }),
@@ -161,7 +163,9 @@ function loadConfig(projectRoot: string = findProjectRoot()): Config {
         ]),
         platforms: {
           ...acc.platforms,
-          ...config.platforms,
+          ...(selectedPlatform && config.platforms[selectedPlatform]
+            ? {[selectedPlatform]: config.platforms[selectedPlatform]}
+            : config.platforms),
         },
         healthChecks: [...acc.healthChecks, ...config.healthChecks],
       }) as Config;

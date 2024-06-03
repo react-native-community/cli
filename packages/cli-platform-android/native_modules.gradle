@@ -432,7 +432,7 @@ class ReactNativeModules {
     String[] nodeCommand = ["node", "-e", cliResolveScript]
     def cliPath = this.getCommandOutput(nodeCommand, this.root)
 
-    String[] reactNativeConfigCommand = ["node", cliPath, "config"]
+    String[] reactNativeConfigCommand = ["node", cliPath, "config", "--platform", "android"]
     def reactNativeConfigOutput = this.getCommandOutput(reactNativeConfigCommand, this.root)
 
     def json

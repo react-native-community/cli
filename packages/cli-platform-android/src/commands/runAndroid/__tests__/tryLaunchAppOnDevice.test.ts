@@ -118,6 +118,34 @@ test('launches adb shell with intent to launch com.myapp.MainActivity with diffe
   );
 });
 
+test('launches adb shell with intent to launch fully specified activity with different appId than packageName and an app suffix on a device', () => {
+  tryLaunchAppOnDevice(
+    device,
+    {
+      ...androidProject,
+      mainActivity: 'com.zoontek.rnbootsplash.RNBootSplashActivity',
+    },
+    adbPath,
+    {
+      ...args,
+      appIdSuffix: 'dev',
+    },
+  );
+
+  expect(execa.sync).toHaveBeenCalledWith(
+    'path/to/adb',
+    [
+      '-s',
+      'emulator-5554',
+      ...shellStartCommand,
+      '-n',
+      'com.myapp.custom.dev/com.zoontek.rnbootsplash.RNBootSplashActivity',
+      ...actionCategoryFlags,
+    ],
+    {stdio: 'inherit'},
+  );
+});
+
 test('--appId flag overwrites applicationId setting in androidProject', () => {
   tryLaunchAppOnDevice(undefined, androidProject, adbPath, {
     ...args,

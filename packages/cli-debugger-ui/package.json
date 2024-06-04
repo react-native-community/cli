@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "yarn build:ui && yarn build:middleware",
-    "build:ui": "parcel build --no-content-hash src/ui/index.html --dist-dir build/ui --public-url '/debugger-ui'",
+    "build:ui": "parcel build --no-cache --no-content-hash src/ui/index.html --dist-dir build/ui --public-url '/debugger-ui'",
     "build:middleware": "tsc"
   },
   "files": [

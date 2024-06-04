@@ -117,7 +117,8 @@ function connectToDebuggerProxy() {
     // This worker will run the application JavaScript code,
     // making sure that it's run in an environment without a global
     // document, to make it consistent with the JSC executor environment.
-    worker = new Worker('./debuggerWorker.js');
+    const url = new URL('./debuggerWorker.js', import.meta.url);
+    worker = new Worker(url);
     worker.onmessage = function (message) {
       ws.send(JSON.stringify(message.data));
     };

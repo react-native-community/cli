@@ -24,11 +24,13 @@ function tryLaunchAppOnDevice(
     .filter(Boolean)
     .join('.');
 
-  const activityToLaunch = mainActivity.startsWith(packageName)
-    ? mainActivity
-    : mainActivity.startsWith('.')
-    ? [packageName, mainActivity].join('')
-    : [packageName, mainActivity].filter(Boolean).join('.');
+  const activityToLaunch =
+    mainActivity.startsWith(packageName) ||
+    (!mainActivity.startsWith('.') && mainActivity.includes('.'))
+      ? mainActivity
+      : mainActivity.startsWith('.')
+      ? [packageName, mainActivity].join('')
+      : [packageName, mainActivity].filter(Boolean).join('.');
 
   try {
     // Here we're using the same flags as Android Studio to launch the app

@@ -125,7 +125,7 @@ async function getAvailableDevicePort(
 async function buildAndRun(args: Flags, androidProject: AndroidProject) {
   if (args.deviceId) {
     logger.warn(
-      'The `deviceId` parameter is deprecated. Please use `device` instead.',
+      'The `deviceId` parameter is renamed to `device`. Please use the new `device` argument next time to avoid this warning.',
     );
     args.device = args.deviceId;
   }

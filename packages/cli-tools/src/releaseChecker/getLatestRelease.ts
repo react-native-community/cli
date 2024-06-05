@@ -73,7 +73,7 @@ export default async function getLatestRelease(
         stable,
         candidate,
         changelogUrl: buildChangelogUrl(stable),
-        diffUrl: buildDiffUrl(currentVersion),
+        diffUrl: buildDiffUrl(currentVersion, stable),
       };
     }
   } catch (e) {
@@ -89,8 +89,8 @@ function buildChangelogUrl(version: string) {
   return `https://github.com/facebook/react-native/releases/tag/v${version}`;
 }
 
-function buildDiffUrl(version: string) {
-  return `https://react-native-community.github.io/upgrade-helper/?from=${version}`;
+function buildDiffUrl(oldVersion: string, newVersion: string) {
+  return `https://react-native-community.github.io/upgrade-helper/?from=${oldVersion}&to=${newVersion}`;
 }
 
 type LatestVersions = {

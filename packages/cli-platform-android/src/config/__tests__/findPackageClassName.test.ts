@@ -24,8 +24,14 @@ const fs = require('fs');
           flatJava: {
             android: mocks.valid,
           },
+          flatJavaDifferentName: {
+            android: mocks.validWithDifferentFileName,
+          },
           flatKotlin: {
             android: mocks.validKotlin,
+          },
+          flatKotlinDifferentName: {
+            android: mocks.validKotlinWithDifferentFileName,
           },
         },
         platform,
@@ -42,8 +48,20 @@ const fs = require('fs');
       );
     });
 
+    it('returns the name of the java class implementing ReactPackage with different file name', () => {
+      expect(findPackageClassName(`${root}flatJavaDifferentName`)).toBe(
+        'SomeExampleJavaPackage',
+      );
+    });
+
     it('returns the name of the kotlin class implementing ReactPackage', () => {
       expect(findPackageClassName(`${root}flatKotlin`)).toBe(
+        'SomeExampleKotlinPackage',
+      );
+    });
+
+    it('returns the name of the kotlin class implementing ReactPackage with different file name', () => {
+      expect(findPackageClassName(`${root}flatKotlinDifferentName`)).toBe(
         'SomeExampleKotlinPackage',
       );
     });

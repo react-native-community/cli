@@ -75,6 +75,12 @@ export const valid = generateValidFileStructureForLib('ReactPackage.java');
 
 export const validKotlin = generateValidFileStructureForLib('ReactPackage.kt');
 
+export const validWithDifferentFileName =
+  generateValidFileStructureForLib('React.java');
+
+export const validKotlinWithDifferentFileName =
+  generateValidFileStructureForLib('React.kt');
+
 export const validApp = generateValidFileStructureForApp();
 
 export const userConfigManifest = {

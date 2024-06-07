@@ -11,20 +11,41 @@ import glob from 'fast-glob';
 import path from 'path';
 import {unixifyPaths} from '@react-native-community/cli-tools';
 
-export function getMainActivityFiles(folder: string) {
-  return glob.sync('**/+(*.java|*.kt)', {cwd: unixifyPaths(folder)});
+export function getMainActivityFiles(
+  folder: string,
+  includePackage: boolean = true,
+) {
+  let patternArray = [];
+
+  if (includePackage) {
+    patternArray.push('*Package.java', '*Package.kt');
+  } else {
+    patternArray.push('*.java', '*.kt');
+  }
+
+  return glob.sync(`**/+(${patternArray.join('|')})`, {
+    cwd: unixifyPaths(folder),
+  });
 }
 
 export default function getPackageClassName(folder: string) {
-  const files = getMainActivityFiles(folder);
+  let files = getMainActivityFiles(folder);
+  let packages = getClassNameMatches(files, folder);
 
-  const packages = files
-    .map((filePath) => fs.readFileSync(path.join(folder, filePath), 'utf8'))
-    .map(matchClassName)
-    .filter((match) => match);
+  if (!packages.length) {
+    files = getMainActivityFiles(folder, false);
+    packages = getClassNameMatches(files, folder);
+  }
 
   // @ts-ignore
   return packages.length ? packages[0][1] : null;
+}
+
+function getClassNameMatches(files: string[], folder: string) {
+  return files
+    .map((filePath) => fs.readFileSync(path.join(folder, filePath), 'utf8'))
+    .map(matchClassName)
+    .filter((match) => match);
 }
 
 export function matchClassName(file: string) {

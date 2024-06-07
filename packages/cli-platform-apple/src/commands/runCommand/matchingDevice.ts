@@ -1,11 +1,12 @@
 import {logger} from '@react-native-community/cli-tools';
 import chalk from 'chalk';
-import {Device} from '../../types';
+import {Device, DeviceType} from '../../types';
 
 export function matchingDevice(
   devices: Array<Device>,
   deviceName: string | true | undefined,
 ) {
+  // The condition specifically checks if the value is `true`, not just truthy to allow for `--device` flag without a value
   if (deviceName === true) {
     const firstIOSDevice = devices.find((d) => d.type === 'device')!;
     if (firstIOSDevice) {
@@ -20,18 +21,10 @@ export function matchingDevice(
       return undefined;
     }
   }
-  const deviceByName = devices.find(
+  return devices.find(
     (device) =>
       device.name === deviceName || formattedDeviceName(device) === deviceName,
   );
-  if (!deviceByName) {
-    logger.error(
-      `Could not find a device named: "${chalk.bold(
-        String(deviceName),
-      )}". ${printFoundDevices(devices)}`,
-    );
-  }
-  return deviceByName;
 }
 
 export function formattedDeviceName(simulator: Device) {
@@ -40,9 +33,15 @@ export function formattedDeviceName(simulator: Device) {
     : simulator.name;
 }
 
-export function printFoundDevices(devices: Array<Device>) {
+export function printFoundDevices(devices: Array<Device>, type?: DeviceType) {
+  let filteredDevice = [...devices];
+
+  if (type) {
+    filteredDevice = filteredDevice.filter((device) => device.type === type);
+  }
+
   return [
     'Available devices:',
-    ...devices.map((device) => `  - ${device.name} (${device.udid})`),
+    ...filteredDevice.map(({name, udid}) => `  - ${name} (${udid})`),
   ].join('\n');
 }

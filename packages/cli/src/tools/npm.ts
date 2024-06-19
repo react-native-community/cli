@@ -28,3 +28,17 @@ export function getNpmVersionIfAvailable() {
 export function isProjectUsingNpm(cwd: string) {
   return findUp.sync('package-lock.json', {cwd});
 }
+
+/**
+ * Convert an npm tag to a concrete version, for example:
+ * - next -> 0.75.0-rc.0
+ * - nightly -> 0.75.0-nightly-20240618-5df5ed1a8
+ */
+export async function npmResolveConcreteVersion(
+  tagOrVersion: string,
+): Promise<string> {
+  const json: any = await fetch(
+    `https://registry.npmjs.org/react-native/${tagOrVersion}`,
+  ).then((resp) => resp.json());
+  return json.version;
+}

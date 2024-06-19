@@ -20,12 +20,15 @@ import {
   copyTemplate,
   executePostInitScript,
 } from './template';
-import {changePlaceholderInTemplate} from './editTemplate';
+import {changePlaceholderInTemplate, updateDependencies} from './editTemplate';
 import * as PackageManager from '../../tools/packageManager';
 import banner from './banner';
 import TemplateAndVersionError from './errors/TemplateAndVersionError';
 import {getBunVersionIfAvailable} from '../../tools/bun';
-import {getNpmVersionIfAvailable} from '../../tools/npm';
+import {
+  getNpmVersionIfAvailable,
+  npmResolveConcreteVersion,
+} from '../../tools/npm';
 import {getYarnVersionIfAvailable} from '../../tools/yarn';
 import {createHash} from 'crypto';
 import {
@@ -211,6 +214,7 @@ async function createFromTemplate({
   installCocoaPods,
   replaceDirectory,
   yarnConfigOptions,
+  version,
 }: TemplateOptions): Promise<TemplateReturnType> {
   logger.debug('Initializing new project');
   // Only print out the banner if we're not in a CI
@@ -280,6 +284,19 @@ async function createFromTemplate({
       placeholderTitle: templateConfig.titlePlaceholder,
       packageName,
     });
+
+    // Update the react-native dependency if using the new @react-native-community/template.
+    // We can figure this out as it ships with react-native@1000.0.0 set to a dummy version.
+    const templatePackageJson = JSON.parse(
+      fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'),
+    );
+    if (templatePackageJson.dependencies?.['react-native'] === '1000.0.0') {
+      updateDependencies({
+        dependencies: {
+          'react-native': await npmResolveConcreteVersion(version ?? 'latest'),
+        },
+      });
+    }
 
     if (packageManager === 'yarn' && shouldBumpYarnVersion) {
       await bumpYarnVersion(false, projectDirectory);

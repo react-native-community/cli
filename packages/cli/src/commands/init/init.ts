@@ -90,7 +90,7 @@ const bumpYarnVersion = async (silent: boolean, root: string) => {
     if (yarnVersion) {
       // `yarn set` is unsupported until 1.22, however it's a alias (yarnpkg/yarn/pull/7862) calling `policies set-version`.
       let setVersionArgs = ['set', 'version', YARN_VERSION];
-      if (yarnVersion.major === 1 && yarnVersion.minor <= 22) {
+      if (yarnVersion.major === 1 && yarnVersion.minor < 22) {
         setVersionArgs = ['policies', 'set-version', YARN_VERSION];
       }
       await executeCommand('yarn', setVersionArgs, {

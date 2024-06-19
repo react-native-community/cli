@@ -75,7 +75,7 @@ export function getInfo(
       return result;
     }
 
-    const schemes = info?.schemes;
+    const schemes = info.schemes;
 
     // If this is the first project, use it as the "main" project
     if (!result) {

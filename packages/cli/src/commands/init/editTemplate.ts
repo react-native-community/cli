@@ -307,3 +307,25 @@ export async function changePlaceholderInTemplate({
     }
   }
 }
+
+type Packages = {
+  [pkgs: string]: string;
+};
+
+const REACT_NATIVE_SCOPE = '@react-native/';
+
+/**
+ * Packages that are scoped under @react-native need a consistent version
+ */
+export function normalizeReactNativeDeps(
+  deps: Packages | undefined,
+  version: string,
+): Packages {
+  const updated: Packages = {};
+  for (const key of Object.keys(deps ?? {}).filter((pkg) =>
+    pkg.startsWith(REACT_NATIVE_SCOPE),
+  )) {
+    updated[key] = version;
+  }
+  return updated;
+}

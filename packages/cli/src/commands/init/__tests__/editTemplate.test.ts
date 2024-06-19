@@ -11,6 +11,7 @@ import {
   validatePackageName,
   replaceNameInUTF8File,
   updateDependencies,
+  normalizeReactNativeDeps,
 } from '../editTemplate';
 import semver from 'semver';
 
@@ -429,5 +430,27 @@ describe('replaceNameInUTF8File', () => {
 
     expect(beforeReplacement).toEqual(afterReplacement);
     expect(fsWriteFileSpy).toHaveBeenCalledTimes(0);
+  });
+});
+
+describe('normalizeReactNativeDeps', () => {
+  it('returns only @react-native/* dependencies updated to a specific version', () => {
+    const devDependencies = {
+      '@babel/core': '^7.20.0',
+      '@react-native/babel-preset': '0.75.0-main',
+      '@react-native/eslint-config': '0.75.0-main',
+      '@react-native/metro-config': '0.75.0-main',
+      '@react-native/typescript-config': '0.75.0-main',
+      '@types/react': '^18.2.6',
+      '@types/react-test-renderer': '^18.0.0',
+      eslint: '^8.19.0',
+      'react-test-renderer': '19.0.0-rc-fb9a90fa48-20240614',
+    };
+    expect(normalizeReactNativeDeps(devDependencies, '0.75.0')).toMatchObject({
+      '@react-native/babel-preset': '0.75.0',
+      '@react-native/eslint-config': '0.75.0',
+      '@react-native/metro-config': '0.75.0',
+      '@react-native/typescript-config': '0.75.0',
+    });
   });
 });

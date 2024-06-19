@@ -19,7 +19,11 @@ import {
   copyTemplate,
   executePostInitScript,
 } from './template';
-import {changePlaceholderInTemplate, updateDependencies} from './editTemplate';
+import {
+  changePlaceholderInTemplate,
+  updateDependencies,
+  normalizeReactNativeDeps,
+} from './editTemplate';
 import * as PackageManager from '../../tools/packageManager';
 import banner from './banner';
 import TemplateAndVersionError from './errors/TemplateAndVersionError';
@@ -293,13 +297,24 @@ async function createFromTemplate({
       fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'),
     );
     if (templatePackageJson.dependencies?.['react-native'] === '1000.0.0') {
-      // Since 0.75
-
+      // Since 0.75, the version of all @react-native/ packages are pinned to the version of
+      // react native.  Enforce this when updating versions.
+      const concreteVersion = await npmResolveConcreteVersion(
+        'react-native',
+        version,
+      );
       updateDependencies({
         dependencies: {
-          'react-native': await npmResolveConcreteVersion(
-            'react-native',
-            version,
+          'react-native': concreteVersion,
+          ...normalizeReactNativeDeps(
+            templatePackageJson.dependencies,
+            concreteVersion,
+          ),
+        },
+        devDependencies: {
+          ...normalizeReactNativeDeps(
+            templatePackageJson.devDependencies,
+            concreteVersion,
           ),
         },
       });
@@ -484,20 +499,26 @@ async function createProject(
   shouldBumpYarnVersion: boolean,
   options: Options,
 ): Promise<TemplateReturnType> {
-  // Handle these cases (when community template is published and react-native
-  // doesn't have a template in 'react-native/template'):
+  // Handle these cases (when community template is published and react-native >= 0.75
   //
   // +==================================================================+==========+==============+
   // | Arguments                                                        | Template | React Native |
   // +==================================================================+==========+==============+
   // | <None>                                                           | latest   | latest       |
   // +------------------------------------------------------------------+----------+--------------+
-  // | --version 0.75.0                                                 | latest   | 0.75.0       |
+  // | --version 0.75.0                                                 | 0.75.0   | 0.75.0       |
   // +------------------------------------------------------------------+----------+--------------+
   // | --template @react-native-community/template@0.75.1               | 0.75.1   | latest       |
   // +------------------------------------------------------------------+----------+--------------+
   // | --template @react-native-community/template@0.75.1 --version 0.75| 0.75.1   | 0.75.x       |
   // +------------------------------------------------------------------+----------+--------------+
+  //
+  // 1. If you specify `--version 0.75.0` and `@react-native-community/template@0.75.0` is *NOT*
+  // published, then `init` will exit and suggest explicitly using the `--template` argument.
+  //
+  // 2. `--template` will always win over `--version` for the template.
+  //
+  // 3. For version < 0.75, the template ships with react-native.
   const templateUri = await createTemplateUri(options, version);
 
   return createFromTemplate({

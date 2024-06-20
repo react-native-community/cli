@@ -15,6 +15,15 @@ interface PlaceholderConfig {
   packageName?: string;
 }
 
+interface NpmPackageDependencies {
+  dependencies?: {
+    [name: string]: string;
+  };
+  devDependencies?: {
+    [name: string]: string;
+  };
+}
+
 /**
   TODO: This is a default placeholder for title in react-native template.
   We should get rid of this once custom templates adapt `placeholderTitle` in their configurations.
@@ -226,6 +235,35 @@ export async function replacePlaceholderWithPackageName({
   }
 }
 
+export function updateDependencies(update: NpmPackageDependencies) {
+  logger.debug('Updating package.json dependencies:');
+  const pkgJsonPath = path.join(process.cwd(), 'package.json');
+
+  const pkgJson = JSON.parse(fs.readFileSync(pkgJsonPath, 'utf8'));
+
+  for (const [pkg, value] of Object.entries(update.dependencies ?? {})) {
+    const old = pkgJson.dependencies[pkg];
+    if (old) {
+      logger.debug(`${pkg}: ${old} → ${value}`);
+    } else {
+      logger.debug(`${pkg}: ${value}`);
+    }
+    pkgJson.dependencies[pkg] = value;
+  }
+
+  for (const [pkg, value] of Object.entries(update.devDependencies ?? {})) {
+    const old = pkgJson.devDependencies[pkg];
+    if (old) {
+      logger.debug(`${pkg}: ${old} → ${value}`);
+    } else {
+      logger.debug(`${pkg}: ${value}`);
+    }
+    pkgJson.devDependencies[pkg] = value;
+  }
+
+  fs.writeFileSync(pkgJsonPath, JSON.stringify(pkgJson, null, 2));
+}
+
 export async function changePlaceholderInTemplate({
   projectName,
   placeholderName,
@@ -268,4 +306,26 @@ export async function changePlaceholderInTemplate({
       await processDotfiles(filePath);
     }
   }
+}
+
+type Packages = {
+  [pkgs: string]: string;
+};
+
+const REACT_NATIVE_SCOPE = '@react-native/';
+
+/**
+ * Packages that are scoped under @react-native need a consistent version
+ */
+export function normalizeReactNativeDeps(
+  deps: Packages | undefined,
+  version: string,
+): Packages {
+  const updated: Packages = {};
+  for (const key of Object.keys(deps ?? {}).filter((pkg) =>
+    pkg.startsWith(REACT_NATIVE_SCOPE),
+  )) {
+    updated[key] = version;
+  }
+  return updated;
 }

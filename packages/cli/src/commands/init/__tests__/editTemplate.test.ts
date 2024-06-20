@@ -10,6 +10,8 @@ import {
   replacePlaceholderWithPackageName,
   validatePackageName,
   replaceNameInUTF8File,
+  updateDependencies,
+  normalizeReactNativeDeps,
 } from '../editTemplate';
 import semver from 'semver';
 
@@ -173,7 +175,7 @@ describe('changePlaceholderInTemplate', () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.restoreAllMocks();
   });
 
   skipIfNode20(
@@ -200,13 +202,74 @@ describe('changePlaceholderInTemplate', () => {
   );
 });
 
+const samplePackageJson: string = `{
+  "name": "HelloWorld",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "lint": "eslint .",
+    "start": "react-native start",
+    "test": "jest"
+  },
+  "dependencies": {
+    "react": "19.0.0-rc-fb9a90fa48-20240614",
+    "react-native": "1000.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0",
+    "@babel/preset-env": "^7.20.0",
+    "@babel/runtime": "^7.20.0",
+    "@react-native/babel-preset": "0.75.0-main",
+    "@react-native/eslint-config": "0.75.0-main",
+    "@react-native/metro-config": "0.75.0-main",
+    "@react-native/typescript-config": "0.75.0-main",
+    "@types/react": "^18.2.6",
+    "@types/react-test-renderer": "^18.0.0",
+    "babel-jest": "^29.6.3",
+    "eslint": "^8.19.0",
+    "jest": "^29.6.3",
+    "prettier": "2.8.8",
+    "react-test-renderer": "19.0.0-rc-fb9a90fa48-20240614",
+    "typescript": "5.0.4"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}`;
+
+describe('updateDependencies', () => {
+  beforeEach(() => {
+    jest.spyOn(process, 'cwd').mockImplementation(() => testPath);
+    jest.spyOn(fs, 'writeFileSync');
+    jest.spyOn(fs, 'readFileSync').mockImplementation(() => samplePackageJson);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('updates react-native', () => {
+    updateDependencies({
+      dependencies: {
+        'react-native': '0.75.0',
+      },
+    });
+    expect(fs.writeFileSync as jest.Mock).toHaveBeenCalledWith(
+      expect.anything(),
+      samplePackageJson.replace('1000.0.0', '0.75.0'),
+    );
+  });
+});
+
 describe('replacePlaceholderWithPackageName', () => {
   beforeEach(() => {
     jest.spyOn(process, 'cwd').mockImplementation(() => testPath);
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.restoreAllMocks();
   });
 
   skipIfNode20(
@@ -367,5 +430,27 @@ describe('replaceNameInUTF8File', () => {
 
     expect(beforeReplacement).toEqual(afterReplacement);
     expect(fsWriteFileSpy).toHaveBeenCalledTimes(0);
+  });
+});
+
+describe('normalizeReactNativeDeps', () => {
+  it('returns only @react-native/* dependencies updated to a specific version', () => {
+    const devDependencies = {
+      '@babel/core': '^7.20.0',
+      '@react-native/babel-preset': '0.75.0-main',
+      '@react-native/eslint-config': '0.75.0-main',
+      '@react-native/metro-config': '0.75.0-main',
+      '@react-native/typescript-config': '0.75.0-main',
+      '@types/react': '^18.2.6',
+      '@types/react-test-renderer': '^18.0.0',
+      eslint: '^8.19.0',
+      'react-test-renderer': '19.0.0-rc-fb9a90fa48-20240614',
+    };
+    expect(normalizeReactNativeDeps(devDependencies, '0.75.0')).toMatchObject({
+      '@react-native/babel-preset': '0.75.0',
+      '@react-native/eslint-config': '0.75.0',
+      '@react-native/metro-config': '0.75.0',
+      '@react-native/typescript-config': '0.75.0',
+    });
   });
 });

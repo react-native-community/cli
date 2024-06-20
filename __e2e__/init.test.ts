@@ -207,8 +207,11 @@ test('init --platform-name should work for out of tree platform', () => {
   ]);
 
   expect(stdout).toContain('Run instructions');
+  // This will no longer contain react-native-macos@latest, but
+  // react-native-macos@0.74.1 or whatever the concrete version
+  // matching @latest at the time of execution.
   expect(stdout).toContain(
-    `Installing template from ${outOfTreePlatformName}@latest`,
+    `Installing template from ${outOfTreePlatformName}@`,
   );
 
   // make sure we don't leave garbage

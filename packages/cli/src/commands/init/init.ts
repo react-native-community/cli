@@ -19,11 +19,7 @@ import {
   copyTemplate,
   executePostInitScript,
 } from './template';
-import {
-  changePlaceholderInTemplate,
-  updateDependencies,
-  normalizeReactNativeDeps,
-} from './editTemplate';
+import {changePlaceholderInTemplate} from './editTemplate';
 import * as PackageManager from '../../tools/packageManager';
 import banner from './banner';
 import TemplateAndVersionError from './errors/TemplateAndVersionError';
@@ -31,7 +27,6 @@ import {getBunVersionIfAvailable} from '../../tools/bun';
 import {
   getNpmVersionIfAvailable,
   npmResolveConcreteVersion,
-  npmCheckPackageVersionExists,
 } from '../../tools/npm';
 import {getYarnVersionIfAvailable} from '../../tools/yarn';
 import {createHash} from 'crypto';
@@ -46,7 +41,7 @@ import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
 
 const DEFAULT_VERSION = 'latest';
 // This version moved from inlining the template to using @react-native-community/template
-const TEMPLATE_COMMUNITY_REACT_NATIVE_VERSION = '0.75.0-rc.0';
+const TEMPLATE_COMMUNITY_REACT_NATIVE_VERSION = '0.75.0';
 const TEMPLATE_PACKAGE_COMMUNITY = '@react-native-community/template';
 const TEMPLATE_PACKAGE_LEGACY = 'react-native';
 const TEMPLATE_PACKAGE_LEGACY_TYPESCRIPT = 'react-native-template-typescript';
@@ -220,7 +215,6 @@ async function createFromTemplate({
   installCocoaPods,
   replaceDirectory,
   yarnConfigOptions,
-  version,
 }: TemplateOptions): Promise<TemplateReturnType> {
   logger.debug('Initializing new project');
   // Only print out the banner if we're not in a CI
@@ -290,35 +284,6 @@ async function createFromTemplate({
       placeholderTitle: templateConfig.titlePlaceholder,
       packageName,
     });
-
-    // Update the react-native dependency if using the new @react-native-community/template.
-    // We can figure this out as it ships with react-native@1000.0.0 set to a dummy version.
-    const templatePackageJson = JSON.parse(
-      fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'),
-    );
-    if (templatePackageJson.dependencies?.['react-native'] === '1000.0.0') {
-      // Since 0.75, the version of all @react-native/ packages are pinned to the version of
-      // react native.  Enforce this when updating versions.
-      const concreteVersion = await npmResolveConcreteVersion(
-        'react-native',
-        version,
-      );
-      updateDependencies({
-        dependencies: {
-          'react-native': concreteVersion,
-          ...normalizeReactNativeDeps(
-            templatePackageJson.dependencies,
-            concreteVersion,
-          ),
-        },
-        devDependencies: {
-          ...normalizeReactNativeDeps(
-            templatePackageJson.devDependencies,
-            concreteVersion,
-          ),
-        },
-      });
-    }
 
     if (packageManager === 'yarn' && shouldBumpYarnVersion) {
       await bumpYarnVersion(false, projectDirectory);
@@ -453,37 +418,48 @@ async function createTemplateUri(
     return options.template;
   }
 
-  // Figure out whether we should use the @react-native-community/template over react-native/template,
-  // this requires 2 tests.
+  // 0.75.0-nightly-20240618-5df5ed1a8' -> 0.75.0
+  // 0.75.0-rc.1 -> 0.75.0
+  const simpleVersion = semver.coerce(version) ?? version;
 
-  // Test #1: Does the @react-native-community/template@ exist?
-  const canUseCommunityTemplate = await npmCheckPackageVersionExists(
-    TEMPLATE_PACKAGE_COMMUNITY,
-    version,
-  );
-
-  // Test #2: Does the react-native@version package *not* have a template embedded. We know that
-  //          this applies to all version before 0.75. The 1st release candidate is the minimal
-  //          version that has no template.
+  // Does the react-native@version package *not* have a template embedded. We know that this applies to
+  // all version before 0.75. The 1st release candidate is the minimal version that has no template.
   const useLegacyTemplate = semver.lt(
-    version,
+    simpleVersion,
     TEMPLATE_COMMUNITY_REACT_NATIVE_VERSION,
   );
 
-  if (!useLegacyTemplate && !canUseCommunityTemplate) {
-    // This isn't going to succeed, stop the user and help them unblock themselves.
-    logger.warn(
-      `You've asked to install react-native@${version}, but there isn't a matching @react-native-community/template@${version}.
+  logger.debug(
+    `[template]: is '${version} (${simpleVersion})' < '${TEMPLATE_COMMUNITY_REACT_NATIVE_VERSION}' = ` +
+      (useLegacyTemplate
+        ? 'yes, look for template in react-native'
+        : 'no, look for template in @react-native-community/template'),
+  );
 
-Something has gone wrong here 😔.  If you know what you're doing, specify the exact ${chalk.bold(
-        '--template',
-      )}`,
-    );
-    process.exit(1);
-  }
+  if (!useLegacyTemplate) {
+    // This will use ~ to grab the latest patch version.
+    //
+    // Because we allow for many PATCHes to occur for a version of react-native, it's not possible to know
+    // (without inspecting the template's npm metadata) which template works with which react-native version.
+    // We are guaranteed that the latest version of react-native  will work with the latest version of the
+    // template on that version.
+    //
+    // Example:
+    //
+    // Suppose react-native 0.75.0 was released, and 0.74.8 was the previous version. If I ran
+    // `init --version 0.74.8` it would be guaranteed to work with the latest version of the template
+    // matching the MAJOR.MINOR, e.g. 0.74.21.
+    if (/nightly/.test(version)) {
+      logger.debug(
+        "[template]: you're using a nightly version of react-native",
+      );
+      // Template nightly versions and react-native@nightly versions don't match (template releases at a much
+      // lower cadence). The naming scheme we use for nightlies doesn't support '~'. We have to assume the user
+      // is running against the latest nightly:
+      return `${TEMPLATE_PACKAGE_COMMUNITY}@nightly`;
+    }
 
-  if (!useLegacyTemplate && canUseCommunityTemplate) {
-    return `${TEMPLATE_PACKAGE_COMMUNITY}@${version}`;
+    return `${TEMPLATE_PACKAGE_COMMUNITY}@~${version}`;
   }
 
   logger.debug(
@@ -501,17 +477,19 @@ async function createProject(
 ): Promise<TemplateReturnType> {
   // Handle these cases (when community template is published and react-native >= 0.75
   //
-  // +==================================================================+==========+==============+
-  // | Arguments                                                        | Template | React Native |
-  // +==================================================================+==========+==============+
-  // | <None>                                                           | latest   | latest       |
-  // +------------------------------------------------------------------+----------+--------------+
-  // | --version 0.75.0                                                 | 0.75.0   | 0.75.0       |
-  // +------------------------------------------------------------------+----------+--------------+
-  // | --template @react-native-community/template@0.75.1               | 0.75.1   | latest       |
-  // +------------------------------------------------------------------+----------+--------------+
-  // | --template @react-native-community/template@0.75.1 --version 0.75| 0.75.1   | 0.75.x       |
-  // +------------------------------------------------------------------+----------+--------------+
+  // +==================================================================+==========+===================+
+  // | Arguments                                                        | Template |   React Native    |
+  // +==================================================================+==========+===================+
+  // | <None>                                                           | 0.74.x   | 0.74.5 (latest)   |
+  // +------------------------------------------------------------------+----------+-------------------+
+  // | --version next                                                   | 0.75.x   | 0.75.0-rc.1 (next)|
+  // +------------------------------------------------------------------+----------+-------------------+
+  // | --version 0.75.0                                                 | 0.75.x   | 0.75.0            |
+  // +------------------------------------------------------------------+----------+-------------------+
+  // | --template @react-native-community/template@0.75.1               | 0.75.1   | latest            |
+  // +------------------------------------------------------------------+----------+-------------------+
+  // | --template @react-native-community/template@0.75.1 --version 0.75| 0.75.1   | 0.75.x            |
+  // +------------------------------------------------------------------+----------+-------------------+
   //
   // 1. If you specify `--version 0.75.0` and `@react-native-community/template@0.75.0` is *NOT*
   // published, then `init` will exit and suggest explicitly using the `--template` argument.
@@ -519,7 +497,15 @@ async function createProject(
   // 2. `--template` will always win over `--version` for the template.
   //
   // 3. For version < 0.75, the template ships with react-native.
+  if (semver.valid(version) == null) {
+    throw new Error(
+      `--version=${options.version} -> '${version}' isn't valid SEMVER`,
+    );
+  }
+
   const templateUri = await createTemplateUri(options, version);
+
+  logger.debug(`Template: '${templateUri}'`);
 
   return createFromTemplate({
     projectName,
@@ -564,7 +550,7 @@ export default (async function initialize(
   validateProjectName(projectName);
 
   const version = await npmResolveConcreteVersion(
-    'react-native',
+    options.platformName ?? 'react-native',
     options.version ?? DEFAULT_VERSION,
   );
 

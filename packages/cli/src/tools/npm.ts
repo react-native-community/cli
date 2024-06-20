@@ -46,34 +46,6 @@ export async function npmResolveConcreteVersion(
   return json.version;
 }
 
-export async function npmCheckPackageVersionExists(
-  packageName: string,
-  tagOrVersion: string,
-): Promise<boolean> {
-  const url = new URL(registry);
-  url.pathname = `${packageName}/${tagOrVersion}`;
-  return await urlExists(url);
-}
-
-async function urlExists(url: string | URL): Promise<boolean> {
-  try {
-    // @ts-ignore-line: TS2304
-    const {status} = await fetch(url, {method: 'HEAD'});
-    return (
-      [
-        200, // OK
-        301, // Moved Permanemently
-        302, // Found
-        304, // Not Modified
-        307, // Temporary Redirect
-        308, // Permanent Redirect
-      ].indexOf(status) !== -1
-    );
-  } catch {
-    return false;
-  }
-}
-
 export function getNpmRegistryUrl(): string {
   try {
     return execSync('npm config get registry').toString().trim();

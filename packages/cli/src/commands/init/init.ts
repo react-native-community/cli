@@ -570,14 +570,16 @@ export default (async function initialize(
 
   // From 0.75 it actually is useful to be able to specify both the template and react-native version.
   // This should only be used by people who know what they're doing.
-  if (semver.gte(version, TEMPLATE_COMMUNITY_REACT_NATIVE_VERSION)) {
-    logger.warn(
-      `Use ${chalk.bold('--template')} and ${chalk.bold(
-        '--version',
-      )} only if you know what you're doing. Here be dragons 🐉.`,
-    );
-  } else if (!!options.template && !!options.version) {
-    throw new TemplateAndVersionError(options.template);
+  if (!!options.template && !!options.version) {
+    if (semver.gte(version, TEMPLATE_COMMUNITY_REACT_NATIVE_VERSION)) {
+      logger.warn(
+        `Use ${chalk.bold('--template')} and ${chalk.bold(
+          '--version',
+        )} only if you know what you're doing. Here be dragons 🐉.`,
+      );
+    } else {
+      throw new TemplateAndVersionError(options.template);
+    }
   }
 
   const root = process.cwd();

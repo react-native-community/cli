@@ -185,6 +185,6 @@ Starts iOS device syslog tail.
 
 #### Options
 
-#### `--interactive`
+#### `--interactive`, `-i`
 
 Explicitly select simulator to tail logs from. By default it will tail logs from the first booted and available simulator.

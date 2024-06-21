@@ -42,7 +42,20 @@ export async function npmResolveConcreteVersion(
 ): Promise<string> {
   const url = new URL(registry);
   url.pathname = `${packageName}/${tagOrVersion}`;
-  const json: any = await fetch(url).then((resp) => resp.json());
+  const resp = await fetch(url);
+  if (
+    [
+      200, // OK
+      301, // Moved Permanemently
+      302, // Found
+      304, // Not Modified
+      307, // Temporary Redirect
+      308, // Permanent Redirect
+    ].indexOf(resp.status) === -1
+  ) {
+    throw new Error(`Unknown version ${packageName}@${tagOrVersion}`);
+  }
+  const json: any = await resp.json();
   return json.version;
 }
 

@@ -8,17 +8,17 @@ export default function findDependencies(root: string): Array<string> {
   let pjson;
 
   try {
-    pjson = JSON.parse(
-      fs.readFileSync(path.join(root, 'package.json'), 'utf8'),
-    );
+    const content = fs.readFileSync(path.join(root, 'package.json'), 'utf8');
+    pjson = JSON.parse(content);
   } catch (e) {
     return [];
   }
 
-  const deps = [
+  const deps = new Set([
     ...Object.keys(pjson.dependencies || {}),
+    ...Object.keys(pjson.peerDependencies || {}),
     ...Object.keys(pjson.devDependencies || {}),
-  ];
+  ]);
 
-  return deps;
+  return Array.from(deps);
 }

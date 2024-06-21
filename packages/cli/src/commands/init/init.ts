@@ -337,19 +337,19 @@ async function createFromTemplate({
       loader.succeed('Dependencies installation skipped');
     }
   } catch (e) {
+    loader.fail();
     if (e instanceof Error) {
       logger.error(
         'Installing pods failed. This doesn\'t affect project initialization and you can safely proceed. \nHowever, you will need to install pods manually when running iOS, follow additional steps in "Run instructions for iOS" section.\n',
       );
+      logger.debug(e as any);
     }
-    loader.fail();
     didInstallPods = false;
   } finally {
     fs.removeSync(templateSourceDir);
   }
 
   if (process.platform === 'darwin') {
-    logger.log('\n');
     logger.info(
       `💡 To enable automatic CocoaPods installation when building for iOS you can create react-native.config.js with automaticPodsInstallation field. \n${chalk.reset.dim(
         `For more details, see ${chalk.underline(

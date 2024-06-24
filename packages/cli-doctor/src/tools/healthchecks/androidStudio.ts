@@ -22,11 +22,13 @@ export default {
 
     // On Windows `doctor` installs Android Studio locally in a well-known place
     if (needsToBeFixed && process.platform === 'win32') {
+      const prefix = process.arch === 'x64' ? '64' : '';
+
       const androidStudioPath = join(
         getUserAndroidPath(),
         'android-studio',
         'bin',
-        'studio.exe',
+        `studio${prefix}.exe`,
       ).replace(/\\/g, '\\\\');
       const {stdout} = await executeCommand(
         `wmic datafile where name="${androidStudioPath}" get Version`,

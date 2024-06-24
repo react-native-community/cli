@@ -52,7 +52,7 @@ npx react-native@${VERSION} init ProjectName --template ${TEMPLATE_NAME}
 You can force usage of `npm` if you have both `yarn` and `npm` installed on your machine:
 
 ```sh
-npx react-native@latest init ProjectName --npm
+npx react-native@latest init ProjectName --pm npm
 ```
 
 ## Creating custom template

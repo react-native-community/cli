@@ -52,7 +52,7 @@ export const getBuildOptions = ({platformName}: BuilderCommand) => {
       description: 'Explicitly set Xcode target to use.',
     },
     {
-      name: '--interactive',
+      name: '-i --interactive',
       description:
         'Explicitly select which scheme and configuration to use before running a build',
     },

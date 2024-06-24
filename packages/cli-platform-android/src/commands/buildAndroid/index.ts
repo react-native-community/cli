@@ -118,7 +118,7 @@ export const options = [
     parse: (val: string) => val.split(' '),
   },
   {
-    name: '--interactive',
+    name: '-i --interactive',
     description:
       'Explicitly select build type and flavour to use before running a build',
   },

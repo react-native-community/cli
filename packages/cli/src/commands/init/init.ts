@@ -444,12 +444,6 @@ async function createTemplateUri(
       // lower cadence). We have to assume the user is running against the latest nightly by pointing to the tag.
       return `${TEMPLATE_PACKAGE_COMMUNITY}@nightly`;
     }
-
-    // Special case to unblock a release. This will need to be cleaned up in the future once 0.75 RC2 is out.
-    if (version === '0.75.0-rc.1') {
-      return `${TEMPLATE_PACKAGE_COMMUNITY}@0.75.0-rc.1.1`;
-    }
-
     return `${TEMPLATE_PACKAGE_COMMUNITY}@${version}`;
   }
 

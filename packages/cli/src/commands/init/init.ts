@@ -436,29 +436,21 @@ async function createTemplateUri(
   );
 
   if (!useLegacyTemplate) {
-    // This will use ~ to grab the latest patch version.
-    //
-    // Because we allow for many PATCHes to occur for a version of react-native, it's not possible to know
-    // (without inspecting the template's npm metadata) which template works with which react-native version.
-    // We are guaranteed that the latest version of react-native  will work with the latest version of the
-    // template on that version.
-    //
-    // Example:
-    //
-    // Suppose react-native 0.75.0 was released, and 0.74.8 was the previous version. If I ran
-    // `init --version 0.74.8` it would be guaranteed to work with the latest version of the template
-    // matching the MAJOR.MINOR, e.g. 0.74.21.
     if (/nightly/.test(version)) {
       logger.debug(
         "[template]: you're using a nightly version of react-native",
       );
       // Template nightly versions and react-native@nightly versions don't match (template releases at a much
-      // lower cadence). The naming scheme we use for nightlies doesn't support '~'. We have to assume the user
-      // is running against the latest nightly:
+      // lower cadence). We have to assume the user is running against the latest nightly by pointing to the tag.
       return `${TEMPLATE_PACKAGE_COMMUNITY}@nightly`;
     }
 
-    return `${TEMPLATE_PACKAGE_COMMUNITY}@~${version}`;
+    // Special case to unblock a release. This will need to be cleaned up in the future once 0.75 RC2 is out.
+    if (version === '0.75.0-rc.1') {
+      return `${TEMPLATE_PACKAGE_COMMUNITY}@0.75.0-rc.1.1`;
+    }
+
+    return `${TEMPLATE_PACKAGE_COMMUNITY}@${version}`;
   }
 
   logger.debug(
@@ -496,12 +488,6 @@ async function createProject(
   // 2. `--template` will always win over `--version` for the template.
   //
   // 3. For version < 0.75, the template ships with react-native.
-  if (semver.valid(version) == null) {
-    throw new Error(
-      `--version=${options.version} -> '${version}' isn't valid SEMVER`,
-    );
-  }
-
   const templateUri = await createTemplateUri(options, version);
 
   logger.debug(`Template: '${templateUri}'`);
@@ -548,15 +534,29 @@ export default (async function initialize(
 
   validateProjectName(projectName);
 
-  const version = await npmResolveConcreteVersion(
-    options.platformName ?? 'react-native',
-    options.version ?? DEFAULT_VERSION,
-  );
+  let version = options.version ?? DEFAULT_VERSION;
+
+  try {
+    const updatedVersion = await npmResolveConcreteVersion(
+      options.platformName ?? 'react-native',
+      version,
+    );
+    logger.debug(`Mapped: ${version} -> ${updatedVersion}`);
+    version = updatedVersion;
+  } catch (e) {
+    logger.debug(
+      `Failed to get concrete version from '${version}': `,
+      e as any,
+    );
+  }
 
   // From 0.75 it actually is useful to be able to specify both the template and react-native version.
   // This should only be used by people who know what they're doing.
   if (!!options.template && !!options.version) {
-    if (semver.gte(version, TEMPLATE_COMMUNITY_REACT_NATIVE_VERSION)) {
+    // 0.75.0-nightly-20240618-5df5ed1a8' -> 0.75.0
+    // 0.75.0-rc.1 -> 0.75.0
+    const semverVersion = semver.coerce(version)?.version ?? version;
+    if (semver.gte(semverVersion, TEMPLATE_COMMUNITY_REACT_NATIVE_VERSION)) {
       logger.warn(
         `Use ${chalk.bold('--template')} and ${chalk.bold(
           '--version',

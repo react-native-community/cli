@@ -15,7 +15,7 @@
     "nocache": "^3.0.1",
     "pretty-format": "^26.6.2",
     "serve-static": "^1.13.1",
-    "ws": "^6.2.2"
+    "ws": "^6.2.3"
   },
   "devDependencies": {
     "@types/compression": "^1.7.2",

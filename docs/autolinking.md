@@ -141,7 +141,7 @@ module.exports = {
 };
 ```
 
-> Note: In the root field, it's recommended to use `__dirname` instead of `process.cwd()`. This ensures the path is consistently resolved, regardless of the current working directory.
+> Note: In the `root` field, it's recommended to use `__dirname` instead of `process.cwd()`. This ensures the path is consistently resolved, regardless of the current working directory.
 
 ## How can I use autolinking in a monorepo?
 

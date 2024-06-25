@@ -202,11 +202,12 @@ async function createFromTemplate({
   installCocoaPods,
   replaceDirectory,
   yarnConfigOptions,
+  version,
 }: TemplateOptions): Promise<TemplateReturnType> {
   logger.debug('Initializing new project');
   // Only print out the banner if we're not in a CI
   if (!process.env.CI) {
-    logger.log(banner);
+    logger.log(banner(version !== DEFAULT_VERSION ? version : undefined));
   }
   let didInstallPods = String(installCocoaPods) === 'true';
   let packageManager = pm;

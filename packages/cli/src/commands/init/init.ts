@@ -400,7 +400,7 @@ async function createTemplateUri(
   options: Options,
   version: string,
 ): Promise<string> {
-  if (options.platformName) {
+  if (options.platformName && options.platformName !== 'react-native') {
     logger.debug('User has specified an out-of-tree platform, using it');
     return `${options.platformName}@${version}`;
   }

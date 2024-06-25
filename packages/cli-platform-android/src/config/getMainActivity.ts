@@ -54,6 +54,10 @@ export default function getMainActivity(manifestPath: string): string | null {
         return intentFilters.find((intentFilter: IntentFilter) => {
           const {action, category} = intentFilter;
 
+          if (!action || !category) {
+            return false;
+          }
+
           let actions;
           let categories;
 

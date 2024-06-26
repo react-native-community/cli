@@ -111,6 +111,31 @@ When you're sending a pull request:
 - Preview the documentation to make sure it looks good.
 - Follow the pull request template when opening a pull request.
 
+## Publishing workflow
+
+This part is for maintainers only, documenting steps to manually publish the packages with Lerna. Make sure you have publish access to the `@react-native-community/cli` and related packages.
+
+### Stable version
+
+1. Pull latest changes for the stable branch (we use a _N.x_ convention where _N_ stands for major version of the RNC CLI).
+1. Run `yarn run publish`, it will tag the packages as `latest`.
+1. Chose an appropriate version from the available options.
+1. Create release notes in the project's Release tab.
+
+### Prerelease
+
+1. Pull latest changes for the `main` branch.
+1. Run `yarn run publish:next`, it will tag the packages as `next`.
+1. Use `Custom prerelease` option and go with `-alpha.N` convention.
+1. Create release notes in the project's Release tab.
+
+### Legacy version
+
+1. Pull latest changes for the _N.x_ branch (where N stands for major legacy version).
+1. Run `yarn run publish --dist-tag N.x` to tag the packages as `N.x`.
+1. Chose an appropriate version from the available options.
+1. Create release notes in the project's Release tab.
+
 ## Reporting issues
 
 You can report issues on our [bug tracker](https://github.com/react-native-community/react-native-cli/issues). Please follow the issue template when opening an issue.

@@ -15,6 +15,21 @@ import {simulatorDestinationMap} from './simulatorDestinationMap';
 import {supportedPlatforms} from '../../config/supportedPlatforms';
 import {ApplePlatform} from '../../types';
 
+function prettifyXcodebuildMessages(output: string): Set<string> {
+  const errorRegex = /error\b[^\S\r\n]*[:\-\s]*([^\r\n]*)/gim;
+  const errors = new Set<string>();
+
+  let match;
+  while ((match = errorRegex.exec(output)) !== null) {
+    if (match[1]) {
+      // match[1] contains the captured group that excludes any leading colons or spaces
+      errors.add(match[1].trim());
+    }
+  }
+
+  return errors;
+}
+
 export function buildProject(
   xcodeProject: IOSProjectInfo,
   platform: ApplePlatform,
@@ -84,7 +99,6 @@ export function buildProject(
       getProcessOptions(args),
     );
     let buildOutput = '';
-    let errorOutput = '';
     buildProcess.stdout.on('data', (data: Buffer) => {
       const stringData = data.toString();
       buildOutput += stringData;
@@ -100,10 +114,6 @@ export function buildProject(
         }
       }
     });
-
-    buildProcess.stderr.on('data', (data: Buffer) => {
-      errorOutput += data;
-    });
     buildProcess.on('close', (code: number) => {
       if (xcodebuildOutputFormatter) {
         xcodebuildOutputFormatter.stdin.end();
@@ -112,22 +122,23 @@ export function buildProject(
       }
       if (code !== 0) {
         printRunDoctorTip();
-        reject(
-          new CLIError(
-            `
-            Failed to build ${platform} project.
+        if (!xcodebuildOutputFormatter) {
+          Array.from(prettifyXcodebuildMessages(buildOutput)).forEach((error) =>
+            logger.error(error),
+          );
+        }
 
-            "xcodebuild" exited with error code '${code}'. To debug build
-            logs further, consider building your app with Xcode.app, by opening
-            '${xcodeProject.name}'.
-          `,
-            xcodebuildOutputFormatter
-              ? undefined
-              : buildOutput + '\n' + errorOutput,
-          ),
+        reject(
+          new CLIError(`
+        Failed to build ${platform} project.
+
+        "xcodebuild" exited with error code '${code}'. To debug build
+        logs further, consider building your app with Xcode.app, by opening
+        '${xcodeProject.name}'.`),
         );
         return;
       }
+
       logger.success('Successfully built the app');
       resolve(buildOutput);
     });

@@ -11,7 +11,6 @@ React Native CLI comes with following commands:
 - [`info`](/packages/cli-doctor/README.md#info)
 - [`log-android`](/packages/cli-platform-android/README.md#log-android)
 - [`log-ios`](/packages/cli-platform-ios/README.md#log-ios)
-- [`ram-bundle`](https://github.com/facebook/react-native/tree/main/packages/community-cli-plugin#ram-bundle)
 - [`run-android`](/packages/cli-platform-android/README.md#run-android)
 - [`build-android`](/packages/cli-platform-android/README.md#build-android)
 - [`run-ios`](/packages/cli-platform-ios/README.md#run-ios)

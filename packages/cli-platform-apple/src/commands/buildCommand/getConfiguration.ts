@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import {IOSProjectInfo} from '@react-native-community/cli-types';
+import type {IOSProjectInfo} from '@react-native-community/cli-types';
 import {logger} from '@react-native-community/cli-tools';
 import {selectFromInteractiveMode} from '../../tools/selectFromInteractiveMode';
 import {getInfo} from '../../tools/getInfo';
@@ -16,7 +16,7 @@ export async function getConfiguration(
   args: BuildFlags,
   platformName: ApplePlatform,
 ) {
-  const info = getInfo();
+  const info = getInfo(xcodeProject, sourceDir);
 
   if (args.mode) {
     checkIfConfigurationExists(info?.configurations ?? [], args.mode);

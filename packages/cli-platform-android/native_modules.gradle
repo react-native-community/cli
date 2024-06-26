@@ -1,4 +1,5 @@
 import groovy.json.JsonSlurper
+import groovy.transform.CompileStatic
 import org.gradle.initialization.DefaultSettings
 import org.apache.tools.ant.taskdefs.condition.Os
 
@@ -389,27 +390,36 @@ class ReactNativeModules {
   }
 
   /**
-   * Runs a specified command using providers.exec in a specified directory.
-   * Throws when the command result is empty.
-   */
+  * Runs a specified command using ProcessBuilder in a specified directory.
+  * Throws an exception if the command fails or produces an empty output.
+  *
+  * @param command The command to execute as an array of strings.
+  * @param directory The directory in which to execute the command.
+  * @return The trimmed output of the command.
+  * @throws Exception if the command fails or produces an empty output.
+  */
+  @CompileStatic
   String getCommandOutput(String[] command, File directory) {
-    try {
-      def execOutput = providers.exec {
-        commandLine(command)
-        workingDir(directory)
+      try {
+          def process = new ProcessBuilder(command as String[])
+                          .directory(directory)
+                          .redirectErrorStream(true)
+                          .start()
+          int exitCode = process.waitFor()
+          def output = process.inputStream.text.trim()
+          if (exitCode != 0) {
+              throw new Exception("Command '${command}' failed with exit code ${exitCode}.")
+          }
+          if (!output) {
+              throw new Exception("Empty output received from command '${command}'.")
+          }
+          return output
+      } catch (Exception e) {
+          println "Error executing command '${command}': ${e.message}"
+          throw e
       }
-      def output = execOutput.standardOutput.asText.get().trim()
-      if (!output) {
-        this.logger.error("${LOG_PREFIX}Unexpected empty result of running '${command}' command.")
-        def error = execOutput.standardError.asText.get().trim()
-        throw new Exception(error)
-      }
-      return output
-    } catch (Exception exception) {
-      this.logger.error("${LOG_PREFIX}Running '${command}' command failed.")
-      throw exception
-    }
   }
+
 
   /**
    * Runs a process to call the React Native CLI Config command and parses the output

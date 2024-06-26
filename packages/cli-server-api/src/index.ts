@@ -45,7 +45,7 @@ export function createDevServerMiddleware(options: MiddlewareOptions) {
   const eventsSocketEndpoint = createEventsSocketEndpoint(broadcast);
 
   const middleware = connect()
-    .use(securityHeadersMiddleware)
+    .use(securityHeadersMiddleware(options))
     // @ts-ignore compression and connect types mismatch
     .use(compression())
     .use(nocache())

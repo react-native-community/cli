@@ -240,17 +240,6 @@ const createRun =
 
       logger.info(`Found booted ${booted.map(({name}) => name).join(', ')}`);
 
-      for (const device of bootedDevices) {
-        await runOnDevice(
-          device,
-          platformName,
-          mode,
-          scheme,
-          xcodeProject,
-          args,
-        );
-      }
-
       for (const simulator of bootedSimulators) {
         await runOnSimulator(
           xcodeProject,
@@ -259,6 +248,17 @@ const createRun =
           scheme,
           args,
           simulator || fallbackSimulator,
+        );
+      }
+
+      for (const device of bootedDevices) {
+        await runOnDevice(
+          device,
+          platformName,
+          mode,
+          scheme,
+          xcodeProject,
+          args,
         );
       }
 
@@ -300,9 +300,36 @@ const createRun =
         );
       }
     } else if (args.device) {
-      const physicalDevices = devices.filter(({type}) => type !== 'simulator');
-      const device = matchingDevice(physicalDevices, args.device);
-      if (device) {
+      let device = matchingDevice(devices, args.device);
+
+      if (!device) {
+        const deviceByUdid = devices.find((d) => d.udid === args.device);
+        if (!deviceByUdid) {
+          return logger.error(
+            `Could not find a physical device with name or unique device identifier: "${chalk.bold(
+              args.device,
+            )}". ${printFoundDevices(devices, 'device')}`,
+          );
+        }
+
+        device = deviceByUdid;
+
+        if (deviceByUdid.type === 'simulator') {
+          return logger.error(
+            `The device with udid: "${chalk.bold(
+              args.device,
+            )}" is a simulator. If you want to run on a simulator, use the "--simulator" flag instead.`,
+          );
+        }
+      }
+
+      if (device && device.type === 'simulator') {
+        return logger.error(
+          "`--device` flag is intended for physical devices. If you're trying to run on a simulator, use `--simulator` instead.",
+        );
+      }
+
+      if (device && device.type === 'device') {
         return runOnDevice(
           device,
           platformName,

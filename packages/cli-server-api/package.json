@@ -1,21 +1,21 @@
 {
   "name": "@react-native-community/cli-server-api",
-  "version": "14.0.0-alpha.5",
+  "version": "14.0.0-alpha.11",
   "license": "MIT",
   "main": "build/index.js",
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "@react-native-community/cli-debugger-ui": "14.0.0-alpha.5",
-    "@react-native-community/cli-tools": "14.0.0-alpha.5",
+    "@react-native-community/cli-debugger-ui": "14.0.0-alpha.11",
+    "@react-native-community/cli-tools": "14.0.0-alpha.11",
     "compression": "^1.7.1",
     "connect": "^3.6.5",
     "errorhandler": "^1.5.1",
     "nocache": "^3.0.1",
     "pretty-format": "^26.6.2",
     "serve-static": "^1.13.1",
-    "ws": "^6.2.2"
+    "ws": "^6.2.3"
   },
   "devDependencies": {
     "@types/compression": "^1.7.2",

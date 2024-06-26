@@ -28,3 +28,41 @@ export function getNpmVersionIfAvailable() {
 export function isProjectUsingNpm(cwd: string) {
   return findUp.sync('package-lock.json', {cwd});
 }
+
+const registry = getNpmRegistryUrl();
+
+/**
+ * Convert an npm tag to a concrete version, for example:
+ * - next -> 0.75.0-rc.0
+ * - nightly -> 0.75.0-nightly-20240618-5df5ed1a8
+ */
+export async function npmResolveConcreteVersion(
+  packageName: string,
+  tagOrVersion: string,
+): Promise<string> {
+  const url = new URL(registry);
+  url.pathname = `${packageName}/${tagOrVersion}`;
+  const resp = await fetch(url);
+  if (
+    [
+      200, // OK
+      301, // Moved Permanemently
+      302, // Found
+      304, // Not Modified
+      307, // Temporary Redirect
+      308, // Permanent Redirect
+    ].indexOf(resp.status) === -1
+  ) {
+    throw new Error(`Unknown version ${packageName}@${tagOrVersion}`);
+  }
+  const json: any = await resp.json();
+  return json.version;
+}
+
+export function getNpmRegistryUrl(): string {
+  try {
+    return execSync('npm config get registry').toString().trim();
+  } catch {
+    return 'https://registry.npmjs.org/';
+  }
+}

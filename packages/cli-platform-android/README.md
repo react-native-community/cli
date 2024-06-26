@@ -36,9 +36,15 @@ Specify an `applicationIdSuffix` to launch after build.
 
 Name of the activity to start.
 
+#### `--device <string>`
+
+Explicitly set the device to use by name. The value is not required if you have a single device connected.
+
 #### `--deviceId <string>`
 
-builds your app and starts it on a specific device/simulator with the given device id (listed by running "adb devices" on the command line).
+> **DEPRECATED** - use `--device <string>` instead
+
+Builds your app and starts it on a specific device with the given device id (listed by running "adb devices" on the command line).
 
 #### `--no-packager`
 
@@ -73,7 +79,7 @@ Build native libraries only for the current device architecture for debug builds
 
 List all available Android devices and simulators and let you choose one to run the app.
 
-#### `--interactive`
+#### `--interactive`, `-i`
 
 Manually select a task and device/simulator you want to run your app on.
 

@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/cli-tools",
-  "version": "14.0.0-alpha.5",
+  "version": "14.0.0-alpha.11",
   "license": "MIT",
   "main": "build/index.js",
   "publishConfig": {
@@ -12,7 +12,6 @@
     "execa": "^5.0.0",
     "find-up": "^5.0.0",
     "mime": "^2.4.1",
-    "node-fetch": "^2.6.0",
     "open": "^6.2.0",
     "ora": "^5.4.1",
     "semver": "^7.5.2",
@@ -20,11 +19,10 @@
     "sudo-prompt": "^9.0.0"
   },
   "devDependencies": {
-    "@react-native-community/cli-types": "14.0.0-alpha.5",
+    "@react-native-community/cli-types": "14.0.0-alpha.11",
     "@types/lodash": "^4.14.149",
     "@types/mime": "^2.0.1",
     "@types/node": "^18.0.0",
-    "@types/node-fetch": "^2.5.5",
     "@types/shell-quote": "^1.7.1"
   },
   "files": [

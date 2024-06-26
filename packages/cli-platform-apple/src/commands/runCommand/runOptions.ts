@@ -45,7 +45,7 @@ export const getRunOptions = ({platformName}: BuilderCommand) => {
     !isMac && {
       name: '--device [string]', // here we're intentionally using [] over <> to make passed value optional to allow users to run only on physical devices
       description:
-        'Explicitly set the device to use by name. If the value is not provided,' +
+        'Explicitly set the device to use by name or by unique device identifier . If the value is not provided,' +
         'the app will run on the first available physical device.',
     },
     ...getBuildOptions({platformName}),

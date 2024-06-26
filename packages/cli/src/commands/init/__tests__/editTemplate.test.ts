@@ -173,7 +173,7 @@ describe('changePlaceholderInTemplate', () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.restoreAllMocks();
   });
 
   skipIfNode20(
@@ -206,7 +206,7 @@ describe('replacePlaceholderWithPackageName', () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.restoreAllMocks();
   });
 
   skipIfNode20(

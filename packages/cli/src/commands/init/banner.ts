@@ -30,13 +30,19 @@ const reactLogoArray = [
   '                                                          ',
 ];
 
-const welcomeMessage =
-  '                  Welcome to React Native!                ';
+const getWelcomeMessage = (reactNativeVersion: string = '') => {
+  if (reactNativeVersion) {
+    return `              Welcome to React Native ${reactNativeVersion}!                `;
+  }
+  return '                  Welcome to React Native!                ';
+};
 const learnOnceMessage =
   '                 Learn once, write anywhere               ';
 
-export default `${chalk.cyan(reactLogoArray.join('\n'))}
+export default function banner(reactNativeVersion?: string) {
+  return `${chalk.cyan(reactLogoArray.join('\n'))}
 
-${chalk.cyanBright.bold(welcomeMessage)}
+${chalk.cyanBright.bold(getWelcomeMessage(reactNativeVersion))}
 ${chalk.dim(learnOnceMessage)}
 `;
+}

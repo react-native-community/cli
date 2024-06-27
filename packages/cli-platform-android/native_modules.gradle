@@ -186,6 +186,11 @@ class ReactNativeModules {
     reactNativeModules.forEach { reactNativeModule ->
       def nameCleansed = reactNativeModule["nameCleansed"]
       def dependencyConfiguration = reactNativeModule["dependencyConfiguration"]
+      def isPureCxxDependency = reactNativeModule["isPureCxxDependency"]
+      if (isPureCxxDependency) {
+        return
+      }
+
       appProject.dependencies {
         if (reactNativeModulesBuildVariants.containsKey(nameCleansed)) {
           reactNativeModulesBuildVariants
@@ -248,10 +253,14 @@ class ReactNativeModules {
                     "${prefix}${packageName}.${className}${suffix}"
                 })
       }
-      packageImports = packages.collect {
+      packageImports = packages
+      .findAll { !it.isPureCxxDependency }
+      .collect {
         "// ${it.name}\n${interpolateDynamicValues(it.packageImportPath)}"
       }.join('\n')
-      packageClassInstances = ",\n      " + packages.collect {
+      packageClassInstances = ",\n      " + packages
+      .findAll { !it.isPureCxxDependency }
+      .collect {
         interpolateDynamicValues(it.packageInstance)
       }.join(",\n      ")
     }
@@ -481,6 +490,7 @@ class ReactNativeModules {
         reactNativeModuleConfig.put("cxxModuleCMakeListsModuleName", androidConfig["cxxModuleCMakeListsModuleName"])
         reactNativeModuleConfig.put("cxxModuleCMakeListsPath", androidConfig["cxxModuleCMakeListsPath"])
         reactNativeModuleConfig.put("cxxModuleHeaderName", androidConfig["cxxModuleHeaderName"])
+        reactNativeModuleConfig.put("isPureCxxDependency", androidConfig["isPureCxxDependency"])
 
         if (androidConfig["buildTypes"] && !androidConfig["buildTypes"].isEmpty()) {
           reactNativeModulesBuildVariants.put(nameCleansed, androidConfig["buildTypes"])

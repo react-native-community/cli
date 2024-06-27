@@ -25,8 +25,8 @@ export type AndroidProjectParams = {
 
 export type AndroidDependencyConfig = {
   sourceDir: string;
-  packageImportPath: string;
-  packageInstance: string;
+  packageImportPath: string | null;
+  packageInstance: string | null;
   dependencyConfiguration?: string;
   buildTypes: string[];
   libraryName?: string | null;
@@ -35,6 +35,7 @@ export type AndroidDependencyConfig = {
   cxxModuleCMakeListsModuleName?: string | null;
   cxxModuleCMakeListsPath?: string | null;
   cxxModuleHeaderName?: string | null;
+  isPureCxxDependency?: boolean;
 };
 
 export type AndroidDependencyParams = {

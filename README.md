@@ -1,8 +1,6 @@
-# React Native CLI
+# React Native Community CLI
 
-Command line tools that ship with [`react-native`](https://github.com/facebook/react-native) in form of the `@react-native-community/cli` package.
-
-> It exposes `react-native` binary, so you can call `yarn react-native` or `npx react-native` directly from your project.
+Command line tools that help you build apps with [`react-native`](https://github.com/facebook/react-native), shipped as the `@react-native-community/cli` NPM package.
 
 [![Build Status][build-badge]][build] [![Version][version-badge]][package] [![MIT License][license-badge]][license] [![PRs Welcome][prs-welcome-badge]][prs-welcome] [![Lean Core Extracted][lean-core-badge]][lean-core]
 
@@ -57,19 +55,17 @@ This monorepository contains tools and helpers for React Native projects in form
 Run the following command in your terminal prompt:
 
 ```sh
-npx react-native@latest init MyApp
+npx @react-native-community/cli@latest init MyApp
 ```
 
 ## Usage in an existing React Native project
 
-Once you're inside an existing project, a local `react-native` binary will be available for you to use. Feel free to use Yarn to call it directly.
+Once you're inside an existing project, you can run a series of commands to interact with your projects by using the `rnc-cli` binary.
 
 Example running `start` command in terminal:
 
 ```sh
-yarn react-native start
-# or:
-npx react-native start
+yarn rnc-cli start
 ```
 
 You can also add npm scripts to call it with whichever package manager you use:
@@ -77,9 +73,15 @@ You can also add npm scripts to call it with whichever package manager you use:
 ```json
 {
   "scripts": {
-    "start": "react-native start"
+    "start": "rnc-cli start"
   }
 }
+```
+
+to call it as
+
+```sh
+yarn start
 ```
 
 ## Updating the CLI

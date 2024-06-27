@@ -22,11 +22,13 @@ export default {
 
     // On Windows `doctor` installs Android Studio locally in a well-known place
     if (needsToBeFixed && process.platform === 'win32') {
+      const archSuffix = process.arch === 'x64' ? '64' : '';
+
       const androidStudioPath = join(
         getUserAndroidPath(),
         'android-studio',
         'bin',
-        'studio.exe',
+        `studio${archSuffix}.exe`,
       ).replace(/\\/g, '\\\\');
       const {stdout} = await executeCommand(
         `wmic datafile where name="${androidStudioPath}" get Version`,
@@ -58,11 +60,11 @@ export default {
       installPath: installPath,
     });
 
-    const prefix = process.arch === 'x64' ? '64' : '';
+    const archSuffix = process.arch === 'x64' ? '64' : '';
     const binFolder = join(installPath, 'android-studio', 'bin');
 
     await createShortcut({
-      path: join(binFolder, `studio${prefix}.exe`),
+      path: join(binFolder, `studio${archSuffix}.exe`),
       name: 'Android Studio',
       ico: join(binFolder, 'studio.ico'),
     });

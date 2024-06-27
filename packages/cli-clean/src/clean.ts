@@ -153,26 +153,6 @@ export async function clean(
         },
       ],
     },
-    npm: {
-      description:
-        '`node_modules` folder in the current package, and optionally verify npm cache',
-      tasks: [
-        {
-          label: 'Remove node_modules',
-          action: () => cleanDir(`${projectRoot}/node_modules`),
-        },
-        ...(verifyCache
-          ? [
-              {
-                label: 'Verify npm cache',
-                action: async () => {
-                  await execa('npm', ['cache', 'verify'], {cwd: projectRoot});
-                },
-              },
-            ]
-          : []),
-      ],
-    },
     bun: {
       description: 'Bun cache',
       tasks: [
@@ -214,6 +194,26 @@ export async function clean(
             await execa('yarn', ['cache', 'clean'], {cwd: projectRoot});
           },
         },
+      ],
+    },
+    npm: {
+      description:
+        '`node_modules` folder in the current package, and optionally verify npm cache',
+      tasks: [
+        {
+          label: 'Remove node_modules',
+          action: () => cleanDir(`${projectRoot}/node_modules`),
+        },
+        ...(verifyCache
+          ? [
+              {
+                label: 'Verify npm cache',
+                action: async () => {
+                  await execa('npm', ['cache', 'verify'], {cwd: projectRoot});
+                },
+              },
+            ]
+          : []),
       ],
     },
   };

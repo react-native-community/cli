@@ -222,7 +222,7 @@ Another use-case would be supporting local libraries that are not discoverable f
 module.exports = {
   dependencies: {
     'local-rn-library': {
-      root: '/root/libraries',
+      root: path.join(__dirname, '/path/to/library'),
     },
   },
 };

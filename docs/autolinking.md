@@ -135,11 +135,13 @@ We can leverage CLI configuration to make it "see" React Native libraries that a
 module.exports = {
   dependencies: {
     'local-rn-library': {
-      root: '/root/libraries',
+      root: path.join(__dirname, '/path/to/local-rn-library'),
     },
   },
 };
 ```
+
+> Note: In the `root` field, it's recommended to use `__dirname` instead of `process.cwd()`. This ensures the path is consistently resolved, regardless of the current working directory.
 
 ## How can I use autolinking in a monorepo?
 

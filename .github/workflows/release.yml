@@ -1,9 +1,8 @@
 name: Release
 
-# Temporarily disable until issues resolved
 on:
-#   release:
-#     types: [published]
+  release:
+    types: [published]
   workflow_dispatch:
 
 jobs:
@@ -11,38 +10,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: "Checkout"
+      - name: 'Checkout'
         uses: actions/checkout@v3
         with:
-          ref: "main"
+          ref: 'main'
           persist-credentials: false
 
-      - name: "Setup Node v16"
+      - name: 'Setup Node v20'
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '20'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: "Setup git user"
-        run: |
-          git config user.name "${{ github.actor }}"
-          git config user.email "bot@callstack.io"
-
-      - name: "Prelease"
-        if: "github.event.release.prerelease"
+      - name: 'Prelease'
+        if: 'github.event.release.prerelease'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           npx lerna version --conventional-commits --conventional-prerelease --preid alpha --yes
-          
+
           npx lerna publish from-git --no-verify-access --no-changelog --yes
 
-      - name: "Release"
-        if: "!github.event.release.prerelease"
+      - name: 'Release'
+        if: '!github.event.release.prerelease'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           npx lerna version --conventional-commits --yes
-          
+
           npx lerna publish from-git --no-verify-access --no-changelog --yes

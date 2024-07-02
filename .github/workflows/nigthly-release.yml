@@ -46,4 +46,6 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          yarn run publish:next 
+          npx lerna version --conventional-commits --conventional-prerelease --preid alpha --yes
+          
+          npx lerna publish from-git --no-verify-access --no-changelog --yes

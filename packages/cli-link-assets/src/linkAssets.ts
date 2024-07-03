@@ -97,7 +97,7 @@ async function linkAssets(_argv: string[], ctx: CLIConfig): Promise<void> {
 
     if (!iosProjectInfo) {
       throw new CLIError(
-        `Could not find Xcode project files in "${iosPath}" folder`,
+        `Could not find Xcode project files in "${iosPath}" folder. Please make sure that you have installed Cocoapods and "${iosPath}" is a valid path`,
       );
     }
 

@@ -29,10 +29,16 @@ const createBuild =
         ? await getArchitecture(platformConfig.sourceDir)
         : undefined;
 
-      await resolvePods(ctx.root, ctx.dependencies, platformName, {
-        forceInstall: args.forcePods,
-        newArchEnabled: isAppRunningNewArchitecture,
-      });
+      await resolvePods(
+        ctx.root,
+        platformConfig.sourceDir,
+        ctx.dependencies,
+        platformName,
+        {
+          forceInstall: args.forcePods,
+          newArchEnabled: isAppRunningNewArchitecture,
+        },
+      );
 
       installedPods = true;
     }

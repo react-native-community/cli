@@ -27,7 +27,7 @@ jobs:
       - name: 'Setup git user'
         run: |
           git config user.name "${{ github.actor }}"
-          git config user.email "bot@callstack.io"
+          git config user.email "bot@reactnative.dev"
 
       - name: 'Check for new commits'
         id: check

@@ -22,7 +22,7 @@ export function getXcodeProjectAndDir(
 
   if (!xcodeProject) {
     throw new CLIError(
-      `Could not find Xcode project files in "${sourceDir}" folder`,
+      `Could not find Xcode project files in "${sourceDir}" folder. Please make sure that you have installed Cocoapods and "${sourceDir}" is a valid path`,
     );
   }
 

@@ -66,5 +66,5 @@ jobs:
           VERSION="${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}-${PRERELEASE_NAME}-${DATE}-${COMMIT_HASH}"
 
           npx lerna version --force-publish --no-push --allow-branch '*' --preid $VERSION --yes
-          npx lerna publish --tag nightly from-git --no-verify-access --no-changelog --yes
+          npx lerna publish from-git --tag nightly --no-verify-access --no-changelog --yes
 

@@ -46,6 +46,25 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          npx lerna version --conventional-commits --conventional-prerelease --preid alpha --yes
-          
-          npx lerna publish from-git --no-verify-access --no-changelog --yes
+          # Get the current commit hash
+          COMMIT_HASH=$(git rev-parse --short HEAD)
+          # Get the current date
+          DATE=$(date +%Y%m%d)
+          # Get the version from package.json and split into an array
+          IFS='.' read -ra VERSION_ARRAY <<< "$(node -p -e "require('./packages/cli/package.json').version")"
+
+          MAJOR_VERSION=${VERSION_ARRAY[0]}
+          MINOR_VERSION=${VERSION_ARRAY[1]}
+          PATCH_VERSION=${VERSION_ARRAY[2]}
+
+          # If PATCH_VERSION contains a '-', strip everything after it
+          if echo $PATCH_VERSION | grep -q '-'; then
+              PATCH_VERSION=${PATCH_VERSION%%-*}
+          fi
+
+          # Create a version string that includes the commit hash and date
+          VERSION="${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}-${PRERELEASE_NAME}-${DATE}-${COMMIT_HASH}"
+
+          npx lerna version --force-publish --no-push --allow-branch '*' --preid $VERSION --yes
+          npx lerna publish --tag nightly from-git --no-verify-access --no-changelog --yes
+

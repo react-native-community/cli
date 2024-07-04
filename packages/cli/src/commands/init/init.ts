@@ -333,8 +333,8 @@ async function createFromTemplate({
             }
           }
         } catch (e) {
-          throw new CLIError(
-            'Installing pods failed. This doesn\'t affect project initialization and you can safely proceed. \nHowever, you will need to install pods manually when running iOS, follow additional steps in "Run instructions for iOS" section.\n',
+          logger.error(
+            'Installing Cocoapods failed. This doesn\'t affect project initialization and you can safely proceed. \nHowever, you will need to install Cocoapods manually when running iOS, follow additional steps in "Run instructions for iOS" section.\n',
           );
         }
       }
@@ -343,16 +343,15 @@ async function createFromTemplate({
       loader.succeed('Dependencies installation skipped');
     }
   } catch (e) {
+    logger.log('\n');
     if (e instanceof CLIError) {
       logger.error(e.message);
     } else if (e instanceof Error) {
-      const unknownErrorMessage = 'Please report this issue';
-      logger.error(
-        `An unexpected error occurred: ${e.message}. ${unknownErrorMessage}`,
-      );
-      logger.debug(e as any);
+      logger.error(`An unexpected error occurred: ${e.message}.`);
     }
     didInstallPods = false;
+    logger.debug(e as any);
+    process.exit(1);
   } finally {
     fs.removeSync(templateSourceDir);
   }

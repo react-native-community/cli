@@ -13,6 +13,7 @@ import {
   IOSDependencyConfig,
 } from '@react-native-community/cli-types';
 import {ApplePlatform} from '../types';
+import readline from 'readline';
 
 interface ResolvePodsOptions {
   forceInstall?: boolean;
@@ -64,6 +65,30 @@ export function compareMd5Hashes(hash1?: string, hash2?: string) {
   return hash1 === hash2;
 }
 
+async function getChecksum(podfileLockPath: string) {
+  const fileStream = fs.createReadStream(podfileLockPath);
+
+  const rl = readline.createInterface({
+    input: fileStream,
+    crlfDelay: Infinity,
+  });
+
+  let lines = [];
+  for await (const line of rl) {
+    lines.push(line);
+  }
+
+  lines = lines.reverse();
+
+  for (const line of lines) {
+    if (line.includes('PODFILE CHECKSUM')) {
+      return line.split(': ')[1];
+    }
+  }
+
+  return undefined;
+}
+
 async function install(
   packageJson: Record<string, any>,
   cachedDependenciesHash: string | undefined,
@@ -78,12 +103,13 @@ async function install(
     });
     cacheManager.set(packageJson.name, 'dependencies', currentDependenciesHash);
     loader.succeed();
-  } catch {
+  } catch (error) {
     loader.fail();
     throw new CLIError(
       `Something when wrong while installing CocoaPods. Please run ${chalk.bold(
         'pod install',
       )} manually`,
+      error as Error,
     );
   }
 }
@@ -114,12 +140,10 @@ export default async function resolvePods(
   const currentPodfileHash = generateMd5Hash(
     fs.readFileSync(podfilePath, 'utf8'),
   );
-  const currentPodfileLockHash = generateMd5Hash(
-    fs.readFileSync(podfileLockPath, 'utf8'),
-  );
+  let currentPodfileLockChecksum = await getChecksum(podfileLockPath);
 
   const cachedPodfileHash = cacheManager.get(packageJson.name, 'podfile');
-  const cachedPodfileLockHash = cacheManager.get(
+  const cachedPodfileLockChecksum = cacheManager.get(
     packageJson.name,
     'podfileLock',
   );
@@ -140,13 +164,16 @@ export default async function resolvePods(
     arePodsInstalled &&
     compareMd5Hashes(currentDependenciesHash, cachedDependenciesHash) &&
     compareMd5Hashes(currentPodfileHash, cachedPodfileHash) &&
-    compareMd5Hashes(currentPodfileLockHash, cachedPodfileLockHash)
+    compareMd5Hashes(currentPodfileLockChecksum, cachedPodfileLockChecksum)
   ) {
     cacheManager.set(packageJson.name, 'dependencies', currentDependenciesHash);
     cacheManager.set(packageJson.name, 'podfile', currentPodfileHash);
-    cacheManager.set(packageJson.name, 'podfileLock', currentPodfileLockHash);
+    cacheManager.set(
+      packageJson.name,
+      'podfileLock',
+      currentPodfileLockChecksum ?? '',
+    );
   } else {
-    console.log('eh');
     const loader = getLoader('Installing CocoaPods...');
     try {
       await installPods(loader, {
@@ -160,14 +187,21 @@ export default async function resolvePods(
         currentDependenciesHash,
       );
       cacheManager.set(packageJson.name, 'podfile', currentPodfileHash);
-      cacheManager.set(packageJson.name, 'podfileLock', currentPodfileLockHash);
+      // We need to read again the checksum because value changed after running `pod install`
+      currentPodfileLockChecksum = await getChecksum(podfileLockPath);
+      cacheManager.set(
+        packageJson.name,
+        'podfileLock',
+        currentPodfileLockChecksum ?? '',
+      );
       loader.succeed();
-    } catch {
+    } catch (error) {
       loader.fail();
       throw new CLIError(
         `Something when wrong while installing CocoaPods. Please run ${chalk.bold(
           'pod install',
         )} manually`,
+        error as Error,
       );
     }
   }

@@ -70,6 +70,26 @@ You’re already using Gradle, so Android support will work by default.
 
 On the iOS side, you will need to ensure you have a Podspec to the root of your repo. The `react-native-webview` Podspec is a good example of a [`package.json`](https://github.com/react-native-community/react-native-webview/blob/master/react-native-webview.podspec)-driven Podspec. Note that CocoaPods does not support having `/`s in the name of a dependency, so if you are using scoped packages - you may need to change the name for the Podspec.
 
+### Pure C++ libraries
+
+Alternatively, if you have a pure C++ library and don't want to use Gradle, you can still use autolinking. You need to update your `react-native.config.js` to include the following:
+
+```js
+// react-native.config.js
+module.exports = {
+  dependency: {
+    platforms: {
+      android: {
+        sourceDir: 'path/to/your/c++/code',
+        cxxModuleCMakeListsPath: `relative/path/to/CMakeLists.txt`, // This is relative to the sourceDir.
+        cxxModuleCMakeListsModuleName: 'MyModule', // This is the name of the CMake target.
+        cxxModuleHeaderName: 'MyHeader', // CLI will include this header while linking.
+      },
+    },
+  },
+};
+```
+
 ## How can I customize how autolinking works for my package?
 
 A library can add a `react-native.config.js` configuration file, which will customize the defaults, example:

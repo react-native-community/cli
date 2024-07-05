@@ -87,7 +87,7 @@ interface TemplateReturnType {
 // Here we are defining explicit version of Yarn to be used in the new project because in some cases providing `3.x` don't work.
 const YARN_VERSION = '3.6.4';
 
-const bumpYarnVersion = async (silent: boolean, root: string) => {
+const bumpYarnVersion = async (root: string) => {
   try {
     let yarnVersion = semver.parse(getYarnVersionIfAvailable());
 
@@ -99,14 +99,14 @@ const bumpYarnVersion = async (silent: boolean, root: string) => {
       }
       await executeCommand('yarn', setVersionArgs, {
         root,
-        silent,
+        silent: !logger.isVerbose(),
       });
 
       // React Native doesn't support PnP, so we need to set nodeLinker to node-modules. Read more here: https://github.com/react-native-community/cli/issues/27#issuecomment-1772626767
       await executeCommand(
         'yarn',
         ['config', 'set', 'nodeLinker', 'node-modules'],
-        {root, silent},
+        {root, silent: !logger.isVerbose()},
       );
     }
   } catch (e) {
@@ -286,7 +286,7 @@ async function createFromTemplate({
     });
 
     if (packageManager === 'yarn' && shouldBumpYarnVersion) {
-      await bumpYarnVersion(false, projectDirectory);
+      await bumpYarnVersion(projectDirectory);
     }
 
     loader.succeed();

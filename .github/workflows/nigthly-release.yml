@@ -1,0 +1,71 @@
+name: Nightly Release
+
+on: 
+  schedule:
+    # This runs at 00:00 UTC every day
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+jobs:
+  nightly:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps: 
+      - name: 'Checkout'
+        uses: actions/checkout@v3
+        with:
+          ref: 'main'
+          persist-credentials: false
+
+      - name: 'Setup Node v20'
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: 'Setup git user'
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "bot@reactnative.dev"
+
+      - name: 'Check for new commits'
+        id: check
+        run: |
+          LAST_COMMIT=$(git rev-parse HEAD)
+          DAY_BEFORE=$(date -u -d "yesterday" '+%Y-%m-%dT%H:%M:%SZ')
+          COMMITS=$(git log --since="$DAY_BEFORE" --format="%H" -n 1)
+          if [[ "$LAST_COMMIT" == "$COMMITS" ]]; then
+             echo "::set-output name=changed::true"
+          else
+             echo "::set-output name=changed::false"
+          fi
+
+      - name: 'Prelease'
+        if: steps.check.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Get the current commit hash
+          COMMIT_HASH=$(git rev-parse --short HEAD)
+          # Get the current date
+          DATE=$(date +%Y%m%d)
+          # Get the version from package.json and split into an array
+          IFS='.' read -ra VERSION_ARRAY <<< "$(node -p -e "require('./packages/cli/package.json').version")"
+
+          MAJOR_VERSION=${VERSION_ARRAY[0]}
+          MINOR_VERSION=${VERSION_ARRAY[1]}
+          PATCH_VERSION=${VERSION_ARRAY[2]}
+
+          # If PATCH_VERSION contains a '-', strip everything after it
+          if echo $PATCH_VERSION | grep -q '-'; then
+              PATCH_VERSION=${PATCH_VERSION%%-*}
+          fi
+
+          PRERELEASE_NAME="nightly"
+
+          # Create a version string that includes the commit hash and date
+          VERSION="${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}-${PRERELEASE_NAME}-${DATE}-${COMMIT_HASH}"
+
+          npx lerna version "$VERSION" from-package --force-publish --no-push --allow-branch 'main' --preid $PRERELEASE_NAME --yes
+          npx lerna publish from-git --dist-tag $PRERELEASE_NAME --no-changelog --yes

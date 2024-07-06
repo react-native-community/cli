@@ -24,8 +24,6 @@ jobs:
           cache: yarn
       - name: Install dependencies
         run: yarn --frozen-lockfile
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: 'Setup git user'
         run: |
@@ -48,6 +46,7 @@ jobs:
         if: steps.check.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           # Get the current commit hash
           COMMIT_HASH=$(git rev-parse --short HEAD)

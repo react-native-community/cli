@@ -26,6 +26,7 @@ import {findComponentDescriptors} from './findComponentDescriptors';
 import {findBuildGradle} from './findBuildGradle';
 import {CLIError, logger} from '@react-native-community/cli-tools';
 import getMainActivity from './getMainActivity';
+import findModuleName from './findModuleName';
 
 /**
  * Gets android project config by analyzing given folder and taking some
@@ -141,6 +142,7 @@ export function dependencyConfig(
     userConfig.cxxModuleHeaderName != null &&
     !manifestPath &&
     !buildGradlePath;
+  let moduleName;
 
   if (!manifestPath && !buildGradlePath && !isPureCxxDependency) {
     return null;
@@ -158,14 +160,20 @@ export function dependencyConfig(
      * This module has no package to export
      */
     if (!packageClassName) {
-      return null;
+      // New templates don't need to have a *Package.java/kt that extends ReactPackage anymore
+      // which was useless boilerplate. We can directly generate code for registering the module.
+      moduleName = findModuleName(sourceDir);
     }
 
     packageImportPath =
       userConfig.packageImportPath ||
-      `import ${packageName}.${packageClassName};`;
+      (packageName &&
+        packageClassName &&
+        `import ${packageName}.${packageClassName};`);
 
-    packageInstance = userConfig.packageInstance || `new ${packageClassName}()`;
+    packageInstance =
+      userConfig.packageInstance ||
+      (packageInstance && `new ${packageClassName}()`);
   }
 
   const buildTypes = userConfig.buildTypes || [];
@@ -194,6 +202,9 @@ export function dependencyConfig(
   return {
     sourceDir,
     packageImportPath,
+    packageName:
+      userConfig.packageName || getPackageName(manifestPath, buildGradlePath),
+    moduleName,
     packageInstance,
     buildTypes,
     dependencyConfiguration,

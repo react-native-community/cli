@@ -54,6 +54,7 @@ type AndroidDependencyParams = {
   dependencyConfiguration?: string;
   packageImportPath?: string;
   packageInstance?: string;
+  moduleName?: string;
   buildTypes?: string[];
   libraryName?: string | null;
   componentDescriptors?: string[] | null;
@@ -110,6 +111,10 @@ Custom package name to override one from `AndroidManifest.xml`
 #### platforms.android.packageImportPath
 
 Custom package import. For example: `import com.acme.AwesomePackage;`.
+
+#### platforms.android.moduleName
+
+TODO: Documentation
 
 #### platforms.android.packageInstance
 

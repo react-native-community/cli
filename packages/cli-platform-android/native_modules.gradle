@@ -5,6 +5,76 @@ import org.apache.tools.ant.taskdefs.condition.Os
 
 def generatedFileName = "PackageList.java"
 def generatedFilePackage = "com.facebook.react"
+
+def packageRegistrationTemplateLegacy = """
+package {packageName};
+
+import androidx.annotation.NonNull;
+
+import com.facebook.react.ReactPackage;
+import com.facebook.react.bridge.NativeModule;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.uimanager.ViewManager;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class {moduleName}Package implements ReactPackage {
+  @NonNull
+  @Override
+  public List<NativeModule> createNativeModules(@NonNull ReactApplicationContext reactContext) {
+    List<NativeModule> modules = new ArrayList<>();
+    modules.add(new {moduleName}(reactContext));
+    return modules;
+  }
+
+  @NonNull
+  @Override
+  public List<ViewManager> createViewManagers(@NonNull ReactApplicationContext reactContext) {
+    return Collections.emptyList();
+  }
+}
+"""
+
+def packageRegistrationTemplateNewArch = """
+package {packageName};
+
+import com.facebook.react.TurboReactPackage
+import com.facebook.react.bridge.NativeModule
+import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.module.model.ReactModuleInfo
+import com.facebook.react.module.model.ReactModuleInfoProvider
+import java.util.HashMap
+
+class {moduleName}Package : TurboReactPackage() {
+  override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? {
+    return if (name == {moduleName}.NAME) {
+      {moduleName}(reactContext)
+    } else {
+      null
+    }
+  }
+
+  override fun getReactModuleInfoProvider(): ReactModuleInfoProvider {
+    return ReactModuleInfoProvider {
+      val moduleInfos: MutableMap<String, ReactModuleInfo> = HashMap()
+      moduleInfos[{moduleName}.NAME] = ReactModuleInfo(
+        {moduleName}.NAME,
+        {moduleName}.NAME,
+        false,  // canOverrideExistingModule
+        false,  // needsEagerInit
+        true,  // hasConstants
+        false,  // isCxxModule
+        true // isTurboModule
+      )
+      moduleInfos
+    }
+  }
+}
+"""
+
+
 def generatedFileContentsTemplate = """
 package $generatedFilePackage;
 
@@ -258,6 +328,7 @@ class ReactNativeModules {
       .collect {
         "// ${it.name}\n${interpolateDynamicValues(it.packageImportPath)}"
       }.join('\n')
+
       packageClassInstances = ",\n      " + packages
       .findAll { !it.isPureCxxDependency }
       .collect {
@@ -268,6 +339,8 @@ class ReactNativeModules {
     String generatedFileContents = generatedFileContentsTemplate
       .replace("{{ packageImports }}", packageImports)
       .replace("{{ packageClassInstances }}", packageClassInstances)
+    
+    // TODO: check if `packageInstance` is present if not, let's try generating package registration for `moduleName`
 
     outputDir.mkdirs()
     final FileTreeBuilder treeBuilder = new FileTreeBuilder(outputDir)
@@ -482,6 +555,8 @@ class ReactNativeModules {
         reactNativeModuleConfig.put("name", name)
         reactNativeModuleConfig.put("nameCleansed", nameCleansed)
         reactNativeModuleConfig.put("androidSourceDir", androidConfig["sourceDir"])
+        reactNativeModuleConfig.put("moduleName", androidConfig["moduleName"])
+        reactNativeModuleConfig.put("packageName", androidConfig["packageName"])
         reactNativeModuleConfig.put("packageInstance", androidConfig["packageInstance"])
         reactNativeModuleConfig.put("packageImportPath", androidConfig["packageImportPath"])
         reactNativeModuleConfig.put("libraryName", androidConfig["libraryName"])

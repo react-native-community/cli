@@ -120,6 +120,8 @@ type AndroidDependencyConfig = {
   sourceDir: string;
   packageImportPath: string;
   packageInstance: string;
+  moduleName: string;
+  packageName: string;
   dependencyConfiguration?: string;
   buildTypes: string[];
   libraryName?: string | null;

@@ -81,6 +81,7 @@ export const dependencyConfig = t
                 packageName: t.string(),
                 packageImportPath: t.string(),
                 packageInstance: t.string(),
+                moduleName: t.string(),
                 dependencyConfiguration: t.string(),
                 buildTypes: t.array().items(t.string()).default([]),
                 libraryName: t.string().allow(null),
@@ -134,8 +135,8 @@ export const projectConfig = t
               // AndroidDependencyConfig
               .object({
                 sourceDir: t.string(),
-                packageImportPath: t.string(),
-                packageInstance: t.string(),
+                packageImportPath: t.string().allow(null),
+                packageInstance: t.string().allow(null),
                 dependencyConfiguration: t.string(),
                 buildTypes: t.array().items(t.string()).default([]),
                 libraryName: t.string().allow(null),

@@ -67,5 +67,5 @@ jobs:
           # Create a version string that includes the commit hash and date
           VERSION="${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}-${PRERELEASE_NAME}-${DATE}-${COMMIT_HASH}"
 
-          npx lerna version "$VERSION" from-package --force-publish --no-push --allow-branch 'main' --preid $PRERELEASE_NAME --yes
+          npx lerna version "$VERSION" --force-publish --no-push --allow-branch 'main' --preid $PRERELEASE_NAME --yes
           npx lerna publish from-git --dist-tag $PRERELEASE_NAME --no-changelog --yes

@@ -85,15 +85,15 @@ const removeDuplicateCommands = <T extends boolean>(commands: Command<T>[]) => {
 /**
  * Loads CLI configuration
  */
-function loadConfig({
+async function loadConfig({
   projectRoot = findProjectRoot(),
   selectedPlatform,
 }: {
   projectRoot?: string;
   selectedPlatform?: string;
-}): Config {
+}): Promise<Config> {
   let lazyProject: ProjectConfig;
-  const userConfig = readConfigFromDisk(projectRoot);
+  const userConfig = await readConfigFromDisk(projectRoot);
 
   const initialConfig: Config = {
     root: projectRoot,
@@ -130,12 +130,13 @@ function loadConfig({
     },
   };
 
-  const finalConfig = Array.from(
+  const finalConfig = await Array.from(
     new Set([
       ...Object.keys(userConfig.dependencies),
       ...findDependencies(projectRoot),
     ]),
-  ).reduce((acc: Config, dependencyName) => {
+  ).reduce(async (accPromise: Promise<Config>, dependencyName) => {
+    const acc = await accPromise;
     const localDependencyRoot =
       userConfig.dependencies[dependencyName] &&
       userConfig.dependencies[dependencyName].root;
@@ -143,7 +144,7 @@ function loadConfig({
       let root =
         localDependencyRoot ||
         resolveNodeModuleDir(projectRoot, dependencyName);
-      let config = readDependencyConfigFromDisk(root, dependencyName);
+      let config = await readDependencyConfigFromDisk(root, dependencyName);
 
       return assign({}, acc, {
         dependencies: assign({}, acc.dependencies, {
@@ -172,7 +173,7 @@ function loadConfig({
     } catch {
       return acc;
     }
-  }, initialConfig);
+  }, Promise.resolve(initialConfig));
 
   return finalConfig;
 }

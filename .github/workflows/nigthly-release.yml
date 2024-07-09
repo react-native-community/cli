@@ -70,4 +70,9 @@ jobs:
           VERSION="${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}-${PRERELEASE_NAME}-${DATE}-${COMMIT_HASH}"
 
           npx lerna version "$VERSION" --force-publish --no-push --allow-branch 'main' --preid $PRERELEASE_NAME --yes
-          npx lerna publish from-git --dist-tag $PRERELEASE_NAME --no-changelog --yes
+          npx lerna publish from-git --dist-tag $PRERELEASE_NAME --no-changelog --yes --loglevel verbose
+      - name: 'Print Lerna Debug Log'
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          echo "Contents of lerna-debug.log:"
+          cat lerna-debug.log

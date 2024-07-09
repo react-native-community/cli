@@ -13,7 +13,6 @@ import {
   IOSDependencyConfig,
 } from '@react-native-community/cli-types';
 import {ApplePlatform} from '../types';
-import readline from 'readline';
 
 interface ResolvePodsOptions {
   forceInstall?: boolean;
@@ -65,26 +64,20 @@ export function compareMd5Hashes(hash1?: string, hash2?: string) {
   return hash1 === hash2;
 }
 
-async function getChecksum(podfileLockPath: string) {
-  const fileStream = fs.createReadStream(podfileLockPath);
+async function getChecksum(
+  podfileLockPath: string,
+): Promise<string | undefined> {
+  const file = fs.readFileSync(podfileLockPath, 'utf8');
 
-  const rl = readline.createInterface({
-    input: fileStream,
-    crlfDelay: Infinity,
-  });
+  const checksumLine = file
+    .split('\n')
+    .find((line) => line.includes('PODFILE CHECKSUM'));
 
-  let lines = [];
-  for await (const line of rl) {
-    lines.push(line);
+  if (checksumLine) {
+    return checksumLine.split(': ')[1];
+  } else {
+    return undefined;
   }
-
-  lines = lines.reverse();
-
-  return lines
-    .filter((line) => line.includes('PODFILE CHECKSUM'))[0]
-    .split(': ')[1]
-
-  return undefined;
 }
 
 async function install(

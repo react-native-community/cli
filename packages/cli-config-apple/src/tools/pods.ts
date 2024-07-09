@@ -80,11 +80,9 @@ async function getChecksum(podfileLockPath: string) {
 
   lines = lines.reverse();
 
-  for (const line of lines) {
-    if (line.includes('PODFILE CHECKSUM')) {
-      return line.split(': ')[1];
-    }
-  }
+  return lines
+    .filter((line) => line.includes('PODFILE CHECKSUM'))[0]
+    .split(': ')[1]
 
   return undefined;
 }

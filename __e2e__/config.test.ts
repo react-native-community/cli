@@ -122,6 +122,20 @@ module.exports = {
 };
 `;
 
+const USER_CONFIG_ESM = `
+export default {
+  commands: [
+    {
+      name: 'test-command-esm',
+      description: 'test command',
+      func: () => {
+        console.log('test-command-esm');
+      },
+    },
+  ],
+};
+`;
+
 test('should read user config from react-native.config.js', () => {
   writeFiles(path.join(DIR, 'TestProject'), {
     'react-native.config.js': USER_CONFIG,
@@ -138,4 +152,13 @@ test('should read user config from react-native.config.ts', () => {
 
   const {stdout} = runCLI(path.join(DIR, 'TestProject'), ['test-command']);
   expect(stdout).toBe('test-command');
+});
+
+test('should read user config from react-native.config.mjs', () => {
+  writeFiles(path.join(DIR, 'TestProject'), {
+    'react-native.config.mjs': USER_CONFIG_ESM,
+  });
+
+  const {stdout} = runCLI(path.join(DIR, 'TestProject'), ['test-command-esm']);
+  expect(stdout).toBe('test-command-esm');
 });

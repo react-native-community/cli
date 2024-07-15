@@ -29,7 +29,21 @@ export function isProjectUsingNpm(cwd: string) {
   return findUp.sync('package-lock.json', {cwd});
 }
 
-const registry = getNpmRegistryUrl();
+export const getNpmRegistryUrl = (() => {
+  // Lazily resolve npm registry url since it is only needed when initializing a
+  // new project.
+  let registryUrl = '';
+  return () => {
+    if (!registryUrl) {
+      try {
+        registryUrl = execSync('npm config get registry').toString().trim();
+      } catch {
+        registryUrl = 'https://registry.npmjs.org/';
+      }
+    }
+    return registryUrl;
+  };
+})();
 
 /**
  * Convert an npm tag to a concrete version, for example:
@@ -40,7 +54,7 @@ export async function npmResolveConcreteVersion(
   packageName: string,
   tagOrVersion: string,
 ): Promise<string> {
-  const url = new URL(registry);
+  const url = new URL(getNpmRegistryUrl());
   url.pathname = `${packageName}/${tagOrVersion}`;
   const resp = await fetch(url);
   if (
@@ -57,12 +71,4 @@ export async function npmResolveConcreteVersion(
   }
   const json: any = await resp.json();
   return json.version;
-}
-
-export function getNpmRegistryUrl(): string {
-  try {
-    return execSync('npm config get registry').toString().trim();
-  } catch {
-    return 'https://registry.npmjs.org/';
-  }
 }

@@ -36,7 +36,11 @@ export const getNpmRegistryUrl = (() => {
   return () => {
     if (!registryUrl) {
       try {
-        registryUrl = execSync('npm config get registry --workspaces=false --include-workspace-root').toString().trim();
+        registryUrl = execSync(
+          'npm config get registry --workspaces=false --include-workspace-root',
+        )
+          .toString()
+          .trim();
       } catch {
         registryUrl = 'https://registry.npmjs.org/';
       }

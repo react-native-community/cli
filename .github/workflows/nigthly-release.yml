@@ -72,7 +72,7 @@ jobs:
           npx lerna version "$VERSION" --force-publish --no-push --allow-branch 'main' --preid $PRERELEASE_NAME --yes
           npx lerna publish from-git --dist-tag $PRERELEASE_NAME --no-changelog --yes --loglevel verbose
       - name: 'Print Lerna Debug Log'
-        if: steps.check.outputs.changed == 'true'
+        if: always() && steps.check.outputs.changed == 'true'
         run: |
           echo "Contents of lerna-debug.log:"
           cat lerna-debug.log

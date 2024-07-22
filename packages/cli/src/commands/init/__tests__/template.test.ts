@@ -2,7 +2,7 @@ jest.mock('execa', () => jest.fn());
 import execa from 'execa';
 import path from 'path';
 import fs from 'fs';
-import * as PackageManger from '../../../tools/packageManager';
+import * as PackageManger from '@react-native-community/cli-package-manager';
 import {
   installTemplatePackage,
   getTemplateConfig,

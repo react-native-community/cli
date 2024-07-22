@@ -3,7 +3,7 @@ import execa from 'execa';
 import * as yarn from '../yarn';
 import * as bun from '../bun';
 import {logger} from '@react-native-community/cli-tools';
-import * as PackageManager from '../packageManager';
+import * as PackageManager from '..';
 
 const PACKAGES = ['react', 'react-native'];
 const PROJECT_ROOT = '/some/dir';

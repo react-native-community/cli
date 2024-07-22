@@ -1,13 +1,12 @@
 import execa from 'execa';
 import path from 'path';
 import {logger, CLIError} from '@react-native-community/cli-tools';
-import * as PackageManager from '../../tools/packageManager';
+import * as PackageManager from '@react-native-community/cli-package-manager';
 import copyFiles from '../../tools/copyFiles';
 import replacePathSepForRegex from '../../tools/replacePathSepForRegex';
 import fs from 'fs';
 import chalk from 'chalk';
-import {getYarnVersionIfAvailable} from '../../tools/yarn';
-import {executeCommand} from '../../tools/executeCommand';
+import {executeCommand} from '@react-native-community/cli-package-manager';
 
 export type TemplateConfig = {
   placeholderName: string;
@@ -30,7 +29,10 @@ export async function installTemplatePackage(
     root,
   });
 
-  if (packageManager === 'yarn' && getYarnVersionIfAvailable() !== null) {
+  if (
+    packageManager === 'yarn' &&
+    PackageManager.getYarnVersionIfAvailable() !== null
+  ) {
     const options = {
       root,
       silent: true,

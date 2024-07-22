@@ -33,6 +33,13 @@ const packageManagers = {
     uninstall: ['remove'],
     installAll: ['install'],
   },
+  pnpm: {
+    init: ['init', '-y'],
+    install: ['install'],
+    installDev: ['install', '--dev'],
+    uninstall: ['remove'],
+    installAll: ['install'],
+  },
 };
 
 function configurePackageManager(

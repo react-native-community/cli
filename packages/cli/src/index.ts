@@ -15,7 +15,7 @@ const pkgJson = require('../package.json');
 
 const program = new CommanderCommand()
   .usage('[command] [options]')
-  .version(pkgJson.version, '-v', 'Output the current version')
+  .version(pkgJson.version, '-v --version', 'Output the current version')
   .enablePositionalOptions();
 
 const handleError = (err: Error) => {

@@ -10,6 +10,8 @@ type CacheKey =
   | 'lastChecked'
   | 'latestVersion'
   | 'dependencies'
+  | 'podfile'
+  | 'podfileLock'
   | 'lastUsedIOSDeviceId';
 type Cache = {[key in CacheKey]?: string};
 

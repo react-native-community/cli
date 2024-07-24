@@ -20,15 +20,10 @@ import {
   executePostInitScript,
 } from './template';
 import {changePlaceholderInTemplate} from './editTemplate';
-import * as PackageManager from '../../tools/packageManager';
+import * as PackageManager from '@react-native-community/cli-package-manager';
 import banner from './banner';
 import TemplateAndVersionError from './errors/TemplateAndVersionError';
-import {getBunVersionIfAvailable} from '../../tools/bun';
-import {
-  getNpmVersionIfAvailable,
-  npmResolveConcreteVersion,
-} from '../../tools/npm';
-import {getYarnVersionIfAvailable} from '../../tools/yarn';
+import {} from '@react-native-community/cli-tools';
 import {createHash} from 'crypto';
 import {
   createGitRepository,
@@ -36,7 +31,6 @@ import {
   checkIfFolderIsGitRepo,
 } from './git';
 import semver from 'semver';
-import {executeCommand} from '../../tools/executeCommand';
 import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
 
 const DEFAULT_VERSION = 'latest';
@@ -89,7 +83,7 @@ const YARN_VERSION = '3.6.4';
 
 const bumpYarnVersion = async (root: string) => {
   try {
-    let yarnVersion = semver.parse(getYarnVersionIfAvailable());
+    let yarnVersion = semver.parse(PackageManager.getYarnVersionIfAvailable());
 
     if (yarnVersion) {
       // `yarn set` is unsupported until 1.22, however it's a alias (yarnpkg/yarn/pull/7862) calling `policies set-version`.
@@ -97,13 +91,13 @@ const bumpYarnVersion = async (root: string) => {
       if (yarnVersion.major === 1 && yarnVersion.minor < 22) {
         setVersionArgs = ['policies', 'set-version', YARN_VERSION];
       }
-      await executeCommand('yarn', setVersionArgs, {
+      await PackageManager.executeCommand('yarn', setVersionArgs, {
         root,
         silent: !logger.isVerbose(),
       });
 
       // React Native doesn't support PnP, so we need to set nodeLinker to node-modules. Read more here: https://github.com/react-native-community/cli/issues/27#issuecomment-1772626767
-      await executeCommand(
+      await PackageManager.executeCommand(
         'yarn',
         ['config', 'set', 'nodeLinker', 'node-modules'],
         {root, silent: !logger.isVerbose()},
@@ -387,11 +381,11 @@ function checkPackageManagerAvailability(
   packageManager: PackageManager.PackageManager,
 ) {
   if (packageManager === 'bun') {
-    return getBunVersionIfAvailable();
+    return PackageManager.getBunVersionIfAvailable();
   } else if (packageManager === 'npm') {
-    return getNpmVersionIfAvailable();
+    return PackageManager.getNpmVersionIfAvailable();
   } else if (packageManager === 'yarn') {
-    return getYarnVersionIfAvailable();
+    return PackageManager.getYarnVersionIfAvailable();
   }
 
   return false;
@@ -532,7 +526,7 @@ export default (async function initialize(
   let version = options.version ?? DEFAULT_VERSION;
 
   try {
-    const updatedVersion = await npmResolveConcreteVersion(
+    const updatedVersion = await PackageManager.npmResolveConcreteVersion(
       options.platformName ?? 'react-native',
       version,
     );

@@ -11,7 +11,7 @@
     "chalk": "^4.1.2",
     "execa": "^5.0.0",
     "fast-glob": "^3.3.2",
-    "fast-xml-parser": "^4.2.4",
+    "fast-xml-parser": "^4.4.1",
     "logkitty": "^0.7.1"
   },
   "files": [

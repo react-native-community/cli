@@ -23,7 +23,6 @@ import {changePlaceholderInTemplate} from './editTemplate';
 import * as PackageManager from '@react-native-community/cli-package-manager';
 import banner from './banner';
 import TemplateAndVersionError from './errors/TemplateAndVersionError';
-import {} from '@react-native-community/cli-tools';
 import {createHash} from 'crypto';
 import {
   createGitRepository,

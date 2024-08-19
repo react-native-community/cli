@@ -42,7 +42,7 @@ function getDependencyConfig(
               ? null
               : platformConfig.dependencyConfig(
                   root,
-                  config.dependency.platforms[platform],
+                  config.dependency.platforms?.[platform],
                 );
           return dependency;
         },

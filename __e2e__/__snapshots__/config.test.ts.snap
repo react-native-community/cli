@@ -4,9 +4,29 @@ exports[`shows up current config without unnecessary output 1`] = `
 {
   "root": "<<REPLACED_ROOT>>/TestProject",
   "reactNativePath": "<<REPLACED_ROOT>>/TestProject/node_modules/react-native",
-  "reactNativeVersion": "0.74",
+  "reactNativeVersion": "0.75",
   "dependencies": {},
   "commands": [
+    {
+      "name": "bundle",
+      "description": "Build the bundle for the provided JavaScript entry file.",
+      "options": [
+        "<<REPLACED>>"
+      ]
+    },
+    {
+      "name": "start",
+      "description": "Start the React Native development server.",
+      "options": [
+        "<<REPLACED>>"
+      ]
+    },
+    {
+      "name": "codegen",
+      "options": [
+        "<<REPLACED>>"
+      ]
+    },
     {
       "name": "log-ios",
       "description": "starts iOS device syslog tail",
@@ -48,33 +68,6 @@ exports[`shows up current config without unnecessary output 1`] = `
     {
       "name": "build-android",
       "description": "builds your app",
-      "options": [
-        "<<REPLACED>>"
-      ]
-    },
-    {
-      "name": "bundle",
-      "description": "Build the bundle for the provided JavaScript entry file.",
-      "options": [
-        "<<REPLACED>>"
-      ]
-    },
-    {
-      "name": "ram-bundle",
-      "description": "Build the RAM bundle for the provided JavaScript entry file. See https://reactnative.dev/docs/ram-bundles-inline-requires.",
-      "options": [
-        "<<REPLACED>>"
-      ]
-    },
-    {
-      "name": "start",
-      "description": "Start the React Native development server.",
-      "options": [
-        "<<REPLACED>>"
-      ]
-    },
-    {
-      "name": "codegen",
       "options": [
         "<<REPLACED>>"
       ]

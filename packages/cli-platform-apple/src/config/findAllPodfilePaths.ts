@@ -15,5 +15,9 @@ export default function findAllPodfilePaths(cwd: string) {
   return glob.sync('**/Podfile', {
     cwd: unixifyPaths(cwd),
     ignore: GLOB_EXCLUDE_PATTERN,
+    // Stop unbounded globbing and infinite loops for projects
+    // with deeply nested subdirectories. The most likely result
+    // is `ios/Podfile`, so this depth should be plenty:
+    deep: 10,
   });
 }

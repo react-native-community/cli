@@ -1,6 +1,6 @@
 # @react-native-community/cli-platform-apple
 
-This package is part of the [React Native CLI](../../README.md). It contains utilities for building reusable commands targetting Apple platforms.
+This package is part of the [React Native CLI](../../README.md). It contains utilities for building reusable commands targeting Apple platforms.
 
 ## Installation
 
@@ -44,7 +44,7 @@ module.exports = {
 `cli-platform-apple` also exports utilities to create OOT platform config.
 
 - `getProjectConfig()` - creates project config for given platform
-- `getDependencyConfg()` - creates dependency config for given platform
+- `getDependencyConfig()` - creates dependency config for given platform
 
 Example (`<oot-platform>/packages/react-native/react-native.config.js`):
 
@@ -53,7 +53,7 @@ platforms: {
     visionos: {
       npmPackageName: '@callstack/react-native-visionos',
       projectConfig: getProjectConfig({platformName: 'visionos'}),
-      dependencyConfig: getDependencyConfg({platformName: 'visionos'}),
+      dependencyConfig: getDependencyConfig({platformName: 'visionos'}),
     },
     ..
   },

@@ -16,6 +16,8 @@ export type BuildFlags = {
 
 export const getBuildOptions = ({platformName}: BuilderCommand) => {
   const {readableName} = getPlatformInfo(platformName);
+  const isMac = platformName === 'macos';
+
   return [
     {
       name: '--mode <string>',
@@ -59,6 +61,12 @@ export const getBuildOptions = ({platformName}: BuilderCommand) => {
     {
       name: '--force-pods',
       description: 'Force CocoaPods installation',
+    },
+    !isMac && {
+      name: '--device [string]', // here we're intentionally using [] over <> to make passed value optional to allow users to run only on physical devices
+      description:
+        'Explicitly set the device to use by name or by unique device identifier . If the value is not provided,' +
+        'the app will run on the first available physical device.',
     },
   ];
 };

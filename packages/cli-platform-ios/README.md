@@ -148,6 +148,10 @@ Explicitly set Xcode scheme to use.
 
 Explicitly set Xcode target to use.
 
+#### `--device [string]`
+
+Explicitly set device to use by name. The value is not required if you have a single device connected.
+
 #### `--verbose`
 
 Do not use `xcbeautify` or `xcpretty` even if installed.

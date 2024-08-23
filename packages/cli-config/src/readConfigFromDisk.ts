@@ -20,6 +20,7 @@ const searchPlaces = ['react-native.config.js', 'react-native.config.ts'];
 export function readConfigFromDisk(rootFolder: string): UserConfig {
   const explorer = cosmiconfigSync('react-native', {
     stopDir: rootFolder,
+    searchPlaces,
   });
 
   const searchResult = explorer.search(rootFolder);

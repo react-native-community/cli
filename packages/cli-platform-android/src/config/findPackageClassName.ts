@@ -29,9 +29,6 @@ export function getMainActivityFiles(
 }
 
 export default function getPackageClassName(folder: string) {
-  let files = getMainActivityFiles(folder);
-  let packages = getClassNameMatches(files, folder);
-
   /*
     When module contains `expo-module.config.json` we return null
     because expo modules follow other practices and don't implement
@@ -60,6 +57,9 @@ export default function getPackageClassName(folder: string) {
   ) {
     return null;
   }
+
+  let files = getMainActivityFiles(folder);
+  let packages = getClassNameMatches(files, folder);
 
   if (!packages.length) {
     files = getMainActivityFiles(folder, false);

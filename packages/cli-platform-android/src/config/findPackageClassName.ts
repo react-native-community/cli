@@ -32,6 +32,35 @@ export default function getPackageClassName(folder: string) {
   let files = getMainActivityFiles(folder);
   let packages = getClassNameMatches(files, folder);
 
+  /*
+    When module contains `expo-module.config.json` we return null
+    because expo modules follow other practices and don't implement
+    ReactPackage/TurboReactPackage directly, so it doesn't make sense
+    to scan and read hundreds of files to get package class name.
+
+    Exception is `expo` package itself which contains `expo-module.config.json`
+    and implements `ReactPackage/TurboReactPackage` inside `ExpoModulesPackage.kt`.
+
+    Following logic is done due to performance optimization.
+  */
+
+  if (
+    fs.existsSync(path.join(folder, '..', 'expo-module.config.json')) &&
+    !fs.existsSync(
+      path.join(
+        folder,
+        'src',
+        'main',
+        'java',
+        'expo',
+        'modules',
+        'ExpoModulesPackage.kt',
+      ),
+    )
+  ) {
+    return null;
+  }
+
   if (!packages.length) {
     files = getMainActivityFiles(folder, false);
     packages = getClassNameMatches(files, folder);

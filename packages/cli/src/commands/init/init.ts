@@ -344,6 +344,8 @@ async function createFromTemplate({
       didInstallPods = false;
       loader.succeed('Dependencies installation skipped');
     }
+
+    fs.removeSync(templateSourceDir);
   } catch (e) {
     logger.log('\n');
     if (e instanceof CLIError) {
@@ -353,9 +355,8 @@ async function createFromTemplate({
     }
     didInstallPods = false;
     logger.debug(e as any);
-    process.exit(1);
-  } finally {
     fs.removeSync(templateSourceDir);
+    process.exit(1);
   }
 
   if (process.platform === 'darwin') {

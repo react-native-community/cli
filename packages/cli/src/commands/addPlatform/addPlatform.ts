@@ -12,10 +12,7 @@ import {install, PackageManager} from './../../tools/packageManager';
 import npmFetch from 'npm-registry-fetch';
 import semver from 'semver';
 import {checkGitInstallation, isGitTreeDirty} from '../init/git';
-import {
-  changePlaceholderInTemplate,
-  getTemplateName,
-} from '../init/editTemplate';
+import {changePlaceholderInTemplate} from '../init/editTemplate';
 import {
   copyTemplate,
   executePostInitScript,
@@ -46,7 +43,7 @@ const getAppName = async (root: string) => {
   let name;
 
   try {
-    name = JSON.parse(readFileSync(pkgJsonPath, 'utf8'));
+    name = JSON.parse(readFileSync(pkgJsonPath, 'utf8')).name;
   } catch (e) {
     throw new CLIError(`Failed to read ${pkgJsonPath} file.`, e as Error);
   }
@@ -105,6 +102,19 @@ const getPackageMatchingVersion = async (
   );
 };
 
+// From React Native 0.75 template is not longer inside `react-native` core,
+// so we need to map package name (fork) to template name
+
+const getTemplateNameFromPackageName = (packageName: string) => {
+  switch (packageName) {
+    case '@callstack/react-native-visionos':
+    case 'react-native-visionos':
+      return '@callstack/visionos-template';
+    default:
+      return packageName;
+  }
+};
+
 async function addPlatform(
   [packageName]: string[],
   {root, reactNativeVersion}: Config,
@@ -114,6 +124,7 @@ async function addPlatform(
     throw new CLIError('Please provide package name e.g. react-native-macos');
   }
 
+  const templateName = getTemplateNameFromPackageName(packageName);
   const isGitAvailable = await checkGitInstallation();
 
   if (isGitAvailable) {
@@ -163,20 +174,35 @@ async function addPlatform(
       root,
     });
     loader.succeed();
-  } catch (e) {
+  } catch (error) {
     loader.fail();
-    throw e;
+    throw new CLIError(
+      `Failed to install package ${packageName}@${matchingVersion}`,
+      (error as Error).message,
+    );
+  }
+
+  loader.start(`Installing template packages from ${templateName}@0${version}`);
+
+  const templateSourceDir = mkdtempSync(join(tmpdir(), 'rncli-init-template-'));
+
+  try {
+    await installTemplatePackage(
+      `${templateName}@0${version}`,
+      templateSourceDir,
+      pm,
+    );
+    loader.succeed();
+  } catch (error) {
+    loader.fail();
+    throw new CLIError(
+      `Failed to install template packages from ${templateName}@0${version}`,
+      (error as Error).message,
+    );
   }
 
   loader.start('Copying template files');
-  const templateSourceDir = mkdtempSync(join(tmpdir(), 'rncli-init-template-'));
-  await installTemplatePackage(
-    `${packageName}@${matchingVersion}`,
-    templateSourceDir,
-    pm,
-  );
 
-  const templateName = getTemplateName(templateSourceDir);
   const templateConfig = getTemplateConfig(templateName, templateSourceDir);
 
   if (!templateConfig.platforms) {
@@ -187,6 +213,7 @@ async function addPlatform(
 
   for (const platform of templateConfig.platforms) {
     if (existsSync(join(root, platform))) {
+      loader.fail();
       throw new CLIError(
         `Platform ${platform} already exists in the project. Directory ${join(
           root,

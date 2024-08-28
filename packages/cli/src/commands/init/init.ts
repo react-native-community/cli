@@ -82,6 +82,8 @@ const bumpYarnVersion = async (root: string) => {
         root,
         silent: !logger.isVerbose(),
       });
+
+      setNodeModulesLinker(root);
     }
   } catch (e) {
     logger.debug(e as string);

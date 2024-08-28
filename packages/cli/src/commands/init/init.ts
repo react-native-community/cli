@@ -82,13 +82,6 @@ const bumpYarnVersion = async (root: string) => {
         root,
         silent: !logger.isVerbose(),
       });
-
-      // React Native doesn't support PnP, so we need to set nodeLinker to node-modules. Read more here: https://github.com/react-native-community/cli/issues/27#issuecomment-1772626767
-      await executeCommand(
-        'yarn',
-        ['config', 'set', 'nodeLinker', 'node-modules'],
-        {root, silent: !logger.isVerbose()},
-      );
     }
   } catch (e) {
     logger.debug(e as string);
@@ -266,8 +259,12 @@ async function createFromTemplate({
       packageName,
     });
 
-    if (packageManager === 'yarn' && shouldBumpYarnVersion) {
-      await bumpYarnVersion(projectDirectory);
+    if (packageManager === 'yarn') {
+      setNodeModulesLinker(projectDirectory);
+
+      if (shouldBumpYarnVersion) {
+        await bumpYarnVersion(projectDirectory);
+      }
     }
 
     loader.succeed();
@@ -543,3 +540,20 @@ export default (async function initialize(
     showPodsInstructions: !didInstallPods,
   });
 });
+
+export async function setNodeModulesLinker(root: string) {
+  const options = {root, silent: !logger.isVerbose()};
+
+  // React Native doesn't support PnP, so we need to set nodeLinker to node-modules. Read more here: https://github.com/react-native-community/cli/issues/27#issuecomment-1772626767
+  await executeCommand(
+    'yarn',
+    ['config', 'set', 'nodeLinker', 'node-modules'],
+    {root, silent: !logger.isVerbose()},
+  );
+
+  await executeCommand(
+    'yarn',
+    ['config', 'set', 'nmHoistingLimits', 'workspaces'],
+    options,
+  );
+}

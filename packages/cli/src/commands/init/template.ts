@@ -6,8 +6,8 @@ import copyFiles from '../../tools/copyFiles';
 import replacePathSepForRegex from '../../tools/replacePathSepForRegex';
 import fs from 'fs';
 import chalk from 'chalk';
-import {getYarnVersionIfAvailable} from '../../tools/yarn';
 import {executeCommand} from '../../tools/executeCommand';
+import {setNodeModulesLinker} from './init';
 
 export type TemplateConfig = {
   placeholderName: string;
@@ -30,29 +30,16 @@ export async function installTemplatePackage(
     root,
   });
 
-  if (packageManager === 'yarn' && getYarnVersionIfAvailable() !== null) {
-    const options = {
-      root,
-      silent: true,
-    };
-
-    // React Native doesn't support PnP, so we need to set nodeLinker to node-modules. Read more here: https://github.com/react-native-community/cli/issues/27#issuecomment-1772626767
-    executeCommand(
-      'yarn',
-      ['config', 'set', 'nodeLinker', 'node-modules'],
-      options,
-    );
-
-    executeCommand(
-      'yarn',
-      ['config', 'set', 'nmHoistingLimits', 'workspaces'],
-      options,
-    );
+  if (packageManager === 'yarn') {
+    await setNodeModulesLinker(root);
 
     for (let key in yarnConfigOptions) {
       if (yarnConfigOptions.hasOwnProperty(key)) {
         let value = yarnConfigOptions[key];
-        executeCommand('yarn', ['config', 'set', key, value], options);
+        executeCommand('yarn', ['config', 'set', key, value], {
+          root,
+          silent: !logger.isVerbose(),
+        });
       }
     }
   }

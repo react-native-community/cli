@@ -166,7 +166,7 @@ async function setProjectDirectory(
 
   try {
     if (deleteDirectory) {
-      fs.removeSync(directory);
+      fs.emptyDirSync(directory);
     }
 
     fs.mkdirSync(directory, {recursive: true});
@@ -242,6 +242,10 @@ async function createFromTemplate({
 
   // if the project with the name already has cache, remove the cache to avoid problems with pods installation
   cacheManager.removeProjectCache(projectName);
+
+  if (directory === '') {
+    directory = process.cwd();
+  }
 
   const projectDirectory = await setProjectDirectory(
     directory,

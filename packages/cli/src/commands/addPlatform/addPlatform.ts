@@ -22,6 +22,7 @@ import {
 import {tmpdir} from 'os';
 import {mkdtempSync} from 'graceful-fs';
 import {existsSync} from 'fs';
+import {getNpmRegistryUrl} from '../../tools/npm';
 
 type Options = {
   packageName: string;
@@ -30,7 +31,7 @@ type Options = {
   title: string;
 };
 
-const NPM_REGISTRY_URL = 'http://registry.npmjs.org'; // TODO: Support local registry
+const NPM_REGISTRY_URL = getNpmRegistryUrl();
 
 const getAppName = async (root: string) => {
   logger.log(`Reading ${chalk.cyan('name')} from package.json…`);

@@ -183,13 +183,15 @@ async function addPlatform(
     );
   }
 
-  loader.start(`Installing template packages from ${templateName}@0${version}`);
+  loader.start(
+    `Installing template packages from ${templateName}@0${matchingVersion}`,
+  );
 
   const templateSourceDir = mkdtempSync(join(tmpdir(), 'rncli-init-template-'));
 
   try {
     await installTemplatePackage(
-      `${templateName}@0${version}`,
+      `${templateName}@0${matchingVersion}`,
       templateSourceDir,
       pm,
     );
@@ -197,7 +199,7 @@ async function addPlatform(
   } catch (error) {
     loader.fail();
     throw new CLIError(
-      `Failed to install template packages from ${templateName}@0${version}`,
+      `Failed to install template packages from ${templateName}@0${matchingVersion}`,
       (error as Error).message,
     );
   }

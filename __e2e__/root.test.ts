@@ -28,6 +28,10 @@ beforeAll(() => {
     },
   );
   console.log(linkingOutput.stdout);
+  const filesOutput = spawnScript('ls', ['-la', path.dirname(__dirname)], {
+    cwd: path.join(DIR, 'TestProject'),
+  });
+  console.log(filesOutput.stdout);
 });
 
 afterAll(() => {

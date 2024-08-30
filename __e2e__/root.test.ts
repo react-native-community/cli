@@ -20,9 +20,13 @@ beforeAll(() => {
 
   // Link CLI to the project
   console.log(__dirname);
-  const linkingOutput = spawnScript('yarn', ['link', __dirname, '--all'], {
-    cwd: path.join(DIR, 'TestProject'),
-  });
+  const linkingOutput = spawnScript(
+    'yarn',
+    ['link', path.dirname(__dirname), '--all'],
+    {
+      cwd: path.join(DIR, 'TestProject'),
+    },
+  );
   console.log(linkingOutput.stdout);
 });
 

@@ -31,9 +31,14 @@ beforeAll(() => {
   console.log(linkPackagesOutput.stdout);
 
   const yarnVersionOutput = spawnScript('yarn', ['--version'], {
-    cwd: path.dirname(__dirname),
+    cwd: path.join(DIR, 'TestProject'),
   });
   console.log(yarnVersionOutput.stdout);
+
+  const yarnWHy = spawnScript('yarn', ['why', '@react-native-community/cli'], {
+    cwd: path.join(DIR, 'TestProject'),
+  });
+  console.log(yarnWHy.stdout);
 
   const linkingOutput = spawnScript(
     'yarn',

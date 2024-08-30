@@ -48,6 +48,15 @@ beforeAll(() => {
     cwd: path.join(DIR, 'TestProject'),
   });
   console.log(yarnWHy.stdout);
+
+  const configOutput = spawnScript(
+    'npx',
+    ['@react-native-community/cli', 'config'],
+    {
+      cwd: path.join(DIR, 'TestProject'),
+    },
+  );
+  console.log(configOutput.stdout);
 });
 
 afterAll(() => {

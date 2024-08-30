@@ -35,11 +35,6 @@ beforeAll(() => {
   });
   console.log(yarnVersionOutput.stdout);
 
-  const yarnWHy = spawnScript('yarn', ['why', '@react-native-community/cli'], {
-    cwd: path.join(DIR, 'TestProject'),
-  });
-  console.log(yarnWHy.stdout);
-
   const linkingOutput = spawnScript(
     'yarn',
     ['link', path.dirname(__dirname), '--all'],
@@ -48,6 +43,11 @@ beforeAll(() => {
     },
   );
   console.log(linkingOutput.stdout);
+
+  const yarnWHy = spawnScript('yarn', ['why', '@react-native-community/cli'], {
+    cwd: path.join(DIR, 'TestProject'),
+  });
+  console.log(yarnWHy.stdout);
 });
 
 afterAll(() => {

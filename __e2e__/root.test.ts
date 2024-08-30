@@ -19,9 +19,10 @@ beforeAll(() => {
   runCLI(DIR, ['init', 'TestProject', `--install-pods`]);
 
   // Link CLI to the project
-  spawnScript('yarn', ['link', __dirname, '--all'], {
+  const linkingOutput = spawnScript('yarn', ['link', __dirname, '--all'], {
     cwd: path.join(DIR, 'TestProject'),
   });
+  console.log(linkingOutput.stdout);
 });
 
 afterAll(() => {

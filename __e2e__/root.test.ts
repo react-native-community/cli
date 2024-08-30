@@ -30,6 +30,11 @@ beforeAll(() => {
   });
   console.log(linkPackagesOutput.stdout);
 
+  const yarnVersionOutput = spawnScript('yarn', ['--version'], {
+    cwd: path.dirname(__dirname),
+  });
+  console.log(yarnVersionOutput.stdout);
+
   const linkingOutput = spawnScript(
     'yarn',
     ['link', path.dirname(__dirname), '--all'],

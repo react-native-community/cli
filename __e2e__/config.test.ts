@@ -35,7 +35,7 @@ function createCorruptedSetupEnvScript() {
   };
 }
 
-beforeAll(() => {
+beforeEach(() => {
   // Clean up folder and re-create a new project
   cleanup(DIR);
   writeFiles(DIR, {});
@@ -122,6 +122,20 @@ module.exports = {
 };
 `;
 
+const USER_CONFIG_TS = `
+export default {
+  commands: [
+    {
+      name: 'test-command-ts',
+      description: 'test command',
+      func: () => {
+        console.log('test-command-ts');
+      },
+    },
+  ],
+};
+`;
+
 const USER_CONFIG_ESM = `
 export default {
   commands: [
@@ -147,11 +161,11 @@ test('should read user config from react-native.config.js', () => {
 
 test('should read user config from react-native.config.ts', () => {
   writeFiles(path.join(DIR, 'TestProject'), {
-    'react-native.config.ts': USER_CONFIG,
+    'react-native.config.ts': USER_CONFIG_TS,
   });
 
-  const {stdout} = runCLI(path.join(DIR, 'TestProject'), ['test-command']);
-  expect(stdout).toBe('test-command');
+  const {stdout} = runCLI(path.join(DIR, 'TestProject'), ['test-command-ts']);
+  expect(stdout).toBe('test-command-ts');
 });
 
 test('should read user config from react-native.config.mjs', () => {

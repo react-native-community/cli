@@ -31,6 +31,7 @@
     "@react-native-community/cli-server-api": "14.0.1",
     "@react-native-community/cli-tools": "14.0.1",
     "@react-native-community/cli-types": "14.0.1",
+    "@react-native-community/cli-package-manager": "14.0.1",
     "chalk": "^4.1.2",
     "commander": "^9.4.1",
     "deepmerge": "^4.3.0",

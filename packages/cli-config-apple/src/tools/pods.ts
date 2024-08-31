@@ -67,15 +67,19 @@ export function compareMd5Hashes(hash1?: string, hash2?: string) {
 async function getChecksum(
   podfileLockPath: string,
 ): Promise<string | undefined> {
-  const file = fs.readFileSync(podfileLockPath, 'utf8');
+  try {
+    const file = fs.readFileSync(podfileLockPath, 'utf8');
 
-  const checksumLine = file
-    .split('\n')
-    .find((line) => line.includes('PODFILE CHECKSUM'));
+    const checksumLine = file
+      .split('\n')
+      .find((line) => line.includes('PODFILE CHECKSUM'));
 
-  if (checksumLine) {
-    return checksumLine.split(': ')[1];
-  } else {
+    if (checksumLine) {
+      return checksumLine.split(': ')[1];
+    }
+
+    return undefined;
+  } catch {
     return undefined;
   }
 }

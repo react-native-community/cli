@@ -13,6 +13,8 @@ import chalk from 'chalk';
  */
 const searchPlaces = [
   'react-native.config.js',
+  'react-native.config.cjs',
+  'react-native.config.mjs',
   'react-native.config.ts',
   'react-native.config.mjs',
 ];

@@ -1,6 +1,12 @@
 import fs from 'fs';
 import path from 'path';
-import {runCLI, getTempDirectory, cleanup, writeFiles} from '../jest/helpers';
+import {
+  runCLI,
+  getTempDirectory,
+  cleanup,
+  writeFiles,
+  spawnScript,
+} from '../jest/helpers';
 import slash from 'slash';
 
 const DIR = getTempDirectory('command-init');
@@ -34,6 +40,7 @@ const customTemplateCopiedFiles = [
 beforeEach(() => {
   cleanup(DIR);
   writeFiles(DIR, {});
+  spawnScript('corepack', ['enable'], {cwd: DIR});
 });
 afterEach(() => {
   cleanup(DIR);

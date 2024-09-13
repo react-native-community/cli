@@ -22,13 +22,10 @@ function createCustomTemplateFiles() {
 
 const customTemplateCopiedFiles = [
   '.git',
-  '.yarn',
-  '.yarnrc.yml', // .yarnrc.yml for Yarn versions >= 2.0.0
   'dir',
   'file',
-  'node_modules',
+  'package-lock.json',
   'package.json',
-  'yarn.lock',
 ];
 
 beforeEach(() => {
@@ -150,7 +147,7 @@ test('init skips installation of dependencies with --skip-install', () => {
 
   expect(dirFiles).toEqual(
     customTemplateCopiedFiles.filter(
-      (file) => !['node_modules', 'yarn.lock'].includes(file),
+      (file) => !['node_modules', 'package-lock.json'].includes(file),
     ),
   );
 });

@@ -100,13 +100,6 @@ Skip dependencies installation
 
 Determine if CocoaPods should be installed when initializing a project. If set to `true` it will install pods, if set to `false`, it will skip the step entirely. If not used, prompt will be displayed
 
-#### `--npm`
-
-> [!WARNING]  
-> `--npm` is deprecated and will be removed in the future. Please use `--pm npm` instead.
-
-Force use of npm during initialization
-
 #### `--pm <string>`
 
 Use specific package manager to initialize the project. Available options: `yarn`, `npm`, `bun`. Default: `yarn`

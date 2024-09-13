@@ -155,44 +155,6 @@ test('init skips installation of dependencies with --skip-install', () => {
   );
 });
 
-test('init uses npm as the package manager with --npm', () => {
-  createCustomTemplateFiles();
-
-  const {stdout} = runCLI(DIR, [
-    'init',
-    '--template',
-    templatePath,
-    PROJECT_NAME,
-    '--npm',
-    '--install-pods',
-    'false',
-  ]);
-
-  expect(stdout).toContain('Run instructions');
-
-  // make sure we don't leave garbage
-  expect(fs.readdirSync(DIR)).toContain('custom');
-
-  const initDirPath = path.join(DIR, PROJECT_NAME);
-
-  // Remove yarn specific files and node_modules
-  const filteredFiles = customTemplateCopiedFiles.filter(
-    (file) =>
-      !['yarn.lock', 'node_modules', '.yarnrc.yml', '.yarn'].includes(file),
-  );
-
-  // Add package-lock.json
-  const customTemplateCopiedFilesForNpm = [
-    ...filteredFiles,
-    'package-lock.json',
-  ];
-
-  // Assert for existence
-  customTemplateCopiedFilesForNpm.forEach((file) => {
-    expect(fs.existsSync(path.join(initDirPath, file))).toBe(true);
-  });
-});
-
 // react-native-macos stopped shipping `template.config.js` for 0.75, so this test is disabled. in future releases we should re-enable once `template.config.js` will be there again.
 test.skip('init --platform-name should work for out of tree platform', () => {
   createCustomTemplateFiles();

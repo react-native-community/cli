@@ -31,7 +31,7 @@ npx react-native@${VERSION} init ProjectName
 It is possible to initialize a new application with a custom template with
 a `--template` option.
 
-It should point to a valid package that can be installed with `yarn` or `npm` (if you're using `--npm` option).
+It should point to a valid package that can be installed with `npm` or `yarn` (if you're using `--pm yarn` option).
 
 The most common options are:
 

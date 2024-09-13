@@ -48,7 +48,6 @@ interface TemplateOptions {
   projectName: string;
   shouldBumpYarnVersion: boolean;
   templateUri: string;
-  npm?: boolean;
   pm?: PackageManager.PackageManager;
   directory: string;
   projectTitle?: string;
@@ -186,7 +185,6 @@ async function createFromTemplate({
   projectName,
   shouldBumpYarnVersion,
   templateUri,
-  npm,
   pm,
   directory,
   projectTitle,
@@ -211,14 +209,6 @@ async function createFromTemplate({
     const userAgentPM = userAgentPackageManager();
     // if possible, use the package manager from the user agent. Otherwise fallback to default (yarn)
     packageManager = userAgentPM || 'yarn';
-  }
-
-  if (npm) {
-    logger.warn(
-      'Flag --npm is deprecated and will be removed soon. In the future, please use --pm npm instead.',
-    );
-
-    packageManager = 'npm';
   }
 
   // if the project with the name already has cache, remove the cache to avoid problems with pods installation
@@ -425,7 +415,6 @@ async function createProject(
     projectName,
     shouldBumpYarnVersion,
     templateUri,
-    npm: options.npm,
     pm: options.pm,
     directory,
     projectTitle: options.title,

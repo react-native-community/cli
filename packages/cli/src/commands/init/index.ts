@@ -14,11 +14,7 @@ export default {
     {
       name: '--template <string>',
       description:
-        'Uses a custom template. Valid arguments are the ones supported by `yarn add [package]` or `npm install [package]`, if you are using `--npm` option',
-    },
-    {
-      name: '--npm',
-      description: 'Forces using npm for initialization',
+        'Uses a custom template. Valid arguments are the ones supported by `npm install [package]` or `yarn add [package]`, if you are using `--pm yarn` option',
     },
     {
       name: '--pm <string>',

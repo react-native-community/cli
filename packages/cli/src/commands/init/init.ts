@@ -207,8 +207,8 @@ async function createFromTemplate({
     packageManager = pm;
   } else {
     const userAgentPM = userAgentPackageManager();
-    // if possible, use the package manager from the user agent. Otherwise fallback to default (yarn)
-    packageManager = userAgentPM || 'yarn';
+    // if possible, use the package manager from the user agent. Otherwise fallback to default (npm)
+    packageManager = userAgentPM || 'npm';
   }
 
   // if the project with the name already has cache, remove the cache to avoid problems with pods installation

@@ -19,7 +19,7 @@ export default {
     {
       name: '--pm <string>',
       description:
-        'Use specific package manager to initialize the project. Available options: `yarn`, `npm`, `bun`. Default: `yarn`',
+        'Use specific package manager to initialize the project. Available options: `yarn`, `npm`, `bun`. Default: `npm`',
     },
     {
       name: '--directory <string>',

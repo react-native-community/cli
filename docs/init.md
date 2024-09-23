@@ -6,7 +6,7 @@ There are couple of ways to initialize new React Native projects.
 npx react-native@latest init ProjectName
 ```
 
-> Note: If you have both `yarn` and `npm` installed on your machine, React Native CLI will always try to use `yarn`, so even if you use `npx` utility, only `react-native` executable will be installed using `npm` and the rest of the work will be delegated to `yarn`. You can force usage of `npm` adding `--pm npm` flag to the command.
+> Note: If you have both `yarn` and `npm` installed on your machine, React Native CLI will always try to use `npm`. You can force usage of `yarn` by adding `--pm yarn` flag to the command.
 
 > Note: for Yarn users, `yarn dlx` command similar to `npx` will be featured in Yarn 2.0: <https://github.com/yarnpkg/berry/pull/40> so we'll be able to use it in a similar fashion.
 
@@ -49,10 +49,10 @@ npx react-native@latest init ProjectName --template ${TEMPLATE_NAME}
 npx react-native@${VERSION} init ProjectName --template ${TEMPLATE_NAME}
 ```
 
-You can force usage of `npm` if you have both `yarn` and `npm` installed on your machine:
+You can force usage of `yarn` if you have both `yarn` and `npm` installed on your machine:
 
 ```sh
-npx react-native@latest init ProjectName --pm npm
+npx react-native@latest init ProjectName --pm yarn
 ```
 
 ## Creating custom template

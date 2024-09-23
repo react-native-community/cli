@@ -149,12 +149,30 @@ const createRun =
       return;
     }
 
-    const devices = await listDevices(sdkNames);
+    let devices = await listDevices(sdkNames);
 
     if (devices.length === 0) {
       return logger.error(
         `${platformReadableName} devices or simulators not detected. Install simulators via Xcode or connect a physical ${platformReadableName} device`,
       );
+    }
+
+    const packageJson = getPackageJson(ctx.root);
+
+    const preferredDevice = cacheManager.get(
+      packageJson.name,
+      'lastUsedIOSDeviceId',
+    );
+
+    if (preferredDevice) {
+      const preferredDeviceIndex = devices.findIndex(
+        ({udid}) => udid === preferredDevice,
+      );
+
+      if (preferredDeviceIndex > -1) {
+        const [device] = devices.splice(preferredDeviceIndex, 1);
+        devices.unshift(device);
+      }
     }
 
     const fallbackSimulator =
@@ -169,16 +187,7 @@ const createRun =
         );
       }
 
-      const packageJson = getPackageJson(ctx.root);
-      const preferredDevice = cacheManager.get(
-        packageJson.name,
-        'lastUsedIOSDeviceId',
-      );
-
-      const selectedDevice = await promptForDeviceSelection(
-        devices,
-        preferredDevice,
-      );
+      const selectedDevice = await promptForDeviceSelection(devices);
 
       if (!selectedDevice) {
         throw new CLIError(

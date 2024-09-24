@@ -2,7 +2,7 @@ import {isProjectUsingKotlin} from '@react-native-community/cli-platform-android
 import {CLIError, logger} from '@react-native-community/cli-tools';
 import {XMLBuilder, XMLParser} from 'fast-xml-parser';
 import fs from 'fs-extra';
-import {sync as globSync} from 'glob';
+import glob from 'fast-glob';
 import OpenType from 'opentype.js';
 import path from 'path';
 
@@ -77,7 +77,7 @@ function convertToAndroidResourceName(str: string) {
 function getProjectFilePath(rootPath: string, name: string) {
   const isUsingKotlin = isProjectUsingKotlin(rootPath);
   const ext = isUsingKotlin ? 'kt' : 'java';
-  const filePath = globSync(
+  const filePath = glob.sync(
     path.join(rootPath, `app/src/main/java/**/${name}.${ext}`),
   )[0];
   return filePath;

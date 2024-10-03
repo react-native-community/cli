@@ -22,6 +22,7 @@ describe('android::getDependencyConfig', () => {
     fs.__setMockFilesystem({
       empty: {},
       nested: {
+        'package.json': JSON.stringify({codegenConfig: {jsSrcsDir: 'src'}}),
         android: {
           app: mocks.valid,
         },

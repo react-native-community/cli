@@ -9,6 +9,7 @@
 import {execSync} from 'child_process';
 import findUp from 'find-up';
 import semver from 'semver';
+import { TEMPLATE_PACKAGE_COMMUNITY } from '../'
 
 export function getNpmVersionIfAvailable() {
   let npmVersion;
@@ -119,8 +120,6 @@ class Template {
   }
 }
 
-const TEMPLATE_VERSIONS_URL =
-  'https://registry.npmjs.org/@react-native-community/template';
 const minorVersion = (version: string) => {
   const v = semver.parse(version)!;
   return `${v.major}.${v.minor}`;
@@ -129,7 +128,7 @@ const minorVersion = (version: string) => {
 export async function getTemplateVersion(
   reactNativeVersion: string,
 ): Promise<TemplateVersion | undefined> {
-  const json = await fetch(TEMPLATE_VERSIONS_URL).then(
+  const json = await fetch(getNpmRegistryUrl() + '@react-native-community/template').then(
     (resp) => resp.json() as Promise<NpmTemplateResponse>,
   );
 

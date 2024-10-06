@@ -9,7 +9,6 @@
 import {execSync} from 'child_process';
 import findUp from 'find-up';
 import semver from 'semver';
-import { TEMPLATE_PACKAGE_COMMUNITY } from '../'
 
 export function getNpmVersionIfAvailable() {
   let npmVersion;

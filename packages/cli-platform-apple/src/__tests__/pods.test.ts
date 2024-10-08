@@ -1,3 +1,4 @@
+import path from 'path';
 import {writeFiles, getTempDirectory, cleanup} from '../../../../jest/helpers';
 import installPods from '../tools/installPods';
 import resolvePods, {
@@ -51,6 +52,7 @@ const DIR = getTempDirectory('root_test');
 const createTempFiles = (rest?: Record<string, string>) => {
   writeFiles(DIR, {
     'package.json': JSON.stringify(packageJson),
+    'ios/Podfile': '',
     ...rest,
   });
 };
@@ -83,9 +85,9 @@ describe('getPlatformDependencies', () => {
 
 describe('resolvePods', () => {
   it('should install pods if they are not installed', async () => {
-    createTempFiles({'ios/Podfile/Manifest.lock': ''});
+    createTempFiles();
 
-    await resolvePods(DIR, {}, 'ios');
+    await resolvePods(DIR, path.join(DIR, 'ios'), {}, 'ios');
 
     expect(installPods).toHaveBeenCalled();
   });
@@ -93,7 +95,9 @@ describe('resolvePods', () => {
   it('should install pods when force option is set to true', async () => {
     createTempFiles();
 
-    await resolvePods(DIR, {}, 'ios', {forceInstall: true});
+    await resolvePods(DIR, path.join(DIR, 'ios'), {}, 'ios', {
+      forceInstall: true,
+    });
 
     expect(installPods).toHaveBeenCalled();
   });
@@ -101,7 +105,7 @@ describe('resolvePods', () => {
   it('should install pods when there is no cached hash of dependencies', async () => {
     createTempFiles();
 
-    await resolvePods(DIR, {}, 'ios');
+    await resolvePods(DIR, path.join(DIR, 'ios'), {}, 'ios');
 
     expect(mockSet).toHaveBeenCalledWith(
       packageJson.name,
@@ -111,22 +115,26 @@ describe('resolvePods', () => {
   });
 
   it('should skip pods installation if the cached hash and current hash are the same', async () => {
-    createTempFiles({'ios/Pods/Manifest.lock': ''});
+    createTempFiles({
+      'ios/Pods/Manifest.lock': '',
+      'ios/Podfile.lock': `PODFILE CHECKSUM: ${dependencyHash}`,
+    });
 
     mockGet.mockImplementation(() => dependencyHash);
 
-    await resolvePods(DIR, {}, 'ios');
+    await resolvePods(DIR, path.join(DIR, 'ios'), {}, 'ios');
 
     expect(installPods).not.toHaveBeenCalled();
   });
 
   it('should install pods if the cached hash and current hash are different', async () => {
-    createTempFiles({'ios/Pods/Manifest.lock': ''});
+    createTempFiles();
 
     mockGet.mockImplementation(() => dependencyHash);
 
     await resolvePods(
       DIR,
+      path.join(DIR, 'ios'),
       {
         dep1: {
           name: 'dep1',

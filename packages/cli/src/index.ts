@@ -193,7 +193,7 @@ async function setupAndRun(platformName?: string) {
       }
     }
 
-    config = loadConfig({
+    config = await loadConfig({
       selectedPlatform,
     });
 

@@ -21,6 +21,9 @@ describe('findBuildGradle for apps', () => {
       flat: {
         android: mocks.validApp,
       },
+      customPath: {
+        android: mocks.validAppWithCustomAppName,
+      },
     });
   });
 
@@ -32,6 +35,12 @@ describe('findBuildGradle for apps', () => {
 
   it('returns `null` if there is no gradle in the app folder', () => {
     expect(findBuildGradle('/empty', false)).toBeNull();
+  });
+
+  it('returns the app build.gradle with custom app name', () => {
+    expect(findBuildGradle('/customPath/android', false, 'custom')).toBe(
+      '/customPath/android/custom/build.gradle',
+    );
   });
 });
 

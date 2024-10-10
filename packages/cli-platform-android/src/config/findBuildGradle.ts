@@ -1,14 +1,18 @@
 import fs from 'fs';
 import path from 'path';
 
-export function findBuildGradle(sourceDir: string, isLibrary: boolean) {
+export function findBuildGradle(
+  sourceDir: string,
+  isLibrary: boolean,
+  appName = 'app',
+) {
   const buildGradlePath = path.join(
     sourceDir,
-    isLibrary ? 'build.gradle' : 'app/build.gradle',
+    isLibrary ? 'build.gradle' : `${appName}/build.gradle`,
   );
   const buildGradleKtsPath = path.join(
     sourceDir,
-    isLibrary ? 'build.gradle.kts' : 'app/build.gradle.kts',
+    isLibrary ? 'build.gradle.kts' : `${appName}/build.gradle.kts`,
   );
 
   if (fs.existsSync(buildGradlePath)) {

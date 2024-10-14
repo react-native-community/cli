@@ -48,7 +48,11 @@ export function projectConfig(
   const manifestPath = userConfig.manifestPath
     ? path.join(sourceDir, userConfig.manifestPath)
     : findManifest(path.join(sourceDir, appName));
-  const buildGradlePath = findBuildGradle(sourceDir, false, appName);
+  const buildGradlePath = findBuildGradle(
+    sourceDir,
+    false,
+    appName === '' ? 'app' : appName,
+  );
 
   if (!manifestPath && !buildGradlePath) {
     return null;

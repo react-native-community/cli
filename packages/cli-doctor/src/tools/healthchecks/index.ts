@@ -29,14 +29,16 @@ type Options = {
   contributor: boolean | void;
 };
 
-export const getHealthchecks = ({contributor}: Options): Healthchecks => {
+export const getHealthchecks = async ({
+  contributor,
+}: Options): Promise<Healthchecks> => {
   let additionalChecks: HealthCheckCategory[] = [];
   let projectSpecificHealthchecks = {};
   let config;
 
   // Doctor can run in a detached mode, where there isn't a config so this can fail
   try {
-    config = loadConfig({});
+    config = await loadConfig({});
     additionalChecks = config.healthChecks;
 
     if (config.reactNativePath) {

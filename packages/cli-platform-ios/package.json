@@ -9,6 +9,9 @@
   "dependencies": {
     "@react-native-community/cli-platform-apple": "15.0.0"
   },
+  "devDependencies": {
+    "hasbin": "^1.2.3"
+  },
   "files": [
     "build",
     "!*.d.ts",

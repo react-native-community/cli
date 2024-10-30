@@ -14,8 +14,6 @@
   },
   "devDependencies": {
     "@react-native-community/cli-types": "15.0.0",
-    "@types/lodash": "^4.14.149",
-    "hasbin": "^1.2.3",
     "ora": "^5.4.1"
   },
   "files": [

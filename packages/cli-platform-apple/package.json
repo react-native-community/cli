@@ -14,9 +14,7 @@
     "fast-xml-parser": "^4.4.1"
   },
   "devDependencies": {
-    "@react-native-community/cli-types": "15.0.0",
-    "@types/lodash": "^4.14.149",
-    "hasbin": "^1.2.3"
+    "@react-native-community/cli-types": "15.0.0"
   },
   "files": [
     "build",

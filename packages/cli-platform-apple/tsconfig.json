@@ -2,7 +2,11 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "build",
+    "outDir": "build"
   },
-  "references": [{"path": "../cli-tools"}, {"path": "../cli-types"}]
+  "references": [
+    {"path": "../cli-tools"},
+    {"path": "../cli-types"},
+    {"path": "../cli-config-apple"}
+  ]
 }

@@ -1,5 +1,5 @@
 {
-  "name": "@react-native-community/cli-platform-apple",
+  "name": "@react-native-community/cli-config-apple",
   "version": "15.0.0",
   "license": "MIT",
   "main": "build/index.js",
@@ -7,24 +7,24 @@
     "access": "public"
   },
   "dependencies": {
-    "@react-native-community/cli-config-apple": "15.0.0",
     "@react-native-community/cli-tools": "15.0.0",
     "chalk": "^4.1.2",
     "execa": "^5.0.0",
-    "fast-xml-parser": "^4.4.1"
+    "fast-glob": "^3.3.2"
   },
   "devDependencies": {
-    "@react-native-community/cli-types": "15.0.0"
+    "@react-native-community/cli-types": "15.0.0",
+    "ora": "^5.4.1"
   },
   "files": [
     "build",
     "!*.d.ts",
     "!*.map"
   ],
-  "homepage": "https://github.com/react-native-community/cli/tree/main/packages/cli-platform-apple",
+  "homepage": "https://github.com/react-native-community/cli/tree/main/packages/cli-config-apple",
   "repository": {
     "type": "git",
     "url": "https://github.com/react-native-community/cli.git",
-    "directory": "packages/cli-platform-apple"
+    "directory": "packages/cli-config-apple"
   }
 }

@@ -12,7 +12,7 @@ import {
 } from '@react-native-community/cli-tools';
 import type {BuildFlags} from './buildOptions';
 import {simulatorDestinationMap} from './simulatorDestinationMap';
-import {supportedPlatforms} from '../../config/supportedPlatforms';
+import {supportedPlatforms} from '@react-native-community/cli-config-apple';
 import {ApplePlatform} from '../../types';
 
 function prettifyXcodebuildMessages(output: string): Set<string> {

@@ -20,7 +20,6 @@ import {
 } from '@react-native-community/cli-tools';
 import getArchitecture from '../../tools/getArchitecture';
 import listDevices from '../../tools/listDevices';
-import resolvePods, {getPackageJson} from '../../tools/pods';
 import {promptForDeviceSelection} from '../../tools/prompts';
 import {BuildFlags} from '../buildCommand/buildOptions';
 import {buildProject} from '../buildCommand/buildProject';
@@ -32,7 +31,10 @@ import {printFoundDevices, matchingDevice} from './matchingDevice';
 import {runOnDevice} from './runOnDevice';
 import {runOnSimulator} from './runOnSimulator';
 import {BuilderCommand} from '../../types';
-import {supportedPlatforms} from '../../config/supportedPlatforms';
+import {
+  supportedPlatforms,
+  resolvePods,
+} from '@react-native-community/cli-config-apple';
 import openApp from './openApp';
 
 export interface FlagsT extends BuildFlags {
@@ -44,6 +46,16 @@ export interface FlagsT extends BuildFlags {
   packager?: boolean;
   port: number;
   terminal?: string;
+}
+
+function getPackageJson(root: string) {
+  try {
+    return require(path.join(root, 'package.json'));
+  } catch {
+    throw new CLIError(
+      'No package.json found. Please make sure the file exists in the current folder.',
+    );
+  }
 }
 
 const createRun =

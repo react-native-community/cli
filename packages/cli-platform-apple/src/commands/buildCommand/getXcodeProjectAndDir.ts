@@ -1,7 +1,7 @@
 import fs from 'fs';
 import {IOSProjectConfig} from '@react-native-community/cli-types';
 import {CLIError} from '@react-native-community/cli-tools';
-import findXcodeProject from '../../config/findXcodeProject';
+import {findXcodeProject} from '@react-native-community/cli-config-apple';
 import {getPlatformInfo} from '../runCommand/getPlatformInfo';
 import {ApplePlatform} from '../../types';
 

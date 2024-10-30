@@ -6,7 +6,7 @@ import path from 'path';
 import listDevices from '../../tools/listDevices';
 import {getPlatformInfo} from '../runCommand/getPlatformInfo';
 import {BuilderCommand, Device} from '../../types';
-import {supportedPlatforms} from '../../config/supportedPlatforms';
+import {supportedPlatforms} from '@react-native-community/cli-config-apple';
 import {promptForDeviceToTailLogs} from '../../tools/prompts';
 
 /**

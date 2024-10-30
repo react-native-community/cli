@@ -1,13 +1,15 @@
 import {CLIError} from '@react-native-community/cli-tools';
 import {Config, IOSProjectConfig} from '@react-native-community/cli-types';
 import getArchitecture from '../../tools/getArchitecture';
-import resolvePods from '../../tools/pods';
 import {BuildFlags} from './buildOptions';
 import {buildProject} from './buildProject';
 import {getConfiguration} from './getConfiguration';
 import {getXcodeProjectAndDir} from './getXcodeProjectAndDir';
 import {BuilderCommand} from '../../types';
-import {supportedPlatforms} from '../../config/supportedPlatforms';
+import {
+  supportedPlatforms,
+  resolvePods,
+} from '@react-native-community/cli-config-apple';
 
 const createBuild =
   ({platformName}: BuilderCommand) =>

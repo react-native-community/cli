@@ -2,7 +2,10 @@ export {
   getDependencyConfig,
   getProjectConfig,
   findPodfilePaths,
-} from './config';
+  installPods,
+  findXcodeProject,
+  findPbxprojFile,
+} from '@react-native-community/cli-config-apple';
 
 export {getBuildOptions} from './commands/buildCommand/buildOptions';
 export {getLogOptions} from './commands/logCommand/logOptions';
@@ -13,7 +16,3 @@ export {default as createLog} from './commands/logCommand/createLog';
 export {default as createRun} from './commands/runCommand/createRun';
 
 export {default as getArchitecture} from './tools/getArchitecture';
-export {default as installPods} from './tools/installPods';
-
-export {default as findXcodeProject} from './config/findXcodeProject';
-export {default as findPbxprojFile} from './config/findPbxprojFile';

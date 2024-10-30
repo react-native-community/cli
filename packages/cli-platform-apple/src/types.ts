@@ -1,4 +1,4 @@
-import {supportedPlatforms} from './config/supportedPlatforms';
+import {supportedPlatforms} from '@react-native-community/cli-config-apple';
 
 type ObjectValues<T> = T[keyof T];
 

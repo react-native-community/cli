@@ -24,7 +24,7 @@ interface NativeDependencies {
   [key: string]: DependencyConfig;
 }
 
-export function getPackageJson(root: string) {
+function getPackageJson(root: string) {
   try {
     return require(path.join(root, 'package.json'));
   } catch {

@@ -298,7 +298,7 @@ async function createFromTemplate({
             didInstallPods = installCocoapods;
 
             if (installCocoapods) {
-              await installPods(loader);
+              await installPods(loader, {newArchEnabled: true});
               loader.succeed();
               setEmptyHashForCachedDependencies(projectName);
             }

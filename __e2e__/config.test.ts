@@ -184,7 +184,7 @@ test('should read user config from react-native.config.mjs', () => {
   expect(stdout).toBe('test-command-esm');
 });
 
-test('should fail if if using require() in ES module in react-native.config.mjs', () => {
+test('should fail if using require() in ES module in react-native.config.mjs', () => {
   writeFiles(path.join(DIR, 'TestProject'), {
     'react-native.config.mjs': `
       const packageJSON = require('./package.json');

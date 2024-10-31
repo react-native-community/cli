@@ -201,7 +201,7 @@ test('should fail if using require() in ES module in react-native.config.mjs', (
   );
 });
 
-test('should fail if if using require() in ES module with "type": "module" in package.json', () => {
+test('should fail if using require() in ES module with "type": "module" in package.json', () => {
   writeFiles(path.join(DIR, 'TestProject'), {
     'react-native.config.js': `
       const packageJSON = require('./package.json');

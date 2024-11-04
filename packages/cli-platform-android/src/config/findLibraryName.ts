@@ -17,10 +17,16 @@ export function findLibraryName(root: string, sourceDir: string) {
   // If not, we check if the library specified it in the build.gradle file.
   let match: RegExpMatchArray | null = null;
   if (fs.existsSync(buildGradlePath)) {
-    const buildGradleContents = fs.readFileSync(buildGradlePath, 'utf-8');
+    const buildGradleContents = fs
+      .readFileSync(buildGradlePath, 'utf-8')
+      .replace(/\/\/.*$/gm, '') // Remove single-line comments
+      .replace(/\/\*[\s\S]*?\*\//g, ''); // Remove multi-line comments
     match = buildGradleContents.match(/libraryName = ["'](.+)["']/);
   } else if (fs.existsSync(buildGradleKtsPath)) {
-    const buildGradleContents = fs.readFileSync(buildGradleKtsPath, 'utf-8');
+    const buildGradleContents = fs
+      .readFileSync(buildGradleKtsPath, 'utf-8')
+      .replace(/\/\/.*$/gm, '') // Remove single-line comments
+      .replace(/\/\*[\s\S]*?\*\//g, ''); // Remove multi-line comments
     match = buildGradleContents.match(/libraryName\.set\(["'](.+)["']\)/);
   } else {
     return undefined;

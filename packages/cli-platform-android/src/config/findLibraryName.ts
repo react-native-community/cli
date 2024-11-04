@@ -15,16 +15,16 @@ export function findLibraryName(root: string, sourceDir: string) {
   }
 
   // If not, we check if the library specified it in the build.gradle file.
-  let buildGradleContents = '';
+  let match: RegExpMatchArray | null = null;
   if (fs.existsSync(buildGradlePath)) {
-    buildGradleContents = fs.readFileSync(buildGradlePath, 'utf-8');
+    const buildGradleContents = fs.readFileSync(buildGradlePath, 'utf-8');
+    match = buildGradleContents.match(/libraryName = ["'](.+)["']/);
   } else if (fs.existsSync(buildGradleKtsPath)) {
-    buildGradleContents = fs.readFileSync(buildGradleKtsPath, 'utf-8');
+    const buildGradleContents = fs.readFileSync(buildGradleKtsPath, 'utf-8');
+    match = buildGradleContents.match(/libraryName\.set\(["'](.+)["']\)/);
   } else {
     return undefined;
   }
-
-  const match = buildGradleContents.match(/libraryName = ["'](.+)["']/);
 
   if (match) {
     return match[1];

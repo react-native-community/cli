@@ -49,10 +49,75 @@ const packageJsonWithoutCodegenConfig = `
   }
   `;
 
+const buildGradleWithSingleLineComments = `
+  apply plugin: "com.android.application"
+  apply plugin: "com.facebook.react"
+
+  // react {
+  //   libraryName = "justalibrary"
+  // }
+  `;
+
+const buildGradleWithMultiLineComments = `
+  apply plugin: "com.android.application"
+  apply plugin: "com.facebook.react"
+
+  /*
+  react {
+    libraryName = "justalibrary"
+  }
+  */
+  `;
+
+const buildGradleValidWithComments = `
+  apply plugin: "com.android.application"
+  apply plugin: "com.facebook.react"
+
+  // react {
+  //   libraryName = "justalibrary"
+  // }
+  react {
+    libraryName = "justalibrary2"
+  }
+  `;
+
+const buildGradleKtsWithSingleLineComments = `
+  apply(id = "com.android.application")
+  apply(id = "com.facebook.react")
+
+  // react {
+  //   libraryName.set("justalibrary")
+  // }
+  `;
+
+const buildGradleKtsWithMultiLineComments = `
+  apply(id = "com.android.application")
+  apply(id = "com.facebook.react")
+
+  /*
+  react {
+    libraryName.set("justalibrary")
+  }
+  */
+  `;
+
 describe('android::findLibraryName', () => {
   beforeAll(() => {
     fs.__setMockFilesystem({
-      empty: {},
+      empty: {
+        singlelinecomments: {
+          'build.gradle': buildGradleWithSingleLineComments,
+        },
+        multilinecomments: {
+          'build.gradle': buildGradleWithMultiLineComments,
+        },
+        singllinecommentskts: {
+          'build.gradle.kts': buildGradleKtsWithSingleLineComments,
+        },
+        multilinecommentskts: {
+          'build.gradle.kts': buildGradleKtsWithMultiLineComments,
+        },
+      },
       valid: {
         android: mocks.valid,
         singlequotes: {
@@ -72,6 +137,9 @@ describe('android::findLibraryName', () => {
           android: {
             'build.gradle': buildGradleWithSingleQuotes,
           },
+        },
+        withcomments: {
+          'build.gradle': buildGradleValidWithComments,
         },
       },
     });
@@ -98,6 +166,10 @@ describe('android::findLibraryName', () => {
     ).toBe('my-awesome-library');
   });
 
+  it('returns the library name if declared in the build.gradle file with comments', () => {
+    expect(findLibraryName('/', '/valid/withcomments')).toBe('justalibrary2');
+  });
+
   it('falls back to reading from build.gradle when codegenConfig is not there', () => {
     expect(
       findLibraryName(
@@ -109,5 +181,21 @@ describe('android::findLibraryName', () => {
 
   it('returns null if there is no build.gradle file', () => {
     expect(findLibraryName('/', '/empty')).toBeUndefined();
+  });
+
+  it('returns null if the library name is declared as a single line comment', () => {
+    expect(findLibraryName('/', '/empty/singlelinecomments')).toBeUndefined();
+  });
+
+  it('returns null if the library name is declared as a multi line comment', () => {
+    expect(findLibraryName('/', '/empty/multilinecomments')).toBeUndefined();
+  });
+
+  it('returns null if the library name is declared as a single line comment in build.gradle.kts', () => {
+    expect(findLibraryName('/', '/empty/singllinecommentskts')).toBeUndefined();
+  });
+
+  it('returns null if the library name is declared as a multi line comment in build.gradle.kts', () => {
+    expect(findLibraryName('/', '/empty/multilinecommentskts')).toBeUndefined();
   });
 });

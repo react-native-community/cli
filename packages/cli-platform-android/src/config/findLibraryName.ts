@@ -24,7 +24,9 @@ export function findLibraryName(root: string, sourceDir: string) {
     return undefined;
   }
 
-  const match = buildGradleContents.match(/libraryName = ["'](.+)["']/);
+  const match =
+    buildGradleContents.match(/libraryName = ["'](.+)["']/) ??
+    buildGradleContents.match(/libraryName\.set\(["'](.+)["']\)/);
 
   if (match) {
     return match[1];

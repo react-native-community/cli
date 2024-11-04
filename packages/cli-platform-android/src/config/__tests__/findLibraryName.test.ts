@@ -86,7 +86,7 @@ describe('android::findLibraryName', () => {
   });
 
   it('returns the library name if declared with inside a build.gradle.kts file', () => {
-    expect(findLibraryName('/', '/valid/singlequotes')).toBe('justalibrary');
+    expect(findLibraryName('/', '/valid/gradlekts')).toBe('justalibrary');
   });
 
   it('returns the library name if defined inside codegenConfig', () => {

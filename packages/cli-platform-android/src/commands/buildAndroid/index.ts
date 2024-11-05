@@ -5,7 +5,7 @@ import {
 } from '@react-native-community/cli-tools';
 import {Config} from '@react-native-community/cli-types';
 import execa from 'execa';
-import {getAndroidProject} from '../../config/getAndroidProject';
+import {getAndroidProject} from '@react-native-community/cli-config-android';
 import adb from '../runAndroid/adb';
 import getAdbPath from '../runAndroid/getAdbPath';
 import {getTaskNames} from '../runAndroid/getTaskNames';

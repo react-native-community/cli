@@ -9,6 +9,10 @@ export {
   listAndroidDevices,
   tryRunAdbReverse,
 } from './commands/runAndroid';
-export {projectConfig, dependencyConfig} from './config';
-export {getAndroidProject, getPackageName} from './config/getAndroidProject';
-export {default as isProjectUsingKotlin} from './config/isProjectUsingKotlin';
+export {
+  projectConfig,
+  dependencyConfig,
+  getAndroidProject,
+  getPackageName,
+  isProjectUsingKotlin,
+} from '@react-native-community/cli-config-android';

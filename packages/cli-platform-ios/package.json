@@ -15,8 +15,7 @@
   "files": [
     "build",
     "!*.d.ts",
-    "!*.map",
-    "native_modules.rb"
+    "!*.map"
   ],
   "homepage": "https://github.com/react-native-community/cli/tree/main/packages/cli-platform-ios",
   "repository": {

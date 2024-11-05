@@ -1,5 +1,5 @@
 /**
- * Types in this document describe the data that is expected by `native_modules.rb`.
+ * Types in this document describe the data that is expected by https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/cocoapods/autolinking.rb.
  * When performing changes, make sure to sync it with the Ruby file.
  */
 

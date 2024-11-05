@@ -59,7 +59,7 @@ export type Command<IsDetached extends boolean = false> = {
 
 export type DetachedCommand = Command<true>;
 
-interface PlatformConfig<
+export interface PlatformConfig<
   ProjectConfig,
   ProjectParams,
   DependencyConfig,

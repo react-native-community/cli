@@ -1,4 +1,4 @@
-import loadConfig from '@react-native-community/cli-config';
+import loadConfig, {loadConfigAsync} from '@react-native-community/cli-config';
 import {CLIError, logger} from '@react-native-community/cli-tools';
 import type {
   Command,
@@ -193,7 +193,7 @@ async function setupAndRun(platformName?: string) {
       }
     }
 
-    config = await loadConfig({
+    config = await loadConfigAsync({
       selectedPlatform,
     });
 
@@ -243,4 +243,4 @@ async function setupAndRun(platformName?: string) {
 
 const bin = require.resolve('./bin');
 
-export {run, bin, loadConfig};
+export {run, bin, loadConfig, loadConfigAsync};

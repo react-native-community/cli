@@ -17,7 +17,9 @@ import findDependencies from './findDependencies';
 import resolveReactNativePath from './resolveReactNativePath';
 import {
   readConfigFromDisk,
+  readConfigFromDiskAsync,
   readDependencyConfigFromDisk,
+  readDependencyConfigFromDiskAsync,
 } from './readConfigFromDisk';
 import assign from './assign';
 import merge from './merge';
@@ -85,7 +87,103 @@ const removeDuplicateCommands = <T extends boolean>(commands: Command<T>[]) => {
 /**
  * Loads CLI configuration
  */
-async function loadConfig({
+export default function loadConfig({
+  projectRoot = findProjectRoot(),
+  selectedPlatform,
+}: {
+  projectRoot?: string;
+  selectedPlatform?: string;
+}): Config {
+  let lazyProject: ProjectConfig;
+  const userConfig = readConfigFromDisk(projectRoot);
+
+  const initialConfig: Config = {
+    root: projectRoot,
+    get reactNativePath() {
+      return userConfig.reactNativePath
+        ? path.resolve(projectRoot, userConfig.reactNativePath)
+        : resolveReactNativePath(projectRoot);
+    },
+    get reactNativeVersion() {
+      return getReactNativeVersion(initialConfig.reactNativePath);
+    },
+    dependencies: userConfig.dependencies,
+    commands: userConfig.commands,
+    healthChecks: userConfig.healthChecks || [],
+    platforms: userConfig.platforms,
+    assets: userConfig.assets,
+    get project() {
+      if (lazyProject) {
+        return lazyProject;
+      }
+
+      lazyProject = {};
+      for (const platform in finalConfig.platforms) {
+        const platformConfig = finalConfig.platforms[platform];
+        if (platformConfig) {
+          lazyProject[platform] = platformConfig.projectConfig(
+            projectRoot,
+            userConfig.project[platform] || {},
+          );
+        }
+      }
+
+      return lazyProject;
+    },
+  };
+
+  const finalConfig = Array.from(
+    new Set([
+      ...Object.keys(userConfig.dependencies),
+      ...findDependencies(projectRoot),
+    ]),
+  ).reduce((acc: Config, dependencyName) => {
+    const localDependencyRoot =
+      userConfig.dependencies[dependencyName] &&
+      userConfig.dependencies[dependencyName].root;
+    try {
+      let root =
+        localDependencyRoot ||
+        resolveNodeModuleDir(projectRoot, dependencyName);
+      let config = readDependencyConfigFromDisk(root, dependencyName);
+
+      return assign({}, acc, {
+        dependencies: assign({}, acc.dependencies, {
+          get [dependencyName](): DependencyConfig {
+            return getDependencyConfig(
+              root,
+              dependencyName,
+              finalConfig,
+              config,
+              userConfig,
+            );
+          },
+        }),
+        commands: removeDuplicateCommands([
+          ...config.commands,
+          ...acc.commands,
+        ]),
+        platforms: {
+          ...acc.platforms,
+          ...(selectedPlatform && config.platforms[selectedPlatform]
+            ? {[selectedPlatform]: config.platforms[selectedPlatform]}
+            : config.platforms),
+        },
+        healthChecks: [...acc.healthChecks, ...config.healthChecks],
+      }) as Config;
+    } catch {
+      return acc;
+    }
+  }, initialConfig);
+
+  return finalConfig;
+}
+
+/**
+ * Load CLI configuration asynchronously, which supports reading ESM modules.
+ */
+
+export async function loadConfigAsync({
   projectRoot = findProjectRoot(),
   selectedPlatform,
 }: {
@@ -93,7 +191,7 @@ async function loadConfig({
   selectedPlatform?: string;
 }): Promise<Config> {
   let lazyProject: ProjectConfig;
-  const userConfig = await readConfigFromDisk(projectRoot);
+  const userConfig = await readConfigFromDiskAsync(projectRoot);
 
   const initialConfig: Config = {
     root: projectRoot,
@@ -144,7 +242,10 @@ async function loadConfig({
       let root =
         localDependencyRoot ||
         resolveNodeModuleDir(projectRoot, dependencyName);
-      let config = await readDependencyConfigFromDisk(root, dependencyName);
+      let config = await readDependencyConfigFromDiskAsync(
+        root,
+        dependencyName,
+      );
 
       return assign({}, acc, {
         dependencies: assign({}, acc.dependencies, {
@@ -177,5 +278,3 @@ async function loadConfig({
 
   return finalConfig;
 }
-
-export default loadConfig;

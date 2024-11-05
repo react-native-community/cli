@@ -35,7 +35,14 @@ function createCorruptedSetupEnvScript() {
   };
 }
 
-beforeAll(() => {
+const modifyPackageJson = (dir: string, key: string, value: string) => {
+  const packageJsonPath = path.join(dir, 'package.json');
+  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+  packageJson[key] = value;
+  fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
+};
+
+beforeEach(() => {
   // Clean up folder and re-create a new project
   cleanup(DIR);
   writeFiles(DIR, {});
@@ -122,6 +129,34 @@ module.exports = {
 };
 `;
 
+const USER_CONFIG_TS = `
+export default {
+  commands: [
+    {
+      name: 'test-command-ts',
+      description: 'test command',
+      func: () => {
+        console.log('test-command-ts');
+      },
+    },
+  ],
+};
+`;
+
+const USER_CONFIG_ESM = `
+export default {
+  commands: [
+    {
+      name: 'test-command-esm',
+      description: 'test command',
+      func: () => {
+        console.log('test-command-esm');
+      },
+    },
+  ],
+};
+`;
+
 test('should read user config from react-native.config.js', () => {
   writeFiles(path.join(DIR, 'TestProject'), {
     'react-native.config.js': USER_CONFIG,
@@ -133,9 +168,110 @@ test('should read user config from react-native.config.js', () => {
 
 test('should read user config from react-native.config.ts', () => {
   writeFiles(path.join(DIR, 'TestProject'), {
-    'react-native.config.ts': USER_CONFIG,
+    'react-native.config.ts': USER_CONFIG_TS,
   });
 
+  const {stdout} = runCLI(path.join(DIR, 'TestProject'), ['test-command-ts']);
+  expect(stdout).toBe('test-command-ts');
+});
+
+test('should read user config from react-native.config.mjs', () => {
+  writeFiles(path.join(DIR, 'TestProject'), {
+    'react-native.config.mjs': USER_CONFIG_ESM,
+  });
+
+  const {stdout} = runCLI(path.join(DIR, 'TestProject'), ['test-command-esm']);
+  expect(stdout).toBe('test-command-esm');
+});
+
+test('should fail if using require() in ES module in react-native.config.mjs', () => {
+  writeFiles(path.join(DIR, 'TestProject'), {
+    'react-native.config.mjs': `
+      const packageJSON = require('./package.json');
+      ${USER_CONFIG_ESM}
+    `,
+  });
+
+  const {stderr, stdout} = runCLI(path.join(DIR, 'TestProject'), [
+    'test-command-esm',
+  ]);
+  expect(stderr).toMatch('error Failed to load configuration of your project');
+  expect(stdout).toMatch(
+    'ReferenceError: require is not defined in ES module scope, you can use import instead',
+  );
+});
+
+test('should fail if using require() in ES module with "type": "module" in package.json', () => {
+  writeFiles(path.join(DIR, 'TestProject'), {
+    'react-native.config.js': `
+      const packageJSON = require('./package.json');
+      ${USER_CONFIG_ESM}
+    `,
+  });
+
+  modifyPackageJson(path.join(DIR, 'TestProject'), 'type', 'module');
+
+  const {stderr} = runCLI(path.join(DIR, 'TestProject'), ['test-command-esm']);
+  console.log(stderr);
+  expect(stderr).toMatch('error Failed to load configuration of your project');
+});
+
+test('should read config if using createRequire() helper in react-native.config.js with "type": "module" in package.json', () => {
+  writeFiles(path.join(DIR, 'TestProject'), {
+    'react-native.config.js': `
+      import { createRequire } from 'node:module'; 
+      const require = createRequire(import.meta.url);
+      const packageJSON = require('./package.json');
+
+      ${USER_CONFIG_ESM}
+    `,
+  });
+
+  modifyPackageJson(path.join(DIR, 'TestProject'), 'type', 'module');
+
+  const {stdout} = runCLI(path.join(DIR, 'TestProject'), ['test-command-esm']);
+  expect(stdout).toBe('test-command-esm');
+});
+
+test('should read config if using require() in react-native.config.cjs with "type": "module" in package.json', () => {
+  writeFiles(path.join(DIR, 'TestProject'), {
+    'react-native.config.cjs': `
+      const packageJSON = require('./package.json');
+      ${USER_CONFIG}
+    `,
+  });
+
+  modifyPackageJson(path.join(DIR, 'TestProject'), 'type', 'module');
+
   const {stdout} = runCLI(path.join(DIR, 'TestProject'), ['test-command']);
-  expect(stdout).toBe('test-command');
+  expect(stdout).toMatch('test-command');
+});
+
+test('should read config if using import/export in react-native.config.js with "type": "module" package.json', () => {
+  writeFiles(path.join(DIR, 'TestProject'), {
+    'react-native.config.js': `
+      import {} from 'react';
+      ${USER_CONFIG_ESM}
+    `,
+  });
+
+  modifyPackageJson(path.join(DIR, 'TestProject'), 'type', 'module');
+
+  const {stdout} = runCLI(path.join(DIR, 'TestProject'), ['test-command-esm']);
+  expect(stdout).toMatch('test-command-esm');
+});
+
+test('should read config if using import/export in react-native.config.mjs with "type": "commonjs" package.json', () => {
+  writeFiles(path.join(DIR, 'TestProject'), {
+    'react-native.config.mjs': `
+      import {} from 'react';
+
+      ${USER_CONFIG_ESM}
+    `,
+  });
+
+  modifyPackageJson(path.join(DIR, 'TestProject'), 'type', 'commonjs');
+
+  const {stdout} = runCLI(path.join(DIR, 'TestProject'), ['test-command-esm']);
+  expect(stdout).toMatch('test-command-esm');
 });

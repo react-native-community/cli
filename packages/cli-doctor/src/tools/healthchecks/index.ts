@@ -12,7 +12,7 @@ import xcode from './xcode';
 import cocoaPods from './cocoaPods';
 import iosDeploy from './iosDeploy';
 import {Healthchecks, HealthCheckCategory} from '../../types';
-import loadConfig from '@react-native-community/cli-config';
+import {loadConfigAsync} from '@react-native-community/cli-config';
 import xcodeEnv from './xcodeEnv';
 import packager from './packager';
 import gradle from './gradle';
@@ -29,14 +29,16 @@ type Options = {
   contributor: boolean | void;
 };
 
-export const getHealthchecks = ({contributor}: Options): Healthchecks => {
+export const getHealthchecks = async ({
+  contributor,
+}: Options): Promise<Healthchecks> => {
   let additionalChecks: HealthCheckCategory[] = [];
   let projectSpecificHealthchecks = {};
   let config;
 
   // Doctor can run in a detached mode, where there isn't a config so this can fail
   try {
-    config = loadConfig({});
+    config = await loadConfigAsync({});
     additionalChecks = config.healthChecks;
 
     if (config.reactNativePath) {

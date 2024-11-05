@@ -170,7 +170,7 @@ const doctorCommand = (async (_, options, config) => {
     Promise.all(categories.map(iterateOverHealthChecks));
 
   const healthchecksPerCategory = await iterateOverCategories(
-    Object.values(getHealthchecks(options)).filter(
+    Object.values(await getHealthchecks(options)).filter(
       (category) => category !== undefined,
     ) as HealthCheckCategory[],
   );

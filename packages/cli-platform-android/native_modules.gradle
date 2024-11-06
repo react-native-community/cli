@@ -1,0 +1,9 @@
+import org.gradle.initialization.DefaultSettings
+
+ext.applyNativeModulesSettingsGradle = { DefaultSettings defaultSettings ->
+  logger.warn("\nDEPRECATION WARNING: The 'applyNativeModulesSettingsGradle' function is deprecated. Autolinking logic has moved to React Native Gradle Plugin. Please follow the upgrade instructions at: https://react-native-community.github.io/upgrade-helper/.\n")
+}
+
+ext.applyNativeModulesAppBuildGradle = { Project project ->
+  logger.warn("\nDEPRECATION WARNING: The 'applyNativeModulesAppBuildGradle' function is deprecated. Autolinking logic has moved to React Native Gradle Plugin. Please follow the upgrade instructions at: https://react-native-community.github.io/upgrade-helper/.\n")
+}

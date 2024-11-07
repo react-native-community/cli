@@ -29,7 +29,7 @@ Each platform defines its own [`platforms`](./platforms.md) configuration. It in
 
 ## Platform iOS
 
-The [react-native/scripts/react_native_pods.rb](https://github.com/facebook/react-native/blob/master/packages/react-native/scripts/react_native_pods.rb) script required by `Podfile` requires the [native_modules.rb](https://github.com/react-native-community/cli/blob/main/packages/cli-platform-ios/native_modules.rb) script, which gets the package metadata from `react-native config` during install phase and:
+The [react-native/scripts/react_native_pods.rb](https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb) script required by `Podfile` gets the package metadata from `react-native config` command during install phase and:
 
 1. Adds dependencies via CocoaPods dev pods (using files from a local path).
 1. Adds build phase scripts to the App project’s build phase. (see examples below)
@@ -44,11 +44,11 @@ See example usage in React Native template's [Podfile](https://github.com/react-
 
 ## Platform Android
 
-The [native_modules.gradle](https://github.com/react-native-community/cli/blob/main/packages/cli-platform-android/native_modules.gradle) script is included in your project's `settings.gradle` and `app/build.gradle` files and:
+The [`autolinkLibrariesWithApp`](https://github.com/facebook/react-native/blob/8c50bf0beb17ced7fdafeae7a734edfc03e6e0b2/packages/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/ReactExtension.kt#L162) function from React Native Gradle Plugin (RNGP) must be registered in your project's `settings.gradle` file and called in `app/build.gradle` file and:
 
 1. At build time, before the build script is run:
-   1. A first Gradle plugin (in `settings.gradle`) runs `applyNativeModulesSettingsGradle` method. It uses the package metadata from `react-native config` to add Android projects.
-   1. A second Gradle plugin (in `app/build.gradle`) runs `applyNativeModulesAppBuildGradle` method. It creates a list of React Native packages to include in the generated `/android/build/generated/rn/src/main/java/com/facebook/react/PackageList.java` file.
+   1. RNGP plugin registered in `settings.gradle` runs `autolinkLibrariesFromCommand()` method. It uses the package metadata from `react-native config` to add Android projects.
+   1. Then in `app/build.gradle` it runs `autolinkLibrariesWithApp()` method. It creates a list of React Native packages to include in the generated `/android/build/generated/rn/src/main/java/com/facebook/react/PackageList.java` file.
       1. When the new architecture is turned on, the `generateNewArchitectureFiles` task is fired, generating `/android/build/generated/rn/src/main/jni` directory with the following files:
          - `Android-rncli.cmake` – creates a list of codegen'd libs. Used by the project's `CMakeLists.txt`.
          - `rncli.cpp` – registers codegen'd Turbo Modules and Fabric component providers. Used by `MainApplicationModuleProvider.cpp` and `MainComponentsRegistry.cpp`.
@@ -68,7 +68,7 @@ See example usage in React Native template:
 
 You’re already using Gradle, so Android support will work by default.
 
-On the iOS side, you will need to ensure you have a Podspec to the root of your repo. The `react-native-webview` Podspec is a good example of a [`package.json`](https://github.com/react-native-community/react-native-webview/blob/master/react-native-webview.podspec)-driven Podspec. Note that CocoaPods does not support having `/`s in the name of a dependency, so if you are using scoped packages - you may need to change the name for the Podspec.
+On the iOS side, you will need to ensure you have a Podspec to the root of your repo. The `react-native-webview` Podspec is a good example of a [`package.json`](https://github.com/react-native-community/react-native-webview/blob/main/react-native-webview.podspec)-driven Podspec. Note that CocoaPods does not support having `/`s in the name of a dependency, so if you are using scoped packages - you may need to change the name for the Podspec.
 
 ### Pure C++ libraries
 
@@ -166,13 +166,6 @@ module.exports = {
 ## How can I use autolinking in a monorepo?
 
 There is nothing extra you need to do - monorepos are supported by default.
-
-Please note that in certain scenarios, such as when using Yarn workspaces, your packages might be hoisted to the root of the repository. If that is the case, please make sure that the following paths are pointing to the
-correct location and update them accordingly:
-
-- path to `native_modules.rb` in your `ios/Podfile` (the right path should be resolved automatically in react-native >0.73)
-- path to `native_modules.gradle` in your `android/settings.gradle`
-- path to `native_modules.gradle` in your `android/app/build.gradle`
 
 Dependencies are only linked if they are listed in the package.json of the mobile workspace, where "react-native" dependency is defined. For example, with this file structure:
 

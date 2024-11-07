@@ -16,8 +16,7 @@
   "files": [
     "build",
     "!*.d.ts",
-    "!*.map",
-    "native_modules.gradle"
+    "!*.map"
   ],
   "devDependencies": {
     "@react-native-community/cli-types": "15.1.0"

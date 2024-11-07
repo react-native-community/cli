@@ -1,7 +1,8 @@
+import type {CosmiconfigResult} from 'cosmiconfig';
 import {cosmiconfig, cosmiconfigSync} from 'cosmiconfig';
 import {JoiError} from './errors';
 import * as schema from './schema';
-import {
+import type {
   UserConfig,
   UserDependencyConfig,
 } from '@react-native-community/cli-types';
@@ -10,14 +11,27 @@ import chalk from 'chalk';
 
 /**
  * Places to look for the configuration file.
+ * Note that we need different sets for CJS and ESM because the synchronous
+ * version cannot contain `.mjs` files. Doing so will cause "Error: Missing
+ * loader for extension" during runtime.
  */
-const searchPlaces = [
+const searchPlacesForCJS = [
   'react-native.config.js',
   'react-native.config.cjs',
-  'react-native.config.mjs',
   'react-native.config.ts',
-  'react-native.config.mjs',
 ];
+const searchPlaces = [...searchPlacesForCJS, 'react-native.config.mjs'];
+
+function parseUserConfig(searchResult: CosmiconfigResult): UserConfig {
+  const config = searchResult ? searchResult.config : undefined;
+  const result = schema.projectConfig.validate(config);
+
+  if (result.error) {
+    throw new JoiError(result.error);
+  }
+
+  return result.value as UserConfig;
+}
 
 /**
  * Reads a project configuration as defined by the user in the current
@@ -32,15 +46,7 @@ export async function readConfigFromDiskAsync(
   });
 
   const searchResult = await explorer.search(rootFolder);
-
-  const config = searchResult ? searchResult.config : undefined;
-  const result = schema.projectConfig.validate(config);
-
-  if (result.error) {
-    throw new JoiError(result.error);
-  }
-
-  return result.value as UserConfig;
+  return parseUserConfig(searchResult);
 }
 
 /**
@@ -55,15 +61,32 @@ export function readConfigFromDisk(rootFolder: string): UserConfig {
   });
 
   const searchResult = explorer.search(rootFolder);
+  return parseUserConfig(searchResult);
+}
 
-  const config = searchResult ? searchResult.config : undefined;
-  const result = schema.projectConfig.validate(config);
+function parseDependencyConfig(
+  dependencyName: string,
+  searchResult: CosmiconfigResult,
+): UserDependencyConfig {
+  const config = searchResult ? searchResult.config : emptyDependencyConfig;
+
+  const result = schema.dependencyConfig.validate(config, {abortEarly: false});
 
   if (result.error) {
-    throw new JoiError(result.error);
+    const validationError = new JoiError(result.error);
+    logger.warn(
+      inlineString(`
+        Package ${chalk.bold(
+          dependencyName,
+        )} contains invalid configuration: ${chalk.bold(
+        validationError.message,
+      )}.
+
+      Please verify it's properly linked using "npx react-native config" command and contact the package maintainers about this.`),
+    );
   }
 
-  return result.value as UserConfig;
+  return result.value as UserDependencyConfig;
 }
 
 /**
@@ -80,25 +103,7 @@ export async function readDependencyConfigFromDiskAsync(
   });
 
   const searchResult = await explorer.search(rootFolder);
-  const config = searchResult ? searchResult.config : emptyDependencyConfig;
-
-  const result = schema.dependencyConfig.validate(config, {abortEarly: false});
-
-  if (result.error) {
-    const validationError = new JoiError(result.error);
-    logger.warn(
-      inlineString(`
-        Package ${chalk.bold(
-          dependencyName,
-        )} contains invalid configuration: ${chalk.bold(
-        validationError.message,
-      )}.
-      
-      Please verify it's properly linked using "npx react-native config" command and contact the package maintainers about this.`),
-    );
-  }
-
-  return result.value as UserDependencyConfig;
+  return parseDependencyConfig(dependencyName, searchResult);
 }
 
 /**
@@ -112,29 +117,11 @@ export function readDependencyConfigFromDisk(
 ): UserDependencyConfig {
   const explorer = cosmiconfigSync('react-native', {
     stopDir: rootFolder,
-    searchPlaces,
+    searchPlaces: searchPlacesForCJS,
   });
 
   const searchResult = explorer.search(rootFolder);
-  const config = searchResult ? searchResult.config : emptyDependencyConfig;
-
-  const result = schema.dependencyConfig.validate(config, {abortEarly: false});
-
-  if (result.error) {
-    const validationError = new JoiError(result.error);
-    logger.warn(
-      inlineString(`
-        Package ${chalk.bold(
-          dependencyName,
-        )} contains invalid configuration: ${chalk.bold(
-        validationError.message,
-      )}.
-      
-      Please verify it's properly linked using "npx react-native config" command and contact the package maintainers about this.`),
-    );
-  }
-
-  return result.value as UserDependencyConfig;
+  return parseDependencyConfig(dependencyName, searchResult);
 }
 
 const emptyDependencyConfig = {

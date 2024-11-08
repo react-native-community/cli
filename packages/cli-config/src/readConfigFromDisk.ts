@@ -57,7 +57,7 @@ export async function readConfigFromDiskAsync(
 export function readConfigFromDisk(rootFolder: string): UserConfig {
   const explorer = cosmiconfigSync('react-native', {
     stopDir: rootFolder,
-    searchPlaces,
+    searchPlaces: searchPlacesForCJS,
   });
 
   const searchResult = explorer.search(rootFolder);

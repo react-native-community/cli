@@ -27,7 +27,6 @@ let androidProject: AndroidProjectConfig = {
   mainActivity: '.MainActivity',
   dependencyConfiguration: undefined,
   watchModeCommandParams: undefined,
-  unstable_reactLegacyComponentNames: undefined,
 };
 
 const shellStartCommand = ['shell', 'am', 'start'];

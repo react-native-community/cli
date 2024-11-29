@@ -49,9 +49,9 @@ const getBuildToolsVersion = (projectRoot = ''): string => {
       // Get only the portion of the declaration of `buildToolsVersion`
       .substring(buildToolsVersionIndex)
       .split('\n')[0]
-      // Get only the the value of `buildToolsVersion`
-      .match(/\d|\../g) || []
-  ).join('');
+      // Get only the value of `buildToolsVersion`
+      .match(/\d+\.\d+\.\d+/g) || []
+  ).at(0);
 
   return buildToolsVersion || 'Not Found';
 };

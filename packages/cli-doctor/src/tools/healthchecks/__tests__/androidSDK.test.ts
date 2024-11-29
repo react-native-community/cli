@@ -75,6 +75,29 @@ describe('androidSDK', () => {
     expect(diagnostics.needsToBeFixed).toBe(true);
   });
 
+  it('reads buildToolsVersion when using more complex definition', async () => {
+    // Override mock file
+    writeFiles(mockWorkingDir, {
+      'android/build.gradle': `
+        buildscript {
+          ext {
+            buildToolsVersion = findProperty('android.buildToolsVersion') ?: '34.0.0' 
+            minSdkVersion = 16
+            compileSdkVersion = 28
+            targetSdkVersion = 28
+          }
+        }
+      `,
+    });
+    // @ts-ignore
+    environmentInfo.SDKs['Android SDK'] = {
+      'Build Tools': ['34.0.0'],
+    };
+    (execa as unknown as jest.Mock).mockResolvedValue({stdout: ''});
+    const diagnostics = await androidSDK.getDiagnostics(environmentInfo);
+    expect(diagnostics.needsToBeFixed).toBe(false);
+  });
+
   it('returns false if the SDK version is in range', async () => {
     // To avoid having to provide fake versions for all the Android SDK tools
     // @ts-ignore

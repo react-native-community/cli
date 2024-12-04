@@ -118,6 +118,15 @@ List all available iOS devices and simulators and let you choose one to run the 
 
 Force running `pod install` before running an app
 
+#### Environment Variables
+
+#### `PREFERRED_IOS_DEVICES`
+
+Comma-separated list of devices or simulators to use when none are specified
+in the command line options. These can be either names or udids. The first to match
+an attached device or a simulator will be selected. Matched simulators will be booted
+if necessary.
+
 ### `build-ios`
 
 Usage:

@@ -119,8 +119,6 @@ class Template {
   }
 }
 
-const TEMPLATE_VERSIONS_URL =
-  'https://registry.npmjs.org/@react-native-community/template';
 const minorVersion = (version: string) => {
   const v = semver.parse(version)!;
   return `${v.major}.${v.minor}`;
@@ -129,9 +127,9 @@ const minorVersion = (version: string) => {
 export async function getTemplateVersion(
   reactNativeVersion: string,
 ): Promise<TemplateVersion | undefined> {
-  const json = await fetch(TEMPLATE_VERSIONS_URL).then(
-    (resp) => resp.json() as Promise<NpmTemplateResponse>,
-  );
+  const json = await fetch(
+    new URL('@react-native-community/template', getNpmRegistryUrl()),
+  ).then((resp) => resp.json() as Promise<NpmTemplateResponse>);
 
   // We are abusing which npm metadata is publicly available through the registry. Scripts
   // is always captured, and we use this in the Github Action that manages our releases to

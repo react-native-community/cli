@@ -24,14 +24,27 @@ const REACT_NATIVE_MOCK = {
     module.exports = {
       platforms: {
         ios: {
-          linkConfig: ios.linkConfig,
           projectConfig: ios.projectConfig,
           dependencyConfig: ios.dependencyConfig,
         },
         android: {
-          linkConfig: android.linkConfig,
           projectConfig: android.projectConfig,
           dependencyConfig: android.dependencyConfig,
+        },
+      },
+    };
+  `,
+};
+
+const PLATFORM_MOCK = {
+  'node_modules/react-native-os/package.json': '{}',
+  'node_modules/react-native-os/react-native.config.js': `
+    const os = require("${iosPath}");
+    module.exports = {
+      platforms: {
+        os: {
+          projectConfig: os.projectConfig,
+          dependencyConfig: os.dependencyConfig,
         },
       },
     };
@@ -371,6 +384,70 @@ test('should apply build types from dependency config', async () => {
   expect(
     removeString(dependencies['react-native-test'], DIR),
   ).toMatchSnapshot();
+});
+
+test('should be able to read multiple platforms from many packages', async () => {
+  DIR = getTempDirectory('config_test_apply_dependency_config');
+  writeFiles(DIR, {
+    ...REACT_NATIVE_MOCK,
+    ...PLATFORM_MOCK,
+    'package.json': `{
+      "dependencies": {
+        "react-native": "0.0.1",
+        "react-native-os": "0.0.1"
+      }
+    }`,
+  });
+  const {platforms} = await loadConfigAsync({projectRoot: DIR});
+  expect(removeString(platforms, DIR)).toMatchInlineSnapshot(`
+    Object {
+      "android": Object {},
+      "ios": Object {},
+      "os": Object {},
+    }
+  `);
+});
+
+test('should be able to read only selected platform', async () => {
+  DIR = getTempDirectory('config_test_apply_dependency_config');
+  writeFiles(DIR, {
+    ...REACT_NATIVE_MOCK,
+    ...PLATFORM_MOCK,
+    'package.json': `{
+      "dependencies": {
+        "react-native": "0.0.1",
+        "react-native-os": "0.0.1"
+      }
+    }`,
+  });
+  const {platforms} = await loadConfigAsync({
+    projectRoot: DIR,
+    selectedPlatform: 'os',
+  });
+  expect(removeString(platforms, DIR)).toMatchInlineSnapshot(`
+    Object {
+      "os": Object {},
+    }
+  `);
+});
+
+test('should be able to read no platforms when non-existent selected', async () => {
+  DIR = getTempDirectory('config_test_apply_dependency_config');
+  writeFiles(DIR, {
+    ...REACT_NATIVE_MOCK,
+    ...PLATFORM_MOCK,
+    'package.json': `{
+      "dependencies": {
+        "react-native": "0.0.1",
+        "react-native-os": "0.0.1"
+      }
+    }`,
+  });
+  const {platforms} = await loadConfigAsync({
+    projectRoot: DIR,
+    selectedPlatform: 'macos',
+  });
+  expect(removeString(platforms, DIR)).toMatchInlineSnapshot(`Object {}`);
 });
 
 test('supports dependencies from user configuration with custom build type', async () => {

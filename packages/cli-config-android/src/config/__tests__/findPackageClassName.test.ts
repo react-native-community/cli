@@ -79,6 +79,7 @@ describe('android:FindPackageClassNameRegex', () => {
   ].forEach((files) => {
     it('returns the name of the kotlin/java class implementing ReactPackage', () => {
       files.forEach((file) => {
+        console.log({file});
         expect(matchClassName(file)[1]).toBe('SomeExampleKotlinPackage');
       });
     });

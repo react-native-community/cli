@@ -76,7 +76,7 @@ export function matchClassName(file: string) {
     return nativeModuleMatch;
   } else {
     return file.match(
-      /class\s+(\w+[^(\s]*)[\s\w():]*(\s+extends\s+|:)[\s\w():,]*[^{]*TurboReactPackage/,
+      /class\s+(\w+[^(\s]*)[\s\w():]*(\s+extends\s+|:)[\s\w():,]*[^{]*(Turbo|Base)ReactPackage/,
     );
   }
 }

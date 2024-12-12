@@ -167,7 +167,9 @@ export default function loadConfig({
           ...acc.platforms,
           ...(selectedPlatform && config.platforms[selectedPlatform]
             ? {[selectedPlatform]: config.platforms[selectedPlatform]}
-            : config.platforms),
+            : !selectedPlatform
+            ? config.platforms
+            : undefined),
         },
         healthChecks: [...acc.healthChecks, ...config.healthChecks],
       }) as Config;
@@ -267,7 +269,9 @@ export async function loadConfigAsync({
           ...acc.platforms,
           ...(selectedPlatform && config.platforms[selectedPlatform]
             ? {[selectedPlatform]: config.platforms[selectedPlatform]}
-            : config.platforms),
+            : !selectedPlatform
+            ? config.platforms
+            : undefined),
         },
         healthChecks: [...acc.healthChecks, ...config.healthChecks],
       }) as Config;

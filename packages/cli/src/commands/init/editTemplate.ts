@@ -13,6 +13,7 @@ interface PlaceholderConfig {
   placeholderTitle?: string;
   projectTitle?: string;
   packageName?: string;
+  projectPath?: string;
 }
 
 /**
@@ -145,11 +146,12 @@ export async function replacePlaceholderWithPackageName({
   placeholderName,
   placeholderTitle,
   packageName,
+  projectPath = process.cwd(),
 }: Omit<Required<PlaceholderConfig>, 'projectTitle'>) {
   validatePackageName(packageName);
   const cleanPackageName = packageName.replace(/[^\p{L}\p{N}.]+/gu, '');
 
-  for (const filePath of walk(process.cwd()).reverse()) {
+  for (const filePath of walk(projectPath).reverse()) {
     if (shouldIgnoreFile(filePath)) {
       continue;
     }
@@ -232,6 +234,7 @@ export async function changePlaceholderInTemplate({
   placeholderTitle = DEFAULT_TITLE_PLACEHOLDER,
   projectTitle = projectName,
   packageName,
+  projectPath = process.cwd(),
 }: PlaceholderConfig) {
   logger.debug(`Changing ${placeholderName} for ${projectName} in template`);
 
@@ -242,12 +245,13 @@ export async function changePlaceholderInTemplate({
         placeholderName,
         placeholderTitle,
         packageName,
+        projectPath,
       });
     } catch (error) {
       throw new CLIError((error as Error).message);
     }
   } else {
-    for (const filePath of walk(process.cwd()).reverse()) {
+    for (const filePath of walk(projectPath).reverse()) {
       if (shouldIgnoreFile(filePath)) {
         continue;
       }
@@ -268,4 +272,23 @@ export async function changePlaceholderInTemplate({
       await processDotfiles(filePath);
     }
   }
+}
+
+export function getTemplateName(cwd: string) {
+  // We use package manager to infer the name of the template module for us.
+  // That's why we get it from temporary package.json, where the name is the
+  // first and only dependency (hence 0).
+  let name;
+  try {
+    name = Object.keys(
+      JSON.parse(fs.readFileSync(path.join(cwd, './package.json'), 'utf8'))
+        .dependencies,
+    )[0];
+  } catch {
+    throw new CLIError(
+      'Failed to read template name from package.json. Please make sure that the template you are using has a valid package.json file.',
+    );
+  }
+
+  return name;
 }

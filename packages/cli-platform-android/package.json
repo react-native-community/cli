@@ -1,28 +1,25 @@
 {
   "name": "@react-native-community/cli-platform-android",
-  "version": "15.0.0-alpha.2",
+  "version": "16.0.2",
   "license": "MIT",
   "main": "build/index.js",
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "@react-native-community/cli-tools": "15.0.0-alpha.2",
+    "@react-native-community/cli-config-android": "16.0.2",
+    "@react-native-community/cli-tools": "16.0.2",
     "chalk": "^4.1.2",
     "execa": "^5.0.0",
-    "fast-glob": "^3.3.2",
-    "fast-xml-parser": "^4.4.1",
     "logkitty": "^0.7.1"
   },
   "files": [
     "build",
     "!*.d.ts",
-    "!*.map",
-    "native_modules.gradle"
+    "!*.map"
   ],
   "devDependencies": {
-    "@react-native-community/cli-types": "15.0.0-alpha.2",
-    "@types/fs-extra": "^8.1.0"
+    "@react-native-community/cli-types": "16.0.2"
   },
   "homepage": "https://github.com/react-native-community/cli/tree/main/packages/cli-platform-android",
   "repository": {

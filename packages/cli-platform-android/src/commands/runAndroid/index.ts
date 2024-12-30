@@ -21,7 +21,7 @@ import {
   startServerInNewWindow,
   findDevServerPort,
 } from '@react-native-community/cli-tools';
-import {getAndroidProject} from '../../config/getAndroidProject';
+import {getAndroidProject} from '@react-native-community/cli-config-android';
 import listAndroidDevices from './listAndroidDevices';
 import tryLaunchEmulator from './tryLaunchEmulator';
 import chalk from 'chalk';

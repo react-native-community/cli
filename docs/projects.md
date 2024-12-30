@@ -93,24 +93,10 @@ multiple `Podfile` files in your project.
 
 Array of strings that will be passed to the `npx react-native run-ios` command when running in watch mode.
 
-#### project.ios.unstable_reactLegacyComponentNames
-
-> [!CAUTION]
-> Deprecated in React Native 0.74, where this behavior is detected automatically and this config does nothing. You can safely remove it from your project. 
-
-Please note that this is part of the **Unstable Fabric Interop Layer**, and might be subject to breaking change in the future,
-hence the `unstable_` prefix.
-
-An array with a list of Legacy Component Name that you want to be registered with the Fabric Interop Layer.
-This will allow you to use libraries that haven't been migrated yet on the New Architecture.
-
-The list should contain the name of the components, as they're registered in the ViewManagers (i.e. just `"Button"`).
-
-Since React Native 0.74, this property is ignored as the Interop Layer is **Automatic**, you don't need to register the Legacy Components anymore and they will be discovered automatically.
-
 #### project.ios.automaticPodsInstallation
 
 A boolean value to determine if you want to automatically install CocoaPods when running `run-ios` or `build-ios` command when:
+
 - they are not yet installed
 - a new dependency visible for autolinking is installed
 - a version of existing native dependency has changed
@@ -146,21 +132,6 @@ See [`dependency.platforms.android.configuration`](dependencies.md#platformsandr
 #### project.android.watchModeCommandParams
 
 Array of strings that will be passed to the `npx react-native run-android` command when running in watch mode.
-
-#### project.android.unstable_reactLegacyComponentNames
-
-> [!CAUTION]
-> Deprecated in React Native 0.74, where this behavior is detected automatically and this config does nothing. You can safely remove it from your project. 
-
-Please note that this is part of the **Unstable Fabric Interop Layer**, and might be subject to breaking change in the future,
-hence the `unstable_` prefix.
-
-An array with a list of Legacy Component Name that you want to be registered with the Fabric Interop Layer.
-This will allow you to use libraries that haven't been migrated yet on the New Architecture.
-
-The list should contain the name of the components, as they're registered in the ViewManagers (i.e. just `"Button"`).
-
-Since React Native 0.74, this property is ignored as the Interop Layer is **Automatic**, you don't need to register the Legacy Components anymore and they will be discovered automatically.
 
 ### project.android.assets
 

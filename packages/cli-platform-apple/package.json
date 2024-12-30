@@ -1,23 +1,20 @@
 {
   "name": "@react-native-community/cli-platform-apple",
-  "version": "15.0.0-alpha.2",
+  "version": "16.0.2",
   "license": "MIT",
   "main": "build/index.js",
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "@react-native-community/cli-tools": "15.0.0-alpha.2",
+    "@react-native-community/cli-config-apple": "16.0.2",
+    "@react-native-community/cli-tools": "16.0.2",
     "chalk": "^4.1.2",
     "execa": "^5.0.0",
-    "fast-glob": "^3.3.2",
-    "fast-xml-parser": "^4.4.1",
-    "ora": "^5.4.1"
+    "fast-xml-parser": "^4.4.1"
   },
   "devDependencies": {
-    "@react-native-community/cli-types": "15.0.0-alpha.2",
-    "@types/lodash": "^4.14.149",
-    "hasbin": "^1.2.3"
+    "@react-native-community/cli-types": "16.0.2"
   },
   "files": [
     "build",

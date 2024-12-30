@@ -24,7 +24,7 @@ import {
 import {findLibraryName} from './findLibraryName';
 import {findComponentDescriptors} from './findComponentDescriptors';
 import {findBuildGradle} from './findBuildGradle';
-import {CLIError, logger} from '@react-native-community/cli-tools';
+import {CLIError} from '@react-native-community/cli-tools';
 import getMainActivity from './getMainActivity';
 
 /**
@@ -72,13 +72,6 @@ export function projectConfig(
     : packageName;
   const mainActivity = getMainActivity(manifestPath || '') ?? '';
 
-  // @todo remove for RN 0.75
-  if (userConfig.unstable_reactLegacyComponentNames) {
-    logger.warn(
-      'The "project.android.unstable_reactLegacyComponentNames" config option is not necessary anymore for React Native 0.74 and does nothing. Please remove it from the "react-native.config.js" file.',
-    );
-  }
-
   return {
     sourceDir,
     appName,
@@ -87,8 +80,6 @@ export function projectConfig(
     mainActivity,
     dependencyConfiguration: userConfig.dependencyConfiguration,
     watchModeCommandParams: userConfig.watchModeCommandParams,
-    // @todo remove for RN 0.75
-    unstable_reactLegacyComponentNames: undefined,
     assets: userConfig.assets ?? [],
   };
 }

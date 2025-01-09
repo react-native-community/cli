@@ -1,4 +1,4 @@
-import sudo from 'sudo-prompt';
+import sudo from '@vscode/sudo-prompt';
 
 export default function runSudo(command: string): Promise<void> {
   return new Promise((resolve, reject) => {

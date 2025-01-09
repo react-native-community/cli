@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import readline from 'readline';
 import wcwidth from 'wcwidth';
-import stripAnsi from 'strip-ansi';
+import util from 'util';
 import {logger} from '@react-native-community/cli-tools';
 import {Loader} from '../../types';
 
@@ -94,7 +94,10 @@ const logError = ({
 function calculateMessageSize(message: string) {
   return Math.max(
     1,
-    Math.ceil(wcwidth(stripAnsi(message)) / (process.stdout.columns || 80)),
+    Math.ceil(
+      wcwidth(util.stripVTControlCharacters(message)) /
+        (process.stdout.columns || 80),
+    ),
   );
 }
 

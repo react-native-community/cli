@@ -1,5 +1,5 @@
 import execa from 'execa';
-import path from 'path';
+import path, {join} from 'path';
 import {logger, CLIError} from '@react-native-community/cli-tools';
 import * as PackageManager from '../../tools/packageManager';
 import copyFiles from '../../tools/copyFiles';
@@ -14,6 +14,7 @@ export type TemplateConfig = {
   templateDir: string;
   postInitScript?: string;
   titlePlaceholder?: string;
+  platforms?: string[];
 };
 
 export async function installTemplatePackage(
@@ -91,6 +92,7 @@ export async function copyTemplate(
   templateName: string,
   templateDir: string,
   templateSourceDir: string,
+  platform: string = '',
 ) {
   const templatePath = path.resolve(
     templateSourceDir,
@@ -101,7 +103,7 @@ export async function copyTemplate(
 
   logger.debug(`Copying template from ${templatePath}`);
   let regexStr = path.resolve(templatePath, 'node_modules');
-  await copyFiles(templatePath, process.cwd(), {
+  await copyFiles(join(templatePath, platform), join(process.cwd(), platform), {
     exclude: [new RegExp(replacePathSepForRegex(regexStr))],
   });
 }

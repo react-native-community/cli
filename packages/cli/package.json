@@ -26,7 +26,6 @@
   "dependencies": {
     "@react-native-community/cli-clean": "16.0.2",
     "@react-native-community/cli-config": "16.0.2",
-    "@react-native-community/cli-debugger-ui": "16.0.2",
     "@react-native-community/cli-doctor": "16.0.2",
     "@react-native-community/cli-server-api": "16.0.2",
     "@react-native-community/cli-tools": "16.0.2",

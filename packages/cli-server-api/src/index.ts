@@ -20,15 +20,6 @@ import createDebuggerProxyEndpoint from './websocket/createDebuggerProxyEndpoint
 import createMessageSocketEndpoint from './websocket/createMessageSocketEndpoint';
 import createEventsSocketEndpoint from './websocket/createEventsSocketEndpoint';
 
-export {devToolsMiddleware};
-export {indexPageMiddleware};
-export {openStackFrameInEditorMiddleware};
-export {openURLMiddleware};
-export {rawBodyMiddleware};
-export {securityHeadersMiddleware};
-export {statusPageMiddleware};
-export {systraceProfileMiddleware};
-
 type MiddlewareOptions = {
   host?: string;
   watchFolders: ReadonlyArray<string>;
@@ -49,6 +40,7 @@ export function createDevServerMiddleware(options: MiddlewareOptions) {
     // @ts-ignore compression and connect types mismatch
     .use(compression())
     .use(nocache())
+    .use('/', indexPageMiddleware)
     .use('/debugger-ui', debuggerUIMiddleware())
     .use(
       '/launch-js-devtools',

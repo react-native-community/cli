@@ -13,7 +13,7 @@ export default function indexPageMiddleware(
   res: http.ServerResponse,
   next: (err?: any) => void,
 ) {
-  if (req.url === '/') {
+  if (req.method === 'GET' && req.url === '/') {
     res.setHeader('Content-Type', 'text/html');
     res.end(fs.readFileSync(path.join(__dirname, 'index.html')));
   } else {

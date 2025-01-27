@@ -7,7 +7,6 @@
     "access": "public"
   },
   "dependencies": {
-    "@react-native-community/cli-debugger-ui": "16.0.2",
     "@react-native-community/cli-tools": "16.0.2",
     "compression": "^1.7.1",
     "connect": "^3.6.5",

@@ -4,7 +4,7 @@ exports[`shows up current config without unnecessary output 1`] = `
 {
   "root": "<<REPLACED_ROOT>>/TestProject",
   "reactNativePath": "<<REPLACED_ROOT>>/TestProject/node_modules/react-native",
-  "reactNativeVersion": "0.76",
+  "reactNativeVersion": "0.77",
   "dependencies": {},
   "commands": [
     {

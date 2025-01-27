@@ -5,9 +5,8 @@
   ],
   "scripts": {
     "prebuild": "yarn build:ts",
-    "build": "node ./scripts/build.js && yarn build:debugger",
+    "build": "node ./scripts/build.js",
     "build:ts": "node ./scripts/buildTs.js",
-    "build:debugger": "yarn workspace @react-native-community/cli-debugger-ui build",
     "build-clean": "rimraf ./packages/*/build",
     "build-clean-all": "rimraf ./packages/*/build ./packages/*/tsconfig.tsbuildinfo",
     "watch": "node ./scripts/watch.js",

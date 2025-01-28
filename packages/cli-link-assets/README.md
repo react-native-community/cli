@@ -8,6 +8,21 @@ This package is part of the [React Native CLI](../../README.md). It contains com
 yarn add @react-native-community/cli-link-assets
 ```
 
+## Usage
+
+> [!Warning]
+> Currently, this command isn’t shipped by default because it uses a legacy method of modifying Xcode and Gradle files. An improved [autolinking-based](./../../docs/autolinking.md) solution is in development. Until then, please use it with caution.
+
+To enable the command in the CLI, add the following to your `react-native.config.js`:
+
+```js
+const linkAssets = require('@react-native-community/cli-link-assets');
+
+module.exports = {
+  commands: [linkAssets.commands.linkAssets]
+};
+```
+
 ## Commands
 
 ### `link-assets`

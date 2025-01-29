@@ -7,7 +7,7 @@ import nocache from 'nocache';
 import serveStatic from 'serve-static';
 
 import indexPageMiddleware from './indexPageMiddleware';
-import openStackFrameInEditorMiddleware from './openStackFrameInEditorMiddleware';
+import openStackFrameMiddleware from './openStackFrameMiddleware';
 import openURLMiddleware from './openURLMiddleware';
 import rawBodyMiddleware from './rawBodyMiddleware';
 import securityHeadersMiddleware from './securityHeadersMiddleware';
@@ -35,9 +35,10 @@ export function createDevServerMiddleware(options: MiddlewareOptions) {
     .use(compression())
     .use(nocache())
     .use('/', indexPageMiddleware)
-    .use('/open-stack-frame', openStackFrameInEditorMiddleware(options))
+    .use('/open-stack-frame', openStackFrameMiddleware(options))
     .use('/open-url', openURLMiddleware)
     .use('/status', statusPageMiddleware)
+    // TODO: Remove. Requires standardized JSON body parsing support in Metro.
     .use('/symbolicate', rawBodyMiddleware)
     // @ts-ignore mismatch
     .use('/systrace', systraceProfileMiddleware)

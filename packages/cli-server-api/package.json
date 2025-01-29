@@ -8,10 +8,12 @@
   },
   "dependencies": {
     "@react-native-community/cli-tools": "16.0.2",
+    "body-parser": "^1.20.3",
     "compression": "^1.7.1",
     "connect": "^3.6.5",
     "errorhandler": "^1.5.1",
     "nocache": "^3.0.1",
+    "open": "^6.2.0",
     "pretty-format": "^26.6.2",
     "serve-static": "^1.13.1",
     "ws": "^6.2.3"

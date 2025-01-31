@@ -4,26 +4,40 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import http from 'http';
-import {launchDefaultBrowser, logger} from '@react-native-community/cli-tools';
+
+import type {IncomingMessage, ServerResponse} from 'http';
+
+import {json} from 'body-parser';
 import connect from 'connect';
-import rawBodyMiddleware from './rawBodyMiddleware';
+import open from 'open';
 
 /**
- * Handle request from JS to open an arbitrary URL in Chrome
+ * Open a URL in the system browser.
  */
-function openURLMiddleware(
-  req: http.IncomingMessage & {rawBody?: string},
-  res: http.ServerResponse,
-  next: (err?: any) => void,
+async function openURLMiddleware(
+  req: IncomingMessage & {
+    // Populated by body-parser
+    body?: Object;
+  },
+  res: ServerResponse,
+  next: (err?: Error) => void,
 ) {
-  if (!req.rawBody) {
-    return next(new Error('missing request body'));
+  if (req.method === 'POST') {
+    if (req.body == null) {
+      res.writeHead(400);
+      res.end('Missing request body');
+      return;
+    }
+
+    const {url} = req.body as {url: string};
+
+    await open(url);
+
+    res.writeHead(200);
+    res.end();
   }
-  const {url} = JSON.parse(req.rawBody);
-  logger.info(`Opening ${url}...`);
-  launchDefaultBrowser(url);
-  res.end('OK');
+
+  next();
 }
 
-export default connect().use(rawBodyMiddleware).use(openURLMiddleware);
+export default connect().use(json()).use(openURLMiddleware);

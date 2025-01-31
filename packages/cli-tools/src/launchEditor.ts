@@ -12,7 +12,7 @@ import launchEditorImpl from 'launch-editor';
 export default function launchEditor(
   fileName: string,
   lineNumber: number,
-  _watchFolders: ReadonlyArray<string>,
+  _watchFolders?: ReadonlyArray<string>,
 ): void {
   launchEditorImpl(`${fileName}:${lineNumber}`, process.env.REACT_EDITOR);
 }

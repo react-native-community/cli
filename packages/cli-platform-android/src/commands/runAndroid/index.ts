@@ -178,7 +178,7 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
 
     if (device.connected) {
       return runOnSpecificDevice(
-        {...args, deviceId: device.deviceId},
+        {...args, device: device.deviceId},
         adbPath,
         androidProject,
         selectedTask,
@@ -192,7 +192,7 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
     if (result.success) {
       logger.info('Successfully launched emulator.');
       return runOnSpecificDevice(
-        {...args, deviceId: emulator},
+        {...args, device: emulator},
         adbPath,
         androidProject,
         selectedTask,
@@ -217,7 +217,7 @@ function runOnSpecificDevice(
   selectedTask?: string,
 ) {
   const devices = adb.getDevices(adbPath);
-  const {deviceId} = args;
+  const {device} = args;
 
   // if coming from run-android command and we have selected task
   // from interactive mode we need to create appropriate build task
@@ -226,8 +226,8 @@ function runOnSpecificDevice(
     ? [selectedTask.replace('install', 'assemble')]
     : [];
 
-  if (devices.length > 0 && deviceId) {
-    if (devices.indexOf(deviceId) !== -1) {
+  if (devices.length > 0 && device) {
+    if (devices.indexOf(device) !== -1) {
       let gradleArgs = getTaskNames(
         androidProject.appName,
         args.mode,
@@ -246,7 +246,7 @@ function runOnSpecificDevice(
       }
 
       if (args.activeArchOnly) {
-        const architecture = adb.getCPU(adbPath, deviceId);
+        const architecture = adb.getCPU(adbPath, device);
 
         if (architecture !== null) {
           logger.info(`Detected architecture ${architecture}`);
@@ -263,14 +263,14 @@ function runOnSpecificDevice(
 
       installAndLaunchOnDevice(
         args,
-        deviceId,
+        device,
         adbPath,
         androidProject,
         selectedTask,
       );
     } else {
       logger.error(
-        `Could not find device with the id: "${deviceId}". Please choose one of the following:`,
+        `Could not find device: "${device}". Please choose one of the following:`,
         ...devices,
       );
     }

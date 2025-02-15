@@ -77,8 +77,8 @@ describe('getBuildConfigurationFromXcScheme', () => {
       );
     } catch (err) {
       const msg = (err as CLIError).message;
-      expect(msg).toContain(`Could not find scheme ${scheme}`);
-      expect(msg).toContain(`Available schemas are: ${scheme}`);
+      expect(msg).toContain(`Could not load the shared scheme for ${scheme}`);
+      expect(msg).toContain(`includes: ${projectInfo.schemes[0]}`);
     }
   });
 

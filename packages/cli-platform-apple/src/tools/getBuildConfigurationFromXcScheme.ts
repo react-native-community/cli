@@ -43,7 +43,7 @@ export function getBuildConfigurationFromXcScheme(
       projectInfo && projectInfo.schemes && projectInfo.schemes.length > 0
         ? `Available schemas are: ${projectInfo.schemes
             .map((name) => chalk.bold(name))
-            .join(', ')}'`
+            .join(', ')}`
         : '';
 
     throw new CLIError(

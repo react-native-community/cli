@@ -114,13 +114,15 @@ React Native CLI is a dependency of `react-native`, which makes it a transitive 
 
 ## Maintainers
 
-- Adam Trzciński ([**@adamTrz**](https://github.com/adamTrz)) - [Callstack](https://callstack.com)
 - Michał Pierzchała ([**@thymikee**](https://github.com/thymikee)) - [Callstack](https://callstack.com)
+- Szymon Rybczak ([**@szymonrybczak**](https://github.com/szymonrybczak)) - [Callstack](https://callstack.com)
+- Alex Hunt ([**@huntie**](https://github.com/huntie)) - [Meta](https://meta.com)
 
 Previously:
 
 - Mike Grabowski ([**@grabbou**](https://github.com/grabbou)) - [Callstack](https://callstack.com)
-- Kacper Wiszczuk ([**@esemesek**](https://github.com/esemesek))
+- Kacper Wiszczuk ([**@esemesek**](https://github.com/esemesek)) - [Callstack](https://callstack.com)
+- Adam Trzciński ([**@adamTrz**](https://github.com/adamTrz)) - [Callstack](https://callstack.com)
 
 ## License
 

@@ -10,26 +10,54 @@ import {
   runSudo,
 } from '@react-native-community/cli-tools';
 import runBundleInstall from './runBundleInstall';
+import path from 'path';
 
 interface PodInstallOptions {
   skipBundleInstall?: boolean;
   newArchEnabled?: boolean;
   iosFolderPath?: string;
+  platform: string;
+  root: string;
 }
 
 interface RunPodInstallOptions {
+  root: string;
+  platform: string;
   shouldHandleRepoUpdate?: boolean;
   newArchEnabled?: boolean;
 }
 
-async function runPodInstall(loader: Ora, options?: RunPodInstallOptions) {
+async function runPodInstall(loader: Ora, options: RunPodInstallOptions) {
   const shouldHandleRepoUpdate = options?.shouldHandleRepoUpdate || true;
   try {
+    if (fs.existsSync('build')) {
+      fs.rmSync('build', {recursive: true});
+    }
+
     loader.start(
       `Installing CocoaPods dependencies ${chalk.bold(
         options?.newArchEnabled ? 'with New Architecture' : '',
       )} ${chalk.dim('(this may take a few minutes)')}`,
     );
+
+    const reactNativePath = path.dirname(
+      require.resolve('react-native', {paths: [process.cwd()]}),
+    );
+    const codegenScript = path.join(
+      reactNativePath,
+      'scripts',
+      'generate-codegen-artifacts.js',
+    );
+
+    execa.sync('node', [
+      codegenScript,
+      '-p',
+      options.root,
+      '-o',
+      process.cwd(),
+      '-t',
+      options.platform,
+    ]);
 
     await execa('bundle', ['exec', 'pod', 'install'], {
       env: {
@@ -53,6 +81,8 @@ async function runPodInstall(loader: Ora, options?: RunPodInstallOptions) {
       await runPodInstall(loader, {
         shouldHandleRepoUpdate: false,
         newArchEnabled: options?.newArchEnabled,
+        platform: options.platform,
+        root: options.root,
       });
     } else {
       loader.fail();
@@ -156,7 +186,11 @@ async function installPods(loader?: Ora, options?: PodInstallOptions) {
       await installCocoaPods(loader);
     }
 
-    await runPodInstall(loader, {newArchEnabled: options?.newArchEnabled});
+    await runPodInstall(loader, {
+      newArchEnabled: options?.newArchEnabled,
+      platform: options?.platform ?? 'ios',
+      root: options?.root ?? process.cwd(),
+    });
   } finally {
     process.chdir('..');
   }

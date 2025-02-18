@@ -284,7 +284,10 @@ async function createFromTemplate({
         try {
           if (installPodsValue === 'true') {
             didInstallPods = true;
-            await installPods(loader);
+            await installPods(loader, {
+              platform: 'ios',
+              root: projectDirectory,
+            });
             loader.succeed();
             setEmptyHashForCachedDependencies(projectName);
           } else if (installPodsValue === 'undefined') {
@@ -298,7 +301,11 @@ async function createFromTemplate({
             didInstallPods = installCocoapods;
 
             if (installCocoapods) {
-              await installPods(loader, {newArchEnabled: true});
+              await installPods(loader, {
+                newArchEnabled: true,
+                platform: 'ios',
+                root: projectDirectory,
+              });
               loader.succeed();
               setEmptyHashForCachedDependencies(projectName);
             }

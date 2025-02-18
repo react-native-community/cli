@@ -89,12 +89,16 @@ async function install(
   cachedDependenciesHash: string | undefined,
   currentDependenciesHash: string,
   iosFolderPath: string,
+  platform: string,
+  root: string,
 ) {
   const loader = getLoader('Installing CocoaPods...');
   try {
     await installPods(loader, {
       skipBundleInstall: !!cachedDependenciesHash,
       iosFolderPath,
+      platform,
+      root,
     });
     cacheManager.set(packageJson.name, 'dependencies', currentDependenciesHash);
     loader.succeed();
@@ -154,6 +158,8 @@ export default async function resolvePods(
       cachedDependenciesHash,
       currentDependenciesHash,
       platformFolderPath,
+      platformName,
+      root,
     );
   } else if (
     arePodsInstalled &&
@@ -175,6 +181,8 @@ export default async function resolvePods(
         skipBundleInstall: !!cachedDependenciesHash,
         newArchEnabled: options?.newArchEnabled,
         iosFolderPath: platformFolderPath,
+        platform: platformName,
+        root,
       });
       cacheManager.set(
         packageJson.name,

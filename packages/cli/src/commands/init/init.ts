@@ -41,6 +41,7 @@ import DirectoryAlreadyExistsError from './errors/DirectoryAlreadyExistsError';
 import {createTemplateUri} from './version';
 import {TEMPLATE_COMMUNITY_REACT_NATIVE_VERSION} from './constants';
 import type {Options} from './types';
+import {runCodegen} from '@react-native-community/cli-config-apple';
 
 const DEFAULT_VERSION = 'latest';
 
@@ -284,10 +285,11 @@ async function createFromTemplate({
         try {
           if (installPodsValue === 'true') {
             didInstallPods = true;
-            await installPods(loader, {
-              platform: 'ios',
+            await runCodegen({
               root: projectDirectory,
+              platform: 'ios',
             });
+            await installPods(loader, {});
             loader.succeed();
             setEmptyHashForCachedDependencies(projectName);
           } else if (installPodsValue === 'undefined') {
@@ -301,11 +303,11 @@ async function createFromTemplate({
             didInstallPods = installCocoapods;
 
             if (installCocoapods) {
-              await installPods(loader, {
-                newArchEnabled: true,
-                platform: 'ios',
+              await runCodegen({
                 root: projectDirectory,
+                platform: 'ios',
               });
+              await installPods(loader, {});
               loader.succeed();
               setEmptyHashForCachedDependencies(projectName);
             }

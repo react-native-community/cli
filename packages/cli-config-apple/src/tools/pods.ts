@@ -13,6 +13,7 @@ import {
   IOSDependencyConfig,
 } from '@react-native-community/cli-types';
 import {ApplePlatform} from '../types';
+import runCodegen from './runCodegen';
 
 interface ResolvePodsOptions {
   forceInstall?: boolean;
@@ -94,11 +95,13 @@ async function install(
 ) {
   const loader = getLoader('Installing CocoaPods...');
   try {
+    await runCodegen({
+      root,
+      platform,
+    });
     await installPods(loader, {
       skipBundleInstall: !!cachedDependenciesHash,
       iosFolderPath,
-      platform,
-      root,
     });
     cacheManager.set(packageJson.name, 'dependencies', currentDependenciesHash);
     loader.succeed();
@@ -181,8 +184,6 @@ export default async function resolvePods(
         skipBundleInstall: !!cachedDependenciesHash,
         newArchEnabled: options?.newArchEnabled,
         iosFolderPath: platformFolderPath,
-        platform: platformName,
-        root,
       });
       cacheManager.set(
         packageJson.name,

@@ -11,6 +11,8 @@ import {Command as CommanderCommand} from 'commander';
 import path from 'path';
 import {detachedCommands, projectCommands} from './commands';
 
+export {createDevServerMiddleware} from '@react-native-community/cli-server-api';
+
 const pkgJson = require('../package.json');
 
 const program = new CommanderCommand()

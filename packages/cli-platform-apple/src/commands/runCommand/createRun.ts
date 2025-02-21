@@ -194,7 +194,9 @@ const createRun =
     }
 
     const fallbackSimulator =
-      platformName === 'ios' || platformName === 'tvos' ? getFallbackSimulator(args) : devices[0];
+      platformName === 'ios' || platformName === 'tvos'
+        ? getFallbackSimulator(args)
+        : devices[0];
 
     if (args.listDevices || args.interactive) {
       if (args.device || args.udid) {

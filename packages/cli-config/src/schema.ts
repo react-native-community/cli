@@ -155,7 +155,7 @@ export const projectConfig = t
           .object({
             sourceDir: t.string(),
             watchModeCommandParams: t.array().items(t.string()),
-            automaticPodsInstallation: t.bool().default(false),
+            automaticPodsInstallation: t.bool().default(true),
             assets: t.array().items(t.string()).default([]),
           })
           .default({}),

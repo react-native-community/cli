@@ -16,6 +16,7 @@ jest.mock('@react-native-community/cli-tools', () => ({
   },
 }));
 jest.mock('../tools/installPods', () => jest.fn());
+jest.mock('../tools/runCodegen', () => jest.fn());
 const dependencyHash = 'd41d8cd98f00b204e9800998ecf8427e';
 
 const packageJson = {

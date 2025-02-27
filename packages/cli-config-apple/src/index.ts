@@ -3,7 +3,7 @@ export {
   getProjectConfig,
   findPodfilePaths,
 } from './config';
-
+export {default as runCodegen} from './tools/runCodegen';
 export {default as installPods} from './tools/installPods';
 export {default as resolvePods} from './tools/pods';
 export {default as findXcodeProject} from './config/findXcodeProject';

@@ -7,9 +7,9 @@ All work on React Native CLI happens directly on GitHub. Contributors send pull 
 > **Working on your first pull request?** You can learn how from this _free_ series: [How to Contribute to an Open Source Project on GitHub](https://egghead.io/series/how-to-contribute-to-an-open-source-project-on-github).
 
 1. Fork the repo and create your branch from `main` (a guide on [how to fork a repository](https://help.github.com/articles/fork-a-repo/)).
-1. Run `yarn` or `npm install` to install all required dependencies.
-1. Run `yarn watch` to automatically build the changed files.
-1. Now you are ready to do the changes.
+2. Run `yarn` or `npm install` to install all required dependencies.
+3. Run `yarn watch` to automatically build the changed files.
+4. Now you are ready to do the changes.
 
 ## Testing your changes
 
@@ -75,11 +75,11 @@ First make sure you have RN repo checked out and CLI repo checked out and built.
 
 1. Check out `react-native` repo. Then update template in local `react-native/template/package.json`, replacing dependency version of `react-native` with the absolute path of the react native repo, for example: "react-native": "file:///Users/username/react-native" (you can find the absolute path using `pwd` command)
 
-1. Go back up and create a new RN project: `node ./cli/packages/cli/build/bin.js init --template=file:///path/to/local/react-native/RNTestProject`
+2. Go back up and create a new RN project: `node ./cli/packages/cli/build/bin.js init --template=file:///path/to/local/react-native/RNTestProject`
 
-1. To work with android, update gradle config in the newly created project following the second part of [Christoph's instructions](https://gist.github.com/cpojer/38a91f90614f35769e88410e3a387b48)
+3. To work with android, update gradle config in the newly created project following the second part of [Christoph's instructions](https://gist.github.com/cpojer/38a91f90614f35769e88410e3a387b48)
 
-1. Run start (as described above) and compile your app eg `node ../cli/packages/cli/build/bin.js run-android` (make sure you definitely have NDK r17c installed before building android)
+4. Run start (as described above) and compile your app eg `node ../cli/packages/cli/build/bin.js run-android` (make sure you definitely have NDK r17c installed before building android)
 
 ## Typechecking, linting and testing
 
@@ -118,23 +118,23 @@ This part is for maintainers only, documenting steps to manually publish the pac
 ### Stable version
 
 1. Pull latest changes for the stable branch (we use a _N.x_ convention where _N_ stands for major version of the RNC CLI).
-1. Run `yarn run publish`, it will tag the packages as `latest`.
-1. Chose an appropriate version from the available options.
-1. Create release notes in the project's Release tab.
+2. Run `yarn run publish`, it will tag the packages as `latest`.
+3. Choose an appropriate version from the available options.
+4. Create release notes in the project's Release tab.
 
 ### Prerelease
 
 1. Pull latest changes for the `main` branch.
-1. Run `yarn run publish:next`, it will tag the packages as `next`.
-1. Use `Custom prerelease` option and go with `-alpha.N` convention.
-1. Create release notes in the project's Release tab.
+2. Run `yarn run publish:next`, it will tag the packages as `next`.
+3. Use `Custom prerelease` option and go with `-alpha.N` convention.
+4. Create release notes in the project's Release tab.
 
 ### Legacy version
 
 1. Pull latest changes for the _N.x_ branch (where N stands for major legacy version).
-1. Run `yarn run publish --dist-tag N.x` to tag the packages as `N.x`.
-1. Chose an appropriate version from the available options.
-1. Create release notes in the project's Release tab.
+2. Run `yarn run publish --dist-tag N.x` to tag the packages as `N.x`.
+3. Choose an appropriate version from the available options.
+4. Create release notes in the project's Release tab.
 
 ## Reporting issues
 

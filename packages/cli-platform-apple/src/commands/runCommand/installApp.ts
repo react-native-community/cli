@@ -28,6 +28,7 @@ type Options = {
   udid: string;
   binaryPath?: string;
   platform?: ApplePlatform;
+  isSimulator?: boolean;
 };
 
 export default async function installApp({
@@ -39,6 +40,7 @@ export default async function installApp({
   udid,
   binaryPath,
   platform,
+  isSimulator = true,
 }: Options) {
   let appPath = binaryPath;
 
@@ -72,7 +74,11 @@ export default async function installApp({
   logger.info(`Installing "${chalk.bold(appPath)}`);
 
   if (udid && appPath) {
-    child_process.spawnSync('xcrun', ['simctl', 'install', udid, appPath], {
+    const installParameters = isSimulator
+      ? ['simctl', 'install', udid, appPath]
+      : ['devicectl', 'device', 'install', 'app', '--device', udid, appPath];
+
+    child_process.spawnSync('xcrun', installParameters, {
       stdio: 'inherit',
     });
   }
@@ -91,12 +97,11 @@ export default async function installApp({
 
   logger.info(`Launching "${chalk.bold(bundleID)}"`);
 
-  let result = child_process.spawnSync('xcrun', [
-    'simctl',
-    'launch',
-    udid,
-    bundleID,
-  ]);
+  const launchParameters = isSimulator
+    ? ['simctl', 'launch', udid, bundleID]
+    : ['devicectl', 'device', 'process', 'launch', '--device', udid, bundleID];
+
+  const result = child_process.spawnSync('xcrun', launchParameters);
 
   handleLaunchResult(
     result.status === 0,

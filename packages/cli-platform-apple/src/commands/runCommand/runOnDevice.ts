@@ -2,11 +2,11 @@ import child_process from 'child_process';
 import {ApplePlatform, Device} from '../../types';
 import {IOSProjectInfo} from '@react-native-community/cli-types';
 import {CLIError, logger} from '@react-native-community/cli-tools';
-import chalk from 'chalk';
 import {buildProject} from '../buildCommand/buildProject';
 import {getBuildPath} from './getBuildPath';
 import {FlagsT} from './createRun';
 import {getBuildSettings} from './getBuildSettings';
+import installApp from './installApp';
 
 export async function runOnDevice(
   selectedDevice: Device,
@@ -19,20 +19,6 @@ export async function runOnDevice(
   if (args.binaryPath && selectedDevice.type === 'catalyst') {
     throw new CLIError(
       'binary-path was specified for catalyst device, which is not supported.',
-    );
-  }
-
-  const isIOSDeployInstalled = child_process.spawnSync(
-    'ios-deploy',
-    ['--version'],
-    {encoding: 'utf8'},
-  );
-
-  if (isIOSDeployInstalled.error) {
-    throw new CLIError(
-      `Failed to install the app on the device because we couldn't execute the "ios-deploy" command. Please install it by running "${chalk.bold(
-        'brew install ios-deploy',
-      )}" and try again.`,
     );
   }
 
@@ -64,8 +50,10 @@ export async function runOnDevice(
     });
     appProcess.unref();
   } else {
-    let buildOutput, appPath;
-    if (!args.binaryPath) {
+    const {binaryPath, target} = args;
+
+    let buildOutput;
+    if (!binaryPath) {
       buildOutput = await buildProject(
         xcodeProject,
         platform,
@@ -74,44 +62,20 @@ export async function runOnDevice(
         scheme,
         args,
       );
-
-      const buildSettings = await getBuildSettings(
-        xcodeProject,
-        mode,
-        buildOutput,
-        scheme,
-      );
-
-      if (!buildSettings) {
-        throw new CLIError('Failed to get build settings for your project');
-      }
-
-      appPath = await getBuildPath(buildSettings, platform);
-    } else {
-      appPath = args.binaryPath;
     }
-
-    const iosDeployInstallArgs = [
-      '--bundle',
-      appPath,
-      '--id',
-      selectedDevice.udid,
-      '--justlaunch',
-    ];
 
     logger.info(`Installing and launching your app on ${selectedDevice.name}`);
 
-    const iosDeployOutput = child_process.spawnSync(
-      'ios-deploy',
-      iosDeployInstallArgs,
-      {encoding: 'utf8'},
-    );
-
-    if (iosDeployOutput.error) {
-      throw new CLIError(
-        `Failed to install the app on the device. We've encountered an error in "ios-deploy" command: ${iosDeployOutput.error.message}`,
-      );
-    }
+    installApp({
+      buildOutput: buildOutput ?? '',
+      xcodeProject,
+      mode,
+      scheme,
+      target,
+      udid: selectedDevice.udid,
+      binaryPath,
+      isSimulator: false,
+    });
   }
 
   return logger.success('Installed the app on the device.');

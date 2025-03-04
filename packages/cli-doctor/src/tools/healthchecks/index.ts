@@ -10,7 +10,6 @@ import androidSDK from './androidSDK';
 import androidNDK from './androidNDK';
 import xcode from './xcode';
 import cocoaPods from './cocoaPods';
-import iosDeploy from './iosDeploy';
 import {Healthchecks, HealthCheckCategory} from '../../types';
 import {loadConfigAsync} from '@react-native-community/cli-config';
 import xcodeEnv from './xcodeEnv';
@@ -93,7 +92,7 @@ export const getHealthchecks = async ({
       ? {
           ios: {
             label: 'iOS',
-            healthchecks: [xcode, ruby, cocoaPods, iosDeploy],
+            healthchecks: [xcode, ruby, cocoaPods],
           },
         }
       : {}),

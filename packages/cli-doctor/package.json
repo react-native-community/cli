@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/cli-doctor",
-  "version": "17.0.0",
+  "version": "18.0.0",
   "license": "MIT",
   "main": "build/index.js",
   "publishConfig": {
@@ -8,11 +8,11 @@
   },
   "types": "build/index.d.ts",
   "dependencies": {
-    "@react-native-community/cli-config": "17.0.0",
-    "@react-native-community/cli-platform-android": "17.0.0",
-    "@react-native-community/cli-platform-apple": "17.0.0",
-    "@react-native-community/cli-platform-ios": "17.0.0",
-    "@react-native-community/cli-tools": "17.0.0",
+    "@react-native-community/cli-config": "18.0.0",
+    "@react-native-community/cli-platform-android": "18.0.0",
+    "@react-native-community/cli-platform-apple": "18.0.0",
+    "@react-native-community/cli-platform-ios": "18.0.0",
+    "@react-native-community/cli-tools": "18.0.0",
     "chalk": "^4.1.2",
     "command-exists": "^1.2.8",
     "deepmerge": "^4.3.0",
@@ -30,7 +30,7 @@
     "!*.map"
   ],
   "devDependencies": {
-    "@react-native-community/cli-types": "17.0.0",
+    "@react-native-community/cli-types": "18.0.0",
     "@types/command-exists": "^1.2.0",
     "@types/envinfo": "^7.8.4",
     "@types/ip": "^1.1.0",

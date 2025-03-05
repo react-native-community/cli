@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/cli-link-assets",
-  "version": "16.0.2",
+  "version": "17.0.0",
   "license": "MIT",
   "main": "build/index.js",
   "publishConfig": {
@@ -8,11 +8,11 @@
   },
   "types": "build/index.d.ts",
   "dependencies": {
-    "@react-native-community/cli-config": "16.0.2",
-    "@react-native-community/cli-platform-android": "16.0.2",
-    "@react-native-community/cli-platform-apple": "16.0.2",
-    "@react-native-community/cli-platform-ios": "16.0.2",
-    "@react-native-community/cli-tools": "16.0.2",
+    "@react-native-community/cli-config": "17.0.0",
+    "@react-native-community/cli-platform-android": "17.0.0",
+    "@react-native-community/cli-platform-apple": "17.0.0",
+    "@react-native-community/cli-platform-ios": "17.0.0",
+    "@react-native-community/cli-tools": "17.0.0",
     "chalk": "^4.1.2",
     "fast-glob": "^3.3.2",
     "fast-xml-parser": "^4.4.1",
@@ -26,7 +26,7 @@
     "!*.map"
   ],
   "devDependencies": {
-    "@react-native-community/cli-types": "16.0.2",
+    "@react-native-community/cli-types": "17.0.0",
     "@types/plist": "^3.0.5",
     "type-fest": "^4.10.2"
   },

@@ -1,13 +1,13 @@
 {
   "name": "@react-native-community/cli-platform-ios",
-  "version": "16.0.2",
+  "version": "17.0.0",
   "license": "MIT",
   "main": "build/index.js",
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "@react-native-community/cli-platform-apple": "16.0.2"
+    "@react-native-community/cli-platform-apple": "17.0.0"
   },
   "devDependencies": {
     "hasbin": "^1.2.3"

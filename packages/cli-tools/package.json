@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/cli-tools",
-  "version": "16.0.2",
+  "version": "17.0.0",
   "license": "MIT",
   "main": "build/index.js",
   "publishConfig": {
@@ -19,7 +19,7 @@
     "semver": "^7.5.2"
   },
   "devDependencies": {
-    "@react-native-community/cli-types": "16.0.2",
+    "@react-native-community/cli-types": "17.0.0",
     "@types/mime": "^2.0.1",
     "@types/node": "^18.0.0",
     "@types/prompts": "^2.4.4",

@@ -330,17 +330,6 @@ async function createFromTemplate({
     process.exit(1);
   }
 
-  if (process.platform === 'darwin') {
-    logger.info(
-      `💡 To enable automatic CocoaPods installation when building for iOS you can create react-native.config.js with automaticPodsInstallation field. \n${chalk.reset.dim(
-        `For more details, see ${chalk.underline(
-          'https://github.com/react-native-community/cli/blob/main/docs/projects.md#projectiosautomaticpodsinstallation',
-        )}`,
-      )}
-            `,
-    );
-  }
-
   return {didInstallPods};
 }
 

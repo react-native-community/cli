@@ -24,7 +24,11 @@ const createBuild =
     }
 
     let installedPods = false;
-    if (platformConfig.automaticPodsInstallation || args.forcePods) {
+    if (
+      platformConfig.automaticPodsInstallation ||
+      args.forcePods ||
+      args.onlyPods
+    ) {
       const isAppRunningNewArchitecture = platformConfig.sourceDir
         ? await getArchitecture(platformConfig.sourceDir)
         : undefined;
@@ -41,6 +45,10 @@ const createBuild =
       );
 
       installedPods = true;
+    }
+
+    if (args.onlyPods) {
+      return;
     }
 
     let {xcodeProject, sourceDir} = getXcodeProjectAndDir(

@@ -79,7 +79,11 @@ const createRun =
     let {packager, port} = args;
     let installedPods = false;
     // check if pods need to be installed
-    if (platformConfig.automaticPodsInstallation || args.forcePods) {
+    if (
+      platformConfig.automaticPodsInstallation ||
+      args.forcePods ||
+      args.onlyPods
+    ) {
       const isAppRunningNewArchitecture = platformConfig.sourceDir
         ? await getArchitecture(platformConfig.sourceDir)
         : undefined;
@@ -96,6 +100,10 @@ const createRun =
       );
 
       installedPods = true;
+    }
+
+    if (args.onlyPods) {
+      return;
     }
 
     if (packager) {

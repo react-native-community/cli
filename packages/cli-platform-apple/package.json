@@ -1,20 +1,20 @@
 {
   "name": "@react-native-community/cli-platform-apple",
-  "version": "18.0.0",
+  "version": "19.0.0-alpha.0",
   "license": "MIT",
   "main": "build/index.js",
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "@react-native-community/cli-config-apple": "18.0.0",
-    "@react-native-community/cli-tools": "18.0.0",
+    "@react-native-community/cli-config-apple": "19.0.0-alpha.0",
+    "@react-native-community/cli-tools": "19.0.0-alpha.0",
     "chalk": "^4.1.2",
     "execa": "^5.0.0",
     "fast-xml-parser": "^4.4.1"
   },
   "devDependencies": {
-    "@react-native-community/cli-types": "18.0.0"
+    "@react-native-community/cli-types": "19.0.0-alpha.0"
   },
   "files": [
     "build",

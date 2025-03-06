@@ -94,7 +94,7 @@ const createRun =
         ctx.dependencies,
         platformName,
         {
-          forceInstall: args.forcePods,
+          forceInstall: args.forcePods || args.onlyPods,
           newArchEnabled: isAppRunningNewArchitecture,
         },
       );

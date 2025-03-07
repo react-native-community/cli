@@ -22,7 +22,7 @@ interface RunPodInstallOptions {
   newArchEnabled?: boolean;
 }
 
-async function runPodInstall(loader: Ora, options?: RunPodInstallOptions) {
+async function runPodInstall(loader: Ora, options: RunPodInstallOptions) {
   const shouldHandleRepoUpdate = options?.shouldHandleRepoUpdate || true;
   try {
     loader.start(
@@ -156,8 +156,9 @@ async function installPods(loader?: Ora, options?: PodInstallOptions) {
       loader.info();
       await installCocoaPods(loader);
     }
-
-    await runPodInstall(loader, {newArchEnabled: options?.newArchEnabled});
+    await runPodInstall(loader, {
+      newArchEnabled: options?.newArchEnabled,
+    });
   } finally {
     process.chdir('..');
   }

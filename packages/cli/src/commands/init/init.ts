@@ -281,6 +281,9 @@ async function createFromTemplate({
 
       if (process.platform === 'darwin') {
         const installPodsValue = String(installCocoaPods);
+        const reactNativePath = path.dirname(
+          require.resolve('react-native', {paths: [projectDirectory]}),
+        );
 
         try {
           if (installPodsValue === 'true') {
@@ -288,6 +291,7 @@ async function createFromTemplate({
             await runCodegen({
               root: projectDirectory,
               platform: 'ios',
+              reactNativePath,
             });
             await installPods(loader, {});
             loader.succeed();
@@ -306,6 +310,7 @@ async function createFromTemplate({
               await runCodegen({
                 root: projectDirectory,
                 platform: 'ios',
+                reactNativePath,
               });
               await installPods(loader, {});
               loader.succeed();

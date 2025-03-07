@@ -89,6 +89,7 @@ const createRun =
         platformConfig.sourceDir,
         ctx.dependencies,
         platformName,
+        ctx.reactNativePath,
         {
           forceInstall: args.forcePods,
           newArchEnabled: isAppRunningNewArchitecture,

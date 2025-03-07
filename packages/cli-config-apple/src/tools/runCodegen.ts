@@ -5,6 +5,7 @@ import execa from 'execa';
 interface CodegenOptions {
   root: string;
   platform: string;
+  reactNativePath: string;
 }
 
 async function runCodegen(options: CodegenOptions): Promise<void> {
@@ -12,11 +13,8 @@ async function runCodegen(options: CodegenOptions): Promise<void> {
     fs.rmSync('build', {recursive: true});
   }
 
-  const reactNativePath = path.dirname(
-    require.resolve('react-native', {paths: [process.cwd()]}),
-  );
   const codegenScript = path.join(
-    reactNativePath,
+    options.reactNativePath,
     'scripts',
     'generate-codegen-artifacts.js',
   );

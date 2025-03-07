@@ -118,6 +118,10 @@ List all available iOS devices and simulators and let you choose one to run the 
 
 Force running `pod install` before running an app
 
+#### `--only-pods`,
+
+Only install Cocoapods, do not build the app.
+
 ### `build-ios`
 
 Usage:
@@ -176,6 +180,10 @@ npx react-native build-ios --extra-params "-jobs 4"
 #### `--force-pods`,
 
 Force running `pod install` before building an app
+
+#### `--only-pods`,
+
+Only install Cocoapods, do not build the app.
 
 ### `log-ios`
 

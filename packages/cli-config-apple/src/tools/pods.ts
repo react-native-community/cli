@@ -6,6 +6,7 @@ import {
   CLIError,
   cacheManager,
   getLoader,
+  logger,
 } from '@react-native-community/cli-tools';
 import installPods from './installPods';
 import {
@@ -14,6 +15,7 @@ import {
 } from '@react-native-community/cli-types';
 import {ApplePlatform} from '../types';
 import runCodegen from './runCodegen';
+import runBundleInstall from './runBundleInstall';
 
 interface ResolvePodsOptions {
   forceInstall?: boolean;
@@ -22,6 +24,18 @@ interface ResolvePodsOptions {
 
 interface NativeDependencies {
   [key: string]: DependencyConfig;
+}
+
+function checkGemfileForCocoaPods(gemfilePath: string): boolean {
+  try {
+    const gemfileContent = fs.readFileSync(gemfilePath, 'utf-8');
+    // Check for common CocoaPods gem declarations, because some projects might have Gemfile but for other purposes
+    return /^\s*gem\s+['"]cocoapods['"]/.test(gemfileContent);
+  } catch (error) {
+    logger.debug(`Failed to read Gemfile at: ${gemfilePath}`);
+    logger.debug(String(error));
+    return false;
+  }
 }
 
 function getPackageJson(root: string) {
@@ -87,7 +101,6 @@ async function getChecksum(
 
 async function install(
   packageJson: Record<string, any>,
-  cachedDependenciesHash: string | undefined,
   currentDependenciesHash: string,
   iosFolderPath: string,
   platform: string,
@@ -101,9 +114,26 @@ async function install(
       platform,
       reactNativePath,
     });
+    const gemfilePath = path.join(root, 'Gemfile');
+    let useBundler = checkGemfileForCocoaPods(gemfilePath);
+
+    if (!useBundler) {
+      logger.debug(
+        `Could not find the Gemfile at: ${chalk.cyan(gemfilePath)}
+  The default React Native Template uses Gemfile to leverage Ruby Bundler and we advice the same.
+  If you use Gemfile, make sure it's ${chalk.bold(
+    'in the project root directory',
+  )}.
+  Falling back to installing CocoaPods using globally installed "pod".`,
+      );
+    } else {
+      await runBundleInstall(loader);
+    }
+
     await installPods(loader, {
-      skipBundleInstall: !!cachedDependenciesHash,
+      useBundler,
       iosFolderPath,
+      root,
     });
     cacheManager.set(packageJson.name, 'dependencies', currentDependenciesHash);
     loader.succeed();
@@ -161,7 +191,6 @@ export default async function resolvePods(
   if (options?.forceInstall) {
     await install(
       packageJson,
-      cachedDependenciesHash,
       currentDependenciesHash,
       platformFolderPath,
       platformName,
@@ -182,17 +211,14 @@ export default async function resolvePods(
       currentPodfileLockChecksum ?? '',
     );
   } else {
-    const loader = getLoader('Installing CocoaPods...');
     try {
-      await installPods(loader, {
-        skipBundleInstall: !!cachedDependenciesHash,
-        newArchEnabled: options?.newArchEnabled,
-        iosFolderPath: platformFolderPath,
-      });
-      cacheManager.set(
-        packageJson.name,
-        'dependencies',
+      await install(
+        packageJson,
         currentDependenciesHash,
+        platformFolderPath,
+        platformName,
+        root,
+        reactNativePath,
       );
       cacheManager.set(packageJson.name, 'podfile', currentPodfileHash);
       // We need to read again the checksum because value changed after running `pod install`
@@ -202,9 +228,7 @@ export default async function resolvePods(
         'podfileLock',
         currentPodfileLockChecksum ?? '',
       );
-      loader.succeed();
     } catch (error) {
-      loader.fail();
       throw new CLIError(
         `Something when wrong while installing CocoaPods. Please run ${chalk.bold(
           'pod install',

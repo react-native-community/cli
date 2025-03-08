@@ -9,17 +9,18 @@ import {
   CLIError,
   runSudo,
 } from '@react-native-community/cli-tools';
-import runBundleInstall from './runBundleInstall';
 
 interface PodInstallOptions {
-  skipBundleInstall?: boolean;
   newArchEnabled?: boolean;
   iosFolderPath?: string;
+  useBundler?: boolean;
+  root?: string;
 }
 
 interface RunPodInstallOptions {
   shouldHandleRepoUpdate?: boolean;
   newArchEnabled?: boolean;
+  useBundler?: boolean;
 }
 
 async function runPodInstall(loader: Ora, options: RunPodInstallOptions) {
@@ -30,8 +31,10 @@ async function runPodInstall(loader: Ora, options: RunPodInstallOptions) {
         options?.newArchEnabled ? 'with New Architecture' : '',
       )} ${chalk.dim('(this may take a few minutes)')}`,
     );
+    const command = options.useBundler ? 'bundle' : 'pod';
+    const args = options.useBundler ? ['exec', 'pod', 'install'] : ['install'];
 
-    await execa('bundle', ['exec', 'pod', 'install'], {
+    await execa(command, args, {
       env: {
         RCT_NEW_ARCH_ENABLED: options?.newArchEnabled ? '1' : '0',
         RCT_IGNORE_PODS_DEPRECATION: '1', // From React Native 0.79 onwards, users shouldn't install CocoaPods manually.
@@ -139,14 +142,6 @@ async function installPods(loader?: Ora, options?: PodInstallOptions) {
       return;
     }
 
-    if (fs.existsSync('../Gemfile') && !options?.skipBundleInstall) {
-      await runBundleInstall(loader);
-    } else if (!fs.existsSync('../Gemfile')) {
-      throw new CLIError(
-        'Could not find the Gemfile. Currently the CLI requires to have this file in the root directory of the project to install CocoaPods. If your configuration is different, please install the CocoaPods manually.',
-      );
-    }
-
     try {
       // Check if "pod" is available and usable. It happens that there are
       // multiple versions of "pod" command and even though it's there, it exits
@@ -157,10 +152,11 @@ async function installPods(loader?: Ora, options?: PodInstallOptions) {
       await installCocoaPods(loader);
     }
     await runPodInstall(loader, {
+      useBundler: options?.useBundler,
       newArchEnabled: options?.newArchEnabled,
     });
   } finally {
-    process.chdir('..');
+    process.chdir(options?.root ?? '..');
   }
 }
 

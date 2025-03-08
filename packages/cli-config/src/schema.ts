@@ -158,7 +158,9 @@ export const projectConfig = t
             automaticPodsInstallation: t.bool().default(true),
             assets: t.array().items(t.string()).default([]),
           })
-          .default({}),
+          .default({
+            automaticPodsInstallation: true,
+          }),
         android: t
           // AndroidProjectParams
           .object({

@@ -9,6 +9,7 @@ import {
   CLIError,
   runSudo,
 } from '@react-native-community/cli-tools';
+import runBundleInstall from './runBundleInstall';
 
 interface PodInstallOptions {
   newArchEnabled?: boolean;
@@ -140,6 +141,10 @@ async function installPods(loader?: Ora, options?: PodInstallOptions) {
 
     if (!hasPods) {
       return;
+    }
+
+    if (options?.useBundler) {
+      await runBundleInstall(loader);
     }
 
     try {

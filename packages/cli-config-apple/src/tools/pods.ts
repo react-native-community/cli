@@ -15,7 +15,6 @@ import {
 } from '@react-native-community/cli-types';
 import {ApplePlatform} from '../types';
 import runCodegen from './runCodegen';
-import runBundleInstall from './runBundleInstall';
 
 interface ResolvePodsOptions {
   forceInstall?: boolean;
@@ -126,8 +125,6 @@ async function install(
   )}.
   Falling back to installing CocoaPods using globally installed "pod".`,
       );
-    } else {
-      await runBundleInstall(loader);
     }
 
     await installPods(loader, {

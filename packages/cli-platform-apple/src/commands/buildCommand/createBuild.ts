@@ -24,7 +24,11 @@ const createBuild =
     }
 
     let installedPods = false;
-    if (platformConfig.automaticPodsInstallation || args.forcePods) {
+    if (
+      platformConfig.automaticPodsInstallation ||
+      args.forcePods ||
+      args.onlyPods
+    ) {
       const isAppRunningNewArchitecture = platformConfig.sourceDir
         ? await getArchitecture(platformConfig.sourceDir)
         : undefined;
@@ -36,12 +40,16 @@ const createBuild =
         platformName,
         ctx.reactNativePath,
         {
-          forceInstall: args.forcePods,
+          forceInstall: args.forcePods || args.onlyPods,
           newArchEnabled: isAppRunningNewArchitecture,
         },
       );
 
       installedPods = true;
+    }
+
+    if (args.onlyPods) {
+      return;
     }
 
     let {xcodeProject, sourceDir} = getXcodeProjectAndDir(

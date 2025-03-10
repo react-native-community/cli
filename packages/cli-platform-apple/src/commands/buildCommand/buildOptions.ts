@@ -12,6 +12,7 @@ export type BuildFlags = {
   destination?: string;
   extraParams?: string[];
   forcePods?: boolean;
+  onlyPods?: boolean;
 };
 
 export const getBuildOptions = ({platformName}: BuilderCommand) => {
@@ -61,6 +62,10 @@ export const getBuildOptions = ({platformName}: BuilderCommand) => {
     {
       name: '--force-pods',
       description: 'Force CocoaPods installation',
+    },
+    {
+      name: '--only-pods',
+      description: 'Only install Cocoapods, do not build the app',
     },
     !isMac && {
       name: '--device [string]', // here we're intentionally using [] over <> to make passed value optional to allow users to run only on physical devices

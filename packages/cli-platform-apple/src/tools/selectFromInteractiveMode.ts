@@ -1,5 +1,5 @@
 import {logger} from '@react-native-community/cli-tools';
-import chalk from 'chalk';
+import pico from 'picocolors';
 import {IosInfo} from '../types';
 import {
   promptForConfigurationSelection,
@@ -24,14 +24,14 @@ export async function selectFromInteractiveMode({
   if (schemes && schemes.length > 1) {
     newScheme = await promptForSchemeSelection(schemes);
   } else {
-    logger.info(`Automatically selected ${chalk.bold(scheme)} scheme.`);
+    logger.info(`Automatically selected ${pico.bold(scheme)} scheme.`);
   }
 
   const configurations = info?.configurations;
   if (configurations && configurations.length > 1) {
     newMode = await promptForConfigurationSelection(configurations);
   } else {
-    logger.info(`Automatically selected ${chalk.bold(mode)} configuration.`);
+    logger.info(`Automatically selected ${pico.bold(mode)} configuration.`);
   }
 
   return {

@@ -9,9 +9,9 @@
   "dependencies": {
     "@react-native-community/cli-config-android": "19.0.0-alpha.0",
     "@react-native-community/cli-tools": "19.0.0-alpha.0",
-    "chalk": "^4.1.2",
     "execa": "^5.0.0",
-    "logkitty": "^0.7.1"
+    "logkitty": "^0.7.1",
+    "picocolors": "^1.1.1"
   },
   "files": [
     "build",

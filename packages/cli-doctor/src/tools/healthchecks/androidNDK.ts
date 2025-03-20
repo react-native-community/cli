@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import pico from 'picocolors';
 import versionRanges from '../versionRanges';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
 import {EnvironmentInfo, HealthCheckInterface} from '../../types';
@@ -29,7 +29,7 @@ export default {
 
     if (isNDKInstalled) {
       return logManualInstallation({
-        message: `Read more about how to update Android NDK at ${chalk.dim(
+        message: `Read more about how to update Android NDK at ${pico.dim(
           'https://developer.android.com/ndk/downloads',
         )}`,
       });

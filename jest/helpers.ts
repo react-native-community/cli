@@ -121,7 +121,7 @@ function getExecaOptions(options: SpawnOptions) {
 
   const cwd = isRelative ? path.resolve(__dirname, options.cwd) : options.cwd;
 
-  let env = Object.assign({}, process.env, {FORCE_COLOR: '0'}, options.env);
+  let env = Object.assign({}, process.env, {NO_COLOR: 1}, options.env);
 
   if (options.nodeOptions) {
     env.NODE_OPTIONS = options.nodeOptions;

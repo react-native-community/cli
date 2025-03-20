@@ -33,7 +33,6 @@
     "@types/node": "^18.0.0",
     "babel-jest": "^26.6.2",
     "babel-plugin-module-resolver": "^3.2.0",
-    "chalk": "^4.1.2",
     "chokidar": "^3.3.1",
     "eslint": "^8.23.1",
     "eslint-import-resolver-alias": "^1.1.2",
@@ -50,6 +49,7 @@
     "lint-staged": "^13.1.0",
     "metro-memory-fs": "0.78.0",
     "micromatch": "^4.0.4",
+    "picocolors": "^1.1.1",
     "prettier": "2.8.8",
     "slash": "^3.0.0",
     "string-length": "^2.0.0",
@@ -62,5 +62,6 @@
     "./packages/**/*.ts": [
       "yarn lint"
     ]
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

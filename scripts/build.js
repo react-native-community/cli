@@ -22,7 +22,7 @@ const fs = require('fs');
 const path = require('path');
 const glob = require('fast-glob');
 const babel = require('@babel/core');
-const chalk = require('chalk');
+const pico = require('picocolors');
 const micromatch = require('micromatch');
 const {
   PACKAGES_DIR,
@@ -72,7 +72,7 @@ function buildFile(file, silent) {
     silent ||
       process.stdout.write(
         `${
-          chalk.dim('  \u2022 ') + path.relative(PACKAGES_DIR, file)
+          pico.dim('  \u2022 ') + path.relative(PACKAGES_DIR, file)
         } (ignore)\n`,
       );
     return;
@@ -96,9 +96,9 @@ function buildFile(file, silent) {
     silent ||
       process.stdout.write(
         `${
-          chalk.red('  \u2022 ') +
+          pico.red('  \u2022 ') +
           path.relative(PACKAGES_DIR, file) +
-          chalk.red(' \u21D2 ') +
+          pico.red(' \u21D2 ') +
           path.relative(PACKAGES_DIR, destPath)
         } (copy)\n`,
       );
@@ -118,9 +118,9 @@ function buildFile(file, silent) {
     silent ||
       process.stdout.write(
         `${
-          chalk.green('  \u2022 ') +
+          pico.green('  \u2022 ') +
           path.relative(PACKAGES_DIR, file) +
-          chalk.green(' \u21D2 ') +
+          pico.green(' \u21D2 ') +
           path.relative(PACKAGES_DIR, destPath)
         }\n`,
       );
@@ -133,7 +133,7 @@ if (files.length) {
   files.forEach(buildFile);
 } else {
   const packages = getPackages();
-  process.stdout.write(chalk.inverse(' Building packages \n'));
+  process.stdout.write(pico.inverse(' Building packages \n'));
   packages.forEach(buildNodePackage);
   process.stdout.write('\n');
 }

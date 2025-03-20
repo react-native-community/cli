@@ -48,7 +48,7 @@ describe('getBuildConfigurationFromXcScheme', () => {
   });
 
   it('throws CLIError when reading the shared scheme file fails', () => {
-    process.env.NO_COLOR = '1'; // To disable picocolors
+    process.env.NO_COLOR = '1'; // To disable colours from picocolors
     (fs.readdirSync as jest.Mock).mockReturnValue(['Test.xcodeproj']);
     (fs.readFileSync as jest.Mock).mockImplementation(() => {
       throw new Error('File not found');

@@ -259,7 +259,7 @@ test('should load commands from "react-native-foo" and "react-native-bar" packag
 });
 
 test('should not skip packages that have invalid configuration (to avoid breaking users)', async () => {
-  process.env.FORCE_COLOR = '0'; // To disable chalk
+  process.env.NO_COLOR = '1'; // To disable picocolors
   DIR = getTempDirectory('config_test_skip');
   writeFiles(DIR, {
     'node_modules/react-native/package.json': '{}',

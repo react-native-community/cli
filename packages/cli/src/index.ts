@@ -5,10 +5,10 @@ import type {
   Config,
   DetachedCommand,
 } from '@react-native-community/cli-types';
-import chalk from 'chalk';
 import childProcess from 'child_process';
 import {Command as CommanderCommand} from 'commander';
 import path from 'path';
+import pico from 'picocolors';
 import {detachedCommands, projectCommands} from './commands';
 
 export {createDevServerMiddleware} from '@react-native-community/cli-server-api';
@@ -34,8 +34,8 @@ const handleError = (err: Error) => {
   }
   if (!program.opts().verbose && logger.hasDebugMessages()) {
     logger.info(
-      chalk.dim(
-        `Run CLI with ${chalk.reset('--verbose')} ${chalk.dim(
+      pico.dim(
+        `Run CLI with ${pico.reset('--verbose')} ${pico.dim(
           'flag for more details.',
         )}`,
       ),
@@ -49,10 +49,10 @@ function printExamples(examples: Command['examples']) {
 
   if (examples && examples.length > 0) {
     const formattedUsage = examples
-      .map((example) => `  ${example.desc}: \n  ${chalk.cyan(example.cmd)}`)
+      .map((example) => `  ${example.desc}: \n  ${pico.cyan(example.cmd)}`)
       .join('\n\n');
 
-    output = output.concat([chalk.bold('\nExample usage:'), formattedUsage]);
+    output = output.concat([pico.bold('\nExample usage:'), formattedUsage]);
   }
 
   return output.join('\n').concat('\n');
@@ -169,8 +169,8 @@ async function setupAndRun(platformName?: string) {
       childProcess.execFileSync(absolutePath, {stdio: 'pipe'});
     } catch (error) {
       logger.warn(
-        `Failed to run environment setup script "${scriptName}"\n\n${chalk.red(
-          error,
+        `Failed to run environment setup script "${scriptName}"\n\n${pico.red(
+          `${error}`,
         )}`,
       );
       logger.info(

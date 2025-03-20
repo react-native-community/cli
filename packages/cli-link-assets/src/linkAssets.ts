@@ -8,9 +8,9 @@ import {
   logger,
 } from '@react-native-community/cli-tools';
 import type {Config as CLIConfig} from '@react-native-community/cli-types';
-import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
+import pico from 'picocolors';
 import {audioTypes, fontTypes, imageTypes} from './fileTypes';
 import cleanAndroidAssets from './tools/cleanAssets/android';
 import cleanIOSAssets from './tools/cleanAssets/ios';
@@ -207,12 +207,12 @@ async function linkAssets(_argv: string[], ctx: CLIConfig): Promise<void> {
   ) {
     logger.info(
       inlineString(
-        `It looks like you haven't configured your assets paths in ${chalk.bold(
+        `It looks like you haven't configured your assets paths in ${pico.bold(
           'react-native.config.js',
         )} file.
-        To can learn more about ${chalk.bold(
+        To can learn more about ${pico.bold(
           'link-assets',
-        )} command visit: ${chalk.underline(
+        )} command visit: ${pico.underline(
           'https://github.com/react-native-community/cli/blob/main/packages/cli-link-assets/README.md',
         )}`,
       ),

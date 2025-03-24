@@ -9,7 +9,6 @@ import serveStatic from 'serve-static';
 import indexPageMiddleware from './indexPageMiddleware';
 import openStackFrameMiddleware from './openStackFrameMiddleware';
 import openURLMiddleware from './openURLMiddleware';
-import rawBodyMiddleware from './rawBodyMiddleware';
 import securityHeadersMiddleware from './securityHeadersMiddleware';
 import statusPageMiddleware from './statusPageMiddleware';
 import systraceProfileMiddleware from './systraceProfileMiddleware';
@@ -38,8 +37,6 @@ export function createDevServerMiddleware(options: MiddlewareOptions) {
     .use('/open-stack-frame', openStackFrameMiddleware(options))
     .use('/open-url', openURLMiddleware)
     .use('/status', statusPageMiddleware)
-    // TODO: Remove. Requires standardized JSON body parsing support in Metro.
-    .use('/symbolicate', rawBodyMiddleware)
     // @ts-ignore mismatch
     .use('/systrace', systraceProfileMiddleware)
     .use('/reload', (_req: http.IncomingMessage, res: http.ServerResponse) => {

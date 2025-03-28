@@ -25,7 +25,7 @@ export default {
     const isNDKInstalled =
       androidSdk !== 'Not Found' && androidSdk['Android NDK'] !== 'Not Found';
 
-    loader.fail();
+    loader.error();
 
     if (isNDKInstalled) {
       return logManualInstallation({

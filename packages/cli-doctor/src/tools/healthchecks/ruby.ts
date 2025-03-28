@@ -170,7 +170,7 @@ export default {
     return fallbackResult;
   },
   runAutomaticFix: async ({loader, logManualInstallation}) => {
-    loader.fail();
+    loader.error();
 
     logManualInstallation({
       healthcheck: 'Ruby',

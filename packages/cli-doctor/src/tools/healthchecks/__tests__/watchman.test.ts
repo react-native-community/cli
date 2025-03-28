@@ -87,7 +87,7 @@ describe('watchman', () => {
     const brewInstallSpy = jest
       .spyOn(brewInstall, 'brewInstall')
       .mockImplementation(({loader}) => {
-        loader.succeed();
+        loader.success();
         return Promise.resolve();
       });
 

@@ -29,12 +29,12 @@ export default {
   runAutomaticFix: async ({loader, logManualInstallation}) => {
     // Variable could have been added if installing Android Studio so double checking
     if (process.env.ANDROID_HOME) {
-      loader.succeed();
+      loader.success();
 
       return;
     }
 
-    loader.fail();
+    loader.error();
 
     logManualInstallation({
       message,

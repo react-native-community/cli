@@ -109,7 +109,7 @@ export default {
     const androidSDKRoot = getAndroidSdkRootInstallation();
 
     if (androidSDKRoot === '') {
-      loader.fail('There was an error finding the Android SDK root');
+      loader.error('There was an error finding the Android SDK root');
 
       return;
     }
@@ -122,7 +122,7 @@ export default {
     });
 
     for (const component of componentsToInstall) {
-      loader.text = `Installing "${component}" (this may take a few minutes)`;
+      loader.update(`Installing "${component}" (this may take a few minutes)`);
 
       try {
         await installComponent(component, androidSDKRoot);
@@ -131,7 +131,7 @@ export default {
       }
     }
 
-    loader.text = 'Updating environment variables';
+    loader.update('Updating environment variables');
 
     // Required for the emulator to work from the CLI
     await setEnvironment('ANDROID_SDK_ROOT', androidSDKRoot);
@@ -142,8 +142,9 @@ export default {
       path.join(androidSDKRoot, 'platform-tools'),
     );
 
-    loader.text =
-      'Configuring Hypervisor for faster emulation, this might prompt UAC';
+    loader.update(
+      'Configuring Hypervisor for faster emulation, this might prompt UAC',
+    );
 
     const {hypervisor, installed} = await getBestHypervisor(androidSDKRoot);
 
@@ -164,15 +165,15 @@ export default {
       }
     }
 
-    loader.text = 'Creating AVD';
+    loader.update('Creating AVD');
     await createAVD(androidSDKRoot, 'pixel_9.0', 'pixel', systemImage);
 
-    loader.succeed(
+    loader.success(
       'Android SDK configured. You might need to restart your PC for all changes to take effect.',
     );
   },
   runAutomaticFix: async ({loader, logManualInstallation, environmentInfo}) => {
-    loader.fail();
+    loader.error();
 
     if (isSDKInstalled(environmentInfo)) {
       return logManualInstallation({

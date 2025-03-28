@@ -19,7 +19,7 @@ async function install({pkg, label, url, loader}: InstallArgs) {
         throw new Error('Not implemented yet');
     }
   } catch (_error) {
-    loader.fail();
+    loader.error();
 
     logManualInstallation({
       healthcheck: label,

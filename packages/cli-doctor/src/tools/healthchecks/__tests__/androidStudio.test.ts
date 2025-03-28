@@ -53,8 +53,8 @@ describe('androidStudio', () => {
 
   it('downloads and unzips Android Studio on Windows when missing', async () => {
     const loader = new NoopLoader();
-    const loaderSucceedSpy = jest.spyOn(loader, 'succeed');
-    const loaderFailSpy = jest.spyOn(loader, 'fail');
+    const loaderSuccessSpy = jest.spyOn(loader, 'success');
+    const loaderErrorSpy = jest.spyOn(loader, 'error');
     const downloadAndUnzipSpy = jest
       .spyOn(downloadAndUnzip, 'downloadAndUnzip')
       .mockImplementation(() => Promise.resolve());
@@ -65,10 +65,10 @@ describe('androidStudio', () => {
       environmentInfo,
     });
 
-    expect(loaderFailSpy).toHaveBeenCalledTimes(0);
+    expect(loaderErrorSpy).toHaveBeenCalledTimes(0);
     expect(logSpy).toHaveBeenCalledTimes(0);
     expect(downloadAndUnzipSpy).toBeCalledTimes(1);
-    expect(loaderSucceedSpy).toBeCalledWith(
+    expect(loaderSuccessSpy).toBeCalledWith(
       `Android Studio installed successfully in "${
         downloadAndUnzipSpy.mock.calls[0][0].installPath || ''
       }".`,

@@ -69,12 +69,12 @@ export default {
       ico: join(binFolder, 'studio.ico'),
     });
 
-    loader.succeed(
+    loader.success(
       `Android Studio installed successfully in "${installPath}".`,
     );
   },
   runAutomaticFix: async ({loader, logManualInstallation}) => {
-    loader.fail();
+    loader.error();
 
     return logManualInstallation({
       healthcheck: 'Android Studio',

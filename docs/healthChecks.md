@@ -1,8 +1,8 @@
 # Health Check Plugins
 
-Plugins can be used to extend the health checks that `npx react-native doctor` runs.  This can be used to add additional checks for out of tree platforms, or other checks that are specific to a community module.
+Plugins can be used to extend the health checks that `npx react-native doctor` runs. This can be used to add additional checks for out of tree platforms, or other checks that are specific to a community module.
 
-See [`Plugins`](./plugins.md) for information about how plugins work.  
+See [`Plugins`](./plugins.md) for information about how plugins work.
 
 ## How does it work?
 
@@ -21,7 +21,7 @@ module.exports = {
           }),
           runAutomaticFix: async ({loader}) => {
             await installBar();
-            loader.succeed();
+            loader.success();
           },
         },
       ],
@@ -61,9 +61,7 @@ type HealthCheckInterface = {
   visible?: boolean | void;
   isRequired?: boolean;
   description: string;
-  getDiagnostics: (
-    environmentInfo: EnvironmentInfo,
-  ) => Promise<{
+  getDiagnostics: (environmentInfo: EnvironmentInfo) => Promise<{
     version?: string;
     versions?: [string];
     versionRange?: string;
@@ -94,7 +92,7 @@ Longer description of this health check
 
 ##### `getDiagnostics`
 
-Functions which performs the actual check.  Simple checks can just return `needsToBeFixed`.  Checks which are looking at versions of an installed component (such as the version of node), can also return `version`, `versions` and `versionRange` to provide better information to be displayed in `react-native doctor` when running the check
+Functions which performs the actual check. Simple checks can just return `needsToBeFixed`. Checks which are looking at versions of an installed component (such as the version of node), can also return `version`, `versions` and `versionRange` to provide better information to be displayed in `react-native doctor` when running the check
 
 ##### `win32AutomaticFix`
 
@@ -116,7 +114,7 @@ This function will be used to try to fix the issue when `react-native doctor` is
 
 ```ts
 type RunAutomaticFix = (args: {
-  loader: Ora;
+  loader: Spinner;
   logManualInstallation: ({
     healthcheck,
     url,
@@ -134,7 +132,7 @@ type RunAutomaticFix = (args: {
 
 ##### `loader`
 
-A reference to a [`ora`](https://www.npmjs.com/package/ora) instance which should be used to report success / failure, and progress of the fix.  The fix function should always call either `loader.succeed()` or `loader.fail()` before returning.
+A reference to a [`nanospinner`](https://www.npmjs.com/package/nanospinner) instance which should be used to report success / failure, and progress of the fix. The fix function should always call either `loader.success()` or `loader.error()` before returning.
 
 ##### `logManualInstallation`
 
@@ -146,26 +144,27 @@ Provides information about the current system
 
 ### Examples of RunAutomaticFix implementations
 
-A health check that requires the user to manually go download/install something.  This check will immediately display a message to notify the user how to fix the issue.
+A health check that requires the user to manually go download/install something. This check will immediately display a message to notify the user how to fix the issue.
 
 ```ts
 async function needToInstallFoo({loader, logManualInstallation}) {
-    loader.fail();
+  loader.error();
 
-    return logManualInstallation({
-      healthcheck: 'Foo',
-      url: 'https:/foo.com/download',
-    });
+  return logManualInstallation({
+    healthcheck: 'Foo',
+    url: 'https:/foo.com/download',
+  });
 }
 ```
 
-A health check that runs some commands locally which may fix the issue.  This check will display a spinner while the exec commands are running.  Then once the commands are complete, the spinner will change to a checkmark.
+A health check that runs some commands locally which may fix the issue. This check will display a spinner while the exec commands are running. Then once the commands are complete, the spinner will change to a checkmark.
 
 ```ts
-import { exec } from 'promisify-child-process';
+import {exec} from 'promisify-child-process';
 async function fixFoo({loader}) {
   await exec(`foo --install`);
   await exec(`foo --fix`);
 
-  loader.succeed();
+  loader.success();
 }
+```

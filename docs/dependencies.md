@@ -56,7 +56,6 @@ type AndroidDependencyParams = {
   packageInstance?: string;
   buildTypes?: string[];
   libraryName?: string | null;
-  componentDescriptors?: string[] | null;
   cmakeListsPath?: string | null;
   cxxModuleCMakeListsModuleName?: string | null;
   cxxModuleCMakeListsPath?: string | null;
@@ -134,9 +133,9 @@ A string indicating your custom library name. By default it's taken from the `li
 
 #### platforms.android.componentDescriptors
 
-> Note: Only applicable when new architecture is turned on.
+> Note: This field is deprecated and providing a value to it will have no effect.
 
-An array of custom component descriptor strings. By default they're generated based on `codegenNativeComponent` calls.
+Historically used to provide an array of custom component descriptor to register with the Interop Layer. [Since 0.74](https://github.com/reactwg/react-native-new-architecture/discussions/175) this field is ignored as the interop layer are automatic.
 
 #### platforms.android.cmakeListsPath
 

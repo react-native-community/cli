@@ -272,12 +272,22 @@ const createRun =
     }
 
     if (args.udid) {
-      const device = devices.find((d) => d.udid === args.udid);
+      let device = devices.find((d) => d.udid === args.udid);
       if (!device) {
-        return logger.error(
-          `Could not find a device with udid: "${chalk.bold(
-            args.udid,
-          )}". ${printFoundDevices(devices)}`,
+        // On arm64 machines, the catalyst UDID returned by 'xcrun xctrace list devices' is not correct
+        // xcodebuild will return an error indicating the UDID is unknown and offering a different one
+        // you may obtain it by running xcodebuild with the UDID you think works then parse out the other one from the returned error:
+        // CATALYST_DESTINATION=$(xcodebuild -workspace ios/rnfbdemo.xcworkspace -configuration Debug -scheme rnfbdemo -destination id=7153382A-C92B-5798-BEA3-D82D195F25F8 2>&1|grep macOS|grep Catalyst|head -1 |cut -d':' -f5 |cut -d' ' -f1)
+        //
+        // How to handle the incorrect catalyst UDID?
+        // Assume if a UDID is specified, the user knows what they are doing.
+        // Use the given UDID and force the type, so "catalyst" will launch the app correctly
+        device = {name: 'unknown', udid: args.udid, type: 'catalyst'};
+        logger.warn(
+          `Could not find a device with udid: "${chalk.bold(args.udid)}".`,
+        );
+        logger.warn(
+          'Running with provided udid anyway, and type "catalyst". \'xcodebuild\' command may return error.',
         );
       }
       if (device.type === 'simulator') {

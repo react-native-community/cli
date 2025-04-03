@@ -2,7 +2,7 @@ import os from 'os';
 import path from 'path';
 import fs, {readdirSync} from 'fs-extra';
 import {validateProjectName} from './validate';
-import chalk from 'chalk';
+import pico from 'picocolors';
 import printRunInstructions from './printRunInstructions';
 import {
   CLIError,
@@ -121,7 +121,7 @@ async function setProjectDirectory(
     const conflicts = getConflictsForDirectory(directory);
 
     if (conflicts.length > 0) {
-      let warnMessage = `The directory ${chalk.bold(
+      let warnMessage = `The directory ${pico.bold(
         directory,
       )} contains files that will be overwritten:\n`;
 
@@ -300,8 +300,8 @@ async function createFromTemplate({
             const {installCocoapods} = await prompt({
               type: 'confirm',
               name: 'installCocoapods',
-              message: `Do you want to install CocoaPods now? ${chalk.reset.dim(
-                'Needed for running iOS project',
+              message: `Do you want to install CocoaPods now? ${pico.reset(
+                pico.dim('Needed for running iOS project'),
               )}`,
             });
             didInstallPods = installCocoapods;
@@ -479,7 +479,7 @@ export default (async function initialize(
     const semverVersion = semver.coerce(version)?.version ?? version;
     if (semver.gte(semverVersion, TEMPLATE_COMMUNITY_REACT_NATIVE_VERSION)) {
       logger.warn(
-        `Use ${chalk.bold('--template')} and ${chalk.bold(
+        `Use ${pico.bold('--template')} and ${pico.bold(
           '--version',
         )} only if you know what you're doing. Here be dragons 🐉.`,
       );

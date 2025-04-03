@@ -10,8 +10,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const chalk = require('chalk');
 const execa = require('execa');
+const pico = require('picocolors');
 const {getPackages, adjustToTerminalWidth, OK} = require('./helpers');
 
 const packages = getPackages();
@@ -31,7 +31,7 @@ const args = [
   ...process.argv.slice(2),
 ];
 
-console.log(chalk.inverse('Building TypeScript definition files'));
+console.log(pico.inverse('Building TypeScript definition files'));
 process.stdout.write(adjustToTerminalWidth('Building\n'));
 
 try {
@@ -40,7 +40,7 @@ try {
 } catch (e) {
   process.stdout.write('\n');
   console.error(
-    chalk.inverse.red('Unable to build TypeScript definition files'),
+    pico.inverse(pico.red('Unable to build TypeScript definition files')),
   );
   console.error(e.stack);
   process.exitCode = 1;

@@ -6,8 +6,8 @@
  *
  */
 
-import chalk from 'chalk';
 import execa from 'execa';
+import pico from 'picocolors';
 import {Config} from '@react-native-community/cli-types';
 import {
   link,
@@ -40,7 +40,7 @@ async function runOnAllDevices(
       devices = adb.getDevices(adbPath);
     } else {
       logger.error(
-        `Failed to launch emulator. Reason: ${chalk.dim(result.error || '')}.`,
+        `Failed to launch emulator. Reason: ${pico.dim(result.error || '')}.`,
       );
       logger.warn(
         'Please launch an emulator manually or connect a device. Otherwise app may fail to launch.',
@@ -124,15 +124,17 @@ function createInstallError(error: Error & {stderr: string}) {
     stderr.includes('licences have not been accepted') ||
     stderr.includes('accept the SDK license')
   ) {
-    message = `Please accept all necessary Android SDK licenses using Android SDK Manager: "${chalk.bold(
+    message = `Please accept all necessary Android SDK licenses using Android SDK Manager: "${pico.bold(
       '$ANDROID_HOME/tools/bin/sdkmanager --licenses',
     )}."`;
   } else if (stderr.includes('requires Java')) {
-    message = `Looks like your Android environment is not properly set. Please go to ${chalk.dim.underline(
-      link.docs('environment-setup', 'android', {
-        hash: 'jdk-studio',
-        guide: 'native',
-      }),
+    message = `Looks like your Android environment is not properly set. Please go to ${pico.dim(
+      pico.underline(
+        link.docs('environment-setup', 'android', {
+          hash: 'jdk-studio',
+          guide: 'native',
+        }),
+      ),
     )} and follow the React Native CLI QuickStart guide to install the compatible version of JDK.`;
   } else {
     message = error.message;

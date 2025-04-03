@@ -4,7 +4,7 @@ import getAdbPath from './getAdbPath';
 import {getEmulators} from './tryLaunchEmulator';
 import {toPascalCase} from './toPascalCase';
 import os from 'os';
-import chalk from 'chalk';
+import pico from 'picocolors';
 import {CLIError, prompt} from '@react-native-community/cli-tools';
 
 type DeviceData = {
@@ -60,7 +60,7 @@ async function promptForDeviceSelection(
     name: 'device',
     message: 'Select the device / emulator you want to use',
     choices: allDevices.map((d) => ({
-      title: `${chalk.bold(`${toPascalCase(d.type)}`)} ${chalk.green(
+      title: `${pico.bold(`${toPascalCase(d.type)}`)} ${pico.green(
         `${d.readableName}`,
       )} (${d.connected ? 'connected' : 'disconnected'})`,
       value: d,

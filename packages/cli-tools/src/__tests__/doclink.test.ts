@@ -10,20 +10,28 @@ describe('link', () => {
     mockPlatform.mockReturnValueOnce('darwin');
     link.setPlatform('android');
 
-    const url = new URL(link.docs('environment-setup', 'inherit')).toString();
+    const url = new URL(
+      link.docs('set-up-your-environment', 'inherit'),
+    ).toString();
     expect(url).toMatch(/os=macos/);
     expect(url).toMatch(/platform=android/);
     expect(url).toEqual(
-      expect.stringContaining('https://reactnative.dev/docs/environment-setup'),
+      expect.stringContaining(
+        'https://reactnative.dev/docs/set-up-your-environment',
+      ),
     );
 
     // Handles a change of os
     mockPlatform.mockReturnValueOnce('win32');
-    expect(link.docs('environment-setup', 'inherit')).toMatch(/os=windows/);
+    expect(link.docs('set-up-your-environment', 'inherit')).toMatch(
+      /os=windows/,
+    );
 
     // Handles a change of platform
     link.setPlatform('ios');
-    expect(link.docs('environment-setup', 'inherit')).toMatch(/platform=ios/);
+    expect(link.docs('set-up-your-environment', 'inherit')).toMatch(
+      /platform=ios/,
+    );
 
     // Handles cases where we don't need a platform
     expect(link.blog('2019/11/18/react-native-doctor', 'none')).not.toMatch(
@@ -32,7 +40,9 @@ describe('link', () => {
   });
 
   it('preserves anchor-links', () => {
-    expect(link.docs('environment-setup', 'inherit', 'ruby')).toMatch(/#ruby/);
+    expect(link.docs('set-up-your-environment', 'inherit', 'ruby')).toMatch(
+      /#ruby/,
+    );
   });
 
   describe('overrides', () => {
@@ -41,8 +51,8 @@ describe('link', () => {
       [{hash: 'ruby'}, /#ruby/],
       [{hash: 'ruby', os: 'linux'}, /os=linux/],
       [{'extra stuff': 'here?ok'}, /extra\+stuff=here%3Fok/],
-    ])("link.doc('environment-setup, %o) -> %o", (param, re) => {
-      expect(link.docs('environment-setup', 'none', param)).toMatch(re);
+    ])("link.doc('set-up-your-environment, %o) -> %o", (param, re) => {
+      expect(link.docs('set-up-your-environment', 'none', param)).toMatch(re);
     });
   });
 
@@ -59,9 +69,9 @@ describe('link', () => {
     afterAll(() => link.setVersion(null));
     it('supports linking to a specific version of React Native', () => {
       link.setVersion('0.71');
-      expect(link.docs('environment-setup', 'ios', 'ruby')).toEqual(
+      expect(link.docs('set-up-your-environment', 'ios', 'ruby')).toEqual(
         expect.stringContaining(
-          'https://reactnative.dev/docs/0.71/environment-setup',
+          'https://reactnative.dev/docs/0.71/set-up-your-environment',
         ),
       );
     });

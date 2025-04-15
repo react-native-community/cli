@@ -129,7 +129,7 @@ function createInstallError(error: Error & {stderr: string}) {
     )}."`;
   } else if (stderr.includes('requires Java')) {
     message = `Looks like your Android environment is not properly set. Please go to ${chalk.dim.underline(
-      link.docs('environment-setup', 'android', {
+      link.docs('set-up-your-environment', 'android', {
         hash: 'jdk-studio',
         guide: 'native',
       }),

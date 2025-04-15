@@ -12,7 +12,7 @@ async function runBundleInstall(loader: Ora) {
     logger.error((error as any).stderr || (error as any).stdout);
     throw new CLIError(
       `Looks like your iOS environment is not properly set. Please go to ${link.docs(
-        'environment-setup',
+        'set-up-your-environment',
         'ios',
         {guide: 'native'},
       )} and follow the React Native CLI QuickStart guide for macOS and iOS.`,

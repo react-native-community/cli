@@ -1,14 +1,19 @@
 import fs from 'fs';
 import path from 'path';
 
-export function findBuildGradle(sourceDir: string, isLibrary: boolean) {
+/**
+ * Find the build.gradle file for the given app name.
+ * This helper is used to find build.gradle file in both apps and libraries.
+ * For libraries, the appName is empty string.
+ */
+export function findBuildGradle(sourceDir: string, appName: string) {
   const buildGradlePath = path.join(
     sourceDir,
-    isLibrary ? 'build.gradle' : 'app/build.gradle',
+    path.join(appName, 'build.gradle'),
   );
   const buildGradleKtsPath = path.join(
     sourceDir,
-    isLibrary ? 'build.gradle.kts' : 'app/build.gradle.kts',
+    path.join(appName, 'build.gradle.kts'),
   );
 
   if (fs.existsSync(buildGradlePath)) {

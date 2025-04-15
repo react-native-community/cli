@@ -25,13 +25,13 @@ describe('findBuildGradle for apps', () => {
   });
 
   it('returns the app gradle path if file exists in the folder', () => {
-    expect(findBuildGradle('/flat/android', false)).toBe(
+    expect(findBuildGradle('/flat/android', 'app')).toBe(
       '/flat/android/app/build.gradle',
     );
   });
 
   it('returns `null` if there is no gradle in the app folder', () => {
-    expect(findBuildGradle('/empty', false)).toBeNull();
+    expect(findBuildGradle('/empty', 'app')).toBeNull();
   });
 });
 
@@ -46,12 +46,12 @@ describe('findBuildGradle for libraries', () => {
   });
 
   it('returns the app gradle path if file exists in the folder', () => {
-    expect(findBuildGradle('/flat/android', true)).toBe(
+    expect(findBuildGradle('/flat/android', '')).toBe(
       '/flat/android/build.gradle',
     );
   });
 
   it('returns `null` if there is no gradle in the app folder', () => {
-    expect(findBuildGradle('/empty', true)).toBeNull();
+    expect(findBuildGradle('/empty', '')).toBeNull();
   });
 });

@@ -1,51 +1,60 @@
-import ora from 'ora';
-import type {Ora, Options, Spinner, Color} from 'ora';
+import {createSpinner} from 'nanospinner';
+import type {Spinner} from 'nanospinner';
 import logger from './logger';
 
-export type Loader = Ora;
+export type Loader = Spinner;
 
-class OraNoop implements Loader {
-  spinner: Spinner = {interval: 1, frames: []};
-  indent: number = 0;
-  isSpinning: boolean = false;
-  text: string = '';
-  prefixText: string = '';
-  color: Color = 'blue';
+type Options = Parameters<typeof createSpinner>[1];
 
-  succeed(_text?: string | undefined) {
+class NanospinnerNoop implements Spinner {
+  success() {
     return this;
   }
-  fail(_text?: string) {
+  error() {
     return this;
   }
-  start(_text?: string) {
+  warn() {
+    return this;
+  }
+  info() {
     return this;
   }
   stop() {
     return this;
   }
-  warn(_text?: string) {
+  start() {
     return this;
   }
-  info(_text?: string) {
+  update() {
     return this;
   }
-  stopAndPersist() {
+  reset() {
     return this;
   }
   clear() {
     return this;
   }
+  spin() {
+    return this;
+  }
+  write() {
+    return this;
+  }
   render() {
     return this;
   }
-  frame() {
-    return this.text;
+  loop() {
+    return this;
+  }
+  isSpinning() {
+    return false;
   }
 }
 
-export function getLoader(options?: string | Options | undefined): Loader {
-  return logger.isVerbose() ? new OraNoop() : ora(options);
+export function getLoader(options?: Options): Loader {
+  return logger.isVerbose()
+    ? new NanospinnerNoop()
+    : createSpinner('', options);
 }
 
-export const NoopLoader = OraNoop;
+export const NoopLoader = NanospinnerNoop;

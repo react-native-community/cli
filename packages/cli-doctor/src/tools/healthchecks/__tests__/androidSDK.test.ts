@@ -81,7 +81,7 @@ describe('androidSDK', () => {
       'android/build.gradle': `
         buildscript {
           ext {
-            buildToolsVersion = findProperty('android.buildToolsVersion') ?: '34.0.0' 
+            buildToolsVersion = findProperty('android.buildToolsVersion') ?: '34.0.0'
             minSdkVersion = 16
             compileSdkVersion = 28
             targetSdkVersion = 28
@@ -123,8 +123,8 @@ describe('androidSDK', () => {
 
   it('installs the SDK if it is missing on Windows', async () => {
     const loader = new tools.NoopLoader();
-    const loaderSucceedSpy = jest.spyOn(loader, 'succeed');
-    const loaderFailSpy = jest.spyOn(loader, 'fail');
+    const loaderSuccessSpy = jest.spyOn(loader, 'success');
+    const loaderErrorSpy = jest.spyOn(loader, 'error');
     const downloadAndUnzipSpy = jest
       .spyOn(downloadAndUnzip, 'downloadAndUnzip')
       .mockImplementation(() => Promise.resolve());
@@ -178,10 +178,10 @@ describe('androidSDK', () => {
       expect(requiredComponents.includes(call[0])).toBeTruthy();
     }
 
-    expect(loaderFailSpy).toHaveBeenCalledTimes(0);
+    expect(loaderErrorSpy).toHaveBeenCalledTimes(0);
     expect(logSpy).toHaveBeenCalledTimes(0);
 
-    expect(loaderSucceedSpy).toBeCalledWith(
+    expect(loaderSuccessSpy).toBeCalledWith(
       'Android SDK configured. You might need to restart your PC for all changes to take effect.',
     );
   });

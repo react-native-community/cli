@@ -71,6 +71,19 @@ function generateValidFileStructureForApp() {
   };
 }
 
+function generateValidFileStructureForAppWithCustomAppName(
+  customAppName: string,
+) {
+  return {
+    'build.gradle': buildGradle,
+    [customAppName]: {
+      'build.gradle': appBuildGradle,
+    },
+    src: {
+      'AndroidManifest.xml': manifest,
+    },
+  };
+}
 export const valid = generateValidFileStructureForLib('ReactPackage.java');
 
 export const validKotlin = generateValidFileStructureForLib('ReactPackage.kt');
@@ -82,6 +95,9 @@ export const validKotlinWithDifferentFileName =
   generateValidFileStructureForLib('React.kt');
 
 export const validApp = generateValidFileStructureForApp();
+
+export const validAppWithCustomAppName =
+  generateValidFileStructureForAppWithCustomAppName('custom');
 
 export const userConfigManifest = {
   src: {

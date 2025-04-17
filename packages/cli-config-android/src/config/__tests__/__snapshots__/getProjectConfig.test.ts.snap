@@ -3,7 +3,7 @@
 exports[`android::getProjectConfig returns an object with android project configuration for flat structure 1`] = `
 Object {
   "appName": "",
-  "applicationId": "com.some.example",
+  "applicationId": "com.example",
   "assets": Array [],
   "dependencyConfiguration": undefined,
   "mainActivity": ".MainActivity",

@@ -50,7 +50,7 @@ beforeEach(() => {
   // Initialise React Native project
   runCLI(DIR, ['init', 'TestProject', '--install-pods']);
   // Link CLI to the project
-  spawnScript('yarn', ['link', '.', '--all'], {
+  spawnScript('yarn', ['link', '--all'], {
     cwd: path.join(DIR, 'TestProject'),
   });
 });

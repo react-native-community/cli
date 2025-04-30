@@ -49,9 +49,8 @@ beforeEach(() => {
 
   // Initialise React Native project
   runCLI(DIR, ['init', 'TestProject', '--install-pods']);
-
   // Link CLI to the project
-  spawnScript('yarn', ['link', __dirname, '--all'], {
+  spawnScript('yarn', ['link', '--all'], {
     cwd: path.join(DIR, 'TestProject'),
   });
 });
@@ -196,9 +195,13 @@ test('should fail if using require() in ES module in react-native.config.mjs', (
     'test-command-esm',
   ]);
   expect(stderr).toMatch('error Failed to load configuration of your project');
-  expect(stdout).toMatch(
-    'ReferenceError: require is not defined in ES module scope, you can use import instead',
-  );
+  if (process.version.startsWith('v18.')) {
+    expect(stdout).toMatch(
+      'ReferenceError: require is not defined in ES module scope, you can use import instead',
+    );
+  } else {
+    expect(stdout).toContain('Cannot require() ES Module');
+  }
 });
 
 test('should fail if using require() in ES module with "type": "module" in package.json', () => {

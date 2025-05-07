@@ -70,6 +70,9 @@ test('shows up current config without unnecessary output', () => {
     options: command.options && ['<<REPLACED>>'],
   }));
 
+  expect(parsedStdout.reactNativeVersion).toMatch(/^\d+\.\d+(\.\d+)?$/);
+  parsedStdout.reactNativeVersion = '<<REPLACED>>';
+
   const expectedXcodeProject =
     process.platform === 'darwin'
       ? {

@@ -127,7 +127,7 @@ function attachCommand<C extends Command<boolean>>(
   cmd.addHelpText('after', printExamples(command.examples));
 
   for (const opt of command.options || []) {
-    cmd.option(
+    cmd[opt.required ? 'requiredOption' : 'option'](
       opt.name,
       opt.description ?? '',
       opt.parse || ((val: any) => val),

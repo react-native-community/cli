@@ -47,6 +47,7 @@ type Command = {
       | boolean
       | number
       | ((config: ConfigT) => string | boolean | number);
+    required?: boolean;
   }>;
   examples?: Array<{
     desc: string;
@@ -101,6 +102,10 @@ Parsing function that can be used to transform a raw (string) option as passed b
 Default value for the option when not provided. Can be either a primitive value or a function, that receives a configuration and returns a primitive.
 
 Useful when you want to use project settings as default value for your option.
+
+##### `options.required`
+
+If true and no default is specified, fail with a friendly error if the user doesn't supply this option.
 
 #### `examples`
 

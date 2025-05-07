@@ -157,6 +157,31 @@ export default {
 };
 `;
 
+const USER_CONFIG_COMMAND_ARG_REQUIRED = `;
+module.exports = {
+  commands: [
+    {
+      name: 'test-command-arg-required',
+      description: 'test command',
+      func: () => {
+        console.log('ok');
+      },
+      options: [
+        {
+          name: '--required-arg <string>',
+          description: 'test command arg',
+          required: true,
+        },
+        {
+          name: '--optional-arg <string>',
+          description: 'test command arg',
+        },
+      ],
+    },
+  ],
+};
+`;
+
 test('should read user config from react-native.config.js', () => {
   writeFiles(path.join(DIR, 'TestProject'), {
     'react-native.config.js': USER_CONFIG,
@@ -274,4 +299,28 @@ test('should read config if using import/export in react-native.config.mjs with 
 
   const {stdout} = runCLI(path.join(DIR, 'TestProject'), ['test-command-esm']);
   expect(stdout).toMatch('test-command-esm');
+});
+
+test('should fail if a required arg is missing, pass if optional missing', () => {
+  writeFiles(path.join(DIR, 'TestProject'), {
+    'react-native.config.cjs': USER_CONFIG_COMMAND_ARG_REQUIRED,
+  });
+
+  const {stderr} = runCLI(
+    path.join(DIR, 'TestProject'),
+    ['test-command-arg-required', '--optional-arg', 'foo'],
+    {
+      expectedFailure: true,
+    },
+  );
+  expect(stderr).toMatch(
+    "required option '--required-arg <string>' not specified",
+  );
+
+  const {stdout} = runCLI(path.join(DIR, 'TestProject'), [
+    'test-command-arg-required',
+    '--required-arg',
+    'bar',
+  ]);
+  expect(stdout).toMatch('ok');
 });

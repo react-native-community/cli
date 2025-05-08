@@ -1,14 +1,14 @@
 import execa from 'execa';
 import {CLIError, logger, link} from '@react-native-community/cli-tools';
-import type {Ora} from 'ora';
+import type {Spinner} from 'nanospinner';
 
-async function runBundleInstall(loader: Ora) {
+async function runBundleInstall(loader: Spinner) {
   try {
     loader.start('Installing Ruby Gems');
 
     await execa('bundle', ['install']);
   } catch (error) {
-    loader.fail();
+    loader.error();
     logger.error((error as any).stderr || (error as any).stdout);
     throw new CLIError(
       `Looks like your iOS environment is not properly set. Please go to ${link.docs(
@@ -19,7 +19,7 @@ async function runBundleInstall(loader: Ora) {
     );
   }
 
-  loader.succeed();
+  loader.success();
 }
 
 export default runBundleInstall;

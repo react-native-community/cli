@@ -1,7 +1,7 @@
 import type {Config} from '@react-native-community/cli-types';
-import type {Ora} from 'ora';
+import type {Spinner} from 'nanospinner';
 
-export type Loader = Ora;
+export type Loader = Spinner;
 
 export type NotFound = 'Not Found';
 

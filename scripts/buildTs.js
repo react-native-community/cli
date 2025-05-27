@@ -21,13 +21,15 @@ const packagesWithTs = packages.filter((p) =>
 );
 
 const args = [
-  path.resolve(
-    require.resolve('typescript/package.json'),
-    '..',
-    require('typescript/package.json').bin.tsc,
-  ),
+  '"' +
+    path.resolve(
+      require.resolve('typescript/package.json'),
+      '..',
+      require('typescript/package.json').bin.tsc,
+    ) +
+    '"',
   '-b',
-  ...packagesWithTs,
+  ...packagesWithTs.map((p) => '"' + p + '"'),
   ...process.argv.slice(2),
 ];
 

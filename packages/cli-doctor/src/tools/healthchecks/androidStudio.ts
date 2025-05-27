@@ -78,7 +78,7 @@ export default {
 
     return logManualInstallation({
       healthcheck: 'Android Studio',
-      url: link.docs('environment-setup', 'android', {
+      url: link.docs('set-up-your-environment', 'android', {
         hash: 'android-studio',
         guide: 'native',
       }),

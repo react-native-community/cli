@@ -62,5 +62,6 @@
     "./packages/**/*.ts": [
       "yarn lint"
     ]
-  }
+  },
+  "packageManager": "yarn@1.22.22"
 }

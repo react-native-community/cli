@@ -174,7 +174,7 @@ export default {
 
     logManualInstallation({
       healthcheck: 'Ruby',
-      url: link.docs('environment-setup', 'ios', {
+      url: link.docs('set-up-your-environment', 'ios', {
         hash: 'ruby',
         guide: 'native',
       }),

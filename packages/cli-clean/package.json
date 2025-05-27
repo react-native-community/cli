@@ -9,7 +9,6 @@
   "types": "build/index.d.ts",
   "dependencies": {
     "@react-native-community/cli-tools": "19.0.0",
-    "chalk": "^4.1.2",
     "execa": "^5.0.0",
     "fast-glob": "^3.3.2",
     "picocolors": "^1.1.1"

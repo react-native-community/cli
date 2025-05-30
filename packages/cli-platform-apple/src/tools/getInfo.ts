@@ -5,12 +5,12 @@ import * as fs from 'fs';
 import * as path from 'path';
 import type {IosInfo} from '../types';
 
-function isErrorLike(err: unknown): err is {message: string} {
+function isErrorLike(err: unknown): err is { message: string } {
   return Boolean(
     err &&
-      typeof err === 'object' &&
-      'message' in err &&
-      typeof err.message === 'string',
+    typeof err === 'object' &&
+    'message' in err &&
+    typeof err.message === 'string',
   );
 }
 
@@ -72,7 +72,10 @@ export function getInfo(
       '-list',
       '-json',
       '-project',
-      path.join(sourceDir, location.replace('group:', '')),
+      path.join(
+        sourceDir,
+        location.replace('group:', '').replace('container:', ''),
+      ),
     ]);
     const info = parseTargetList(xcodebuild.stdout);
     if (!info) {

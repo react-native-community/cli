@@ -5,12 +5,12 @@ import * as fs from 'fs';
 import * as path from 'path';
 import type {IosInfo} from '../types';
 
-function isErrorLike(err: unknown): err is { message: string } {
+function isErrorLike(err: unknown): err is {message: string} {
   return Boolean(
     err &&
-    typeof err === 'object' &&
-    'message' in err &&
-    typeof err.message === 'string',
+      typeof err === 'object' &&
+      'message' in err &&
+      typeof err.message === 'string',
   );
 }
 

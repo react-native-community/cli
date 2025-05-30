@@ -16,7 +16,7 @@ describe('getInfo', () => {
   it('handles non-project / workspace locations in a ', () => {
     const name = `YourProjectName`;
     (fs.readFileSync as jest.Mock)
-    .mockReturnValueOnce(`<?xml version="1.0" encoding="UTF-8"?>
+      .mockReturnValueOnce(`<?xml version="1.0" encoding="UTF-8"?>
 <Workspace
    version = "1.0">
    <FileRef
@@ -44,7 +44,7 @@ describe('getInfo', () => {
   it('handles xcodeproj location in container in a ', () => {
     const name = `YourProjectName`;
     (fs.readFileSync as jest.Mock)
-    .mockReturnValueOnce(`<?xml version="1.0" encoding="UTF-8"?>
+      .mockReturnValueOnce(`<?xml version="1.0" encoding="UTF-8"?>
 <Workspace
    version = "1.0">
    <FileRef

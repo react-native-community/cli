@@ -23,6 +23,7 @@ export default function findManifest(folder: string) {
       '**/sdks/hermes/android/**',
       '**/src/androidTest/**',
       '**/src/test/**',
+      '**/.cxx/**',
     ],
   });
   if (manifestPaths.length > 1) {

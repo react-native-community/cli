@@ -16,10 +16,10 @@ function tryInstallAppOnDevice(
     // "app" is usually the default value for Android apps with only 1 app
     const {appName, sourceDir} = androidProject;
 
-    const defaultVariant = (args.mode || 'debug').toLowerCase();
+    const defaultVariant = 'debug';
 
-    // handle if selected task from interactive mode includes build flavour as well, eg. installProductionDebug should create ['production','debug'] array
-    const variantFromSelectedTask = selectedTask
+    // handle if selected task from interactive mode, or mode from arguments, includes build flavour as well, eg. installProductionDebug should create ['production','debug'] array
+    const variantFromSelectedTask = (selectedTask ?? args.mode)
       ?.replace('install', '')
       .split(/(?=[A-Z])/);
 

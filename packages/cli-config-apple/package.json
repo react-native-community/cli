@@ -13,8 +13,8 @@
     "fast-glob": "^3.3.2"
   },
   "devDependencies": {
-    "@react-native-community/cli-types": "19.0.0",
-    "ora": "^5.4.1"
+    "@react-native-community/cli-types": "19.0.0-alpha.0",
+    "nanospinner": "^1.0.0"
   },
   "files": [
     "build",

@@ -14,7 +14,7 @@ export default {
     versionRange: versionRanges.NODE_JS,
   }),
   runAutomaticFix: async ({loader, logManualInstallation}) => {
-    loader.fail();
+    loader.error();
 
     logManualInstallation({
       healthcheck: 'Node.js',

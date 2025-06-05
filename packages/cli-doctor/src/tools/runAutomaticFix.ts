@@ -80,7 +80,6 @@ export default async function ({
 
     for (const healthcheckToRun of healthchecksToRun) {
       const spinner = getLoader({
-        prefixText: '',
         text: healthcheckToRun.label,
       }).start();
 

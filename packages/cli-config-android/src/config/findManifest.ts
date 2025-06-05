@@ -14,12 +14,10 @@ export default function findManifest(folder: string) {
   let manifestPaths = glob.sync('**/AndroidManifest.xml', {
     cwd: unixifyPaths(folder),
     ignore: [
-      'node_modules/**',
       '**/build/**',
       '**/debug/**',
       'Examples/**',
       'examples/**',
-      '**/Pods/**',
       '**/sdks/hermes/android/**',
       '**/src/androidTest/**',
       '**/src/test/**',

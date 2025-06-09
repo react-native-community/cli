@@ -9,7 +9,9 @@ import glob from 'fast-glob';
 import {unixifyPaths} from '@react-native-community/cli-tools';
 
 // These folders will be excluded from search to speed it up
-const GLOB_EXCLUDE_PATTERN = ['**/@(Pods|node_modules|Carthage|vendor)/**'];
+const GLOB_EXCLUDE_PATTERN = [
+  '**/@(Pods|node_modules|Carthage|vendor|android)/**',
+];
 
 export default function findAllPodfilePaths(cwd: string) {
   return glob.sync('**/Podfile', {

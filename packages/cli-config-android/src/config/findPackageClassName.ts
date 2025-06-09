@@ -25,6 +25,8 @@ export function getMainActivityFiles(
 
   return glob.sync(`**/+(${patternArray.join('|')})`, {
     cwd: unixifyPaths(folder),
+    onlyFiles: true,
+    ignore: ['**/.cxx/**'],
   });
 }
 

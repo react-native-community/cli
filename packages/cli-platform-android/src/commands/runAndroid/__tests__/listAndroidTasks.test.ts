@@ -1,5 +1,5 @@
-import chalk from 'chalk';
 import execa from 'execa';
+import pico from 'picocolors';
 import prompts from 'prompts';
 import {
   parseTasksFromGradleFile,
@@ -117,7 +117,7 @@ describe('promptForTaskSelection', () => {
 
     expect(promptSpy).toHaveBeenCalledWith({
       choices: tasksList.map((t) => ({
-        title: `${chalk.bold(t.task)} - ${t.description}`,
+        title: `${pico.bold(t.task)} - ${t.description}`,
         value: t.task,
       })),
       message: 'Select install task you want to perform',

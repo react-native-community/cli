@@ -3,7 +3,7 @@ import os from 'os';
 import path from 'path';
 import {createDirectory} from 'jest-util';
 import execa from 'execa';
-import chalk from 'chalk';
+import pico from 'picocolors';
 import slash from 'slash';
 
 const CLI_PATH = path.resolve(__dirname, '../packages/cli/build/bin.js');
@@ -121,7 +121,7 @@ function getExecaOptions(options: SpawnOptions) {
 
   const cwd = isRelative ? path.resolve(__dirname, options.cwd) : options.cwd;
 
-  let env = Object.assign({}, process.env, {FORCE_COLOR: '0'}, options.env);
+  let env = Object.assign({}, process.env, {NO_COLOR: 1}, options.env);
 
   if (options.nodeOptions) {
     env.NODE_OPTIONS = options.nodeOptions;
@@ -147,12 +147,12 @@ function handleTestFailure(
 ) {
   if (!options.expectedFailure && result.exitCode !== 0) {
     console.log(`Running ${cmd} command failed for unexpected reason. Here's more info:
-${chalk.bold('cmd:')}     ${cmd}
-${chalk.bold('options:')} ${JSON.stringify(options)}
-${chalk.bold('args:')}    ${(args || []).join(' ')}
-${chalk.bold('stderr:')}  ${result.stderr}
-${chalk.bold('stdout:')}  ${result.stdout}
-${chalk.bold('exitCode:')}${result.exitCode}`);
+${pico.bold('cmd:')}     ${cmd}
+${pico.bold('options:')} ${JSON.stringify(options)}
+${pico.bold('args:')}    ${(args || []).join(' ')}
+${pico.bold('stderr:')}  ${result.stderr}
+${pico.bold('stdout:')}  ${result.stdout}
+${pico.bold('exitCode:')}${result.exitCode}`);
   } else if (options.expectedFailure && result.exitCode === 0) {
     throw new Error("Expected command to fail, but it didn't");
   }

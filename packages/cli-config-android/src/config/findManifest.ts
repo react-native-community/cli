@@ -6,13 +6,14 @@
  *
  */
 
-import glob from 'fast-glob';
+import glob from 'tinyglobby';
 import path from 'path';
 import {unixifyPaths} from '@react-native-community/cli-tools';
 
 export default function findManifest(folder: string) {
-  let manifestPaths = glob.sync('**/AndroidManifest.xml', {
+  let manifestPaths = glob.globSync('**/AndroidManifest.xml', {
     cwd: unixifyPaths(folder),
+    expandDirectories: false,
     ignore: [
       '**/build/**',
       '**/debug/**',

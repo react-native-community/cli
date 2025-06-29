@@ -200,7 +200,7 @@ test('should fail if using require() in ES module in react-native.config.mjs', (
   ]);
   expect(stderr).toMatch('error Failed to load configuration of your project');
   expect(stdout).toMatch(
-    'ReferenceError: require is not defined in ES module scope, you can use import instead',
+    'Cannot require() ES Module',
   );
 });
 

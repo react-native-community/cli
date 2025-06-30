@@ -95,4 +95,24 @@ describe('androidStudio', () => {
 
     platformSpy.mockRestore();
   });
+
+  it('detects when Android Studio is also not in fallback installation path', async () => {
+    // Make CLI think Android Studio was not found
+    environmentInfo.IDEs['Android Studio'] = 'Not Found';
+    // Force the platform to win32 for the test
+    const platformSpy = jest
+      .spyOn(process, 'platform', 'get')
+      .mockReturnValue('win32');
+
+    // First WMIC (primary) returns empty, second (fallback) returns version
+    (execa as jest.Mock)
+      .mockResolvedValueOnce({stdout: ''})
+      .mockResolvedValueOnce({stdout: ''});
+
+    const diagnostics = await androidStudio.getDiagnostics(environmentInfo);
+
+    expect(diagnostics.needsToBeFixed).toBe(true);
+
+    platformSpy.mockRestore();
+  });
 });

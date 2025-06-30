@@ -74,4 +74,25 @@ describe('androidStudio', () => {
       }".`,
     );
   });
+
+  it('detects Android Studio in the fallback Windows installation path', async () => {
+    // Make CLI think Android Studio was not found
+    environmentInfo.IDEs['Android Studio'] = 'Not Found';
+    // Force the platform to win32 for the test
+    const platformSpy = jest
+      .spyOn(process, 'platform', 'get')
+      .mockReturnValue('win32');
+
+    // First WMIC (primary) returns empty, second (fallback) returns version
+    (execa as jest.Mock)
+      .mockResolvedValueOnce({stdout: ''})
+      .mockResolvedValueOnce({stdout: '4.2.1.0'});
+
+    const diagnostics = await androidStudio.getDiagnostics(environmentInfo);
+
+    expect(diagnostics.needsToBeFixed).toBe(false);
+    expect(diagnostics.version).toBe('4.2.1.0');
+
+    platformSpy.mockRestore();
+  });
 });

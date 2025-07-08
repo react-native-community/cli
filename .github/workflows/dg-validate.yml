@@ -1,0 +1,28 @@
+name: DeepGuide
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  validate:
+    name: Validate Demos
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+      
+    - name: Install asciinema
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y asciinema
+    
+    - name: Validate demos
+      run: npx @deepguide-ai/dg validate --non-interactive

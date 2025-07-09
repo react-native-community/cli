@@ -1,13 +1,13 @@
 {
   "name": "@react-native-community/cli-server-api",
-  "version": "19.0.0",
+  "version": "19.1.0",
   "license": "MIT",
   "main": "build/index.js",
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "@react-native-community/cli-tools": "19.0.0",
+    "@react-native-community/cli-tools": "19.1.0",
     "body-parser": "^1.20.3",
     "compression": "^1.7.1",
     "connect": "^3.6.5",

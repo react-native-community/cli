@@ -72,7 +72,7 @@ export function getInfo(
       '-list',
       '-json',
       '-project',
-      path.join(sourceDir, location.replace('group:', '')),
+      path.join(sourceDir, location.replace('group:', '').replace('container:', '')),
     ]);
     const info = parseTargetList(xcodebuild.stdout);
     if (!info) {

@@ -100,6 +100,7 @@ async function install(
       root,
       platform,
       reactNativePath,
+      iosFolderPath,
     });
     await installPods(loader, {
       skipBundleInstall: !!cachedDependenciesHash,

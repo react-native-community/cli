@@ -6,6 +6,7 @@ interface CodegenOptions {
   root: string;
   platform: string;
   reactNativePath: string;
+  iosFolderPath: string;
 }
 
 async function runCodegen(options: CodegenOptions): Promise<void> {
@@ -24,7 +25,7 @@ async function runCodegen(options: CodegenOptions): Promise<void> {
     '-p',
     options.root,
     '-o',
-    process.cwd(),
+    options.iosFolderPath,
     '-t',
     options.platform,
   ]);

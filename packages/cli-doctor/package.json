@@ -43,5 +43,6 @@
     "type": "git",
     "url": "https://github.com/react-native-community/cli.git",
     "directory": "packages/cli-doctor"
-  }
+  },
+  "gitHead": "3614a01613030c0a328ad2e8bb5d897e5bae1456"
 }

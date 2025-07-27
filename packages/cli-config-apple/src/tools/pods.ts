@@ -219,15 +219,25 @@ export default async function resolvePods(
 
 export async function execaPod(args: string[], options?: execa.Options) {
   let podType: 'system' | 'bundle' = 'system';
+
   try {
+    // try bundle pod first
     await execa('bundle', ['exec', 'pod', '--version'], options);
     podType = 'bundle';
-  } catch (bundledPodError) {
+  } catch (bundlePodError) {
+    // try to install bundle pod
     try {
-      await execa('pod', ['--version'], options);
-      podType = 'system';
-    } catch (systemPodError) {
-      throw new Error('cocoapods not installed');
+      await execa('bundle', ['install']);
+      await execa('bundle', ['exec', 'pod', '--version'], options);
+      podType = 'bundle';
+    } catch (bundleInstallError) {
+      // fall back to system pod
+      try {
+        await execa('pod', ['--version'], options);
+        podType = 'system';
+      } catch (systemPodError) {
+        throw new Error('cocoapods not installed');
+      }
     }
   }
 

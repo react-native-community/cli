@@ -111,7 +111,7 @@ async function install(
   } catch (error) {
     loader.fail();
     throw new CLIError(
-      `Something when wrong while installing CocoaPods. Please run ${chalk.bold(
+      `Something went wrong while installing CocoaPods. Please run ${chalk.bold(
         'pod install',
       )} manually`,
       error as Error,
@@ -207,7 +207,7 @@ export default async function resolvePods(
     } catch (error) {
       loader.fail();
       throw new CLIError(
-        `Something when wrong while installing CocoaPods. Please run ${chalk.bold(
+        `Something went wrong while installing CocoaPods. Please run ${chalk.bold(
           'pod install',
         )} manually`,
         error as Error,

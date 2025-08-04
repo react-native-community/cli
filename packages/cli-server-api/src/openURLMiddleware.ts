@@ -31,6 +31,19 @@ async function openURLMiddleware(
 
     const {url} = req.body as {url: string};
 
+    try {
+      const parsedUrl = new URL(url);
+      if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
+        res.writeHead(400);
+        res.end('Invalid URL protocol');
+        return;
+      }
+    } catch (error) {
+      res.writeHead(400);
+      res.end('Invalid URL format');
+      return;
+    }
+
     await open(url);
 
     res.writeHead(200);

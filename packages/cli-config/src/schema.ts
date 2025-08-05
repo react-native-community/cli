@@ -27,6 +27,7 @@ const command = t.object({
         default: t
           .alternatives()
           .try(t.bool(), t.number(), t.string().allow(''), t.func()),
+        required: t.bool(),
       })
       .rename('command', 'name', {ignoreUndefined: true}),
   ),

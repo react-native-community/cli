@@ -35,7 +35,7 @@ It should point to a valid package that can be installed with `npm` or `yarn` (i
 
 The most common options are:
 
-- Full package name, eg. `react-native-template-typescript` or `react-native-template-javascript`.
+- Full package name, eg. `react-native-template-typescript`.
 - Absolute path to directory containing template, eg. `file:///Users/username/project/some-template`.
 - Absolute path to a tarball created using `npm pack`.
 

@@ -294,7 +294,9 @@ async function createFromTemplate({
               reactNativePath,
               iosFolderPath: path.join(projectDirectory, 'ios'),
             });
-            await installPods(loader, {});
+            await installPods(loader, {
+              useBundler: true,
+            });
             loader.succeed();
             setEmptyHashForCachedDependencies(projectName);
           } else if (installPodsValue === 'undefined') {
@@ -314,7 +316,9 @@ async function createFromTemplate({
                 reactNativePath,
                 iosFolderPath: path.join(projectDirectory, 'ios'),
               });
-              await installPods(loader, {});
+              await installPods(loader, {
+                useBundler: true,
+              });
               loader.succeed();
               setEmptyHashForCachedDependencies(projectName);
             }

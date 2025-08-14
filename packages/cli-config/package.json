@@ -12,7 +12,6 @@
     "chalk": "^4.1.2",
     "cosmiconfig": "^9.0.0",
     "deepmerge": "^4.3.0",
-    "fast-glob": "^3.3.2",
     "joi": "^17.2.1"
   },
   "files": [

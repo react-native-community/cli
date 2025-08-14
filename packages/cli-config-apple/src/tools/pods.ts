@@ -14,6 +14,7 @@ import {
 } from '@react-native-community/cli-types';
 import {ApplePlatform} from '../types';
 import runCodegen from './runCodegen';
+import execa from 'execa';
 
 interface ResolvePodsOptions {
   forceInstall?: boolean;
@@ -214,4 +215,34 @@ export default async function resolvePods(
       );
     }
   }
+}
+
+export async function execaPod(args: string[], options?: execa.Options) {
+  let podType: 'system' | 'bundle' = 'system';
+
+  try {
+    // try bundle pod first
+    await execa('bundle', ['exec', 'pod', '--version'], options);
+    podType = 'bundle';
+  } catch (bundlePodError) {
+    // try to install bundle pod
+    try {
+      await execa('bundle', ['install']);
+      await execa('bundle', ['exec', 'pod', '--version'], options);
+      podType = 'bundle';
+    } catch (bundleInstallError) {
+      // fall back to system pod
+      try {
+        await execa('pod', ['--version'], options);
+        podType = 'system';
+      } catch (systemPodError) {
+        throw new Error('cocoapods not installed');
+      }
+    }
+  }
+
+  if (podType === 'bundle') {
+    return execa('bundle', ['exec', 'pod', ...args], options);
+  }
+  return execa('pod', args, options);
 }

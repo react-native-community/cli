@@ -26,7 +26,7 @@ async function brewInstall({
       return onSuccess();
     }
 
-    return loader.succeed();
+    return loader.success();
   } catch (error) {
     if (typeof onFail === 'function') {
       return onFail();

@@ -100,6 +100,7 @@ async function install(
       root,
       platform,
       reactNativePath,
+      iosFolderPath,
     });
     await installPods(loader, {
       skipBundleInstall: !!cachedDependenciesHash,
@@ -110,7 +111,7 @@ async function install(
   } catch (error) {
     loader.error();
     throw new CLIError(
-      `Something when wrong while installing CocoaPods. Please run ${chalk.bold(
+      `Something went wrong while installing CocoaPods. Please run ${chalk.bold(
         'pod install',
       )} manually`,
       error as Error,
@@ -206,7 +207,7 @@ export default async function resolvePods(
     } catch (error) {
       loader.error();
       throw new CLIError(
-        `Something when wrong while installing CocoaPods. Please run ${chalk.bold(
+        `Something went wrong while installing CocoaPods. Please run ${chalk.bold(
           'pod install',
         )} manually`,
         error as Error,

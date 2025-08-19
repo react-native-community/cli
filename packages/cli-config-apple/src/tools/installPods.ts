@@ -35,6 +35,15 @@ async function runPodInstall(loader: Spinner, options: RunPodInstallOptions) {
       env: {
         RCT_NEW_ARCH_ENABLED: options?.newArchEnabled ? '1' : '0',
         RCT_IGNORE_PODS_DEPRECATION: '1', // From React Native 0.79 onwards, users shouldn't install CocoaPods manually.
+        ...(process.env.USE_THIRD_PARTY_JSC && {
+          USE_THIRD_PARTY_JSC: process.env.USE_THIRD_PARTY_JSC,
+        }), // This is used to install the third party JSC.
+        ...(process.env.RCT_USE_RN_DEP && {
+          RCT_USE_RN_DEP: process.env.RCT_USE_RN_DEP,
+        }), // prebuilt RN dep available from 0.80 onwards
+        ...(process.env.RCT_USE_PREBUILT_RNCORE && {
+          RCT_USE_PREBUILT_RNCORE: process.env.RCT_USE_PREBUILT_RNCORE,
+        }), // whole RN core prebuilt from 0.81 onwards
       },
     });
   } catch (error) {

@@ -5,7 +5,36 @@ exports[`shows up current config without unnecessary output 1`] = `
   "root": "<<REPLACED_ROOT>>/TestProject",
   "reactNativePath": "<<REPLACED_ROOT>>/TestProject/node_modules/react-native",
   "reactNativeVersion": "<<REPLACED>>",
-  "dependencies": {},
+  "dependencies": {
+    "react-native-safe-area-context": {
+      "root": "<<REPLACED_ROOT>>/TestProject/node_modules/react-native-safe-area-context",
+      "name": "react-native-safe-area-context",
+      "platforms": {
+        "ios": {
+          "podspecPath": "<<REPLACED_ROOT>>/TestProject/node_modules/react-native-safe-area-context/react-native-safe-area-context.podspec",
+          "version": "5.6.1",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "<<REPLACED_ROOT>>/TestProject/node_modules/react-native-safe-area-context/android",
+          "packageImportPath": "import com.th3rdwave.safeareacontext.SafeAreaContextPackage;",
+          "packageInstance": "new SafeAreaContextPackage()",
+          "buildTypes": [],
+          "libraryName": "safeareacontext",
+          "componentDescriptors": [
+            "RNCSafeAreaProviderComponentDescriptor",
+            "RNCSafeAreaViewComponentDescriptor"
+          ],
+          "cmakeListsPath": "<<REPLACED_ROOT>>/TestProject/node_modules/react-native-safe-area-context/android/src/main/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        }
+      }
+    }
+  },
   "commands": [
     {
       "name": "bundle",

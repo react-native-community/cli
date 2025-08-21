@@ -13,7 +13,7 @@ npx react-native-community/cli@latest init ProjectName
 ## Installing `react-native` and invoking `init` command
 
 ```sh
-yarn init && yarn add react-native && yarn react-native init ProjectName
+yarn init && yarn add react-native-community/cli@latest && yarn react-native-community/cli@latest init ProjectName
 ```
 
 ## Initializing project with custom version of `react-native`

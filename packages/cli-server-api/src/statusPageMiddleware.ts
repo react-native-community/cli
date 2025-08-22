@@ -14,6 +14,9 @@ export default function statusPageMiddleware(
   _req: http.IncomingMessage,
   res: http.ServerResponse,
 ) {
-  res.setHeader('X-React-Native-Project-Root', process.cwd());
+  res.setHeader(
+    'X-React-Native-Project-Root',
+    new URL(`file:///${process.cwd()}`).pathname.slice(1),
+  );
   res.end('packager-status:running');
 }

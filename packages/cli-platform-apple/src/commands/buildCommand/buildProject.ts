@@ -46,11 +46,7 @@ export function buildProject(
     } else if (isDevice) {
       destination = 'generic/platform=iOS';
     } else if (mode === 'Debug') {
-      const simulatorDest =
-        simulatorDestinationMap.simulatorDestinationMap === null ||
-        simulatorDestinationMap.simulatorDestinationMap === void 0
-          ? void 0
-          : simulatorDestinationMap.simulatorDestinationMap[platform];
+      const simulatorDest = simulatorDestinationMap?.[platform];
       if (!simulatorDest) {
         reject(
           new CLIError(

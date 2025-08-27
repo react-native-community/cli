@@ -36,7 +36,7 @@ export async function getBuildSettings(
 
   const settings = JSON.parse(buildSettings);
 
-  // Find app in all building settings - look for WRAPPER_EXTENSION: 'app',
+  // Find all 'app' targets in the build settings
   const applicationTargets = settings
     .filter(
       (setting: any) =>

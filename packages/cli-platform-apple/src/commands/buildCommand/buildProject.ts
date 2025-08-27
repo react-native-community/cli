@@ -39,17 +39,35 @@ export function buildProject(
   args: BuildFlags,
 ): Promise<string> {
   return new Promise((resolve, reject) => {
-    const simulatorDest = simulatorDestinationMap?.[platform];
-
-    if (!simulatorDest) {
-      reject(
-        new CLIError(
-          `Unknown platform: ${platform}. Please, use one of: ${Object.values(
-            supportedPlatforms,
-          ).join(', ')}.`,
-        ),
-      );
-      return;
+    const isDevice = args.device;
+    let destination = '';
+    if (udid) {
+      destination = `id=${udid}`;
+    } else if (isDevice) {
+      destination = 'generic/platform=iOS';
+    } else if (mode === 'Debug') {
+      const simulatorDest =
+        simulatorDestinationMap.simulatorDestinationMap === null ||
+        simulatorDestinationMap.simulatorDestinationMap === void 0
+          ? void 0
+          : simulatorDestinationMap.simulatorDestinationMap[platform];
+      if (!simulatorDest) {
+        reject(
+          new CLIError(
+            `Unknown platform: ${platform}. Please, use one of: ${Object.values(
+              supportedPlatforms,
+            ).join(', ')}.`,
+          ),
+        );
+        return;
+      }
+      destination = `generic/platform=${simulatorDest}`;
+    } else {
+      destination = `generic/platform=${platform}`;
+    }
+    
+    if (args.destination) {
+      destination += `,${args.destination}`;
     }
 
     const xcodebuildArgs = [
@@ -62,12 +80,7 @@ export function buildProject(
       '-scheme',
       scheme,
       '-destination',
-      (udid
-        ? `id=${udid}`
-        : mode === 'Debug'
-        ? `generic/platform=${simulatorDest}`
-        : `generic/platform=${platform}`) +
-        (args.destination ? ',' + args.destination : ''),
+      destination,
     ];
 
     if (args.extraParams) {

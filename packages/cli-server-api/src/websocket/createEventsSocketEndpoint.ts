@@ -1,6 +1,6 @@
 import {Server as WebSocketServer} from 'ws';
 import {logger} from '@react-native-community/cli-tools';
-import prettyFormat from 'pretty-format';
+import prettyFormat, {plugins} from 'pretty-format';
 
 /**
  * The eventsSocket websocket listens at the 'events/` for websocket
@@ -87,7 +87,7 @@ function serializeMessage(message: any) {
               highlight: true,
               maxDepth: 3,
               min: true,
-              plugins: [prettyFormat.plugins.ReactElement],
+              plugins: [plugins.ReactElement],
             }),
       ),
     };

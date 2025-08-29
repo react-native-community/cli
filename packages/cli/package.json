@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/cli",
-  "version": "19.0.0",
+  "version": "20.0.1",
   "description": "React Native CLI",
   "license": "MIT",
   "main": "build/index.js",
@@ -18,18 +18,18 @@
   ],
   "engineStrict": true,
   "engines": {
-    "node": ">=18"
+    "node": ">=20.19.4"
   },
   "jest": {
     "testEnvironment": "node"
   },
   "dependencies": {
-    "@react-native-community/cli-clean": "19.0.0",
-    "@react-native-community/cli-config": "19.0.0",
-    "@react-native-community/cli-doctor": "19.0.0",
-    "@react-native-community/cli-server-api": "19.0.0",
-    "@react-native-community/cli-tools": "19.0.0",
-    "@react-native-community/cli-types": "19.0.0",
+    "@react-native-community/cli-clean": "20.0.1",
+    "@react-native-community/cli-config": "20.0.1",
+    "@react-native-community/cli-doctor": "20.0.1",
+    "@react-native-community/cli-server-api": "20.0.1",
+    "@react-native-community/cli-tools": "20.0.1",
+    "@react-native-community/cli-types": "20.0.1",
     "commander": "^9.4.1",
     "deepmerge": "^4.3.0",
     "execa": "^5.0.0",
@@ -54,5 +54,6 @@
     "type": "git",
     "url": "https://github.com/react-native-community/cli.git",
     "directory": "packages/cli"
-  }
+  },
+  "gitHead": "3614a01613030c0a328ad2e8bb5d897e5bae1456"
 }

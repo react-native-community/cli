@@ -292,6 +292,7 @@ async function createFromTemplate({
               root: projectDirectory,
               platform: 'ios',
               reactNativePath,
+              iosFolderPath: path.join(projectDirectory, 'ios'),
             });
             await installPods(loader, {});
             loader.succeed();
@@ -311,6 +312,7 @@ async function createFromTemplate({
                 root: projectDirectory,
                 platform: 'ios',
                 reactNativePath,
+                iosFolderPath: path.join(projectDirectory, 'ios'),
               });
               await installPods(loader, {});
               loader.succeed();

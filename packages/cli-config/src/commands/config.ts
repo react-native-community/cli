@@ -10,12 +10,13 @@ function isValidRNDependency(config: DependencyConfig) {
 
 function filterConfig(config: Config) {
   const filtered = {...config};
+  const dependencies: Record<string, DependencyConfig> = {};
   Object.keys(filtered.dependencies).forEach((item) => {
-    if (!isValidRNDependency(filtered.dependencies[item])) {
-      delete filtered.dependencies[item];
+    if (isValidRNDependency(filtered.dependencies[item])) {
+      dependencies[item] = filtered.dependencies[item];
     }
   });
-  return filtered;
+  return {...filtered, dependencies};
 }
 
 export default {

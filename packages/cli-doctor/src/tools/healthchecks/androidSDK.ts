@@ -1,5 +1,5 @@
 import {findProjectRoot, logger, link} from '@react-native-community/cli-tools';
-import chalk from 'chalk';
+import pico from 'picocolors';
 import fs from 'fs';
 import path from 'path';
 import {EnvironmentInfo, HealthCheckInterface} from '../../types';
@@ -56,7 +56,7 @@ const getBuildToolsVersion = (projectRoot = ''): string => {
   return buildToolsVersion || 'Not Found';
 };
 
-const installMessage = `Read more about how to update Android SDK at ${chalk.dim(
+const installMessage = `Read more about how to update Android SDK at ${pico.dim(
   'https://developer.android.com/studio',
 )}`;
 

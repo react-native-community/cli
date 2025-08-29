@@ -1,5 +1,5 @@
 import logger from './logger';
-import chalk from 'chalk';
+import pico from 'picocolors';
 
 const printRunDoctorTip = () => {
   const linkToDocs =
@@ -7,10 +7,10 @@ const printRunDoctorTip = () => {
 
   logger.log('');
   logger.info(
-    chalk.dim(
-      `${chalk.dim(
+    pico.dim(
+      `${pico.dim(
         '💡 Tip: Make sure that you have set up your development environment correctly, by running',
-      )} ${chalk.reset(chalk.bold('npx react-native doctor'))}. ${chalk.dim(
+      )} ${pico.reset(pico.bold('npx react-native doctor'))}. ${pico.dim(
         `To read more about doctor command visit: ${linkToDocs} \n`,
       )}`,
     ),

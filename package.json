@@ -41,7 +41,6 @@
     "eslint-plugin-ft-flow": "^2.0.1",
     "eslint-plugin-import": "^2.25.3",
     "execa": "^5.0.0",
-    "fast-glob": "^3.3.2",
     "husky": "^8.0.2",
     "jest": "^26.6.2",
     "jest-circus": "^26.6.2",
@@ -53,6 +52,7 @@
     "prettier": "2.8.8",
     "slash": "^3.0.0",
     "string-length": "^2.0.0",
+    "tinyglobby": "^0.2.14",
     "typescript": "^5.2.0"
   },
   "lint-staged": {

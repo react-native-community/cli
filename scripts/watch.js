@@ -12,7 +12,7 @@
 const fs = require('fs');
 const {execSync} = require('child_process');
 const path = require('path');
-const chalk = require('chalk');
+const pico = require('picocolors');
 const chokidar = require('chokidar');
 const {getPackages} = require('./helpers');
 
@@ -26,7 +26,7 @@ const onChange = (srcDir) => {
   return (filePath) => {
     const filename = path.basename(filePath);
 
-    console.log(chalk.green('->'), `change: ${filename}`);
+    console.log(pico.green('->'), `change: ${filename}`);
     rebuild(filePath);
   };
 };
@@ -41,7 +41,7 @@ const onUnlink = (srcDir) => {
       fs.unlinkSync(buildFile);
       process.stdout.write(
         `${
-          chalk.red('  \u2022 ') +
+          pico.red('  \u2022 ') +
           path.relative(path.resolve(srcDir, '..', '..'), buildFile)
         } (deleted)\n`,
       );
@@ -80,4 +80,4 @@ setInterval(() => {
   }
 }, 100);
 
-console.log(chalk.red('->'), chalk.cyan('Watching for changes...'));
+console.log(pico.red('->'), pico.cyan('Watching for changes...'));

@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import pico from 'picocolors';
 import type {IOSProjectInfo} from '@react-native-community/cli-types';
 import {logger} from '@react-native-community/cli-tools';
 import {selectFromInteractiveMode} from '../../tools/selectFromInteractiveMode';
@@ -32,9 +32,9 @@ export async function getConfiguration(
 
     if (info?.schemes?.includes(fallbackScheme)) {
       logger.warn(
-        `Scheme "${chalk.bold(
+        `Scheme "${pico.bold(
           scheme,
-        )}" doesn't exist. Using fallback scheme "${chalk.bold(
+        )}" doesn't exist. Using fallback scheme "${pico.bold(
           fallbackScheme,
         )}"`,
       );
@@ -66,7 +66,7 @@ export async function getConfiguration(
   logger.info(
     `Found Xcode ${
       xcodeProject.isWorkspace ? 'workspace' : 'project'
-    } "${chalk.bold(xcodeProject.name)}"`,
+    } "${pico.bold(xcodeProject.name)}"`,
   );
 
   return {scheme, mode};

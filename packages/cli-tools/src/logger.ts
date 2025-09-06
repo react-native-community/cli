@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import pico from 'picocolors';
 
 const SEPARATOR = ', ';
 
@@ -7,35 +7,41 @@ let disabled = false;
 let hidden = false;
 
 const formatMessages = (messages: Array<string>) =>
-  chalk.reset(messages.join(SEPARATOR));
+  pico.reset(messages.join(SEPARATOR));
 
 const success = (...messages: Array<string>) => {
   if (!disabled) {
-    console.log(`${chalk.green.bold('success')} ${formatMessages(messages)}`);
+    console.log(
+      `${pico.green(pico.bold('success'))} ${formatMessages(messages)}`,
+    );
   }
 };
 
 const info = (...messages: Array<string>) => {
   if (!disabled) {
-    console.log(`${chalk.cyan.bold('info')} ${formatMessages(messages)}`);
+    console.log(`${pico.cyan(pico.bold('info'))} ${formatMessages(messages)}`);
   }
 };
 
 const warn = (...messages: Array<string>) => {
   if (!disabled) {
-    console.warn(`${chalk.yellow.bold('warn')} ${formatMessages(messages)}`);
+    console.warn(
+      `${pico.yellow(pico.bold('warn'))} ${formatMessages(messages)}`,
+    );
   }
 };
 
 const error = (...messages: Array<string>) => {
   if (!disabled) {
-    console.error(`${chalk.red.bold('error')} ${formatMessages(messages)}`);
+    console.error(
+      `${pico.red(pico.bold('error'))} ${formatMessages(messages)}`,
+    );
   }
 };
 
 const debug = (...messages: Array<string>) => {
   if (verbose && !disabled) {
-    console.log(`${chalk.gray.bold('debug')} ${formatMessages(messages)}`);
+    console.log(`${pico.gray(pico.bold('debug'))} ${formatMessages(messages)}`);
   } else {
     hidden = true;
   }

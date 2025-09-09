@@ -41,4 +41,32 @@ describe('getInfo', () => {
       ],
     ]);
   });
+  it('handles xcodeproj location in container in a ', () => {
+    const name = `YourProjectName`;
+    (fs.readFileSync as jest.Mock)
+      .mockReturnValueOnce(`<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "container:${name}.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Pods/Pods.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:container/some_other_file.mm">
+   </FileRef>
+</Workspace>`);
+    (execa.sync as jest.Mock).mockReturnValue({stdout: '{}'});
+    getInfo({isWorkspace: true, name} as IOSProjectInfo, 'some/path');
+
+    const execaSync = execa.sync as jest.Mock;
+    // Should not call on Pods or the other misc groups
+    expect(execaSync.mock.calls).toEqual([
+      [
+        'xcodebuild',
+        ['-list', '-json', '-project', `some/path/${name}.xcodeproj`],
+      ],
+    ]);
+  });
 });

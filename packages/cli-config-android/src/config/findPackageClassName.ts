@@ -18,12 +18,12 @@ export function getMainActivityFiles(
   let patternArray = [];
 
   if (includePackage) {
-    patternArray.push('*Package.java', '*Package.kt');
+    patternArray.push('Package.java', 'Package.kt');
   } else {
-    patternArray.push('*.java', '*.kt');
+    patternArray.push('.java', '.kt');
   }
 
-  return glob.sync(`**/+(${patternArray.join('|')})`, {
+  return glob.sync(`**/*{${patternArray.join(',')}}`, {
     cwd: unixifyPaths(folder),
     onlyFiles: true,
     ignore: ['**/.cxx/**'],

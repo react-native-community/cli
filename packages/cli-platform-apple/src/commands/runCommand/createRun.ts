@@ -39,7 +39,6 @@ import openApp from './openApp';
 
 export interface FlagsT extends BuildFlags {
   simulator?: string;
-  device?: string | true;
   udid?: string;
   binaryPath?: string;
   listDevices?: boolean;

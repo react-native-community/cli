@@ -63,7 +63,8 @@ export default async function installApp({
   const targetBuildDir = buildSettings.TARGET_BUILD_DIR;
   const infoPlistPath = buildSettings.INFOPLIST_PATH;
 
-  if (!infoPlistPath) {
+  const plistPath = appPath ? _path().default.join(appPath, "Info.plist") : _path().default.join(targetBuildDir, infoPlistPath)
+  if (!plistPath) {
     throw new CLIError('Failed to find Info.plist');
   }
 
@@ -89,7 +90,7 @@ export default async function installApp({
       [
         '-c',
         'Print:CFBundleIdentifier',
-        path.join(targetBuildDir, infoPlistPath),
+        plistPath,
       ],
       {encoding: 'utf8'},
     )

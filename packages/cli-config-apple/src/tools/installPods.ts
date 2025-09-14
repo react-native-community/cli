@@ -10,6 +10,7 @@ import {
   runSudo,
 } from '@react-native-community/cli-tools';
 import runBundleInstall from './runBundleInstall';
+import {execaPod} from './pods';
 
 interface PodInstallOptions {
   skipBundleInstall?: boolean;
@@ -31,10 +32,19 @@ async function runPodInstall(loader: Ora, options: RunPodInstallOptions) {
       )} ${chalk.dim('(this may take a few minutes)')}`,
     );
 
-    await execa('bundle', ['exec', 'pod', 'install'], {
+    await execaPod(['install'], {
       env: {
         RCT_NEW_ARCH_ENABLED: options?.newArchEnabled ? '1' : '0',
         RCT_IGNORE_PODS_DEPRECATION: '1', // From React Native 0.79 onwards, users shouldn't install CocoaPods manually.
+        ...(process.env.USE_THIRD_PARTY_JSC && {
+          USE_THIRD_PARTY_JSC: process.env.USE_THIRD_PARTY_JSC,
+        }), // This is used to install the third party JSC.
+        ...(process.env.RCT_USE_RN_DEP && {
+          RCT_USE_RN_DEP: process.env.RCT_USE_RN_DEP,
+        }), // prebuilt RN dep available from 0.80 onwards
+        ...(process.env.RCT_USE_PREBUILT_RNCORE && {
+          RCT_USE_PREBUILT_RNCORE: process.env.RCT_USE_PREBUILT_RNCORE,
+        }), // whole RN core prebuilt from 0.81 onwards
       },
     });
   } catch (error) {
@@ -77,7 +87,7 @@ async function runPodUpdate(loader: Ora) {
         '(this may take a few minutes)',
       )}`,
     );
-    await execa('pod', ['repo', 'update']);
+    await execaPod(['repo', 'update']);
   } catch (error) {
     // "pod" command outputs errors to stdout (at least some of them)
     logger.log((error as any).stderr || (error as any).stdout);
@@ -151,7 +161,7 @@ async function installPods(loader?: Ora, options?: PodInstallOptions) {
       // Check if "pod" is available and usable. It happens that there are
       // multiple versions of "pod" command and even though it's there, it exits
       // with a failure
-      await execa('pod', ['--version']);
+      await execaPod(['--version']);
     } catch (e) {
       loader.info();
       await installCocoaPods(loader);

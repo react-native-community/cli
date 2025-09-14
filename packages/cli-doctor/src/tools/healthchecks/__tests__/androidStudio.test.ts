@@ -78,13 +78,17 @@ describe('androidStudio', () => {
   it('detects Android Studio in the fallback Windows installation path', async () => {
     // Make CLI think Android Studio was not found
     environmentInfo.IDEs['Android Studio'] = 'Not Found';
-    // Force the platform to win32 for the test
-    const platformSpy = jest
-      .spyOn(process, 'platform', 'get')
-      .mockReturnValue('win32');
+    // Force platform to win32 for the test
+    // TODO: use cleaner jest.replaceProperty in jest 29+
+    const originalPlatform = process.platform;
+    Object.defineProperty(process, 'platform', {
+      value: 'win32',
+      writable: true,
+      configurable: true,
+    });
 
     // First WMIC (primary) returns empty, second (fallback) returns version
-    (execa as jest.Mock)
+    (execa as unknown as jest.Mock)
       .mockResolvedValueOnce({stdout: ''})
       .mockResolvedValueOnce({stdout: '4.2.1.0'});
 
@@ -93,19 +97,29 @@ describe('androidStudio', () => {
     expect(diagnostics.needsToBeFixed).toBe(false);
     expect(diagnostics.version).toBe('4.2.1.0');
 
-    platformSpy.mockRestore();
+    // Restore original platform
+    // TODO: use cleaner mockRestore in jest 29+
+    Object.defineProperty(process, 'platform', {
+      value: originalPlatform,
+      writable: true,
+      configurable: true,
+    });
   });
 
   it('detects when Android Studio is also not in fallback installation path', async () => {
     // Make CLI think Android Studio was not found
     environmentInfo.IDEs['Android Studio'] = 'Not Found';
     // Force the platform to win32 for the test
-    const platformSpy = jest
-      .spyOn(process, 'platform', 'get')
-      .mockReturnValue('win32');
+    // TODO: use cleaner jest.replaceProperty in jest 29+
+    const originalPlatform = process.platform;
+    Object.defineProperty(process, 'platform', {
+      value: 'win32',
+      writable: true,
+      configurable: true,
+    });
 
     // First WMIC (primary) returns empty, second (fallback) returns version
-    (execa as jest.Mock)
+    (execa as unknown as jest.Mock)
       .mockResolvedValueOnce({stdout: ''})
       .mockResolvedValueOnce({stdout: ''});
 
@@ -113,6 +127,12 @@ describe('androidStudio', () => {
 
     expect(diagnostics.needsToBeFixed).toBe(true);
 
-    platformSpy.mockRestore();
+    // Restore original platform
+    // TODO: use cleaner mockRestore in jest 29+
+    Object.defineProperty(process, 'platform', {
+      value: originalPlatform,
+      writable: true,
+      configurable: true,
+    });
   });
 });

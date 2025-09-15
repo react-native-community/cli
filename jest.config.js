@@ -2,6 +2,9 @@ const common = {
   testEnvironment: 'node',
   snapshotSerializers: [require.resolve('jest-snapshot-serializer-raw')],
   testRunner: 'jest-circus/runner',
+  moduleNameMapper: {
+    '^@react-native-community/(.*)$': '<rootDir>/packages/$1/src',
+  },
 };
 
 module.exports = {

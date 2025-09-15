@@ -1,4 +1,4 @@
-import execa from 'execa';
+import {execa} from 'execa';
 import androidStudio from '../androidStudio';
 import getEnvironmentInfo from '../../envinfo';
 import {EnvironmentInfo} from '../../../types';
@@ -73,5 +73,62 @@ describe('androidStudio', () => {
         downloadAndUnzipSpy.mock.calls[0][0].installPath || ''
       }".`,
     );
+  });
+
+  it('detects Android Studio in the fallback Windows installation path', async () => {
+    // Make CLI think Android Studio was not found
+    environmentInfo.IDEs['Android Studio'] = 'Not Found';
+    // Force the platform to win32 for the test
+    const originalPlatform = process.platform;
+    Object.defineProperty(process, 'platform', {
+      value: 'win32',
+      writable: true,
+      configurable: true,
+    });
+
+    // First WMIC (primary) returns empty, second (fallback) returns version
+    (execa as unknown as jest.Mock)
+      .mockResolvedValueOnce({stdout: ''})
+      .mockResolvedValueOnce({stdout: '4.2.1.0'});
+
+    const diagnostics = await androidStudio.getDiagnostics(environmentInfo);
+
+    expect(diagnostics.needsToBeFixed).toBe(false);
+    expect(diagnostics.version).toBe('4.2.1.0');
+
+    // Restore original platform
+    Object.defineProperty(process, 'platform', {
+      value: originalPlatform,
+      writable: true,
+      configurable: true,
+    });
+  });
+
+  it('detects when Android Studio is also not in fallback installation path', async () => {
+    // Make CLI think Android Studio was not found
+    environmentInfo.IDEs['Android Studio'] = 'Not Found';
+    // Force the platform to win32 for the test
+    const originalPlatform = process.platform;
+    Object.defineProperty(process, 'platform', {
+      value: 'win32',
+      writable: true,
+      configurable: true,
+    });
+
+    // First WMIC (primary) returns empty, second (fallback) returns version
+    (execa as unknown as jest.Mock)
+      .mockResolvedValueOnce({stdout: ''})
+      .mockResolvedValueOnce({stdout: ''});
+
+    const diagnostics = await androidStudio.getDiagnostics(environmentInfo);
+
+    expect(diagnostics.needsToBeFixed).toBe(true);
+
+    // Restore original platform
+    Object.defineProperty(process, 'platform', {
+      value: originalPlatform,
+      writable: true,
+      configurable: true,
+    });
   });
 });

@@ -1,5 +1,5 @@
 jest.mock('execa', () => jest.fn());
-import execa from 'execa';
+import {execa} from 'execa';
 import * as yarn from '../yarn';
 import * as bun from '../bun';
 import {logger} from '@react-native-community/cli-tools';

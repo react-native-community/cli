@@ -10,7 +10,7 @@
     "@react-native-community/cli-config-apple": "20.0.2",
     "@react-native-community/cli-tools": "20.0.2",
     "chalk": "^4.1.2",
-    "execa": "^5.0.0",
+    "execa": "^9.6.0",
     "fast-xml-parser": "^4.4.1"
   },
   "devDependencies": {

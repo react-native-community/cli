@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs';
-import execa from 'execa';
+import {execa, execaSync, type SyncOptions} from 'execa';
 import logger from './logger';
 import chalk from 'chalk';
 import {findPackageDependencyDir} from './findPackageDependencyDir';
@@ -61,7 +61,7 @@ function startServerInNewWindow(
    * It lives next to `.packager.(bat|env)`
    */
   const launchPackagerScript = path.join(generatedPath, scriptFile);
-  const procConfig: execa.SyncOptions = {cwd: path.dirname(packagerEnvFile)};
+  const procConfig: SyncOptions = {cwd: path.dirname(packagerEnvFile)};
 
   /**
    * Ensure we overwrite file by passing the `w` flag
@@ -98,30 +98,31 @@ function startServerInNewWindow(
 
   if (process.platform === 'darwin') {
     try {
-      return execa.sync(
+      return execaSync(
         'open',
         ['-na', terminal, launchPackagerScript],
         procConfig,
       );
     } catch (error) {
-      return execa.sync('open', [launchPackagerScript], procConfig);
+      return execaSync('open', [launchPackagerScript], procConfig);
     }
   }
   if (process.platform === 'linux') {
     try {
-      return execa.sync(terminal, ['-e', `sh ${launchPackagerScript}`], {
-        ...procConfig,
-        detached: true,
-      });
+      return execaSync(
+        terminal,
+        ['-e', `sh ${launchPackagerScript}`],
+        procConfig,
+      );
     } catch (error) {
       // By default, the child shell process will be attached to the parent
-      return execa.sync('sh', [launchPackagerScript], procConfig);
+      return execaSync('sh', [launchPackagerScript], procConfig);
     }
   }
   if (isWindows) {
     // Awaiting this causes the CLI to hang indefinitely, so this must execute without await.
     return execa(terminal, ['/C', launchPackagerScript], {
-      ...procConfig,
+      cwd: path.dirname(packagerEnvFile),
       detached: true,
       stdio: 'ignore',
     });

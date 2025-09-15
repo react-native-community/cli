@@ -1,4 +1,4 @@
-import execa from 'execa';
+import {execa} from 'execa';
 import path from 'path';
 import {logger, CLIError} from '@react-native-community/cli-tools';
 import * as PackageManager from '../../tools/packageManager';

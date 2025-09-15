@@ -1,4 +1,4 @@
-import execa from 'execa';
+import {execa} from 'execa';
 import os from 'os';
 import prompts from 'prompts';
 import {clean, cleanDir} from '../clean';

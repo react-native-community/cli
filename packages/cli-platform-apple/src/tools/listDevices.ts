@@ -1,5 +1,5 @@
 import {Device} from '../types';
-import execa from 'execa';
+import {execaSync} from 'execa';
 
 type DeviceOutput = {
   modelCode: string;
@@ -55,11 +55,11 @@ const parseXcdeviceList = (text: string, sdkNames: string[] = []): Device[] => {
  * @returns List of available devices and simulators.
  */
 async function listDevices(sdkNames: string[]): Promise<Device[]> {
-  const xcdeviceOutput = execa.sync('xcrun', ['xcdevice', 'list']).stdout;
+  const xcdeviceOutput = execaSync('xcrun', ['xcdevice', 'list']).stdout;
   const parsedXcdeviceOutput = parseXcdeviceList(xcdeviceOutput, sdkNames);
 
   const simctlOutput = JSON.parse(
-    execa.sync('xcrun', ['simctl', 'list', '--json', 'devices']).stdout,
+    execaSync('xcrun', ['simctl', 'list', '--json', 'devices']).stdout,
   );
 
   const parsedSimctlOutput: Device[] = Object.keys(simctlOutput.devices)

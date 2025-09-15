@@ -1,5 +1,5 @@
 jest.mock('execa', () => jest.fn());
-import execa from 'execa';
+import {execa} from 'execa';
 import path from 'path';
 import fs from 'fs';
 import * as PackageManger from '../../../tools/packageManager';

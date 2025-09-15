@@ -1,4 +1,4 @@
-import execa from 'execa';
+import {execaSync} from 'execa';
 import fs from 'fs';
 import {logger, CLIError} from '@react-native-community/cli-tools';
 
@@ -52,7 +52,7 @@ function tryInstallAppOnDevice(
     const adbArgs = [...installArgs, pathToApk];
     logger.info(`Installing the app on the device "${device}"...`);
     logger.debug(`Running command "cd android && adb ${adbArgs.join(' ')}"`);
-    execa.sync(adbPath, adbArgs, {stdio: 'inherit'});
+    execaSync(adbPath, adbArgs, {stdio: 'inherit'});
   } catch (error) {
     throw new CLIError(
       'Failed to install the app on the device.',

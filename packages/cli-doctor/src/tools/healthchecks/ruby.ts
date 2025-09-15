@@ -1,4 +1,4 @@
-import execa from 'execa';
+import {execa} from 'execa';
 import chalk from 'chalk';
 
 import {logger, findProjectRoot, link} from '@react-native-community/cli-tools';

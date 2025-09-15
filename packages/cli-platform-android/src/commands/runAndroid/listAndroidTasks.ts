@@ -1,6 +1,6 @@
 import {CLIError, getLoader, prompt} from '@react-native-community/cli-tools';
 import chalk from 'chalk';
-import execa from 'execa';
+import {execaSync} from 'execa';
 
 type GradleTask = {
   task: string;
@@ -35,7 +35,7 @@ export const getGradleTasks = (
   loader.start('Searching for available Gradle tasks...');
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
   try {
-    const out = execa.sync(cmd, ['tasks', '--group', taskType], {
+    const out = execaSync(cmd, ['tasks', '--group', taskType], {
       cwd: sourceDir,
     }).stdout;
     loader.succeed();

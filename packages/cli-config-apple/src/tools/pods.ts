@@ -14,7 +14,7 @@ import {
 } from '@react-native-community/cli-types';
 import {ApplePlatform} from '../types';
 import runCodegen from './runCodegen';
-import execa from 'execa';
+import {execa, type Options} from 'execa';
 
 interface ResolvePodsOptions {
   forceInstall?: boolean;
@@ -217,7 +217,7 @@ export default async function resolvePods(
   }
 }
 
-export async function execaPod(args: string[], options?: execa.Options) {
+export async function execaPod(args: string[], options?: Options) {
   let podType: 'system' | 'bundle' = 'system';
 
   try {

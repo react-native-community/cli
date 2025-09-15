@@ -6,15 +6,15 @@
  *
  */
 
-import execa from 'execa';
+import {execaSync} from 'execa';
 import listDevices from '../listDevices';
 
-jest.mock('execa', () => {
-  return {sync: jest.fn()};
-});
+jest.mock('execa', () => ({
+  execaSync: jest.fn(),
+}));
 
 beforeEach(() => {
-  (execa.sync as jest.Mock)
+  (execaSync as jest.Mock)
     .mockReturnValueOnce({stdout: xcrunXcdeviceOut})
     .mockReturnValueOnce({stdout: xcrunSimctlOut});
 });

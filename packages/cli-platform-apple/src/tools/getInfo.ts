@@ -1,5 +1,5 @@
 import type {IOSProjectInfo} from '@react-native-community/cli-types';
-import execa from 'execa';
+import {execaSync} from 'execa';
 import {XMLParser} from 'fast-xml-parser';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -42,7 +42,7 @@ export function getInfo(
   sourceDir: string,
 ): IosInfo | undefined {
   if (!projectInfo.isWorkspace) {
-    const xcodebuild = execa.sync('xcodebuild', ['-list', '-json']);
+    const xcodebuild = execaSync('xcodebuild', ['-list', '-json']);
     return parseTargetList(xcodebuild.stdout);
   }
 
@@ -68,7 +68,7 @@ export function getInfo(
       return result;
     }
 
-    const xcodebuild = execa.sync('xcodebuild', [
+    const xcodebuild = execaSync('xcodebuild', [
       '-list',
       '-json',
       '-project',

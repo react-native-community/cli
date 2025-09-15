@@ -2,7 +2,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import {createDirectory} from 'jest-util';
-import execa from 'execa';
+import {execaSync} from 'execa';
 import chalk from 'chalk';
 import slash from 'slash';
 
@@ -104,12 +104,12 @@ type SpawnFunction<T> = (
   options: SpawnOptions,
 ) => T;
 
-export const spawnScript: SpawnFunction<execa.ExecaReturnBase<string>> = (
+export const spawnScript: SpawnFunction<ReturnType<typeof execaSync>> = (
   execPath,
   args,
   options,
 ) => {
-  const result = execa.sync(execPath, args, getExecaOptions(options));
+  const result = execaSync(execPath, args, getExecaOptions(options));
 
   handleTestFailure(execPath, options, result, args);
 
@@ -142,7 +142,7 @@ function getExecaOptions(options: SpawnOptions) {
 function handleTestFailure(
   cmd: string,
   options: SpawnOptions,
-  result: execa.ExecaReturnBase<string>,
+  result: ReturnType<typeof execaSync>,
   args: string[] | undefined,
 ) {
   if (!options.expectedFailure && result.exitCode !== 0) {

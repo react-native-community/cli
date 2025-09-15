@@ -7,7 +7,9 @@ import fs from 'fs';
 
 const DIR = getTempDirectory('temp-cache');
 
-jest.mock('execa', () => jest.fn());
+jest.mock('execa', () => ({
+  execa: jest.fn(),
+}));
 jest.mock('prompts', () => jest.fn());
 
 afterEach(() => {

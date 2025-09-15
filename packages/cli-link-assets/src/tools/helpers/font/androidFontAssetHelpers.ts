@@ -77,9 +77,11 @@ function convertToAndroidResourceName(str: string) {
 function getProjectFilePath(rootPath: string, name: string) {
   const isUsingKotlin = isProjectUsingKotlin(rootPath);
   const ext = isUsingKotlin ? 'kt' : 'java';
-  const filePath = glob.sync(
-    path.join(rootPath, `app/src/main/java/**/${name}.${ext}`),
-  )[0];
+  // Use forward slashes for glob pattern to work on all platforms
+  const pattern = path
+    .join(rootPath, `app/src/main/java/**/${name}.${ext}`)
+    .replace(/\\/g, '/');
+  const filePath = glob.sync(pattern)[0];
   return filePath;
 }
 

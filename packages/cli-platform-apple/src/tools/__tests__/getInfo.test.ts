@@ -2,6 +2,7 @@ import type {IOSProjectInfo} from '@react-native-community/cli-types';
 
 import {execaSync} from 'execa';
 import fs from 'fs';
+import path from 'path';
 import {getInfo} from '../getInfo';
 
 jest.mock('execa', () => ({
@@ -36,7 +37,12 @@ describe('getInfo', () => {
     expect((execaSync as jest.Mock).mock.calls).toEqual([
       [
         'xcodebuild',
-        ['-list', '-json', '-project', `some/path/${name}.xcodeproj`],
+        [
+          '-list',
+          '-json',
+          '-project',
+          path.join('some/path', `${name}.xcodeproj`),
+        ],
       ],
     ]);
   });

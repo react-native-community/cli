@@ -19,7 +19,11 @@
     /* Module Resolution Options */
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@react-native-community/*": ["packages/*"]
+    }
   },
   "exclude": ["**/__tests__/**/*", "**/build/**/*"]
 }

@@ -36,7 +36,7 @@ const fetchToTemp = (url: string): Promise<string> => {
         }
 
         const dest = fs.createWriteStream(tmpDir);
-        const body = stream.Readable.fromWeb(result.body);
+        const body = stream.Readable.fromWeb(result.body as any);
 
         body.pipe(dest);
 

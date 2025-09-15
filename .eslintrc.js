@@ -5,20 +5,29 @@ module.exports = {
   },
   rules: {
     'prettier/prettier': [2],
+    // Conditionally disable import/no-unresolved for workspace packages on Windows
+    // where junctions cause resolution issues. On Linux/macOS, full validation is preserved.
+    'import/no-unresolved': [
+      'error',
+      {
+        ignore:
+          process.platform === 'win32' ? ['^@react-native-community/'] : [],
+      },
+    ],
   },
   // @todo: remove once we cover whole codebase with types
   plugins: ['import'],
   settings: {
     'import/resolver': {
-      // Use <rootDir>/tsconfig.json for typescript resolution
+      // Use TypeScript resolver for proper workspace resolution
       typescript: {
         project: ['./tsconfig.json', './packages/*/tsconfig.json'],
         alwaysTryTypes: true,
       },
-      // Also add node resolver to handle node_modules correctly
+      // Use node resolver as fallback
       node: {
         extensions: ['.js', '.jsx', '.ts', '.tsx'],
-        paths: ['packages'],
+        moduleDirectory: ['node_modules'],
       },
     },
   },

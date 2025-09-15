@@ -1,7 +1,7 @@
 import {getLoader, logger, prompt} from '@react-native-community/cli-tools';
 import type {Config as CLIConfig} from '@react-native-community/cli-types';
-import pico from 'picocolors';
-import execa from 'execa';
+import chalk from 'chalk';
+import {execa} from 'execa';
 import {existsSync as fileExists, rm} from 'fs';
 import os from 'os';
 import path from 'path';

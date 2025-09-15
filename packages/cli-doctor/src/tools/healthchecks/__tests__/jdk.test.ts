@@ -1,4 +1,4 @@
-import execa from 'execa';
+import {execa} from 'execa';
 import jdk from '../jdk';
 import getEnvironmentInfo from '../../envinfo';
 import {EnvironmentInfo} from '../../../types';

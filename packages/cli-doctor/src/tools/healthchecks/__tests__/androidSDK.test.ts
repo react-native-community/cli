@@ -1,6 +1,6 @@
 import * as os from 'os';
 import {join} from 'path';
-import execa from 'execa';
+import {execa} from 'execa';
 import {cleanup, writeFiles} from '../../../../../../jest/helpers';
 import androidSDK from '../androidSDK';
 import getEnvironmentInfo from '../../envinfo';

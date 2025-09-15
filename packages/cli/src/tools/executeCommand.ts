@@ -1,5 +1,5 @@
 import {logger} from '@react-native-community/cli-tools';
-import execa from 'execa';
+import {execa} from 'execa';
 
 export function executeCommand(
   command: string,

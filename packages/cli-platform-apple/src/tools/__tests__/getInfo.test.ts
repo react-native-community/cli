@@ -1,11 +1,11 @@
 import type {IOSProjectInfo} from '@react-native-community/cli-types';
 
-import execa from 'execa';
+import {execaSync} from 'execa';
 import fs from 'fs';
 import {getInfo} from '../getInfo';
 
 jest.mock('execa', () => ({
-  sync: jest.fn(),
+  execaSync: jest.fn(),
 }));
 
 jest.mock('fs', () => ({
@@ -29,12 +29,11 @@ describe('getInfo', () => {
       location = "group:container/some_other_file.mm">
    </FileRef>
 </Workspace>`);
-    (execa.sync as jest.Mock).mockReturnValue({stdout: '{}'});
+    (execaSync as jest.Mock).mockReturnValue({stdout: '{}'});
     getInfo({isWorkspace: true, name} as IOSProjectInfo, 'some/path');
 
-    const execaSync = execa.sync as jest.Mock;
     // Should not call on Pods or the other misc groups
-    expect(execaSync.mock.calls).toEqual([
+    expect((execaSync as jest.Mock).mock.calls).toEqual([
       [
         'xcodebuild',
         ['-list', '-json', '-project', `some/path/${name}.xcodeproj`],

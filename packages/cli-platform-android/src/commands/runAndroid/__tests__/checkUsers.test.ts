@@ -1,4 +1,4 @@
-import execa from 'execa';
+import {execaSync} from 'execa';
 import {checkUsers} from '../listAndroidUsers';
 
 // output of "adb -s ... shell pm users list" command
@@ -8,13 +8,13 @@ Users:
         UserInfo{10:Guest:404}
 `;
 
-jest.mock('execa', () => {
-  return {sync: jest.fn()};
-});
+jest.mock('execa', () => ({
+  execaSync: jest.fn(),
+}));
 
 describe('check android users', () => {
   it('should correctly parse recieved users', () => {
-    (execa.sync as jest.Mock).mockReturnValueOnce({stdout: gradleOutput});
+    (execaSync as jest.Mock).mockReturnValueOnce({stdout: gradleOutput});
     const users = checkUsers('device', 'adbPath');
 
     expect(users).toStrictEqual([

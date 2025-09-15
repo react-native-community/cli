@@ -1,5 +1,5 @@
 import fs from 'fs';
-import execa from 'execa';
+import {execa} from 'execa';
 import type {Ora} from 'ora';
 import pico from 'picocolors';
 import {

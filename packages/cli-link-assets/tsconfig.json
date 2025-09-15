@@ -8,6 +8,6 @@
     {"path": "../cli-tools"},
     {"path": "../cli-types"},
     {"path": "../cli-config"},
-    {"path": "../cli-platform-apple"},
+    {"path": "../cli-platform-apple"}
   ]
 }

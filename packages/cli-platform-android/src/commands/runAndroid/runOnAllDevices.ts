@@ -6,8 +6,8 @@
  *
  */
 
-import execa from 'execa';
-import pico from 'picocolors';
+import chalk from 'chalk';
+import {execa} from 'execa';
 import {Config} from '@react-native-community/cli-types';
 import {
   link,

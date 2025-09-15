@@ -1,4 +1,4 @@
-import execa from 'execa';
+import {execa} from 'execa';
 import {Loader} from '../types';
 import {logError} from './healthchecks/common';
 

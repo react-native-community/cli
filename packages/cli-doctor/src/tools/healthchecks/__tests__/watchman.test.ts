@@ -1,4 +1,4 @@
-import execa from 'execa';
+import {execa} from 'execa';
 import watchman from '../watchman';
 import getEnvironmentInfo from '../../envinfo';
 import {EnvironmentInfo} from '../../../types';

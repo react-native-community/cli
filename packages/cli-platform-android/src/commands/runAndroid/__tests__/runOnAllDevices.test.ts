@@ -7,7 +7,7 @@
  */
 
 import runOnAllDevices from '../runOnAllDevices';
-import execa from 'execa';
+import {execa} from 'execa';
 import {Flags} from '..';
 import {AndroidProjectConfig} from '@react-native-community/cli-types';
 
@@ -72,7 +72,7 @@ describe('--appFolder', () => {
   };
   beforeEach(() => {
     jest.clearAllMocks();
-    (execa.sync as jest.Mock).mockReturnValueOnce({stdout: gradleTaskOutput});
+    (execaSync as jest.Mock).mockReturnValueOnce({stdout: gradleTaskOutput});
   });
 
   it('uses task "install[Variant]" as default task', async () => {

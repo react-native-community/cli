@@ -2,7 +2,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import {createDirectory} from 'jest-util';
-import {execaSync} from 'execa';
+import {spawnSync} from 'child_process';
 import chalk from 'chalk';
 import slash from 'slash';
 
@@ -104,16 +104,25 @@ type SpawnFunction<T> = (
   options: SpawnOptions,
 ) => T;
 
-export const spawnScript: SpawnFunction<ReturnType<typeof execaSync>> = (
-  execPath,
-  args,
-  options,
-) => {
-  const result = execaSync(execPath, args, getExecaOptions(options));
+export const spawnScript: SpawnFunction<any> = (execPath, args, options) => {
+  // Use Node.js built-in spawnSync instead of execa to avoid ESM import issues in Jest
+  const execaOptions = getExecaOptions(options);
+  const result = spawnSync(execPath, args, {
+    ...execaOptions,
+    encoding: 'utf8',
+  });
 
-  handleTestFailure(execPath, options, result, args);
+  // Transform spawnSync result to match execa format
+  const execaLikeResult = {
+    exitCode: result.status || 0,
+    stdout: result.stdout || '',
+    stderr: result.stderr || '',
+    failed: result.status !== 0,
+  };
 
-  return result;
+  handleTestFailure(execPath, options, execaLikeResult, args);
+
+  return execaLikeResult;
 };
 
 function getExecaOptions(options: SpawnOptions) {
@@ -142,7 +151,7 @@ function getExecaOptions(options: SpawnOptions) {
 function handleTestFailure(
   cmd: string,
   options: SpawnOptions,
-  result: ReturnType<typeof execaSync>,
+  result: any,
   args: string[] | undefined,
 ) {
   if (!options.expectedFailure && result.exitCode !== 0) {

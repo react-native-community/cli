@@ -7,7 +7,7 @@
  */
 
 import runOnAllDevices from '../runOnAllDevices';
-import {execa} from 'execa';
+import {execa, execaSync} from 'execa';
 import {Flags} from '..';
 import {AndroidProjectConfig} from '@react-native-community/cli-types';
 
@@ -46,7 +46,10 @@ installRelease - Installs the Release build.
 uninstallAll - Uninstall all applications.
 `;
 
-jest.mock('execa');
+jest.mock('execa', () => ({
+  execa: jest.fn(),
+  execaSync: jest.fn(),
+}));
 jest.mock('../getAdbPath');
 jest.mock('../tryLaunchEmulator');
 
@@ -64,11 +67,12 @@ describe('--appFolder', () => {
     activeArchOnly: false,
   };
   const androidProject: AndroidProjectConfig = {
-    appName: 'app',
-    packageName: 'com.test',
-    applicationId: 'com.test',
-    sourceDir: '/android',
+    appName: 'testApp',
+    packageName: 'com.testapp',
+    applicationId: 'com.testapp',
+    sourceDir: 'app/main/src/java',
     mainActivity: '.MainActivity',
+    assets: [],
   };
   beforeEach(() => {
     jest.clearAllMocks();

@@ -7,7 +7,9 @@ import * as common from '../common';
 import * as downloadAndUnzip from '../../downloadAndUnzip';
 import * as deleteFile from '../../deleteFile';
 
-jest.mock('execa', () => jest.fn());
+jest.mock('execa', () => ({
+  execa: jest.fn(),
+}));
 jest
   .spyOn(deleteFile, 'deleteFile')
   .mockImplementation(() => Promise.resolve());

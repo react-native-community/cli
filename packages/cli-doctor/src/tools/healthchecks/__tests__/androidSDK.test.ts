@@ -14,7 +14,28 @@ import * as environmentVariables from '../../windows/environmentVariables';
 const logSpy = jest.spyOn(common, 'logManualInstallation');
 const {logManualInstallation} = common;
 
-jest.mock('execa', () => jest.fn());
+jest.mock('execa', () => ({
+  execa: jest.fn(),
+}));
+
+jest.mock('../../envinfo', () => ({
+  __esModule: true,
+  default: jest.fn().mockResolvedValue({
+    SDKs: {
+      'Android SDK': {
+        'Build Tools': ['28.0.3', '29.0.3'],
+        'API Levels': ['28', '29'],
+        'System Images': ['android-28 | Google APIs Intel x86 Atom'],
+      },
+    },
+    IDEs: {},
+    Languages: {},
+    Managers: {},
+    Utilities: {},
+    Virtualization: {},
+    System: {},
+  }),
+}));
 
 let mockWorkingDir = '';
 
@@ -49,7 +70,7 @@ describe('androidSDK', () => {
 
   beforeAll(async () => {
     environmentInfo = await getEnvironmentInfo();
-  }, 60000);
+  }, 1000); // Reduced timeout since getEnvironmentInfo is now mocked
 
   afterEach(() => {
     jest.resetAllMocks();

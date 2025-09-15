@@ -1,4 +1,6 @@
-jest.mock('execa', () => jest.fn());
+jest.mock('execa', () => ({
+  execa: jest.fn(),
+}));
 import {execa} from 'execa';
 import * as yarn from '../yarn';
 import * as bun from '../bun';
@@ -17,8 +19,8 @@ describe('yarn', () => {
   beforeEach(() => {
     jest
       .spyOn(yarn, 'getYarnVersionIfAvailable')
-      .mockImplementation(() => true);
-    jest.spyOn(yarn, 'isProjectUsingYarn').mockImplementation(() => true);
+      .mockImplementation(() => '1.22.19');
+    jest.spyOn(yarn, 'isProjectUsingYarn').mockImplementation(() => '1.22.19');
 
     jest.spyOn(logger, 'isVerbose').mockImplementation(() => false);
   });
@@ -102,7 +104,9 @@ describe('npm', () => {
 
 describe('bun', () => {
   it('should install', () => {
-    jest.spyOn(bun, 'getBunVersionIfAvailable').mockImplementation(() => true);
+    jest
+      .spyOn(bun, 'getBunVersionIfAvailable')
+      .mockImplementation(() => '1.0.0');
     jest
       .spyOn(bun, 'isProjectUsingBun')
       .mockImplementation(() => './path/to/bun.lockb');
@@ -119,7 +123,9 @@ describe('bun', () => {
   });
 
   it('should installDev', () => {
-    jest.spyOn(bun, 'getBunVersionIfAvailable').mockImplementation(() => true);
+    jest
+      .spyOn(bun, 'getBunVersionIfAvailable')
+      .mockImplementation(() => '1.0.0');
     jest
       .spyOn(bun, 'isProjectUsingBun')
       .mockImplementation(() => './path/to/bun.lockb');
@@ -136,7 +142,9 @@ describe('bun', () => {
   });
 
   it('should uninstall', () => {
-    jest.spyOn(bun, 'getBunVersionIfAvailable').mockImplementation(() => true);
+    jest
+      .spyOn(bun, 'getBunVersionIfAvailable')
+      .mockImplementation(() => '1.0.0');
     jest
       .spyOn(bun, 'isProjectUsingBun')
       .mockImplementation(() => './path/to/bun.lockb');
@@ -153,7 +161,7 @@ describe('bun', () => {
   });
 
   it('should use npm if bun is not available', () => {
-    jest.spyOn(bun, 'getBunVersionIfAvailable').mockImplementation(() => false);
+    jest.spyOn(bun, 'getBunVersionIfAvailable').mockImplementation(() => null);
     PackageManager.install(PACKAGES, {
       packageManager: 'bun',
       root: PROJECT_ROOT,
@@ -167,7 +175,7 @@ describe('bun', () => {
   });
 
   it('should use npm if bun bun.lockb is not found', () => {
-    jest.spyOn(bun, 'isProjectUsingBun').mockImplementation(() => false);
+    jest.spyOn(bun, 'isProjectUsingBun').mockImplementation(() => undefined);
     PackageManager.install(PACKAGES, {
       packageManager: 'bun',
       root: PROJECT_ROOT,
@@ -182,7 +190,7 @@ describe('bun', () => {
 });
 
 it('should use npm if yarn is not available', () => {
-  jest.spyOn(yarn, 'getYarnVersionIfAvailable').mockImplementation(() => false);
+  jest.spyOn(yarn, 'getYarnVersionIfAvailable').mockImplementation(() => null);
   PackageManager.install(PACKAGES, {
     packageManager: 'yarn',
     root: PROJECT_ROOT,
@@ -211,7 +219,9 @@ it('should use npm if project is not using yarn', () => {
 });
 
 it('should use yarn if project is using yarn', () => {
-  jest.spyOn(yarn, 'getYarnVersionIfAvailable').mockImplementation(() => true);
+  jest
+    .spyOn(yarn, 'getYarnVersionIfAvailable')
+    .mockImplementation(() => '1.22.19');
 
   PackageManager.install(PACKAGES, {
     packageManager: 'yarn',
@@ -229,8 +239,8 @@ test.each([
   (isVerbose: boolean, stdioType: string) => {
     jest
       .spyOn(yarn, 'getYarnVersionIfAvailable')
-      .mockImplementation(() => true);
-    jest.spyOn(yarn, 'isProjectUsingYarn').mockImplementation(() => true);
+      .mockImplementation(() => '1.22.19');
+    jest.spyOn(yarn, 'isProjectUsingYarn').mockImplementation(() => '1.22.19');
     jest.spyOn(logger, 'isVerbose').mockImplementation(() => isVerbose);
 
     PackageManager.install(PACKAGES, {

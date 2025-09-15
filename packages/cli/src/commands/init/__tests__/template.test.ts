@@ -1,4 +1,6 @@
-jest.mock('execa', () => jest.fn());
+jest.mock('execa', () => ({
+  execa: jest.fn(),
+}));
 import {execa} from 'execa';
 import path from 'path';
 import fs from 'fs';
@@ -61,7 +63,9 @@ test('copyTemplate', async () => {
   const CWD = '.';
 
   jest.spyOn(path, 'resolve').mockImplementationOnce((...e) => e.join('/'));
-  jest.spyOn(copyFiles, 'default').mockImplementationOnce(() => null);
+  jest
+    .spyOn(copyFiles, 'default')
+    .mockImplementationOnce(() => Promise.resolve([]));
   jest.spyOn(process, 'cwd').mockImplementationOnce(() => CWD);
 
   await copyTemplate(TEMPLATE_NAME, TEMPLATE_DIR, TEMPLATE_SOURCE_DIR);

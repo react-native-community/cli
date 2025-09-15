@@ -6,7 +6,9 @@ import {NoopLoader} from '@react-native-community/cli-tools';
 import * as common from '../common';
 import * as brewInstall from '../../brewInstall';
 
-jest.mock('execa', () => jest.fn());
+jest.mock('execa', () => ({
+  execa: jest.fn(),
+}));
 
 const logSpy = jest.spyOn(common, 'logManualInstallation');
 const {logManualInstallation} = common;

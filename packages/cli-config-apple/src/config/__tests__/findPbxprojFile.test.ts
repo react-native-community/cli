@@ -1,4 +1,5 @@
 import findPbxprojFile from '../findPbxprojFile';
+import path from 'path';
 
 describe('findPbxprojFile', () => {
   it('should find project.pbxproj file', () => {
@@ -8,7 +9,7 @@ describe('findPbxprojFile', () => {
         name: 'AwesomeApp.xcodeproj',
         isWorkspace: false,
       }),
-    ).toEqual('AwesomeApp.xcodeproj/project.pbxproj');
+    ).toEqual(path.join('AwesomeApp.xcodeproj', 'project.pbxproj'));
   });
 
   it('should convert .xcworkspace to .xcodeproj and find project.pbxproj file', () => {
@@ -18,6 +19,6 @@ describe('findPbxprojFile', () => {
         name: 'AwesomeApp.xcworkspace',
         isWorkspace: true,
       }),
-    ).toEqual('AwesomeApp.xcodeproj/project.pbxproj');
+    ).toEqual(path.join('AwesomeApp.xcodeproj', 'project.pbxproj'));
   });
 });

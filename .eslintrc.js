@@ -11,7 +11,15 @@ module.exports = {
   settings: {
     'import/resolver': {
       // Use <rootDir>/tsconfig.json for typescript resolution
-      typescript: {},
+      typescript: {
+        project: ['./tsconfig.json', './packages/*/tsconfig.json'],
+        alwaysTryTypes: true,
+      },
+      // Also add node resolver to handle node_modules correctly
+      node: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        paths: ['packages'],
+      },
     },
   },
   overrides: [

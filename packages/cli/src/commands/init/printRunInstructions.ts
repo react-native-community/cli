@@ -64,7 +64,7 @@ function printRunInstructions(
     desktopInstructions = `
   ${chalk.magenta(`Run instructions for ${chalk.bold('macOS')}`)}:
     • See ${chalk.underline(
-      'https://microsoft.github.io/ract-native-macos',
+      'https://microsoft.github.io/react-native-macos',
     )} for the latest up-to-date instructions.
     `;
   }

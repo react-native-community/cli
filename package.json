@@ -31,6 +31,7 @@
     "@types/glob": "^7.1.1",
     "@types/jest": "^26.0.15",
     "@types/node": "^20.0.0",
+    "@types/picomatch": "^4.0.2",
     "babel-jest": "^26.6.2",
     "babel-plugin-module-resolver": "^3.2.0",
     "chalk": "^4.1.2",
@@ -41,7 +42,6 @@
     "eslint-plugin-ft-flow": "^2.0.1",
     "eslint-plugin-import": "^2.25.3",
     "execa": "^5.0.0",
-    "fast-glob": "^3.3.2",
     "husky": "^8.0.2",
     "jest": "^26.6.2",
     "jest-circus": "^26.6.2",
@@ -53,6 +53,7 @@
     "prettier": "2.8.8",
     "slash": "^3.0.0",
     "string-length": "^2.0.0",
+    "tinyglobby": "^0.2.15",
     "typescript": "^5.2.0"
   },
   "lint-staged": {

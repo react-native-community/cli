@@ -68,7 +68,7 @@ const logError = ({
   command: string;
 }) => {
   if (loader) {
-    loader.fail();
+    loader.error();
   }
 
   addBlankLine();

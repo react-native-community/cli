@@ -1,6 +1,6 @@
 import fs from 'fs';
 import execa from 'execa';
-import type {Ora} from 'ora';
+import type {Spinner} from 'nanospinner';
 import chalk from 'chalk';
 import {
   logger,
@@ -23,7 +23,7 @@ interface RunPodInstallOptions {
   newArchEnabled?: boolean;
 }
 
-async function runPodInstall(loader: Ora, options: RunPodInstallOptions) {
+async function runPodInstall(loader: Spinner, options: RunPodInstallOptions) {
   const shouldHandleRepoUpdate = options?.shouldHandleRepoUpdate || true;
   try {
     loader.start(
@@ -66,7 +66,7 @@ async function runPodInstall(loader: Ora, options: RunPodInstallOptions) {
         newArchEnabled: options?.newArchEnabled,
       });
     } else {
-      loader.fail();
+      loader.error();
       logger.error(stderr);
 
       throw new CLIError(
@@ -80,7 +80,7 @@ async function runPodInstall(loader: Ora, options: RunPodInstallOptions) {
   }
 }
 
-async function runPodUpdate(loader: Ora) {
+async function runPodUpdate(loader: Spinner) {
   try {
     loader.start(
       `Updating CocoaPods repositories ${chalk.dim(
@@ -91,7 +91,7 @@ async function runPodUpdate(loader: Ora) {
   } catch (error) {
     // "pod" command outputs errors to stdout (at least some of them)
     logger.log((error as any).stderr || (error as any).stdout);
-    loader.fail();
+    loader.error();
 
     throw new CLIError(
       `Failed to update CocoaPods repositories for iOS project.\nPlease try again manually: "pod repo update".\nCocoaPods documentation: ${chalk.dim.underline(
@@ -113,7 +113,7 @@ async function installCocoaPodsWithGem() {
   }
 }
 
-async function installCocoaPods(loader: Ora) {
+async function installCocoaPods(loader: Spinner) {
   loader.stop();
 
   loader.start('Installing CocoaPods');
@@ -121,9 +121,9 @@ async function installCocoaPods(loader: Ora) {
   try {
     await installCocoaPodsWithGem();
 
-    return loader.succeed();
+    return loader.success();
   } catch (error) {
-    loader.fail();
+    loader.error();
     logger.error((error as any).stderr);
 
     throw new CLIError(
@@ -134,7 +134,7 @@ async function installCocoaPods(loader: Ora) {
   }
 }
 
-async function installPods(loader?: Ora, options?: PodInstallOptions) {
+async function installPods(loader?: Spinner, options?: PodInstallOptions) {
   loader = loader || new NoopLoader();
   try {
     if (!options?.iosFolderPath && !fs.existsSync('ios')) {

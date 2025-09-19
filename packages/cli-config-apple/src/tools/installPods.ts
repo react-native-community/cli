@@ -10,6 +10,7 @@ import {
   runSudo,
 } from '@react-native-community/cli-tools';
 import runBundleInstall from './runBundleInstall';
+import {execaPod} from './pods';
 
 interface PodInstallOptions {
   skipBundleInstall?: boolean;
@@ -31,7 +32,7 @@ async function runPodInstall(loader: Spinner, options: RunPodInstallOptions) {
       )} ${chalk.dim('(this may take a few minutes)')}`,
     );
 
-    await execa('bundle', ['exec', 'pod', 'install'], {
+    await execaPod(['install'], {
       env: {
         RCT_NEW_ARCH_ENABLED: options?.newArchEnabled ? '1' : '0',
         RCT_IGNORE_PODS_DEPRECATION: '1', // From React Native 0.79 onwards, users shouldn't install CocoaPods manually.
@@ -86,7 +87,7 @@ async function runPodUpdate(loader: Spinner) {
         '(this may take a few minutes)',
       )}`,
     );
-    await execa('pod', ['repo', 'update']);
+    await execaPod(['repo', 'update']);
   } catch (error) {
     // "pod" command outputs errors to stdout (at least some of them)
     logger.log((error as any).stderr || (error as any).stdout);
@@ -160,7 +161,7 @@ async function installPods(loader?: Spinner, options?: PodInstallOptions) {
       // Check if "pod" is available and usable. It happens that there are
       // multiple versions of "pod" command and even though it's there, it exits
       // with a failure
-      await execa('pod', ['--version']);
+      await execaPod(['--version']);
     } catch (e) {
       loader.info();
       await installCocoaPods(loader);

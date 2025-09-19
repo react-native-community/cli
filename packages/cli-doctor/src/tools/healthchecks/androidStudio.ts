@@ -24,16 +24,43 @@ export default {
     if (needsToBeFixed && process.platform === 'win32') {
       const archSuffix = process.arch === 'x64' ? '64' : '';
 
-      const androidStudioPath = join(
+      // Check if Android Studio is installed in one of its default locations
+      const primaryAndroidStudioPath = join(
         getUserAndroidPath(),
         'android-studio',
         'bin',
         `studio${archSuffix}.exe`,
       ).replace(/\\/g, '\\\\');
       const {stdout} = await executeCommand(
-        `wmic datafile where name="${androidStudioPath}" get Version`,
+        `wmic datafile where name="${primaryAndroidStudioPath}" get Version`,
       );
-      const version = stdout.replace(/(\r\n|\n|\r)/gm, '').trim();
+      let version = stdout.replace(/(\r\n|\n|\r)/gm, '').trim();
+
+      if (version !== '') {
+        return {
+          needsToBeFixed: false,
+          version,
+        };
+      }
+
+      // 2) fallback path under %LOCALAPPDATA%\Programs\Android Studio
+      // This is the path used by the JetBrains Toolbox / Android Studio installer
+      const altBase = process.env.LOCALAPPDATA || '';
+      const fallbackPath = join(
+        altBase,
+        'Programs',
+        'Android Studio',
+        'bin',
+        `studio${archSuffix}.exe`,
+      ).replace(/\\/g, '\\\\');
+      try {
+        const {stdout} = await executeCommand(
+          `wmic datafile where name="${fallbackPath}" get Version`,
+        );
+        version = stdout.replace(/(\r\n|\n|\r)/gm, '').trim();
+      } catch {
+        version = '';
+      }
 
       if (version === '') {
         return missing;

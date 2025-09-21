@@ -15,6 +15,9 @@ jest.mock('@react-native-community/cli-tools', () => ({
     info: jest.fn(),
     log: jest.fn(),
   },
+  version: {
+    logIfUpdateAvailable: jest.fn(),
+  },
 }));
 
 // Mock the envinfo module used by the info command

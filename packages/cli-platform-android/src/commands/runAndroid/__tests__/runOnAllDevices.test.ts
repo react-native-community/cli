@@ -67,7 +67,7 @@ describe('--appFolder', () => {
     activeArchOnly: false,
   };
   const androidProject: AndroidProjectConfig = {
-    appName: 'testApp',
+    appName: 'app',
     packageName: 'com.testapp',
     applicationId: 'com.testapp',
     sourceDir: 'app/main/src/java',

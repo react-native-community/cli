@@ -100,7 +100,7 @@ function startServerInNewWindow(
     try {
       return execaSync(
         'open',
-        ['-na', terminal, launchPackagerScript],
+        ['-a', terminal, launchPackagerScript],
         procConfig,
       );
     } catch (error) {

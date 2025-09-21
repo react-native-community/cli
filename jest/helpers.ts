@@ -45,7 +45,9 @@ export const makeTemplate =
     });
 
 export const cleanup = (directory: string) => {
-  fs.rmSync(directory, {recursive: true, force: true, maxRetries: 10});
+  if (fs.existsSync(directory)) {
+    fs.rmSync(directory, {recursive: true, force: true, maxRetries: 10});
+  }
 };
 
 /**
@@ -115,8 +117,8 @@ export const spawnScript: SpawnFunction<any> = (execPath, args, options) => {
   // Transform spawnSync result to match execa format
   const execaLikeResult = {
     exitCode: result.status || 0,
-    stdout: result.stdout || '',
-    stderr: result.stderr || '',
+    stdout: result.stdout?.trim() || '',
+    stderr: result.stderr?.trim() || '',
     failed: result.status !== 0,
   };
 

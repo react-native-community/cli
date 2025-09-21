@@ -149,6 +149,7 @@ function linkPlatform({
 
       if (stats.isDirectory()) {
         fs.readdirSync(asset)
+          .sort() // Ensure consistent ordering across platforms
           .map((file) => path.resolve(asset, file))
           .forEach(loadAsset);
       } else {
@@ -318,10 +319,12 @@ function linkPlatform({
   }
 
   manifest.write(
-    assets.map((asset) => ({
-      ...asset,
-      path: path.relative(rootPath, asset.path).split(path.sep).join('/'), // Convert path to POSIX just for manifest
-    })),
+    assets
+      .sort((a, b) => a.path.localeCompare(b.path)) // Ensure consistent ordering for snapshots
+      .map((asset) => ({
+        ...asset,
+        path: path.relative(rootPath, asset.path).split(path.sep).join('/'), // Convert path to POSIX just for manifest
+      })),
   ); // Make relative
 
   if (showAndroidRelinkingWarning) {

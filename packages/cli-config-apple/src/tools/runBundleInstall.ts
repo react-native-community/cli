@@ -1,4 +1,4 @@
-import execa from 'execa';
+import {execa} from 'execa';
 import {CLIError, logger, link} from '@react-native-community/cli-tools';
 import type {Ora} from 'ora';
 

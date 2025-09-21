@@ -4,7 +4,7 @@ import {
 } from '@react-native-community/cli-tools';
 import {HealthCheckInterface} from '../../types';
 import {logManualInstallation} from './common';
-import execa from 'execa';
+import {execa} from 'execa';
 import path from 'path';
 
 export default {

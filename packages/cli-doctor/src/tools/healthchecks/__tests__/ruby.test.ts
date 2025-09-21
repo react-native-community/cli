@@ -4,7 +4,9 @@ import ruby, {output} from '../ruby';
 // Mocks
 //
 const mockExeca = jest.fn();
-jest.mock('execa', () => mockExeca);
+jest.mock('execa', () => ({
+  execa: mockExeca,
+}));
 
 const mockLogger = jest.fn();
 jest.mock('@react-native-community/cli-tools', () => ({

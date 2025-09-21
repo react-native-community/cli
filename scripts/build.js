@@ -54,7 +54,7 @@ function getBuildPath(file, buildFolder) {
 
 function buildNodePackage(p) {
   const srcDir = path.resolve(p, SRC_DIR);
-  const pattern = path.resolve(srcDir, '**/*');
+  const pattern = path.posix.join(srcDir.replace(/\\/g, '/'), '**/*');
   const files = glob.sync(pattern, {
     nodir: true,
   });

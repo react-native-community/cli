@@ -11,8 +11,8 @@ afterEach(() => {
 });
 
 test('shows up help information without passing in any args', () => {
-  const {stderr} = runCLI(DIR, [], {expectedFailure: true});
-  expect(stderr).toMatchSnapshot();
+  const {stderr} = runCLI(DIR);
+  expect(stderr.trim()).toMatchSnapshot();
 });
 
 test('does not pass --platform-name by default', () => {

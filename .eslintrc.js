@@ -7,13 +7,16 @@ module.exports = {
     'prettier/prettier': [2],
     // Conditionally disable import/no-unresolved for workspace packages on Windows
     // where junctions cause resolution issues. On Linux/macOS, full validation is preserved.
-    'import/no-unresolved': [
-      'error',
-      {
-        ignore:
-          process.platform === 'win32' ? ['^@react-native-community/'] : [],
-      },
-    ],
+    ...(process.platform === 'win32'
+      ? {
+          'import/no-unresolved': [
+            'error',
+            {
+              ignore: ['^@react-native-community/'],
+            },
+          ],
+        }
+      : {}),
   },
   // @todo: remove once we cover whole codebase with types
   plugins: ['import'],

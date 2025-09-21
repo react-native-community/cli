@@ -19,7 +19,11 @@ beforeAll(() => {
   runCLI(DIR, ['init', 'TestProject', `--pm`, 'npm', `--install-pods`]);
 
   // Link CLI to the project
-  spawnScript('yarn', ['link', __dirname, '--all'], {
+  const cliPath = path.resolve(__dirname, '../packages/cli');
+  spawnScript('yarn', ['link'], {
+    cwd: cliPath,
+  });
+  spawnScript('yarn', ['link', '@react-native-community/cli'], {
     cwd: path.join(DIR, 'TestProject'),
   });
 });

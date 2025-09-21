@@ -51,7 +51,11 @@ beforeEach(() => {
   runCLI(DIR, ['init', 'TestProject', '--install-pods']);
 
   // Link CLI to the project
-  spawnScript('yarn', ['link', __dirname, '--all'], {
+  const cliPath = path.resolve(__dirname, '../packages/cli');
+  spawnScript('yarn', ['link'], {
+    cwd: cliPath,
+  });
+  spawnScript('yarn', ['link', '@react-native-community/cli'], {
     cwd: path.join(DIR, 'TestProject'),
   });
 });
@@ -108,7 +112,8 @@ test('should log only valid JSON config if setting up env throws an error', () =
       ? stderr
           .split('\n')
           .filter(
-            (line) => !line.startsWith('warn Multiple Podfiles were found'),
+            (line: string) =>
+              !line.startsWith('warn Multiple Podfiles were found'),
           )
           .join('\n')
       : stderr;
@@ -199,7 +204,7 @@ test('should fail if using require() in ES module in react-native.config.mjs', (
     'test-command-esm',
   ]);
   expect(stderr).toMatch('error Failed to load configuration of your project');
-  expect(stdout).toMatch(/Cannot require\(\) ES Module/);
+  expect(stdout).toMatch(/require is not defined in ES module scope/);
 });
 
 test('should fail if using require() in ES module with "type": "module" in package.json', () => {

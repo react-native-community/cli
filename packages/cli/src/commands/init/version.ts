@@ -58,7 +58,10 @@ export async function createTemplateUri(
       // lower cadence). We have to assume the user is running against the latest nightly by pointing to the tag.
       return `${TEMPLATE_PACKAGE_COMMUNITY}@nightly`;
     }
-    const templateVersion = await getTemplateVersion(version);
+    const templateVersion = await getTemplateVersion(
+      version,
+      options.authToken,
+    );
     return `${TEMPLATE_PACKAGE_COMMUNITY}@${templateVersion}`;
   }
 

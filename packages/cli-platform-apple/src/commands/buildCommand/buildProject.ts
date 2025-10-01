@@ -39,6 +39,18 @@ export function buildProject(
   args: BuildFlags,
 ): Promise<string> {
   return new Promise((resolve, reject) => {
+    const simulatorDest = simulatorDestinationMap?.[platform];
+    if (!simulatorDest) {
+      reject(
+        new CLIError(
+          `Unknown platform: ${platform}. Please, use one of: ${Object.values(
+            supportedPlatforms,
+          ).join(', ')}.`,
+        ),
+      );
+      return;
+    }
+    
     const isDevice = args.device;
     let destination = '';
     if (udid) {
@@ -46,17 +58,6 @@ export function buildProject(
     } else if (isDevice) {
       destination = 'generic/platform=iOS';
     } else if (mode === 'Debug') {
-      const simulatorDest = simulatorDestinationMap?.[platform];
-      if (!simulatorDest) {
-        reject(
-          new CLIError(
-            `Unknown platform: ${platform}. Please, use one of: ${Object.values(
-              supportedPlatforms,
-            ).join(', ')}.`,
-          ),
-        );
-        return;
-      }
       destination = `generic/platform=${simulatorDest}`;
     } else {
       destination = `generic/platform=${platform}`;

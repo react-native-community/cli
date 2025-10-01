@@ -51,7 +51,7 @@ export function buildProject(
       );
       return;
     }
-    
+
     const isDevice = args.device;
     let destination = '';
     if (udid) {
@@ -63,7 +63,7 @@ export function buildProject(
     } else {
       destination = `generic/platform=${platform}`;
     }
-    
+
     if (args.destination) {
       destination += `,${args.destination}`;
     }

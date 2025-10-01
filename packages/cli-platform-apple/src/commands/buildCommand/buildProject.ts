@@ -40,7 +40,7 @@ export function buildProject(
 ): Promise<string> {
   return new Promise((resolve, reject) => {
     const simulatorDest = simulatorDestinationMap?.[platform];
-    
+
     if (!simulatorDest) {
       reject(
         new CLIError(

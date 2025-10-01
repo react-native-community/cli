@@ -38,17 +38,13 @@ export async function getBuildSettings(
 
   // Find all 'app' targets in the build settings
   const applicationTargets = settings
-    .filter(
-      (setting: any) =>
-        setting.buildSettings.WRAPPER_EXTENSION ===
-        'app',
-    )
+    .filter((setting: any) => setting.buildSettings.WRAPPER_EXTENSION === 'app')
     .map(({target: settingsTarget}: any) => settingsTarget);
 
   if (applicationTargets.length === 0) return null
-  
+
   let selectedTarget = applicationTargets[0];
-  
+
   if (target) {
     if (!applicationTargets.includes(target)) {
       logger.info(
@@ -60,7 +56,7 @@ export async function getBuildSettings(
       selectedTarget = target;
     }
   }
-  
+
   const targetIndex = applicationTargets.indexOf(selectedTarget);
   return settings[targetIndex].buildSettings;
 }

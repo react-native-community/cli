@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import glob from 'fast-glob';
+import glob from 'tinyglobby';
 import {extractComponentDescriptors} from './extractComponentDescriptors';
 import {unixifyPaths} from '@react-native-community/cli-tools';
 
@@ -18,9 +18,9 @@ export function findComponentDescriptors(packageRoot: string) {
   const globPattern = jsSrcsDir
     ? `${jsSrcsDir}/**/*{.js,.jsx,.ts,.tsx}`
     : '**/*{.js,.jsx,.ts,.tsx}';
-  const files = glob.sync(globPattern, {
+  const files = glob.globSync(globPattern, {
     cwd: unixifyPaths(packageRoot),
-    onlyFiles: true,
+    expandDirectories: false,
     ignore: ['**/node_modules/**'],
   });
   const codegenComponent = files

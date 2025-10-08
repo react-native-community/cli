@@ -71,9 +71,9 @@ export default {
           const destFilePath = path.join(pathString, xcodeEnvFile);
           await copyFileAsync(src, destFilePath);
         });
-      loader.succeed('.xcode.env file have been created!');
+      loader.success('.xcode.env file have been created!');
     } catch (e) {
-      loader.fail(e as any);
+      loader.error(e as any);
     }
   },
 } as HealthCheckInterface;

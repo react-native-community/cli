@@ -16,8 +16,8 @@ export function findComponentDescriptors(packageRoot: string) {
     // no jsSrcsDir, continue with default glob pattern
   }
   const globPattern = jsSrcsDir
-    ? `${jsSrcsDir}/**/+(*.js|*.jsx|*.ts|*.tsx)`
-    : '**/+(*.js|*.jsx|*.ts|*.tsx)';
+    ? `${jsSrcsDir}/**/*{.js,.jsx,.ts,.tsx}`
+    : '**/*{.js,.jsx,.ts,.tsx}';
   const files = glob.sync(globPattern, {
     cwd: unixifyPaths(packageRoot),
     onlyFiles: true,

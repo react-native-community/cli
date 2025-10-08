@@ -26,7 +26,7 @@ React Native CLI comes with following commands:
 Usage (with `npx`):
 
 ```sh
-npx react-native@latest init <projectName> [options]
+npx react-native-community/cli@latest init <projectName> [options]
 ```
 
 Initialize a new React Native project named <projectName> in a directory of the same name. You can find out more use cases in [init docs](./init.md).

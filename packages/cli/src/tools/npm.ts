@@ -58,14 +58,18 @@ export const getNpmRegistryUrl = (() => {
 export async function npmResolveConcreteVersion(
   packageName: string,
   tagOrVersion: string,
+  authToken?: string,
 ): Promise<string> {
   const url = new URL(getNpmRegistryUrl());
-  url.pathname = `${packageName}/${tagOrVersion}`;
-  const resp = await fetch(url);
+  url.pathname = `${url.pathname}${packageName}/${tagOrVersion}`;
+  const headers = authToken
+    ? {Authorization: `Bearer ${authToken}`}
+    : undefined;
+  const resp = await fetch(url, {headers});
   if (
     [
       200, // OK
-      301, // Moved Permanemently
+      301, // Moved Permanently
       302, // Found
       304, // Not Modified
       307, // Temporary Redirect
@@ -126,10 +130,16 @@ const minorVersion = (version: string) => {
 
 export async function getTemplateVersion(
   reactNativeVersion: string,
+  authToken?: string,
 ): Promise<TemplateVersion | undefined> {
-  const json = await fetch(
-    new URL('@react-native-community/template', getNpmRegistryUrl()),
-  ).then((resp) => resp.json() as Promise<NpmTemplateResponse>);
+  const url = new URL(getNpmRegistryUrl());
+  url.pathname = `${url.pathname}@react-native-community/template`;
+  const headers = authToken
+    ? {Authorization: `Bearer ${authToken}`}
+    : undefined;
+  const json = await fetch(url, {headers}).then(
+    (resp) => resp.json() as Promise<NpmTemplateResponse>,
+  );
 
   // We are abusing which npm metadata is publicly available through the registry. Scripts
   // is always captured, and we use this in the Github Action that manages our releases to

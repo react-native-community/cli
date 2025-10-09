@@ -22,6 +22,11 @@ export default {
         'Use specific package manager to initialize the project. Available options: `yarn`, `npm`, `bun`. Default: `npm`',
     },
     {
+      name: '--auth-token <string>',
+      description:
+        'Use a specific authentication token when connecting to the registry, typically only needed for third-party registries',
+    },
+    {
       name: '--directory <string>',
       description: 'Uses a custom directory instead of `<projectName>`.',
     },

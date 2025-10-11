@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import execa from 'execa';
+import {execaSync} from 'execa';
 import prompts from 'prompts';
 import {
   parseTasksFromGradleFile,
@@ -96,15 +96,15 @@ const tasksList = [
   },
 ];
 
-jest.mock('execa', () => {
-  return {sync: jest.fn()};
-});
+jest.mock('execa', () => ({
+  execaSync: jest.fn(),
+}));
 
 jest.mock('prompts', () => jest.fn());
 
 describe('promptForTaskSelection', () => {
   it('should prompt with correct tasks', () => {
-    (execa.sync as jest.Mock).mockReturnValueOnce({stdout: gradleTaskOutput});
+    (execaSync as jest.Mock).mockReturnValueOnce({stdout: gradleTaskOutput});
     (prompts as jest.MockedFunction<typeof prompts>).mockReturnValue(
       Promise.resolve({
         task: [],

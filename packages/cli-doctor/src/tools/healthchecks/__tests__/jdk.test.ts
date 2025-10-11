@@ -1,4 +1,4 @@
-import execa from 'execa';
+import {execa} from 'execa';
 import jdk from '../jdk';
 import getEnvironmentInfo from '../../envinfo';
 import {EnvironmentInfo} from '../../../types';
@@ -7,7 +7,9 @@ import * as common from '../common';
 import * as downloadAndUnzip from '../../downloadAndUnzip';
 import * as deleteFile from '../../deleteFile';
 
-jest.mock('execa', () => jest.fn());
+jest.mock('execa', () => ({
+  execa: jest.fn(),
+}));
 jest
   .spyOn(deleteFile, 'deleteFile')
   .mockImplementation(() => Promise.resolve());

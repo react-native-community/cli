@@ -11,7 +11,7 @@ const fs = require('fs');
 const path = require('path');
 
 const chalk = require('chalk');
-const execa = require('execa');
+const {execaSync} = require('execa');
 const {getPackages, adjustToTerminalWidth, OK} = require('./helpers');
 
 const packages = getPackages();
@@ -21,15 +21,13 @@ const packagesWithTs = packages.filter((p) =>
 );
 
 const args = [
-  '"' +
-    path.resolve(
-      require.resolve('typescript/package.json'),
-      '..',
-      require('typescript/package.json').bin.tsc,
-    ) +
-    '"',
+  path.resolve(
+    require.resolve('typescript/package.json'),
+    '..',
+    require('typescript/package.json').bin.tsc,
+  ),
   '-b',
-  ...packagesWithTs.map((p) => '"' + p + '"'),
+  ...packagesWithTs,
   ...process.argv.slice(2),
 ];
 
@@ -37,7 +35,7 @@ console.log(chalk.inverse('Building TypeScript definition files'));
 process.stdout.write(adjustToTerminalWidth('Building\n'));
 
 try {
-  execa.sync('node', args, {stdio: 'inherit', shell: true});
+  execaSync('node', args, {stdio: 'inherit'});
   process.stdout.write(`${OK}\n`);
 } catch (e) {
   process.stdout.write('\n');

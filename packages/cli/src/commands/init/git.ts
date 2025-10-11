@@ -1,5 +1,5 @@
 import {getLoader, logger} from '@react-native-community/cli-tools';
-import execa from 'execa';
+import {execa} from 'execa';
 import fs from 'fs';
 import path from 'path';
 

@@ -2,7 +2,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import {createDirectory} from 'jest-util';
-import execa from 'execa';
+import {spawnSync} from 'child_process';
 import chalk from 'chalk';
 import slash from 'slash';
 
@@ -45,7 +45,9 @@ export const makeTemplate =
     });
 
 export const cleanup = (directory: string) => {
-  fs.rmSync(directory, {recursive: true, force: true, maxRetries: 10});
+  if (fs.existsSync(directory)) {
+    fs.rmSync(directory, {recursive: true, force: true, maxRetries: 10});
+  }
 };
 
 /**
@@ -104,16 +106,25 @@ type SpawnFunction<T> = (
   options: SpawnOptions,
 ) => T;
 
-export const spawnScript: SpawnFunction<execa.ExecaReturnBase<string>> = (
-  execPath,
-  args,
-  options,
-) => {
-  const result = execa.sync(execPath, args, getExecaOptions(options));
+export const spawnScript: SpawnFunction<any> = (execPath, args, options) => {
+  // Use Node.js built-in spawnSync instead of execa to avoid ESM import issues in Jest
+  const execaOptions = getExecaOptions(options);
+  const result = spawnSync(execPath, args, {
+    ...execaOptions,
+    encoding: 'utf8',
+  });
 
-  handleTestFailure(execPath, options, result, args);
+  // Transform spawnSync result to match execa format
+  const execaLikeResult = {
+    exitCode: result.status || 0,
+    stdout: result.stdout?.trim() || '',
+    stderr: result.stderr?.trim() || '',
+    failed: result.status !== 0,
+  };
 
-  return result;
+  handleTestFailure(execPath, options, execaLikeResult, args);
+
+  return execaLikeResult;
 };
 
 function getExecaOptions(options: SpawnOptions) {
@@ -121,7 +132,13 @@ function getExecaOptions(options: SpawnOptions) {
 
   const cwd = isRelative ? path.resolve(__dirname, options.cwd) : options.cwd;
 
+  const localBin = path.resolve(cwd, 'node_modules/.bin');
+
+  // Merge the existing environment with the new one
   let env = Object.assign({}, process.env, {FORCE_COLOR: '0'}, options.env);
+
+  // Prepend the local node_modules/.bin to the PATH
+  env.PATH = `${localBin}${path.delimiter}${env.PATH}`;
 
   if (options.nodeOptions) {
     env.NODE_OPTIONS = options.nodeOptions;
@@ -142,7 +159,7 @@ function getExecaOptions(options: SpawnOptions) {
 function handleTestFailure(
   cmd: string,
   options: SpawnOptions,
-  result: execa.ExecaReturnBase<string>,
+  result: any,
   args: string[] | undefined,
 ) {
   if (!options.expectedFailure && result.exitCode !== 0) {

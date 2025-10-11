@@ -3,7 +3,7 @@ import {IOSProjectInfo} from '@react-native-community/cli-types';
 import chalk from 'chalk';
 import {getBuildPath} from './getBuildPath';
 import {getBuildSettings} from './getBuildSettings';
-import execa from 'execa';
+import {execa} from 'execa';
 
 type Options = {
   buildOutput: string;

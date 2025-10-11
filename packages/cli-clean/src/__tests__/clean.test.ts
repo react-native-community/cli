@@ -1,4 +1,4 @@
-import execa from 'execa';
+import {execa} from 'execa';
 import os from 'os';
 import prompts from 'prompts';
 import {clean, cleanDir} from '../clean';
@@ -7,7 +7,9 @@ import fs from 'fs';
 
 const DIR = getTempDirectory('temp-cache');
 
-jest.mock('execa', () => jest.fn());
+jest.mock('execa', () => ({
+  execa: jest.fn(),
+}));
 jest.mock('prompts', () => jest.fn());
 
 afterEach(() => {

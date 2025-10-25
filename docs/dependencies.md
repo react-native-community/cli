@@ -23,6 +23,7 @@ The following type describes the configuration of a dependency that can be set u
 
 ```ts
 type DependencyConfig = {
+  autolinkTransitiveDependencies?: boolean;
   platforms: {
     android?: AndroidDependencyParams;
     ios?: IOSDependencyParams;
@@ -36,6 +37,10 @@ type DependencyConfig = {
 ### platforms
 
 A map of specific settings that can be set per platform. The exact shape is always defined by the package that provides given platform.
+
+### autolinkTransitiveDependencies
+
+When set to `true`, the CLI will inspect the dependency's `peerDependencies` and attempt to autolink any peers that are also React Native native modules. The CLI does not install those peers for the user, but they will be linked automatically whenever they are present in `node_modules`. Use this if your library relies on a native peer dependency (for example, `react-native-nitro-text` depending on `react-native-nitro-modules`) and would otherwise require users to manually add that peer.
 
 In most cases, as a library author, you should not need to define any of these.
 

@@ -40,7 +40,7 @@ A map of specific settings that can be set per platform. The exact shape is alwa
 
 ### autolinkTransitiveDependencies
 
-When set to `true`, the CLI will inspect the dependency's `peerDependencies` and attempt to autolink any peers that are also React Native native modules. The CLI does not install those peers for the user, but they will be linked automatically whenever they are present in `node_modules`. Use this if your library relies on a native peer dependency (for example, `react-native-nitro-text` depending on `react-native-nitro-modules`) and would otherwise require users to manually add that peer.
+When set to `true`, the CLI will inspect the dependency's `peerDependencies` and attempt to autolink any peers that are also React Native native modules. The CLI does not install those peers for the user, but they will be linked automatically whenever they are present in `node_modules`. Use this if your library relies on a native peer dependency (for example, [`react-native-nitro-text`](https://github.com/patrickkabwe/react-native-nitro-text) depending on [`react-native-nitro-modules`](https://github.com/mrousavy/nitro)) and would otherwise require users to manually add that peer.
 
 In most cases, as a library author, you should not need to define any of these.
 

@@ -27,6 +27,11 @@ export default {
       name: '--platform <platform>',
       description: 'Output configuration for a specific platform',
     },
+    {
+      name: '--react-native-package-name <platform>',
+      description:
+        'Optional package name to use when resolving react-native, passable by out-of-tree platforms.',
+    },
   ],
   func: async (_argv: string[], ctx: Config) => {
     console.log(JSON.stringify(filterConfig(ctx), null, 2));

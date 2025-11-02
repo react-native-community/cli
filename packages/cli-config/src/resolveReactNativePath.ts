@@ -7,12 +7,15 @@ import {
  * Finds path to React Native inside `node_modules` or throws
  * an error otherwise.
  */
-export default function resolveReactNativePath(root: string) {
+export default function resolveReactNativePath(
+  root: string,
+  reactNativePackageName = 'react-native',
+) {
   try {
-    return resolveNodeModuleDir(root, 'react-native');
+    return resolveNodeModuleDir(root, reactNativePackageName);
   } catch (_ignored) {
     throw new CLIError(`
-      Unable to find React Native files looking up from ${root}. Make sure "react-native" module is installed
+      Unable to find React Native files looking up from ${root}. Make sure "${reactNativePackageName}" module is installed
       in your project dependencies.
 
       If you are using React Native from a non-standard location, consider setting:

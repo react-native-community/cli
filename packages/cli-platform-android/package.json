@@ -1,14 +1,14 @@
 {
   "name": "@react-native-community/cli-platform-android",
-  "version": "18.0.0",
+  "version": "18.0.1",
   "license": "MIT",
   "main": "build/index.js",
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "@react-native-community/cli-config-android": "18.0.0",
-    "@react-native-community/cli-tools": "18.0.0",
+    "@react-native-community/cli-config-android": "18.0.1",
+    "@react-native-community/cli-tools": "18.0.1",
     "chalk": "^4.1.2",
     "execa": "^5.0.0",
     "logkitty": "^0.7.1"
@@ -19,7 +19,7 @@
     "!*.map"
   ],
   "devDependencies": {
-    "@react-native-community/cli-types": "18.0.0"
+    "@react-native-community/cli-types": "18.0.1"
   },
   "homepage": "https://github.com/react-native-community/cli/tree/main/packages/cli-platform-android",
   "repository": {

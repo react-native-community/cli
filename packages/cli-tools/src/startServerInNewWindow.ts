@@ -109,7 +109,7 @@ function startServerInNewWindow(
   }
   if (process.platform === 'linux') {
     try {
-      return execa.sync(terminal, ['-e', `sh ${launchPackagerScript}`], {
+      return execa(terminal, ['-e', `sh ${launchPackagerScript}`], {
         ...procConfig,
         detached: true,
       });

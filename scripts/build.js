@@ -119,9 +119,7 @@ function buildFile(file, silent) {
 
       // Normalize/override key fields for consistency
       map.file = outFile;
-      map.sources = [
-        path.relative(outDir, file).replace(/\\/g, '/'),
-      ];
+      map.sources = [path.relative(outDir, file).replace(/\\/g, '/')];
 
       code = `${code}\n\n//# sourceMappingURL=${mapFileName}`;
       fs.writeFileSync(mapPath, JSON.stringify(map));

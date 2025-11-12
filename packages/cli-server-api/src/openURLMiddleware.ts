@@ -14,7 +14,7 @@ import open from 'open';
 /**
  * Open a URL in the system browser.
  */
-async function openURLMiddleware(
+export async function openURLMiddleware(
   req: IncomingMessage & {
     // Populated by body-parser
     body?: Object;

@@ -31,20 +31,38 @@ async function openURLMiddleware(
 
     const {url} = req.body as {url: string};
 
+    if (typeof url !== 'string') {
+      res.writeHead(400);
+      res.end('URL must be a string');
+      return;
+    }
+
+    let parsedUrl: URL;
     try {
-      const parsedUrl = new URL(url);
-      if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
-        res.writeHead(400);
-        res.end('Invalid URL protocol');
-        return;
-      }
+      parsedUrl = new URL(url);
     } catch (error) {
       res.writeHead(400);
       res.end('Invalid URL format');
       return;
     }
 
-    await open(url);
+    // Only allow http and https protocols
+    if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
+      res.writeHead(400);
+      res.end('Invalid URL protocol');
+      return;
+    }
+
+    // Reconstruct URL with proper encoding to prevent command injection
+    // The URL constructor doesn't automatically encode special characters like | in query strings,
+    // which can be interpreted as shell commands.
+    // So we create a new URL object with sanitized components to prevent command injection.
+    const sanitizedUrl = new URL(parsedUrl.origin);
+    sanitizedUrl.pathname = encodeURI(parsedUrl.pathname);
+    sanitizedUrl.search = new URLSearchParams(parsedUrl.search).toString();
+    sanitizedUrl.hash = encodeURI(parsedUrl.hash);
+
+    await open(sanitizedUrl.href);
 
     res.writeHead(200);
     res.end();

@@ -4,6 +4,7 @@ export type Options = {
   template?: string;
   npm?: boolean;
   pm?: PackageManager;
+  authToken?: string;
   directory?: string;
   displayName?: string;
   title?: string;

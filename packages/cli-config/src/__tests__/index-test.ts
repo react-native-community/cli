@@ -578,3 +578,22 @@ test('should convert project sourceDir relative path to absolute', async () => {
     path.join(DIR, androidProjectDir),
   );
 });
+
+test('should be able to resolve platform-specific react-native path', async () => {
+  DIR = getTempDirectory('config_test_apply_platform_react_native_path');
+  writeFiles(DIR, {
+    ...REACT_NATIVE_MOCK,
+    ...PLATFORM_MOCK,
+    'package.json': `{
+      "dependencies": {
+        "react-native": "0.0.1",
+        "react-native-os": "0.0.1"
+      }
+    }`,
+  });
+  const {reactNativePath} = await loadConfigAsync({
+    projectRoot: DIR,
+    reactNativePackageName: 'react-native-os',
+  });
+  expect(reactNativePath).toMatch(/\/react-native-os$/);
+});

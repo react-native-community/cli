@@ -46,7 +46,6 @@ async function openURLMiddleware(
       return;
     }
 
-    // Only allow http and https protocols
     if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
       res.writeHead(400);
       res.end('Invalid URL protocol');

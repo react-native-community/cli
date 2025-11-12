@@ -28,5 +28,5 @@ export function getBunVersionIfAvailable() {
 }
 
 export function isProjectUsingBun(cwd: string) {
-  return findUp.sync('bun.lockb', {cwd});
+  return findUp.sync('bun.lockb', {cwd}) || findUp.sync('bun.lock', {cwd});
 }

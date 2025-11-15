@@ -7,7 +7,7 @@
  */
 
 import fs from 'fs';
-import glob from 'fast-glob';
+import glob from 'tinyglobby';
 import path from 'path';
 import {unixifyPaths} from '@react-native-community/cli-tools';
 
@@ -23,9 +23,9 @@ export function getMainActivityFiles(
     patternArray.push('.java', '.kt');
   }
 
-  return glob.sync(`**/*{${patternArray.join(',')}}`, {
+  return glob.globSync(`**/*{${patternArray.join(',')}}`, {
     cwd: unixifyPaths(folder),
-    onlyFiles: true,
+    expandDirectories: false,
     ignore: ['**/.cxx/**'],
   });
 }

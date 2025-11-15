@@ -1,9 +1,11 @@
 const execa = require('execa');
 const chalk = require('chalk');
 const path = require('path');
-const glob = require('fast-glob');
+const glob = require('tinyglobby');
 
-const projects = glob.sync('packages/*/package.json');
+const projects = glob.globSync('packages/*/package.json', {
+  expandDirectories: false,
+});
 
 projects.forEach((project) => {
   const cwd = path.dirname(project);

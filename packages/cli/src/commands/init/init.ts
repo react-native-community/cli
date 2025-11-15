@@ -235,7 +235,7 @@ async function createFromTemplate({
       yarnConfigOptions,
     );
 
-    loader.succeed();
+    loader.success();
     loader.start('Copying template');
 
     const templateName = getTemplateName(templateSourceDir);
@@ -246,7 +246,7 @@ async function createFromTemplate({
       templateSourceDir,
     );
 
-    loader.succeed();
+    loader.success();
     loader.start('Processing template');
 
     await changePlaceholderInTemplate({
@@ -261,7 +261,7 @@ async function createFromTemplate({
       await bumpYarnVersion(projectDirectory);
     }
 
-    loader.succeed();
+    loader.success();
     const {postInitScript} = templateConfig;
     if (postInitScript) {
       loader.info('Executing post init script ');
@@ -295,7 +295,7 @@ async function createFromTemplate({
               iosFolderPath: path.join(projectDirectory, 'ios'),
             });
             await installPods(loader, {});
-            loader.succeed();
+            loader.success();
             setEmptyHashForCachedDependencies(projectName);
           } else if (installPodsValue === 'undefined') {
             const {installCocoapods} = await prompt({
@@ -315,7 +315,7 @@ async function createFromTemplate({
                 iosFolderPath: path.join(projectDirectory, 'ios'),
               });
               await installPods(loader, {});
-              loader.succeed();
+              loader.success();
               setEmptyHashForCachedDependencies(projectName);
             }
           }
@@ -329,7 +329,7 @@ async function createFromTemplate({
       }
     } else {
       didInstallPods = false;
-      loader.succeed('Dependencies installation skipped');
+      loader.success('Dependencies installation skipped');
     }
 
     fs.removeSync(templateSourceDir);
@@ -366,7 +366,7 @@ async function installDependencies({
     root,
   });
 
-  loader.succeed();
+  loader.success();
 }
 
 function checkPackageManagerAvailability(

@@ -63,7 +63,7 @@ function printRunInstructions(
 
     desktopInstructions = `
   ${pico.magenta(`Run instructions for ${pico.bold('macOS')}`)}:
-    • See ${pico.underline
+    • See ${pico.underline(
       'https://microsoft.github.io/react-native-macos',
     )} for the latest up-to-date instructions.
     `;

@@ -63,7 +63,10 @@ export default async function installApp({
   const targetBuildDir = buildSettings.TARGET_BUILD_DIR;
   const infoPlistPath = buildSettings.INFOPLIST_PATH;
 
-  if (!infoPlistPath) {
+  const plistPath = appPath
+    ? path.join(appPath, 'Info.plist')
+    : path.join(targetBuildDir, infoPlistPath);
+  if (!plistPath) {
     throw new CLIError('Failed to find Info.plist');
   }
 
@@ -86,11 +89,7 @@ export default async function installApp({
   const bundleID = child_process
     .execFileSync(
       '/usr/libexec/PlistBuddy',
-      [
-        '-c',
-        'Print:CFBundleIdentifier',
-        path.join(targetBuildDir, infoPlistPath),
-      ],
+      ['-c', 'Print:CFBundleIdentifier', plistPath],
       {encoding: 'utf8'},
     )
     .trim();

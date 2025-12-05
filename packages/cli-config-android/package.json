@@ -1,13 +1,13 @@
 {
   "name": "@react-native-community/cli-config-android",
-  "version": "20.0.1",
+  "version": "20.0.2",
   "license": "MIT",
   "main": "build/index.js",
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "@react-native-community/cli-tools": "20.0.1",
+    "@react-native-community/cli-tools": "20.0.2",
     "fast-glob": "^3.3.2",
     "fast-xml-parser": "^4.4.1",
     "picocolors": "^1.1.1"
@@ -19,7 +19,7 @@
     "native_modules.gradle"
   ],
   "devDependencies": {
-    "@react-native-community/cli-types": "20.0.1"
+    "@react-native-community/cli-types": "20.0.2"
   },
   "homepage": "https://github.com/react-native-community/cli/tree/main/packages/cli-config-android",
   "repository": {

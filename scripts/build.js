@@ -103,14 +103,26 @@ function buildFile(file, silent) {
         } (copy)\n`,
       );
   } else {
-    const options = Object.assign({}, transformOptions);
+    const options = {
+      ...transformOptions,
+      sourceMaps: true,
+      sourceFileName: path.basename(file),
+    };
 
     let {code, map} = babel.transformFileSync(file, options);
 
-    if (!file.endsWith('.d.ts') && map.sources.length > 0) {
-      code = `${code}\n\n//# sourceMappingURL=${destPath}.map`;
-      map.sources = [path.relative(path.dirname(destPath), file)];
-      fs.writeFileSync(`${destPath}.map`, JSON.stringify(map));
+    if (!file.endsWith('.d.ts')) {
+      const outDir = path.dirname(destPath);
+      const outFile = path.basename(destPath);
+      const mapFileName = `${outFile}.map`;
+      const mapPath = path.join(outDir, mapFileName);
+
+      // Normalize/override key fields for consistency
+      map.file = outFile;
+      map.sources = [path.relative(outDir, file).replace(/\\/g, '/')];
+
+      code = `${code}\n\n//# sourceMappingURL=${mapFileName}`;
+      fs.writeFileSync(mapPath, JSON.stringify(map));
     }
 
     fs.writeFileSync(destPath, code);

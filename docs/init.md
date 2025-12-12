@@ -3,7 +3,7 @@
 There are couple of ways to initialize new React Native projects.
 
 ```sh
-npx react-native-community/cli@latest init ProjectName
+npx @react-native-community/cli@latest init ProjectName
 ```
 
 > Note: If you have both `yarn` and `npm` installed on your machine, React Native CLI will always try to use `npm`. You can force usage of `yarn` by adding `--pm yarn` flag to the command.
@@ -20,7 +20,7 @@ yarn init && yarn add react-native && yarn react-native init ProjectName
 
 ```sh
 # This will use the latest init command but will install react-native@VERSION and use its template
-npx react-native-community/cli@latest init ProjectName --version ${VERSION}
+npx @react-native-community/cli@latest init ProjectName --version ${VERSION}
 
 # This will use init command from react-native@VERSION through react-native-community/cli@${VERSION} (e.g. X.XX.X) automatically
 npx react-native-community/cli@${VERSION} init ProjectName
@@ -43,7 +43,7 @@ For all available options, please check [Yarn documentation](https://classic.yar
 
 ```sh
 # This will initialize new project using template from `react-native-template-typescript` package
-npx react-native-community/cli@latest init ProjectName --template ${TEMPLATE_NAME}
+npx @react-native-community/cli@latest init ProjectName --template ${TEMPLATE_NAME}
 
 # This will initialize new project using init command from react-native@VERSION but will use a custom template
 npx react-native-community/cli@${VERSION} init ProjectName --template ${TEMPLATE_NAME}
@@ -52,7 +52,7 @@ npx react-native-community/cli@${VERSION} init ProjectName --template ${TEMPLATE
 You can force usage of `yarn` if you have both `yarn` and `npm` installed on your machine:
 
 ```sh
-npx react-native-community/cli@latest init ProjectName --pm yarn
+npx @react-native-community/cli@latest init ProjectName --pm yarn
 ```
 
 ## Creating custom template

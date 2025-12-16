@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import pico from 'picocolors';
 import {logger, getLoader, CLIError} from '@react-native-community/cli-tools';
 import {getHealthchecks, HEALTHCHECK_TYPES} from '../tools/healthchecks';
 import printFixOptions, {KEYS} from '../tools/printFixOptions';
@@ -18,7 +18,7 @@ const printCategory = ({label, key}: {label: string; key: number}) => {
     logger.log();
   }
 
-  logger.log(chalk.dim(label));
+  logger.log(pico.dim(label));
 };
 
 const printVersions = ({
@@ -35,16 +35,16 @@ const printVersions = ({
       ? versions.join(', ')
       : 'N/A';
 
-    logMessage(`- Versions found: ${chalk.red(versionsToShow)}`);
-    logMessage(`- Version supported: ${chalk.green(versionRange)}`);
+    logMessage(`- Versions found: ${pico.red(versionsToShow)}`);
+    logMessage(`- Version supported: ${pico.green(versionRange)}`);
 
     return;
   }
 
   const versionsToShow = version && version !== 'Not Found' ? version : 'N/A';
 
-  logMessage(`- Version found: ${chalk.red(versionsToShow)}`);
-  logMessage(`- Version supported: ${chalk.green(versionRange)}`);
+  logMessage(`- Version found: ${pico.red(versionsToShow)}`);
+  logMessage(`- Version supported: ${pico.green(versionRange)}`);
 
   return;
 };
@@ -60,9 +60,9 @@ const printIssue = ({
 }: HealthCheckResult) => {
   const symbol = needsToBeFixed
     ? isRequired
-      ? chalk.red('✖')
-      : chalk.yellow('●')
-    : chalk.green('✓');
+      ? pico.red('✖')
+      : pico.yellow('●')
+    : pico.green('✓');
 
   const descriptionToShow = description ? ` - ${description}` : '';
 
@@ -80,8 +80,8 @@ const printOverallStats = ({
   errors: number;
   warnings: number;
 }) => {
-  logger.log(`\n${chalk.bold('Errors:')}   ${errors}`);
-  logger.log(`${chalk.bold('Warnings:')} ${warnings}`);
+  logger.log(`\n${pico.bold('Errors:')}   ${errors}`);
+  logger.log(`${pico.bold('Warnings:')} ${warnings}`);
 };
 
 type FlagsT = {

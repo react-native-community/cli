@@ -1,6 +1,6 @@
 import {CLIError, logger} from '@react-native-community/cli-tools';
 import {IOSProjectInfo} from '@react-native-community/cli-types';
-import chalk from 'chalk';
+import pico from 'picocolors';
 import {getBuildPath} from './getBuildPath';
 import {getBuildSettings} from './getBuildSettings';
 import execa from 'execa';
@@ -40,7 +40,7 @@ export default async function openApp({
     appPath = await getBuildPath(buildSettings, 'macos');
   }
 
-  logger.info(`Opening "${chalk.bold(appPath)}"`);
+  logger.info(`Opening "${pico.bold(appPath)}"`);
 
   try {
     await execa(`open ${appPath}`);

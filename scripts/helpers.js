@@ -7,12 +7,12 @@
 
 const fs = require('fs');
 const path = require('path');
-const chalk = require('chalk');
+const pico = require('picocolors');
 const stringLength = require('string-length');
 
 const PACKAGES_DIR = path.resolve(__dirname, '../packages');
 
-const OK = chalk.reset.inverse.bold.green(' DONE ');
+const OK = pico.reset(pico.inverse(pico.bold(pico.green(' DONE '))));
 
 function getPackages() {
   return fs
@@ -27,7 +27,7 @@ function adjustToTerminalWidth(str) {
   const strs = str.match(new RegExp(`(.{1,${WIDTH}})`, 'g'));
   let lastString = strs[strs.length - 1];
   if (lastString.length < WIDTH) {
-    lastString += Array(WIDTH - lastString.length).join(chalk.dim('.'));
+    lastString += Array(WIDTH - lastString.length).join(pico.dim('.'));
   }
   return strs.slice(0, -1).concat(lastString).join('\n');
 }

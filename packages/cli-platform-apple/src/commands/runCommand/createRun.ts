@@ -6,9 +6,9 @@
  *
  */
 
-import path from 'path';
 import fs from 'fs';
-import chalk from 'chalk';
+import path from 'path';
+import pico from 'picocolors';
 import {Config, IOSProjectConfig} from '@react-native-community/cli-types';
 import {
   logger,
@@ -314,7 +314,7 @@ const createRun =
         // We may be able to recover from this for macCatalyst app starts,
         // but the general case is this is a problem and device list will help
         logger.warn(
-          `Could not find a device with udid: "${chalk.bold(
+          `Could not find a device with udid: "${pico.bold(
             args.udid,
           )}". ${printFoundDevices(devices)}`,
         );
@@ -359,8 +359,8 @@ const createRun =
         const deviceByUdid = devices.find((d) => d.udid === args.device);
         if (!deviceByUdid) {
           return logger.error(
-            `Could not find a physical device with name or unique device identifier: "${chalk.bold(
-              args.device,
+            `Could not find a physical device with name or unique device identifier: "${pico.bold(
+              typeof args.device === 'string' ? args.device : 'true',
             )}". ${printFoundDevices(devices, 'device')}`,
           );
         }
@@ -369,8 +369,8 @@ const createRun =
 
         if (deviceByUdid.type === 'simulator') {
           return logger.error(
-            `The device with udid: "${chalk.bold(
-              args.device,
+            `The device with udid: "${pico.bold(
+              typeof args.device === 'string' ? args.device : 'true',
             )}" is a simulator. If you want to run on a simulator, use the "--simulator" flag instead.`,
           );
         }

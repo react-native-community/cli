@@ -1,6 +1,6 @@
 import {CLIError, logger} from '@react-native-community/cli-tools';
 import {IOSProjectInfo} from '@react-native-community/cli-types';
-import chalk from 'chalk';
+import pico from 'picocolors';
 import child_process from 'child_process';
 
 export type BuildSettings = {
@@ -48,9 +48,9 @@ export async function getBuildSettings(
   if (target) {
     if (!applicationTargets.includes(target)) {
       logger.info(
-        `Target ${chalk.bold(target)} not found for scheme ${chalk.bold(
+        `Target ${pico.bold(target)} not found for scheme ${pico.bold(
           scheme,
-        )}, automatically selected target ${chalk.bold(selectedTarget)}`,
+        )}, automatically selected target ${pico.bold(selectedTarget)}`,
       );
     } else {
       selectedTarget = target;

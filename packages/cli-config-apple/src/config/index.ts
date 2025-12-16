@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import chalk from 'chalk';
 import path from 'path';
+import pico from 'picocolors';
 import fs from 'fs';
 import findPodfilePath from './findPodfilePath';
 import findXcodeProject from './findXcodeProject';
@@ -85,7 +85,7 @@ export const getDependencyConfig =
       }
     } catch {
       throw new CLIError(
-        `Failed to locate package.json file from ${chalk.underline(
+        `Failed to locate package.json file from ${pico.underline(
           folder,
         )}. This is most likely issue with your node_modules folder being corrupted. Please force install dependencies and try again`,
       );

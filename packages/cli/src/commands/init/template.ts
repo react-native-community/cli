@@ -5,7 +5,7 @@ import * as PackageManager from '../../tools/packageManager';
 import copyFiles from '../../tools/copyFiles';
 import replacePathSepForRegex from '../../tools/replacePathSepForRegex';
 import fs from 'fs';
-import chalk from 'chalk';
+import pico from 'picocolors';
 import {getYarnVersionIfAvailable} from '../../tools/yarn';
 import {executeCommand} from '../../tools/executeCommand';
 
@@ -79,8 +79,10 @@ export function getTemplateConfig(
   if (!fs.existsSync(configFilePath)) {
     throw new CLIError(
       `Couldn't find the "${configFilePath} file inside "${templateName}" template. Please make sure the template is valid.
-      Read more: ${chalk.underline.dim(
-        'https://github.com/react-native-community/cli/blob/main/docs/init.md#creating-custom-template',
+      Read more: ${pico.underline(
+        pico.dim(
+          'https://github.com/react-native-community/cli/blob/main/docs/init.md#creating-custom-template',
+        ),
       )}`,
     );
   }

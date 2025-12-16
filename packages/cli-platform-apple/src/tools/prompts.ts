@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import pico from 'picocolors';
 import {Device} from '../types';
 import {prompt} from '@react-native-community/cli-tools';
 
@@ -50,11 +50,11 @@ export async function promptForDeviceSelection(
       .map((d) => {
         const availability =
           !d.isAvailable && !!d.availabilityError
-            ? chalk.red(`(unavailable - ${d.availabilityError})`)
+            ? pico.red(`(unavailable - ${d.availabilityError})`)
             : '';
 
         return {
-          title: `${chalk.bold(
+          title: `${pico.bold(
             `${d.name}${getVersionFromDevice(d)}`,
           )} ${availability}`,
           value: d,

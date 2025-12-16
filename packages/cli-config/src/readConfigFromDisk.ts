@@ -7,7 +7,7 @@ import type {
   UserDependencyConfig,
 } from '@react-native-community/cli-types';
 import {logger, inlineString} from '@react-native-community/cli-tools';
-import chalk from 'chalk';
+import pico from 'picocolors';
 
 /**
  * Places to look for the configuration file.
@@ -76,9 +76,9 @@ function parseDependencyConfig(
     const validationError = new JoiError(result.error);
     logger.warn(
       inlineString(`
-        Package ${chalk.bold(
+        Package ${pico.bold(
           dependencyName,
-        )} contains invalid configuration: ${chalk.bold(
+        )} contains invalid configuration: ${pico.bold(
         validationError.message,
       )}.
 

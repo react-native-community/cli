@@ -1,7 +1,7 @@
 import {Config} from '@react-native-community/cli-types';
 import {logger, CLIError} from '@react-native-community/cli-tools';
 import fs from 'fs';
-import chalk from 'chalk';
+import pico from 'picocolors';
 
 export function getAndroidProject(config: Config) {
   const androidProject = config.project.android;
@@ -48,11 +48,11 @@ function discoverPackageName(
 
   throw new CLIError(
     `Failed to build the app: No package name found. 
-    We couldn't parse the namespace from neither your build.gradle[.kts] file at ${chalk.underline.dim(
-      `${buildGradlePath}`,
+    We couldn't parse the namespace from neither your build.gradle[.kts] file at ${pico.underline(
+      pico.dim(`${buildGradlePath}`),
     )} 
-    nor your package in the AndroidManifest at ${chalk.underline.dim(
-      `${manifestPath}`,
+    nor your package in the AndroidManifest at ${pico.underline(
+      pico.dim(`${manifestPath}`),
     )}
     `,
   );
@@ -70,10 +70,10 @@ export function getPackageName(
   let packageName = discoverPackageName(manifestPath, buildGradlePath);
   if (!validatePackageName(packageName)) {
     logger.warn(
-      `Invalid application's package name "${chalk.bgRed(
+      `Invalid application's package name "${pico.bgRed(
         packageName,
-      )}" in either 'AndroidManifest.xml' or 'build.gradle'. Read guidelines for setting the package name here: ${chalk.underline.dim(
-        'https://developer.android.com/studio/build/application-id',
+      )}" in either 'AndroidManifest.xml' or 'build.gradle'. Read guidelines for setting the package name here: ${pico.underline(
+        pico.dim('https://developer.android.com/studio/build/application-id'),
       )}`,
     );
   }

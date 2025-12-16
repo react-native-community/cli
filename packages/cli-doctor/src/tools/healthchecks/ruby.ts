@@ -1,5 +1,5 @@
 import execa from 'execa';
-import chalk from 'chalk';
+import pico from 'picocolors';
 
 import {logger, findProjectRoot, link} from '@react-native-community/cli-tools';
 
@@ -154,9 +154,9 @@ export default {
           description: 'Cannot find a working copy of Ruby.',
         };
       case output.NO_GEMFILE:
-        fallbackResult.description = `Could not find the project ${chalk.bold(
+        fallbackResult.description = `Could not find the project ${pico.bold(
           'Gemfile',
-        )} in your project folder (${chalk.dim(
+        )} in your project folder (${pico.dim(
           projectRoot,
         )}), guessed using my built-in version.`;
         break;

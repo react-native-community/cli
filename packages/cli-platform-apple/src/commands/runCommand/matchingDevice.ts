@@ -1,5 +1,5 @@
 import {logger} from '@react-native-community/cli-tools';
-import chalk from 'chalk';
+import pico from 'picocolors';
 import {Device, DeviceType} from '../../types';
 
 export function matchingDevice(
@@ -11,7 +11,7 @@ export function matchingDevice(
     const firstIOSDevice = devices.find((d) => d.type === 'device')!;
     if (firstIOSDevice) {
       logger.info(
-        `Using first available device named "${chalk.bold(
+        `Using first available device named "${pico.bold(
           firstIOSDevice.name,
         )}" due to lack of name supplied.`,
       );

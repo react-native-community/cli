@@ -8,9 +8,9 @@
   },
   "dependencies": {
     "@react-native-community/cli-tools": "20.0.2",
-    "chalk": "^4.1.2",
     "fast-glob": "^3.3.2",
-    "fast-xml-parser": "^4.4.1"
+    "fast-xml-parser": "^4.4.1",
+    "picocolors": "^1.1.1"
   },
   "files": [
     "build",

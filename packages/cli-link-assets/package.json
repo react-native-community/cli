@@ -13,10 +13,10 @@
     "@react-native-community/cli-platform-apple": "20.0.2",
     "@react-native-community/cli-platform-ios": "20.0.2",
     "@react-native-community/cli-tools": "20.0.2",
-    "chalk": "^4.1.2",
     "fast-glob": "^3.3.2",
     "fast-xml-parser": "^4.4.1",
     "opentype.js": "^1.3.4",
+    "picocolors": "^1.1.1",
     "plist": "^3.1.0",
     "xcode": "^3.0.1"
   },

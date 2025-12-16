@@ -2,12 +2,12 @@ import path from 'path';
 import fs from 'fs';
 import execa from 'execa';
 import logger from './logger';
-import chalk from 'chalk';
+import pico from 'picocolors';
 import {findPackageDependencyDir} from './findPackageDependencyDir';
 
-const ERROR = `a dev server manually by running ${chalk.bold(
+const ERROR = `a dev server manually by running ${pico.bold(
   'npm start',
-)} or ${chalk.bold('yarn start')} in other terminal window.`;
+)} or ${pico.bold('yarn start')} in other terminal window.`;
 
 function startServerInNewWindow(
   port: number,

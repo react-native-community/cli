@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs-extra';
 import {createHash} from 'crypto';
-import chalk from 'chalk';
+import pico from 'picocolors';
 import {
   CLIError,
   cacheManager,
@@ -112,7 +112,7 @@ async function install(
   } catch (error) {
     loader.fail();
     throw new CLIError(
-      `Something went wrong while installing CocoaPods. Please run ${chalk.bold(
+      `Something went wrong while installing CocoaPods. Please run ${pico.bold(
         'pod install',
       )} manually`,
       error as Error,
@@ -208,7 +208,7 @@ export default async function resolvePods(
     } catch (error) {
       loader.fail();
       throw new CLIError(
-        `Something went wrong while installing CocoaPods. Please run ${chalk.bold(
+        `Something went wrong while installing CocoaPods. Please run ${pico.bold(
           'pod install',
         )} manually`,
         error as Error,

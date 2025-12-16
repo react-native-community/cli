@@ -1,6 +1,6 @@
 import {CLIError, getLoader, prompt} from '@react-native-community/cli-tools';
-import chalk from 'chalk';
 import execa from 'execa';
+import pico from 'picocolors';
 
 type GradleTask = {
   task: string;
@@ -59,7 +59,7 @@ export const promptForTaskSelection = async (
     name: 'task',
     message: `Select ${taskType} task you want to perform`,
     choices: tasks.map((t: GradleTask) => ({
-      title: `${chalk.bold(t.task)} - ${t.description}`,
+      title: `${pico.bold(t.task)} - ${t.description}`,
       value: t.task,
     })),
     min: 1,

@@ -1,7 +1,7 @@
 import child_process from 'child_process';
 import {CLIError, logger} from '@react-native-community/cli-tools';
 import {IOSProjectInfo} from '@react-native-community/cli-types';
-import chalk from 'chalk';
+import pico from 'picocolors';
 import {getBuildPath} from './getBuildPath';
 import {getBuildSettings} from './getBuildSettings';
 import path from 'path';
@@ -74,7 +74,7 @@ export default async function installApp({
     throw new CLIError('Failed to get target build directory.');
   }
 
-  logger.info(`Installing "${chalk.bold(appPath)}`);
+  logger.info(`Installing "${pico.bold(appPath)}`);
 
   if (udid && appPath) {
     const installParameters = isSimulator
@@ -94,7 +94,7 @@ export default async function installApp({
     )
     .trim();
 
-  logger.info(`Launching "${chalk.bold(bundleID)}"`);
+  logger.info(`Launching "${pico.bold(bundleID)}"`);
 
   const launchParameters = isSimulator
     ? ['simctl', 'launch', udid, bundleID]

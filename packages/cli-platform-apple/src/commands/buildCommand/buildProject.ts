@@ -2,7 +2,7 @@ import child_process, {
   ChildProcess,
   SpawnOptionsWithoutStdio,
 } from 'child_process';
-import chalk from 'chalk';
+import pico from 'picocolors';
 import {IOSProjectInfo} from '@react-native-community/cli-types';
 import {
   logger,
@@ -87,7 +87,7 @@ export function buildProject(
 
     const loader = getLoader();
     logger.info(
-      `Building ${chalk.dim(
+      `Building ${pico.dim(
         `(using "xcodebuild ${xcodebuildArgs.join(' ')}")`,
       )}`,
     );

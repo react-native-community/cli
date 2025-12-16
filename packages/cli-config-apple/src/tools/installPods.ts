@@ -1,7 +1,7 @@
 import fs from 'fs';
 import execa from 'execa';
 import type {Ora} from 'ora';
-import chalk from 'chalk';
+import pico from 'picocolors';
 import {
   logger,
   NoopLoader,
@@ -27,9 +27,9 @@ async function runPodInstall(loader: Ora, options: RunPodInstallOptions) {
   const shouldHandleRepoUpdate = options?.shouldHandleRepoUpdate || true;
   try {
     loader.start(
-      `Installing CocoaPods dependencies ${chalk.bold(
+      `Installing CocoaPods dependencies ${pico.bold(
         options?.newArchEnabled ? 'with New Architecture' : '',
-      )} ${chalk.dim('(this may take a few minutes)')}`,
+      )} ${pico.dim('(this may take a few minutes)')}`,
     );
 
     await execaPod(['install'], {
@@ -83,7 +83,7 @@ async function runPodInstall(loader: Ora, options: RunPodInstallOptions) {
 async function runPodUpdate(loader: Ora) {
   try {
     loader.start(
-      `Updating CocoaPods repositories ${chalk.dim(
+      `Updating CocoaPods repositories ${pico.dim(
         '(this may take a few minutes)',
       )}`,
     );
@@ -94,8 +94,8 @@ async function runPodUpdate(loader: Ora) {
     loader.fail();
 
     throw new CLIError(
-      `Failed to update CocoaPods repositories for iOS project.\nPlease try again manually: "pod repo update".\nCocoaPods documentation: ${chalk.dim.underline(
-        'https://cocoapods.org/',
+      `Failed to update CocoaPods repositories for iOS project.\nPlease try again manually: "pod repo update".\nCocoaPods documentation: ${pico.dim(
+        pico.underline('https://cocoapods.org/'),
       )}`,
     );
   }
@@ -127,8 +127,8 @@ async function installCocoaPods(loader: Ora) {
     logger.error((error as any).stderr);
 
     throw new CLIError(
-      `An error occured while trying to install CocoaPods, which is required by this template.\nPlease try again manually: sudo gem install cocoapods.\nCocoaPods documentation: ${chalk.dim.underline(
-        'https://cocoapods.org/',
+      `An error occured while trying to install CocoaPods, which is required by this template.\nPlease try again manually: sudo gem install cocoapods.\nCocoaPods documentation: ${pico.dim(
+        pico.underline('https://cocoapods.org/'),
       )}`,
     );
   }

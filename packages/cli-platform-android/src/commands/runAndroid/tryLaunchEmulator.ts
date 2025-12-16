@@ -1,5 +1,5 @@
 import os from 'os';
-import execa from 'execa';
+import {execa, execaSync} from 'execa';
 import adb from './adb';
 
 const emulatorCommand = process.env.ANDROID_HOME
@@ -8,7 +8,7 @@ const emulatorCommand = process.env.ANDROID_HOME
 
 export const getEmulators = () => {
   try {
-    const emulatorsOutput = execa.sync(emulatorCommand, ['-list-avds']).stdout;
+    const emulatorsOutput = execaSync(emulatorCommand, ['-list-avds']).stdout;
     return emulatorsOutput
       .split(os.EOL)
       .filter((name) => name !== '' && !name.includes(' '));

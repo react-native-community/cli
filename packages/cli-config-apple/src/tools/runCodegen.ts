@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import execa from 'execa';
+import {execa} from 'execa';
 
 interface CodegenOptions {
   root: string;

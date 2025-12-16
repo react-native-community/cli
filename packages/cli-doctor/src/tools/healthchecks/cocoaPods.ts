@@ -1,4 +1,4 @@
-import execa from 'execa';
+import {execa} from 'execa';
 import {runSudo} from '@react-native-community/cli-tools';
 import {doesSoftwareNeedToBeFixed} from '../checkInstallation';
 import {logError} from './common';

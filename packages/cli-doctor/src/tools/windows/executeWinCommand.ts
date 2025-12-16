@@ -2,7 +2,7 @@ import {writeFileSync} from 'fs';
 import {tmpdir} from 'os';
 import {join} from 'path';
 
-import execa from 'execa';
+import {execa} from 'execa';
 
 /** Runs a command requestion permission to run elevated. */
 const runElevated = (command: string) => {

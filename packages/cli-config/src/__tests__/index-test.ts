@@ -58,8 +58,14 @@ const removeString = (config, str) =>
       // In certain cases, `str` (which is a temporary location) will be `/tmp`
       // which is a symlink to `/private/tmp` on OS X. In this case, tests will fail.
       // Following RegExp makes sure we strip the entire path.
+      // Escape special regex characters and handle Windows paths
       typeof value === 'string'
-        ? slash(value.replace(new RegExp(`(.*)${str}`), '<<REPLACED>>'))
+        ? slash(
+            value.replace(
+              new RegExp(`(.*)${str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`),
+              '<<REPLACED>>',
+            ),
+          )
         : value,
     ),
   );

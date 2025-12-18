@@ -64,6 +64,7 @@ export const dependencyConfig = t
   .object({
     dependency: t
       .object({
+        autolinkTransitiveDependencies: t.boolean(),
         platforms: map(t.string(), t.any())
           .keys({
             ios: t
@@ -120,6 +121,7 @@ export const projectConfig = t
       t
         .object({
           root: t.string(),
+          autolinkTransitiveDependencies: t.boolean(),
           platforms: map(t.string(), t.any()).keys({
             ios: t
               // IOSDependencyConfig

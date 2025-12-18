@@ -99,6 +99,7 @@ export type ProjectConfig = {
 export interface DependencyConfig {
   name: string;
   root: string;
+  autolinkTransitiveDependencies?: boolean;
   platforms: {
     android?: Exclude<
       ReturnType<AndroidPlatformConfig['dependencyConfig']>,

@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import pico from 'picocolors';
 
 const reactLogoArray = [
   '                                                          ',
@@ -40,9 +40,9 @@ const learnOnceMessage =
   '                 Learn once, write anywhere               ';
 
 export default function banner(reactNativeVersion?: string) {
-  return `${chalk.cyan(reactLogoArray.join('\n'))}
+  return `${pico.cyan(reactLogoArray.join('\n'))}
 
-${chalk.cyanBright.bold(getWelcomeMessage(reactNativeVersion))}
-${chalk.dim(learnOnceMessage)}
+${pico.cyanBright(pico.bold(getWelcomeMessage(reactNativeVersion)))}
+${pico.dim(learnOnceMessage)}
 `;
 }

@@ -1,7 +1,7 @@
 import child_process from 'child_process';
 import {CLIError, logger} from '@react-native-community/cli-tools';
 import {IOSProjectInfo} from '@react-native-community/cli-types';
-import chalk from 'chalk';
+import pico from 'picocolors';
 import {getBuildPath} from './getBuildPath';
 import {getBuildSettings} from './getBuildSettings';
 import path from 'path';
@@ -63,7 +63,10 @@ export default async function installApp({
   const targetBuildDir = buildSettings.TARGET_BUILD_DIR;
   const infoPlistPath = buildSettings.INFOPLIST_PATH;
 
-  if (!infoPlistPath) {
+  const plistPath = appPath
+    ? path.join(appPath, 'Info.plist')
+    : path.join(targetBuildDir, infoPlistPath);
+  if (!plistPath) {
     throw new CLIError('Failed to find Info.plist');
   }
 
@@ -71,7 +74,7 @@ export default async function installApp({
     throw new CLIError('Failed to get target build directory.');
   }
 
-  logger.info(`Installing "${chalk.bold(appPath)}`);
+  logger.info(`Installing "${pico.bold(appPath)}`);
 
   if (udid && appPath) {
     const installParameters = isSimulator
@@ -86,16 +89,12 @@ export default async function installApp({
   const bundleID = child_process
     .execFileSync(
       '/usr/libexec/PlistBuddy',
-      [
-        '-c',
-        'Print:CFBundleIdentifier',
-        path.join(targetBuildDir, infoPlistPath),
-      ],
+      ['-c', 'Print:CFBundleIdentifier', plistPath],
       {encoding: 'utf8'},
     )
     .trim();
 
-  logger.info(`Launching "${chalk.bold(bundleID)}"`);
+  logger.info(`Launching "${pico.bold(bundleID)}"`);
 
   const launchParameters = isSimulator
     ? ['simctl', 'launch', udid, bundleID]

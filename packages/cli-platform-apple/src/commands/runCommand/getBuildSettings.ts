@@ -1,6 +1,6 @@
 import {CLIError, logger} from '@react-native-community/cli-tools';
 import {IOSProjectInfo} from '@react-native-community/cli-types';
-import chalk from 'chalk';
+import pico from 'picocolors';
 import child_process from 'child_process';
 
 export type BuildSettings = {
@@ -36,35 +36,29 @@ export async function getBuildSettings(
 
   const settings = JSON.parse(buildSettings);
 
-  const targets = settings.map(
-    ({target: settingsTarget}: any) => settingsTarget,
-  );
+  // Find all 'app' targets in the build settings
+  const applicationTargets = settings
+    .filter((setting: any) => setting.buildSettings.WRAPPER_EXTENSION === 'app')
+    .map(({target: settingsTarget}: any) => settingsTarget);
 
-  let selectedTarget = targets[0];
+  if (applicationTargets.length === 0) return null;
+
+  let selectedTarget = applicationTargets[0];
 
   if (target) {
-    if (!targets.includes(target)) {
+    if (!applicationTargets.includes(target)) {
       logger.info(
-        `Target ${chalk.bold(target)} not found for scheme ${chalk.bold(
+        `Target ${pico.bold(target)} not found for scheme ${pico.bold(
           scheme,
-        )}, automatically selected target ${chalk.bold(selectedTarget)}`,
+        )}, automatically selected target ${pico.bold(selectedTarget)}`,
       );
     } else {
       selectedTarget = target;
     }
   }
 
-  // Find app in all building settings - look for WRAPPER_EXTENSION: 'app',
-  const targetIndex = targets.indexOf(selectedTarget);
-  const targetSettings = settings[targetIndex].buildSettings;
-
-  const wrapperExtension = targetSettings.WRAPPER_EXTENSION;
-
-  if (wrapperExtension === 'app') {
-    return settings[targetIndex].buildSettings;
-  }
-
-  return null;
+  const targetIndex = applicationTargets.indexOf(selectedTarget);
+  return settings[targetIndex].buildSettings;
 }
 
 function getPlatformName(buildOutput: string) {

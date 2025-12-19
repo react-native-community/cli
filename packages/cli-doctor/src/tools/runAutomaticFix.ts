@@ -1,6 +1,6 @@
 import {getLoader, logger} from '@react-native-community/cli-tools';
 import type {Config} from '@react-native-community/cli-types';
-import chalk from 'chalk';
+import pico from 'picocolors';
 import {EnvironmentInfo, HealthCheckCategoryResult, Loader} from '../types';
 import {HEALTHCHECK_TYPES} from './healthchecks';
 import {logManualInstallation} from './healthchecks/common';
@@ -44,7 +44,7 @@ export default async function ({
   const issuesCount = totalIssuesBasedOnFixLevel[automaticFixLevel];
 
   logger.log(
-    `\nAttempting to fix ${chalk.bold(issuesCount.toString())} issue${
+    `\nAttempting to fix ${pico.bold(issuesCount.toString())} issue${
       issuesCount > 1 ? 's' : ''
     }...`,
   );
@@ -76,7 +76,7 @@ export default async function ({
       continue;
     }
 
-    logger.log(`\n${chalk.dim(category.label)}`);
+    logger.log(`\n${pico.dim(category.label)}`);
 
     for (const healthcheckToRun of healthchecksToRun) {
       const spinner = getLoader({

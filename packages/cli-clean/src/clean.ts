@@ -1,6 +1,6 @@
 import {getLoader, logger, prompt} from '@react-native-community/cli-tools';
 import type {Config as CLIConfig} from '@react-native-community/cli-types';
-import chalk from 'chalk';
+import pico from 'picocolors';
 import execa from 'execa';
 import {existsSync as fileExists, rm} from 'fs';
 import os from 'os';
@@ -62,7 +62,7 @@ async function promptForCaches(
     name: 'caches',
     message: 'Select all caches to clean',
     choices: Object.entries(groups).map(([cmd, group]) => ({
-      title: `${cmd} ${chalk.dim(`(${group.description})`)}`,
+      title: `${cmd} ${pico.dim(`(${group.description})`)}`,
       value: cmd,
       selected: DEFAULT_GROUPS.includes(cmd),
     })),

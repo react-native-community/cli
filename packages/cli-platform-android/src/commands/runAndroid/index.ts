@@ -24,8 +24,8 @@ import {
 import {getAndroidProject} from '@react-native-community/cli-config-android';
 import listAndroidDevices from './listAndroidDevices';
 import tryLaunchEmulator from './tryLaunchEmulator';
-import chalk from 'chalk';
 import path from 'path';
+import pico from 'picocolors';
 import {build, BuildFlags, options} from '../buildAndroid';
 import {promptForTaskSelection} from './listAndroidTasks';
 import {getTaskNames} from './getTaskNames';
@@ -199,7 +199,7 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
       );
     }
     throw new CLIError(
-      `Failed to launch emulator. Reason: ${chalk.dim(result.error || '')}`,
+      `Failed to launch emulator. Reason: ${pico.dim(result.error || '')}`,
     );
   }
 

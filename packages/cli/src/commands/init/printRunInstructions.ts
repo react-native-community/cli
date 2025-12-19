@@ -10,7 +10,7 @@
 import path from 'path';
 import fs from 'fs';
 import process from 'process';
-import chalk from 'chalk';
+import pico from 'picocolors';
 import {logger} from '@react-native-community/cli-tools';
 
 interface Options {
@@ -43,7 +43,7 @@ function printRunInstructions(
     );
 
     iosInstructions = `
-  ${chalk.cyan(`Run instructions for ${chalk.bold('iOS')}`)}:
+  ${pico.cyan(`Run instructions for ${pico.bold('iOS')}`)}:
     • cd "${projectDir}${options.showPodsInstructions ? '/ios' : ''}"
     ${
       options.showPodsInstructions
@@ -56,14 +56,14 @@ function printRunInstructions(
         : ''
     }
     • npx react-native run-ios
-    ${chalk.dim('- or -')}
+    ${pico.dim('- or -')}
     • Open ${relativeXcodeProjectPath} in Xcode or run "xed -b ios"
     • Hit the Run button
     `;
 
     desktopInstructions = `
-  ${chalk.magenta(`Run instructions for ${chalk.bold('macOS')}`)}:
-    • See ${chalk.underline(
+  ${pico.magenta(`Run instructions for ${pico.bold('macOS')}`)}:
+    • See ${pico.underline(
       'https://microsoft.github.io/react-native-macos',
     )} for the latest up-to-date instructions.
     `;
@@ -71,15 +71,15 @@ function printRunInstructions(
 
   if (process.platform === 'win32') {
     desktopInstructions = `
-  ${chalk.cyan(`Run instructions for ${chalk.bold('Windows')}`)}:
-    • See ${chalk.underline(
+  ${pico.cyan(`Run instructions for ${pico.bold('Windows')}`)}:
+    • See ${pico.underline(
       'https://microsoft.github.io/react-native-windows',
     )} for the latest up-to-date instructions.
     `;
   }
 
   const androidInstructions = `
-  ${chalk.green(`Run instructions for ${chalk.bold('Android')}`)}:
+  ${pico.green(`Run instructions for ${pico.bold('Android')}`)}:
     • Have an Android emulator running (quickest way to get started), or a device connected.
     • cd "${projectDir}" && npx react-native run-android
   `;

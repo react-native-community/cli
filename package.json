@@ -41,7 +41,7 @@
     "eslint-plugin-import": "^2.25.3",
     "execa": "^5.0.0",
     "fast-glob": "^3.3.2",
-    "husky": "^8.0.2",
+    "husky": "^9.1.7",
     "jest": "^26.6.2",
     "jest-circus": "^26.6.2",
     "jest-snapshot-serializer-raw": "^1.1.0",

@@ -321,10 +321,9 @@ async function createFromTemplate({
           }
         } catch (error) {
           logger.error(
-            `\nInstalling Cocoapods failed. This doesn't affect project initialization and you can safely proceed. However, you will need to install Cocoapods manually when running iOS, follow additional steps in "Run instructions for iOS" section.\n\nError: ${
-              (error as Error).message as string
-            }\n`,
+            `\nInstalling Cocoapods failed. This doesn't affect project initialization and you can safely proceed. However, you will need to install Cocoapods manually when running iOS, follow additional steps in "Run instructions for iOS" section.\n`,
           );
+          logger.error((error as Error).message as string);
         }
       }
     } else {

@@ -281,12 +281,12 @@ async function createFromTemplate({
 
       if (process.platform === 'darwin') {
         const installPodsValue = String(installCocoaPods);
-        const reactNativePath = path.dirname(
-          require.resolve('react-native', {paths: [projectDirectory]}),
-        );
 
         try {
           if (installPodsValue === 'true') {
+            const reactNativePath = path.dirname(
+              require.resolve('react-native', {paths: [projectDirectory]}),
+            );
             didInstallPods = true;
             await runCodegen({
               root: projectDirectory,
@@ -308,6 +308,9 @@ async function createFromTemplate({
             didInstallPods = installCocoapods;
 
             if (installCocoapods) {
+              const reactNativePath = path.dirname(
+                require.resolve('react-native', {paths: [projectDirectory]}),
+              );
               await runCodegen({
                 root: projectDirectory,
                 platform: 'ios',
@@ -321,7 +324,7 @@ async function createFromTemplate({
           }
         } catch (error) {
           logger.error(
-            `\nInstalling Cocoapods failed. This doesn't affect project initialization and you can safely proceed. However, you will need to install Cocoapods manually when running iOS, follow additional steps in "Run instructions for iOS" section.\n`,
+            '\nInstalling Cocoapods failed. This doesn\'t affect project initialization and you can safely proceed. However, you will need to install Cocoapods manually when running iOS, follow additional steps in "Run instructions for iOS" section.\n',
           );
           logger.error((error as Error).message as string);
         }

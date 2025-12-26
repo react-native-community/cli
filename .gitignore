@@ -13,3 +13,4 @@ build/
 coverage
 *.env
 .parcel-cache
+.yarn/

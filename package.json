@@ -18,7 +18,7 @@
     "link-packages": "node ./scripts/linkPackages.js",
     "publish": "yarn build-clean-all && yarn install && lerna publish --force-publish",
     "publish:next": "yarn build-clean-all && yarn install && lerna publish --force-publish --dist-tag next",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",

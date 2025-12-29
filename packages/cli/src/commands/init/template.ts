@@ -37,22 +37,24 @@ export async function installTemplatePackage(
     };
 
     // React Native doesn't support PnP, so we need to set nodeLinker to node-modules. Read more here: https://github.com/react-native-community/cli/issues/27#issuecomment-1772626767
-    executeCommand(
+    await executeCommand(
       'yarn',
       ['config', 'set', 'nodeLinker', 'node-modules'],
       options,
     );
 
-    executeCommand(
+    await executeCommand(
       'yarn',
       ['config', 'set', 'nmHoistingLimits', 'workspaces'],
       options,
     );
 
-    for (let key in yarnConfigOptions) {
-      if (yarnConfigOptions.hasOwnProperty(key)) {
-        let value = yarnConfigOptions[key];
-        executeCommand('yarn', ['config', 'set', key, value], options);
+    if (yarnConfigOptions) {
+      for (let key in yarnConfigOptions) {
+        if (Object.prototype.hasOwnProperty.call(yarnConfigOptions, key)) {
+          const value = yarnConfigOptions[key];
+          await executeCommand('yarn', ['config', 'set', key, value], options);
+        }
       }
     }
   }

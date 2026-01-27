@@ -66,4 +66,35 @@ describe('openURLMiddleware', () => {
 
     openURLMiddleware(req, res, next);
   });
+
+  // CVE-2025-11953
+  test('should reject URL with Windows pipe separator', (done) => {
+    const maliciousUrl = 'https://evil.com?|calc.exe';
+    const req = createMockRequest('POST', {url: maliciousUrl});
+
+    res.end = jest.fn(() => {
+      expect(open).not.toHaveBeenCalled();
+      expect(res.writeHead).toHaveBeenCalledWith(400);
+      expect(res.end).toHaveBeenCalledWith('Invalid URL');
+      done();
+    }) as any;
+
+    openURLMiddleware(req, res, next);
+  });
+
+  // CVE-2025-11953
+  test('should reject URL with Windows command exfiltration', (done) => {
+    // Encodes to reveal %BETA% env var
+    const maliciousUrl = 'https://example.com/?a=%¾TA%';
+    const req = createMockRequest('POST', {url: maliciousUrl});
+
+    res.end = jest.fn(() => {
+      expect(open).not.toHaveBeenCalled();
+      expect(res.writeHead).toHaveBeenCalledWith(400);
+      expect(res.end).toHaveBeenCalledWith('Invalid URL');
+      done();
+    }) as any;
+
+    openURLMiddleware(req, res, next);
+  });
 });

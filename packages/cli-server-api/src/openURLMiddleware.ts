@@ -10,17 +10,7 @@ import type {IncomingMessage, ServerResponse} from 'http';
 import {json} from 'body-parser';
 import connect from 'connect';
 import open from 'open';
-
-// Cache the imported sanitizeUrl function to avoid repeated dynamic imports
-let sanitizeUrlFn: ((url: string) => string) | null = null;
-
-async function getSanitizeUrl(): Promise<(url: string) => string> {
-  if (sanitizeUrlFn === null) {
-    const module = await import('strict-url-sanitise');
-    sanitizeUrlFn = module.sanitizeUrl;
-  }
-  return sanitizeUrlFn;
-}
+import {sanitizeUrl} from 'strict-url-sanitise';
 
 /**
  * Open a URL in the system browser.
@@ -50,7 +40,6 @@ export async function openURLMiddleware(
 
     let sanitizedUrl: string;
     try {
-      const sanitizeUrl = await getSanitizeUrl();
       sanitizedUrl = sanitizeUrl(url);
     } catch {
       res.writeHead(400);

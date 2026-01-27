@@ -3,19 +3,6 @@ import open from 'open';
 import {openURLMiddleware} from '../openURLMiddleware';
 
 jest.mock('open');
-jest.mock('strict-url-sanitise', () => ({
-  sanitizeUrl: jest.fn((url: string) => {
-    // Simulate the behavior of strict-url-sanitise
-    const parsed = new URL(url);
-    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-      throw new Error(`Invalid url to pass to open(): ${url}`);
-    }
-    if (parsed.hostname !== encodeURIComponent(parsed.hostname)) {
-      throw new Error(`Invalid url to pass to open(): ${url}`);
-    }
-    return url;
-  }),
-}));
 
 describe('openURLMiddleware', () => {
   let req: http.IncomingMessage & {body?: Object};
@@ -59,8 +46,6 @@ describe('openURLMiddleware', () => {
 
     expect(open).not.toHaveBeenCalled();
     expect(res.writeHead).toHaveBeenCalledWith(400);
-    expect(res.end).toHaveBeenCalledWith(
-      expect.stringContaining('Invalid url to pass to open()'),
-    );
+    expect(res.end).toHaveBeenCalledWith('Invalid URL');
   });
 });

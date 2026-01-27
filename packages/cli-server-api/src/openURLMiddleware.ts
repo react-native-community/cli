@@ -52,9 +52,9 @@ export async function openURLMiddleware(
     try {
       const sanitizeUrl = await getSanitizeUrl();
       sanitizedUrl = sanitizeUrl(url);
-    } catch (error) {
+    } catch {
       res.writeHead(400);
-      res.end(error instanceof Error ? error.message : 'Invalid URL');
+      res.end('Invalid URL');
       return;
     }
 

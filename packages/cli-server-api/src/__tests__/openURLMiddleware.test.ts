@@ -53,6 +53,7 @@ describe('openURLMiddleware', () => {
     openURLMiddleware(req, res, next);
   });
 
+  // CVE-2025-11953
   test('should reject malicious URL with invalid hostname', (done) => {
     const maliciousUrl = 'https://www.$(calc.exe).com/foo';
     const req = createMockRequest('POST', {url: maliciousUrl});

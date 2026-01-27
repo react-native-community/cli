@@ -28,7 +28,7 @@ describe('openURLMiddleware', () => {
     jest.restoreAllMocks();
   });
 
-  it('should return 400 for non-string URL', async () => {
+  test('should return 400 for non-string URL', async () => {
     req.body = {url: 123};
 
     await openURLMiddleware(req, res, next);
@@ -38,7 +38,7 @@ describe('openURLMiddleware', () => {
     expect(res.end).toHaveBeenCalledWith('URL must be a string');
   });
 
-  it('should reject malicious URL with invalid hostname', async () => {
+  test('should reject malicious URL with invalid hostname', async () => {
     const maliciousUrl = 'https://www.$(calc.exe).com/foo';
     req.body = {url: maliciousUrl};
 

@@ -14,7 +14,7 @@ import open from 'open';
 /**
  * Open a URL in the system browser.
  */
-async function openURLMiddleware(
+export async function openURLMiddleware(
   req: IncomingMessage & {
     // Populated by body-parser
     body?: Object;
@@ -31,20 +31,23 @@ async function openURLMiddleware(
 
     const {url} = req.body as {url: string};
 
-    try {
-      const parsedUrl = new URL(url);
-      if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
-        res.writeHead(400);
-        res.end('Invalid URL protocol');
-        return;
-      }
-    } catch (error) {
+    if (typeof url !== 'string') {
       res.writeHead(400);
-      res.end('Invalid URL format');
+      res.end('URL must be a string');
       return;
     }
 
-    await open(url);
+    let sanitizedUrl: string;
+    try {
+      const {sanitizeUrl} = await import('strict-url-sanitise');
+      sanitizedUrl = sanitizeUrl(url);
+    } catch (error) {
+      res.writeHead(400);
+      res.end(error instanceof Error ? error.message : 'Invalid URL');
+      return;
+    }
+
+    await open(sanitizedUrl);
 
     res.writeHead(200);
     res.end();

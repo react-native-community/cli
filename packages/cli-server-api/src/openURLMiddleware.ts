@@ -15,7 +15,7 @@ import {sanitizeUrl} from 'strict-url-sanitise';
 /**
  * Open a URL in the system browser.
  */
-export async function openURLMiddleware(
+async function openURLMiddleware(
   req: IncomingMessage & {
     // Populated by body-parser
     body?: Object;

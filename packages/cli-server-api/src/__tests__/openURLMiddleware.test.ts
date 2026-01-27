@@ -1,23 +1,35 @@
 import http from 'http';
+import {Readable} from 'stream';
 import open from 'open';
-import {openURLMiddleware} from '../openURLMiddleware';
+import openURLMiddleware from '../openURLMiddleware';
 
 jest.mock('open');
 
+function createMockRequest(method: string, body: object): http.IncomingMessage {
+  const bodyStr = JSON.stringify(body);
+  const readable = new Readable();
+  readable.push(bodyStr);
+  readable.push(null);
+
+  return Object.assign(readable, {
+    method,
+    url: '/',
+    headers: {
+      'content-type': 'application/json',
+      'content-length': String(Buffer.byteLength(bodyStr)),
+    },
+  }) as unknown as http.IncomingMessage;
+}
+
 describe('openURLMiddleware', () => {
-  let req: http.IncomingMessage & {body?: Object};
   let res: jest.Mocked<http.ServerResponse>;
   let next: jest.Mock;
 
   beforeEach(() => {
-    req = {
-      method: 'POST',
-      body: {},
-    } as any;
-
     res = {
       writeHead: jest.fn(),
       end: jest.fn(),
+      setHeader: jest.fn(),
     } as any;
 
     next = jest.fn();
@@ -28,24 +40,30 @@ describe('openURLMiddleware', () => {
     jest.restoreAllMocks();
   });
 
-  test('should return 400 for non-string URL', async () => {
-    req.body = {url: 123};
+  test('should return 400 for non-string URL', (done) => {
+    const req = createMockRequest('POST', {url: 123});
 
-    await openURLMiddleware(req, res, next);
+    res.end = jest.fn(() => {
+      expect(open).not.toHaveBeenCalled();
+      expect(res.writeHead).toHaveBeenCalledWith(400);
+      expect(res.end).toHaveBeenCalledWith('URL must be a string');
+      done();
+    }) as any;
 
-    expect(open).not.toHaveBeenCalled();
-    expect(res.writeHead).toHaveBeenCalledWith(400);
-    expect(res.end).toHaveBeenCalledWith('URL must be a string');
+    openURLMiddleware(req, res, next);
   });
 
-  test('should reject malicious URL with invalid hostname', async () => {
+  test('should reject malicious URL with invalid hostname', (done) => {
     const maliciousUrl = 'https://www.$(calc.exe).com/foo';
-    req.body = {url: maliciousUrl};
+    const req = createMockRequest('POST', {url: maliciousUrl});
 
-    await openURLMiddleware(req, res, next);
+    res.end = jest.fn(() => {
+      expect(open).not.toHaveBeenCalled();
+      expect(res.writeHead).toHaveBeenCalledWith(400);
+      expect(res.end).toHaveBeenCalledWith('Invalid URL');
+      done();
+    }) as any;
 
-    expect(open).not.toHaveBeenCalled();
-    expect(res.writeHead).toHaveBeenCalledWith(400);
-    expect(res.end).toHaveBeenCalledWith('Invalid URL');
+    openURLMiddleware(req, res, next);
   });
 });

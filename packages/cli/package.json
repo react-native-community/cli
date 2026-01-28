@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/cli",
-  "version": "20.1.0",
+  "version": "20.1.1",
   "description": "React Native CLI",
   "license": "MIT",
   "main": "build/index.js",
@@ -24,12 +24,12 @@
     "testEnvironment": "node"
   },
   "dependencies": {
-    "@react-native-community/cli-clean": "20.1.0",
-    "@react-native-community/cli-config": "20.1.0",
-    "@react-native-community/cli-doctor": "20.1.0",
-    "@react-native-community/cli-server-api": "20.1.0",
-    "@react-native-community/cli-tools": "20.1.0",
-    "@react-native-community/cli-types": "20.1.0",
+    "@react-native-community/cli-clean": "20.1.1",
+    "@react-native-community/cli-config": "20.1.1",
+    "@react-native-community/cli-doctor": "20.1.1",
+    "@react-native-community/cli-server-api": "20.1.1",
+    "@react-native-community/cli-tools": "20.1.1",
+    "@react-native-community/cli-types": "20.1.1",
     "commander": "^9.4.1",
     "deepmerge": "^4.3.0",
     "execa": "^5.0.0",

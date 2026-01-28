@@ -10,6 +10,7 @@ import type {IncomingMessage, ServerResponse} from 'http';
 import {json} from 'body-parser';
 import connect from 'connect';
 import open from 'open';
+import {sanitizeUrl} from 'strict-url-sanitise';
 
 /**
  * Open a URL in the system browser.
@@ -31,20 +32,22 @@ async function openURLMiddleware(
 
     const {url} = req.body as {url: string};
 
-    try {
-      const parsedUrl = new URL(url);
-      if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
-        res.writeHead(400);
-        res.end('Invalid URL protocol');
-        return;
-      }
-    } catch (error) {
+    if (typeof url !== 'string') {
       res.writeHead(400);
-      res.end('Invalid URL format');
+      res.end('URL must be a string');
       return;
     }
 
-    await open(url);
+    let sanitizedUrl: string;
+    try {
+      sanitizedUrl = sanitizeUrl(url);
+    } catch {
+      res.writeHead(400);
+      res.end('Invalid URL');
+      return;
+    }
+
+    await open(sanitizedUrl);
 
     res.writeHead(200);
     res.end();

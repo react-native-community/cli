@@ -44,10 +44,14 @@ describe('openURLMiddleware', () => {
     const req = createMockRequest('POST', {url: 123});
 
     res.end = jest.fn(() => {
-      expect(open).not.toHaveBeenCalled();
-      expect(res.writeHead).toHaveBeenCalledWith(400);
-      expect(res.end).toHaveBeenCalledWith('URL must be a string');
-      done();
+      try {
+        expect(open).not.toHaveBeenCalled();
+        expect(res.writeHead).toHaveBeenCalledWith(400);
+        expect(res.end).toHaveBeenCalledWith('URL must be a string');
+        done();
+      } catch (error) {
+        done(error);
+      }
     }) as any;
 
     openURLMiddleware(req, res, next);
@@ -59,10 +63,14 @@ describe('openURLMiddleware', () => {
     const req = createMockRequest('POST', {url: maliciousUrl});
 
     res.end = jest.fn(() => {
-      expect(open).not.toHaveBeenCalled();
-      expect(res.writeHead).toHaveBeenCalledWith(400);
-      expect(res.end).toHaveBeenCalledWith('Invalid URL');
-      done();
+      try {
+        expect(open).not.toHaveBeenCalled();
+        expect(res.writeHead).toHaveBeenCalledWith(400);
+        expect(res.end).toHaveBeenCalledWith('Invalid URL');
+        done();
+      } catch (error) {
+        done(error);
+      }
     }) as any;
 
     openURLMiddleware(req, res, next);
@@ -74,10 +82,14 @@ describe('openURLMiddleware', () => {
     const req = createMockRequest('POST', {url: maliciousUrl});
 
     res.end = jest.fn(() => {
-      expect(open).not.toHaveBeenCalled();
-      expect(res.writeHead).toHaveBeenCalledWith(400);
-      expect(res.end).toHaveBeenCalledWith('Invalid URL');
-      done();
+      try {
+        expect(open).not.toHaveBeenCalled();
+        expect(res.writeHead).toHaveBeenCalledWith(400);
+        expect(res.end).toHaveBeenCalledWith('Invalid URL');
+        done();
+      } catch (error) {
+        done(error);
+      }
     }) as any;
 
     openURLMiddleware(req, res, next);
@@ -90,10 +102,14 @@ describe('openURLMiddleware', () => {
     const req = createMockRequest('POST', {url: maliciousUrl});
 
     res.end = jest.fn(() => {
-      expect(open).not.toHaveBeenCalled();
-      expect(res.writeHead).toHaveBeenCalledWith(400);
-      expect(res.end).toHaveBeenCalledWith('Invalid URL');
-      done();
+      try {
+        expect(open).not.toHaveBeenCalled();
+        expect(res.writeHead).toHaveBeenCalledWith(400);
+        expect(res.end).toHaveBeenCalledWith('Invalid URL');
+        done();
+      } catch (error) {
+        done(error);
+      }
     }) as any;
 
     openURLMiddleware(req, res, next);

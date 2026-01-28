@@ -16,6 +16,7 @@
     "open": "^6.2.0",
     "pretty-format": "^29.7.0",
     "serve-static": "^1.13.1",
+    "strict-url-sanitise": "0.0.1",
     "ws": "^6.2.3"
   },
   "devDependencies": {

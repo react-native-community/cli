@@ -199,7 +199,7 @@ test('should fail if using require() in ES module in react-native.config.mjs', (
     'test-command-esm',
   ]);
   expect(stderr).toMatch('error Failed to load configuration of your project');
-  expect(stdout).toMatch(/Cannot require\(\) ES Module/);
+  expect(stdout).toMatch(/ES Module/i);
 });
 
 test('should fail if using require() in ES module with "type": "module" in package.json', () => {

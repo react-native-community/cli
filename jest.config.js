@@ -2,7 +2,6 @@ const common = {
   testEnvironment: 'node',
   snapshotSerializers: [require.resolve('jest-snapshot-serializer-raw')],
   testRunner: 'jest-circus/runner',
-  resolver: '<rootDir>/jest/resolver.js',
 };
 
 module.exports = {

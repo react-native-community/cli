@@ -10,7 +10,7 @@
     "@react-native-community/cli-tools": "20.0.1",
     "chalk": "^4.1.2",
     "fast-glob": "^3.3.2",
-    "fast-xml-parser": "^4.4.1"
+    "fast-xml-parser": "^5.3.4"
   },
   "files": [
     "build",

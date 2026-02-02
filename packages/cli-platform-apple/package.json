@@ -10,7 +10,7 @@
     "@react-native-community/cli-config-apple": "20.1.1",
     "@react-native-community/cli-tools": "20.1.1",
     "execa": "^5.0.0",
-    "fast-xml-parser": "^4.4.1",
+    "fast-xml-parser": "^5.3.4",
     "picocolors": "^1.1.1"
   },
   "devDependencies": {

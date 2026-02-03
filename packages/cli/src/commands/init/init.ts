@@ -465,6 +465,7 @@ export default (async function initialize(
     const updatedVersion = await npmResolveConcreteVersion(
       options.platformName ?? 'react-native',
       version,
+      options.authToken,
     );
     logger.debug(`Mapped: ${version} -> ${updatedVersion}`);
     version = updatedVersion;

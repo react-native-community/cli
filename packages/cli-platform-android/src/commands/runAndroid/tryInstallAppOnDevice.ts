@@ -24,8 +24,10 @@ function tryInstallAppOnDevice(
       .split(/(?=[A-Z])/);
 
     // create path to output file, eg. `production/debug`
-    const variantPath =
-      variantFromSelectedTask?.join('/')?.toLowerCase() ?? defaultVariant;
+    // ensure multiflavored path is correct, e.g. `clientStagingDebug` -> `clientStaging/debug`
+    const variantPath = variantFromSelectedTask
+      ? `${variantFromSelectedTask.slice(0, -1).join("")}/${variantFromSelectedTask.at(-1).toLocaleLowerCase()}`
+      : defaultVariant;
     // create output file name, eg. `production-debug`
     const variantAppName =
       variantFromSelectedTask?.join('-')?.toLowerCase() ?? defaultVariant;

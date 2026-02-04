@@ -26,7 +26,7 @@ function tryInstallAppOnDevice(
     // create path to output file, eg. `production/debug`
     // ensure multiflavored path is correct, e.g. `clientStagingDebug` -> `clientStaging/debug`
     const variantPath = variantFromSelectedTask
-      ? `${variantFromSelectedTask.slice(0, -1).join("")}/${variantFromSelectedTask.at(-1).toLocaleLowerCase()}`
+      ? `${variantFromSelectedTask.slice(0, -1).join("")}/${variantFromSelectedTask.at(-1)!.toLocaleLowerCase()}`
       : defaultVariant;
     // create output file name, eg. `production-debug`
     const variantAppName =

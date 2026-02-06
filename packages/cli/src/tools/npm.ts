@@ -119,11 +119,6 @@ class Template {
   }
 }
 
-const minorVersion = (version: string) => {
-  const v = semver.parse(version)!;
-  return `${v.major}.${v.minor}`;
-};
-
 export async function getTemplateVersion(
   reactNativeVersion: string,
 ): Promise<TemplateVersion | undefined> {
@@ -139,11 +134,8 @@ export async function getTemplateVersion(
   // - IF there a match for React Native MAJOR.MINOR.PATCH?
   //    - Yes: if there are >= 2 versions, pick the one last published. This lets us release
   //           specific fixes for React Native versions.
-  // - ELSE, is there a match for React Native MINOR.PATCH?
-  //    - Yes: if there are >= 2 versions, pick the one last published. This decouples us from
-  //           React Native releases.
   //    - No: we don't have a version of the template for a version of React Native. There should
-  //          at a minimum be at last one version cut for each MINOR.PATCH since 0.75. Before this
+  //          at a minimum be at least one version cut for each MAJOR.MINOR.PATCH since 0.75. Before this
   //          the template was shipped with React Native
   const rnToTemplate: VersionedTemplates = {};
   for (const [templateVersion, pkg] of Object.entries(json.versions)) {
@@ -159,12 +151,8 @@ export async function getTemplateVersion(
       json.time[templateVersion],
     );
 
-    const rnMinorVersion = minorVersion(rnVersion);
-
     rnToTemplate[rnVersion] = rnToTemplate[rnVersion] ?? [];
     rnToTemplate[rnVersion].push(template);
-    rnToTemplate[rnMinorVersion] = rnToTemplate[rnMinorVersion] ?? [];
-    rnToTemplate[rnMinorVersion].push(template);
   }
 
   // Make sure the last published is the first one in each version of React Native
@@ -176,10 +164,6 @@ export async function getTemplateVersion(
 
   if (reactNativeVersion in rnToTemplate) {
     return rnToTemplate[reactNativeVersion][0].version;
-  }
-  const rnMinorVersion = minorVersion(reactNativeVersion);
-  if (rnMinorVersion in rnToTemplate) {
-    return rnToTemplate[rnMinorVersion][0].version;
   }
   return;
 }

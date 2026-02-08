@@ -54,10 +54,10 @@ export default {
         `studio${archSuffix}.exe`,
       ).replace(/\\/g, '\\\\');
       try {
-        const {stdout} = await executeCommand(
+        const {stdout: fallbackStdout} = await executeCommand(
           `wmic datafile where name="${fallbackPath}" get Version`,
         );
-        version = stdout.replace(/(\r\n|\n|\r)/gm, '').trim();
+        version = fallbackStdout.replace(/(\r\n|\n|\r)/gm, '').trim();
       } catch {
         version = '';
       }

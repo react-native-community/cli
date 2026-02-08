@@ -191,6 +191,7 @@ test('init supports --pm yarn together with --skip-install', () => {
 });
 
 // react-native-macos stopped shipping `template.config.js` for 0.75, so this test is disabled. in future releases we should re-enable once `template.config.js` will be there again.
+// eslint-disable-next-line jest/no-disabled-tests
 test.skip('init --platform-name should work for out of tree platform', () => {
   createCustomTemplateFiles();
   const outOfTreePlatformName = 'react-native-macos';

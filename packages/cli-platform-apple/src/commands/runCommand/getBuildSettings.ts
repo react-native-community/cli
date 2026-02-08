@@ -41,7 +41,9 @@ export async function getBuildSettings(
     .filter((setting: any) => setting.buildSettings.WRAPPER_EXTENSION === 'app')
     .map(({target: settingsTarget}: any) => settingsTarget);
 
-  if (applicationTargets.length === 0) return null;
+  if (applicationTargets.length === 0) {
+    return null;
+  }
 
   let selectedTarget = applicationTargets[0];
 

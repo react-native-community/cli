@@ -11,11 +11,11 @@ afterEach(() => {
 });
 
 test('shows up help information without passing in any args', () => {
-  const {stderr} = runCLI(DIR);
+  const {stderr} = runCLI(DIR, [], {expectedFailure: true});
   expect(stderr).toMatchSnapshot();
 });
 
 test('does not pass --platform-name by default', () => {
-  const {stderr} = runCLI(DIR);
+  const {stderr} = runCLI(DIR, [], {expectedFailure: true});
   expect(stderr).not.toContain("unknown option '--platform-name'");
 });

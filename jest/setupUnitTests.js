@@ -1,3 +1,6 @@
+// mock node: prefixed built-in modules for Jest 26 compatibility
+jest.mock('node:zlib', () => require('zlib'), {virtual: true});
+
 jest.mock('@react-native-community/cli-tools', () => {
   return {
     ...jest.requireActual('@react-native-community/cli-tools'),

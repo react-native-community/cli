@@ -100,6 +100,8 @@ Present this plan to the user before proceeding. Group changes by area:
 - **iOS native files** (`ios/` directory)
 - **Android native files** (`android/` directory)
 - **JavaScript/TypeScript source** (if any template source files changed)
+- **Third-party native dependencies** (from step 7 — include any version bumps
+  identified there)
 
 ### 6. Apply changes
 
@@ -122,7 +124,38 @@ Apply the changes following the plan from step 5:
 - Refer to the [references](#references) section for version-specific guidance
   on breaking changes and migration notes.
 
-### 7. Post-upgrade checklist
+### 7. Update third-party native dependencies
+
+Scan the project's `dependencies` and `devDependencies` in `package.json` for
+third-party React Native libraries that contain **native code** (i.e. they have
+an `ios/` or `android/` directory, or are known native modules). Common examples
+include `react-native-screens`, `react-native-reanimated`,
+`react-native-gesture-handler`, `@react-native-async-storage/async-storage`,
+`react-native-svg`, `react-native-safe-area-context`, etc.
+
+For each candidate dependency:
+
+1. **Fetch the library's README** from its GitHub repository or npm page.
+2. **Look for a React Native version compatibility table or section** — many
+   native libraries document which versions of their package support which React
+   Native versions (e.g. a "Compatibility" or "Version Support" table).
+3. **If the README contains a compatibility table** that maps the target React
+   Native version to a specific library version, include that library version
+   bump in the upgrade plan.
+4. **If the README does not mention version compatibility with React Native
+   versions**, skip the library — do not guess or assume an upgrade is needed.
+
+Present all proposed dependency bumps alongside the diff-based changes in step 5
+(grouped under a **Third-party native dependencies** section). For each:
+
+- State the current version, the proposed version, and link to the compatibility
+  info you found.
+- If multiple major versions are compatible, prefer the latest stable version
+  that supports the target React Native version.
+
+Apply these version bumps to `package.json` as part of step 6.
+
+### 8. Post-upgrade checklist
 
 After applying all changes, present the user with a checklist:
 

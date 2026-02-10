@@ -33,5 +33,5 @@ Skills are auto-discovered by Cursor based on their descriptions.
 ### Other agents
 
 ```sh
-bunx skills add react-native-community/react-native-cli skills
+npx skills add react-native-community/react-native-cli skills
 ```

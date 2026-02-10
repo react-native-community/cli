@@ -4,7 +4,7 @@ description: >
   Use when upgrading react-native to a newer version. Handles version bumps,
   native project changes (Android/iOS), dependency updates, and breaking change
   migration. Invoke with `/upgrade-react-native <version>`.
-version: 1.0.0
+version: 0.1.0
 license: MIT
 ---
 

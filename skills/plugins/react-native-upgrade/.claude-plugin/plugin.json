@@ -1,6 +1,6 @@
 {
   "name": "react-native-upgrade",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Upgrade React Native versions in Community CLI projects using the upgrade helper diff.",
   "author": "React Native Community <https://github.com/react-native-community>"
 }

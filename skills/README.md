@@ -2,22 +2,18 @@
 
 Official AI coding agent skills for React Native Community CLI projects. Installable in [Claude Code](https://docs.anthropic.com/en/docs/claude-code) and [Cursor](https://cursor.sh).
 
-## Available plugins
+## Available skills
 
-| Plugin | Description |
-|--------|-------------|
-| [react-native-upgrade](./plugins/react-native-upgrade/) | Upgrade React Native versions using the upgrade helper diff |
+| Skill | Description |
+|-------|-------------|
+| [upgrade-react-native](./upgrade-react-native/) | Upgrade React Native versions using the upgrade helper diff |
 
 ## Installation
 
 ### Claude Code
 
 ```sh
-# Add the marketplace
-/plugin marketplace add react-native-community/react-native-cli skills
-
-# Install a plugin
-/plugin install react-native-upgrade
+npx skills add react-native-community/skills
 ```
 
 ### Cursor
@@ -33,5 +29,5 @@ Skills are auto-discovered by Cursor based on their descriptions.
 ### Other agents
 
 ```sh
-npx skills add react-native-community/react-native-cli skills
+npx skills add react-native-community/skills
 ```

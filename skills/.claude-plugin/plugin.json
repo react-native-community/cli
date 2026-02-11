@@ -1,0 +1,16 @@
+{
+  "name": "@react-native-community/skills",
+  "version": "0.1.0",
+  "description": "Official skills for React Native Community CLI projects",
+  "owner": {
+    "name": "React Native Community",
+    "url": "https://github.com/react-native-community"
+  },
+  "skills": [
+    {
+      "name": "upgrade-react-native",
+      "source": "./upgrade-react-native",
+      "description": "Upgrade React Native versions in Community CLI projects using the upgrade helper diff."
+    }
+  ]
+}

@@ -1,6 +1,6 @@
-# @react-native-community/skills
+# react-native-community-skills (experimental)
 
-Official AI coding agent skills for React Native Community CLI projects. Installable in [Claude Code](https://docs.anthropic.com/en/docs/claude-code) and [Cursor](https://cursor.sh).
+Official Agent Skills for React Native Community CLI projects.
 
 ## Available skills
 
@@ -31,3 +31,7 @@ Skills are auto-discovered by Cursor based on their descriptions.
 ```sh
 npx skills add https://github.com/react-native-community/cli/tree/main/skills
 ```
+
+## License
+
+MIT

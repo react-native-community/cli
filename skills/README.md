@@ -13,7 +13,7 @@ Official AI coding agent skills for React Native Community CLI projects. Install
 ### Claude Code
 
 ```sh
-npx skills add react-native-community/skills
+npx skills add https://github.com/react-native-community/cli/tree/main/skills
 ```
 
 ### Cursor
@@ -29,5 +29,5 @@ Skills are auto-discovered by Cursor based on their descriptions.
 ### Other agents
 
 ```sh
-npx skills add react-native-community/skills
+npx skills add https://github.com/react-native-community/cli/tree/main/skills
 ```

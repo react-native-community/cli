@@ -32,6 +32,7 @@ export type AndroidDependencyConfig = {
   cxxModuleCMakeListsPath?: string | null;
   cxxModuleHeaderName?: string | null;
   isPureCxxDependency?: boolean;
+  hasCodegenPrefab: boolean;
 };
 
 export type AndroidDependencyParams = {
@@ -48,4 +49,5 @@ export type AndroidDependencyParams = {
   cxxModuleCMakeListsModuleName?: string | null;
   cxxModuleCMakeListsPath?: string | null;
   cxxModuleHeaderName?: string | null;
+  hasCodegenPrefab?: boolean;
 };

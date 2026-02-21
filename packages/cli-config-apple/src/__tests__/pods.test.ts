@@ -103,6 +103,22 @@ describe('resolvePods', () => {
     expect(installPods).toHaveBeenCalled();
   });
 
+  it('passes new architecture flag when force option is set', async () => {
+    createTempFiles();
+
+    await resolvePods(DIR, path.join(DIR, 'ios'), {}, 'ios', '', {
+      forceInstall: true,
+      newArchEnabled: true,
+    });
+
+    expect(installPods).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        newArchEnabled: true,
+      }),
+    );
+  });
+
   it('should install pods when there is no cached hash of dependencies', async () => {
     createTempFiles();
 

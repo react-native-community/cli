@@ -94,6 +94,7 @@ async function install(
   platform: string,
   root: string,
   reactNativePath: string,
+  newArchEnabled?: boolean,
 ) {
   const loader = getLoader('Installing CocoaPods...');
   try {
@@ -105,6 +106,7 @@ async function install(
     });
     await installPods(loader, {
       skipBundleInstall: !!cachedDependenciesHash,
+      newArchEnabled,
       iosFolderPath,
     });
     cacheManager.set(packageJson.name, 'dependencies', currentDependenciesHash);
@@ -169,6 +171,7 @@ export default async function resolvePods(
       platformName,
       root,
       reactNativePath,
+      options?.newArchEnabled,
     );
   } else if (
     arePodsInstalled &&

@@ -182,6 +182,7 @@ async function setupAndRun(platformName?: string) {
   let config: Config | undefined;
   try {
     let selectedPlatform: string | undefined;
+    let reactNativePackageName: string | undefined;
 
     /*
       When linking dependencies in iOS and Android build we're passing `--platform` argument,
@@ -193,10 +194,22 @@ async function setupAndRun(platformName?: string) {
       if (platformIndex !== -1 && platformIndex < process.argv.length - 1) {
         selectedPlatform = process.argv[platformIndex + 1];
       }
+
+      const reactNativePackageNameIndex = process.argv.indexOf(
+        '--react-native-package-name',
+      );
+
+      if (
+        reactNativePackageNameIndex !== -1 &&
+        reactNativePackageNameIndex < process.argv.length - 1
+      ) {
+        reactNativePackageName = process.argv[reactNativePackageNameIndex + 1];
+      }
     }
 
     config = await loadConfigAsync({
       selectedPlatform,
+      reactNativePackageName,
     });
 
     logger.enable();

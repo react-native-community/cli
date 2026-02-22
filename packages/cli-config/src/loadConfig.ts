@@ -90,9 +90,11 @@ const removeDuplicateCommands = <T extends boolean>(commands: Command<T>[]) => {
 export default function loadConfig({
   projectRoot = findProjectRoot(),
   selectedPlatform,
+  reactNativePackageName,
 }: {
   projectRoot?: string;
   selectedPlatform?: string;
+  reactNativePackageName?: string;
 }): Config {
   let lazyProject: ProjectConfig;
   const userConfig = readConfigFromDisk(projectRoot);
@@ -102,7 +104,7 @@ export default function loadConfig({
     get reactNativePath() {
       return userConfig.reactNativePath
         ? path.resolve(projectRoot, userConfig.reactNativePath)
-        : resolveReactNativePath(projectRoot);
+        : resolveReactNativePath(projectRoot, reactNativePackageName);
     },
     get reactNativeVersion() {
       return getReactNativeVersion(initialConfig.reactNativePath);
@@ -188,9 +190,11 @@ export default function loadConfig({
 export async function loadConfigAsync({
   projectRoot = findProjectRoot(),
   selectedPlatform,
+  reactNativePackageName,
 }: {
   projectRoot?: string;
   selectedPlatform?: string;
+  reactNativePackageName?: string;
 }): Promise<Config> {
   let lazyProject: ProjectConfig;
   const userConfig = await readConfigFromDiskAsync(projectRoot);
@@ -200,7 +204,7 @@ export async function loadConfigAsync({
     get reactNativePath() {
       return userConfig.reactNativePath
         ? path.resolve(projectRoot, userConfig.reactNativePath)
-        : resolveReactNativePath(projectRoot);
+        : resolveReactNativePath(projectRoot, reactNativePackageName);
     },
     get reactNativeVersion() {
       return getReactNativeVersion(initialConfig.reactNativePath);

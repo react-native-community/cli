@@ -34,7 +34,9 @@ async function runPodInstall(loader: Ora, options: RunPodInstallOptions) {
 
     await execaPod(['install'], {
       env: {
-        RCT_NEW_ARCH_ENABLED: options?.newArchEnabled ? '1' : '0',
+        ...(options?.newArchEnabled !== undefined && {
+          RCT_NEW_ARCH_ENABLED: options.newArchEnabled ? '1' : '0',
+        }), // Skip forcing when architecture is unknown (e.g. first pod install)
         RCT_IGNORE_PODS_DEPRECATION: '1', // From React Native 0.79 onwards, users shouldn't install CocoaPods manually.
         ...(process.env.USE_THIRD_PARTY_JSC && {
           USE_THIRD_PARTY_JSC: process.env.USE_THIRD_PARTY_JSC,

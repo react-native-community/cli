@@ -57,7 +57,7 @@ const info = async function getInfo(_argv: Array<string>, ctx: Config) {
           ctx.project.ios.sourceDir,
         );
 
-        platforms.iOS.newArchEnabled = isNewArchitecture;
+        platforms.iOS.newArchEnabled = isNewArchitecture ?? notFound;
       } catch {
         platforms.iOS.newArchEnabled = notFound;
       }

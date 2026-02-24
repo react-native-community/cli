@@ -18,7 +18,6 @@ import {
   findDevServerPort,
   cacheManager,
 } from '@react-native-community/cli-tools';
-import getArchitecture from '../../tools/getArchitecture';
 import listDevices from '../../tools/listDevices';
 import {promptForDeviceSelection} from '../../tools/prompts';
 import {BuildFlags} from '../buildCommand/buildOptions';
@@ -83,10 +82,6 @@ const createRun =
       args.forcePods ||
       args.onlyPods
     ) {
-      const isAppRunningNewArchitecture = platformConfig.sourceDir
-        ? await getArchitecture(platformConfig.sourceDir)
-        : undefined;
-
       await resolvePods(
         ctx.root,
         platformConfig.sourceDir,
@@ -95,7 +90,6 @@ const createRun =
         ctx.reactNativePath,
         {
           forceInstall: args.forcePods || args.onlyPods,
-          newArchEnabled: isAppRunningNewArchitecture,
         },
       );
 

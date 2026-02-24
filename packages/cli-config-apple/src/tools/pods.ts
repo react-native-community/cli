@@ -18,7 +18,6 @@ import execa from 'execa';
 
 interface ResolvePodsOptions {
   forceInstall?: boolean;
-  newArchEnabled?: boolean;
 }
 
 interface NativeDependencies {
@@ -188,7 +187,6 @@ export default async function resolvePods(
     try {
       await installPods(loader, {
         skipBundleInstall: !!cachedDependenciesHash,
-        newArchEnabled: options?.newArchEnabled,
         iosFolderPath: platformFolderPath,
       });
       cacheManager.set(

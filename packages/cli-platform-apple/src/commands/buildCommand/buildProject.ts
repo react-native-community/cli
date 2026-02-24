@@ -110,6 +110,7 @@ export function buildProject(
       getProcessOptions(args),
     );
     let buildOutput = '';
+    let buildResolved = false;
     buildProcess.stdout.on('data', (data: Buffer) => {
       const stringData = data.toString();
       buildOutput += stringData;
@@ -124,8 +125,22 @@ export function buildProject(
           );
         }
       }
+      // Workaround: xcodebuild on Xcode 26.2+ may hang after build succeeds.
+      // Detect BUILD SUCCEEDED and resolve immediately instead of waiting for close.
+      if (!buildResolved && stringData.includes('BUILD SUCCEEDED')) {
+        buildResolved = true;
+        if (xcodebuildOutputFormatter) {
+          xcodebuildOutputFormatter.stdin.end();
+        } else {
+          loader.stop();
+        }
+        logger.success('Successfully built the app');
+        buildProcess.kill();
+        resolve(buildOutput);
+      }
     });
     buildProcess.on('close', (code: number) => {
+      if (buildResolved) return;
       if (xcodebuildOutputFormatter) {
         xcodebuildOutputFormatter.stdin.end();
       } else {

@@ -1,3 +1,5 @@
+import fs from 'fs';
+import {promises as fsPromises} from 'fs';
 import path from 'path';
 import {
   UserDependencyConfig,
@@ -31,10 +33,15 @@ function getDependencyConfig(
   config: UserDependencyConfig,
   userConfig: UserConfig,
 ): DependencyConfig {
+  const {autolinkTransitiveDependencies} = config.dependency;
+
   return merge(
     {
       root,
       name: dependencyName,
+      ...(autolinkTransitiveDependencies !== undefined
+        ? {autolinkTransitiveDependencies}
+        : {}),
       platforms: Object.keys(finalConfig.platforms).reduce(
         (dependency, platform) => {
           const platformConfig = finalConfig.platforms[platform];
@@ -82,6 +89,62 @@ const removeDuplicateCommands = <T extends boolean>(commands: Command<T>[]) => {
   });
 
   return Array.from(uniqueCommandsMap.values());
+};
+
+const getUserAutolinkOverride = (
+  dependencyName: string,
+  userConfig: UserConfig,
+) => {
+  const userDependencyConfig = userConfig.dependencies[dependencyName];
+  if (
+    userDependencyConfig &&
+    typeof userDependencyConfig === 'object' &&
+    Object.prototype.hasOwnProperty.call(
+      userDependencyConfig,
+      'autolinkTransitiveDependencies',
+    )
+  ) {
+    const value = userDependencyConfig.autolinkTransitiveDependencies;
+    if (typeof value === 'boolean') {
+      return value;
+    }
+  }
+  return undefined;
+};
+
+const shouldAutolinkTransitiveDependencies = (
+  dependencyName: string,
+  dependencyConfig: UserDependencyConfig,
+  userConfig: UserConfig,
+) => {
+  const override = getUserAutolinkOverride(dependencyName, userConfig);
+  if (typeof override === 'boolean') {
+    return override;
+  }
+
+  return dependencyConfig.dependency.autolinkTransitiveDependencies === true;
+};
+
+const getPeerDependenciesSync = (dependencyRoot: string) => {
+  try {
+    const packageJsonPath = path.join(dependencyRoot, 'package.json');
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+    return Object.keys(packageJson.peerDependencies || {});
+  } catch {
+    return [];
+  }
+};
+
+const getPeerDependenciesAsync = async (dependencyRoot: string) => {
+  try {
+    const packageJsonPath = path.join(dependencyRoot, 'package.json');
+    const packageJson = JSON.parse(
+      await fsPromises.readFile(packageJsonPath, 'utf8'),
+    );
+    return Object.keys(packageJson.peerDependencies || {});
+  } catch {
+    return [];
+  }
 };
 
 /**
@@ -132,51 +195,89 @@ export default function loadConfig({
     },
   };
 
-  const finalConfig = Array.from(
-    new Set([
-      ...Object.keys(userConfig.dependencies),
-      ...findDependencies(projectRoot),
-    ]),
-  ).reduce((acc: Config, dependencyName) => {
+  const queuedDependencies = new Set([
+    ...Object.keys(userConfig.dependencies),
+    ...findDependencies(projectRoot),
+  ]);
+  const queue = Array.from(queuedDependencies);
+  const processedDependencies = new Set<string>();
+
+  let finalConfig: Config = initialConfig;
+
+  while (queue.length > 0) {
+    const dependencyName = queue.shift() as string;
+
+    if (processedDependencies.has(dependencyName)) {
+      continue;
+    }
+
+    const currentConfig = finalConfig;
+
+    processedDependencies.add(dependencyName);
+
     const localDependencyRoot =
       userConfig.dependencies[dependencyName] &&
       userConfig.dependencies[dependencyName].root;
     try {
-      let root =
+      const root =
         localDependencyRoot ||
         resolveNodeModuleDir(projectRoot, dependencyName);
-      let config = readDependencyConfigFromDisk(root, dependencyName);
+      const dependencyConfig = readDependencyConfigFromDisk(
+        root,
+        dependencyName,
+      );
 
-      return assign({}, acc, {
-        dependencies: assign({}, acc.dependencies, {
+      const nextConfig = assign({}, currentConfig, {
+        dependencies: assign({}, currentConfig.dependencies, {
           get [dependencyName](): DependencyConfig {
             return getDependencyConfig(
               root,
               dependencyName,
               finalConfig,
-              config,
+              dependencyConfig,
               userConfig,
             );
           },
         }),
         commands: removeDuplicateCommands([
-          ...config.commands,
-          ...acc.commands,
+          ...dependencyConfig.commands,
+          ...currentConfig.commands,
         ]),
         platforms: {
-          ...acc.platforms,
-          ...(selectedPlatform && config.platforms[selectedPlatform]
-            ? {[selectedPlatform]: config.platforms[selectedPlatform]}
+          ...currentConfig.platforms,
+          ...(selectedPlatform && dependencyConfig.platforms[selectedPlatform]
+            ? {[selectedPlatform]: dependencyConfig.platforms[selectedPlatform]}
             : !selectedPlatform
-            ? config.platforms
+            ? dependencyConfig.platforms
             : undefined),
         },
-        healthChecks: [...acc.healthChecks, ...config.healthChecks],
+        healthChecks: [
+          ...currentConfig.healthChecks,
+          ...dependencyConfig.healthChecks,
+        ],
       }) as Config;
+
+      finalConfig = nextConfig;
+
+      if (
+        shouldAutolinkTransitiveDependencies(
+          dependencyName,
+          dependencyConfig,
+          userConfig,
+        )
+      ) {
+        const peerDependencies = getPeerDependenciesSync(root);
+        for (const peerDependency of peerDependencies) {
+          if (!queuedDependencies.has(peerDependency)) {
+            queuedDependencies.add(peerDependency);
+            queue.push(peerDependency);
+          }
+        }
+      }
     } catch {
-      return acc;
+      continue;
     }
-  }, initialConfig);
+  }
 
   return finalConfig;
 }
@@ -230,55 +331,89 @@ export async function loadConfigAsync({
     },
   };
 
-  const finalConfig = await Array.from(
-    new Set([
-      ...Object.keys(userConfig.dependencies),
-      ...findDependencies(projectRoot),
-    ]),
-  ).reduce(async (accPromise: Promise<Config>, dependencyName) => {
-    const acc = await accPromise;
+  const queuedDependencies = new Set([
+    ...Object.keys(userConfig.dependencies),
+    ...findDependencies(projectRoot),
+  ]);
+  const queue = Array.from(queuedDependencies);
+  const processedDependencies = new Set<string>();
+
+  let finalConfig: Config = initialConfig;
+
+  while (queue.length > 0) {
+    const dependencyName = queue.shift() as string;
+
+    if (processedDependencies.has(dependencyName)) {
+      continue;
+    }
+
+    const currentConfig = finalConfig;
+
+    processedDependencies.add(dependencyName);
+
     const localDependencyRoot =
       userConfig.dependencies[dependencyName] &&
       userConfig.dependencies[dependencyName].root;
     try {
-      let root =
+      const root =
         localDependencyRoot ||
         resolveNodeModuleDir(projectRoot, dependencyName);
-      let config = await readDependencyConfigFromDiskAsync(
+      const dependencyConfig = await readDependencyConfigFromDiskAsync(
         root,
         dependencyName,
       );
 
-      return assign({}, acc, {
-        dependencies: assign({}, acc.dependencies, {
+      const nextConfig = assign({}, currentConfig, {
+        dependencies: assign({}, currentConfig.dependencies, {
           get [dependencyName](): DependencyConfig {
             return getDependencyConfig(
               root,
               dependencyName,
               finalConfig,
-              config,
+              dependencyConfig,
               userConfig,
             );
           },
         }),
         commands: removeDuplicateCommands([
-          ...config.commands,
-          ...acc.commands,
+          ...dependencyConfig.commands,
+          ...currentConfig.commands,
         ]),
         platforms: {
-          ...acc.platforms,
-          ...(selectedPlatform && config.platforms[selectedPlatform]
-            ? {[selectedPlatform]: config.platforms[selectedPlatform]}
+          ...currentConfig.platforms,
+          ...(selectedPlatform && dependencyConfig.platforms[selectedPlatform]
+            ? {[selectedPlatform]: dependencyConfig.platforms[selectedPlatform]}
             : !selectedPlatform
-            ? config.platforms
+            ? dependencyConfig.platforms
             : undefined),
         },
-        healthChecks: [...acc.healthChecks, ...config.healthChecks],
+        healthChecks: [
+          ...currentConfig.healthChecks,
+          ...dependencyConfig.healthChecks,
+        ],
       }) as Config;
+
+      finalConfig = nextConfig;
+
+      if (
+        shouldAutolinkTransitiveDependencies(
+          dependencyName,
+          dependencyConfig,
+          userConfig,
+        )
+      ) {
+        const peerDependencies = await getPeerDependenciesAsync(root);
+        for (const peerDependency of peerDependencies) {
+          if (!queuedDependencies.has(peerDependency)) {
+            queuedDependencies.add(peerDependency);
+            queue.push(peerDependency);
+          }
+        }
+      }
     } catch {
-      return acc;
+      continue;
     }
-  }, Promise.resolve(initialConfig));
+  }
 
   return finalConfig;
 }

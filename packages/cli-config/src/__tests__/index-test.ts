@@ -358,6 +358,54 @@ module.exports = {
   `);
 });
 
+test('autolinks transitive peer dependencies when enabled by a library', async () => {
+  DIR = getTempDirectory('config_test_transitive_peers');
+  writeFiles(DIR, {
+    ...REACT_NATIVE_MOCK,
+    'package.json': `{
+      "dependencies": {
+        "react-native": "0.0.1",
+        "react-native-nitro-text": "0.0.1"
+      }
+    }`,
+    'node_modules/react-native-nitro-text/package.json': `{
+      "name": "react-native-nitro-text",
+      "peerDependencies": {
+        "react-native-nitro-modules": "1.0.0"
+      }
+    }`,
+    'node_modules/react-native-nitro-text/react-native.config.js': `module.exports = {
+      dependency: {
+        autolinkTransitiveDependencies: true,
+      },
+    };`,
+    'node_modules/react-native-nitro-modules/package.json': `{
+      "name": "react-native-nitro-modules",
+      "version": "1.0.0"
+    }`,
+    'node_modules/react-native-nitro-modules/ReactNativeNitroModules.podspec':
+      '',
+    'node_modules/react-native-nitro-modules/react-native.config.js': `module.exports = {
+      dependency: {
+        platforms: {
+          ios: {
+            podspecPath: "./ReactNativeNitroModules.podspec",
+          },
+        },
+      },
+    };`,
+  });
+
+  const config = await loadConfigAsync({projectRoot: DIR});
+  expect(Object.keys(config.dependencies)).toEqual(
+    expect.arrayContaining([
+      'react-native',
+      'react-native-nitro-text',
+      'react-native-nitro-modules',
+    ]),
+  );
+});
+
 test('should apply build types from dependency config', async () => {
   DIR = getTempDirectory('config_test_apply_dependency_config');
   writeFiles(DIR, {

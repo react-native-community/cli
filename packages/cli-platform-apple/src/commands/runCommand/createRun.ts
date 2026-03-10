@@ -406,11 +406,12 @@ const createRun =
       );
 
       if (!matchedSimulator) {
-        return logger.error(
+        logger.warn(
           `Could not find a simulator with name or UDID: "${pico.bold(
             args.simulator,
           )}". ${printFoundDevices(devices, 'simulator')}`,
         );
+        logger.info('Falling back to default simulator...');
       }
 
       return runOnSimulator(
@@ -419,7 +420,7 @@ const createRun =
         mode,
         scheme,
         args,
-        matchedSimulator,
+        matchedSimulator ?? fallbackSimulator,
       );
     } else {
       runOnSimulator(

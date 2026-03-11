@@ -27,7 +27,11 @@ import {getConfiguration} from '../buildCommand/getConfiguration';
 import {getXcodeProjectAndDir} from '../buildCommand/getXcodeProjectAndDir';
 import {getFallbackSimulator} from './getFallbackSimulator';
 import {getPlatformInfo} from './getPlatformInfo';
-import {printFoundDevices, matchingDevice} from './matchingDevice';
+import {
+  printFoundDevices,
+  matchingDevice,
+  formattedDeviceName,
+} from './matchingDevice';
 import {runOnDevice} from './runOnDevice';
 import {runOnSimulator} from './runOnSimulator';
 import {BuilderCommand} from '../../types';
@@ -326,7 +330,7 @@ const createRun =
           mode,
           scheme,
           args,
-          fallbackSimulator,
+          device,
         );
       } else {
         if (!device) {
@@ -392,6 +396,32 @@ const createRun =
           args,
         );
       }
+    } else if (args.simulator) {
+      const matchedSimulator = devices.find(
+        (d) =>
+          d.type === 'simulator' &&
+          (d.udid === args.simulator ||
+            d.name === args.simulator ||
+            formattedDeviceName(d) === args.simulator),
+      );
+
+      if (!matchedSimulator) {
+        logger.warn(
+          `Could not find a simulator with name or UDID: "${pico.bold(
+            args.simulator,
+          )}". ${printFoundDevices(devices, 'simulator')}`,
+        );
+        logger.info('Falling back to default simulator...');
+      }
+
+      return runOnSimulator(
+        xcodeProject,
+        platformName,
+        mode,
+        scheme,
+        args,
+        matchedSimulator ?? fallbackSimulator,
+      );
     } else {
       runOnSimulator(
         xcodeProject,

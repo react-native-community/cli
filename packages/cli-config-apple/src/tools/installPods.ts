@@ -14,27 +14,24 @@ import {execaPod} from './pods';
 
 interface PodInstallOptions {
   skipBundleInstall?: boolean;
-  newArchEnabled?: boolean;
   iosFolderPath?: string;
 }
 
 interface RunPodInstallOptions {
   shouldHandleRepoUpdate?: boolean;
-  newArchEnabled?: boolean;
 }
 
 async function runPodInstall(loader: Ora, options: RunPodInstallOptions) {
   const shouldHandleRepoUpdate = options?.shouldHandleRepoUpdate || true;
   try {
     loader.start(
-      `Installing CocoaPods dependencies ${pico.bold(
-        options?.newArchEnabled ? 'with New Architecture' : '',
-      )} ${pico.dim('(this may take a few minutes)')}`,
+      `Installing CocoaPods dependencies ${pico.dim(
+        '(this may take a few minutes)',
+      )}`,
     );
 
     await execaPod(['install'], {
       env: {
-        RCT_NEW_ARCH_ENABLED: options?.newArchEnabled ? '1' : '0',
         RCT_IGNORE_PODS_DEPRECATION: '1', // From React Native 0.79 onwards, users shouldn't install CocoaPods manually.
         ...(process.env.USE_THIRD_PARTY_JSC && {
           USE_THIRD_PARTY_JSC: process.env.USE_THIRD_PARTY_JSC,
@@ -63,7 +60,6 @@ async function runPodInstall(loader: Ora, options: RunPodInstallOptions) {
       await runPodUpdate(loader);
       await runPodInstall(loader, {
         shouldHandleRepoUpdate: false,
-        newArchEnabled: options?.newArchEnabled,
       });
     } else {
       loader.fail();
@@ -166,9 +162,7 @@ async function installPods(loader?: Ora, options?: PodInstallOptions) {
       loader.info();
       await installCocoaPods(loader);
     }
-    await runPodInstall(loader, {
-      newArchEnabled: options?.newArchEnabled,
-    });
+    await runPodInstall(loader, {});
   } finally {
     process.chdir('..');
   }

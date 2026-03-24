@@ -70,6 +70,10 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
         args.terminal,
       );
     }
+
+    if (newPort !== port) {
+      args.port = newPort;
+    }
   }
 
   if (config.reactNativeVersion !== 'unknown') {

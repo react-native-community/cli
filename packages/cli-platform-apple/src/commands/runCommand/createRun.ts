@@ -124,6 +124,10 @@ const createRun =
           args.terminal,
         );
       }
+
+      if (newPort !== port) {
+        args.port = newPort;
+      }
     }
 
     if (ctx.reactNativeVersion !== 'unknown') {

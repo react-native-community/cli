@@ -10,7 +10,7 @@
     "@react-native-community/cli-config-android": "20.1.3",
     "@react-native-community/cli-tools": "20.1.3",
     "execa": "^5.0.0",
-    "logkitty": "^0.7.1",
+    "logkitten": "^1.3.3",
     "picocolors": "^1.1.1"
   },
   "files": [

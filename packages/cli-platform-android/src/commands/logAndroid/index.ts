@@ -5,22 +5,32 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import {
-  logkitty,
-  makeTagsFilter,
-  formatEntry,
-  formatError,
-  AndroidPriority,
-} from 'logkitty';
+import {logkitten} from 'logkitten';
+import type {AndroidEntry} from 'logkitten';
 import {logger} from '@react-native-community/cli-tools';
 
-async function logAndroid() {
-  logger.info('Starting logkitty');
+const TAGS = new Set(['ReactNative', 'ReactNativeJS']);
 
-  const emitter = logkitty({
+const LEVEL_LABELS: Record<number, string> = {
+  10: 'V',
+  20: 'D',
+  30: 'I',
+  40: 'W',
+  50: 'E',
+  60: 'F',
+};
+
+function formatEntry(entry: AndroidEntry): string {
+  const level = LEVEL_LABELS[entry.level] ?? '?';
+  return `${level} | ${entry.tag}: ${entry.msg}`;
+}
+
+async function logAndroid() {
+  logger.info('Starting logkitten');
+
+  const emitter = logkitten({
     platform: 'android',
-    priority: AndroidPriority.VERBOSE,
-    filter: makeTagsFilter('ReactNative', 'ReactNativeJS'),
+    filter: (entry: AndroidEntry) => TAGS.has(entry.tag),
   });
 
   emitter.on('entry', (entry) => {
@@ -28,12 +38,12 @@ async function logAndroid() {
   });
 
   emitter.on('error', (error) => {
-    logger.log(formatError(error));
+    logger.log(error.message);
   });
 }
 
 export default {
   name: 'log-android',
-  description: 'starts logkitty',
+  description: 'starts logkitten',
   func: logAndroid,
 };

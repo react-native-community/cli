@@ -59,6 +59,8 @@ jobs:
           java-version: 17
 
       - uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.13'
 
       - uses: ruby/setup-ruby@v1
         if: runner.os == 'macOS'

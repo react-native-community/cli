@@ -1,5 +1,4 @@
 import path from 'path';
-import fs from 'fs';
 import {spawnSync} from 'child_process';
 
 import {
@@ -35,22 +34,12 @@ afterAll(() => {
 });
 
 test('works when Gradle is run outside of the project hierarchy', () => {
-  /**
-   * Location of Android project — we borrow its gradlew wrapper but test
-   * the -p flag against a minimal project that has no Android SDK dependency.
-   */
-  const androidProjectRoot = path.join(DIR, 'TestProject/android');
-  const gradleWrapper = path.join(androidProjectRoot, 'gradlew');
-
-  if (!fs.existsSync(gradleWrapper)) {
-    throw new Error(
-      `gradlew not found at ${gradleWrapper} — react-native init may have failed`,
-    );
-  }
-
-  // Ensure gradlew is executable — npm/yarn don't always preserve the execute
-  // bit from the package tarball on Linux.
-  fs.chmodSync(gradleWrapper, 0o755);
+  // Find the gradle binary: prefer GRADLE_HOME (set by gradle/actions/setup-gradle),
+  // fall back to whatever is on PATH.
+  const gradleHome = process.env.GRADLE_HOME;
+  const gradleBin = gradleHome
+    ? path.join(gradleHome, 'bin', 'gradle')
+    : 'gradle';
 
   // Create a minimal Gradle project with no Android plugin so the test does
   // not require a specific Android SDK installation.
@@ -61,10 +50,8 @@ test('works when Gradle is run outside of the project hierarchy', () => {
   });
 
   // Execute `gradle` with `-p` flag and `cwd` outside of project hierarchy.
-  // The gradlew wrapper is taken from the Android project but the PROJECT
-  // (settings/build files) is the minimal directory above, so no Android SDK
-  // is needed.  Use spawnSync directly to capture raw status/signal/error.
-  const result = spawnSync(gradleWrapper, ['-p', minimalProjectDir, 'help'], {
+  // Use spawnSync directly to capture raw status/signal/error.
+  const result = spawnSync(gradleBin, ['-p', minimalProjectDir, 'help'], {
     cwd: '/',
     env: process.env,
     encoding: 'utf8',

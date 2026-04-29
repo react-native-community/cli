@@ -59,9 +59,7 @@ export async function getBuildSettings(
     }
   }
 
-  const targetSetting = settings.find(
-    (s: any) => s.target === selectedTarget,
-  );
+  const targetSetting = settings.find((s: any) => s.target === selectedTarget);
   return targetSetting?.buildSettings ?? null;
 }
 

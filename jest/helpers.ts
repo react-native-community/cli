@@ -135,7 +135,7 @@ function getExecaOptions(options: SpawnOptions) {
   const localBin = path.resolve(cwd, 'node_modules/.bin');
 
   // Merge the existing environment with the new one
-  let env = Object.assign({}, process.env, {FORCE_COLOR: '0'}, options.env);
+  let env = Object.assign({}, process.env, {NO_COLOR: '1'}, options.env);
 
   // Prepend the local node_modules/.bin to the PATH
   env.PATH = `${localBin}${path.delimiter}${env.PATH}`;

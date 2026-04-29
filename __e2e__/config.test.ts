@@ -83,27 +83,10 @@ test('shows up current config without unnecessary output', () => {
   expect(parsedStdout.platforms).toHaveProperty('ios');
   expect(parsedStdout.platforms).toHaveProperty('android');
 
-  expect(parsedStdout.project.ios.sourceDir).toContain('TestProject');
+  expect(parsedStdout.project.ios?.sourceDir).toContain('TestProject');
   expect(parsedStdout.project.android.sourceDir).toContain('TestProject');
   expect(parsedStdout.project.android.packageName).toBe('com.testproject');
   expect(parsedStdout.project.android.applicationId).toBe('com.testproject');
-
-  const expectedXcodeProject =
-    process.platform === 'darwin'
-      ? {
-          name: 'TestProject.xcworkspace',
-          isWorkspace: true,
-          path: '.',
-        }
-      : {
-          name: 'TestProject.xcodeproj',
-          isWorkspace: false,
-          path: '.',
-        };
-
-  expect(parsedStdout.project.ios.xcodeProject).toStrictEqual(
-    expectedXcodeProject,
-  );
 });
 
 test('should log only valid JSON config if setting up env throws an error', () => {

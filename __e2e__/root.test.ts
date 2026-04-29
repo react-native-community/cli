@@ -1,4 +1,5 @@
 import path from 'path';
+import fs from 'fs';
 
 import {
   spawnScript,
@@ -44,6 +45,10 @@ test('works when Gradle is run outside of the project hierarchy', async () => {
    * Gradle globally
    */
   const gradleWrapper = path.join(androidProjectRoot, 'gradlew');
+
+  // Ensure gradlew is executable — npm/yarn don't always preserve the execute
+  // bit from the package tarball on Linux.
+  fs.chmodSync(gradleWrapper, 0o755);
 
   // Make sure that we use `-bin` distribution of Gradle
   await spawnScript(gradleWrapper, ['wrapper', '--distribution-type', 'bin'], {

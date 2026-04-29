@@ -246,7 +246,7 @@ it('should use yarn if project is using yarn', () => {
 });
 
 test.each([
-  [false, 'pipe'],
+  [false, 'ignore'],
   [true, 'inherit'],
 ])(
   'when verbose is set to %s should use "%s" stdio',

@@ -9,7 +9,7 @@ export function executeCommand(
     silent?: boolean;
   },
 ) {
-  const stdio = options.silent && !logger.isVerbose() ? 'pipe' : 'inherit';
+  const stdio = options.silent && !logger.isVerbose() ? 'ignore' : 'inherit';
   return new Promise<void>((resolve, reject) => {
     const child = spawn(command, args, {stdio, cwd: options.root});
     child.on('close', (code) => {

@@ -8,7 +8,10 @@ const DIR = getTempDirectory('test_different_roots');
 function findGradleBin(): string | null {
   const gradleHome = process.env.GRADLE_HOME;
   const bin = gradleHome ? path.join(gradleHome, 'bin', 'gradle') : 'gradle';
-  const probe = spawnSync(bin, ['--version'], {encoding: 'utf8', timeout: 10000});
+  const probe = spawnSync(bin, ['--version'], {
+    encoding: 'utf8',
+    timeout: 10000,
+  });
   return probe.status === 0 ? bin : null;
 }
 

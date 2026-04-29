@@ -117,7 +117,7 @@ describe('promptForTaskSelection', () => {
 
     expect(promptSpy).toHaveBeenCalledWith({
       choices: tasksList.map((t) => ({
-        title: `${pico.bold(t.task)} - ${t.description}`,
+        title: `${chalk.bold(t.task)} - ${t.description}`,
         value: t.task,
       })),
       message: 'Select install task you want to perform',

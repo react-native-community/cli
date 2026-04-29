@@ -59,7 +59,7 @@ export const promptForTaskSelection = async (
     name: 'task',
     message: `Select ${taskType} task you want to perform`,
     choices: tasks.map((t: GradleTask) => ({
-      title: `${pico.bold(t.task)} - ${t.description}`,
+      title: `${chalk.bold(t.task)} - ${t.description}`,
       value: t.task,
     })),
     min: 1,

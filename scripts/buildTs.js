@@ -31,7 +31,7 @@ const args = [
   ...process.argv.slice(2),
 ];
 
-console.log(pico.inverse('Building TypeScript definition files'));
+console.log(chalk.inverse('Building TypeScript definition files'));
 process.stdout.write(adjustToTerminalWidth('Building\n'));
 
 try {
@@ -40,7 +40,7 @@ try {
 } catch (e) {
   process.stdout.write('\n');
   console.error(
-    pico.inverse(pico.red('Unable to build TypeScript definition files')),
+    chalk.inverse(chalk.red('Unable to build TypeScript definition files')),
   );
   console.error(e.stack);
   process.exitCode = 1;

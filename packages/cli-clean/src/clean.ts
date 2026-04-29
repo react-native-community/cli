@@ -62,7 +62,7 @@ async function promptForCaches(
     name: 'caches',
     message: 'Select all caches to clean',
     choices: Object.entries(groups).map(([cmd, group]) => ({
-      title: `${cmd} ${pico.dim(`(${group.description})`)}`,
+      title: `${cmd} ${chalk.dim(`(${group.description})`)}`,
       value: cmd,
       selected: DEFAULT_GROUPS.includes(cmd),
     })),

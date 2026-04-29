@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import execa from 'execa';
+import {spawnSync} from 'child_process';
 import {runCLI, getTempDirectory, cleanup, writeFiles} from '../jest/helpers';
 import slash from 'slash';
 
@@ -46,7 +46,7 @@ if (process.platform === 'win32') {
 
 function isYarnAvailable() {
   try {
-    execa.sync('yarn', ['--version'], {stdio: 'pipe'});
+    spawnSync('yarn', ['--version'], {stdio: 'pipe'});
     return true;
   } catch (error) {
     return false;

@@ -1,7 +1,7 @@
 import {getLoader, logger, prompt} from '@react-native-community/cli-tools';
 import type {Config as CLIConfig} from '@react-native-community/cli-types';
 import chalk from 'chalk';
-import {execa} from 'execa';
+import {spawn} from 'child_process';
 import {existsSync as fileExists, rm} from 'fs';
 import os from 'os';
 import path from 'path';
@@ -30,6 +30,28 @@ const DEFAULT_GROUPS = ['metro', 'watchman'];
 
 const rmAsync = promisify(rm);
 const rmAsyncOptions = {maxRetries: 3, recursive: true, force: true};
+
+function runCommand(
+  command: string,
+  args: string[],
+  options: {cwd?: string},
+): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const child = spawn(command, args, {stdio: 'ignore', ...options});
+    child.on('close', (code) => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject(
+          new Error(
+            `Command failed: ${command} ${args.join(' ')} (exit code ${code})`,
+          ),
+        );
+      }
+    });
+    child.on('error', reject);
+  });
+}
 
 function isDirectoryPattern(directory: string): boolean {
   return directory.endsWith('*') || directory.endsWith('?');
@@ -101,7 +123,7 @@ export async function clean(
 
             if (fileExists(gradlew)) {
               const script = path.basename(gradlew);
-              await execa(
+              await runCommand(
                 os.platform() === 'win32' ? script : `./${script}`,
                 ['clean'],
                 {cwd: path.dirname(gradlew)},
@@ -119,7 +141,7 @@ export async function clean(
               {
                 label: 'Clean CocoaPods pod cache',
                 action: async () => {
-                  await execa('pod', ['cache', 'clean', '--all'], {
+                  await runCommand('pod', ['cache', 'clean', '--all'], {
                     cwd: projectRoot,
                   });
                 },
@@ -159,7 +181,9 @@ export async function clean(
         {
           label: 'Clean Bun cache',
           action: async () => {
-            await execa('bun', ['pm', 'cache', 'rm'], {cwd: projectRoot});
+            await runCommand('bun', ['pm', 'cache', 'rm'], {
+              cwd: projectRoot,
+            });
           },
         },
       ],
@@ -170,7 +194,7 @@ export async function clean(
         {
           label: 'Stop Watchman',
           action: async () => {
-            await execa(
+            await runCommand(
               os.platform() === 'win32' ? 'tskill' : 'killall',
               ['watchman'],
               {cwd: projectRoot},
@@ -180,7 +204,9 @@ export async function clean(
         {
           label: 'Delete Watchman cache',
           action: async () => {
-            await execa('watchman', ['watch-del-all'], {cwd: projectRoot});
+            await runCommand('watchman', ['watch-del-all'], {
+              cwd: projectRoot,
+            });
           },
         },
       ],
@@ -191,7 +217,7 @@ export async function clean(
         {
           label: 'Clean Yarn cache',
           action: async () => {
-            await execa('yarn', ['cache', 'clean'], {cwd: projectRoot});
+            await runCommand('yarn', ['cache', 'clean'], {cwd: projectRoot});
           },
         },
       ],
@@ -209,7 +235,9 @@ export async function clean(
               {
                 label: 'Verify npm cache',
                 action: async () => {
-                  await execa('npm', ['cache', 'verify'], {cwd: projectRoot});
+                  await runCommand('npm', ['cache', 'verify'], {
+                    cwd: projectRoot,
+                  });
                 },
               },
             ]

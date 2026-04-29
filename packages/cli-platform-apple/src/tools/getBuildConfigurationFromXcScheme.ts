@@ -1,5 +1,5 @@
 import {CLIError} from '@react-native-community/cli-tools';
-import chalk from 'chalk';
+import pico from 'picocolors';
 import {XMLParser} from 'fast-xml-parser';
 import fs from 'fs';
 import path from 'path';
@@ -41,7 +41,7 @@ export function getBuildConfigurationFromXcScheme(
   } catch {
     const projectSchemes =
       projectInfo?.schemes && projectInfo.schemes.length > 0
-        ? `${projectInfo.schemes.map((name) => chalk.bold(name)).join(', ')}`
+        ? `${projectInfo.schemes.map((name) => pico.bold(name)).join(', ')}`
         : 'No schemes';
 
     throw new CLIError(

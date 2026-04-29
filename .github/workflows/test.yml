@@ -43,6 +43,7 @@ jobs:
   e2e-tests:
     name: E2E Tests
     strategy:
+      fail-fast: false
       matrix:
         node-version: [20, 22]
         os: [ubuntu-latest, macos-latest]
@@ -59,6 +60,9 @@ jobs:
           java-version: 17
 
       - uses: gradle/actions/setup-gradle@v3
+        continue-on-error: true
+        with:
+          gradle-version: 'current'
 
       - uses: ruby/setup-ruby@v1
         if: runner.os == 'macOS'
@@ -88,5 +92,17 @@ jobs:
       - name: Install dependencies
         run: yarn --frozen-lockfile
 
+      - name: Check Gradle availability
+        run: |
+          echo "GRADLE_HOME=$GRADLE_HOME"
+          which gradle || echo "gradle not on PATH"
+          gradle --version || echo "gradle --version failed"
+
       - name: E2E tests
-        run: yarn test:ci:e2e
+        run: |
+          yarn test:ci:e2e 2>&1 | tee /tmp/e2e_output.txt; status=${PIPESTATUS[0]}
+          echo "## E2E Test Output" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          tail -200 /tmp/e2e_output.txt >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          exit $status

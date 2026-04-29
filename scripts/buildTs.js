@@ -11,7 +11,7 @@ const fs = require('fs');
 const path = require('path');
 
 const chalk = require('chalk');
-const {execaSync} = require('execa');
+const {spawnSync} = require('child_process');
 const {getPackages, adjustToTerminalWidth, OK} = require('./helpers');
 
 const packages = getPackages();
@@ -34,14 +34,16 @@ const args = [
 console.log(chalk.inverse('Building TypeScript definition files'));
 process.stdout.write(adjustToTerminalWidth('Building\n'));
 
-try {
-  execaSync('node', args, {stdio: 'inherit'});
+const result = spawnSync('node', args, {stdio: 'inherit'});
+if (result.status === 0) {
   process.stdout.write(`${OK}\n`);
-} catch (e) {
+} else {
   process.stdout.write('\n');
   console.error(
-    chalk.inverse.red('Unable to build TypeScript definition files'),
+    chalk.inverse(chalk.red('Unable to build TypeScript definition files')),
   );
-  console.error(e.stack);
+  if (result.error) {
+    console.error(result.error.stack);
+  }
   process.exitCode = 1;
 }

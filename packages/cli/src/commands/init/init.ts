@@ -2,7 +2,7 @@ import os from 'os';
 import path from 'path';
 import fs, {readdirSync} from 'fs-extra';
 import {validateProjectName} from './validate';
-import chalk from 'chalk';
+import pico from 'picocolors';
 import printRunInstructions from './printRunInstructions';
 import {
   CLIError,
@@ -121,7 +121,7 @@ async function setProjectDirectory(
     const conflicts = getConflictsForDirectory(directory);
 
     if (conflicts.length > 0) {
-      let warnMessage = `The directory ${chalk.bold(
+      let warnMessage = `The directory ${pico.bold(
         directory,
       )} contains files that will be overwritten:\n`;
 
@@ -281,12 +281,12 @@ async function createFromTemplate({
 
       if (process.platform === 'darwin') {
         const installPodsValue = String(installCocoaPods);
-        const reactNativePath = path.dirname(
-          require.resolve('react-native', {paths: [projectDirectory]}),
-        );
 
         try {
           if (installPodsValue === 'true') {
+            const reactNativePath = path.dirname(
+              require.resolve('react-native', {paths: [projectDirectory]}),
+            );
             didInstallPods = true;
             await runCodegen({
               root: projectDirectory,
@@ -301,13 +301,16 @@ async function createFromTemplate({
             const {installCocoapods} = await prompt({
               type: 'confirm',
               name: 'installCocoapods',
-              message: `Do you want to install CocoaPods now? ${chalk.reset.dim(
-                'Needed for running iOS project',
+              message: `Do you want to install CocoaPods now? ${pico.reset(
+                pico.dim('Needed for running iOS project'),
               )}`,
             });
             didInstallPods = installCocoapods;
 
             if (installCocoapods) {
+              const reactNativePath = path.dirname(
+                require.resolve('react-native', {paths: [projectDirectory]}),
+              );
               await runCodegen({
                 root: projectDirectory,
                 platform: 'ios',
@@ -321,10 +324,9 @@ async function createFromTemplate({
           }
         } catch (error) {
           logger.error(
-            `Installing Cocoapods failed. This doesn't affect project initialization and you can safely proceed. However, you will need to install Cocoapods manually when running iOS, follow additional steps in "Run instructions for iOS" section.\n\nError: ${
-              (error as Error).message as string
-            }\n`,
+            '\nInstalling Cocoapods failed. This doesn\'t affect project initialization and you can safely proceed. However, you will need to install Cocoapods manually when running iOS, follow additional steps in "Run instructions for iOS" section.\n',
           );
+          logger.error((error as Error).message as string);
         }
       }
     } else {
@@ -481,7 +483,7 @@ export default (async function initialize(
     const semverVersion = semver.coerce(version)?.version ?? version;
     if (semver.gte(semverVersion, TEMPLATE_COMMUNITY_REACT_NATIVE_VERSION)) {
       logger.warn(
-        `Use ${chalk.bold('--template')} and ${chalk.bold(
+        `Use ${pico.bold('--template')} and ${pico.bold(
           '--version',
         )} only if you know what you're doing. Here be dragons 🐉.`,
       );

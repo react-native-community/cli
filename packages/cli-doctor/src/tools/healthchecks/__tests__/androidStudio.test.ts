@@ -80,8 +80,7 @@ describe('androidStudio', () => {
   it('detects Android Studio in the fallback Windows installation path', async () => {
     // Make CLI think Android Studio was not found
     environmentInfo.IDEs['Android Studio'] = 'Not Found';
-    // Force platform to win32 for the test
-    // TODO: use cleaner jest.replaceProperty in jest 29+
+    // Force the platform to win32 for the test
     const originalPlatform = process.platform;
     Object.defineProperty(process, 'platform', {
       value: 'win32',
@@ -99,7 +98,7 @@ describe('androidStudio', () => {
     expect(diagnostics.needsToBeFixed).toBe(false);
     expect(diagnostics.version).toBe('4.2.1.0');
 
-    // TODO: use cleaner mockRestore in jest 29+
+    // Restore original platform
     Object.defineProperty(process, 'platform', {
       value: originalPlatform,
       writable: true,
@@ -111,7 +110,6 @@ describe('androidStudio', () => {
     // Make CLI think Android Studio was not found
     environmentInfo.IDEs['Android Studio'] = 'Not Found';
     // Force the platform to win32 for the test
-    // TODO: use cleaner jest.replaceProperty in jest 29+
     const originalPlatform = process.platform;
     Object.defineProperty(process, 'platform', {
       value: 'win32',
@@ -128,7 +126,7 @@ describe('androidStudio', () => {
 
     expect(diagnostics.needsToBeFixed).toBe(true);
 
-    // TODO: use cleaner mockRestore in jest 29+
+    // Restore original platform
     Object.defineProperty(process, 'platform', {
       value: originalPlatform,
       writable: true,

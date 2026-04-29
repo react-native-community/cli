@@ -6,9 +6,9 @@
  *
  */
 
-import path from 'path';
 import fs from 'fs';
-import chalk from 'chalk';
+import path from 'path';
+import pico from 'picocolors';
 import {Config, IOSProjectConfig} from '@react-native-community/cli-types';
 import {
   logger,
@@ -27,7 +27,11 @@ import {getConfiguration} from '../buildCommand/getConfiguration';
 import {getXcodeProjectAndDir} from '../buildCommand/getXcodeProjectAndDir';
 import {getFallbackSimulator} from './getFallbackSimulator';
 import {getPlatformInfo} from './getPlatformInfo';
-import {printFoundDevices, matchingDevice} from './matchingDevice';
+import {
+  printFoundDevices,
+  matchingDevice,
+  formattedDeviceName,
+} from './matchingDevice';
 import {runOnDevice} from './runOnDevice';
 import {runOnSimulator} from './runOnSimulator';
 import {BuilderCommand} from '../../types';
@@ -39,7 +43,6 @@ import openApp from './openApp';
 
 export interface FlagsT extends BuildFlags {
   simulator?: string;
-  device?: string | true;
   udid?: string;
   binaryPath?: string;
   listDevices?: boolean;
@@ -120,6 +123,10 @@ const createRun =
           ctx.reactNativePath,
           args.terminal,
         );
+      }
+
+      if (newPort !== port) {
+        args.port = newPort;
       }
     }
 
@@ -315,7 +322,7 @@ const createRun =
         // We may be able to recover from this for macCatalyst app starts,
         // but the general case is this is a problem and device list will help
         logger.warn(
-          `Could not find a device with udid: "${chalk.bold(
+          `Could not find a device with udid: "${pico.bold(
             args.udid,
           )}". ${printFoundDevices(devices)}`,
         );
@@ -327,7 +334,7 @@ const createRun =
           mode,
           scheme,
           args,
-          fallbackSimulator,
+          device,
         );
       } else {
         if (!device) {
@@ -360,8 +367,8 @@ const createRun =
         const deviceByUdid = devices.find((d) => d.udid === args.device);
         if (!deviceByUdid) {
           return logger.error(
-            `Could not find a physical device with name or unique device identifier: "${chalk.bold(
-              args.device,
+            `Could not find a physical device with name or unique device identifier: "${pico.bold(
+              typeof args.device === 'string' ? args.device : 'true',
             )}". ${printFoundDevices(devices, 'device')}`,
           );
         }
@@ -370,8 +377,8 @@ const createRun =
 
         if (deviceByUdid.type === 'simulator') {
           return logger.error(
-            `The device with udid: "${chalk.bold(
-              args.device,
+            `The device with udid: "${pico.bold(
+              typeof args.device === 'string' ? args.device : 'true',
             )}" is a simulator. If you want to run on a simulator, use the "--simulator" flag instead.`,
           );
         }
@@ -393,6 +400,32 @@ const createRun =
           args,
         );
       }
+    } else if (args.simulator) {
+      const matchedSimulator = devices.find(
+        (d) =>
+          d.type === 'simulator' &&
+          (d.udid === args.simulator ||
+            d.name === args.simulator ||
+            formattedDeviceName(d) === args.simulator),
+      );
+
+      if (!matchedSimulator) {
+        logger.warn(
+          `Could not find a simulator with name or UDID: "${pico.bold(
+            args.simulator,
+          )}". ${printFoundDevices(devices, 'simulator')}`,
+        );
+        logger.info('Falling back to default simulator...');
+      }
+
+      return runOnSimulator(
+        xcodeProject,
+        platformName,
+        mode,
+        scheme,
+        args,
+        matchedSimulator ?? fallbackSimulator,
+      );
     } else {
       runOnSimulator(
         xcodeProject,

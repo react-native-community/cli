@@ -18,6 +18,7 @@ const handlePortUnavailable = async (
 
   if (!start) {
     packager = false;
+    port = nextPort;
     logAlreadyRunningBundler(nextPort);
   } else {
     const {change} = await askForPortChange(port, nextPort);

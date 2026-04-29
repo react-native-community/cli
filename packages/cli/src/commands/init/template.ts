@@ -1,11 +1,10 @@
-import {execa} from 'execa';
 import path from 'path';
 import {logger, CLIError} from '@react-native-community/cli-tools';
 import * as PackageManager from '../../tools/packageManager';
 import copyFiles from '../../tools/copyFiles';
 import replacePathSepForRegex from '../../tools/replacePathSepForRegex';
 import fs from 'fs';
-import chalk from 'chalk';
+import pico from 'picocolors';
 import {getYarnVersionIfAvailable} from '../../tools/yarn';
 import {executeCommand} from '../../tools/executeCommand';
 
@@ -37,22 +36,24 @@ export async function installTemplatePackage(
     };
 
     // React Native doesn't support PnP, so we need to set nodeLinker to node-modules. Read more here: https://github.com/react-native-community/cli/issues/27#issuecomment-1772626767
-    executeCommand(
+    await executeCommand(
       'yarn',
       ['config', 'set', 'nodeLinker', 'node-modules'],
       options,
     );
 
-    executeCommand(
+    await executeCommand(
       'yarn',
       ['config', 'set', 'nmHoistingLimits', 'workspaces'],
       options,
     );
 
-    for (let key in yarnConfigOptions) {
-      if (yarnConfigOptions.hasOwnProperty(key)) {
-        let value = yarnConfigOptions[key];
-        executeCommand('yarn', ['config', 'set', key, value], options);
+    if (yarnConfigOptions) {
+      for (let key in yarnConfigOptions) {
+        if (Object.prototype.hasOwnProperty.call(yarnConfigOptions, key)) {
+          const value = yarnConfigOptions[key];
+          await executeCommand('yarn', ['config', 'set', key, value], options);
+        }
       }
     }
   }
@@ -79,8 +80,10 @@ export function getTemplateConfig(
   if (!fs.existsSync(configFilePath)) {
     throw new CLIError(
       `Couldn't find the "${configFilePath} file inside "${templateName}" template. Please make sure the template is valid.
-      Read more: ${chalk.underline.dim(
-        'https://github.com/react-native-community/cli/blob/main/docs/init.md#creating-custom-template',
+      Read more: ${pico.underline(
+        pico.dim(
+          'https://github.com/react-native-community/cli/blob/main/docs/init.md#creating-custom-template',
+        ),
       )}`,
     );
   }
@@ -120,5 +123,5 @@ export function executePostInitScript(
 
   logger.debug(`Executing post init script located ${scriptPath}`);
 
-  return execa(scriptPath, {stdio: 'inherit'});
+  return executeCommand(scriptPath, [], {root: templateSourceDir});
 }

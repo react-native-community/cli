@@ -2,7 +2,7 @@ import child_process, {
   ChildProcess,
   SpawnOptionsWithoutStdio,
 } from 'child_process';
-import chalk from 'chalk';
+import pico from 'picocolors';
 import {IOSProjectInfo} from '@react-native-community/cli-types';
 import {
   logger,
@@ -52,6 +52,22 @@ export function buildProject(
       return;
     }
 
+    const isDevice = args.device;
+    let destination = '';
+    if (udid) {
+      destination = `id=${udid}`;
+    } else if (isDevice) {
+      destination = 'generic/platform=iOS';
+    } else if (mode === 'Debug') {
+      destination = `generic/platform=${simulatorDest}`;
+    } else {
+      destination = `generic/platform=${platform}`;
+    }
+
+    if (args.destination) {
+      destination += `,${args.destination}`;
+    }
+
     const xcodebuildArgs = [
       xcodeProject.isWorkspace ? '-workspace' : '-project',
       xcodeProject.name,
@@ -62,12 +78,7 @@ export function buildProject(
       '-scheme',
       scheme,
       '-destination',
-      (udid
-        ? `id=${udid}`
-        : mode === 'Debug'
-        ? `generic/platform=${simulatorDest}`
-        : `generic/platform=${platform}`) +
-        (args.destination ? ',' + args.destination : ''),
+      destination,
     ];
 
     if (args.extraParams) {
@@ -76,7 +87,7 @@ export function buildProject(
 
     const loader = getLoader();
     logger.info(
-      `Building ${chalk.dim(
+      `Building ${pico.dim(
         `(using "xcodebuild ${xcodebuildArgs.join(' ')}")`,
       )}`,
     );

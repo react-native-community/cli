@@ -1,7 +1,8 @@
-jest.mock('execa', () => ({
-  execa: jest.fn(),
+jest.mock('child_process', () => ({
+  spawn: jest.fn(),
 }));
-import {execa} from 'execa';
+
+import {spawn} from 'child_process';
 import path from 'path';
 import fs from 'fs';
 import * as PackageManger from '../../../tools/packageManager';
@@ -15,6 +16,19 @@ import * as copyFiles from '../../../tools/copyFiles';
 
 const TEMPLATE_NAME = 'templateName';
 const TEMPLATE_SOURCE_DIR = '/tmp/rncli-init-template-123456';
+
+let mockChild: {on: jest.Mock};
+
+beforeEach(() => {
+  mockChild = {
+    on: jest.fn((event: string, callback: (code: number) => void) => {
+      if (event === 'close') {
+        callback(0);
+      }
+    }),
+  };
+  (spawn as jest.Mock).mockImplementation(() => mockChild);
+});
 
 afterEach(() => {
   jest.restoreAllMocks();
@@ -95,7 +109,8 @@ test('executePostInitScript', async () => {
     TEMPLATE_NAME,
     SCRIPT_PATH,
   );
-  expect(execa).toHaveBeenCalledWith(RESOLVED_PATH, {
+  expect(spawn).toHaveBeenCalledWith(RESOLVED_PATH, [], {
     stdio: 'inherit',
+    cwd: TEMPLATE_SOURCE_DIR,
   });
 });

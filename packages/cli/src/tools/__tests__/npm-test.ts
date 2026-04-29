@@ -39,7 +39,7 @@ describe('getTemplateVersion', () => {
     expect(await getTemplateVersion(VERSION)).toEqual('1.2.3');
   });
 
-  it('should matching latest MAJOR.MINOR if MAJOR.MINOR.PATCH has no match', async () => {
+  it('should NOT match if MAJOR.MINOR.PATCH has no exact match', async () => {
     fetchReturn({
       versions: {
         '3.2.1': {scripts: {version: '0.75.1'}},
@@ -51,7 +51,7 @@ describe('getTemplateVersion', () => {
       },
     });
 
-    expect(await getTemplateVersion('0.75.3')).toEqual('3.2.2');
+    expect(await getTemplateVersion('0.75.3')).toEqual(undefined);
   });
 
   it('should NOT matching when MAJOR.MINOR is not found', async () => {

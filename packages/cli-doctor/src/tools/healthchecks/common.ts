@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import pico from 'picocolors';
 import readline from 'readline';
 import wcwidth from 'wcwidth';
 import util from 'util';
@@ -39,8 +39,8 @@ const logManualInstallation = ({
 
   if (url) {
     logMessage(
-      `Read more about how to download ${healthcheck} at ${chalk.dim.underline(
-        url,
+      `Read more about how to download ${healthcheck} at ${pico.dim(
+        pico.underline(url),
       )}`,
     );
 
@@ -49,7 +49,7 @@ const logManualInstallation = ({
 
   if (command) {
     logMessage(
-      `Please install ${healthcheck} by running ${chalk.bold(command)}`,
+      `Please install ${healthcheck} by running ${pico.bold(command)}`,
     );
   }
 };
@@ -73,7 +73,7 @@ const logError = ({
 
   addBlankLine();
 
-  logMessage(chalk.dim(error.message));
+  logMessage(pico.dim(error.message));
 
   if (message) {
     logMessage(message);
@@ -83,7 +83,7 @@ const logError = ({
   }
 
   logMessage(
-    `The error above occured while trying to install ${healthcheck}. Please try again manually: ${chalk.bold(
+    `The error above occured while trying to install ${healthcheck}. Please try again manually: ${pico.bold(
       command,
     )}`,
   );

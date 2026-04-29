@@ -1,7 +1,8 @@
-jest.mock('execa', () => ({
-  execa: jest.fn(),
+jest.mock('child_process', () => ({
+  spawn: jest.fn(),
 }));
-import {execa} from 'execa';
+
+import {spawn} from 'child_process';
 import * as yarn from '../yarn';
 import * as bun from '../bun';
 import {logger} from '@react-native-community/cli-tools';
@@ -10,6 +11,19 @@ import * as PackageManager from '../packageManager';
 const PACKAGES = ['react', 'react-native'];
 const PROJECT_ROOT = '/some/dir';
 const EXEC_OPTS = {stdio: 'inherit', cwd: PROJECT_ROOT};
+
+let mockChild: {on: jest.Mock};
+
+beforeEach(() => {
+  mockChild = {
+    on: jest.fn((event: string, callback: (code: number) => void) => {
+      if (event === 'close') {
+        callback(0);
+      }
+    }),
+  };
+  (spawn as jest.Mock).mockImplementation(() => mockChild);
+});
 
 afterEach(() => {
   jest.resetAllMocks();
@@ -31,7 +45,7 @@ describe('yarn', () => {
       root: PROJECT_ROOT,
     });
 
-    expect(execa).toHaveBeenCalledWith('yarn', ['add', ...PACKAGES], EXEC_OPTS);
+    expect(spawn).toHaveBeenCalledWith('yarn', ['add', ...PACKAGES], EXEC_OPTS);
   });
 
   it('should installDev', () => {
@@ -40,7 +54,7 @@ describe('yarn', () => {
       root: PROJECT_ROOT,
     });
 
-    expect(execa).toHaveBeenCalledWith(
+    expect(spawn).toHaveBeenCalledWith(
       'yarn',
       ['add', '-D', ...PACKAGES],
       EXEC_OPTS,
@@ -53,7 +67,7 @@ describe('yarn', () => {
       root: PROJECT_ROOT,
     });
 
-    expect(execa).toHaveBeenCalledWith(
+    expect(spawn).toHaveBeenCalledWith(
       'yarn',
       ['remove', ...PACKAGES],
       EXEC_OPTS,
@@ -68,7 +82,7 @@ describe('npm', () => {
       root: PROJECT_ROOT,
     });
 
-    expect(execa).toHaveBeenCalledWith(
+    expect(spawn).toHaveBeenCalledWith(
       'npm',
       ['install', '--save', '--save-exact', ...PACKAGES],
       EXEC_OPTS,
@@ -81,7 +95,7 @@ describe('npm', () => {
       root: PROJECT_ROOT,
     });
 
-    expect(execa).toHaveBeenCalledWith(
+    expect(spawn).toHaveBeenCalledWith(
       'npm',
       ['install', '--save-dev', '--save-exact', ...PACKAGES],
       EXEC_OPTS,
@@ -94,7 +108,7 @@ describe('npm', () => {
       root: PROJECT_ROOT,
     });
 
-    expect(execa).toHaveBeenCalledWith(
+    expect(spawn).toHaveBeenCalledWith(
       'npm',
       ['uninstall', '--save', ...PACKAGES],
       EXEC_OPTS,
@@ -115,7 +129,7 @@ describe('bun', () => {
       root: PROJECT_ROOT,
     });
 
-    expect(execa).toHaveBeenCalledWith(
+    expect(spawn).toHaveBeenCalledWith(
       'bun',
       ['add', '--exact', ...PACKAGES],
       EXEC_OPTS,
@@ -134,7 +148,7 @@ describe('bun', () => {
       root: PROJECT_ROOT,
     });
 
-    expect(execa).toHaveBeenCalledWith(
+    expect(spawn).toHaveBeenCalledWith(
       'bun',
       ['add', '--dev', '--exact', ...PACKAGES],
       EXEC_OPTS,
@@ -153,7 +167,7 @@ describe('bun', () => {
       root: PROJECT_ROOT,
     });
 
-    expect(execa).toHaveBeenCalledWith(
+    expect(spawn).toHaveBeenCalledWith(
       'bun',
       ['remove', ...PACKAGES],
       EXEC_OPTS,
@@ -167,7 +181,7 @@ describe('bun', () => {
       root: PROJECT_ROOT,
     });
 
-    expect(execa).toHaveBeenCalledWith(
+    expect(spawn).toHaveBeenCalledWith(
       'npm',
       ['install', '--save', '--save-exact', ...PACKAGES],
       EXEC_OPTS,
@@ -181,7 +195,7 @@ describe('bun', () => {
       root: PROJECT_ROOT,
     });
 
-    expect(execa).toHaveBeenCalledWith(
+    expect(spawn).toHaveBeenCalledWith(
       'npm',
       ['install', '--save', '--save-exact', ...PACKAGES],
       EXEC_OPTS,
@@ -196,7 +210,7 @@ it('should use npm if yarn is not available', () => {
     root: PROJECT_ROOT,
   });
 
-  expect(execa).toHaveBeenCalledWith(
+  expect(spawn).toHaveBeenCalledWith(
     'npm',
     ['install', '--save', '--save-exact', ...PACKAGES],
     EXEC_OPTS,
@@ -211,7 +225,7 @@ it('should use npm if project is not using yarn', () => {
     root: PROJECT_ROOT,
   });
 
-  expect(execa).toHaveBeenCalledWith(
+  expect(spawn).toHaveBeenCalledWith(
     'npm',
     ['install', '--save', '--save-exact', ...PACKAGES],
     EXEC_OPTS,
@@ -228,11 +242,11 @@ it('should use yarn if project is using yarn', () => {
     root: PROJECT_ROOT,
   });
 
-  expect(execa).toHaveBeenCalledWith('yarn', ['add', ...PACKAGES], EXEC_OPTS);
+  expect(spawn).toHaveBeenCalledWith('yarn', ['add', ...PACKAGES], EXEC_OPTS);
 });
 
 test.each([
-  [false, 'pipe'],
+  [false, 'ignore'],
   [true, 'inherit'],
 ])(
   'when verbose is set to %s should use "%s" stdio',
@@ -249,7 +263,7 @@ test.each([
       silent: true,
     });
 
-    expect(execa).toHaveBeenCalledWith('yarn', ['add', ...PACKAGES], {
+    expect(spawn).toHaveBeenCalledWith('yarn', ['add', ...PACKAGES], {
       stdio: stdioType,
       cwd: PROJECT_ROOT,
     });

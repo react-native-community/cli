@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import pico from 'picocolors';
 
 import * as link from '../doclink';
 
@@ -17,11 +17,13 @@ export default function printNewRelease(
   logger.info(
     `React Native v${latestRelease.stable} is now available (your project is running on v${currentVersion}).`,
   );
-  logger.info(`Changelog: ${chalk.dim.underline(latestRelease.changelogUrl)}`);
-  logger.info(`Diff: ${chalk.dim.underline(latestRelease.diffUrl)}`);
   logger.info(
-    `For more info, check out "${chalk.dim.underline(
-      link.docs('upgrading', 'none'),
+    `Changelog: ${pico.dim(pico.underline(latestRelease.changelogUrl))}`,
+  );
+  logger.info(`Diff: ${pico.dim(pico.underline(latestRelease.diffUrl))}`);
+  logger.info(
+    `For more info, check out "${pico.dim(
+      pico.underline(link.docs('upgrading', 'none')),
     )}".`,
   );
 

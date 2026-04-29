@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import {spawnSync} from 'child_process';
 import {runCLI, getTempDirectory, cleanup, writeFiles} from '../jest/helpers';
 import slash from 'slash';
 
@@ -41,6 +42,11 @@ if (process.platform === 'win32') {
   templatePath = slash(templatePath);
 } else {
   templatePath = `file://${templatePath}`;
+}
+
+function isYarnAvailable() {
+  const result = spawnSync('yarn', ['--version'], {stdio: 'pipe'});
+  return !result.error && result.status === 0;
 }
 
 test('init fails if the directory already exists and --replace-directory false', () => {
@@ -152,7 +158,39 @@ test('init skips installation of dependencies with --skip-install', () => {
   );
 });
 
+test('init supports --pm yarn together with --skip-install', () => {
+  if (!isYarnAvailable()) {
+    return;
+  }
+
+  createCustomTemplateFiles();
+
+  const {stdout, stderr} = runCLI(DIR, [
+    'init',
+    '--template',
+    templatePath,
+    PROJECT_NAME,
+    '--pm',
+    'yarn',
+    '--skip-install',
+  ]);
+
+  expect(stderr).not.toContain(`Couldn't find the "`);
+  expect(stdout).toContain('Run instructions');
+
+  const dirFiles = fs
+    .readdirSync(path.join(DIR, PROJECT_NAME))
+    .filter((f) => f !== '.gitignore') // Yarn Berry may create .gitignore
+    .sort();
+  const expectedFiles = customTemplateCopiedFiles
+    .filter((file) => !['node_modules', 'package-lock.json'].includes(file))
+    .concat(['.yarn', '.yarnrc.yml'])
+    .sort();
+  expect(dirFiles).toEqual(expectedFiles);
+});
+
 // react-native-macos stopped shipping `template.config.js` for 0.75, so this test is disabled. in future releases we should re-enable once `template.config.js` will be there again.
+// eslint-disable-next-line jest/no-disabled-tests
 test.skip('init --platform-name should work for out of tree platform', () => {
   createCustomTemplateFiles();
   const outOfTreePlatformName = 'react-native-macos';

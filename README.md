@@ -23,7 +23,7 @@ Our release cycle is independent of `react-native`. We follow semver and here is
 
 | `@react-native-community/cli`                                      | `react-native`            |
 | ------------------------------------------------------------------ | ------------------------- |
-| [^20.0.0](https://github.com/react-native-community/cli/tree/main) | ^0.81.0, ^0.82.0          |
+| [^20.0.0](https://github.com/react-native-community/cli/tree/main) | ^0.81.0, ^0.82.0, ^0.83.0, ^0.84.0, ^0.85.0 |
 | [^19.0.0](https://github.com/react-native-community/cli/tree/19.x) | ^0.80.0                   |
 | [^18.0.0](https://github.com/react-native-community/cli/tree/18.x) | ^0.79.0                   |
 | [^15.0.0](https://github.com/react-native-community/cli/tree/15.x) | ^0.76.0, ^0.77.0, ^0.78.0 |
@@ -115,11 +115,11 @@ React Native CLI is a dependency of `react-native`, which makes it a transitive 
 ## Maintainers
 
 - Michał Pierzchała ([**@thymikee**](https://github.com/thymikee)) - [Callstack](https://callstack.com)
-- Szymon Rybczak ([**@szymonrybczak**](https://github.com/szymonrybczak)) - [Callstack](https://callstack.com)
 - Alex Hunt ([**@huntie**](https://github.com/huntie)) - [Meta](https://meta.com)
 
 Previously:
 
+- Szymon Rybczak ([**@szymonrybczak**](https://github.com/szymonrybczak))
 - Mike Grabowski ([**@grabbou**](https://github.com/grabbou)) - [Callstack](https://callstack.com)
 - Kacper Wiszczuk ([**@esemesek**](https://github.com/esemesek)) - [Callstack](https://callstack.com)
 - Adam Trzciński ([**@adamTrz**](https://github.com/adamTrz)) - [Callstack](https://callstack.com)

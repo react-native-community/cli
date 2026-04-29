@@ -13,6 +13,7 @@ export type BuildFlags = {
   extraParams?: string[];
   forcePods?: boolean;
   onlyPods?: boolean;
+  device?: string | true;
 };
 
 export const getBuildOptions = ({platformName}: BuilderCommand) => {

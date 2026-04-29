@@ -2,7 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import os from 'os';
 import appDirs from 'appdirsjs';
-import chalk from 'chalk';
+import pico from 'picocolors';
 import logger from './logger';
 
 type CacheKey =
@@ -66,7 +66,7 @@ function removeProjectCache(name: string) {
     }
   } catch {
     logger.error(
-      `Failed to remove cache for ${name}. If you experience any issues when running freshly initialized project, please remove the "${chalk.underline(
+      `Failed to remove cache for ${name}. If you experience any issues when running freshly initialized project, please remove the "${pico.underline(
         path.join(cacheRootPath, name),
       )}" folder manually.`,
     );

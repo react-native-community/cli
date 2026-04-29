@@ -128,11 +128,13 @@ function createInstallError(error: Error & {stderr: string}) {
       '$ANDROID_HOME/tools/bin/sdkmanager --licenses',
     )}."`;
   } else if (stderr.includes('requires Java')) {
-    message = `Looks like your Android environment is not properly set. Please go to ${chalk.dim.underline(
-      link.docs('set-up-your-environment', 'android', {
-        hash: 'jdk-studio',
-        guide: 'native',
-      }),
+    message = `Looks like your Android environment is not properly set. Please go to ${chalk.dim(
+      chalk.underline(
+        link.docs('set-up-your-environment', 'android', {
+          hash: 'jdk-studio',
+          guide: 'native',
+        }),
+      ),
     )} and follow the React Native CLI QuickStart guide to install the compatible version of JDK.`;
   } else {
     message = error.message;

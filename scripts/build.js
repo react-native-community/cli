@@ -22,7 +22,7 @@ const fs = require('fs');
 const path = require('path');
 const glob = require('fast-glob');
 const babel = require('@babel/core');
-const chalk = require('chalk');
+const pico = require('picocolors');
 const micromatch = require('micromatch');
 const {
   PACKAGES_DIR,
@@ -72,7 +72,7 @@ function buildFile(file, silent) {
     silent ||
       process.stdout.write(
         `${
-          chalk.dim('  \u2022 ') + path.relative(PACKAGES_DIR, file)
+          pico.dim('  \u2022 ') + path.relative(PACKAGES_DIR, file)
         } (ignore)\n`,
       );
     return;
@@ -96,21 +96,33 @@ function buildFile(file, silent) {
     silent ||
       process.stdout.write(
         `${
-          chalk.red('  \u2022 ') +
+          pico.red('  \u2022 ') +
           path.relative(PACKAGES_DIR, file) +
-          chalk.red(' \u21D2 ') +
+          pico.red(' \u21D2 ') +
           path.relative(PACKAGES_DIR, destPath)
         } (copy)\n`,
       );
   } else {
-    const options = Object.assign({}, transformOptions);
+    const options = {
+      ...transformOptions,
+      sourceMaps: true,
+      sourceFileName: path.basename(file),
+    };
 
     let {code, map} = babel.transformFileSync(file, options);
 
-    if (!file.endsWith('.d.ts') && map.sources.length > 0) {
-      code = `${code}\n\n//# sourceMappingURL=${destPath}.map`;
-      map.sources = [path.relative(path.dirname(destPath), file)];
-      fs.writeFileSync(`${destPath}.map`, JSON.stringify(map));
+    if (!file.endsWith('.d.ts')) {
+      const outDir = path.dirname(destPath);
+      const outFile = path.basename(destPath);
+      const mapFileName = `${outFile}.map`;
+      const mapPath = path.join(outDir, mapFileName);
+
+      // Normalize/override key fields for consistency
+      map.file = outFile;
+      map.sources = [path.relative(outDir, file).replace(/\\/g, '/')];
+
+      code = `${code}\n\n//# sourceMappingURL=${mapFileName}`;
+      fs.writeFileSync(mapPath, JSON.stringify(map));
     }
 
     fs.writeFileSync(destPath, code);
@@ -118,9 +130,9 @@ function buildFile(file, silent) {
     silent ||
       process.stdout.write(
         `${
-          chalk.green('  \u2022 ') +
+          pico.green('  \u2022 ') +
           path.relative(PACKAGES_DIR, file) +
-          chalk.green(' \u21D2 ') +
+          pico.green(' \u21D2 ') +
           path.relative(PACKAGES_DIR, destPath)
         }\n`,
       );
@@ -133,7 +145,7 @@ if (files.length) {
   files.forEach(buildFile);
 } else {
   const packages = getPackages();
-  process.stdout.write(chalk.inverse(' Building packages \n'));
+  process.stdout.write(pico.inverse(' Building packages \n'));
   packages.forEach(buildNodePackage);
   process.stdout.write('\n');
 }

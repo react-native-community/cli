@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import pico from 'picocolors';
 import {HealthCheckInterface} from '../../types';
 
 // List of answers on how to set `ANDROID_HOME` for each platform
@@ -16,7 +16,7 @@ const description =
 // for `ANDROID_HOME` for every platform NodeJS supports
 const platform = process.platform as 'darwin' | 'win32' | 'linux';
 
-const message = `Read more about how to set the ${label} at ${chalk.dim(
+const message = `Read more about how to set the ${label} at ${pico.dim(
   URLS[platform],
 )}`;
 

@@ -59,8 +59,10 @@ export async function getBuildSettings(
     }
   }
 
-  const targetIndex = applicationTargets.indexOf(selectedTarget);
-  return settings[targetIndex].buildSettings;
+  const targetSetting = settings.find(
+    (s: any) => s.target === selectedTarget,
+  );
+  return targetSetting?.buildSettings ?? null;
 }
 
 function getPlatformName(buildOutput: string) {

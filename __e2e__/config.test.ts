@@ -160,7 +160,14 @@ test('should read user config from react-native.config.js', () => {
   expect(stdout).toBe('test-command');
 });
 
-test('should read user config from react-native.config.ts', () => {
+// Native TypeScript import() support requires Node >= 22 (landed in 22.6 via --experimental-strip-types).
+// On Node 20, cosmiconfig cannot load .ts config files, so this test is skipped there.
+const testOrSkip =
+  parseInt(process.version.split('.')[0].replace('v', ''), 10) >= 22
+    ? test
+    : test.skip;
+
+testOrSkip('should read user config from react-native.config.ts', () => {
   writeFiles(path.join(DIR, 'TestProject'), {
     'react-native.config.ts': USER_CONFIG_TS,
   });

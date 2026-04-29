@@ -1,5 +1,6 @@
 import path from 'path';
 import fs from 'fs';
+import {spawnSync} from 'child_process';
 
 import {
   spawnScript,
@@ -56,14 +57,24 @@ test('works when Gradle is run outside of the project hierarchy', () => {
   // bit from the package tarball on Linux.
   fs.chmodSync(gradleWrapper, 0o755);
 
-  // Execute `gradle` with `-p` flag and `cwd` outside of project hierarchy
-  const result = spawnScript(gradleWrapper, ['-p', androidProjectRoot], {
+  // Execute `gradle` with `-p` flag and `cwd` outside of project hierarchy.
+  // Use spawnSync directly to capture the raw status, signal, and error
+  // instead of the masked exitCode returned by spawnScript.
+  const result = spawnSync(gradleWrapper, ['-p', androidProjectRoot], {
     cwd: '/',
+    env: process.env,
+    encoding: 'utf8',
   });
 
-  if (!result.stdout.includes('BUILD SUCCESSFUL')) {
+  const stdout = result.stdout?.trim() ?? '';
+  if (!stdout.includes('BUILD SUCCESSFUL')) {
     throw new Error(
-      `Expected Gradle to succeed.\nstdout: ${result.stdout}\nstderr: ${result.stderr}\nexitCode: ${result.exitCode}`,
+      `Expected Gradle to succeed.\n` +
+        `stdout: ${stdout}\n` +
+        `stderr: ${result.stderr?.trim() ?? ''}\n` +
+        `status: ${result.status}\n` +
+        `signal: ${result.signal}\n` +
+        `error: ${result.error?.message ?? 'none'}`,
     );
   }
 });

@@ -8,6 +8,11 @@ Options:
   -h, --help                    display help for command
 
 Commands:
+  config [options]              Print CLI configuration
+  clean [options]               Cleans your project by removing React Native
+                                related caches and modules.
+  info [options]                Get relevant version info about OS, toolchain
+                                and libraries
   init [options] [projectName]  New app will be initialized in the directory of
                                 the same name. Android and iOS projects will
                                 use this name for publishing setup.

@@ -1,16 +1,5 @@
-const mockOn = jest.fn(function (
-  this: object,
-  event: string,
-  callback: (code: number) => void,
-) {
-  if (event === 'close') {
-    callback(0);
-  }
-  return this;
-});
-
 jest.mock('child_process', () => ({
-  spawn: jest.fn(() => ({on: mockOn})),
+  spawn: jest.fn(),
 }));
 
 import {spawn} from 'child_process';
@@ -22,6 +11,19 @@ import * as PackageManager from '../packageManager';
 const PACKAGES = ['react', 'react-native'];
 const PROJECT_ROOT = '/some/dir';
 const EXEC_OPTS = {stdio: 'inherit', cwd: PROJECT_ROOT};
+
+let mockChild: {on: jest.Mock};
+
+beforeEach(() => {
+  mockChild = {
+    on: jest.fn((event: string, callback: (code: number) => void) => {
+      if (event === 'close') {
+        callback(0);
+      }
+    }),
+  };
+  (spawn as jest.Mock).mockImplementation(() => mockChild);
+});
 
 afterEach(() => {
   jest.resetAllMocks();

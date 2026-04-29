@@ -1,16 +1,5 @@
-const mockOn = jest.fn(function (
-  this: object,
-  event: string,
-  callback: (code: number) => void,
-) {
-  if (event === 'close') {
-    callback(0);
-  }
-  return this;
-});
-
 jest.mock('child_process', () => ({
-  spawn: jest.fn(() => ({on: mockOn})),
+  spawn: jest.fn(),
 }));
 
 import {spawn} from 'child_process';
@@ -27,6 +16,19 @@ import * as copyFiles from '../../../tools/copyFiles';
 
 const TEMPLATE_NAME = 'templateName';
 const TEMPLATE_SOURCE_DIR = '/tmp/rncli-init-template-123456';
+
+let mockChild: {on: jest.Mock};
+
+beforeEach(() => {
+  mockChild = {
+    on: jest.fn((event: string, callback: (code: number) => void) => {
+      if (event === 'close') {
+        callback(0);
+      }
+    }),
+  };
+  (spawn as jest.Mock).mockImplementation(() => mockChild);
+});
 
 afterEach(() => {
   jest.restoreAllMocks();

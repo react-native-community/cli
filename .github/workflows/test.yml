@@ -99,4 +99,10 @@ jobs:
           gradle --version || echo "gradle --version failed"
 
       - name: E2E tests
-        run: yarn test:ci:e2e
+        run: |
+          yarn test:ci:e2e 2>&1 | tee /tmp/e2e_output.txt; status=${PIPESTATUS[0]}
+          echo "## E2E Test Output" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          tail -200 /tmp/e2e_output.txt >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          exit $status

@@ -33,7 +33,7 @@ afterAll(() => {
   cleanup(DIR);
 });
 
-test('works when Gradle is run outside of the project hierarchy', async () => {
+test('works when Gradle is run outside of the project hierarchy', () => {
   /**
    * Location of Android project
    */
@@ -46,19 +46,24 @@ test('works when Gradle is run outside of the project hierarchy', async () => {
    */
   const gradleWrapper = path.join(androidProjectRoot, 'gradlew');
 
+  if (!fs.existsSync(gradleWrapper)) {
+    throw new Error(
+      `gradlew not found at ${gradleWrapper} — react-native init may have failed`,
+    );
+  }
+
   // Ensure gradlew is executable — npm/yarn don't always preserve the execute
   // bit from the package tarball on Linux.
   fs.chmodSync(gradleWrapper, 0o755);
 
-  // Make sure that we use `-bin` distribution of Gradle
-  await spawnScript(gradleWrapper, ['wrapper', '--distribution-type', 'bin'], {
-    cwd: androidProjectRoot,
-  });
-
   // Execute `gradle` with `-p` flag and `cwd` outside of project hierarchy
-  const {stdout} = spawnScript(gradleWrapper, ['-p', androidProjectRoot], {
+  const result = spawnScript(gradleWrapper, ['-p', androidProjectRoot], {
     cwd: '/',
   });
 
-  expect(stdout).toContain('BUILD SUCCESSFUL');
+  if (!result.stdout.includes('BUILD SUCCESSFUL')) {
+    throw new Error(
+      `Expected Gradle to succeed.\nstdout: ${result.stdout}\nstderr: ${result.stderr}\nexitCode: ${result.exitCode}`,
+    );
+  }
 });

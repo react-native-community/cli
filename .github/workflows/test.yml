@@ -43,6 +43,7 @@ jobs:
   e2e-tests:
     name: E2E Tests
     strategy:
+      fail-fast: false
       matrix:
         node-version: [20, 22]
         os: [ubuntu-latest, macos-latest]
@@ -59,6 +60,7 @@ jobs:
           java-version: 17
 
       - uses: gradle/actions/setup-gradle@v3
+        continue-on-error: true
         with:
           gradle-version: 'current'
 
@@ -89,6 +91,12 @@ jobs:
           
       - name: Install dependencies
         run: yarn --frozen-lockfile
+
+      - name: Check Gradle availability
+        run: |
+          echo "GRADLE_HOME=$GRADLE_HOME"
+          which gradle || echo "gradle not on PATH"
+          gradle --version || echo "gradle --version failed"
 
       - name: E2E tests
         run: yarn test:ci:e2e

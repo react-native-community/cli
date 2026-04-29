@@ -9,7 +9,7 @@ function spawnPromise(
   options: {cwd?: string; stdio?: 'inherit' | 'ignore' | 'pipe'},
 ): Promise<void> {
   return new Promise((resolve, reject) => {
-    const child = spawn(command, args, options);
+    const child = spawn(command, args, {stdio: 'ignore', ...options});
     child.on('close', (code) => {
       if (code === 0) {
         resolve();

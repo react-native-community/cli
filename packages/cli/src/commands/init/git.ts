@@ -14,7 +14,11 @@ function spawnPromise(
       if (code === 0) {
         resolve();
       } else {
-        reject(new Error(`Command failed: ${command} ${args.join(' ')} (exit code ${code})`));
+        reject(
+          new Error(
+            `Command failed: ${command} ${args.join(' ')} (exit code ${code})`,
+          ),
+        );
       }
     });
     child.on('error', reject);

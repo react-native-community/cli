@@ -1,7 +1,19 @@
-jest.mock('execa', () => ({
-  execa: jest.fn(),
+const mockOn = jest.fn(function (
+  this: object,
+  event: string,
+  callback: (code: number) => void,
+) {
+  if (event === 'close') {
+    callback(0);
+  }
+  return this;
+});
+
+jest.mock('child_process', () => ({
+  spawn: jest.fn(() => ({on: mockOn})),
 }));
-import {execa} from 'execa';
+
+import {spawn} from 'child_process';
 import path from 'path';
 import fs from 'fs';
 import * as PackageManger from '../../../tools/packageManager';
@@ -95,7 +107,8 @@ test('executePostInitScript', async () => {
     TEMPLATE_NAME,
     SCRIPT_PATH,
   );
-  expect(execa).toHaveBeenCalledWith(RESOLVED_PATH, {
+  expect(spawn).toHaveBeenCalledWith(RESOLVED_PATH, [], {
     stdio: 'inherit',
+    cwd: TEMPLATE_SOURCE_DIR,
   });
 });

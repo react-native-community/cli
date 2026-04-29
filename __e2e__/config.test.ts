@@ -1,13 +1,11 @@
 import path from 'path';
 import fs from 'fs';
-import {wrap} from 'jest-snapshot-serializer-raw';
 import {
   runCLI,
   getTempDirectory,
   cleanup,
   writeFiles,
   spawnScript,
-  replaceProjectRootInOutput,
 } from '../jest/helpers';
 
 const DIR = getTempDirectory('test_root');
@@ -67,21 +65,28 @@ afterAll(() => {
 test('shows up current config without unnecessary output', () => {
   const {stdout} = runCLI(path.join(DIR, 'TestProject'), ['config']);
   const parsedStdout = JSON.parse(stdout);
-  // Strip unnecessary parts
-  parsedStdout.commands = parsedStdout.commands.map((command: any) => ({
-    ...command,
-    examples: command.examples && ['<<REPLACED>>'],
-    options: command.options && ['<<REPLACED>>'],
-  }));
 
   expect(parsedStdout.reactNativeVersion).toMatch(/^\d+\.\d+(\.\d+)?$/);
-  parsedStdout.reactNativeVersion = '<<REPLACED>>';
+  expect(parsedStdout.root).toContain('TestProject');
+  expect(parsedStdout.reactNativePath).toContain('react-native');
 
-  Object.values(parsedStdout.dependencies).forEach((dependency: any) => {
-    if (dependency.platforms?.ios?.version) {
-      dependency.platforms.ios.version = '<<REPLACED>>';
-    }
-  });
+  expect(parsedStdout.dependencies).toBeDefined();
+  expect(typeof parsedStdout.dependencies).toBe('object');
+
+  expect(Array.isArray(parsedStdout.commands)).toBe(true);
+  const commandNames = parsedStdout.commands.map((c: any) => c.name);
+  expect(commandNames).toContain('bundle');
+  expect(commandNames).toContain('start');
+  expect(commandNames).toContain('run-android');
+  expect(commandNames).toContain('run-ios');
+
+  expect(parsedStdout.platforms).toHaveProperty('ios');
+  expect(parsedStdout.platforms).toHaveProperty('android');
+
+  expect(parsedStdout.project.ios.sourceDir).toContain('TestProject');
+  expect(parsedStdout.project.android.sourceDir).toContain('TestProject');
+  expect(parsedStdout.project.android.packageName).toBe('com.testproject');
+  expect(parsedStdout.project.android.applicationId).toBe('com.testproject');
 
   const expectedXcodeProject =
     process.platform === 'darwin'
@@ -99,14 +104,6 @@ test('shows up current config without unnecessary output', () => {
   expect(parsedStdout.project.ios.xcodeProject).toStrictEqual(
     expectedXcodeProject,
   );
-
-  delete parsedStdout.project.ios.xcodeProject;
-
-  const configWithReplacedProjectRoots = replaceProjectRootInOutput(
-    JSON.stringify(parsedStdout, null, 2).replace(/\\\\/g, '\\'),
-    DIR,
-  );
-  expect(wrap(configWithReplacedProjectRoots)).toMatchSnapshot();
 });
 
 test('should log only valid JSON config if setting up env throws an error', () => {

@@ -1,11 +1,29 @@
 import {getLoader, logger} from '@react-native-community/cli-tools';
-import {execa} from 'execa';
+import {spawn} from 'child_process';
 import fs from 'fs';
 import path from 'path';
 
+function spawnPromise(
+  command: string,
+  args: string[],
+  options: {cwd?: string; stdio?: 'inherit' | 'ignore' | 'pipe'},
+): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const child = spawn(command, args, options);
+    child.on('close', (code) => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject(new Error(`Command failed: ${command} ${args.join(' ')} (exit code ${code})`));
+      }
+    });
+    child.on('error', reject);
+  });
+}
+
 export const checkGitInstallation = async (): Promise<boolean> => {
   try {
-    await execa('git', ['--version'], {stdio: 'ignore'});
+    await spawnPromise('git', ['--version'], {stdio: 'ignore'});
     return true;
   } catch {
     return false;
@@ -16,7 +34,7 @@ export const checkIfFolderIsGitRepo = async (
   folder: string,
 ): Promise<boolean> => {
   try {
-    await execa('git', ['rev-parse', '--is-inside-work-tree'], {
+    await spawnPromise('git', ['rev-parse', '--is-inside-work-tree'], {
       stdio: 'ignore',
       cwd: folder,
     });
@@ -43,10 +61,10 @@ export const createGitRepository = async (folder: string) => {
   } catch {}
 
   try {
-    await execa('git', ['init'], {cwd: folder});
-    await execa('git', ['branch', '-M', 'main'], {cwd: folder});
-    await execa('git', ['add', '.'], {cwd: folder});
-    await execa(
+    await spawnPromise('git', ['init'], {cwd: folder});
+    await spawnPromise('git', ['branch', '-M', 'main'], {cwd: folder});
+    await spawnPromise('git', ['add', '.'], {cwd: folder});
+    await spawnPromise(
       'git',
       [
         'commit',

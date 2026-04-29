@@ -45,12 +45,8 @@ if (process.platform === 'win32') {
 }
 
 function isYarnAvailable() {
-  try {
-    spawnSync('yarn', ['--version'], {stdio: 'pipe'});
-    return true;
-  } catch (error) {
-    return false;
-  }
+  const result = spawnSync('yarn', ['--version'], {stdio: 'pipe'});
+  return !result.error && result.status === 0;
 }
 
 test('init fails if the directory already exists and --replace-directory false', () => {
@@ -182,7 +178,10 @@ test('init supports --pm yarn together with --skip-install', () => {
   expect(stderr).not.toContain(`Couldn't find the "`);
   expect(stdout).toContain('Run instructions');
 
-  const dirFiles = fs.readdirSync(path.join(DIR, PROJECT_NAME)).sort();
+  const dirFiles = fs
+    .readdirSync(path.join(DIR, PROJECT_NAME))
+    .filter((f) => f !== '.gitignore') // Yarn Berry may create .gitignore
+    .sort();
   const expectedFiles = customTemplateCopiedFiles
     .filter((file) => !['node_modules', 'package-lock.json'].includes(file))
     .concat(['.yarn', '.yarnrc.yml'])

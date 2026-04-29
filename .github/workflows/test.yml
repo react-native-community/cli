@@ -60,7 +60,7 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v3
         with:
-          gradle-version: '8.13'
+          gradle-version: 'current'
 
       - uses: ruby/setup-ruby@v1
         if: runner.os == 'macOS'

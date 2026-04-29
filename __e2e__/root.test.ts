@@ -36,15 +36,10 @@ afterAll(() => {
 
 test('works when Gradle is run outside of the project hierarchy', () => {
   /**
-   * Location of Android project
+   * Location of Android project — we borrow its gradlew wrapper but test
+   * the -p flag against a minimal project that has no Android SDK dependency.
    */
   const androidProjectRoot = path.join(DIR, 'TestProject/android');
-
-  /*
-   * Grab absolute path to Gradle wrapper. The fact that we are using
-   * a wrapper from the project is just a convinience to avoid installing
-   * Gradle globally
-   */
   const gradleWrapper = path.join(androidProjectRoot, 'gradlew');
 
   if (!fs.existsSync(gradleWrapper)) {
@@ -57,10 +52,19 @@ test('works when Gradle is run outside of the project hierarchy', () => {
   // bit from the package tarball on Linux.
   fs.chmodSync(gradleWrapper, 0o755);
 
+  // Create a minimal Gradle project with no Android plugin so the test does
+  // not require a specific Android SDK installation.
+  const minimalProjectDir = path.join(DIR, 'minimal-gradle');
+  writeFiles(minimalProjectDir, {
+    'settings.gradle': 'rootProject.name = "test"',
+    'build.gradle': '// empty',
+  });
+
   // Execute `gradle` with `-p` flag and `cwd` outside of project hierarchy.
-  // Use spawnSync directly to capture the raw status, signal, and error
-  // instead of the masked exitCode returned by spawnScript.
-  const result = spawnSync(gradleWrapper, ['-p', androidProjectRoot], {
+  // The gradlew wrapper is taken from the Android project but the PROJECT
+  // (settings/build files) is the minimal directory above, so no Android SDK
+  // is needed.  Use spawnSync directly to capture raw status/signal/error.
+  const result = spawnSync(gradleWrapper, ['-p', minimalProjectDir, 'help'], {
     cwd: '/',
     env: process.env,
     encoding: 'utf8',

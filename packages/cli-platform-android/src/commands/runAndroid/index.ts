@@ -232,11 +232,22 @@ function runOnSpecificDevice(
 
   if (devices.length > 0 && device) {
     if (devices.indexOf(device) !== -1) {
+      // Build the APK only — Gradle's installDebug task has no way to
+      // know which device the CLI selected (we don't pass
+      // -Pandroid.injected.serial or set ANDROID_SERIAL on the spawn),
+      // so when more than one device is connected it picks one on its
+      // own and silently ignores --device. tryInstallAppOnDevice (called
+      // below via installAndLaunchOnDevice) already runs
+      // `adb -s <device> install -r -d <apk>` against the correct
+      // device, so handing the install off to it produces the right
+      // result without changing any other behavior. The interactive
+      // path on line ~230 already does this swap; this just mirrors
+      // it for the non-interactive path.
       let gradleArgs = getTaskNames(
         androidProject.appName,
         args.mode,
         args.tasks ?? buildTask,
-        'install',
+        'assemble',
       );
 
       // using '-x lint' in order to ignore linting errors while building the apk

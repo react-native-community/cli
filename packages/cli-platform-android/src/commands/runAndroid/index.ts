@@ -236,7 +236,7 @@ function runOnSpecificDevice(
         androidProject.appName,
         args.mode,
         args.tasks ?? buildTask,
-        'install',
+        'assemble',
       );
 
       // using '-x lint' in order to ignore linting errors while building the apk

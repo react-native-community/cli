@@ -1,9 +1,11 @@
 import {AndroidProjectConfig} from '@react-native-community/cli-types';
 import tryLaunchAppOnDevice from '../tryLaunchAppOnDevice';
 import {Flags} from '..';
-import execa from 'execa';
+import {execaSync} from 'execa';
 
-jest.mock('execa');
+jest.mock('execa', () => ({
+  execaSync: jest.fn(),
+}));
 jest.mock('../getAdbPath');
 jest.mock('../tryLaunchEmulator');
 
@@ -44,7 +46,7 @@ beforeEach(() => {
 test('launches adb shell with intent to launch com.myapp.MainActivity with different appId than packageName on a simulator', () => {
   tryLaunchAppOnDevice(device, androidProject, adbPath, args);
 
-  expect(execa.sync).toHaveBeenCalledWith(
+  expect(execaSync).toHaveBeenCalledWith(
     'path/to/adb',
     [
       '-s',
@@ -66,7 +68,7 @@ test('launches adb shell with intent to launch com.myapp.MainActivity with diffe
     args,
   );
 
-  expect(execa.sync).toHaveBeenCalledWith(
+  expect(execaSync).toHaveBeenCalledWith(
     'path/to/adb',
     [
       '-s',
@@ -88,7 +90,7 @@ test('launches adb shell with intent to launch com.myapp.MainActivity with same 
     args,
   );
 
-  expect(execa.sync).toHaveBeenCalledWith(
+  expect(execaSync).toHaveBeenCalledWith(
     'path/to/adb',
     [
       '-s',
@@ -105,7 +107,7 @@ test('launches adb shell with intent to launch com.myapp.MainActivity with same 
 test('launches adb shell with intent to launch com.myapp.MainActivity with different appId than packageName on a device (without calling simulator)', () => {
   tryLaunchAppOnDevice(undefined, androidProject, adbPath, args);
 
-  expect(execa.sync).toHaveBeenCalledWith(
+  expect(execaSync).toHaveBeenCalledWith(
     'path/to/adb',
     [
       ...shellStartCommand,
@@ -131,7 +133,7 @@ test('launches adb shell with intent to launch fully specified activity with dif
     },
   );
 
-  expect(execa.sync).toHaveBeenCalledWith(
+  expect(execaSync).toHaveBeenCalledWith(
     'path/to/adb',
     [
       '-s',
@@ -151,7 +153,7 @@ test('--appId flag overwrites applicationId setting in androidProject', () => {
     appId: 'my.app.id',
   });
 
-  expect(execa.sync).toHaveBeenCalledWith(
+  expect(execaSync).toHaveBeenCalledWith(
     'path/to/adb',
     [
       ...shellStartCommand,
@@ -169,7 +171,7 @@ test('appIdSuffix Staging is appended to applicationId', () => {
     appIdSuffix: 'Staging',
   });
 
-  expect(execa.sync).toHaveBeenCalledWith(
+  expect(execaSync).toHaveBeenCalledWith(
     'path/to/adb',
     [
       ...shellStartCommand,

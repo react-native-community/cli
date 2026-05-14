@@ -4,7 +4,7 @@ import {
   printRunDoctorTip,
 } from '@react-native-community/cli-tools';
 import {Config} from '@react-native-community/cli-types';
-import execa from 'execa';
+import {execaSync} from 'execa';
 import {getAndroidProject} from '@react-native-community/cli-config-android';
 import adb from '../runAndroid/adb';
 import getAdbPath from '../runAndroid/getAdbPath';
@@ -85,7 +85,7 @@ export function build(gradleArgs: string[], sourceDir: string) {
   logger.info('Building the app...');
   logger.debug(`Running command "${cmd} ${gradleArgs.join(' ')}"`);
   try {
-    execa.sync(cmd, gradleArgs, {
+    execaSync(cmd, gradleArgs, {
       stdio: 'inherit',
       cwd: sourceDir,
     });

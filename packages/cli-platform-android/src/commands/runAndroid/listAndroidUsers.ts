@@ -1,4 +1,4 @@
-import execa from 'execa';
+import {execaSync} from 'execa';
 import {logger, prompt} from '@react-native-community/cli-tools';
 
 type User = {
@@ -11,7 +11,7 @@ export function checkUsers(device: string, adbPath: string) {
     const adbArgs = ['-s', device, 'shell', 'pm', 'list', 'users'];
 
     logger.debug(`Checking users on "${device}"...`);
-    const {stdout} = execa.sync(adbPath, adbArgs, {encoding: 'utf-8'});
+    const {stdout} = execaSync(adbPath, adbArgs, {encoding: 'utf8'});
     const regex = new RegExp(
       /^\s*UserInfo\{(?<userId>\d+):(?<userName>.*):(?<userFlags>[0-9a-f]*)}/,
     );

@@ -1,4 +1,3 @@
-import execa from 'execa';
 import path from 'path';
 import {logger, CLIError} from '@react-native-community/cli-tools';
 import * as PackageManager from '../../tools/packageManager';
@@ -124,5 +123,5 @@ export function executePostInitScript(
 
   logger.debug(`Executing post init script located ${scriptPath}`);
 
-  return execa(scriptPath, {stdio: 'inherit'});
+  return executeCommand(scriptPath, [], {root: templateSourceDir});
 }

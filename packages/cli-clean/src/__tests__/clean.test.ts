@@ -1,4 +1,4 @@
-import execa from 'execa';
+import {spawn} from 'child_process';
 import os from 'os';
 import prompts from 'prompts';
 import {clean, cleanDir} from '../clean';
@@ -7,8 +7,23 @@ import fs from 'fs';
 
 const DIR = getTempDirectory('temp-cache');
 
-jest.mock('execa', () => jest.fn());
+jest.mock('child_process', () => ({
+  spawn: jest.fn(),
+}));
 jest.mock('prompts', () => jest.fn());
+
+let mockChild: {on: jest.Mock};
+
+beforeEach(() => {
+  mockChild = {
+    on: jest.fn((event: string, callback: (code: number) => void) => {
+      if (event === 'close') {
+        callback(0);
+      }
+    }),
+  };
+  (spawn as jest.Mock).mockImplementation(() => mockChild);
+});
 
 afterEach(() => {
   cleanup(DIR);
@@ -34,7 +49,7 @@ describe('clean', () => {
 
     await clean([], mockConfig, {include: '', projectRoot: process.cwd()});
 
-    expect(execa).not.toBeCalled();
+    expect(spawn).not.toBeCalled();
     expect(prompts).toBeCalled();
   });
 
@@ -45,12 +60,12 @@ describe('clean', () => {
     });
 
     expect(prompts).not.toBeCalled();
-    expect(execa).toBeCalledWith(
+    expect(spawn).toBeCalledWith(
       os.platform() === 'win32' ? 'tskill' : 'killall',
       ['watchman'],
       expect.anything(),
     );
-    expect(execa).toBeCalledWith(
+    expect(spawn).toBeCalledWith(
       'watchman',
       ['watch-del-all'],
       expect.anything(),

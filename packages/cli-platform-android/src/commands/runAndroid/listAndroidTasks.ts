@@ -1,6 +1,6 @@
 import {CLIError, getLoader, prompt} from '@react-native-community/cli-tools';
-import execa from 'execa';
-import pico from 'picocolors';
+import chalk from 'chalk';
+import {execaSync} from 'execa';
 
 type GradleTask = {
   task: string;
@@ -35,7 +35,7 @@ export const getGradleTasks = (
   loader.start('Searching for available Gradle tasks...');
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
   try {
-    const out = execa.sync(cmd, ['tasks', '--group', taskType], {
+    const out = execaSync(cmd, ['tasks', '--group', taskType], {
       cwd: sourceDir,
     }).stdout;
     loader.succeed();
@@ -59,7 +59,7 @@ export const promptForTaskSelection = async (
     name: 'task',
     message: `Select ${taskType} task you want to perform`,
     choices: tasks.map((t: GradleTask) => ({
-      title: `${pico.bold(t.task)} - ${t.description}`,
+      title: `${chalk.bold(t.task)} - ${t.description}`,
       value: t.task,
     })),
     min: 1,

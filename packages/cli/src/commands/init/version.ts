@@ -62,7 +62,7 @@ export async function createTemplateUri(
     if (templateVersion == null) {
       throw new Error(
         `Unable to find a template for react-native version '${version}'. ` +
-          `Please check that the version exists and has a corresponding template published to npm.`,
+          'Please check that the version exists and has a corresponding template published to npm.',
       );
     }
     return `${TEMPLATE_PACKAGE_COMMUNITY}@${templateVersion}`;

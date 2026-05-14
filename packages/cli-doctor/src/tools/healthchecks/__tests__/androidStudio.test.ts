@@ -1,4 +1,4 @@
-import execa from 'execa';
+import {execa} from 'execa';
 import androidStudio from '../androidStudio';
 import getEnvironmentInfo from '../../envinfo';
 import {EnvironmentInfo} from '../../../types';
@@ -6,7 +6,9 @@ import {NoopLoader} from '@react-native-community/cli-tools';
 import * as common from '../common';
 import * as downloadAndUnzip from '../../downloadAndUnzip';
 
-jest.mock('execa', () => jest.fn());
+jest.mock('execa', () => ({
+  execa: jest.fn(),
+}));
 
 const logSpy = jest.spyOn(common, 'logManualInstallation');
 const {logManualInstallation} = common;
@@ -78,8 +80,7 @@ describe('androidStudio', () => {
   it('detects Android Studio in the fallback Windows installation path', async () => {
     // Make CLI think Android Studio was not found
     environmentInfo.IDEs['Android Studio'] = 'Not Found';
-    // Force platform to win32 for the test
-    // TODO: use cleaner jest.replaceProperty in jest 29+
+    // Force the platform to win32 for the test
     const originalPlatform = process.platform;
     Object.defineProperty(process, 'platform', {
       value: 'win32',
@@ -98,7 +99,6 @@ describe('androidStudio', () => {
     expect(diagnostics.version).toBe('4.2.1.0');
 
     // Restore original platform
-    // TODO: use cleaner mockRestore in jest 29+
     Object.defineProperty(process, 'platform', {
       value: originalPlatform,
       writable: true,
@@ -110,7 +110,6 @@ describe('androidStudio', () => {
     // Make CLI think Android Studio was not found
     environmentInfo.IDEs['Android Studio'] = 'Not Found';
     // Force the platform to win32 for the test
-    // TODO: use cleaner jest.replaceProperty in jest 29+
     const originalPlatform = process.platform;
     Object.defineProperty(process, 'platform', {
       value: 'win32',
@@ -128,7 +127,6 @@ describe('androidStudio', () => {
     expect(diagnostics.needsToBeFixed).toBe(true);
 
     // Restore original platform
-    // TODO: use cleaner mockRestore in jest 29+
     Object.defineProperty(process, 'platform', {
       value: originalPlatform,
       writable: true,

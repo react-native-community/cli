@@ -1,5 +1,5 @@
 import {logger} from '@react-native-community/cli-tools';
-import execa from 'execa';
+import {spawn} from 'child_process';
 
 export function executeCommand(
   command: string,
@@ -9,8 +9,20 @@ export function executeCommand(
     silent?: boolean;
   },
 ) {
-  return execa(command, args, {
-    stdio: options.silent && !logger.isVerbose() ? 'pipe' : 'inherit',
-    cwd: options.root,
+  const stdio = options.silent && !logger.isVerbose() ? 'ignore' : 'inherit';
+  return new Promise<void>((resolve, reject) => {
+    const child = spawn(command, args, {stdio, cwd: options.root});
+    child.on('close', (code) => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject(
+          new Error(
+            `Command failed: ${command} ${args.join(' ')} (exit code ${code})`,
+          ),
+        );
+      }
+    });
+    child.on('error', reject);
   });
 }

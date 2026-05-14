@@ -10,8 +10,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const execa = require('execa');
-const pico = require('picocolors');
+const chalk = require('chalk');
+const {spawnSync} = require('child_process');
 const {getPackages, adjustToTerminalWidth, OK} = require('./helpers');
 
 const packages = getPackages();
@@ -21,29 +21,29 @@ const packagesWithTs = packages.filter((p) =>
 );
 
 const args = [
-  '"' +
-    path.resolve(
-      require.resolve('typescript/package.json'),
-      '..',
-      require('typescript/package.json').bin.tsc,
-    ) +
-    '"',
+  path.resolve(
+    require.resolve('typescript/package.json'),
+    '..',
+    require('typescript/package.json').bin.tsc,
+  ),
   '-b',
-  ...packagesWithTs.map((p) => '"' + p + '"'),
+  ...packagesWithTs,
   ...process.argv.slice(2),
 ];
 
-console.log(pico.inverse('Building TypeScript definition files'));
+console.log(chalk.inverse('Building TypeScript definition files'));
 process.stdout.write(adjustToTerminalWidth('Building\n'));
 
-try {
-  execa.sync('node', args, {stdio: 'inherit', shell: true});
+const result = spawnSync('node', args, {stdio: 'inherit'});
+if (result.status === 0) {
   process.stdout.write(`${OK}\n`);
-} catch (e) {
+} else {
   process.stdout.write('\n');
   console.error(
-    pico.inverse(pico.red('Unable to build TypeScript definition files')),
+    chalk.inverse(chalk.red('Unable to build TypeScript definition files')),
   );
-  console.error(e.stack);
+  if (result.error) {
+    console.error(result.error.stack);
+  }
   process.exitCode = 1;
 }

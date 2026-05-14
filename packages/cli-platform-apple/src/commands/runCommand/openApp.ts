@@ -3,7 +3,7 @@ import {IOSProjectInfo} from '@react-native-community/cli-types';
 import pico from 'picocolors';
 import {getBuildPath} from './getBuildPath';
 import {getBuildSettings} from './getBuildSettings';
-import execa from 'execa';
+import {execa} from 'execa';
 
 type Options = {
   buildOutput: string;

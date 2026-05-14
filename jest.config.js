@@ -2,6 +2,13 @@ const common = {
   testEnvironment: 'node',
   snapshotSerializers: [require.resolve('jest-snapshot-serializer-raw')],
   testRunner: 'jest-circus/runner',
+  moduleNameMapper: {
+    '^@react-native-community/(.*)$': '<rootDir>/packages/$1/src',
+  },
+  // Transform execa since it's ESM-only in v9
+  transformIgnorePatterns: [
+    'node_modules/(?!(execa|strip-final-newline|npm-run-path|path-key|onetime|mimic-fn|human-signals|is-stream|merge-stream)/)',
+  ],
 };
 
 module.exports = {

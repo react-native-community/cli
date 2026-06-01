@@ -165,9 +165,13 @@ export function dependencyConfig(
     userConfig.libraryName || findLibraryName(root, sourceDir);
   const componentDescriptors =
     userConfig.componentDescriptors || findComponentDescriptors(root);
+
   let cmakeListsPath = userConfig.cmakeListsPath
     ? path.join(sourceDir, userConfig.cmakeListsPath)
+    : isPureCxxDependency
+    ? null
     : path.join(sourceDir, 'build/generated/source/codegen/jni/CMakeLists.txt');
+
   const cxxModuleCMakeListsModuleName =
     userConfig.cxxModuleCMakeListsModuleName || null;
   const cxxModuleHeaderName = userConfig.cxxModuleHeaderName || null;
@@ -176,7 +180,10 @@ export function dependencyConfig(
     : null;
 
   if (process.platform === 'win32') {
-    cmakeListsPath = cmakeListsPath.replace(/\\/g, '/');
+    if (cmakeListsPath) {
+      cmakeListsPath = cmakeListsPath.replace(/\\/g, '/');
+    }
+
     if (cxxModuleCMakeListsPath) {
       cxxModuleCMakeListsPath = cxxModuleCMakeListsPath.replace(/\\/g, '/');
     }

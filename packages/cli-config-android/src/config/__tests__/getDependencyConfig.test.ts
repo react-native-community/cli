@@ -34,12 +34,40 @@ describe('android::getDependencyConfig', () => {
       noPackage: {
         android: {},
       },
+      pureCxx: {
+        android: {},
+      },
     });
   });
 
   it('returns an object with android project configuration', () => {
-    expect(getDependencyConfig('/nested', userConfig)).not.toBeNull();
-    expect(typeof getDependencyConfig('/nested', userConfig)).toBe('object');
+    const config = getDependencyConfig('/nested', userConfig);
+
+    expect(config).not.toBeNull();
+    expect(typeof config).toBe('object');
+    expect(config).toMatchObject({
+      cmakeListsPath:
+        '/nested/android/build/generated/source/codegen/jni/CMakeLists.txt',
+      isPureCxxDependency: false,
+    });
+  });
+
+  it('sets cmakeListsPath to null for pure C++ dependencies', () => {
+    expect(
+      getDependencyConfig('/pureCxx', {
+        cxxModuleCMakeListsModuleName: 'PureCxxModule',
+        cxxModuleCMakeListsPath: 'src/main/jni/CMakeLists.txt',
+        cxxModuleHeaderName: 'PureCxxModule.h',
+      }),
+    ).toMatchObject({
+      cmakeListsPath: null,
+      cxxModuleCMakeListsModuleName: 'PureCxxModule',
+      cxxModuleCMakeListsPath: '/pureCxx/android/src/main/jni/CMakeLists.txt',
+      cxxModuleHeaderName: 'PureCxxModule.h',
+      isPureCxxDependency: true,
+      packageImportPath: null,
+      packageInstance: null,
+    });
   });
 
   it('returns `null` if manifest file has not been found', () => {

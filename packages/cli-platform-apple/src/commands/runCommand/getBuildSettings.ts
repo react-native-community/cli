@@ -45,7 +45,11 @@ export async function getBuildSettings(
     return null;
   }
 
-  let selectedTarget = applicationTargets[0];
+  // Select target matching with the Scheme name first
+  let selectedTarget =
+    applicationTargets.find(
+      (t: string) => t.toLowerCase() === scheme.toLowerCase(),
+    ) || applicationTargets[0];
 
   if (target) {
     if (!applicationTargets.includes(target)) {
@@ -59,8 +63,7 @@ export async function getBuildSettings(
     }
   }
 
-  const targetIndex = applicationTargets.indexOf(selectedTarget);
-  return settings[targetIndex].buildSettings;
+  return settings.find((s: any) => s.target === selectedTarget).buildSettings;
 }
 
 function getPlatformName(buildOutput: string) {

@@ -43,22 +43,22 @@ export default {
         installPath,
       });
 
-      loader.text = 'Updating environment variables';
+      loader.update('Updating environment variables');
 
       const jdkPath = join(installPath, 'jdk-11.0.2');
 
       await setEnvironment('JAVA_HOME', jdkPath);
       await updateEnvironment('PATH', join(jdkPath, 'bin'));
 
-      loader.succeed(
+      loader.success(
         'JDK installed successfully. Please restart your shell to see the changes',
       );
     } catch (e) {
-      loader.fail(e as any);
+      loader.error(e as any);
     }
   },
   runAutomaticFix: async ({logManualInstallation, loader}) => {
-    loader.fail();
+    loader.error();
     logManualInstallation({
       healthcheck: 'JDK',
       url: link.docs('set-up-your-environment', 'android', {

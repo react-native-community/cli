@@ -21,7 +21,7 @@ module.exports = {
           }),
           runAutomaticFix: async ({loader}) => {
             await installBar();
-            loader.succeed();
+            loader.success();
           },
         },
       ],
@@ -116,7 +116,7 @@ This function will be used to try to fix the issue when `react-native doctor` is
 
 ```ts
 type RunAutomaticFix = (args: {
-  loader: Ora;
+  loader: Loader;
   logManualInstallation: ({
     healthcheck,
     url,
@@ -134,7 +134,7 @@ type RunAutomaticFix = (args: {
 
 ##### `loader`
 
-A reference to a [`ora`](https://www.npmjs.com/package/ora) instance which should be used to report success / failure, and progress of the fix.  The fix function should always call either `loader.succeed()` or `loader.fail()` before returning.
+A reference to a [`nanospinner`](https://www.npmjs.com/package/nanospinner) instance which should be used to report success / failure, and progress of the fix.  The fix function should always call either `loader.success()` or `loader.error()` before returning.
 
 ##### `logManualInstallation`
 
@@ -150,7 +150,7 @@ A health check that requires the user to manually go download/install something.
 
 ```ts
 async function needToInstallFoo({loader, logManualInstallation}) {
-    loader.fail();
+    loader.error();
 
     return logManualInstallation({
       healthcheck: 'Foo',
@@ -167,5 +167,5 @@ async function fixFoo({loader}) {
   await exec(`foo --install`);
   await exec(`foo --fix`);
 
-  loader.succeed();
+  loader.success();
 }

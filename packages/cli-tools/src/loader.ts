@@ -1,36 +1,25 @@
-import ora from 'ora';
-import type {Ora, Options, Spinner, Color} from 'ora';
+import {createSpinner, Spinner} from 'nanospinner';
 import logger from './logger';
 
-export type Loader = Ora;
+export type Loader = Spinner;
 
-class OraNoop implements Loader {
-  spinner: Spinner = {interval: 1, frames: []};
-  indent: number = 0;
-  isSpinning: boolean = false;
-  text: string = '';
-  prefixText: string = '';
-  color: Color = 'blue';
-
-  succeed(_text?: string | undefined) {
-    return this;
-  }
-  fail(_text?: string) {
-    return this;
-  }
-  start(_text?: string) {
+class NoopSpinner implements Loader {
+  start() {
     return this;
   }
   stop() {
     return this;
   }
-  warn(_text?: string) {
+  success() {
     return this;
   }
-  info(_text?: string) {
+  error() {
     return this;
   }
-  stopAndPersist() {
+  warn() {
+    return this;
+  }
+  info() {
     return this;
   }
   clear() {
@@ -39,13 +28,29 @@ class OraNoop implements Loader {
   render() {
     return this;
   }
-  frame() {
-    return this.text;
+  update() {
+    return this;
+  }
+  reset() {
+    return this;
+  }
+  spin() {
+    return this;
+  }
+  write() {
+    return this;
+  }
+  loop() {
+    return this;
+  }
+  isSpinning() {
+    return false;
   }
 }
 
-export function getLoader(options?: string | Options | undefined): Loader {
-  return logger.isVerbose() ? new OraNoop() : ora(options);
+export function getLoader(options?: string | {text?: string}): Loader {
+  const text = typeof options === 'string' ? options : options?.text;
+  return logger.isVerbose() ? new NoopSpinner() : createSpinner(text);
 }
 
-export const NoopLoader = OraNoop;
+export const NoopLoader = NoopSpinner;

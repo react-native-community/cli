@@ -1,4 +1,6 @@
 import child_process from 'child_process';
+import fs from 'fs';
+import path from 'path';
 import {IOSProjectInfo} from '@react-native-community/cli-types';
 import {logger} from '@react-native-community/cli-tools';
 import {ApplePlatform, Device} from '../../types';
@@ -32,12 +34,34 @@ export async function runOnSimulator(
     .execFileSync('xcode-select', ['-p'], {encoding: 'utf8'})
     .trim();
 
-  child_process.execFileSync('open', [
-    `${activeDeveloperDir}/Applications/Simulator.app`,
-    '--args',
-    '-CurrentDeviceUDID',
-    simulator.udid,
-  ]);
+  // Xcode 27 replaces Simulator.app with DeviceHub.app and relocates it from
+  // <Xcode>/Contents/Developer/Applications to <Xcode>/Contents/Applications.
+  // Prefer Simulator.app while it exists (stable Xcode); fall back to DeviceHub
+  // for Xcode 27+. See https://developer.apple.com/documentation/xcode/device-hub
+  const simulatorApp = path.join(
+    activeDeveloperDir,
+    'Applications',
+    'Simulator.app',
+  );
+  const deviceHubApp = path.join(
+    activeDeveloperDir,
+    '..',
+    'Applications',
+    'DeviceHub.app',
+  );
+
+  if (fs.existsSync(simulatorApp)) {
+    child_process.execFileSync('open', [
+      simulatorApp,
+      '--args',
+      '-CurrentDeviceUDID',
+      simulator.udid,
+    ]);
+  } else if (fs.existsSync(deviceHubApp)) {
+    // DeviceHub gives us no way to focus a specific device, so we open it
+    // without the -CurrentDeviceUDID argument.
+    child_process.execFileSync('open', [deviceHubApp]);
+  }
 
   if (simulator.state !== 'Booted') {
     bootSimulator(simulator);

@@ -188,6 +188,7 @@ export function dependencyConfig(
       cxxModuleCMakeListsPath = cxxModuleCMakeListsPath.replace(/\\/g, '/');
     }
   }
+  const hasCodegenPrefab = userConfig.hasCodegenPrefab ?? false;
 
   return {
     sourceDir,
@@ -202,5 +203,6 @@ export function dependencyConfig(
     cxxModuleCMakeListsPath,
     cxxModuleHeaderName,
     isPureCxxDependency,
+    hasCodegenPrefab,
   };
 }

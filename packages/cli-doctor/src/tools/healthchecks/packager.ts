@@ -25,7 +25,7 @@ export default {
     };
   },
   runAutomaticFix: async ({loader, config}) => {
-    loader.fail();
+    loader.error();
     try {
       const terminal = getDefaultUserTerminal();
       const port = Number(process.env.RCT_METRO_PORT) || 8081;
@@ -38,7 +38,7 @@ export default {
           '--terminal',
           terminal,
         ]);
-        return loader.succeed();
+        return loader.success();
       }
       return logManualInstallation({
         message:

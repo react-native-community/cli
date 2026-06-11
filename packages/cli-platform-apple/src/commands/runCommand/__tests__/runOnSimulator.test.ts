@@ -1,6 +1,5 @@
 import child_process from 'child_process';
 import fs from 'fs';
-import path from 'path';
 import {IOSProjectInfo} from '@react-native-community/cli-types';
 import {Device} from '../../../types';
 import {runOnSimulator} from '../runOnSimulator';
@@ -60,7 +59,7 @@ test('opens Simulator.app with the device UDID when it exists', async () => {
   ]);
 });
 
-test('falls back to DeviceHub.app without the UDID when Simulator.app is absent', async () => {
+test('falls back to DeviceHub via devices:// deep link when Simulator.app is absent', async () => {
   (fs.existsSync as jest.Mock).mockImplementation((target) =>
     String(target).endsWith('DeviceHub.app'),
   );
@@ -74,16 +73,11 @@ test('falls back to DeviceHub.app without the UDID when Simulator.app is absent'
     simulator,
   );
 
-  const deviceHubPath = path.join(
-    developerDir,
-    '..',
-    'Applications',
-    'DeviceHub.app',
-  );
+  // DeviceHub registers the `devices://` URL scheme, which focuses the device by UDID.
   expect(child_process.execFileSync).toHaveBeenCalledWith('open', [
-    deviceHubPath,
+    `devices://device/open?id=${simulator.udid}`,
   ]);
-  // DeviceHub cannot focus a specific device, so the UDID must not be passed.
+  // The deep link replaces the Simulator.app `-CurrentDeviceUDID` argument.
   expect(child_process.execFileSync).not.toHaveBeenCalledWith(
     'open',
     expect.arrayContaining(['-CurrentDeviceUDID']),

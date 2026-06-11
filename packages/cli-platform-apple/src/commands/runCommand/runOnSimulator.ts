@@ -58,9 +58,9 @@ export async function runOnSimulator(
       simulator.udid,
     ]);
   } else if (fs.existsSync(deviceHubApp)) {
-    // DeviceHub gives us no way to focus a specific device, so we open it
-    // without the -CurrentDeviceUDID argument.
-    child_process.execFileSync('open', [deviceHubApp]);
+    child_process.execFileSync('open', [
+      `devices://device/open?id=${simulator.udid}`,
+    ]);
   }
 
   if (simulator.state !== 'Booted') {

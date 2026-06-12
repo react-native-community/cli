@@ -266,48 +266,38 @@ const createRun =
       const bootedSimulators = devices.filter(
         ({state, type}) => state === 'Booted' && type === 'simulator',
       );
-      const bootedDevices = devices.filter(({type}) => type === 'device'); // Physical devices here are always booted
-      const booted = [...bootedSimulators, ...bootedDevices];
+      const connectedDevices = devices.filter(({type}) => type === 'device');
 
-      if (booted.length === 0) {
+      const targetSimulator = bootedSimulators[0] ?? fallbackSimulator;
+
+      if (bootedSimulators.length === 0) {
         logger.info(
-          'No booted devices or simulators found. Launching first available simulator...',
+          'No booted simulators found. Launching first available simulator...',
         );
-        return runOnSimulator(
-          xcodeProject,
-          platformName,
-          mode,
-          scheme,
-          args,
-          fallbackSimulator,
+      } else {
+        logger.info(`Found booted ${targetSimulator.name}`);
+      }
+
+      if (connectedDevices.length > 0) {
+        logger.info(
+          `Ignoring connected ${
+            connectedDevices.length === 1 ? 'device' : 'devices'
+          } (${connectedDevices
+            .map(({name}) => name)
+            .join(
+              ', ',
+            )}). Pass --device or --udid to install on a physical device.`,
         );
       }
 
-      logger.info(`Found booted ${booted.map(({name}) => name).join(', ')}`);
-
-      for (const simulator of bootedSimulators) {
-        await runOnSimulator(
-          xcodeProject,
-          platformName,
-          mode,
-          scheme,
-          args,
-          simulator || fallbackSimulator,
-        );
-      }
-
-      for (const device of bootedDevices) {
-        await runOnDevice(
-          device,
-          platformName,
-          mode,
-          scheme,
-          xcodeProject,
-          args,
-        );
-      }
-
-      return;
+      return runOnSimulator(
+        xcodeProject,
+        platformName,
+        mode,
+        scheme,
+        args,
+        targetSimulator,
+      );
     }
 
     if (args.device && args.udid) {

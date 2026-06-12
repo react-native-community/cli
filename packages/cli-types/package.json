@@ -10,7 +10,7 @@
     "!*.map"
   ],
   "dependencies": {
-    "joi": "^17.2.1"
+    "joi": "^18.2.1"
   },
   "types": "build/index.d.ts",
   "license": "MIT",

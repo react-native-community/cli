@@ -82,12 +82,12 @@ describe('watchman', () => {
     });
 
     const loaderSpy = new NoopLoader();
-    const loaderSucceedSpy = jest.spyOn(loaderSpy, 'succeed');
-    const loaderFailSpy = jest.spyOn(loaderSpy, 'fail');
+    const loaderSuccessSpy = jest.spyOn(loaderSpy, 'success');
+    const loaderErrorSpy = jest.spyOn(loaderSpy, 'error');
     const brewInstallSpy = jest
       .spyOn(brewInstall, 'brewInstall')
       .mockImplementation(({loader}) => {
-        loader.succeed();
+        loader.success();
         return Promise.resolve();
       });
 
@@ -102,9 +102,9 @@ describe('watchman', () => {
       value: originalPlatform,
     });
 
-    expect(loaderFailSpy).toHaveBeenCalledTimes(0);
+    expect(loaderErrorSpy).toHaveBeenCalledTimes(0);
     expect(logSpy).toHaveBeenCalledTimes(0);
     expect(brewInstallSpy).toBeCalledTimes(1);
-    expect(loaderSucceedSpy).toBeCalledTimes(1);
+    expect(loaderSuccessSpy).toBeCalledTimes(1);
   });
 });

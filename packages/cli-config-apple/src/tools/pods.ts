@@ -108,9 +108,9 @@ async function install(
       iosFolderPath,
     });
     cacheManager.set(packageJson.name, 'dependencies', currentDependenciesHash);
-    loader.succeed();
+    loader.success();
   } catch (error) {
-    loader.fail();
+    loader.error();
     throw new CLIError(
       `Something went wrong while installing CocoaPods. Please run ${pico.bold(
         'pod install',
@@ -204,9 +204,9 @@ export default async function resolvePods(
         'podfileLock',
         currentPodfileLockChecksum ?? '',
       );
-      loader.succeed();
+      loader.success();
     } catch (error) {
-      loader.fail();
+      loader.error();
       throw new CLIError(
         `Something went wrong while installing CocoaPods. Please run ${pico.bold(
           'pod install',

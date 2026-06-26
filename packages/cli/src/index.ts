@@ -5,6 +5,14 @@ import type {
   Config,
   DetachedCommand,
 } from '@react-native-community/cli-types';
+import {
+  projectConfig as androidProjectConfig,
+  dependencyConfig as androidDependencyConfig,
+} from '@react-native-community/cli-platform-android';
+import {
+  projectConfig as iosProjectConfig,
+  dependencyConfig as iosDependencyConfig,
+} from '@react-native-community/cli-platform-ios';
 import childProcess from 'child_process';
 import {Command as CommanderCommand} from 'commander';
 import path from 'path';
@@ -197,6 +205,26 @@ async function setupAndRun(platformName?: string) {
 
     config = await loadConfigAsync({
       selectedPlatform,
+      // iOS and Android are core platforms bundled with the CLI, so they are
+      // always registered. The project's own and dependencies' configs can
+      // still override them.
+      //
+      // The cast is needed because the platform packages' `projectConfig`/
+      // `dependencyConfig` return `null` and take required params, whereas the
+      // `PlatformConfig` interface models these as `void`. These functions are
+      // the canonical implementations the CLI already calls via the config scan.
+      platforms: {
+        ios: {
+          npmPackageName: '@react-native-community/cli-platform-ios',
+          projectConfig: iosProjectConfig,
+          dependencyConfig: iosDependencyConfig,
+        },
+        android: {
+          npmPackageName: '@react-native-community/cli-platform-android',
+          projectConfig: androidProjectConfig,
+          dependencyConfig: androidDependencyConfig,
+        },
+      } as Config['platforms'],
     });
 
     logger.enable();

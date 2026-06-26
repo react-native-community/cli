@@ -1,6 +1,5 @@
 import {CLIError} from '@react-native-community/cli-tools';
 import {Config, IOSProjectConfig} from '@react-native-community/cli-types';
-import getArchitecture from '../../tools/getArchitecture';
 import {BuildFlags} from './buildOptions';
 import {buildProject} from './buildProject';
 import {getConfiguration} from './getConfiguration';
@@ -29,10 +28,6 @@ const createBuild =
       args.forcePods ||
       args.onlyPods
     ) {
-      const isAppRunningNewArchitecture = platformConfig.sourceDir
-        ? await getArchitecture(platformConfig.sourceDir)
-        : undefined;
-
       await resolvePods(
         ctx.root,
         platformConfig.sourceDir,
@@ -41,7 +36,6 @@ const createBuild =
         ctx.reactNativePath,
         {
           forceInstall: args.forcePods || args.onlyPods,
-          newArchEnabled: isAppRunningNewArchitecture,
         },
       );
 

@@ -85,14 +85,36 @@ const removeDuplicateCommands = <T extends boolean>(commands: Command<T>[]) => {
 };
 
 /**
+ * Returns the built-in platforms to seed the config with, honoring the
+ * `selectedPlatform` filter the same way dependency platforms are filtered. The
+ * project's own and dependencies' platforms are layered on top of these.
+ */
+const getBasePlatforms = (
+  platforms: Config['platforms'] | undefined,
+  selectedPlatform: string | undefined,
+): {[platform: string]: Config['platforms'][string]} => {
+  if (!platforms) {
+    return {};
+  }
+  if (selectedPlatform != null) {
+    return platforms[selectedPlatform]
+      ? {[selectedPlatform]: platforms[selectedPlatform]}
+      : {};
+  }
+  return platforms;
+};
+
+/**
  * Loads CLI configuration
  */
 export default function loadConfig({
   projectRoot = findProjectRoot(),
   selectedPlatform,
+  platforms,
 }: {
   projectRoot?: string;
   selectedPlatform?: string;
+  platforms?: Config['platforms'];
 }): Config {
   let lazyProject: ProjectConfig;
   const userConfig = readConfigFromDisk(projectRoot);
@@ -110,7 +132,10 @@ export default function loadConfig({
     dependencies: userConfig.dependencies,
     commands: userConfig.commands,
     healthChecks: userConfig.healthChecks || [],
-    platforms: userConfig.platforms,
+    platforms: {
+      ...getBasePlatforms(platforms, selectedPlatform),
+      ...userConfig.platforms,
+    },
     assets: userConfig.assets,
     get project() {
       if (lazyProject) {
@@ -188,9 +213,11 @@ export default function loadConfig({
 export async function loadConfigAsync({
   projectRoot = findProjectRoot(),
   selectedPlatform,
+  platforms,
 }: {
   projectRoot?: string;
   selectedPlatform?: string;
+  platforms?: Config['platforms'];
 }): Promise<Config> {
   let lazyProject: ProjectConfig;
   const userConfig = await readConfigFromDiskAsync(projectRoot);
@@ -208,7 +235,10 @@ export async function loadConfigAsync({
     dependencies: userConfig.dependencies,
     commands: userConfig.commands,
     healthChecks: userConfig.healthChecks || [],
-    platforms: userConfig.platforms,
+    platforms: {
+      ...getBasePlatforms(platforms, selectedPlatform),
+      ...userConfig.platforms,
+    },
     assets: userConfig.assets,
     get project() {
       if (lazyProject) {

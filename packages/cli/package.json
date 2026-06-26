@@ -27,6 +27,8 @@
     "@react-native-community/cli-clean": "20.2.0",
     "@react-native-community/cli-config": "20.2.0",
     "@react-native-community/cli-doctor": "20.2.0",
+    "@react-native-community/cli-platform-android": "20.2.0",
+    "@react-native-community/cli-platform-ios": "20.2.0",
     "@react-native-community/cli-server-api": "20.2.0",
     "@react-native-community/cli-tools": "20.2.0",
     "@react-native-community/cli-types": "20.2.0",

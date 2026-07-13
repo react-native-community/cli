@@ -37,11 +37,30 @@ beforeEach(() => {
   );
 });
 
-test('opens Simulator.app with the device UDID when it exists', async () => {
+test('opens Simulator.app with the device UDID when it is not already booted', async () => {
   (fs.existsSync as jest.Mock).mockImplementation((target) =>
     String(target).endsWith('Simulator.app'),
   );
 
+  await runOnSimulator(xcodeProject, 'ios', 'Debug', 'TestApp', args, {
+    ...simulator,
+    state: 'Shutdown',
+  });
+
+  expect(child_process.execFileSync).toHaveBeenCalledWith('open', [
+    `${developerDir}/Applications/Simulator.app`,
+    '--args',
+    '-CurrentDeviceUDID',
+    simulator.udid,
+  ]);
+});
+
+test('opens Simulator.app without -CurrentDeviceUDID when the device is already booted', async () => {
+  (fs.existsSync as jest.Mock).mockImplementation((target) =>
+    String(target).endsWith('Simulator.app'),
+  );
+
+  // `simulator` is already in the `Booted` state.
   await runOnSimulator(
     xcodeProject,
     'ios',
@@ -51,12 +70,16 @@ test('opens Simulator.app with the device UDID when it exists', async () => {
     simulator,
   );
 
+  // Bring the already-running Simulator.app to the foreground without re-issuing
+  // a boot for the booted device, which would otherwise trigger the
+  // "Unable to boot device in current state: Booted" modal alert.
   expect(child_process.execFileSync).toHaveBeenCalledWith('open', [
     `${developerDir}/Applications/Simulator.app`,
-    '--args',
-    '-CurrentDeviceUDID',
-    simulator.udid,
   ]);
+  expect(child_process.execFileSync).not.toHaveBeenCalledWith(
+    'open',
+    expect.arrayContaining(['-CurrentDeviceUDID']),
+  );
 });
 
 test('falls back to DeviceHub via devices:// deep link when Simulator.app is absent', async () => {

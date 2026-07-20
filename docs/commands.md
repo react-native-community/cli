@@ -57,12 +57,12 @@ Uses a custom template. Accepts following template sources:
 Example:
 
 ```sh
-npx react-native-community/cli@latest init MyApp --template react-native-community/cli-custom-template
-npx react-native-community/cli@latest init MyApp --template file:///Users/name/template-path
-npx react-native-community/cli@latest init MyApp --template file:///Users/name/template-name-1.0.0.tgz
-npx react-native-community/cli@latest init MyApp --template Esemesek/react-native-community/cli-new-template
+npx @react-native-community/cli@latest init MyApp --template react-native-community/cli-custom-template
+npx @react-native-community/cli@latest init MyApp --template file:///Users/name/template-path
+npx @react-native-community/cli@latest init MyApp --template file:///Users/name/template-name-1.0.0.tgz
+npx @react-native-community/cli@latest init MyApp --template Esemesek/react-native-community/cli-new-template
 # Use a specific version of the community template with the nightly release of React Native
-npx react-native-community/cli@latest init MyApp --template @react-native-community/template0.74.0 --version nightly
+npx @react-native-community/cli@latest init MyApp --template @react-native-community/template@0.74.0 --version nightly
 ```
 
 A template is any directory or npm package that contains a `template.config.js` file in the root with the following type:
@@ -102,7 +102,7 @@ Determine if CocoaPods should be installed when initializing a project. If set t
 
 #### `--pm <string>`
 
-Use specific package manager to initialize the project. Available options: `yarn`, `npm`, `bun`. Default: `yarn`
+Use specific package manager to initialize the project. Available options: `yarn`, `npm`, `bun`. Default: `npm`
 
 #### `--package-name <string>`
 
@@ -111,13 +111,17 @@ Create project with custom package name for Android and bundle identifier for iO
 - contain at least two segments separated by dots, e.g. `com.example`
 - contain only alphanumeric characters and dots
 
-#### `--skip-git-init <boolean>`
+#### `--platform-name <string>`
+
+Name of an out-of-tree platform to use (for example `react-native-macos`). This flag is optional; out-of-tree platforms usually pass it automatically.
+
+#### `--skip-git-init`
 
 Skip git repository initialization.
 
-#### `--replace-directory <string>`
+#### `--replace-directory [boolean]`
 
-Replaces the directory if it already exists
+Replaces the directory if it already exists.
 
 #### `--yarn-config-options <string>`
 

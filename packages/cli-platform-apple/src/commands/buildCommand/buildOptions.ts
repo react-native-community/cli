@@ -1,3 +1,4 @@
+import {tokenize} from '@react-native-community/cli-tools';
 import {BuilderCommand} from '../../types';
 import {getPlatformInfo} from '../runCommand/getPlatformInfo';
 
@@ -49,7 +50,7 @@ export const getBuildOptions = ({platformName}: BuilderCommand) => {
     {
       name: '--extra-params <string>',
       description: 'Custom params that will be passed to xcodebuild command.',
-      parse: (val: string) => val.split(' '),
+      parse: tokenize,
     },
     {
       name: '--target <string>',

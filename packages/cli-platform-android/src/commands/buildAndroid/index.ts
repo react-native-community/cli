@@ -2,6 +2,7 @@ import {
   CLIError,
   logger,
   printRunDoctorTip,
+  tokenize,
 } from '@react-native-community/cli-tools';
 import {Config} from '@react-native-community/cli-types';
 import execa from 'execa';
@@ -115,7 +116,7 @@ export const options = [
   {
     name: '--extra-params <string>',
     description: 'Custom params passed to gradle build command',
-    parse: (val: string) => val.split(' '),
+    parse: tokenize,
   },
   {
     name: '-i --interactive',

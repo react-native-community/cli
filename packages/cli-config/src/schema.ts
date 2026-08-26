@@ -158,7 +158,7 @@ export const projectConfig = t
             automaticPodsInstallation: t.bool().default(true),
             assets: t.array().items(t.string()).default([]),
           })
-          .default({}),
+          .default(),
         android: t
           // AndroidProjectParams
           .object({
@@ -170,7 +170,7 @@ export const projectConfig = t
             watchModeCommandParams: t.array().items(t.string()),
             assets: t.array().items(t.string()).default([]),
           })
-          .default({}),
+          .default(),
       })
       .default(),
     assets: t.array().items(t.string()).default([]),

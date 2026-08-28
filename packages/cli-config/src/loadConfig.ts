@@ -107,7 +107,7 @@ export default function loadConfig({
     get reactNativeVersion() {
       return getReactNativeVersion(initialConfig.reactNativePath);
     },
-    dependencies: userConfig.dependencies,
+    dependencies: {...userConfig.dependencies},
     commands: userConfig.commands,
     healthChecks: userConfig.healthChecks || [],
     platforms: userConfig.platforms,
@@ -147,18 +147,7 @@ export default function loadConfig({
         resolveNodeModuleDir(projectRoot, dependencyName);
       let config = readDependencyConfigFromDisk(root, dependencyName);
 
-      return assign({}, acc, {
-        dependencies: assign({}, acc.dependencies, {
-          get [dependencyName](): DependencyConfig {
-            return getDependencyConfig(
-              root,
-              dependencyName,
-              finalConfig,
-              config,
-              userConfig,
-            );
-          },
-        }),
+      const nextConfig = assign({}, acc, {
         commands: removeDuplicateCommands([
           ...config.commands,
           ...acc.commands,
@@ -173,6 +162,18 @@ export default function loadConfig({
         },
         healthChecks: [...acc.healthChecks, ...config.healthChecks],
       }) as Config;
+      assign(nextConfig.dependencies, {
+        get [dependencyName](): DependencyConfig {
+          return getDependencyConfig(
+            root,
+            dependencyName,
+            finalConfig,
+            config,
+            userConfig,
+          );
+        },
+      });
+      return nextConfig;
     } catch {
       return acc;
     }
@@ -205,7 +206,7 @@ export async function loadConfigAsync({
     get reactNativeVersion() {
       return getReactNativeVersion(initialConfig.reactNativePath);
     },
-    dependencies: userConfig.dependencies,
+    dependencies: {...userConfig.dependencies},
     commands: userConfig.commands,
     healthChecks: userConfig.healthChecks || [],
     platforms: userConfig.platforms,
@@ -249,18 +250,7 @@ export async function loadConfigAsync({
         dependencyName,
       );
 
-      return assign({}, acc, {
-        dependencies: assign({}, acc.dependencies, {
-          get [dependencyName](): DependencyConfig {
-            return getDependencyConfig(
-              root,
-              dependencyName,
-              finalConfig,
-              config,
-              userConfig,
-            );
-          },
-        }),
+      const nextConfig = assign({}, acc, {
         commands: removeDuplicateCommands([
           ...config.commands,
           ...acc.commands,
@@ -275,6 +265,18 @@ export async function loadConfigAsync({
         },
         healthChecks: [...acc.healthChecks, ...config.healthChecks],
       }) as Config;
+      assign(nextConfig.dependencies, {
+        get [dependencyName](): DependencyConfig {
+          return getDependencyConfig(
+            root,
+            dependencyName,
+            finalConfig,
+            config,
+            userConfig,
+          );
+        },
+      });
+      return nextConfig;
     } catch {
       return acc;
     }

@@ -18,7 +18,7 @@ export default function assign(target: Object, ...sources: Object[]) {
     Object.getOwnPropertySymbols(source).forEach((sym) => {
       let descriptor = Object.getOwnPropertyDescriptor(source, sym);
       if (descriptor && descriptor.enumerable) {
-        descriptors[sym.toString()] = descriptor;
+        descriptors[sym] = descriptor;
       }
     });
     Object.defineProperties(target, descriptors);

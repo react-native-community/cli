@@ -23,14 +23,16 @@ export function findComponentDescriptors(packageRoot: string) {
     onlyFiles: true,
     ignore: ['**/node_modules/**'],
   });
-  const codegenComponent = files
-    .map((filePath) =>
-      fs.readFileSync(path.join(packageRoot, filePath), 'utf8'),
-    )
-    .map(extractComponentDescriptors)
-    .filter(Boolean);
-
   // Filter out duplicates as it happens that libraries contain multiple outputs due to package publishing.
   // TODO: consider using "codegenConfig" to avoid this.
-  return Array.from(new Set(codegenComponent as string[]));
+  const descriptors = new Set<string>();
+  for (const filePath of files) {
+    const descriptor = extractComponentDescriptors(
+      fs.readFileSync(path.join(packageRoot, filePath), 'utf8'),
+    );
+    if (descriptor) {
+      descriptors.add(descriptor);
+    }
+  }
+  return Array.from(descriptors);
 }

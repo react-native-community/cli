@@ -7,7 +7,10 @@
 
 import fs from 'fs';
 import path from 'path';
+import {promisify} from 'util';
 import walk from './walk';
+
+const copyBinaryFile = promisify(fs.copyFile);
 
 type Options = {
   exclude?: Array<RegExp>;
@@ -21,12 +24,13 @@ async function copyFiles(
   destPath: string,
   options: Options = {},
 ) {
+  const files = walk(
+    srcPath,
+    (filePath) =>
+      options.exclude?.some((p) => filePath.search(p) !== -1) ?? false,
+  );
   return Promise.all(
-    walk(srcPath).map(async (absoluteSrcFilePath: string) => {
-      const exclude = options.exclude;
-      if (exclude && exclude.some((p) => p.test(absoluteSrcFilePath))) {
-        return;
-      }
+    files.map(async (absoluteSrcFilePath: string) => {
       const relativeFilePath = path.relative(srcPath, absoluteSrcFilePath);
       await copyFile(
         absoluteSrcFilePath,
@@ -39,7 +43,7 @@ async function copyFiles(
 /**
  * Copy a file to given destination.
  */
-function copyFile(srcPath: string, destPath: string) {
+async function copyFile(srcPath: string, destPath: string) {
   if (fs.lstatSync(srcPath).isDirectory()) {
     if (!fs.existsSync(destPath)) {
       fs.mkdirSync(destPath);
@@ -48,44 +52,8 @@ function copyFile(srcPath: string, destPath: string) {
     return;
   }
 
-  return new Promise((resolve, reject) => {
-    copyBinaryFile(srcPath, destPath, (err) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(destPath);
-    });
-  });
-}
-
-/**
- * Same as 'cp' on Unix. Don't do any replacements.
- */
-function copyBinaryFile(
-  srcPath: string,
-  destPath: string,
-  cb: (err?: Error) => void,
-) {
-  let cbCalled = false;
-  const {mode} = fs.statSync(srcPath);
-  const readStream = fs.createReadStream(srcPath);
-  const writeStream = fs.createWriteStream(destPath, {mode});
-  readStream.on('error', (err) => {
-    done(err);
-  });
-  writeStream.on('error', (err) => {
-    done(err);
-  });
-  readStream.on('close', () => {
-    done();
-  });
-  readStream.pipe(writeStream);
-  function done(err?: Error) {
-    if (!cbCalled) {
-      cb(err);
-      cbCalled = true;
-    }
-  }
+  await copyBinaryFile(srcPath, destPath);
+  return destPath;
 }
 
 export default copyFiles;

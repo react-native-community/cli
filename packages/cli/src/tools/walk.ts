@@ -9,14 +9,20 @@
 import fs from 'fs';
 import path from 'path';
 
-function walk(current: string): string[] {
+function walk(
+  current: string,
+  exclude?: (filePath: string) => boolean,
+): string[] {
+  if (exclude?.(current)) {
+    return [];
+  }
   if (!fs.lstatSync(current).isDirectory()) {
     return [current];
   }
 
   const files = fs
     .readdirSync(current)
-    .map((child) => walk(path.join(current, child)));
+    .map((child) => walk(path.join(current, child), exclude));
   const result: string[] = [];
   return result.concat.apply([current], files);
 }

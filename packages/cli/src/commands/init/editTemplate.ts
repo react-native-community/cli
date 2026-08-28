@@ -27,11 +27,15 @@ export function validatePackageName(packageName: string) {
     /^([a-zA-Z]([a-zA-Z0-9_])*\.)+[a-zA-Z]([a-zA-Z0-9_])*$/u;
 
   if (packageNameParts.length < 2) {
-    throw `The package name ${packageName} is invalid. It should contain at least two segments, e.g. com.app`;
+    throw new CLIError(
+      `The package name ${packageName} is invalid. It should contain at least two segments, e.g. com.app`,
+    );
   }
 
   if (!packageNameRegex.test(packageName)) {
-    throw `The ${packageName} package name is not valid. It can contain only alphanumeric characters and dots.`;
+    throw new CLIError(
+      `The ${packageName} package name is not valid. It can contain only alphanumeric characters and dots.`,
+    );
   }
 }
 
@@ -43,9 +47,8 @@ export async function replaceNameInUTF8File(
   logger.debug(`Replacing in ${filePath}`);
   const fileContent = await fs.readFile(filePath, 'utf8');
   const replacedFileContent = fileContent
-    .replace(new RegExp(templateName, 'g'), projectName)
-    .replace(
-      new RegExp(templateName.toLowerCase(), 'g'),
+    .replace(new RegExp(templateName, 'g'), () => projectName)
+    .replace(new RegExp(templateName.toLowerCase(), 'g'), () =>
       projectName.toLowerCase(),
     );
 
@@ -57,7 +60,7 @@ export async function replaceNameInUTF8File(
 async function renameFile(filePath: string, oldName: string, newName: string) {
   const newFileName = path.join(
     path.dirname(filePath),
-    path.basename(filePath).replace(new RegExp(oldName, 'g'), newName),
+    path.basename(filePath).replace(new RegExp(oldName, 'g'), () => newName),
   );
 
   logger.debug(`Renaming ${filePath} -> file:${newFileName}`);
@@ -70,11 +73,16 @@ function shouldRenameFile(filePath: string, nameToReplace: string) {
 }
 
 function shouldIgnoreFile(filePath: string) {
-  return filePath.match(/node_modules|yarn.lock|package-lock.json/g);
+  return path
+    .relative(process.cwd(), filePath)
+    .split(path.sep)
+    .some((part) =>
+      ['node_modules', 'yarn.lock', 'package-lock.json'].includes(part),
+    );
 }
 
 function isIosFile(filePath: string) {
-  return filePath.includes('ios');
+  return path.relative(process.cwd(), filePath).split(path.sep)[0] === 'ios';
 }
 
 const UNDERSCORED_DOTFILES = [
@@ -93,7 +101,9 @@ const UNDERSCORED_DOTFILES = [
 ];
 
 async function processDotfiles(filePath: string) {
-  const dotfile = UNDERSCORED_DOTFILES.find((e) => filePath.includes(`_${e}`));
+  const dotfile = UNDERSCORED_DOTFILES.find(
+    (e) => path.basename(filePath) === `_${e}`,
+  );
 
   if (dotfile === undefined) {
     return;
@@ -106,36 +116,14 @@ async function createAndroidPackagePaths(
   filePath: string,
   packageName: string,
 ) {
-  const pathParts = filePath.split('/').slice(-2);
-
-  if (pathParts[0] === 'java' && pathParts[1] === 'com') {
-    const pathToFolders = filePath.split('/').slice(0, -2).join('/');
-    const segmentsList = packageName.split('.');
-
-    if (segmentsList.length > 1) {
-      const initialDir = process.cwd();
-      process.chdir(filePath.split('/').slice(0, -1).join('/'));
-
-      try {
-        await fs.rename(
-          `${filePath}/${segmentsList.join('.')}`,
-          `${pathToFolders}/${segmentsList[segmentsList.length - 1]}`,
-        );
-        await fs.rmdir(filePath);
-
-        for (const segment of segmentsList) {
-          fs.mkdirSync(segment);
-          process.chdir(segment);
-        }
-        await fs.rename(
-          `${pathToFolders}/${segmentsList[segmentsList.length - 1]}`,
-          process.cwd(),
-        );
-      } catch {
-        throw 'Failed to create correct paths for Android.';
-      }
-
-      process.chdir(initialDir);
+  const javaPath = path.dirname(filePath);
+  if (path.basename(javaPath) === 'java' && path.basename(filePath) === 'com') {
+    const segments = packageName.split('.');
+    const destination = path.join(javaPath, ...segments);
+    await fs.ensureDir(path.dirname(destination));
+    await fs.rename(path.join(filePath, packageName), destination);
+    if (segments[0] !== 'com') {
+      await fs.rmdir(filePath);
     }
   }
 }
@@ -166,7 +154,7 @@ export async function replacePlaceholderWithPackageName({
         'PRODUCT_BUNDLE_IDENTIFIER = "(.*)"',
       );
 
-      if (filePath.includes('app.json')) {
+      if (path.basename(filePath) === 'app.json') {
         await replaceNameInUTF8File(filePath, projectName, placeholderName);
       } else {
         const fileExtension = path.extname(filePath);

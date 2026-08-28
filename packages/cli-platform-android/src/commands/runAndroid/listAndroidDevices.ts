@@ -1,9 +1,8 @@
-import {execSync} from 'child_process';
+import {execFileSync} from 'child_process';
 import adb from './adb';
 import getAdbPath from './getAdbPath';
 import {getEmulators} from './tryLaunchEmulator';
 import {toPascalCase} from './toPascalCase';
-import os from 'os';
 import pico from 'picocolors';
 import {CLIError, prompt} from '@react-native-community/cli-tools';
 
@@ -21,14 +20,10 @@ type DeviceData = {
  */
 function getEmulatorName(deviceId: string) {
   const adbPath = getAdbPath();
-  const buffer = execSync(`${adbPath} -s ${deviceId} emu avd name`);
+  const buffer = execFileSync(adbPath, ['-s', deviceId, 'emu', 'avd', 'name']);
 
   // 1st line should get us emu name
-  return buffer
-    .toString()
-    .split(os.EOL)[0]
-    .replace(/(\r\n|\n|\r)/gm, '')
-    .trim();
+  return buffer.toString().split(/\r?\n/)[0].trim();
 }
 
 /**
@@ -38,13 +33,14 @@ function getEmulatorName(deviceId: string) {
  */
 function getPhoneName(deviceId: string) {
   const adbPath = getAdbPath();
-  const buffer = execSync(
-    `${adbPath} -s ${deviceId} shell getprop | grep ro.product.model`,
-  );
-  return buffer
-    .toString()
-    .replace(/\[ro\.product\.model\]:\s*\[(.*)\]/, '$1')
-    .trim();
+  const buffer = execFileSync(adbPath, [
+    '-s',
+    deviceId,
+    'shell',
+    'getprop',
+    'ro.product.model',
+  ]);
+  return buffer.toString().trim();
 }
 
 async function promptForDeviceSelection(
@@ -75,7 +71,7 @@ async function listAndroidDevices() {
   const adbPath = getAdbPath();
   const devices = adb.getDevices(adbPath);
 
-  let allDevices: Array<DeviceData> = [];
+  const allDevices: Array<DeviceData> = [];
 
   devices.forEach((deviceId) => {
     if (deviceId.includes('emulator')) {
@@ -85,7 +81,7 @@ async function listAndroidDevices() {
         connected: true,
         type: 'emulator',
       };
-      allDevices = [...allDevices, emulatorData];
+      allDevices.push(emulatorData);
     } else {
       const phoneData: DeviceData = {
         deviceId,
@@ -93,16 +89,21 @@ async function listAndroidDevices() {
         type: 'phone',
         connected: true,
       };
-      allDevices = [...allDevices, phoneData];
+      allDevices.push(phoneData);
     }
   });
 
   const emulators = getEmulators();
+  const emulatorNames = new Set(
+    allDevices
+      .filter((device) => device.type === 'emulator')
+      .map((device) => device.readableName),
+  );
 
   // Find not booted ones:
   emulators.forEach((emulatorName) => {
     // skip those already booted
-    if (allDevices.some((device) => device.readableName === emulatorName)) {
+    if (emulatorNames.has(emulatorName)) {
       return;
     }
     const emulatorData: DeviceData = {
@@ -111,7 +112,8 @@ async function listAndroidDevices() {
       type: 'emulator',
       connected: false,
     };
-    allDevices = [...allDevices, emulatorData];
+    allDevices.push(emulatorData);
+    emulatorNames.add(emulatorName);
   });
 
   const selectedDevice = await promptForDeviceSelection(allDevices);

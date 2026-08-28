@@ -55,6 +55,21 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
 
   let {packager, port} = args;
 
+  if (args.binaryPath) {
+    if (args.tasks) {
+      throw new CLIError(
+        'binary-path and tasks were specified, but they are not compatible. Specify only one',
+      );
+    }
+
+    args.binaryPath = path.resolve(config.root, args.binaryPath);
+    if (!fs.existsSync(args.binaryPath)) {
+      throw new CLIError(
+        'binary-path was specified, but the file was not found.',
+      );
+    }
+  }
+
   if (packager) {
     const {port: newPort, startPackager} = await findDevServerPort(
       port,
@@ -80,25 +95,7 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
     link.setVersion(config.reactNativeVersion);
   }
 
-  if (args.binaryPath) {
-    if (args.tasks) {
-      throw new CLIError(
-        'binary-path and tasks were specified, but they are not compatible. Specify only one',
-      );
-    }
-
-    args.binaryPath = path.isAbsolute(args.binaryPath)
-      ? args.binaryPath
-      : path.join(config.root, args.binaryPath);
-
-    if (args.binaryPath && !fs.existsSync(args.binaryPath)) {
-      throw new CLIError(
-        'binary-path was specified, but the file was not found.',
-      );
-    }
-  }
-
-  let androidProject = getAndroidProject(config);
+  const androidProject = {...getAndroidProject(config)};
 
   if (args.mainActivity) {
     androidProject.mainActivity = args.mainActivity;
@@ -107,7 +104,7 @@ async function runAndroid(_argv: Array<string>, config: Config, args: Flags) {
   return buildAndRun(args, androidProject);
 }
 
-const defaultPort = 5552;
+const defaultPort = 5554;
 async function getAvailableDevicePort(
   port: number = defaultPort,
 ): Promise<number> {
@@ -119,7 +116,7 @@ async function getAvailableDevicePort(
   if (port > 5682) {
     throw new CLIError('Failed to launch emulator...');
   }
-  if (devices.some((d) => d.includes(port.toString()))) {
+  if (devices.includes(`emulator-${port}`)) {
     return await getAvailableDevicePort(port + 2);
   }
   return port;
@@ -134,7 +131,6 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
     args.device = args.deviceId;
   }
 
-  process.chdir(androidProject.sourceDir);
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
 
   const adbPath = getAdbPath();
@@ -169,8 +165,26 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
       );
     }
 
+    let deviceId = device.deviceId;
+    if (!device.connected) {
+      const port = await getAvailableDevicePort();
+      deviceId = `emulator-${port}`;
+      logger.info('Launching emulator...');
+      const result = await tryLaunchEmulator(
+        adbPath,
+        device.readableName,
+        port,
+      );
+      if (!result.success) {
+        throw new CLIError(
+          `Failed to launch emulator. Reason: ${pico.dim(result.error || '')}`,
+        );
+      }
+      logger.info('Successfully launched emulator.');
+    }
+
     if (args.interactive) {
-      const users = checkUsers(device.deviceId as string, adbPath);
+      const users = checkUsers(deviceId as string, adbPath);
       if (users && users.length > 1) {
         const user = await promptForUser(users);
 
@@ -180,30 +194,11 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
       }
     }
 
-    if (device.connected) {
-      return runOnSpecificDevice(
-        {...args, device: device.deviceId},
-        adbPath,
-        androidProject,
-        selectedTask,
-      );
-    }
-
-    const port = await getAvailableDevicePort();
-    const emulator = `emulator-${port}`;
-    logger.info('Launching emulator...');
-    const result = await tryLaunchEmulator(adbPath, device.readableName, port);
-    if (result.success) {
-      logger.info('Successfully launched emulator.');
-      return runOnSpecificDevice(
-        {...args, device: emulator},
-        adbPath,
-        androidProject,
-        selectedTask,
-      );
-    }
-    throw new CLIError(
-      `Failed to launch emulator. Reason: ${pico.dim(result.error || '')}`,
+    return runOnSpecificDevice(
+      {...args, device: deviceId},
+      adbPath,
+      androidProject,
+      selectedTask,
     );
   }
 
@@ -273,13 +268,14 @@ function runOnSpecificDevice(
         selectedTask,
       );
     } else {
-      logger.error(
-        `Could not find device: "${device}". Please choose one of the following:`,
-        ...devices,
+      throw new CLIError(
+        `Could not find device: "${device}". Please choose one of the following: ${devices.join(
+          ', ',
+        )}`,
       );
     }
   } else {
-    logger.error('No Android device or emulator connected.');
+    throw new CLIError('No Android device or emulator connected.');
   }
 }
 

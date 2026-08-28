@@ -10,13 +10,13 @@
  */
 
 const fs = require('fs');
-const {execSync} = require('child_process');
+const {execFileSync} = require('child_process');
 const path = require('path');
 const pico = require('picocolors');
 const chokidar = require('chokidar');
 const {getPackages} = require('./helpers');
 
-const BUILD_CMD = `node ${path.resolve(__dirname, './build.js')}`;
+const BUILD_SCRIPT = path.resolve(__dirname, './build.js');
 
 let filesToBuild = new Map();
 
@@ -33,9 +33,9 @@ const onChange = (srcDir) => {
 
 const onUnlink = (srcDir) => {
   return (filePath) => {
-    const buildFile = filePath
-      .replace(`${path.sep}src${path.sep}`, `${path.sep}build${path.sep}`)
-      .replace('.ts', '.js');
+    const buildFile = path
+      .join(path.dirname(srcDir), 'build', path.relative(srcDir, filePath))
+      .replace(/\.ts$/, '.js');
 
     try {
       fs.unlinkSync(buildFile);
@@ -73,7 +73,9 @@ setInterval(() => {
   if (files.length) {
     filesToBuild = new Map();
     try {
-      execSync(`${BUILD_CMD} ${files.join(' ')}`, {stdio: [0, 1, 2]});
+      execFileSync(process.execPath, [BUILD_SCRIPT, ...files], {
+        stdio: [0, 1, 2],
+      });
     } catch (e) {
       // omit
     }

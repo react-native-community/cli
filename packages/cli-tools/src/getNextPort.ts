@@ -19,10 +19,7 @@ const getNextPort = async (port: number, root: string): Promise<Result> => {
 
   const isRunning = typeof result === 'object' && result.status === 'running';
 
-  if (
-    isRunning &&
-    result.root === new URL(`file:///${root}`).pathname.slice(1)
-  ) {
+  if (isRunning && result.root === root) {
     // Found running bundler for this project, so we do not need to start packager!
     start = false;
   } else if (isRunning || result === 'unrecognized') {

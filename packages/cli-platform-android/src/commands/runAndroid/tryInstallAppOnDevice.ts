@@ -20,7 +20,8 @@ function tryInstallAppOnDevice(
 
     // handle if selected task from interactive mode, or mode from arguments, includes build flavour as well, eg. installProductionDebug should create ['production','debug'] array
     const variantFromSelectedTask = (selectedTask ?? args.mode)
-      ?.replace('install', '')
+      ?.replace(/^install/, '')
+      .replace(/^./, (letter) => letter.toLowerCase())
       .split(/(?=[A-Z])/);
 
     // create path to output file, eg. `production/debug`

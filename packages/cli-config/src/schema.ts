@@ -46,6 +46,7 @@ const healthCheck = t.object({
   healthchecks: t.array().items(
     t.object({
       label: t.string().required(),
+      visible: t.bool(),
       isRequired: t.bool(),
       description: t.string(),
       getDiagnostics: t.func(),

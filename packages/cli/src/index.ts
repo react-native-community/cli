@@ -20,7 +20,8 @@ const program = new CommanderCommand()
   .version(pkgJson.version, '-v --version', 'Output the current version')
   .enablePositionalOptions();
 
-const handleError = (err: Error) => {
+const handleError = (error: unknown) => {
+  const err = error instanceof Error ? error : new Error(String(error));
   logger.enable();
   if (program.opts().verbose) {
     logger.error(err.message);
@@ -116,7 +117,7 @@ function attachCommand<C extends Command<boolean>>(
           throw new Error('A command must be either attached or detached');
         }
       } catch (error) {
-        handleError(error as Error);
+        handleError(error);
       }
     });
 
@@ -141,7 +142,7 @@ async function run(platformName?: string) {
   try {
     await setupAndRun(platformName);
   } catch (e) {
-    handleError(e as Error);
+    handleError(e);
   }
 }
 
@@ -188,10 +189,16 @@ async function setupAndRun(platformName?: string) {
     to only load the configuration for the specific platform.
     */
     if (isCommandPassed('config')) {
-      const platformIndex = process.argv.indexOf('--platform');
-
-      if (platformIndex !== -1 && platformIndex < process.argv.length - 1) {
-        selectedPlatform = process.argv[platformIndex + 1];
+      for (let index = 3; index < process.argv.length; index++) {
+        const arg = process.argv[index];
+        if (arg === '--') {
+          break;
+        }
+        if (arg === '--platform') {
+          selectedPlatform = process.argv[++index];
+        } else if (arg.startsWith('--platform=')) {
+          selectedPlatform = arg.slice('--platform='.length);
+        }
       }
     }
 
@@ -216,8 +223,11 @@ async function setupAndRun(platformName?: string) {
      * When there is no `package.json` found, the CLI will enter `detached` mode and a subset
      * of commands will be available. That's why we don't throw on such kind of error.
      */
-    if ((error as Error).message.includes("We couldn't find a package.json")) {
-      logger.debug((error as Error).message);
+    if (
+      error instanceof Error &&
+      error.message.includes("We couldn't find a package.json")
+    ) {
+      logger.debug(error.message);
       logger.debug(
         'Failed to load configuration of your project. Only a subset of commands will be available.',
       );
@@ -240,7 +250,7 @@ async function setupAndRun(platformName?: string) {
     argv.push('--platform-name', platformName);
   }
 
-  program.parse(argv);
+  await program.parseAsync(argv);
 }
 
 const bin = require.resolve('./bin');

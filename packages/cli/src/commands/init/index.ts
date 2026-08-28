@@ -1,4 +1,5 @@
 import init from './init';
+import {CLIError} from '@react-native-community/cli-tools';
 
 export default {
   func: init,
@@ -63,8 +64,13 @@ export default {
       parse: (val: string): Record<string, string> => {
         return Object.fromEntries(
           val.split(',').map((option) => {
-            const [key, value] = option.split('=');
-            return [key, value];
+            const separator = option.indexOf('=');
+            if (separator <= 0) {
+              throw new CLIError(
+                'Yarn config options must use the format key=value,key2=value2.',
+              );
+            }
+            return [option.slice(0, separator), option.slice(separator + 1)];
           }),
         );
       },

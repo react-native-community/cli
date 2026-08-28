@@ -9,6 +9,8 @@ const ERROR = `a dev server manually by running ${pico.bold(
   'npm start',
 )} or ${pico.bold('yarn start')} in other terminal window.`;
 
+const quoteShellPath = (value: string) => `'${value.replace(/'/g, "'\\''")}'`;
+
 function startServerInNewWindow(
   port: number,
   projectRoot: string,
@@ -33,7 +35,9 @@ function startServerInNewWindow(
   const packagerEnvFilename = isWindows ? '.packager.bat' : '.packager.env';
   const packagerEnvFileExportContent = isWindows
     ? `set RCT_METRO_PORT=${port}\nset PROJECT_ROOT=${projectRoot}\nset REACT_NATIVE_PATH=${reactNativePath}`
-    : `export RCT_METRO_PORT=${port}\nexport PROJECT_ROOT="${projectRoot}"\nexport REACT_NATIVE_PATH="${reactNativePath}"`;
+    : `export RCT_METRO_PORT=${port}\nexport PROJECT_ROOT=${quoteShellPath(
+        projectRoot,
+      )}\nexport REACT_NATIVE_PATH=${quoteShellPath(reactNativePath)}`;
   let generatedPath = findPackageDependencyDir('.generated', {
     startDir: projectRoot,
   });
@@ -109,13 +113,17 @@ function startServerInNewWindow(
   }
   if (process.platform === 'linux') {
     try {
-      return execa.sync(terminal, ['-e', `sh ${launchPackagerScript}`], {
-        ...procConfig,
-        detached: true,
-      });
+      return execa.sync(
+        terminal,
+        ['-e', `bash ${quoteShellPath(launchPackagerScript)}`],
+        {
+          ...procConfig,
+          detached: true,
+        },
+      );
     } catch (error) {
       // By default, the child shell process will be attached to the parent
-      return execa.sync('sh', [launchPackagerScript], procConfig);
+      return execa.sync('bash', [launchPackagerScript], procConfig);
     }
   }
   if (isWindows) {

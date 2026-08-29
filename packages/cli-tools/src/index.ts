@@ -12,6 +12,7 @@ export * from './prompt';
 export * as link from './doclink';
 export {default as startServerInNewWindow} from './startServerInNewWindow';
 export {default as findDevServerPort} from './findDevServerPort';
+export {default as normalizeProjectRoot} from './normalizeProjectRoot';
 export * from './port';
 export {default as cacheManager} from './cacheManager';
 export {default as runSudo} from './runSudo';

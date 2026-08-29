@@ -1,5 +1,6 @@
 import handlePortUnavailable from './handlePortUnavailable';
 import isPackagerRunning from './isPackagerRunning';
+import normalizeProjectRoot from './normalizeProjectRoot';
 import {logAlreadyRunningBundler} from './port';
 
 const findDevServerPort = async (
@@ -18,7 +19,7 @@ const findDevServerPort = async (
     typeof packagerStatus === 'object' &&
     packagerStatus.status === 'running'
   ) {
-    if (packagerStatus.root === root) {
+    if (packagerStatus.root === normalizeProjectRoot(root)) {
       startPackager = false;
       logAlreadyRunningBundler(port);
     } else {

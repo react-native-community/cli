@@ -585,4 +585,59 @@ describe('linkAssets', () => {
       ),
     ).toMatchSnapshot();
   });
+  it('should link a font asset whose extension is upper-cased', async () => {
+    writeFiles(DIR, {
+      ...baseProjectKotlin,
+      'assets/shared/fonts/Montserrat-Regular.TTF':
+        fixtureFiles.montserratRegularFont,
+    });
+
+    await linkAssets([], configMock as CLIConfig);
+
+    // Android: it is linked as a font resource, not as a custom asset.
+    expect(readMontserratXMLFontFile()).toContain('@font/montserrat_regular');
+    expect(
+      fs.existsSync(
+        path.resolve(
+          DIR,
+          'android/app/src/main/res/font/montserrat_regular.ttf',
+        ),
+      ),
+    ).toBe(true);
+    expect(
+      fs.existsSync(
+        path.resolve(
+          DIR,
+          'android/app/src/main/assets/custom/Montserrat-Regular.TTF',
+        ),
+      ),
+    ).toBe(false);
+    expect(readMainApplicationKotlinFile()).toContain(
+      'addCustomFont(this, "Montserrat", R.font.montserrat)',
+    );
+
+    // iOS: it is registered in `UIAppFonts`, otherwise the font ships in the
+    // bundle but cannot be used at runtime.
+    expect(readInfoPlistFile()).toContain('Montserrat-Regular.TTF');
+  });
+
+  it('should link an image asset whose extension is upper-cased', async () => {
+    writeFiles(DIR, {
+      ...baseProjectKotlin,
+      'assets/shared/Upper Image.PNG': fixtureFiles.imagePng,
+    });
+
+    await linkAssets([], configMock as CLIConfig);
+
+    expect(
+      fs.existsSync(
+        path.resolve(DIR, 'android/app/src/main/res/drawable/upper_image.png'),
+      ),
+    ).toBe(true);
+    expect(
+      fs.existsSync(
+        path.resolve(DIR, 'android/app/src/main/assets/custom/Upper Image.PNG'),
+      ),
+    ).toBe(false);
+  });
 });

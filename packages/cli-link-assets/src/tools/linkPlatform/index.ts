@@ -1,6 +1,7 @@
 import {CLIError, logger} from '@react-native-community/cli-tools';
 import fs from 'fs';
 import path from 'path';
+import {getAssetExtension} from '../../fileTypes';
 import sha1File from '../../sha1File';
 import {CleanAssets} from '../cleanAssets/types';
 import {CopyAssets} from '../copyAssets/types';
@@ -173,7 +174,7 @@ function linkPlatform({
     .map((fileExt): FileFilter => {
       return {
         name: fileExt,
-        filter: (asset) => path.extname(asset.path) === `.${fileExt}`,
+        filter: (asset) => getAssetExtension(asset.path) === fileExt,
         options: linkOptionsPerExt[fileExt as Extension],
       };
     })
@@ -181,7 +182,7 @@ function linkPlatform({
       name: 'custom',
       filter: (asset) =>
         Object.keys(linkOptionsPerExt).indexOf(
-          path.extname(asset.path).substring(1),
+          getAssetExtension(asset.path),
         ) === -1,
       options: otherLinkOptions,
     });

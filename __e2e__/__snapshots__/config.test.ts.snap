@@ -111,7 +111,8 @@ exports[`shows up current config without unnecessary output 1`] = `
   "project": {
     "ios": {
       "sourceDir": "<<REPLACED_ROOT>>/TestProject/ios",
-      "assets": []
+      "assets": [],
+      "buildSystem": "cocoapods"
     },
     "android": {
       "sourceDir": "<<REPLACED_ROOT>>/TestProject/android",

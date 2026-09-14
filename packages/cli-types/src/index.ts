@@ -1,4 +1,5 @@
 import {
+  AppleBuildSystem,
   IOSProjectConfig,
   IOSProjectParams,
   IOSDependencyConfig,
@@ -150,6 +151,7 @@ export type UserDependencyConfig = {
 };
 
 export {
+  AppleBuildSystem,
   IOSProjectConfig,
   IOSProjectParams,
   IOSDependencyConfig,

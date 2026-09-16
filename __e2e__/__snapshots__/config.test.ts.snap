@@ -57,6 +57,13 @@ exports[`shows up current config without unnecessary output 1`] = `
       ]
     },
     {
+      "name": "spm [action]",
+      "description": "Set up or maintain Swift Package Manager support for the iOS/macOS app. Actions: add, update, deinit, scaffold. With no action: add (or update if SPM is already set up).",
+      "options": [
+        "<<REPLACED>>"
+      ]
+    },
+    {
       "name": "log-ios",
       "description": "starts iOS device syslog tail",
       "options": [
@@ -111,8 +118,7 @@ exports[`shows up current config without unnecessary output 1`] = `
   "project": {
     "ios": {
       "sourceDir": "<<REPLACED_ROOT>>/TestProject/ios",
-      "assets": [],
-      "buildSystem": "cocoapods"
+      "assets": []
     },
     "android": {
       "sourceDir": "<<REPLACED_ROOT>>/TestProject/android",

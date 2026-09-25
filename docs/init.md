@@ -78,23 +78,23 @@ module.exports = {
 
 ## Post init script loading
 
-The responsibility of showing the user progress of the "Executing post init script" goes to the implementor. In the cli, the `ora` package is used to display progress.
-For a simple usage in a custom template, `ora` can be used like this in a postInitScript :
+The responsibility of showing the user progress of the "Executing post init script" goes to the implementor. In the cli, the `nanospinner` package is used to display progress.
+For a simple usage in a custom template, `nanospinner` can be used like this in a postInitScript :
 
 ```javascript
 #!/usr/bin/env node
-const ora = require('ora');
+const {createSpinner} = require('nanospinner');
 
-const spinner = ora('Executing post init script ');
+const spinner = createSpinner('Executing post init script ');
 
 new Promise((resolve) => {
   spinner.start();
   // do something
   resolve();
 }).then(() => {
-  spinner.succeed();
+  spinner.success();
 }).catch(() => {
-  spinner.fail();
+  spinner.error();
   throw new Error('Something went wrong during the post init script execution');
 });
 ```

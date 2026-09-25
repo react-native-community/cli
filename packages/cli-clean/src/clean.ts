@@ -235,10 +235,10 @@ export async function clean(
       spinner.start(label);
       await action()
         .then(() => {
-          spinner.succeed();
+          spinner.success();
         })
         .catch((e) => {
-          spinner.fail(`${label} » ${e}`);
+          spinner.error(`${label} » ${e}`);
         });
     }
   }

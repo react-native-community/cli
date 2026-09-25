@@ -38,7 +38,7 @@ export default {
     }
   },
   runAutomaticFix: async ({loader, logManualInstallation}) => {
-    loader.fail();
+    loader.error();
     let hash: string;
     switch (link.getOS()) {
       case 'macos':
@@ -59,7 +59,7 @@ export default {
       if (device && device.connected) {
         tryRunAdbReverse(process.env.RCT_METRO_PORT || 8081, device.deviceId);
       }
-      return loader.succeed();
+      return loader.success();
     } catch (e) {
       return logManualInstallation({
         healthcheck: 'Adb',

@@ -1,7 +1,7 @@
 import type {Config} from '@react-native-community/cli-types';
-import type {Ora} from 'ora';
+import type {Loader} from '@react-native-community/cli-tools';
 
-export type Loader = Ora;
+export type {Loader};
 
 export type NotFound = 'Not Found';
 

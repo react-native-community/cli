@@ -73,8 +73,8 @@ describe('jdk', () => {
 
   it('downloads and unzips JDK on Windows when missing', async () => {
     const loader = new tools.NoopLoader();
-    const loaderSucceedSpy = jest.spyOn(loader, 'succeed');
-    const loaderFailSpy = jest.spyOn(loader, 'fail');
+    const loaderSuccessSpy = jest.spyOn(loader, 'success');
+    const loaderErrorSpy = jest.spyOn(loader, 'error');
     const downloadAndUnzipSpy = jest
       .spyOn(downloadAndUnzip, 'downloadAndUnzip')
       .mockImplementation(() => Promise.resolve());
@@ -85,10 +85,10 @@ describe('jdk', () => {
       environmentInfo,
     });
 
-    expect(loaderFailSpy).toHaveBeenCalledTimes(0);
+    expect(loaderErrorSpy).toHaveBeenCalledTimes(0);
     expect(logSpy).toHaveBeenCalledTimes(0);
     expect(downloadAndUnzipSpy).toBeCalledTimes(1);
-    expect(loaderSucceedSpy).toBeCalledWith(
+    expect(loaderSuccessSpy).toBeCalledWith(
       'JDK installed successfully. Please restart your shell to see the changes',
     );
   });

@@ -79,10 +79,7 @@ export default async function ({
     logger.log(`\n${pico.dim(category.label)}`);
 
     for (const healthcheckToRun of healthchecksToRun) {
-      const spinner = getLoader({
-        prefixText: '',
-        text: healthcheckToRun.label,
-      }).start();
+      const spinner = getLoader(healthcheckToRun.label).start();
 
       try {
         await healthcheckToRun.runAutomaticFix({

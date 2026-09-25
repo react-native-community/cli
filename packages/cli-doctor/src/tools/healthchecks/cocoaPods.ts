@@ -33,13 +33,13 @@ export default {
       // First attempt to install `cocoapods`
       await execa('gem', options);
 
-      return loader.succeed(loaderSucceedMessage);
+      return loader.success(loaderSucceedMessage);
     } catch (_error) {
       // If that doesn't work then try with sudo
       try {
         await runSudo(`gem ${options.join(' ')}`);
 
-        return loader.succeed(loaderSucceedMessage);
+        return loader.success(loaderSucceedMessage);
       } catch (error) {
         logError({
           healthcheck: label,

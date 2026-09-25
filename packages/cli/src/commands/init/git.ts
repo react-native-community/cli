@@ -59,7 +59,7 @@ export const createGitRepository = async (folder: string) => {
         cwd: folder,
       },
     );
-    loader.succeed();
+    loader.success();
   } catch (e) {
     loader.stop();
     logger.debug(

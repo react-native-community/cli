@@ -7919,6 +7919,13 @@ nanomatch@^1.2.9:
     snapdragon "^0.8.1"
     to-regex "^3.0.1"
 
+nanospinner@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/nanospinner/-/nanospinner-1.2.2.tgz#5a38f4410b5bf7a41585964bee74d32eab3e040b"
+  integrity sha512-Zt/AmG6qRU3e+WnzGGLuMCEAO/dAu45stNbHY223tUxldaDAeE+FxSPsd9Q+j+paejmm0ZbrNVs5Sraqy3dRxA==
+  dependencies:
+    picocolors "^1.1.1"
+
 natural-compare-lite@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/natural-compare-lite/-/natural-compare-lite-1.4.0.tgz#17b09581988979fddafe0201e931ba933c96cbb4"

@@ -38,10 +38,10 @@ export const getGradleTasks = (
     const out = execa.sync(cmd, ['tasks', '--group', taskType], {
       cwd: sourceDir,
     }).stdout;
-    loader.succeed();
+    loader.success();
     return parseTasksFromGradleFile(taskType, out);
   } catch {
-    loader.fail();
+    loader.error();
     return [];
   }
 };

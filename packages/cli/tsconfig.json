@@ -9,6 +9,8 @@
     {"path": "../cli-config"},
     {"path": "../cli-doctor"},
     {"path": "../cli-link-assets"},
+    {"path": "../cli-platform-android"},
+    {"path": "../cli-platform-ios"},
     {"path": "../cli-server-api"},
     {"path": "../cli-types"},
     {"path": "../cli-tools"}

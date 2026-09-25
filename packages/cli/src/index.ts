@@ -5,6 +5,14 @@ import type {
   Config,
   DetachedCommand,
 } from '@react-native-community/cli-types';
+import {
+  projectConfig as androidProjectConfig,
+  dependencyConfig as androidDependencyConfig,
+} from '@react-native-community/cli-platform-android';
+import {
+  projectConfig as iosProjectConfig,
+  dependencyConfig as iosDependencyConfig,
+} from '@react-native-community/cli-platform-ios';
 import childProcess from 'child_process';
 import {Command as CommanderCommand} from 'commander';
 import path from 'path';
@@ -149,6 +157,31 @@ const isCommandPassed = (commandName: string) => {
   return process.argv.filter((arg) => arg === commandName).length > 0;
 };
 
+/**
+ * Commands that `@react-native/community-cli-plugin` registers, which projects
+ * must list in their own dependencies.
+ */
+const communityCliPluginCommands = ['bundle', 'codegen', 'spm', 'start'];
+
+function exitIfCommunityCliPluginMissing(argv: string[]) {
+  const commandName = argv.slice(2).find((arg) => !arg.startsWith('-'));
+
+  if (
+    commandName == null ||
+    !communityCliPluginCommands.includes(commandName) ||
+    program.commands.some((cmd) => cmd.name() === commandName)
+  ) {
+    return;
+  }
+
+  logger.error(
+    `The "${commandName}" command is provided by ${pico.bold(
+      '@react-native/community-cli-plugin',
+    )}, which is not installed in this project. Add it to your devDependencies, at the same version as react-native, then run your package manager's install.`,
+  );
+  process.exit(1);
+}
+
 async function setupAndRun(platformName?: string) {
   // Commander is not available yet
 
@@ -197,6 +230,24 @@ async function setupAndRun(platformName?: string) {
 
     config = await loadConfigAsync({
       selectedPlatform,
+      // iOS and Android are core platforms bundled with the CLI, so they are
+      // always registered. The project's own and dependencies' configs can
+      // still override them.
+      //
+      // The cast is needed because the platform packages' `projectConfig`/
+      // `dependencyConfig` return `null` and take required params, whereas the
+      // `PlatformConfig` interface models these as `void`. These functions are
+      // the canonical implementations the CLI already calls via the config scan.
+      platforms: {
+        ios: {
+          projectConfig: iosProjectConfig,
+          dependencyConfig: iosDependencyConfig,
+        },
+        android: {
+          projectConfig: androidProjectConfig,
+          dependencyConfig: androidDependencyConfig,
+        },
+      } as Config['platforms'],
     });
 
     logger.enable();
@@ -211,6 +262,8 @@ async function setupAndRun(platformName?: string) {
     for (const command of Object.values(commands)) {
       attachCommand(command, config);
     }
+
+    exitIfCommunityCliPluginMissing(process.argv);
   } catch (error) {
     /**
      * When there is no `package.json` found, the CLI will enter `detached` mode and a subset

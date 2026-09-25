@@ -1,6 +1,6 @@
 import path from 'path';
 import slash from 'slash';
-import {loadConfigAsync} from '..';
+import loadConfig, {loadConfigAsync} from '..';
 import {cleanup, writeFiles, getTempDirectory} from '../../../../jest/helpers';
 
 let DIR = getTempDirectory('config_test');
@@ -98,6 +98,33 @@ test('should return dependencies from package.json', async () => {
   });
   const {dependencies} = await loadConfigAsync({projectRoot: DIR});
   expect(removeString(dependencies, DIR)).toMatchSnapshot();
+});
+
+test('does not link "react-native" as a dependency', async () => {
+  DIR = getTempDirectory('config_test_react_native_not_linked');
+  writeFiles(DIR, {
+    'node_modules/react-native/package.json': '{}',
+    'node_modules/react-native/React-Core-prebuilt.podspec': '',
+    'node_modules/react-native-test/package.json': '{}',
+    'node_modules/react-native-test/ReactNativeTest.podspec': '',
+    'package.json': `{
+      "dependencies": {
+        "react-native": "0.0.1",
+        "react-native-test": "0.0.1"
+      }
+    }`,
+  });
+  const platforms = {
+    ios: {
+      projectConfig: require(iosPath).projectConfig,
+      dependencyConfig: require(iosPath).dependencyConfig,
+    },
+  };
+
+  const asyncConfig = await loadConfigAsync({projectRoot: DIR, platforms});
+  const syncConfig = loadConfig({projectRoot: DIR, platforms});
+  expect(Object.keys(asyncConfig.dependencies)).toEqual(['react-native-test']);
+  expect(Object.keys(syncConfig.dependencies)).toEqual(['react-native-test']);
 });
 
 test('should read a config of a dependency and use it to load other settings', async () => {

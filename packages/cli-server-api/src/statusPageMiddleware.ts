@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 import http from 'http';
+import {normalizeProjectRoot} from '@react-native-community/cli-tools';
 
 /**
  * Status page so that anyone who needs to can verify that the packager is
@@ -16,7 +17,7 @@ export default function statusPageMiddleware(
 ) {
   res.setHeader(
     'X-React-Native-Project-Root',
-    new URL(`file:///${process.cwd()}`).pathname.slice(1),
+    normalizeProjectRoot(process.cwd()),
   );
   res.end('packager-status:running');
 }

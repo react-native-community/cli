@@ -26,6 +26,8 @@ Cleans caches. Commonly used to ensure build failures are not due to stale cache
 
 Comma-separated flag of caches to clear e.g. `npm,yarn`. If omitted, an interactive prompt will appear. Valid values include `android`, `cocoapods`, `metro`, `npm`, `watchman`, and `yarn`.
 
+On macOS, `cocoapods` removes installed pods from the configured iOS source directory (or `ios` under the project root) and the `.cocoapods` spec cache in your home directory, in addition to running `pod cache clean --all`.
+
 #### `--project-root <string>`
 
 > default: current working directory

@@ -69,7 +69,7 @@ function buildArgs(overrides: Record<string, unknown> = {}) {
   } as any;
 }
 
-describe('createRun no-flag default targeting (issue #2765)', () => {
+describe('createRun device targeting', () => {
   let chdirSpy: jest.SpyInstance;
 
   beforeEach(() => {
@@ -141,6 +141,31 @@ describe('createRun no-flag default targeting (issue #2765)', () => {
       buildArgs({device: physicalDevice.name}),
     );
 
+    expect(runOnDevice).toHaveBeenCalledTimes(1);
+    expect(runOnDevice).toHaveBeenCalledWith(
+      physicalDevice,
+      'ios',
+      'Debug',
+      'Demo',
+      expect.anything(),
+      expect.anything(),
+    );
+    expect(runOnSimulator).not.toHaveBeenCalled();
+  });
+
+  test('connected iPhone + --udid -> does not resolve a fallback simulator', async () => {
+    (listDevices as jest.Mock).mockResolvedValue([physicalDevice]);
+    (getFallbackSimulator as jest.Mock).mockImplementation(() => {
+      throw new Error('No simulator available');
+    });
+
+    await createRun({platformName: 'ios'})(
+      [],
+      buildCtx(),
+      buildArgs({udid: physicalDevice.udid}),
+    );
+
+    expect(getFallbackSimulator).not.toHaveBeenCalled();
     expect(runOnDevice).toHaveBeenCalledTimes(1);
     expect(runOnDevice).toHaveBeenCalledWith(
       physicalDevice,

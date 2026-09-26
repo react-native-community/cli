@@ -213,6 +213,51 @@ const xcrunSimctlOut = `
 }`;
 
 describe('listDevices', () => {
+  it.each([
+    [
+      [false, false, false],
+      [0, 1, 2],
+    ],
+    [
+      [true, true, true],
+      [0, 1, 2],
+    ],
+    [
+      [true, false, true, false],
+      [1, 3, 0, 2],
+    ],
+    [
+      [false, true, false, true],
+      [0, 2, 1, 3],
+    ],
+  ])(
+    'keeps devices before simulators without reordering either group: %j',
+    async (simulators, expectedOrder) => {
+      (execa.sync as jest.Mock)
+        .mockReset()
+        .mockReturnValueOnce({
+          stdout: JSON.stringify(
+            simulators.map((simulator, index) => ({
+              simulator,
+              available: true,
+              name: `Device ${index}`,
+              identifier: `device-${index}`,
+              platform: `com.apple.platform.${
+                simulator ? 'iphonesimulator' : 'iphoneos'
+              }`,
+            })),
+          ),
+        })
+        .mockReturnValueOnce({stdout: '{"devices":{}}'});
+
+      const devices = await listDevices(['iphoneos', 'iphonesimulator']);
+
+      expect(devices.map(({udid}) => udid)).toEqual(
+        expectedOrder.map((index) => `device-${index}`),
+      );
+    },
+  );
+
   it('parses output list for iOS', async () => {
     const devices = await listDevices(['iphoneos', 'iphonesimulator']);
 

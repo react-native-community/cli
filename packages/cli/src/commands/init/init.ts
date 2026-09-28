@@ -498,10 +498,9 @@ export default (async function initialize(
   const projectFolder = path.join(root, directoryName);
 
   if (options.pm && !checkPackageManagerAvailability(options.pm)) {
-    logger.error(
+    throw new CLIError(
       'Seems like the package manager you want to use is not installed. Please install it or choose another package manager.',
     );
-    return;
   }
 
   let shouldBumpYarnVersion = true;

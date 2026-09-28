@@ -31,6 +31,15 @@ describe('android::getMainActivity', () => {
           app: mocks.customFlavor,
         },
       },
+      invalid: {
+        android: {
+          app: {
+            src: {
+              'AndroidManifest.xml': '<manifest><application></manifest>',
+            },
+          },
+        },
+      },
     });
   });
 
@@ -69,5 +78,10 @@ describe('android::getMainActivity', () => {
   it('returns null if file do not exist', () => {
     const fakeManifestPath = findManifest('/empty');
     expect(getMainActivity(fakeManifestPath || '')).toBeNull();
+  });
+
+  it('returns null if the manifest XML is invalid', () => {
+    const manifestPath = findManifest('/invalid');
+    expect(getMainActivity(manifestPath || '')).toBeNull();
   });
 });

@@ -129,4 +129,4 @@ Usage:
 npx react-native log-android
 ```
 
-Starts [`logkitty`](https://github.com/zamotany/logkitty) displaying pretty Android logs.
+Starts [`logkitten`](https://github.com/wix-incubator/logkitten) displaying pretty Android logs.

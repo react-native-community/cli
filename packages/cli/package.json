@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/cli",
-  "version": "21.0.0-alpha.0",
+  "version": "21.0.0-alpha.1",
   "description": "React Native CLI",
   "license": "MIT",
   "main": "build/index.js",
@@ -24,14 +24,14 @@
     "testEnvironment": "node"
   },
   "dependencies": {
-    "@react-native-community/cli-clean": "21.0.0-alpha.0",
-    "@react-native-community/cli-config": "21.0.0-alpha.0",
-    "@react-native-community/cli-doctor": "21.0.0-alpha.0",
-    "@react-native-community/cli-platform-android": "21.0.0-alpha.0",
-    "@react-native-community/cli-platform-ios": "21.0.0-alpha.0",
-    "@react-native-community/cli-server-api": "21.0.0-alpha.0",
-    "@react-native-community/cli-tools": "21.0.0-alpha.0",
-    "@react-native-community/cli-types": "21.0.0-alpha.0",
+    "@react-native-community/cli-clean": "21.0.0-alpha.1",
+    "@react-native-community/cli-config": "21.0.0-alpha.1",
+    "@react-native-community/cli-doctor": "21.0.0-alpha.1",
+    "@react-native-community/cli-platform-android": "21.0.0-alpha.1",
+    "@react-native-community/cli-platform-ios": "21.0.0-alpha.1",
+    "@react-native-community/cli-server-api": "21.0.0-alpha.1",
+    "@react-native-community/cli-tools": "21.0.0-alpha.1",
+    "@react-native-community/cli-types": "21.0.0-alpha.1",
     "commander": "^9.4.1",
     "deepmerge": "^4.3.0",
     "execa": "^5.0.0",
@@ -57,5 +57,5 @@
     "url": "https://github.com/react-native-community/cli.git",
     "directory": "packages/cli"
   },
-  "gitHead": "3614a01613030c0a328ad2e8bb5d897e5bae1456"
+  "gitHead": "3171152a33dbbc79e6be7bbbb3bf236e9b1be893"
 }

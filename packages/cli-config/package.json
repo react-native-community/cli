@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/cli-config",
-  "version": "21.0.0-alpha.0",
+  "version": "21.0.0-alpha.1",
   "license": "MIT",
   "main": "build/index.js",
   "publishConfig": {
@@ -8,7 +8,7 @@
   },
   "types": "build/index.d.ts",
   "dependencies": {
-    "@react-native-community/cli-tools": "21.0.0-alpha.0",
+    "@react-native-community/cli-tools": "21.0.0-alpha.1",
     "cosmiconfig": "^9.0.0",
     "deepmerge": "^4.3.0",
     "fast-glob": "^3.3.2",
@@ -21,7 +21,7 @@
     "!*.map"
   ],
   "devDependencies": {
-    "@react-native-community/cli-types": "21.0.0-alpha.0",
+    "@react-native-community/cli-types": "21.0.0-alpha.1",
     "@types/cosmiconfig": "^5.0.3"
   },
   "homepage": "https://github.com/react-native-community/cli/tree/main/packages/cli-config",
@@ -30,5 +30,5 @@
     "url": "https://github.com/react-native-community/cli.git",
     "directory": "packages/cli-config"
   },
-  "gitHead": "3614a01613030c0a328ad2e8bb5d897e5bae1456"
+  "gitHead": "3171152a33dbbc79e6be7bbbb3bf236e9b1be893"
 }

@@ -1,20 +1,20 @@
 {
   "name": "@react-native-community/cli-platform-apple",
-  "version": "21.0.0-alpha.0",
+  "version": "21.0.0-alpha.1",
   "license": "MIT",
   "main": "build/index.js",
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "@react-native-community/cli-config-apple": "21.0.0-alpha.0",
-    "@react-native-community/cli-tools": "21.0.0-alpha.0",
+    "@react-native-community/cli-config-apple": "21.0.0-alpha.1",
+    "@react-native-community/cli-tools": "21.0.0-alpha.1",
     "execa": "^5.0.0",
     "fast-xml-parser": "^5.3.6",
     "picocolors": "^1.1.1"
   },
   "devDependencies": {
-    "@react-native-community/cli-types": "21.0.0-alpha.0"
+    "@react-native-community/cli-types": "21.0.0-alpha.1"
   },
   "files": [
     "build",
@@ -27,5 +27,5 @@
     "url": "https://github.com/react-native-community/cli.git",
     "directory": "packages/cli-platform-apple"
   },
-  "gitHead": "3614a01613030c0a328ad2e8bb5d897e5bae1456"
+  "gitHead": "3171152a33dbbc79e6be7bbbb3bf236e9b1be893"
 }

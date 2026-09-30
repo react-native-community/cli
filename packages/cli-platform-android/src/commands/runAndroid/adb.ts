@@ -42,6 +42,27 @@ function getDevices(adbPath: string): Array<string> {
 }
 
 /**
+ * Checks whether Android has finished booting on a connected device.
+ */
+function isDeviceBooted(adbPath: string, device: string): boolean {
+  try {
+    return (
+      execFileSync(adbPath, [
+        '-s',
+        device,
+        'shell',
+        'getprop',
+        'sys.boot_completed',
+      ])
+        .toString()
+        .trim() === '1'
+    );
+  } catch (e) {
+    return false;
+  }
+}
+
+/**
  * Gets available CPUs of devices from ADB
  */
 function getAvailableCPUs(adbPath: string, device: string): Array<string> {
@@ -90,6 +111,7 @@ function getCPU(adbPath: string, device: string): string | null {
 
 export default {
   getDevices,
+  isDeviceBooted,
   getAvailableCPUs,
   getCPU,
 };

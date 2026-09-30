@@ -37,15 +37,15 @@ const launchEmulator = async (
     },
   );
   cp.unref();
-  const timeout = 30;
+  const timeout = 120;
 
   return new Promise<boolean>((resolve, reject) => {
-    const bootCheckInterval = setInterval(async () => {
+    const bootCheckInterval = setInterval(() => {
       const devices = adb.getDevices(adbPath);
-      const connected = port
+      const connectedDevice = port
         ? devices.find((d) => d.includes(`${port}`))
-        : devices.length > 0;
-      if (connected) {
+        : devices[0];
+      if (connectedDevice && adb.isDeviceBooted(adbPath, connectedDevice)) {
         cleanup();
         resolve(true);
       }

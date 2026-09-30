@@ -208,7 +208,7 @@ const createRun =
       }
     }
 
-    const fallbackSimulator =
+    const getFallbackDevice = () =>
       platformName === 'ios' || platformName === 'tvos'
         ? getFallbackSimulator(args)
         : devices[0];
@@ -267,7 +267,7 @@ const createRun =
       );
       const connectedDevices = devices.filter(({type}) => type === 'device');
 
-      const targetSimulator = bootedSimulators[0] ?? fallbackSimulator;
+      const targetSimulator = bootedSimulators[0] ?? getFallbackDevice();
 
       if (bootedSimulators.length === 0) {
         logger.info(
@@ -413,7 +413,7 @@ const createRun =
         mode,
         scheme,
         args,
-        matchedSimulator ?? fallbackSimulator,
+        matchedSimulator ?? getFallbackDevice(),
       );
     } else {
       runOnSimulator(
@@ -422,7 +422,7 @@ const createRun =
         mode,
         scheme,
         args,
-        fallbackSimulator,
+        getFallbackDevice(),
       );
     }
   };

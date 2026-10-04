@@ -50,21 +50,26 @@ export async function runOnSimulator(
     'DeviceHub.app',
   );
 
-  if (fs.existsSync(simulatorApp)) {
+  const useSimulatorApp = fs.existsSync(simulatorApp);
+  if (useSimulatorApp) {
     child_process.execFileSync('open', [
       simulatorApp,
       '--args',
       '-CurrentDeviceUDID',
       simulator.udid,
     ]);
-  } else if (fs.existsSync(deviceHubApp)) {
-    child_process.execFileSync('open', [
-      `devices://device/open?id=${simulator.udid}`,
-    ]);
   }
 
   if (simulator.state !== 'Booted') {
     bootSimulator(simulator);
+  }
+
+  // DeviceHub shows no window for a device that starts booting right after
+  // the deep link is opened, so only open it once the device is booted.
+  if (!useSimulatorApp && fs.existsSync(deviceHubApp)) {
+    child_process.execFileSync('open', [
+      `devices://device/open?id=${simulator.udid}`,
+    ]);
   }
 
   let buildOutput;

@@ -50,6 +50,15 @@ export const getNpmRegistryUrl = (() => {
   };
 })();
 
+function getNpmPackageUrl(packageName: string, version?: string): URL {
+  const url = new URL(getNpmRegistryUrl());
+  const packagePath = encodeURIComponent(packageName);
+  url.pathname = `${url.pathname.replace(/\/?$/, '/')}${packagePath}${
+    version === undefined ? '' : `/${encodeURIComponent(version)}`
+  }`;
+  return url;
+}
+
 /**
  * Convert an npm tag to a concrete version, for example:
  * - next -> 0.75.0-rc.0
@@ -59,8 +68,7 @@ export async function npmResolveConcreteVersion(
   packageName: string,
   tagOrVersion: string,
 ): Promise<string> {
-  const url = new URL(getNpmRegistryUrl());
-  url.pathname = `${packageName}/${tagOrVersion}`;
+  const url = getNpmPackageUrl(packageName, tagOrVersion);
   const resp = await fetch(url);
   if (
     [
@@ -80,10 +88,6 @@ export async function npmResolveConcreteVersion(
 
 type TimeStampString = string;
 type TemplateVersion = string;
-type VersionedTemplates = {
-  [rnVersion: string]: Template[];
-};
-
 type NpmTemplateResponse = {
   versions: {
     // Template version, semver including -rc candidates
@@ -103,27 +107,11 @@ type NpmTemplateResponse = {
   };
 };
 
-class Template {
-  version: string;
-  reactNativeVersion: string;
-  published: Date;
-
-  constructor(version: string, reactNativeVersion: string, published: string) {
-    this.version = version;
-    this.reactNativeVersion = reactNativeVersion;
-    this.published = new Date(published);
-  }
-
-  get isPreRelease() {
-    return this.version.includes('-rc');
-  }
-}
-
 export async function getTemplateVersion(
   reactNativeVersion: string,
 ): Promise<TemplateVersion | undefined> {
   const json = await fetch(
-    new URL('@react-native-community/template', getNpmRegistryUrl()),
+    getNpmPackageUrl('@react-native-community/template'),
   ).then((resp) => resp.json() as Promise<NpmTemplateResponse>);
 
   // We are abusing which npm metadata is publicly available through the registry. Scripts
@@ -137,33 +125,21 @@ export async function getTemplateVersion(
   //    - No: we don't have a version of the template for a version of React Native. There should
   //          at a minimum be at least one version cut for each MAJOR.MINOR.PATCH since 0.75. Before this
   //          the template was shipped with React Native
-  const rnToTemplate: VersionedTemplates = {};
+  let latestVersion: TemplateVersion | undefined;
+  let latestPublished = -Infinity;
   for (const [templateVersion, pkg] of Object.entries(json.versions)) {
     const rnVersion = pkg?.scripts?.reactNativeVersion ?? pkg?.scripts?.version;
-    if (rnVersion == null || !semver.valid(rnVersion)) {
+    if (rnVersion !== reactNativeVersion || !semver.valid(rnVersion)) {
       // This is a very early version that doesn't have the correct metadata embedded
       continue;
     }
 
-    const template = new Template(
-      templateVersion,
-      rnVersion,
-      json.time[templateVersion],
-    );
-
-    rnToTemplate[rnVersion] = rnToTemplate[rnVersion] ?? [];
-    rnToTemplate[rnVersion].push(template);
+    const published = new Date(json.time[templateVersion]).getTime();
+    if (latestVersion === undefined || published > latestPublished) {
+      latestVersion = templateVersion;
+      latestPublished = published;
+    }
   }
 
-  // Make sure the last published is the first one in each version of React Native
-  for (const v in rnToTemplate) {
-    rnToTemplate[v].sort(
-      (a, b) => b.published.getTime() - a.published.getTime(),
-    );
-  }
-
-  if (reactNativeVersion in rnToTemplate) {
-    return rnToTemplate[reactNativeVersion][0].version;
-  }
-  return;
+  return latestVersion;
 }

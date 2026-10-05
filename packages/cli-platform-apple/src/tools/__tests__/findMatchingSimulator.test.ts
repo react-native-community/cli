@@ -12,6 +12,63 @@ import findMatchingSimulator from '../findMatchingSimulator';
 jest.dontMock('../findMatchingSimulator');
 
 describe('findMatchingSimulator', () => {
+  it.each([
+    ['com.apple.CoreSimulator.SimRuntime.iOS-10-3-1', 'iPhone 6', 'iOS 10.3.1'],
+    ['iOS 10.3.1', 'iPhone 6', 'iOS 10.3.1'],
+    [
+      'com.apple.CoreSimulator.SimRuntime.iOS-10-3-1',
+      'iPad Pro (9.7-inch)',
+      'iOS 10.3.1',
+    ],
+    [
+      'com.apple.CoreSimulator.SimRuntime.tvOS-10-2-1',
+      'Apple TV',
+      'tvOS 10.2.1',
+    ],
+  ])('should match a patch version in %s for %s', (runtime, name, version) => {
+    const simulator = {
+      state: 'Shutdown',
+      isAvailable: true,
+      name,
+      udid: 'B9B5E161-416B-43C4-A78F-729CB96CC8C6',
+    };
+
+    expect(
+      findMatchingSimulator(
+        {devices: {[runtime]: [simulator]}},
+        {simulator: `${name} (${version.split(' ')[1]})`},
+      ),
+    ).toEqual({
+      udid: simulator.udid,
+      name,
+      state: 'Shutdown',
+      version,
+    });
+  });
+
+  it.each(['3.1', '10.3.2'])(
+    'should not match iOS 10.3.1 when version %s is requested',
+    (version) => {
+      expect(
+        findMatchingSimulator(
+          {
+            devices: {
+              'iOS 10.3.1': [
+                {
+                  state: 'Shutdown',
+                  isAvailable: true,
+                  name: 'iPhone 6',
+                  udid: 'B9B5E161-416B-43C4-A78F-729CB96CC8C6',
+                },
+              ],
+            },
+          },
+          {simulator: `iPhone 6 (${version})`},
+        ),
+      ).toBeNull();
+    },
+  );
+
   it('should find simulator', () => {
     expect(
       findMatchingSimulator(

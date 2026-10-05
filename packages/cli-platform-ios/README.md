@@ -26,7 +26,7 @@ Builds your app and starts it on iOS simulator.
 
 > default: iPhone 14
 
-Explicitly set the simulator to use. Optionally include iOS version between parenthesis at the end to match an exact version, e.g. `"iPhone 6 (10.0)"`.
+Explicitly set the simulator to use. Optionally include iOS version between parenthesis at the end to match an exact version, e.g. `"iPhone 6 (10.0)"` or `"iPhone 6 (10.3.1)"`.
 
 Notes: If selected simulator does not exist, cli will try to run fallback simulators in following order:
 

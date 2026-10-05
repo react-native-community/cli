@@ -82,11 +82,9 @@ function get(name: string, key: CacheKey): string | undefined {
 }
 
 function set(name: string, key: CacheKey, value: string) {
-  const cache = loadCache(name);
-  if (cache) {
-    cache[key] = value;
-    saveCache(name, cache);
-  }
+  const cache = loadCache(name) ?? {};
+  cache[key] = value;
+  saveCache(name, cache);
 }
 
 export default {

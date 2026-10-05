@@ -6,7 +6,7 @@
  *
  */
 
-import {execSync, execFileSync} from 'child_process';
+import {execFileSync} from 'child_process';
 
 /**
  * Parses the output of the 'adb devices' command
@@ -34,7 +34,7 @@ function parseDevicesResult(result: string): Array<string> {
  */
 function getDevices(adbPath: string): Array<string> {
   try {
-    const devicesResult = execSync(`"${adbPath}" devices`);
+    const devicesResult = execFileSync(adbPath, ['devices']);
     return parseDevicesResult(devicesResult.toString());
   } catch (e) {
     return [];
@@ -61,7 +61,7 @@ function getAvailableCPUs(adbPath: string, device: string): Array<string> {
       ).toString();
     }
 
-    return (cpus || '').trim().split(',');
+    return cpus.trim().split(',').filter(Boolean);
   } catch (e) {
     return [];
   }

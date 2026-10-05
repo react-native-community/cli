@@ -46,6 +46,10 @@ function tryLaunchAppOnDevice(
       'android.intent.category.LAUNCHER',
     ];
 
+    if (args.user !== undefined) {
+      adbArgs.push('--user', `${args.user}`);
+    }
+
     if (device) {
       adbArgs.unshift('-s', device);
       logger.info(`Starting the app on "${device}"...`);

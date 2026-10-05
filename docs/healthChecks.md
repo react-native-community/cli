@@ -154,7 +154,7 @@ async function needToInstallFoo({loader, logManualInstallation}) {
 
     return logManualInstallation({
       healthcheck: 'Foo',
-      url: 'https:/foo.com/download',
+      url: 'https://foo.com/download',
     });
 }
 ```
@@ -169,3 +169,4 @@ async function fixFoo({loader}) {
 
   loader.succeed();
 }
+```

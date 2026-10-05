@@ -37,7 +37,7 @@ Also, you can provide your own configuration by creating a `react-native.config.
 type Command = {
   name: string;
   description?: string;
-  func: (argv: Array<string>, config: ConfigT, args: Object) => ?Promise<void>;
+  func: (argv: Array<string>, config: ConfigT, args: Object) => Promise<void> | void;
   options?: Array<{
     name: string;
     description?: string;

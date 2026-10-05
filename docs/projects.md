@@ -30,7 +30,7 @@ You can check all available options below.
 ```ts
 // referenced from @react-native-community/cli-types
 type ProjectConfigT = {
-  reactNativePath: ?string;
+  reactNativePath?: string;
   project: {
     android?: AndroidProjectParams;
     ios?: IOSProjectParams;

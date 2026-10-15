@@ -98,15 +98,13 @@ async function runOnAllDevices(
     throw createInstallError(error as any);
   }
 
-  (devices.length > 0 ? devices : [undefined]).forEach(
-    (device: string | void) => {
-      tryRunAdbReverse(args.port, device);
-      if (args.binaryPath && device) {
-        tryInstallAppOnDevice(args, adbPath, device, androidProject);
-      }
-      tryLaunchAppOnDevice(device, androidProject, adbPath, args);
-    },
-  );
+  for (const device of devices.length > 0 ? devices : [undefined]) {
+    tryRunAdbReverse(args.port, device);
+    if (args.binaryPath && device) {
+      await tryInstallAppOnDevice(args, adbPath, device, androidProject);
+    }
+    tryLaunchAppOnDevice(device, androidProject, adbPath, args);
+  }
 }
 
 function createInstallError(error: Error & {stderr: string}) {

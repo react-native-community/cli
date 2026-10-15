@@ -1,11 +1,11 @@
 import execa from 'execa';
 import fs from 'fs';
-import {logger, CLIError} from '@react-native-community/cli-tools';
+import {logger, CLIError, prompt} from '@react-native-community/cli-tools';
 
 import adb from './adb';
 import type {AndroidProject, Flags} from './';
 
-function tryInstallAppOnDevice(
+async function tryInstallAppOnDevice(
   args: Flags,
   adbPath: string,
   device: string,
@@ -34,7 +34,7 @@ function tryInstallAppOnDevice(
     const variantAppName =
       variantFromSelectedTask?.join('-')?.toLowerCase() ?? defaultVariant;
 
-    let pathToApk;
+    let pathToApk: string;
     if (!args.binaryPath) {
       const buildDirectory = `${sourceDir}/${appName}/build/outputs/apk/${variantPath}`;
       const apkFile = getInstallApkName(
@@ -49,20 +49,75 @@ function tryInstallAppOnDevice(
       pathToApk = args.binaryPath;
     }
 
-    const installArgs = ['-s', device, 'install', '-r', '-d'];
-    if (args.user !== undefined) {
-      installArgs.push('--user', `${args.user}`);
+    const install = () => {
+      const installArgs = ['-s', device, 'install', '-r', '-d'];
+      if (args.user !== undefined) {
+        installArgs.push('--user', `${args.user}`);
+      }
+      const adbArgs = [...installArgs, pathToApk];
+      logger.info(`Installing the app on the device "${device}"...`);
+      logger.debug(`Running command "cd android && adb ${adbArgs.join(' ')}"`);
+      execa.sync(adbPath, adbArgs, {stdio: ['inherit', 'inherit', 'pipe']});
+    };
+
+    try {
+      install();
+    } catch (error) {
+      const stderr = ((error as any).stderr || '').toString();
+      logger.log(stderr);
+      if (!stderr.includes('INSTALL_FAILED_VERSION_DOWNGRADE')) {
+        throw error;
+      }
+      await handleVersionDowngrade(
+        args,
+        adbPath,
+        device,
+        androidProject,
+        install,
+      );
     }
-    const adbArgs = [...installArgs, pathToApk];
-    logger.info(`Installing the app on the device "${device}"...`);
-    logger.debug(`Running command "cd android && adb ${adbArgs.join(' ')}"`);
-    execa.sync(adbPath, adbArgs, {stdio: 'inherit'});
   } catch (error) {
     throw new CLIError(
       'Failed to install the app on the device.',
       error as any,
     );
   }
+}
+
+async function handleVersionDowngrade(
+  args: Flags,
+  adbPath: string,
+  device: string,
+  androidProject: AndroidProject,
+  install: () => void,
+) {
+  const {reinstall}: {reinstall: boolean} = await prompt({
+    type: 'confirm',
+    name: 'reinstall',
+    message:
+      'The app installed on the device has a newer version than the one being installed. Do you want to uninstall the existing app and install again?',
+    initial: false,
+  });
+
+  if (!reinstall) {
+    throw new Error('Installation cancelled: INSTALL_FAILED_VERSION_DOWNGRADE');
+  }
+
+  const applicationId = [
+    args.appId || androidProject.applicationId,
+    args.appIdSuffix,
+  ]
+    .filter(Boolean)
+    .join('.');
+  const uninstallArgs = ['-s', device, 'uninstall'];
+  if (args.user !== undefined) {
+    uninstallArgs.push('--user', `${args.user}`);
+  }
+  uninstallArgs.push(applicationId);
+  logger.info(`Uninstalling "${applicationId}" from the device "${device}"...`);
+  logger.debug(`Running command "adb ${uninstallArgs.join(' ')}"`);
+  execa.sync(adbPath, uninstallArgs, {stdio: 'inherit'});
+  install();
 }
 
 function getInstallApkName(

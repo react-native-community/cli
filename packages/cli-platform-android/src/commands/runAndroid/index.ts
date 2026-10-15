@@ -214,7 +214,7 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
   }
 }
 
-function runOnSpecificDevice(
+async function runOnSpecificDevice(
   args: Flags,
   adbPath: string,
   androidProject: AndroidProject,
@@ -265,7 +265,7 @@ function runOnSpecificDevice(
         build(gradleArgs, androidProject.sourceDir);
       }
 
-      installAndLaunchOnDevice(
+      await installAndLaunchOnDevice(
         args,
         device,
         adbPath,
@@ -283,7 +283,7 @@ function runOnSpecificDevice(
   }
 }
 
-function installAndLaunchOnDevice(
+async function installAndLaunchOnDevice(
   args: Flags,
   selectedDevice: string,
   adbPath: string,
@@ -292,7 +292,7 @@ function installAndLaunchOnDevice(
 ) {
   tryRunAdbReverse(args.port, selectedDevice);
 
-  tryInstallAppOnDevice(
+  await tryInstallAppOnDevice(
     args,
     adbPath,
     selectedDevice,

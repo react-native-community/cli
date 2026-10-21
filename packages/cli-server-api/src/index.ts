@@ -7,7 +7,6 @@ import nocache from 'nocache';
 import serveStatic from 'serve-static';
 
 import indexPageMiddleware from './indexPageMiddleware';
-import openStackFrameMiddleware from './openStackFrameMiddleware';
 import openURLMiddleware from './openURLMiddleware';
 import securityHeadersMiddleware from './securityHeadersMiddleware';
 import statusPageMiddleware from './statusPageMiddleware';
@@ -34,7 +33,6 @@ export function createDevServerMiddleware(options: MiddlewareOptions) {
     .use(compression())
     .use(nocache())
     .use('/', indexPageMiddleware)
-    .use('/open-stack-frame', openStackFrameMiddleware(options))
     .use('/open-url', openURLMiddleware)
     .use('/status', statusPageMiddleware)
     // @ts-ignore mismatch

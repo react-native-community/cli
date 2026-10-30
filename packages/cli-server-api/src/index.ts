@@ -1,18 +1,9 @@
-import http from 'http';
-
-import compression from 'compression';
 import connect from 'connect';
 import errorhandler from 'errorhandler';
-import nocache from 'nocache';
 import serveStatic from 'serve-static';
 
 import indexPageMiddleware from './indexPageMiddleware';
-import securityHeadersMiddleware from './securityHeadersMiddleware';
-import statusPageMiddleware from './statusPageMiddleware';
 import systraceProfileMiddleware from './systraceProfileMiddleware';
-
-import createMessageSocketEndpoint from './websocket/createMessageSocketEndpoint';
-import createEventsSocketEndpoint from './websocket/createEventsSocketEndpoint';
 
 type MiddlewareOptions = {
   host?: string;
@@ -21,24 +12,10 @@ type MiddlewareOptions = {
 };
 
 export function createDevServerMiddleware(options: MiddlewareOptions) {
-  const messageSocketEndpoint = createMessageSocketEndpoint();
-  const broadcast = messageSocketEndpoint.broadcast;
-
-  const eventsSocketEndpoint = createEventsSocketEndpoint(broadcast);
-
   const middleware = connect()
-    .use(securityHeadersMiddleware(options))
-    // @ts-ignore compression and connect types mismatch
-    .use(compression())
-    .use(nocache())
     .use('/', indexPageMiddleware)
-    .use('/status', statusPageMiddleware)
     // @ts-ignore mismatch
     .use('/systrace', systraceProfileMiddleware)
-    .use('/reload', (_req: http.IncomingMessage, res: http.ServerResponse) => {
-      broadcast('reload');
-      res.end('OK');
-    })
     // @ts-ignore mismatch
     .use(errorhandler());
 
@@ -47,13 +24,5 @@ export function createDevServerMiddleware(options: MiddlewareOptions) {
     middleware.use(serveStatic(folder));
   });
 
-  return {
-    websocketEndpoints: {
-      '/message': messageSocketEndpoint.server,
-      '/events': eventsSocketEndpoint.server,
-    },
-    messageSocketEndpoint,
-    eventsSocketEndpoint,
-    middleware,
-  };
+  return {middleware};
 }

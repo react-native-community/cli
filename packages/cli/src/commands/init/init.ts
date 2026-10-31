@@ -42,6 +42,14 @@ import {createTemplateUri} from './version';
 import {TEMPLATE_COMMUNITY_REACT_NATIVE_VERSION} from './constants';
 import type {Options} from './types';
 import {runCodegen} from '@react-native-community/cli-config-apple';
+import {
+  assertNoSpmConflict,
+  findSpmSetupScript,
+  getTemplateReactNativeVersion,
+  isSpmExpected,
+  runSpmSetup,
+  SpmSetup,
+} from './spm';
 
 const DEFAULT_VERSION = 'latest';
 
@@ -55,6 +63,7 @@ interface TemplateOptions {
   skipInstall?: boolean;
   packageName?: string;
   installCocoaPods?: string | boolean;
+  skipSpm?: boolean;
   version: string;
   replaceDirectory?: string | boolean;
   yarnConfigOptions?: Record<string, string>;
@@ -62,6 +71,7 @@ interface TemplateOptions {
 
 interface TemplateReturnType {
   didInstallPods?: boolean;
+  spmSetup?: SpmSetup;
   replaceDirectory?: string | boolean;
 }
 
@@ -192,6 +202,7 @@ async function createFromTemplate({
   skipInstall,
   packageName,
   installCocoaPods,
+  skipSpm,
   replaceDirectory,
   yarnConfigOptions,
   version,
@@ -202,6 +213,7 @@ async function createFromTemplate({
     logger.log(banner(version !== DEFAULT_VERSION ? version : undefined));
   }
   let didInstallPods = String(installCocoaPods) === 'true';
+  let spmSetup: SpmSetup | undefined;
   let packageManager = pm;
 
   if (pm) {
@@ -279,7 +291,19 @@ async function createFromTemplate({
         root: projectDirectory,
       });
 
-      if (process.platform === 'darwin') {
+      const spmSetupScript = findSpmSetupScript(projectDirectory, {
+        skipSpm,
+        installPods: installCocoaPods,
+      });
+
+      if (spmSetupScript) {
+        const didSetUpSpm = await runSpmSetup(
+          spmSetupScript,
+          projectDirectory,
+          loader,
+        );
+        spmSetup = didSetUpSpm ? 'done' : 'failed';
+      } else if (process.platform === 'darwin') {
         const installPodsValue = String(installCocoaPods);
 
         try {
@@ -348,7 +372,7 @@ async function createFromTemplate({
     process.exit(1);
   }
 
-  return {didInstallPods};
+  return {didInstallPods, spmSetup};
 }
 
 async function installDependencies({
@@ -428,6 +452,7 @@ async function createProject(
     skipInstall: options.skipInstall,
     packageName: options.packageName,
     installCocoaPods: options.installPods,
+    skipSpm: options.skipSpm,
     version,
     replaceDirectory: options.replaceDirectory,
     yarnConfigOptions: options.yarnConfigOptions,
@@ -492,6 +517,12 @@ export default (async function initialize(
     }
   }
 
+  const templateReactNativeVersion = getTemplateReactNativeVersion(
+    options,
+    version,
+  );
+  assertNoSpmConflict(templateReactNativeVersion, options);
+
   const root = process.cwd();
 
   const directoryName = path.relative(root, options.directory || projectName);
@@ -523,7 +554,7 @@ export default (async function initialize(
     );
   }
 
-  const {didInstallPods} = await createProject(
+  const {didInstallPods, spmSetup} = await createProject(
     projectName,
     directoryName,
     version,
@@ -535,7 +566,11 @@ export default (async function initialize(
     await createGitRepository(projectFolder);
   }
 
+  const isSpmSetupPending =
+    options.skipInstall && isSpmExpected(templateReactNativeVersion, options);
+
   printRunInstructions(projectFolder, projectName, {
     showPodsInstructions: !didInstallPods,
+    spmSetup: isSpmSetupPending ? 'pending' : spmSetup,
   });
 });

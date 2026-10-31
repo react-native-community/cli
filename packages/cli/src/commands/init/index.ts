@@ -36,7 +36,12 @@ export default {
     {
       name: '--install-pods [boolean]',
       description:
-        'Determine if CocoaPods should be installed when initializing a project',
+        'Determine if CocoaPods should be installed. On macOS with React Native 0.87+, init uses Swift Package Manager instead; add --skip-spm to use CocoaPods.',
+    },
+    {
+      name: '--skip-spm',
+      description:
+        'Use CocoaPods instead of Swift Package Manager for iOS dependencies',
     },
     {
       name: '--package-name <string>',

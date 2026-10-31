@@ -98,7 +98,11 @@ Skip dependencies installation
 
 #### `--install-pods [boolean]`
 
-Determine if CocoaPods should be installed when initializing a project. If set to `true` it will install pods, if set to `false`, it will skip the step entirely. If not used, prompt will be displayed
+Determine if CocoaPods should be installed when initializing a project. If set to `true` it will install pods, if set to `false`, it will skip the step entirely. If not used, prompt will be displayed. On macOS with React Native 0.87+, `init` uses Swift Package Manager instead; add `--skip-spm` to use CocoaPods. With `--template` or an out-of-tree `--platform-name`, `--install-pods true` keeps CocoaPods.
+
+#### `--skip-spm`
+
+Use CocoaPods instead of Swift Package Manager for iOS dependencies. On macOS, starting with React Native 0.87, `init` sets up iOS dependencies with Swift Package Manager, the same as `npx react-native spm add --deintegrate`. With this flag, `init` keeps the CocoaPods setup, and `--install-pods` decides whether pods are installed. Passing `--install-pods true` without this flag is an error for React Native 0.87 and later on macOS. The error applies only when `init` can look up the React Native version; if the lookup fails, for example offline, there is no error and `init` uses CocoaPods. It also applies only without `--skip-install` and with the default template. It does not apply with `--template` or with an out-of-tree `--platform-name`.
 
 #### `--pm <string>`
 

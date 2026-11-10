@@ -126,11 +126,18 @@ export async function clean(
               },
               {
                 label: 'Remove installed CocoaPods',
-                action: () => cleanDir('ios/Pods'),
+                action: () =>
+                  cleanDir(
+                    path.join(
+                      ctx.project.ios?.sourceDir ??
+                        path.join(projectRoot, 'ios'),
+                      'Pods',
+                    ),
+                  ),
               },
               {
                 label: 'Remove CocoaPods spec cache',
-                action: () => cleanDir('~/.cocoapods'),
+                action: () => cleanDir(path.join(os.homedir(), '.cocoapods')),
               },
             ],
           },

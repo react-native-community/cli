@@ -1,5 +1,6 @@
 import execa from 'execa';
 import fs from 'fs';
+import path from 'path';
 import {logger, CLIError} from '@react-native-community/cli-tools';
 
 import adb from './adb';
@@ -73,6 +74,10 @@ function getInstallApkName(
   buildDirectory: string,
 ) {
   const availableCPUs = adb.getAvailableCPUs(adbPath, device);
+  const metadataApk = getApkNameFromMetadata(buildDirectory, availableCPUs);
+  if (metadataApk) {
+    return metadataApk;
+  }
 
   // check if there is an apk file like app-armeabi-v7a-debug.apk
   for (const availableCPU of availableCPUs.concat('universal')) {
@@ -89,6 +94,80 @@ function getInstallApkName(
   }
 
   throw new Error('Could not find the correct install APK file.');
+}
+
+type ApkOutput = {
+  outputFile: string;
+  filters?: {filterType: string; value: string}[];
+};
+
+function isApkOutput(value: unknown): value is ApkOutput {
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+  const {outputFile, filters} = value as Partial<ApkOutput>;
+  return (
+    typeof outputFile === 'string' &&
+    outputFile.length > 0 &&
+    path.basename(outputFile) === outputFile &&
+    (filters === undefined ||
+      (Array.isArray(filters) &&
+        filters.every(
+          (filter) =>
+            filter !== null &&
+            typeof filter === 'object' &&
+            typeof filter.filterType === 'string' &&
+            typeof filter.value === 'string',
+        )))
+  );
+}
+
+function getApkNameFromMetadata(
+  buildDirectory: string,
+  availableCPUs: string[],
+): string | undefined {
+  let metadata: unknown;
+  try {
+    metadata = JSON.parse(
+      fs.readFileSync(
+        path.join(buildDirectory, 'output-metadata.json'),
+        'utf8',
+      ),
+    );
+  } catch (error) {
+    logger.debug(`Could not read APK output metadata: ${String(error)}`);
+    return undefined;
+  }
+  const elements =
+    typeof metadata === 'object' && metadata !== null
+      ? (metadata as {elements?: unknown}).elements
+      : undefined;
+  if (!Array.isArray(elements)) {
+    return undefined;
+  }
+  const outputs = elements.filter(isApkOutput).filter(({outputFile}) => {
+    try {
+      return fs.statSync(path.join(buildDirectory, outputFile)).isFile();
+    } catch {
+      return false;
+    }
+  });
+
+  // Follow device preference, not metadata order. Other split filters need
+  // additional device information and must not be mistaken for universal APKs.
+  for (const cpu of availableCPUs) {
+    const output = outputs.find(
+      ({filters}) =>
+        filters?.length === 1 &&
+        filters[0].filterType === 'ABI' &&
+        filters[0].value === cpu,
+    );
+    if (output) {
+      return output.outputFile;
+    }
+  }
+  return outputs.find(({filters}) => !filters || filters.length === 0)
+    ?.outputFile;
 }
 
 export default tryInstallAppOnDevice;

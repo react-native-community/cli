@@ -16,5 +16,6 @@ export * from './port';
 export {default as cacheManager} from './cacheManager';
 export {default as runSudo} from './runSudo';
 export {default as unixifyPaths} from './unixifyPaths';
+export {default as tokenize} from './tokenize';
 
 export * from './errors';

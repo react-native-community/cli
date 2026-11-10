@@ -12,6 +12,7 @@ type Options = {
   scheme: string;
   target?: string;
   binaryPath?: string;
+  buildFolder?: string;
 };
 
 export default async function openApp({
@@ -21,6 +22,7 @@ export default async function openApp({
   scheme,
   target,
   binaryPath,
+  buildFolder,
 }: Options) {
   let appPath = binaryPath;
 
@@ -30,6 +32,7 @@ export default async function openApp({
     buildOutput,
     scheme,
     target,
+    buildFolder,
   );
 
   if (!buildSettings) {

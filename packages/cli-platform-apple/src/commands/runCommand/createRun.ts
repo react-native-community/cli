@@ -177,6 +177,7 @@ const createRun =
         scheme,
         target: args.target,
         binaryPath: args.binaryPath,
+        buildFolder: args.buildFolder,
       });
 
       return;

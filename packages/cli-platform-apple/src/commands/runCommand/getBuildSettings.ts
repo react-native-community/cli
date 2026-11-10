@@ -16,6 +16,7 @@ export async function getBuildSettings(
   buildOutput: string,
   scheme: string,
   target?: string,
+  buildFolder?: string,
 ): Promise<BuildSettings | null> {
   const buildSettings = child_process.execFileSync(
     'xcodebuild',
@@ -28,6 +29,7 @@ export async function getBuildSettings(
       getPlatformName(buildOutput),
       '-configuration',
       mode,
+      ...(buildFolder ? ['-derivedDataPath', buildFolder] : []),
       '-showBuildSettings',
       '-json',
     ],

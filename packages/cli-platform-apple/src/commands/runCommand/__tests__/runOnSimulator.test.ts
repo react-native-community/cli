@@ -101,3 +101,20 @@ test('does not boot the simulator when it is already booted', async () => {
     expect.arrayContaining(['boot']),
   );
 });
+
+test('installs the app from the build folder the project was built into', async () => {
+  (fs.existsSync as jest.Mock).mockReturnValue(true);
+
+  await runOnSimulator(
+    xcodeProject,
+    'ios',
+    'Debug',
+    'TestApp',
+    {...args, buildFolder: 'build/DerivedData'},
+    simulator,
+  );
+
+  expect(installApp).toHaveBeenCalledWith(
+    expect.objectContaining({buildFolder: 'build/DerivedData'}),
+  );
+});

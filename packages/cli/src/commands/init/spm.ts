@@ -1,6 +1,11 @@
 import semver from 'semver';
 import pico from 'picocolors';
 import {CLIError, logger, Loader} from '@react-native-community/cli-tools';
+import {
+  findPodRunner,
+  installCocoaPods,
+  PodRunner,
+} from '@react-native-community/cli-config-apple';
 import {executeCommand} from '../../tools/executeCommand';
 import type {Options} from './types';
 
@@ -85,27 +90,69 @@ export function findSpmSetupScript(
   }
 }
 
+// `setup-apple-spm add --deintegrate` runs `pod deintegrate`, so CocoaPods has
+// to be available first. Prefer the project's bundled CocoaPods, then the
+// system one, and install it the same way `installPods` does as a last resort.
+async function preparePodRunner(
+  projectDirectory: string,
+  loader: Loader,
+): Promise<PodRunner> {
+  try {
+    return await findPodRunner({cwd: projectDirectory});
+  } catch {
+    await installCocoaPods(loader);
+    return findPodRunner({cwd: projectDirectory});
+  }
+}
+
 export async function runSpmSetup(
   scriptPath: string,
   projectDirectory: string,
   loader: Loader,
 ): Promise<boolean> {
+  let podRunner: PodRunner;
+
+  try {
+    loader.start('Preparing CocoaPods for the Swift Package Manager setup');
+    podRunner = await preparePodRunner(projectDirectory, loader);
+  } catch (error) {
+    loader.fail();
+    logger.warn(
+      `Setting up Swift Package Manager needs CocoaPods to remove the template's CocoaPods setup, and CocoaPods could not be found or installed. Project initialization continues, and the iOS project still uses CocoaPods.\nInstall CocoaPods, then run ${pico.bold(
+        SPM_SETUP_COMMAND,
+      )} in the project directory before running iOS.\n${
+        (error as Error).message
+      }`,
+    );
+    return false;
+  }
+
   loader.start('Setting up iOS dependencies with Swift Package Manager');
+
+  const scriptArgs = [scriptPath, 'add', '--deintegrate', '--yes'];
 
   try {
     // A child process, because the script reports failure through `process.exitCode`.
     // `process.execPath`, because nvm or Volta can put a different Node first on PATH.
-    await executeCommand(
-      process.execPath,
-      [scriptPath, 'add', '--deintegrate', '--yes'],
-      {root: projectDirectory, silent: true},
-    );
+    // Under `bundle exec`, the script's `pod` calls use the project's bundled CocoaPods.
+    if (podRunner === 'bundle') {
+      await executeCommand(
+        'bundle',
+        ['exec', process.execPath, ...scriptArgs],
+        {root: projectDirectory, silent: true},
+      );
+    } else {
+      await executeCommand(process.execPath, scriptArgs, {
+        root: projectDirectory,
+        silent: true,
+      });
+    }
     loader.succeed();
     return true;
   } catch (error) {
     loader.fail();
     logger.warn(
-      `Setting up Swift Package Manager failed. Project initialization continues, but the iOS project may be partly converted.\nIf CocoaPods is not installed, install it first: the setup uses it to remove the template's CocoaPods setup.\nYou need to run ${pico.bold(
+      `Setting up Swift Package Manager failed. Project initialization continues, but the iOS project may be partly converted.\nYou need to run ${pico.bold(
         SPM_SETUP_COMMAND,
       )} in the project directory before running iOS.\n${
         (error as Error).message

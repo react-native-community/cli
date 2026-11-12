@@ -3,7 +3,10 @@ import path from 'path';
 import execa from 'execa';
 import * as cliTools from '@react-native-community/cli-tools';
 import {installPods} from '@react-native-community/cli-platform-apple';
-import {runCodegen} from '@react-native-community/cli-config-apple';
+import {
+  findPodRunner,
+  runCodegen,
+} from '@react-native-community/cli-config-apple';
 import {
   cleanup,
   getTempDirectory,
@@ -38,6 +41,8 @@ jest.mock('@react-native-community/cli-platform-apple', () => ({
 }));
 jest.mock('@react-native-community/cli-config-apple', () => ({
   runCodegen: jest.fn(),
+  findPodRunner: jest.fn(),
+  installCocoaPods: jest.fn(),
 }));
 jest.mock('../../../tools/npm', () => ({
   npmResolveConcreteVersion: jest.fn(),
@@ -122,6 +127,7 @@ beforeEach(() => {
     templateDir: 'template',
   });
   (execa as unknown as jest.Mock).mockResolvedValue({exitCode: 0});
+  (findPodRunner as jest.Mock).mockResolvedValue('system');
   (cliTools.getLoader as jest.Mock).mockReturnValue(new cliTools.NoopLoader());
   (cliTools.prompt as jest.Mock).mockResolvedValue({installCocoapods: true});
   jest.spyOn(process, 'exit').mockImplementation((code) => {

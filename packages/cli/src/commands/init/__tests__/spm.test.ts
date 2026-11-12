@@ -3,6 +3,10 @@ import path from 'path';
 import execa from 'execa';
 import {CLIError, logger, NoopLoader} from '@react-native-community/cli-tools';
 import {
+  findPodRunner,
+  installCocoaPods,
+} from '@react-native-community/cli-config-apple';
+import {
   cleanup,
   getTempDirectory,
   writeFiles,
@@ -16,6 +20,10 @@ import {
 } from '../spm';
 
 jest.mock('execa', () => jest.fn());
+jest.mock('@react-native-community/cli-config-apple', () => ({
+  findPodRunner: jest.fn(),
+  installCocoaPods: jest.fn(),
+}));
 
 // A directory per test, because module resolution results are cached per path.
 let projectCount = 0;
@@ -129,8 +137,33 @@ describe('findSpmSetupScript', () => {
 });
 
 describe('runSpmSetup', () => {
-  it('runs the script as a child process in the project directory', async () => {
+  const SCRIPT_ARGS = () => [SCRIPT_PATH, 'add', '--deintegrate', '--yes'];
+
+  beforeEach(() => {
+    (findPodRunner as jest.Mock).mockResolvedValue('system');
     (execa as unknown as jest.Mock).mockResolvedValue({exitCode: 0});
+  });
+
+  it('runs the script as a child process in the project directory', async () => {
+    const didSetUp = await runSpmSetup(
+      SCRIPT_PATH,
+      PROJECT_DIR,
+      new NoopLoader(),
+    );
+
+    expect(didSetUp).toBe(true);
+    expect(findPodRunner).toHaveBeenCalledWith({cwd: PROJECT_DIR});
+    expect(execa).toHaveBeenCalledWith(
+      process.execPath,
+      SCRIPT_ARGS(),
+      expect.objectContaining({cwd: PROJECT_DIR}),
+    );
+    expect(installCocoaPods).not.toHaveBeenCalled();
+    expect(logger.warn).not.toHaveBeenCalled();
+  });
+
+  it("runs the script under bundle exec to use the project's bundled CocoaPods", async () => {
+    (findPodRunner as jest.Mock).mockResolvedValue('bundle');
 
     const didSetUp = await runSpmSetup(
       SCRIPT_PATH,
@@ -140,11 +173,73 @@ describe('runSpmSetup', () => {
 
     expect(didSetUp).toBe(true);
     expect(execa).toHaveBeenCalledWith(
-      process.execPath,
-      [SCRIPT_PATH, 'add', '--deintegrate', '--yes'],
+      'bundle',
+      ['exec', process.execPath, ...SCRIPT_ARGS()],
       expect.objectContaining({cwd: PROJECT_DIR}),
     );
-    expect(logger.warn).not.toHaveBeenCalled();
+  });
+
+  it('installs CocoaPods when it is not available, then runs the script', async () => {
+    (findPodRunner as jest.Mock)
+      .mockRejectedValueOnce(new Error('cocoapods not installed'))
+      .mockResolvedValueOnce('system');
+
+    const didSetUp = await runSpmSetup(
+      SCRIPT_PATH,
+      PROJECT_DIR,
+      new NoopLoader(),
+    );
+
+    expect(didSetUp).toBe(true);
+    expect(installCocoaPods).toHaveBeenCalledTimes(1);
+    expect(execa).toHaveBeenCalledWith(
+      process.execPath,
+      SCRIPT_ARGS(),
+      expect.objectContaining({cwd: PROJECT_DIR}),
+    );
+  });
+
+  it('does not run the script when CocoaPods cannot be installed', async () => {
+    (findPodRunner as jest.Mock).mockRejectedValue(
+      new Error('cocoapods not installed'),
+    );
+    (installCocoaPods as jest.Mock).mockRejectedValue(
+      new CLIError('An error occured while trying to install CocoaPods'),
+    );
+
+    const didSetUp = await runSpmSetup(
+      SCRIPT_PATH,
+      PROJECT_DIR,
+      new NoopLoader(),
+    );
+
+    expect(didSetUp).toBe(false);
+    expect(execa).not.toHaveBeenCalled();
+    const warning = (logger.warn as jest.Mock).mock.calls.flat().join('\n');
+    expect(warning).toContain('the iOS project still uses CocoaPods');
+    expect(warning).toContain('npx react-native spm add --deintegrate');
+    expect(warning).toContain(
+      'An error occured while trying to install CocoaPods',
+    );
+  });
+
+  it('does not run the script when CocoaPods is still missing after installing it', async () => {
+    (findPodRunner as jest.Mock).mockRejectedValue(
+      new Error('cocoapods not installed'),
+    );
+
+    const didSetUp = await runSpmSetup(
+      SCRIPT_PATH,
+      PROJECT_DIR,
+      new NoopLoader(),
+    );
+
+    expect(didSetUp).toBe(false);
+    expect(installCocoaPods).toHaveBeenCalledTimes(1);
+    expect(execa).not.toHaveBeenCalled();
+    const warning = (logger.warn as jest.Mock).mock.calls.flat().join('\n');
+    expect(warning).toContain('the iOS project still uses CocoaPods');
+    expect(warning).toContain('cocoapods not installed');
   });
 
   it('warns with the retry command and does not throw when the script fails', async () => {
@@ -164,23 +259,6 @@ describe('runSpmSetup', () => {
     expect(warning).toContain('npx react-native spm add --deintegrate');
     expect(warning).toContain(
       'Project initialization continues, but the iOS project may be partly converted.',
-    );
-  });
-
-  it('tells the user that the setup needs CocoaPods before the retry command', async () => {
-    (execa as unknown as jest.Mock).mockRejectedValue(
-      new Error('Command failed with exit code 1'),
-    );
-
-    await runSpmSetup(SCRIPT_PATH, PROJECT_DIR, new NoopLoader());
-
-    const warning = (logger.warn as jest.Mock).mock.calls.flat().join('\n');
-    const podHint = warning.indexOf(
-      "If CocoaPods is not installed, install it first: the setup uses it to remove the template's CocoaPods setup.",
-    );
-    expect(podHint).toBeGreaterThan(-1);
-    expect(podHint).toBeLessThan(
-      warning.indexOf('npx react-native spm add --deintegrate'),
     );
   });
 });

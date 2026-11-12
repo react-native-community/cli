@@ -251,32 +251,43 @@ export default async function resolvePods(
   return true;
 }
 
-export async function execaPod(args: string[], options?: execa.Options) {
-  let podType: 'system' | 'bundle' = 'system';
+export type PodRunner = 'bundle' | 'system';
 
+/**
+ * Finds a working `pod`: the project's bundled CocoaPods first (running
+ * `bundle install` if needed), then the system one.
+ */
+export async function findPodRunner(
+  options?: execa.Options,
+): Promise<PodRunner> {
   try {
     // try bundle pod first
     await execa('bundle', ['exec', 'pod', '--version'], options);
-    podType = 'bundle';
+    return 'bundle';
   } catch (bundlePodError) {
     // try to install bundle pod
     try {
-      await execa('bundle', ['install']);
+      await execa('bundle', ['install'], options);
       await execa('bundle', ['exec', 'pod', '--version'], options);
-      podType = 'bundle';
+      return 'bundle';
     } catch (bundleInstallError) {
       // fall back to system pod
       try {
         await execa('pod', ['--version'], options);
-        podType = 'system';
+        return 'system';
       } catch (systemPodError) {
         throw new Error('cocoapods not installed');
       }
     }
   }
+}
 
-  if (podType === 'bundle') {
+export async function execaPod(args: string[], options?: execa.Options) {
+  const podRunner = await findPodRunner(options);
+
+  if (podRunner === 'bundle') {
     return execa('bundle', ['exec', 'pod', ...args], options);
   }
+
   return execa('pod', args, options);
 }

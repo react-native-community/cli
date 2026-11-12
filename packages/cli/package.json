@@ -29,7 +29,6 @@
     "@react-native-community/cli-doctor": "21.0.0-alpha.1",
     "@react-native-community/cli-platform-android": "21.0.0-alpha.1",
     "@react-native-community/cli-platform-ios": "21.0.0-alpha.1",
-    "@react-native-community/cli-server-api": "21.0.0-alpha.1",
     "@react-native-community/cli-tools": "21.0.0-alpha.1",
     "@react-native-community/cli-types": "21.0.0-alpha.1",
     "commander": "^9.4.1",

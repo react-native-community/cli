@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/cli",
-  "version": "21.0.0-alpha.1",
+  "version": "22.0.0-alpha.0",
   "description": "React Native CLI",
   "license": "MIT",
   "main": "build/index.js",
@@ -24,13 +24,13 @@
     "testEnvironment": "node"
   },
   "dependencies": {
-    "@react-native-community/cli-clean": "21.0.0-alpha.1",
-    "@react-native-community/cli-config": "21.0.0-alpha.1",
-    "@react-native-community/cli-doctor": "21.0.0-alpha.1",
-    "@react-native-community/cli-platform-android": "21.0.0-alpha.1",
-    "@react-native-community/cli-platform-ios": "21.0.0-alpha.1",
-    "@react-native-community/cli-tools": "21.0.0-alpha.1",
-    "@react-native-community/cli-types": "21.0.0-alpha.1",
+    "@react-native-community/cli-clean": "22.0.0-alpha.0",
+    "@react-native-community/cli-config": "22.0.0-alpha.0",
+    "@react-native-community/cli-doctor": "22.0.0-alpha.0",
+    "@react-native-community/cli-platform-android": "22.0.0-alpha.0",
+    "@react-native-community/cli-platform-ios": "22.0.0-alpha.0",
+    "@react-native-community/cli-tools": "22.0.0-alpha.0",
+    "@react-native-community/cli-types": "22.0.0-alpha.0",
     "commander": "^9.4.1",
     "deepmerge": "^4.3.0",
     "execa": "^5.0.0",

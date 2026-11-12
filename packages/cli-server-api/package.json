@@ -8,19 +8,13 @@
   },
   "dependencies": {
     "@react-native-community/cli-tools": "21.0.0-alpha.1",
-    "compression": "^1.7.1",
     "connect": "^3.6.5",
     "errorhandler": "^1.5.1",
-    "nocache": "^3.0.1",
-    "pretty-format": "^29.7.0",
-    "serve-static": "^1.13.1",
-    "ws": "^6.2.3"
+    "serve-static": "^1.13.1"
   },
   "devDependencies": {
-    "@types/compression": "^1.7.2",
     "@types/connect": "^3.4.33",
-    "@types/errorhandler": "^1.5.0",
-    "@types/ws": "^7.4.7"
+    "@types/errorhandler": "^1.5.0"
   },
   "files": [
     "build",

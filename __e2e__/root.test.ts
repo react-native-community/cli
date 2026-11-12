@@ -16,7 +16,14 @@ beforeAll(() => {
   writeFiles(DIR, {});
 
   // Initialise React Native project
-  runCLI(DIR, ['init', 'TestProject', `--pm`, 'npm', `--install-pods`]);
+  runCLI(DIR, [
+    'init',
+    'TestProject',
+    `--pm`,
+    'npm',
+    `--install-pods`,
+    '--skip-spm',
+  ]);
 
   // Link CLI to the project
   spawnScript('yarn', ['link', __dirname, '--all'], {

@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import {stripVTControlCharacters} from 'util';
 import execa from 'execa';
 import {CLIError, logger, NoopLoader} from '@react-native-community/cli-tools';
 import {
@@ -328,8 +329,17 @@ describe('assertNoSpmConflict', () => {
             assertNoSpmConflict(reactNativeVersion, {installPods});
           if (spmExpected) {
             expect(check).toThrow(CLIError);
-            expect(check).toThrow('--skip-spm');
-            expect(check).toThrow('or remove --install-pods');
+            // Strip colors, which CI enables, so the bold flags don't split the text.
+            const message = (() => {
+              try {
+                check();
+              } catch (error) {
+                return stripVTControlCharacters((error as Error).message);
+              }
+              return '';
+            })();
+            expect(message).toContain('--skip-spm');
+            expect(message).toContain('or remove --install-pods');
           } else {
             expect(check).not.toThrow();
           }

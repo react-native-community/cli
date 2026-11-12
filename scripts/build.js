@@ -65,10 +65,16 @@ function buildNodePackage(p) {
   process.stdout.write(`${OK}\n`);
 }
 
+// Match globs against the path inside the package, so a checkout under a
+// dot-directory (e.g. ~/.worktrees/cli) doesn't stop `**` from matching.
+function matchesPattern(file, pattern) {
+  return micromatch.isMatch(path.relative(PACKAGES_DIR, file), pattern);
+}
+
 function buildFile(file, silent) {
   const destPath = getBuildPath(file, BUILD_DIR);
 
-  if (micromatch.isMatch(file, IGNORE_PATTERN)) {
+  if (matchesPattern(file, IGNORE_PATTERN)) {
     silent ||
       process.stdout.write(
         `${
@@ -83,8 +89,8 @@ function buildFile(file, silent) {
   const fileName = path.basename(file);
 
   if (
-    !micromatch.isMatch(file, JS_FILES_PATTERN) &&
-    !micromatch.isMatch(file, TS_FILE_PATTERN)
+    !matchesPattern(file, JS_FILES_PATTERN) &&
+    !matchesPattern(file, TS_FILE_PATTERN)
   ) {
     if (FILES_WITH_755_PERMISSION.includes(fileName)) {
       fs.createReadStream(file).pipe(

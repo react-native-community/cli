@@ -11,6 +11,7 @@ export type Options = {
   version: string;
   packageName?: string;
   installPods?: string | boolean;
+  skipSpm?: boolean;
   platformName?: string;
   skipGitInit?: boolean;
   replaceDirectory?: string | boolean;

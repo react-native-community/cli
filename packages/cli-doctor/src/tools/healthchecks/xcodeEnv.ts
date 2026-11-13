@@ -61,16 +61,18 @@ export default {
 
       const iosFolderPath = config?.project.ios?.sourceDir ?? '';
 
-      findPodfilePaths(iosFolderPath)
-        .map((podfilePath) =>
-          removeLastPathComponent(path.join(iosFolderPath, podfilePath)),
-        )
-        // avoid overriding existing .xcode.env
-        .filter(pathDoesNotHaveXcodeEnvFile)
-        .forEach(async (pathString: string) => {
-          const destFilePath = path.join(pathString, xcodeEnvFile);
-          await copyFileAsync(src, destFilePath);
-        });
+      await Promise.all(
+        findPodfilePaths(iosFolderPath)
+          .map((podfilePath) =>
+            removeLastPathComponent(path.join(iosFolderPath, podfilePath)),
+          )
+          // avoid overriding existing .xcode.env
+          .filter(pathDoesNotHaveXcodeEnvFile)
+          .map((pathString: string) => {
+            const destFilePath = path.join(pathString, xcodeEnvFile);
+            return copyFileAsync(src, destFilePath);
+          }),
+      );
       loader.succeed('.xcode.env file have been created!');
     } catch (e) {
       loader.fail(e as any);

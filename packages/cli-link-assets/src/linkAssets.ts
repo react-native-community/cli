@@ -197,7 +197,10 @@ async function linkAssets(_argv: string[], ctx: CLIConfig): Promise<void> {
   try {
     previouslyAndroidLinkedAssets = androidLinkPlatformOptions.manifest.read();
     previouslyIOSLinkedAssets = iosLinkPlatformOptions.manifest.read();
-  } catch (e) {}
+  } catch (e) {
+    // Manifest files may not exist yet, which is fine
+    logger.debug(`Failed to read existing manifest files: ${e}`);
+  }
 
   if (
     androidAssetsPath.length === 0 &&

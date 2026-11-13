@@ -36,7 +36,8 @@ export const getBuildOptions = ({platformName}: BuilderCommand) => {
     },
     {
       name: '--verbose',
-      description: 'Do not use xcbeautify or xcpretty even if installed',
+      description:
+        'Increase logging verbosity. Do not use xcbeautify or xcpretty even if installed',
     },
     {
       name: '--xcconfig [string]',

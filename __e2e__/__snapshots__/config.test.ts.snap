@@ -37,15 +37,25 @@ exports[`shows up current config without unnecessary output 1`] = `
   },
   "commands": [
     {
-      "name": "bundle",
-      "description": "Build the bundle for the provided JavaScript entry file.",
+      "name": "build-android",
+      "description": "<<REPLACED>>",
       "options": [
         "<<REPLACED>>"
       ]
     },
     {
-      "name": "start",
-      "description": "Start the React Native development server.",
+      "name": "build-ios",
+      "description": "<<REPLACED>>",
+      "examples": [
+        "<<REPLACED>>"
+      ],
+      "options": [
+        "<<REPLACED>>"
+      ]
+    },
+    {
+      "name": "bundle",
+      "description": "<<REPLACED>>",
       "options": [
         "<<REPLACED>>"
       ]
@@ -57,22 +67,26 @@ exports[`shows up current config without unnecessary output 1`] = `
       ]
     },
     {
-      "name": "spm [action]",
-      "description": "Set up or maintain Swift Package Manager support for the iOS/macOS app. Actions: add, update, deinit, scaffold. With no action: add (or update if SPM is already set up).",
+      "name": "log-android",
+      "description": "<<REPLACED>>"
+    },
+    {
+      "name": "log-ios",
+      "description": "<<REPLACED>>",
       "options": [
         "<<REPLACED>>"
       ]
     },
     {
-      "name": "log-ios",
-      "description": "starts iOS device syslog tail",
+      "name": "run-android",
+      "description": "<<REPLACED>>",
       "options": [
         "<<REPLACED>>"
       ]
     },
     {
       "name": "run-ios",
-      "description": "builds your app and starts it on iOS simulator",
+      "description": "<<REPLACED>>",
       "examples": [
         "<<REPLACED>>"
       ],
@@ -81,29 +95,15 @@ exports[`shows up current config without unnecessary output 1`] = `
       ]
     },
     {
-      "name": "build-ios",
-      "description": "builds your app for iOS platform",
-      "examples": [
-        "<<REPLACED>>"
-      ],
+      "name": "spm [action]",
+      "description": "<<REPLACED>>",
       "options": [
         "<<REPLACED>>"
       ]
     },
     {
-      "name": "log-android",
-      "description": "starts logkitty"
-    },
-    {
-      "name": "run-android",
-      "description": "builds your app and starts it on a connected Android emulator or device",
-      "options": [
-        "<<REPLACED>>"
-      ]
-    },
-    {
-      "name": "build-android",
-      "description": "builds your app",
+      "name": "start",
+      "description": "<<REPLACED>>",
       "options": [
         "<<REPLACED>>"
       ]

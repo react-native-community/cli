@@ -101,3 +101,31 @@ test('does not boot the simulator when it is already booted', async () => {
     expect.arrayContaining(['boot']),
   );
 });
+
+test('boots a shut-down simulator before opening it in DeviceHub', async () => {
+  (fs.existsSync as jest.Mock).mockImplementation((target) =>
+    String(target).endsWith('DeviceHub.app'),
+  );
+
+  await runOnSimulator(xcodeProject, 'ios', 'Debug', 'TestApp', args, {
+    ...simulator,
+    state: 'Shutdown',
+  });
+
+  const spawnSync = child_process.spawnSync as jest.Mock;
+  const execFileSync = child_process.execFileSync as jest.Mock;
+  const bootCall = spawnSync.mock.calls.findIndex(([, cmdArgs]) =>
+    cmdArgs.includes('boot'),
+  );
+  const openCall = execFileSync.mock.calls.findIndex(([, cmdArgs]) =>
+    String(cmdArgs?.[0]).startsWith('devices://'),
+  );
+
+  expect(bootCall).not.toBe(-1);
+  expect(openCall).not.toBe(-1);
+  // DeviceHub shows no window for a device that starts booting right after
+  // the deep link is opened, so the device has to be booted first.
+  expect(spawnSync.mock.invocationCallOrder[bootCall]).toBeLessThan(
+    execFileSync.mock.invocationCallOrder[openCall],
+  );
+});

@@ -7,6 +7,7 @@
  */
 
 import {fetch} from './fetch';
+import {CLIError} from './errors';
 
 /**
  * Indicates whether or not the packager is running. It returns a promise that
@@ -42,8 +43,9 @@ async function isPackagerRunning(
     }
 
     return 'unrecognized';
-  } catch (_error) {
-    return 'not_running';
+  } catch (error) {
+    // An HTTP error response still means a process is listening on this port.
+    return error instanceof CLIError ? 'unrecognized' : 'not_running';
   }
 }
 

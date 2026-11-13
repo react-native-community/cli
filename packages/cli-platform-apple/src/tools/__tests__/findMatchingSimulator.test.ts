@@ -1114,4 +1114,140 @@ describe('findMatchingSimulator', () => {
       version: 'iOS 16.2',
     });
   });
+
+  it('should return the last booted simulator when it is not first in the list', () => {
+    expect(
+      findMatchingSimulator(
+        {
+          devices: {
+            'com.apple.CoreSimulator.SimRuntime.iOS-18-0': [
+              {
+                udid: 'A1F1E28B-1D0B-4F1E-9E5A-6C7A8E9F0A1B',
+                isAvailable: true,
+                state: 'Shutdown',
+                name: 'iPhone 16',
+              },
+              {
+                lastBootedAt: '2025-01-15T09:12:44Z',
+                udid: 'B2A2F39C-2E1C-5A2F-8F6B-7D8B9F0A1B2C',
+                isAvailable: true,
+                state: 'Shutdown',
+                name: 'iPhone 16 Pro',
+              },
+            ],
+          },
+        },
+        null,
+      ),
+    ).toEqual({
+      udid: 'B2A2F39C-2E1C-5A2F-8F6B-7D8B9F0A1B2C',
+      name: 'iPhone 16 Pro',
+      state: 'Shutdown',
+      version: 'iOS 18.0',
+    });
+  });
+
+  it('should return the most recently booted simulator when several were booted before', () => {
+    expect(
+      findMatchingSimulator(
+        {
+          devices: {
+            'com.apple.CoreSimulator.SimRuntime.iOS-18-0': [
+              {
+                lastBootedAt: '2024-11-02T08:00:00Z',
+                udid: 'C3B3A4AD-3F2D-6B3A-9A7C-8E9C0A1B2C3D',
+                isAvailable: true,
+                state: 'Shutdown',
+                name: 'iPhone 16',
+              },
+              {
+                lastBootedAt: '2025-03-21T17:45:10Z',
+                udid: 'D4C4B5BE-4A3E-7C4B-AB8D-9F0D1B2C3D4E',
+                isAvailable: true,
+                state: 'Shutdown',
+                name: 'iPhone 16 Pro Max',
+              },
+              {
+                lastBootedAt: '2025-02-10T12:30:00Z',
+                udid: 'E5D5C6CF-5B4F-8D5C-BC9E-0A1E2C3D4E5F',
+                isAvailable: true,
+                state: 'Shutdown',
+                name: 'iPhone 16 Plus',
+              },
+            ],
+          },
+        },
+        null,
+      ),
+    ).toEqual({
+      udid: 'D4C4B5BE-4A3E-7C4B-AB8D-9F0D1B2C3D4E',
+      name: 'iPhone 16 Pro Max',
+      state: 'Shutdown',
+      version: 'iOS 18.0',
+    });
+  });
+
+  it('should prefer a currently booted simulator over the last booted one', () => {
+    expect(
+      findMatchingSimulator(
+        {
+          devices: {
+            'com.apple.CoreSimulator.SimRuntime.iOS-18-0': [
+              {
+                lastBootedAt: '2025-03-21T17:45:10Z',
+                udid: 'F6E6D7DA-6C5A-9E6D-CDAF-1B2F3D4E5F60',
+                isAvailable: true,
+                state: 'Shutdown',
+                name: 'iPhone 16 Pro',
+              },
+              {
+                udid: '07F7E8EB-7D6B-AF7E-DEBA-2C3A4E5F6071',
+                isAvailable: true,
+                state: 'Booted',
+                name: 'iPhone 16',
+              },
+            ],
+          },
+        },
+        null,
+      ),
+    ).toEqual({
+      udid: '07F7E8EB-7D6B-AF7E-DEBA-2C3A4E5F6071',
+      name: 'iPhone 16',
+      state: 'Booted',
+      version: 'iOS 18.0',
+    });
+  });
+
+  it('should keep falling back to a previously booted simulator when the requested name is not available', () => {
+    expect(
+      findMatchingSimulator(
+        {
+          devices: {
+            'com.apple.CoreSimulator.SimRuntime.iOS-18-0': [
+              {
+                udid: '18A8F9FC-8E7C-B08F-EFCB-3D4B5F607182',
+                isAvailable: true,
+                state: 'Shutdown',
+                name: 'iPhone 16',
+              },
+              {
+                lastBootedAt: '2025-03-21T17:45:10Z',
+                udid: '29B9A0AD-9F8D-C190-F0DC-4E5C60718293',
+                isAvailable: true,
+                state: 'Shutdown',
+                name: 'iPhone 16 Pro',
+              },
+            ],
+          },
+        },
+        {simulator: 'iPhone 42'},
+      ),
+    ).toEqual({
+      udid: '29B9A0AD-9F8D-C190-F0DC-4E5C60718293',
+      name: 'iPhone 16 Pro',
+      state: 'Shutdown',
+      version: 'iOS 18.0',
+    });
+  });
 });

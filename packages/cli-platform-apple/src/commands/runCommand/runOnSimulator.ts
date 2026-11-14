@@ -27,8 +27,13 @@ export async function runOnSimulator(
    * that the Simulator.app is running.
    *
    * We also pass it `-CurrentDeviceUDID` so that when we launch it for the first time,
-   * it will not boot the "default" device, but the one we set. If the app is already running,
-   * this flag has no effect.
+   * it will not boot the "default" device, but the one we set.
+   *
+   * We only pass that flag when the target device is not already booted. Passing
+   * `-CurrentDeviceUDID` for an already-booted device makes Simulator.app re-issue a
+   * boot request, which CoreSimulator rejects with "Unable to boot device in current
+   * state: Booted" and surfaces as a modal alert on every subsequent run. When the
+   * device is already booted we just bring the running Simulator.app to the foreground.
    */
   const activeDeveloperDir = child_process
     .execFileSync('xcode-select', ['-p'], {encoding: 'utf8'})
@@ -51,12 +56,12 @@ export async function runOnSimulator(
   );
 
   if (fs.existsSync(simulatorApp)) {
-    child_process.execFileSync('open', [
-      simulatorApp,
-      '--args',
-      '-CurrentDeviceUDID',
-      simulator.udid,
-    ]);
+    child_process.execFileSync(
+      'open',
+      simulator.state === 'Booted'
+        ? [simulatorApp]
+        : [simulatorApp, '--args', '-CurrentDeviceUDID', simulator.udid],
+    );
   } else if (fs.existsSync(deviceHubApp)) {
     child_process.execFileSync('open', [
       `devices://device/open?id=${simulator.udid}`,

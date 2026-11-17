@@ -27,6 +27,7 @@ type Options = {
   target?: string;
   udid: string;
   binaryPath?: string;
+  buildFolder?: string;
   platform?: ApplePlatform;
   isSimulator?: boolean;
 };
@@ -39,6 +40,7 @@ export default async function installApp({
   target,
   udid,
   binaryPath,
+  buildFolder,
   platform,
   isSimulator = true,
 }: Options) {
@@ -50,6 +52,7 @@ export default async function installApp({
     buildOutput,
     scheme,
     target,
+    buildFolder,
   );
 
   if (!buildSettings) {

@@ -17,7 +17,7 @@ export async function runOnSimulator(
   args: FlagsT,
   simulator: Device,
 ) {
-  const {binaryPath, target} = args;
+  const {binaryPath, buildFolder, target} = args;
 
   /**
    * Booting simulator through `xcrun simctl boot` will boot it in the `headless` mode
@@ -87,6 +87,7 @@ export async function runOnSimulator(
     target,
     udid: simulator.udid,
     binaryPath,
+    buildFolder,
   });
 }
 

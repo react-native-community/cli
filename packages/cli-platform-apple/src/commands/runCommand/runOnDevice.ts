@@ -37,6 +37,8 @@ export async function runOnDevice(
       mode,
       buildOutput,
       scheme,
+      undefined,
+      args.buildFolder,
     );
 
     if (!buildSettings) {
@@ -50,7 +52,7 @@ export async function runOnDevice(
     });
     appProcess.unref();
   } else {
-    const {binaryPath, target} = args;
+    const {binaryPath, buildFolder, target} = args;
 
     let buildOutput;
     if (!binaryPath) {
@@ -74,6 +76,7 @@ export async function runOnDevice(
       target,
       udid: selectedDevice.udid,
       binaryPath,
+      buildFolder,
       isSimulator: false,
     });
   }

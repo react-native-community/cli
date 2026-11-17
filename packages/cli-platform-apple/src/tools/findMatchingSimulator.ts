@@ -40,7 +40,7 @@ function findMatchingSimulator(
 
   if (findOptions && findOptions.simulator) {
     const parsedSimulatorName = findOptions.simulator.match(
-      /(.*)? (?:\((\d+\.\d+)?\))$/,
+      /^(.*) \((\d+\.\d+(?:\.\d+)?)\)$/,
     );
     if (parsedSimulatorName && parsedSimulatorName[2] !== undefined) {
       simulatorVersion = parsedSimulatorName[2];
@@ -64,10 +64,11 @@ function findMatchingSimulator(
     let version = versionDescriptor;
 
     if (/^com\.apple\.CoreSimulator\.SimRuntime\./g.test(version)) {
-      // Transform "com.apple.CoreSimulator.SimRuntime.iOS-12-2" into "iOS 12.2"
+      // Transform runtime identifiers into versions such as "iOS 12.2" or "iOS 10.3.1".
       version = version.replace(
-        /^com\.apple\.CoreSimulator\.SimRuntime\.([^-]+)-([^-]+)-([^-]+)$/g,
-        '$1 $2.$3',
+        /^com\.apple\.CoreSimulator\.SimRuntime\.([^-]+)-(\d+(?:-\d+)+)$/,
+        (_, platform, runtimeVersion) =>
+          `${platform} ${runtimeVersion.replace(/-/g, '.')}`,
       );
     }
 
@@ -75,7 +76,7 @@ function findMatchingSimulator(
     if (!version.includes('iOS') && !version.includes('tvOS')) {
       continue;
     }
-    if (simulatorVersion && !version.endsWith(simulatorVersion)) {
+    if (simulatorVersion && !version.endsWith(` ${simulatorVersion}`)) {
       continue;
     }
     for (const i in device) {

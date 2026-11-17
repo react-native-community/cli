@@ -86,10 +86,13 @@ export function buildProject(
     }
 
     const loader = getLoader();
+    // Wrap arguments containing whitespace in quotes so the logged command stays
+    // copy-pasteable (e.g. a `-destination` value like `iOS Simulator`).
+    const printableArgs = xcodebuildArgs
+      .map((arg) => (/\s/.test(arg) ? `"${arg}"` : arg))
+      .join(' ');
     logger.info(
-      `Building ${pico.dim(
-        `(using "xcodebuild ${xcodebuildArgs.join(' ')}")`,
-      )}`,
+      `Building ${pico.dim(`(using "xcodebuild ${printableArgs}")`)}`,
     );
     let xcodebuildOutputFormatter: ChildProcess | any;
     if (!args.verbose) {

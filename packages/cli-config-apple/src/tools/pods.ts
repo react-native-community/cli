@@ -6,9 +6,11 @@ import {
   CLIError,
   cacheManager,
   getLoader,
+  logger,
 } from '@react-native-community/cli-tools';
 import installPods from './installPods';
 import {
+  AppleBuildSystem,
   DependencyConfig,
   IOSDependencyConfig,
 } from '@react-native-community/cli-types';
@@ -19,6 +21,7 @@ import execa from 'execa';
 interface ResolvePodsOptions {
   forceInstall?: boolean;
   newArchEnabled?: boolean;
+  buildSystem?: AppleBuildSystem;
 }
 
 interface NativeDependencies {
@@ -127,9 +130,38 @@ export default async function resolvePods(
   platformName: ApplePlatform,
   reactNativePath: string,
   options?: ResolvePodsOptions,
-) {
+): Promise<boolean> {
+  const podfilePath = path.join(sourceDir, 'Podfile');
+
+  /**
+   * A migrated project keeps its `Podfile` on disk, with the React Native
+   * directives stripped from it. `--force-pods` and `--only-pods` still run
+   * CocoaPods, for pods that live next to Swift Package Manager.
+   */
+  if (options?.buildSystem === 'spm' && !options.forceInstall) {
+    logger.debug(
+      'Skipping CocoaPods installation: this project uses Swift Package Manager.',
+    );
+    return false;
+  }
+
+  if (!fs.existsSync(podfilePath)) {
+    if (options?.forceInstall) {
+      throw new CLIError(
+        `No Podfile found in ${pico.bold(
+          sourceDir,
+        )}, so CocoaPods cannot be installed. If this project uses Swift Package Manager (React Native 0.87+), run ${pico.bold(
+          'react-native spm',
+        )} and drop the CocoaPods flags.`,
+      );
+    }
+    logger.debug(
+      `Skipping CocoaPods installation: no Podfile in ${sourceDir}.`,
+    );
+    return false;
+  }
+
   const packageJson = getPackageJson(root);
-  const podfilePath = path.join(sourceDir, 'Podfile'); // sourceDir is calculated based on Podfile location, see getProjectConfig()
 
   const podfileLockPath = path.join(sourceDir, 'Podfile.lock');
   const platformFolderPath = podfilePath
@@ -215,6 +247,8 @@ export default async function resolvePods(
       );
     }
   }
+
+  return true;
 }
 
 export async function execaPod(args: string[], options?: execa.Options) {

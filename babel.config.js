@@ -3,7 +3,9 @@ module.exports = {
   overrides: [
     {
       presets: ['@babel/preset-typescript'],
-      test: '**/*.ts',
+      // A RegExp, because a `**/*.ts` glob doesn't match files under a
+      // dot-directory (e.g. a checkout in ~/.worktrees/cli).
+      test: /\.ts$/,
     },
   ],
   presets: [

@@ -57,6 +57,11 @@ async function runOnAllDevices(
         'install',
       );
 
+      // Allow version downgrades (adb install -d) by default.
+      // Note: this only works for debuggable builds.
+      // Mirrors tryInstallAppOnDevice, which passes `-r -d` to adb install by default.
+      gradleArgs.push('-Pandroid.adbOptions.installOptions=-d');
+
       if (args.extraParams) {
         gradleArgs.push(...args.extraParams);
       }

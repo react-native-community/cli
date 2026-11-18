@@ -16,12 +16,19 @@ export type IOSProjectInfo = {
   isWorkspace: boolean;
 };
 
+/**
+ * Where React Native comes from: `cocoapods` by default, `spm` once
+ * `react-native spm` has migrated the Xcode project.
+ */
+export type AppleBuildSystem = 'cocoapods' | 'spm';
+
 export interface IOSProjectConfig {
   sourceDir: string;
   xcodeProject: IOSProjectInfo | null;
   watchModeCommandParams?: string[];
   automaticPodsInstallation?: boolean;
   assets: string[];
+  buildSystem?: AppleBuildSystem;
 }
 
 export interface IOSDependencyConfig {

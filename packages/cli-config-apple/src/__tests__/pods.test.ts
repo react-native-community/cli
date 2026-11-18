@@ -147,4 +147,51 @@ describe('resolvePods', () => {
 
     expect(installPods).toHaveBeenCalled();
   });
+
+  it('should skip CocoaPods when there is no Podfile (SwiftPM project)', async () => {
+    writeFiles(DIR, {'package.json': JSON.stringify(packageJson)});
+
+    await expect(
+      resolvePods(DIR, path.join(DIR, 'ios'), {}, 'ios', ''),
+    ).resolves.toBe(false);
+
+    expect(installPods).not.toHaveBeenCalled();
+  });
+
+  it('should skip CocoaPods for a Swift Package Manager project keeping a Podfile', async () => {
+    createTempFiles();
+
+    await expect(
+      resolvePods(DIR, path.join(DIR, 'ios'), {}, 'ios', '', {
+        buildSystem: 'spm',
+      }),
+    ).resolves.toBe(false);
+
+    expect(installPods).not.toHaveBeenCalled();
+  });
+
+  it('should install CocoaPods for a Swift Package Manager project when explicitly asked', async () => {
+    createTempFiles();
+
+    await expect(
+      resolvePods(DIR, path.join(DIR, 'ios'), {}, 'ios', '', {
+        buildSystem: 'spm',
+        forceInstall: true,
+      }),
+    ).resolves.toBe(true);
+
+    expect(installPods).toHaveBeenCalled();
+  });
+
+  it('should fail when pods were explicitly requested but there is no Podfile', async () => {
+    writeFiles(DIR, {'package.json': JSON.stringify(packageJson)});
+
+    await expect(
+      resolvePods(DIR, path.join(DIR, 'ios'), {}, 'ios', '', {
+        forceInstall: true,
+      }),
+    ).rejects.toThrow(/No Podfile found/);
+
+    expect(installPods).not.toHaveBeenCalled();
+  });
 });

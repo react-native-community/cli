@@ -144,6 +144,7 @@ describe('--appFolder', () => {
     expect((execa as unknown as jest.Mock).mock.calls[0][1]).toEqual([
       'app:clean',
       'app:someTask',
+      '-Pandroid.adbOptions.installOptions=-d',
       '-PreactNativeDevServerPort=8081',
     ]);
   });

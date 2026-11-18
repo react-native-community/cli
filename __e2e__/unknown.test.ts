@@ -24,3 +24,12 @@ test('suggest matching command', () => {
 (Did you mean init?)`,
   );
 });
+
+test('explain missing @react-native/community-cli-plugin commands', () => {
+  writeFiles(DIR, {'package.json': '{}'});
+  const {exitCode, stderr} = runCLI(DIR, ['start'], {expectedFailure: true});
+  expect(exitCode).toBe(1);
+  expect(stderr).toContain(
+    'The "start" command is provided by @react-native/community-cli-plugin, which is not installed in this project.',
+  );
+});

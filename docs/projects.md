@@ -107,6 +107,8 @@ If set to `true`, you can skip running `pod install` manually whenever it's need
 
 > Note: Starting from React Native 0.73, CLI's `init` command scaffolds the project with `react-native.config.js` file with this value set to `true` by default. Older projects can opt-in after migrating to 0.73. Please note that if your setup does not follow the standard React Native template, e.g. you are not using Gems to install CocoaPods, this might not work properly for you. Starting from React Native 0.79, users shouldn't install CocoaPods manually, but can still opt-out of automatic installation by setting this value to `false`.
 
+> Note: Projects migrated to Swift Package Manager with `react-native spm` (React Native 0.87+) are detected automatically and CocoaPods is skipped for them, even when a leftover `Podfile` is still there. Pass `--force-pods` or `--only-pods` to run CocoaPods anyway, which is how pods unrelated to React Native can be kept next to Swift Package Manager.
+
 ### project.ios.assets
 
 Array of folder paths that will be passed to the `npx react-native link-assets` command to specify the assets to be linked to iOS project.

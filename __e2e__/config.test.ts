@@ -63,12 +63,17 @@ afterAll(() => {
 test('shows up current config without unnecessary output', () => {
   const {stdout} = runCLI(path.join(DIR, 'TestProject'), ['config']);
   const parsedStdout = JSON.parse(stdout);
-  // Strip unnecessary parts
-  parsedStdout.commands = parsedStdout.commands.map((command: any) => ({
-    ...command,
-    examples: command.examples && ['<<REPLACED>>'],
-    options: command.options && ['<<REPLACED>>'],
-  }));
+  // Strip unnecessary parts. Commands also come from react-native itself, whose
+  // descriptions and registration order change between releases, so compare
+  // only the set of command names.
+  parsedStdout.commands = parsedStdout.commands
+    .map((command: any) => ({
+      ...command,
+      description: command.description && '<<REPLACED>>',
+      examples: command.examples && ['<<REPLACED>>'],
+      options: command.options && ['<<REPLACED>>'],
+    }))
+    .sort((a: any, b: any) => a.name.localeCompare(b.name));
 
   expect(parsedStdout.reactNativeVersion).toMatch(/^\d+\.\d+(\.\d+)?$/);
   parsedStdout.reactNativeVersion = '<<REPLACED>>';

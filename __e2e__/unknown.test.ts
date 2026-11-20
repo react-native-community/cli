@@ -25,6 +25,15 @@ test('suggest matching command', () => {
   );
 });
 
+test('explain that project commands need a project', () => {
+  const {exitCode, stderr} = runCLI(DIR, ['info'], {expectedFailure: true});
+  expect(exitCode).toBe(1);
+  expect(stderr).toContain(
+    'The "info" command must be run inside a React Native project. No package.json was found',
+  );
+  expect(stderr).not.toContain('unknown command');
+});
+
 test('explain missing @react-native/community-cli-plugin commands', () => {
   writeFiles(DIR, {'package.json': '{}'});
   const {exitCode, stderr} = runCLI(DIR, ['start'], {expectedFailure: true});

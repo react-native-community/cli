@@ -65,6 +65,18 @@ describe('loadTypeScriptConfig', () => {
       /cannot load TypeScript files natively/,
     );
   });
+
+  it('explains that Node does not load TypeScript from node_modules', async () => {
+    const nodeModulesError = Object.assign(new Error('unsupported'), {
+      code: 'ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING',
+    });
+    tsLoader.mockRejectedValue(typescript7Error);
+    jsLoader.mockRejectedValue(nodeModulesError);
+
+    await expect(loadTypeScriptConfig(FILE, '')).rejects.toThrow(
+      /does not load TypeScript files from node_modules/,
+    );
+  });
 });
 
 describe('loadTypeScriptConfigSync', () => {

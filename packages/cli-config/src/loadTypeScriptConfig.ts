@@ -25,6 +25,14 @@ function explainNativeLoadError(filepath: string, error: unknown): unknown {
       `Failed to load ${filepath}: the installed "typescript" package cannot compile it and this version of Node.js (${process.version}) cannot load TypeScript files natively. Use Node.js 22.18 or newer, or write the configuration as react-native.config.js.`,
     );
   }
+  if (
+    (error as NodeJS.ErrnoException)?.code ===
+    'ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING'
+  ) {
+    return new Error(
+      `Failed to load ${filepath}: Node.js does not load TypeScript files from node_modules and the installed "typescript" package cannot compile it. Ask the package author to ship react-native.config.js, or use a version of "typescript" that provides the compiler API.`,
+    );
+  }
   return error;
 }
 

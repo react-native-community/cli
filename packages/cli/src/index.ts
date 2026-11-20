@@ -142,6 +142,23 @@ function attachCommand<C extends Command<boolean>>(
   }
 }
 
+/**
+ * Registers a hidden placeholder for a project command when no `package.json`
+ * was found, so that running it explains the problem instead of answering
+ * "unknown command".
+ */
+function attachMissingProjectCommand(name: string) {
+  program
+    .command(name, {hidden: true})
+    .allowUnknownOption()
+    .action(() => {
+      handleError(
+        new CLIError(
+          `The "${name}" command must be run inside a React Native project. No package.json was found in the current folder or any parent folder.`,
+        ),
+      );
+    });
+}
 // Platform name is optional argument passed by out of tree platforms.
 async function run(platformName?: string) {
   try {
@@ -272,6 +289,9 @@ async function setupAndRun(platformName?: string) {
       logger.debug(
         'Failed to load configuration of your project. Only a subset of commands will be available.',
       );
+      for (const command of projectCommands) {
+        attachMissingProjectCommand(command.name);
+      }
     } else {
       throw new CLIError(
         'Failed to load configuration of your project.',

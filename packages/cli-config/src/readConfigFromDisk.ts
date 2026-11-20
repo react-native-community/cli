@@ -8,6 +8,10 @@ import type {
 } from '@react-native-community/cli-types';
 import {logger, inlineString} from '@react-native-community/cli-tools';
 import pico from 'picocolors';
+import {
+  loadTypeScriptConfig,
+  loadTypeScriptConfigSync,
+} from './loadTypeScriptConfig';
 
 /**
  * Places to look for the configuration file.
@@ -43,6 +47,7 @@ export async function readConfigFromDiskAsync(
   const explorer = cosmiconfig('react-native', {
     stopDir: rootFolder,
     searchPlaces,
+    loaders: {'.ts': loadTypeScriptConfig},
   });
 
   const searchResult = await explorer.search(rootFolder);
@@ -58,6 +63,7 @@ export function readConfigFromDisk(rootFolder: string): UserConfig {
   const explorer = cosmiconfigSync('react-native', {
     stopDir: rootFolder,
     searchPlaces: searchPlacesForCJS,
+    loaders: {'.ts': loadTypeScriptConfigSync},
   });
 
   const searchResult = explorer.search(rootFolder);
@@ -100,6 +106,7 @@ export async function readDependencyConfigFromDiskAsync(
   const explorer = cosmiconfig('react-native', {
     stopDir: rootFolder,
     searchPlaces,
+    loaders: {'.ts': loadTypeScriptConfig},
   });
 
   const searchResult = await explorer.search(rootFolder);
@@ -118,6 +125,7 @@ export function readDependencyConfigFromDisk(
   const explorer = cosmiconfigSync('react-native', {
     stopDir: rootFolder,
     searchPlaces: searchPlacesForCJS,
+    loaders: {'.ts': loadTypeScriptConfigSync},
   });
 
   const searchResult = explorer.search(rootFolder);

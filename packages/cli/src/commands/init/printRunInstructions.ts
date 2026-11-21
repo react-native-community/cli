@@ -12,9 +12,11 @@ import fs from 'fs';
 import process from 'process';
 import pico from 'picocolors';
 import {logger} from '@react-native-community/cli-tools';
+import {SPM_SETUP_COMMAND, SpmSetup} from './spm';
 
 interface Options {
   showPodsInstructions?: boolean;
+  spmSetup?: SpmSetup;
 }
 
 function printRunInstructions(
@@ -33,7 +35,9 @@ function printRunInstructions(
       iosProjectDir,
       `${projectName}.xcworkspace`,
     );
-    const isUsingPods = fs.existsSync(iosPodsFile);
+    const isUsingSpm = !!options.spmSetup;
+    const isUsingPods = !isUsingSpm && fs.existsSync(iosPodsFile);
+    const showPodsInstructions = !isUsingSpm && options.showPodsInstructions;
 
     const relativeXcodeProjectPath = path.relative(
       '..',
@@ -42,22 +46,39 @@ function printRunInstructions(
         : path.resolve(iosProjectDir, `${projectName}.xcodeproj`),
     );
 
-    iosInstructions = `
-  ${pico.cyan(`Run instructions for ${pico.bold('iOS')}`)}:
-    • cd "${projectDir}${options.showPodsInstructions ? '/ios' : ''}"
-    ${
-      options.showPodsInstructions
-        ? `
+    // A failed setup can leave either the .xcodeproj or the .xcworkspace as the file to open.
+    const xcodeInstruction =
+      options.spmSetup === 'failed'
+        ? 'Open the iOS project in Xcode with "xed -b ios"'
+        : `Open ${relativeXcodeProjectPath} in Xcode or run "xed -b ios"`;
+
+    let dependencyInstructions = '';
+    if (showPodsInstructions) {
+      dependencyInstructions = `
     • Install Cocoapods
       • bundle install # you need to run this only once in your project.
       • bundle exec pod install
       • cd ..
-    `
-        : ''
+    `;
+    } else if (options.spmSetup === 'pending') {
+      dependencyInstructions = `
+    • Set up Swift Package Manager once dependencies are installed
+      • ${SPM_SETUP_COMMAND}
+    `;
+    } else if (options.spmSetup === 'failed') {
+      dependencyInstructions = `
+    • Retry the Swift Package Manager setup
+      • ${SPM_SETUP_COMMAND}
+    `;
     }
+
+    iosInstructions = `
+  ${pico.cyan(`Run instructions for ${pico.bold('iOS')}`)}:
+    • cd "${projectDir}${showPodsInstructions ? '/ios' : ''}"
+    ${dependencyInstructions}
     • npx react-native run-ios
     ${pico.dim('- or -')}
-    • Open ${relativeXcodeProjectPath} in Xcode or run "xed -b ios"
+    • ${xcodeInstruction}
     • Hit the Run button
     `;
 

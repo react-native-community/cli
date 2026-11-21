@@ -1,6 +1,5 @@
-import path from 'path';
 import {AssetPathAndSHA1} from '..';
-import {fontTypes} from '../../../fileTypes';
+import {fontTypes, getAssetExtension} from '../../../fileTypes';
 import {Platform} from '../../linkPlatform';
 
 function migration2(
@@ -12,7 +11,7 @@ function migration2(
     shouldRelinkAndroidFonts:
       platform === 'android' &&
       fontTypes.includes(
-        path.extname(asset.path).substring(1) as (typeof fontTypes)[number],
+        getAssetExtension(asset.path) as (typeof fontTypes)[number],
       ),
   }));
 }

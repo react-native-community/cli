@@ -25,7 +25,8 @@ import {Device} from '../types';
  *    udid: udid of desired simulator
  * }
  * ```
- * If null, it will use the currently booted simulator, or if none are booted, the first in the list.
+ * If null, it will use the currently booted simulator, then the most recently booted one, and if none was
+ * ever booted, the first in the list.
  */
 function findMatchingSimulator(
   simulators: {devices: {[index: string]: Array<Device>}},
@@ -51,7 +52,9 @@ function findMatchingSimulator(
   }
 
   let match;
-  let fallbackMatch;
+  let lastBootedMatch;
+  let lastBootedAtTime = -Infinity;
+  let firstAvailableMatch;
 
   const sortedDevices = Object.fromEntries(
     Object.entries(devices).sort(
@@ -107,19 +110,27 @@ function findMatchingSimulator(
         if (simulator.name === simulatorName && !match) {
           match = simulatorDescriptor;
         }
-        // If no match found, use first available simulator that was booted before
-        if (!!lastBootedAt && !match) {
-          fallbackMatch = simulatorDescriptor;
+        // Keeps track of the most recently booted simulator, so that it can be
+        // used when nothing above matched.
+        if (lastBootedAt) {
+          const bootedAtTime = Date.parse(lastBootedAt);
+          const comparableBootedAtTime = Number.isNaN(bootedAtTime)
+            ? -Infinity
+            : bootedAtTime;
+          if (!lastBootedMatch || comparableBootedAtTime > lastBootedAtTime) {
+            lastBootedAtTime = comparableBootedAtTime;
+            lastBootedMatch = simulatorDescriptor;
+          }
         }
         // Keeps track of the first available simulator for use if we can't find one above.
-        if (simulatorName === null && !match) {
-          match = simulatorDescriptor;
+        if (simulatorName === null && !firstAvailableMatch) {
+          firstAvailableMatch = simulatorDescriptor;
         }
       }
     }
   }
 
-  return match ?? fallbackMatch ?? null;
+  return match ?? lastBootedMatch ?? firstAvailableMatch ?? null;
 }
 
 export default findMatchingSimulator;

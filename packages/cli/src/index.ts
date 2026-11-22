@@ -105,7 +105,6 @@ function attachCommand<C extends Command<boolean>>(
 
   const cmd = program
     .command(command.name)
-    .option('--verbose', 'Increase logging verbosity')
     .action(async function handleAction(
       this: CommanderCommand,
       ...args: string[]
@@ -139,6 +138,14 @@ function attachCommand<C extends Command<boolean>>(
       opt.parse || ((val: any) => val),
       typeof opt.default === 'function' ? opt.default(config) : opt.default,
     );
+  }
+
+  if (
+    !command.options?.some(
+      (option) => cmd.createOption(option.name).long === '--verbose',
+    )
+  ) {
+    cmd.option('--verbose', 'Increase logging verbosity');
   }
 }
 

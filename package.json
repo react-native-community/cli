@@ -11,7 +11,7 @@
     "build-clean-all": "rimraf ./packages/*/build ./packages/*/tsconfig.tsbuildinfo",
     "watch": "node ./scripts/watch.js",
     "test": "jest",
-    "test:ci:unit": "jest packages --ci --coverage",
+    "test:ci:unit": "jest packages scripts --ci --coverage",
     "test:ci:e2e": "jest e2e --ci -i",
     "lint": "eslint --ext .js,.ts . --cache --report-unused-disable-directives",
     "postinstall": "yarn build",

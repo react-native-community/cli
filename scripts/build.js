@@ -53,10 +53,9 @@ function getBuildPath(file, buildFolder) {
 }
 
 function buildNodePackage(p) {
-  const srcDir = path.resolve(p, SRC_DIR);
-  const pattern = path.resolve(srcDir, '**/*');
-  const files = glob.sync(pattern, {
-    nodir: true,
+  const files = glob.sync('**/*', {
+    cwd: path.resolve(p, SRC_DIR),
+    absolute: true,
   });
 
   process.stdout.write(adjustToTerminalWidth(`${path.basename(p)}\n`));

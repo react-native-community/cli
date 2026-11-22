@@ -54,7 +54,11 @@ function getBuildPath(file, buildFolder) {
 
 function buildNodePackage(p) {
   const srcDir = path.resolve(p, SRC_DIR);
-  const pattern = path.resolve(srcDir, '**/*');
+  // Glob patterns must use forward slashes, and backslashes are treated as
+  // escape characters, so an absolute Windows path cannot be interpolated
+  // into a pattern as-is. `convertPathToPattern` normalizes the separators
+  // and escapes any special characters the directory name may contain.
+  const pattern = `${glob.convertPathToPattern(srcDir)}/**/*`;
   const files = glob.sync(pattern, {
     nodir: true,
   });

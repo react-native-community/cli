@@ -81,7 +81,9 @@ async function buildAndroid(
 
 export function build(gradleArgs: string[], sourceDir: string) {
   process.chdir(sourceDir);
-  const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
+  const cmd = process.platform.startsWith('win')
+    ? '.\\gradlew.bat'
+    : './gradlew';
   logger.info('Building the app...');
   logger.debug(`Running command "${cmd} ${gradleArgs.join(' ')}"`);
   try {

@@ -80,7 +80,6 @@ async function buildAndroid(
 }
 
 export function build(gradleArgs: string[], sourceDir: string) {
-  process.chdir(sourceDir);
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
   logger.info('Building the app...');
   logger.debug(`Running command "${cmd} ${gradleArgs.join(' ')}"`);
@@ -103,7 +102,7 @@ export const options = [
   {
     name: '--tasks <list>',
     description:
-      'Run custom Gradle tasks. By default it\'s "assembleDebug". Will override passed mode and variant arguments.',
+      "Run custom Gradle tasks instead of the command's default tasks. Will override passed mode and variant arguments.",
     parse: (val: string) => val.split(','),
   },
   {

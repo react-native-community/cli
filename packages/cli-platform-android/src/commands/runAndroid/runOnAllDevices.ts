@@ -54,7 +54,7 @@ async function runOnAllDevices(
         androidProject.appName,
         args.mode,
         args.tasks,
-        'install',
+        args.user !== undefined ? 'assemble' : 'install',
       );
 
       // Allow version downgrades (adb install -d) by default.
@@ -106,7 +106,7 @@ async function runOnAllDevices(
   (devices.length > 0 ? devices : [undefined]).forEach(
     (device: string | void) => {
       tryRunAdbReverse(args.port, device);
-      if (args.binaryPath && device) {
+      if ((args.binaryPath || args.user !== undefined) && device) {
         tryInstallAppOnDevice(args, adbPath, device, androidProject);
       }
       tryLaunchAppOnDevice(device, androidProject, adbPath, args);

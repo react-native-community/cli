@@ -11,6 +11,8 @@ export function getTaskNames(
     tasks && tasks.length ? tasks : [taskPrefix + toPascalCase(mode)];
 
   return appName
-    ? appTasks.map((command) => `${appName}:${command}`)
+    ? appTasks.map((command) =>
+        command.includes(':') ? command : `${appName}:${command}`,
+      )
     : appTasks;
 }

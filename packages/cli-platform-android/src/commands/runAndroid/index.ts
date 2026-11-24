@@ -136,7 +136,7 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
 
   process.chdir(androidProject.sourceDir);
   const cmd = process.platform.startsWith('win')
-    ? '.\\gradlew.bat'
+    ? path.join(androidProject.sourceDir, 'gradlew.bat')
     : './gradlew';
 
   const adbPath = getAdbPath();

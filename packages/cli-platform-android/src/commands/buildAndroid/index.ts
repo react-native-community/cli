@@ -5,6 +5,7 @@ import {
 } from '@react-native-community/cli-tools';
 import {Config} from '@react-native-community/cli-types';
 import execa from 'execa';
+import path from 'path';
 import {getAndroidProject} from '@react-native-community/cli-config-android';
 import adb from '../runAndroid/adb';
 import getAdbPath from '../runAndroid/getAdbPath';
@@ -82,7 +83,7 @@ async function buildAndroid(
 export function build(gradleArgs: string[], sourceDir: string) {
   process.chdir(sourceDir);
   const cmd = process.platform.startsWith('win')
-    ? '.\\gradlew.bat'
+    ? path.join(sourceDir, 'gradlew.bat')
     : './gradlew';
   logger.info('Building the app...');
   logger.debug(`Running command "${cmd} ${gradleArgs.join(' ')}"`);

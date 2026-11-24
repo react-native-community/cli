@@ -1,5 +1,6 @@
 import execa from 'execa';
 import pico from 'picocolors';
+import path from 'path';
 import prompts from 'prompts';
 import {
   getGradleTasks,
@@ -151,7 +152,7 @@ describe('parseTasksFromGradleFile', () => {
 });
 
 describe('getGradleTasks', () => {
-  it('runs gradlew.bat by its path on Windows', () => {
+  it('runs gradlew.bat by its full path on Windows', () => {
     const platform = Object.getOwnPropertyDescriptor(process, 'platform')!;
     Object.defineProperty(process, 'platform', {value: 'win32'});
     (execa.sync as jest.Mock).mockReturnValueOnce({stdout: gradleTaskOutput});
@@ -162,7 +163,7 @@ describe('getGradleTasks', () => {
     }
 
     expect(execa.sync).toHaveBeenLastCalledWith(
-      '.\\gradlew.bat',
+      path.join('sourceDir', 'gradlew.bat'),
       ['tasks', '--group', 'install'],
       {cwd: 'sourceDir'},
     );

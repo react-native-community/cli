@@ -59,7 +59,7 @@ function doclink(
     isObj && hashOrOverrides.version ? hashOrOverrides.version : _version;
   const OS = isObj && hashOrOverrides.os ? hashOrOverrides.os : getOS();
 
-  url.pathname = _version
+  url.pathname = version
     ? `${section}/${version}/${path}`
     : `${section}/${path}`;
 

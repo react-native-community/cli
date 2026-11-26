@@ -37,10 +37,10 @@ At the end, a map of available platforms is passed to the bundler (Metro) to mak
 ## Platform interface
 
 ```ts
-type PlatformConfig<ProjectParams, ProjectConfig, DependencyConfig> = {
+type PlatformConfig<ProjectParams, ProjectConfig, DependencyParams, DependencyConfig> = {
   npmPackageName?: string;
-  projectConfig: (string, ProjectParams) => ?ProjectConfig;
-  dependencyConfig: (string, ProjectParams) => ?DependencyConfig;
+  projectConfig: (root: string, params: ProjectParams) => ProjectConfig | null;
+  dependencyConfig: (root: string, params: DependencyParams) => DependencyConfig | null;
 };
 ```
 
@@ -75,18 +75,23 @@ type IOSProjectConfig = {
   sourceDir: string;
   xcodeProject: {
     name: string;
+    path: string;
     isWorkspace: boolean;
   } | null;
-  watchModeCommandParams: string;
+  watchModeCommandParams?: string[];
+  automaticPodsInstallation?: boolean;
+  assets: string[];
 };
 
 type AndroidProjectConfig = {
   sourceDir: string;
   appName: string;
   packageName: string;
+  applicationId: string;
   mainActivity: string;
   dependencyConfiguration?: string;
-  watchModeCommandParams: string;
+  watchModeCommandParams?: string[];
+  assets: string[];
 };
 ```
 
@@ -101,7 +106,9 @@ Second argument is everything that dependency authors defined under:
 ```js
 module.exports = {
   dependency: {
-    [yourPlatformKey]: {},
+    platforms: {
+      [yourPlatformKey]: {},
+    },
   },
 };
 ```

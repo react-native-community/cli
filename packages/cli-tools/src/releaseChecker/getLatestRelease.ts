@@ -14,25 +14,13 @@ export type Release = {
 
 interface DiffPurge {
   name: string;
-  zipball_url: string;
-  tarball_url: string;
-  commit: {
-    sha: string;
-    url: string;
-  };
-  node_id: string;
 }
 
 function isDiffPurgeEntry(data: any): data is DiffPurge {
   return (
-    [
-      data.name,
-      data.zipball_url,
-      data.tarball_url,
-      data.commit?.sha,
-      data.commit?.url,
-      data.node_id,
-    ].indexOf(false) === -1
+    typeof data?.name === 'string' &&
+    data.name.startsWith('version/') &&
+    semver.valid(data.name.substring(8)) !== null
   );
 }
 
@@ -131,7 +119,7 @@ async function getLatestRnDiffPurgeVersion(
         result.candidate = version.substring(8);
         continue;
       }
-      if (!version.includes('-rc')) {
+      if (semver.prerelease(version.substring(8)) === null) {
         result.stable = version.substring(8);
         if (eTagHeader) {
           logger.debug(`Saving ${eTagHeader} to cache`);

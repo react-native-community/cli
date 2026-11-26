@@ -92,12 +92,9 @@ function buildFile(file, silent) {
     !matchesPattern(file, JS_FILES_PATTERN) &&
     !matchesPattern(file, TS_FILE_PATTERN)
   ) {
+    fs.copyFileSync(file, destPath);
     if (FILES_WITH_755_PERMISSION.includes(fileName)) {
-      fs.createReadStream(file).pipe(
-        fs.createWriteStream(destPath, {mode: 0o755}),
-      );
-    } else {
-      fs.createReadStream(file).pipe(fs.createWriteStream(destPath));
+      fs.chmodSync(destPath, 0o755);
     }
     silent ||
       process.stdout.write(

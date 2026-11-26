@@ -26,7 +26,7 @@ export default function getMainActivity(manifestPath: string): string | null {
     const xmlParser = new XMLParser({ignoreAttributes: false});
     const manifestContent = fs.readFileSync(manifestPath, {encoding: 'utf8'});
 
-    if (XMLValidator.validate(manifestContent)) {
+    if (XMLValidator.validate(manifestContent) === true) {
       const {manifest} = xmlParser.parse(manifestContent);
 
       const application = manifest.application || {};

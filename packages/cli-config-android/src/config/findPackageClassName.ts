@@ -32,10 +32,10 @@ export function getMainActivityFiles(
 
 export default function getPackageClassName(folder: string) {
   let files = getMainActivityFiles(folder);
-  let packages = getClassNameMatches(files, folder);
+  const packageClassName = getClassName(files, folder);
 
-  if (packages && packages.length > 0 && Array.isArray(packages[0])) {
-    return packages[0][1];
+  if (packageClassName) {
+    return packageClassName;
   }
 
   /*
@@ -55,17 +55,19 @@ export default function getPackageClassName(folder: string) {
   }
 
   files = getMainActivityFiles(folder, false);
-  packages = getClassNameMatches(files, folder);
-
-  // @ts-ignore
-  return packages.length ? packages[0][1] : null;
+  return getClassName(files, folder);
 }
 
-function getClassNameMatches(files: string[], folder: string) {
-  return files
-    .map((filePath) => fs.readFileSync(path.join(folder, filePath), 'utf8'))
-    .map(matchClassName)
-    .filter((match) => match);
+function getClassName(files: string[], folder: string) {
+  for (const filePath of files) {
+    const match = matchClassName(
+      fs.readFileSync(path.join(folder, filePath), 'utf8'),
+    );
+    if (match) {
+      return match[1];
+    }
+  }
+  return null;
 }
 
 export function matchClassName(file: string) {

@@ -3,7 +3,6 @@ import path from 'path';
 import {logger, CLIError} from '@react-native-community/cli-tools';
 import * as PackageManager from '../../tools/packageManager';
 import copyFiles from '../../tools/copyFiles';
-import replacePathSepForRegex from '../../tools/replacePathSepForRegex';
 import fs from 'fs';
 import pico from 'picocolors';
 import {getYarnVersionIfAvailable} from '../../tools/yarn';
@@ -104,9 +103,11 @@ export async function copyTemplate(
   );
 
   logger.debug(`Copying template from ${templatePath}`);
-  let regexStr = path.resolve(templatePath, 'node_modules');
+  const nodeModulesPath = path
+    .resolve(templatePath, 'node_modules')
+    .replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   await copyFiles(templatePath, process.cwd(), {
-    exclude: [new RegExp(replacePathSepForRegex(regexStr))],
+    exclude: [new RegExp(`^${nodeModulesPath}(?:[/\\\\]|$)`)],
   });
 }
 
